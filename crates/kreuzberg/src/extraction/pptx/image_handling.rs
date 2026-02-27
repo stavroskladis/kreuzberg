@@ -5,14 +5,6 @@
 
 use std::borrow::Cow;
 
-pub(super) fn html_escape(text: &str) -> String {
-    text.replace('&', "&amp;")
-        .replace('<', "&lt;")
-        .replace('>', "&gt;")
-        .replace('"', "&quot;")
-        .replace('\'', "&#x27;")
-}
-
 pub(super) fn detect_image_format(data: &[u8]) -> Cow<'static, str> {
     crate::extraction::image_format::detect_image_format(data)
 }

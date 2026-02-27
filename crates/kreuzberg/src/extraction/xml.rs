@@ -33,7 +33,23 @@ use quick_xml::events::Event;
 use std::borrow::Cow;
 use std::collections::HashSet;
 
+/// SVG text-bearing elements whose text content should be extracted.
+const SVG_TEXT_ELEMENTS: &[&str] = &["text", "tspan", "title", "desc", "textPath", "altGlyph"];
+
+/// Parse XML with optional SVG mode.
+///
+/// In SVG mode, only text from SVG text-bearing elements (`<text>`, `<tspan>`,
+/// `<title>`, `<desc>`, `<textPath>`) is extracted, without element name prefixes.
+/// Attribute values are also omitted in SVG mode.
+pub fn parse_xml_svg(xml_bytes: &[u8], preserve_whitespace: bool) -> Result<XmlExtractionResult> {
+    parse_xml_inner(xml_bytes, preserve_whitespace, true)
+}
+
 pub fn parse_xml(xml_bytes: &[u8], preserve_whitespace: bool) -> Result<XmlExtractionResult> {
+    parse_xml_inner(xml_bytes, preserve_whitespace, false)
+}
+
+fn parse_xml_inner(xml_bytes: &[u8], preserve_whitespace: bool, svg_mode: bool) -> Result<XmlExtractionResult> {
     // Handle UTF-16 encoded XML by detecting BOM and transcoding to UTF-8
     let decoded_bytes;
     let effective_bytes = if xml_bytes.len() >= 2 {
@@ -72,21 +88,24 @@ pub fn parse_xml(xml_bytes: &[u8], preserve_whitespace: bool) -> Result<XmlExtra
                 element_count += 1;
                 unique_elements_set.insert(name_owned.clone());
 
-                // Extract attribute values as text content
-                for attr in e.attributes().flatten() {
-                    let attr_value: Cow<str> = String::from_utf8_lossy(&attr.value);
-                    let trimmed_value = attr_value.trim();
-                    if !trimmed_value.is_empty() {
-                        let attr_key: Cow<str> = String::from_utf8_lossy(attr.key.as_ref());
-                        if !content.is_empty() && !content.ends_with('\n') {
+                // In SVG mode, skip attribute extraction entirely
+                if !svg_mode {
+                    // Extract attribute values as text content
+                    for attr in e.attributes().flatten() {
+                        let attr_value: Cow<str> = String::from_utf8_lossy(&attr.value);
+                        let trimmed_value = attr_value.trim();
+                        if !trimmed_value.is_empty() {
+                            let attr_key: Cow<str> = String::from_utf8_lossy(attr.key.as_ref());
+                            if !content.is_empty() && !content.ends_with('\n') {
+                                content.push('\n');
+                            }
+                            content.push_str(&name_owned);
+                            content.push('[');
+                            content.push_str(&attr_key);
+                            content.push_str("]: ");
+                            content.push_str(trimmed_value);
                             content.push('\n');
                         }
-                        content.push_str(&name_owned);
-                        content.push('[');
-                        content.push_str(&attr_key);
-                        content.push_str("]: ");
-                        content.push_str(trimmed_value);
-                        content.push('\n');
                     }
                 }
 
@@ -100,31 +119,34 @@ pub fn parse_xml(xml_bytes: &[u8], preserve_whitespace: bool) -> Result<XmlExtra
                 element_count += 1;
                 unique_elements_set.insert(name_owned.clone());
 
-                // For self-closing tags, add element name and attributes
-                if !content.is_empty() && !content.ends_with('\n') {
-                    content.push('\n');
-                }
-
-                // Extract attribute values
-                let mut has_attrs = false;
-                for attr in e.attributes().flatten() {
-                    let attr_value: Cow<str> = String::from_utf8_lossy(&attr.value);
-                    let trimmed_value = attr_value.trim();
-                    if !trimmed_value.is_empty() {
-                        let attr_key: Cow<str> = String::from_utf8_lossy(attr.key.as_ref());
-                        content.push_str(&name_owned);
-                        content.push('[');
-                        content.push_str(&attr_key);
-                        content.push_str("]: ");
-                        content.push_str(trimmed_value);
+                // In SVG mode, skip self-closing tag output entirely
+                if !svg_mode {
+                    // For self-closing tags, add element name and attributes
+                    if !content.is_empty() && !content.ends_with('\n') {
                         content.push('\n');
-                        has_attrs = true;
                     }
-                }
 
-                if !has_attrs {
-                    content.push_str(&name_owned);
-                    content.push('\n');
+                    // Extract attribute values
+                    let mut has_attrs = false;
+                    for attr in e.attributes().flatten() {
+                        let attr_value: Cow<str> = String::from_utf8_lossy(&attr.value);
+                        let trimmed_value = attr_value.trim();
+                        if !trimmed_value.is_empty() {
+                            let attr_key: Cow<str> = String::from_utf8_lossy(attr.key.as_ref());
+                            content.push_str(&name_owned);
+                            content.push('[');
+                            content.push_str(&attr_key);
+                            content.push_str("]: ");
+                            content.push_str(trimmed_value);
+                            content.push('\n');
+                            has_attrs = true;
+                        }
+                    }
+
+                    if !has_attrs {
+                        content.push_str(&name_owned);
+                        content.push('\n');
+                    }
                 }
                 last_was_element_tag = true;
             }
@@ -142,18 +164,31 @@ pub fn parse_xml(xml_bytes: &[u8], preserve_whitespace: bool) -> Result<XmlExtra
                 };
 
                 if !trimmed.is_empty() {
-                    // Add element context if we just opened a new element
-                    if last_was_element_tag && !element_stack.is_empty() {
-                        if !content.is_empty() && !content.ends_with('\n') {
-                            content.push('\n');
+                    // In SVG mode, only extract text from SVG text-bearing elements
+                    if svg_mode {
+                        let in_text_element = element_stack
+                            .iter()
+                            .any(|name| SVG_TEXT_ELEMENTS.contains(&name.as_str()));
+                        if in_text_element {
+                            if !content.is_empty() && !content.ends_with('\n') && !content.ends_with(' ') {
+                                content.push(' ');
+                            }
+                            content.push_str(&trimmed);
                         }
-                        let elem_name = &element_stack[element_stack.len() - 1];
-                        content.push_str(elem_name);
-                        content.push_str(": ");
-                    }
+                    } else {
+                        // Add element context if we just opened a new element
+                        if last_was_element_tag && !element_stack.is_empty() {
+                            if !content.is_empty() && !content.ends_with('\n') {
+                                content.push('\n');
+                            }
+                            let elem_name = &element_stack[element_stack.len() - 1];
+                            content.push_str(elem_name);
+                            content.push_str(": ");
+                        }
 
-                    content.push_str(&trimmed);
-                    content.push('\n');
+                        content.push_str(&trimmed);
+                        content.push('\n');
+                    }
                     last_was_element_tag = false;
                 }
             }

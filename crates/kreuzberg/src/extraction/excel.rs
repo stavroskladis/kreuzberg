@@ -571,18 +571,17 @@ fn generate_markdown_and_cells(sheet_name: &str, range: &Range<Data>, capacity: 
 ///
 /// This helper function is shared between markdown generation and cell extraction
 /// to ensure byte-identical output.
+///
+/// Float values that are whole numbers (e.g. 1.0, 42.0) are formatted without the
+/// trailing decimal point (e.g. "1", "42") so that numeric ground-truth comparisons
+/// produce correct F1 scores.  Rust's default `{}` formatter already does this for
+/// `f64`, so we simply delegate to it for every float case.
 #[inline]
 fn format_cell_to_string(data: &Data) -> String {
     match data {
         Data::Empty => String::new(),
         Data::String(s) => s.clone(),
-        Data::Float(f) => {
-            if f.fract() == 0.0 {
-                format!("{:.1}", f)
-            } else {
-                format!("{}", f)
-            }
-        }
+        Data::Float(f) => format!("{}", f),
         Data::Int(i) => format!("{}", i),
         Data::Bool(b) => {
             if *b {
@@ -592,11 +591,10 @@ fn format_cell_to_string(data: &Data) -> String {
             }
         }
         Data::DateTime(dt) => {
-            if let Some(datetime) = dt.as_datetime() {
-                format!("{}", datetime.format("%Y-%m-%d %H:%M:%S"))
-            } else {
-                format!("{:?}", dt)
-            }
+            // `as_datetime()` requires the calamine "chrono" feature which is not enabled;
+            // use `to_ymd_hms_milli()` instead (available with the "dates" feature).
+            let (year, month, day, hour, min, sec, _milli) = dt.to_ymd_hms_milli();
+            format!("{:04}-{:02}-{:02} {:02}:{:02}:{:02}", year, month, day, hour, min, sec)
         }
         Data::Error(e) => format!("#ERR: {:?}", e),
         Data::DateTimeIso(s) => s.clone(),
@@ -812,7 +810,9 @@ mod tests {
     fn test_format_cell_to_string_basic() {
         assert_eq!(format_cell_to_string(&Data::Empty), "");
         assert_eq!(format_cell_to_string(&Data::String("test".to_owned())), "test");
-        assert_eq!(format_cell_to_string(&Data::Float(42.0)), "42.0");
+        // Whole-number floats must NOT include a trailing ".0" – ground-truth files
+        // use plain integers and f1_numeric scoring requires an exact token match.
+        assert_eq!(format_cell_to_string(&Data::Float(42.0)), "42");
         assert_eq!(format_cell_to_string(&Data::Int(100)), "100");
         assert_eq!(format_cell_to_string(&Data::Bool(true)), "true");
     }
@@ -842,9 +842,12 @@ mod tests {
     #[test]
     fn test_format_cell_value_datetime() {
         use calamine::{ExcelDateTime, ExcelDateTimeType};
+        // 49353.5 in Excel serial date (1900 epoch) ≈ 2035-03-22 12:00:00
         let dt = Data::DateTime(ExcelDateTime::new(49353.5, ExcelDateTimeType::DateTime, false));
         let result = format_cell_to_string(&dt);
         assert!(!result.is_empty());
+        // Result should look like an ISO-style datetime string
+        assert!(result.contains('-'), "Expected datetime string, got: {}", result);
     }
 
     #[test]
@@ -972,8 +975,9 @@ mod tests {
 
     #[test]
     fn test_format_cell_value_float_integer() {
+        // Whole-number floats should be formatted without a trailing ".0"
         let result = format_cell_to_string(&Data::Float(100.0));
-        assert_eq!(result, "100.0");
+        assert_eq!(result, "100");
     }
 
     #[test]

@@ -2,7 +2,7 @@
 
 use crate::Result;
 use crate::core::config::ExtractionConfig;
-use crate::extraction::xml::parse_xml;
+use crate::extraction::xml::{parse_xml, parse_xml_svg};
 use crate::extractors::SyncExtractor;
 use crate::plugins::{DocumentExtractor, Plugin};
 use crate::types::ExtractionResult;
@@ -54,7 +54,11 @@ impl Plugin for XmlExtractor {
 
 impl SyncExtractor for XmlExtractor {
     fn extract_sync(&self, content: &[u8], mime_type: &str, _config: &ExtractionConfig) -> Result<ExtractionResult> {
-        let xml_result = parse_xml(content, false)?;
+        let xml_result = if mime_type == "image/svg+xml" {
+            parse_xml_svg(content, false)?
+        } else {
+            parse_xml(content, false)?
+        };
 
         Ok(ExtractionResult {
             content: xml_result.content,

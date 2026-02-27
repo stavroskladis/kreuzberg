@@ -98,23 +98,45 @@ impl ContentBuilder {
             return;
         }
 
-        self.content.push_str("\n<table>");
-        for (i, row) in rows.iter().enumerate() {
-            self.content.push_str("<tr>");
-            let tag = if i == 0 { "th" } else { "td" };
-
-            for cell in row {
-                self.content.push('<');
-                self.content.push_str(tag);
-                self.content.push('>');
-                self.content.push_str(&super::image_handling::html_escape(cell));
-                self.content.push_str("</");
-                self.content.push_str(tag);
-                self.content.push('>');
-            }
-            self.content.push_str("</tr>");
+        let num_cols = rows.iter().map(|r| r.len()).max().unwrap_or(0);
+        if num_cols == 0 {
+            return;
         }
-        self.content.push_str("</table>\n");
+
+        // Calculate column widths
+        let mut col_widths = vec![3usize; num_cols];
+        for row in rows {
+            for (i, cell) in row.iter().enumerate() {
+                col_widths[i] = col_widths[i].max(cell.len());
+            }
+        }
+
+        self.content.push('\n');
+
+        // Render rows as markdown pipe table
+        for (row_idx, row) in rows.iter().enumerate() {
+            self.content.push('|');
+            for (i, cell) in row.iter().enumerate() {
+                let width = col_widths.get(i).copied().unwrap_or(3);
+                self.content.push_str(&format!(" {:width$} |", cell, width = width));
+            }
+            // Pad missing columns
+            for i in row.len()..num_cols {
+                let width = col_widths.get(i).copied().unwrap_or(3);
+                self.content.push_str(&format!(" {:width$} |", "", width = width));
+            }
+            self.content.push('\n');
+
+            // Insert separator after header row (first row)
+            if row_idx == 0 {
+                self.content.push('|');
+                for i in 0..num_cols {
+                    let width = col_widths.get(i).copied().unwrap_or(3);
+                    self.content.push_str(&format!(" {} |", "-".repeat(width)));
+                }
+                self.content.push('\n');
+            }
+        }
     }
 
     pub(super) fn add_list_item(&mut self, level: u32, is_ordered: bool, text: &str) {
@@ -130,13 +152,8 @@ impl ContentBuilder {
         self.content.push('\n');
     }
 
-    pub(super) fn add_image(&mut self, image_id: &str, slide_number: u32) {
-        let filename = format!("slide_{}_image_{}.jpg", slide_number, image_id);
-        self.content.push_str("![");
-        self.content.push_str(image_id);
-        self.content.push_str("](");
-        self.content.push_str(&filename);
-        self.content.push_str(")\n");
+    pub(super) fn add_image(&mut self, _image_id: &str, _slide_number: u32) {
+        self.content.push_str("![image]()\n");
     }
 
     pub(super) fn add_notes(&mut self, notes: &str) {

@@ -317,7 +317,7 @@ impl Document {
                             .unwrap_or("");
                         // Ensure blank line separation before image
                         Self::ensure_blank_line(&mut output);
-                        let _ = writeln!(output, "![{}](image_{})", alt, idx);
+                        let _ = writeln!(output, "![{}](image)", alt);
                         prev_was_list = false;
                     }
                 }
@@ -941,6 +941,7 @@ impl<R: Read + Seek> DocxParser<R> {
         let mut current_paragraph: Option<Paragraph> = None;
         let mut current_run: Option<Run> = None;
         let mut in_text = false;
+        let mut in_math_text = false;
         let mut current_hyperlink_url: Option<String> = None;
         let mut table_stack: Vec<TableContext> = Vec::new();
 
@@ -963,6 +964,16 @@ impl<R: Read + Seek> DocxParser<R> {
                     }
                     b"w:t" => {
                         in_text = true;
+                    }
+                    // OMML math run — treat like a word run for text extraction
+                    b"m:r" => {
+                        if current_run.is_none() {
+                            current_run = Some(Run::default());
+                        }
+                    }
+                    // OMML math text
+                    b"m:t" => {
+                        in_math_text = true;
                     }
                     b"w:tbl" => {
                         table_stack.push(TableContext::new());
@@ -1022,6 +1033,12 @@ impl<R: Read + Seek> DocxParser<R> {
                         document.drawings.push(drawing);
                         document.elements.push(DocumentElement::Drawing(idx));
                     }
+                    // Line break (when not self-closing)
+                    b"w:br" => {
+                        if let Some(ref mut run) = current_run {
+                            run.text.push('\n');
+                        }
+                    }
                     b"w:sectPr" => {
                         let sect_props = super::section::parse_section_properties_streaming(&mut reader);
                         document.sections.push(sect_props);
@@ -1034,6 +1051,12 @@ impl<R: Read + Seek> DocxParser<R> {
                     }
                     b"w:pStyle" | b"w:ilvl" | b"w:numId" => {
                         apply_paragraph_property(e, &mut table_stack, &mut current_paragraph);
+                    }
+                    // Line break: insert newline to separate adjacent text
+                    b"w:br" => {
+                        if let Some(ref mut run) = current_run {
+                            run.text.push('\n');
+                        }
                     }
                     b"w:footnoteReference" | b"w:endnoteReference" => {
                         // Insert inline footnote/endnote reference marker [^N]
@@ -1081,7 +1104,9 @@ impl<R: Read + Seek> DocxParser<R> {
                     _ => {}
                 },
                 Ok(Event::Text(e)) => {
-                    if in_text && let Some(ref mut run) = current_run {
+                    if (in_text || in_math_text)
+                        && let Some(ref mut run) = current_run
+                    {
                         let text = e.decode()?;
                         run.text.push_str(&text);
                     }
@@ -1089,6 +1114,30 @@ impl<R: Read + Seek> DocxParser<R> {
                 Ok(Event::End(ref e)) => match e.name().as_ref() {
                     b"w:t" => {
                         in_text = false;
+                    }
+                    b"m:t" => {
+                        in_math_text = false;
+                    }
+                    // Math run ends — flush accumulated math text as a regular run
+                    b"m:r" => {
+                        if let Some(run) = current_run.take()
+                            && !run.text.is_empty()
+                        {
+                            if let Some(ctx) = table_stack.last_mut() {
+                                if let Some(ref mut para) = ctx.paragraph {
+                                    para.add_run(run);
+                                } else if let Some(ref mut cell) = ctx.current_cell {
+                                    if cell.paragraphs.is_empty() {
+                                        cell.paragraphs.push(Paragraph::new());
+                                    }
+                                    if let Some(para) = cell.paragraphs.last_mut() {
+                                        para.add_run(run);
+                                    }
+                                }
+                            } else if let Some(ref mut para) = current_paragraph {
+                                para.add_run(run);
+                            }
+                        }
                     }
                     b"w:r" => {
                         if let Some(run) = current_run.take() {

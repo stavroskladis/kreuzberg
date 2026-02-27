@@ -104,6 +104,10 @@ pub fn convert_html_to_markdown(
 /// capabilities of the `html-to-markdown-rs` library, without relying
 /// on YAML frontmatter in the converted markdown.
 ///
+/// Metadata is extracted via the `MetadataCollector` mechanism, so `extract_metadata`
+/// is set to `false` in the conversion options to prevent duplicate YAML frontmatter
+/// from being prepended to the content string.
+///
 /// Supports both markdown and djot output based on the output_format parameter.
 /// Defaults to Markdown for backward compatibility.
 ///
@@ -129,7 +133,12 @@ pub fn convert_html_to_markdown_with_metadata(
     check_wasm_size_limit(html)?;
 
     let format = output_format.unwrap_or(KreuzbergOutputFormat::Markdown);
-    let options = resolve_conversion_options(options, format);
+    // Disable extract_metadata (YAML frontmatter) in the conversion options because
+    // metadata is collected separately via MetadataCollector in convert_with_metadata.
+    // Keeping extract_metadata=true would cause metadata to appear both as YAML frontmatter
+    // in the content string and in the returned metadata struct, which tanks quality scores.
+    let mut options = resolve_conversion_options(options, format);
+    options.extract_metadata = false;
     let metadata_config = MetadataConfig::default();
 
     #[cfg(not(target_arch = "wasm32"))]

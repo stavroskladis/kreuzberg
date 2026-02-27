@@ -918,6 +918,13 @@ pub fn create_elixir_adapter(ocr_enabled: bool) -> Result<SubprocessAdapter> {
 
     let mut env = build_library_env()?;
 
+    // Ensure the Erlang VM uses UTF-8 for filenames and string encoding.
+    // Without this, Rust NIFs returning UTF-8 strings corrupt when the VM
+    // interprets them as latin1.
+    env.push(("ELIXIR_ERL_OPTIONS".to_string(), "+fnu".to_string()));
+    env.push(("LC_ALL".to_string(), "C.UTF-8".to_string()));
+    env.push(("LANG".to_string(), "C.UTF-8".to_string()));
+
     // Add Elixir package path for the compiled kreuzberg package
     let elixir_pkg_path = workspace_root()?.join("packages/elixir");
     if elixir_pkg_path.exists() {
@@ -963,6 +970,11 @@ pub fn create_elixir_batch_adapter(ocr_enabled: bool) -> Result<SubprocessAdapte
     ];
 
     let mut env = build_library_env()?;
+
+    // Ensure the Erlang VM uses UTF-8 for filenames and string encoding.
+    env.push(("ELIXIR_ERL_OPTIONS".to_string(), "+fnu".to_string()));
+    env.push(("LC_ALL".to_string(), "C.UTF-8".to_string()));
+    env.push(("LANG".to_string(), "C.UTF-8".to_string()));
 
     // Add Elixir package path for the compiled kreuzberg package
     let elixir_pkg_path = workspace_root()?.join("packages/elixir");

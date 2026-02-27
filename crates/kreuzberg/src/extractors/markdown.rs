@@ -345,7 +345,8 @@ impl DocumentExtractor for MarkdownExtractor {
         let events: Vec<Event> = parser.collect();
 
         let mut extracted_images = Vec::new();
-        let extracted_text = Self::extract_text_from_events(&events, &mut extracted_images);
+        // Walk the AST only for images (data URI extraction); use raw text for content
+        let _ = Self::extract_text_from_events(&events, &mut extracted_images);
 
         let tables = Self::extract_tables_from_events(&events);
 
@@ -365,7 +366,7 @@ impl DocumentExtractor for MarkdownExtractor {
         };
 
         Ok(ExtractionResult {
-            content: extracted_text,
+            content: remaining_content.to_string(),
             mime_type: mime_type.to_string().into(),
             metadata,
             tables,
