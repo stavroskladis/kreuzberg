@@ -237,8 +237,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "The use of bacteria with a signal-generating metabolic activity as indicators of toxicity is well established. UK patent number GB 2005018 describes a method of assaying a liquid sample for toxic substances which involves contacting a suspension of bioluminescent microorganisms with a sample suspected of containing a toxic substance and observing the change in the light output of the bioluminescent organisms as a result of contact with the suspected toxic substance. Furthermore, a toxicity monitoring system embodying the same assay principle, which is manufactured and sold under the Trade Mark Microtox\u00ae, is in routine use in both environmental laboratories and for a variety of industrial applications. An improved toxicity assay method using bioluminescent bacteria, which can be used in a wider range of test conditions than the method of GB 2005018, is described in International patent application number WO 95/10767.",
-      "text": "The use of bacteria with a signal-generating metabolic activity as indicators of toxicity is well established. UK patent number GB 2005018 describes a method of assaying a liquid sample for toxic substances which involves contacting a suspension of bioluminescent microorganisms with a sample suspected of containing a toxic substance and observing the change in the light output of the bioluminescent organisms as a result of contact with the suspected toxic substance. Furthermore, a toxicity monitoring system embodying the same assay principle, which is manufactured and sold under the Trade Mark Microtox\u00ae, is in routine use in both environmental laboratories and for a variety of industrial applications. An improved toxicity assay method using bioluminescent bacteria, which can be used in a wider range of test conditions than the method of GB 2005018, is described in International patent application number WO 95/10767."
+      "orig": "The use of bacteria with a signal-generating metabolic activity as indicators of toxicity is well established. UK patent number GB 2005018 describes a method of assaying a liquid sample for toxic substances which involves contacting a suspension of bioluminescent microorganisms with a sample suspected of containing a toxic substance and observing the change in the light output of the bioluminescent organisms as a result of contact with the suspected toxic substance. Furthermore, a toxicity monitoring system embodying the same assay principle, which is manufactured and sold under the Trade Mark Microtox®, is in routine use in both environmental laboratories and for a variety of industrial applications. An improved toxicity assay method using bioluminescent bacteria, which can be used in a wider range of test conditions than the method of GB 2005018, is described in International patent application number WO 95/10767.",
+      "text": "The use of bacteria with a signal-generating metabolic activity as indicators of toxicity is well established. UK patent number GB 2005018 describes a method of assaying a liquid sample for toxic substances which involves contacting a suspension of bioluminescent microorganisms with a sample suspected of containing a toxic substance and observing the change in the light output of the bioluminescent organisms as a result of contact with the suspected toxic substance. Furthermore, a toxicity monitoring system embodying the same assay principle, which is manufactured and sold under the Trade Mark Microtox®, is in routine use in both environmental laboratories and for a variety of industrial applications. An improved toxicity assay method using bioluminescent bacteria, which can be used in a wider range of test conditions than the method of GB 2005018, is described in International patent application number WO 95/10767."
     },
     {
       "self_ref": "#/texts/6",
@@ -297,8 +297,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "Bleomycin and phleomycin are closely related glycopeptide antibiotics that are isolated in the form of copper chelates from cultures of Streptomyces verticillus. They represent a group of proteins with molecular weights ranging from 1000 to 1000 kda that are potent antibiotics and anti-tumour agents. So far more than 200 members of the bleomycin/phleomycin family have been isolated and characterised as complex basic glycopeptides. Family members resemble each other with respect to their physicochemical properties and their structure, indicating that functionally they all behave in the same manner. Furthermore, the chemical structure of the active moiety is conserved between family members and consists of 5 amino acids, L-glucose, 3-O-carbamoyl-D-mannose and a terminal cation. The various different bleomycin/phleomycin family members differ from each other in the nature of the terminal cation moiety, which is usually an amine. A preferred bleomycin/phleomycin antibiotic for use in the method of the invention is phleomycin D1, sold under the trade name Zeocin\u2122.",
-      "text": "Bleomycin and phleomycin are closely related glycopeptide antibiotics that are isolated in the form of copper chelates from cultures of Streptomyces verticillus. They represent a group of proteins with molecular weights ranging from 1000 to 1000 kda that are potent antibiotics and anti-tumour agents. So far more than 200 members of the bleomycin/phleomycin family have been isolated and characterised as complex basic glycopeptides. Family members resemble each other with respect to their physicochemical properties and their structure, indicating that functionally they all behave in the same manner. Furthermore, the chemical structure of the active moiety is conserved between family members and consists of 5 amino acids, L-glucose, 3-O-carbamoyl-D-mannose and a terminal cation. The various different bleomycin/phleomycin family members differ from each other in the nature of the terminal cation moiety, which is usually an amine. A preferred bleomycin/phleomycin antibiotic for use in the method of the invention is phleomycin D1, sold under the trade name Zeocin\u2122."
+      "orig": "Bleomycin and phleomycin are closely related glycopeptide antibiotics that are isolated in the form of copper chelates from cultures of Streptomyces verticillus. They represent a group of proteins with molecular weights ranging from 1000 to 1000 kda that are potent antibiotics and anti-tumour agents. So far more than 200 members of the bleomycin/phleomycin family have been isolated and characterised as complex basic glycopeptides. Family members resemble each other with respect to their physicochemical properties and their structure, indicating that functionally they all behave in the same manner. Furthermore, the chemical structure of the active moiety is conserved between family members and consists of 5 amino acids, L-glucose, 3-O-carbamoyl-D-mannose and a terminal cation. The various different bleomycin/phleomycin family members differ from each other in the nature of the terminal cation moiety, which is usually an amine. A preferred bleomycin/phleomycin antibiotic for use in the method of the invention is phleomycin D1, sold under the trade name Zeocin™.",
+      "text": "Bleomycin and phleomycin are closely related glycopeptide antibiotics that are isolated in the form of copper chelates from cultures of Streptomyces verticillus. They represent a group of proteins with molecular weights ranging from 1000 to 1000 kda that are potent antibiotics and anti-tumour agents. So far more than 200 members of the bleomycin/phleomycin family have been isolated and characterised as complex basic glycopeptides. Family members resemble each other with respect to their physicochemical properties and their structure, indicating that functionally they all behave in the same manner. Furthermore, the chemical structure of the active moiety is conserved between family members and consists of 5 amino acids, L-glucose, 3-O-carbamoyl-D-mannose and a terminal cation. The various different bleomycin/phleomycin family members differ from each other in the nature of the terminal cation moiety, which is usually an amine. A preferred bleomycin/phleomycin antibiotic for use in the method of the invention is phleomycin D1, sold under the trade name Zeocin™."
     },
     {
       "self_ref": "#/texts/11",
@@ -333,8 +333,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "The present inventors have surprisingly found that treatment of a culture of cells with signal-generating metabolic activity with a bleomycin/phleomycin antibiotic renders the culture non-viable whilst retaining a level of signal-generating metabolic activity suitable for use in toxicity testing applications. In the context of this application the term non-viable is taken to mean that the cells are unable to reproduce. The process of rendering cells non-viable whilst retaining signal-generating metabolic activity may hereinafter be referred to as \u2018inactivation\u2019 and cells which have been rendered non-viable according to the method of the invention may be referred to as \u2018inactivated\u2019.",
-      "text": "The present inventors have surprisingly found that treatment of a culture of cells with signal-generating metabolic activity with a bleomycin/phleomycin antibiotic renders the culture non-viable whilst retaining a level of signal-generating metabolic activity suitable for use in toxicity testing applications. In the context of this application the term non-viable is taken to mean that the cells are unable to reproduce. The process of rendering cells non-viable whilst retaining signal-generating metabolic activity may hereinafter be referred to as \u2018inactivation\u2019 and cells which have been rendered non-viable according to the method of the invention may be referred to as \u2018inactivated\u2019."
+      "orig": "The present inventors have surprisingly found that treatment of a culture of cells with signal-generating metabolic activity with a bleomycin/phleomycin antibiotic renders the culture non-viable whilst retaining a level of signal-generating metabolic activity suitable for use in toxicity testing applications. In the context of this application the term non-viable is taken to mean that the cells are unable to reproduce. The process of rendering cells non-viable whilst retaining signal-generating metabolic activity may hereinafter be referred to as ‘inactivation’ and cells which have been rendered non-viable according to the method of the invention may be referred to as ‘inactivated’.",
+      "text": "The present inventors have surprisingly found that treatment of a culture of cells with signal-generating metabolic activity with a bleomycin/phleomycin antibiotic renders the culture non-viable whilst retaining a level of signal-generating metabolic activity suitable for use in toxicity testing applications. In the context of this application the term non-viable is taken to mean that the cells are unable to reproduce. The process of rendering cells non-viable whilst retaining signal-generating metabolic activity may hereinafter be referred to as ‘inactivation’ and cells which have been rendered non-viable according to the method of the invention may be referred to as ‘inactivated’."
     },
     {
       "self_ref": "#/texts/14",
@@ -369,8 +369,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "The optimum concentration of bleomycin/phleomycin antibiotic and contact time required to render a culture of cells non-viable whilst retaining a useful level of signal-generating metabolic activity may vary according to the cell type but can be readily determined by routine experiment. In general, the lower the concentration of antibiotic used the longer the contact time required for cell inactivation. In connection with the production of assay reagents for use in toxicity testing applications, it is generally advantageous to keep the concentration of antibiotic low (e.g. around 1-1.5 mg/ml) and increase the contact time for inactivation. As will be shown in Example 1, treatment with Zeocin\u2122 at a concentration of 1.5 mg/ml for 3 to 5 hours is sufficient to completely inactivate a culture of recombinant E. coli.",
-      "text": "The optimum concentration of bleomycin/phleomycin antibiotic and contact time required to render a culture of cells non-viable whilst retaining a useful level of signal-generating metabolic activity may vary according to the cell type but can be readily determined by routine experiment. In general, the lower the concentration of antibiotic used the longer the contact time required for cell inactivation. In connection with the production of assay reagents for use in toxicity testing applications, it is generally advantageous to keep the concentration of antibiotic low (e.g. around 1-1.5 mg/ml) and increase the contact time for inactivation. As will be shown in Example 1, treatment with Zeocin\u2122 at a concentration of 1.5 mg/ml for 3 to 5 hours is sufficient to completely inactivate a culture of recombinant E. coli."
+      "orig": "The optimum concentration of bleomycin/phleomycin antibiotic and contact time required to render a culture of cells non-viable whilst retaining a useful level of signal-generating metabolic activity may vary according to the cell type but can be readily determined by routine experiment. In general, the lower the concentration of antibiotic used the longer the contact time required for cell inactivation. In connection with the production of assay reagents for use in toxicity testing applications, it is generally advantageous to keep the concentration of antibiotic low (e.g. around 1-1.5 mg/ml) and increase the contact time for inactivation. As will be shown in Example 1, treatment with Zeocin™ at a concentration of 1.5 mg/ml for 3 to 5 hours is sufficient to completely inactivate a culture of recombinant E. coli.",
+      "text": "The optimum concentration of bleomycin/phleomycin antibiotic and contact time required to render a culture of cells non-viable whilst retaining a useful level of signal-generating metabolic activity may vary according to the cell type but can be readily determined by routine experiment. In general, the lower the concentration of antibiotic used the longer the contact time required for cell inactivation. In connection with the production of assay reagents for use in toxicity testing applications, it is generally advantageous to keep the concentration of antibiotic low (e.g. around 1-1.5 mg/ml) and increase the contact time for inactivation. As will be shown in Example 1, treatment with Zeocin™ at a concentration of 1.5 mg/ml for 3 to 5 hours is sufficient to completely inactivate a culture of recombinant E. coli."
     },
     {
       "self_ref": "#/texts/17",
@@ -501,8 +501,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "Toxicity is a general term used to describe an adverse effect on biological system and the term \u2018toxic substances\u2019 includes both toxicants (synthetic chemicals that are toxic) and toxins (natural poisons). Toxicity is usually expressed as an effective concentration (EC) or inhibitory concentration (IC) value. The EC/IC value is usually denoted as a percentage response e.g. EC\u2085\u2080, EC\u2081\u2080 which denotes the concentration (dose) of a particular substance which affects the designated criteria for assessing toxicity (i.e. a behavioural trait or death) in the indicated proportion of the population tested. For example, an EC\u2085\u2080 of 10 ppm indicates that 50% of the population will be affected by a concentration of 10 ppm. In the case of a toxicity assay based on the use of a bioluminescent assay reagent, the EC\u2085\u2080 value is usually the concentration of sample substance causing a 50% change in light output.",
-      "text": "Toxicity is a general term used to describe an adverse effect on biological system and the term \u2018toxic substances\u2019 includes both toxicants (synthetic chemicals that are toxic) and toxins (natural poisons). Toxicity is usually expressed as an effective concentration (EC) or inhibitory concentration (IC) value. The EC/IC value is usually denoted as a percentage response e.g. EC\u2085\u2080, EC\u2081\u2080 which denotes the concentration (dose) of a particular substance which affects the designated criteria for assessing toxicity (i.e. a behavioural trait or death) in the indicated proportion of the population tested. For example, an EC\u2085\u2080 of 10 ppm indicates that 50% of the population will be affected by a concentration of 10 ppm. In the case of a toxicity assay based on the use of a bioluminescent assay reagent, the EC\u2085\u2080 value is usually the concentration of sample substance causing a 50% change in light output."
+      "orig": "Toxicity is a general term used to describe an adverse effect on biological system and the term ‘toxic substances’ includes both toxicants (synthetic chemicals that are toxic) and toxins (natural poisons). Toxicity is usually expressed as an effective concentration (EC) or inhibitory concentration (IC) value. The EC/IC value is usually denoted as a percentage response e.g. EC₅₀, EC₁₀ which denotes the concentration (dose) of a particular substance which affects the designated criteria for assessing toxicity (i.e. a behavioural trait or death) in the indicated proportion of the population tested. For example, an EC₅₀ of 10 ppm indicates that 50% of the population will be affected by a concentration of 10 ppm. In the case of a toxicity assay based on the use of a bioluminescent assay reagent, the EC₅₀ value is usually the concentration of sample substance causing a 50% change in light output.",
+      "text": "Toxicity is a general term used to describe an adverse effect on biological system and the term ‘toxic substances’ includes both toxicants (synthetic chemicals that are toxic) and toxins (natural poisons). Toxicity is usually expressed as an effective concentration (EC) or inhibitory concentration (IC) value. The EC/IC value is usually denoted as a percentage response e.g. EC₅₀, EC₁₀ which denotes the concentration (dose) of a particular substance which affects the designated criteria for assessing toxicity (i.e. a behavioural trait or death) in the indicated proportion of the population tested. For example, an EC₅₀ of 10 ppm indicates that 50% of the population will be affected by a concentration of 10 ppm. In the case of a toxicity assay based on the use of a bioluminescent assay reagent, the EC₅₀ value is usually the concentration of sample substance causing a 50% change in light output."
     },
     {
       "self_ref": "#/texts/28",
@@ -525,8 +525,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 1 is a graph to show the effect of Zeocin\u2122 treatment on viable count and light output of recombinant bioluminescent E. coil cells.",
-      "text": "FIG. 1 is a graph to show the effect of Zeocin\u2122 treatment on viable count and light output of recombinant bioluminescent E. coil cells."
+      "orig": "FIG. 1 is a graph to show the effect of Zeocin™ treatment on viable count and light output of recombinant bioluminescent E. coil cells.",
+      "text": "FIG. 1 is a graph to show the effect of Zeocin™ treatment on viable count and light output of recombinant bioluminescent E. coil cells."
     },
     {
       "self_ref": "#/texts/30",
@@ -537,8 +537,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 2 is a graph to show the light output from five separate vials of reconstituted assay reagent. The assay reagent was prepared from recombinant bioluminescent E. coil exposed to 1.5 mg/ml Zeocin\u2122 for 300 minutes. Five vials were used to reduce discrepancies resulting from vial to vial variation.",
-      "text": "FIG. 2 is a graph to show the light output from five separate vials of reconstituted assay reagent. The assay reagent was prepared from recombinant bioluminescent E. coil exposed to 1.5 mg/ml Zeocin\u2122 for 300 minutes. Five vials were used to reduce discrepancies resulting from vial to vial variation."
+      "orig": "FIG. 2 is a graph to show the light output from five separate vials of reconstituted assay reagent. The assay reagent was prepared from recombinant bioluminescent E. coil exposed to 1.5 mg/ml Zeocin™ for 300 minutes. Five vials were used to reduce discrepancies resulting from vial to vial variation.",
+      "text": "FIG. 2 is a graph to show the light output from five separate vials of reconstituted assay reagent. The assay reagent was prepared from recombinant bioluminescent E. coil exposed to 1.5 mg/ml Zeocin™ for 300 minutes. Five vials were used to reduce discrepancies resulting from vial to vial variation."
     },
     {
       "self_ref": "#/texts/31",
@@ -549,8 +549,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIGS. 3 to 8 are graphs to show the effect of Zeocin\u2122 treatment on the sensitivity of bioluminescent assay reagent to toxicant (ZnSO\u2084):",
-      "text": "FIGS. 3 to 8 are graphs to show the effect of Zeocin\u2122 treatment on the sensitivity of bioluminescent assay reagent to toxicant (ZnSO\u2084):"
+      "orig": "FIGS. 3 to 8 are graphs to show the effect of Zeocin™ treatment on the sensitivity of bioluminescent assay reagent to toxicant (ZnSO₄):",
+      "text": "FIGS. 3 to 8 are graphs to show the effect of Zeocin™ treatment on the sensitivity of bioluminescent assay reagent to toxicant (ZnSO₄):"
     },
     {
       "self_ref": "#/texts/32",
@@ -573,8 +573,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 4: Zeocin\u2122 treated cells, lag phase.",
-      "text": "FIG. 4: Zeocin\u2122 treated cells, lag phase."
+      "orig": "FIG. 4: Zeocin™ treated cells, lag phase.",
+      "text": "FIG. 4: Zeocin™ treated cells, lag phase."
     },
     {
       "self_ref": "#/texts/34",
@@ -597,8 +597,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 6: Zeocin\u2122 treated cells, mid-exponential growth.",
-      "text": "FIG. 6: Zeocin\u2122 treated cells, mid-exponential growth."
+      "orig": "FIG. 6: Zeocin™ treated cells, mid-exponential growth.",
+      "text": "FIG. 6: Zeocin™ treated cells, mid-exponential growth."
     },
     {
       "self_ref": "#/texts/36",
@@ -621,8 +621,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 8: Zeocin\u2122 treated cells, stationary phase.",
-      "text": "FIG. 8: Zeocin\u2122 treated cells, stationary phase."
+      "orig": "FIG. 8: Zeocin™ treated cells, stationary phase.",
+      "text": "FIG. 8: Zeocin™ treated cells, stationary phase."
     },
     {
       "self_ref": "#/texts/38",
@@ -678,8 +678,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "1. Bioluminescent genetically modified E. coil strain HB101 (E. coli HB101 made bioluminescent by transformation with a plasmid carrying the lux operon of Vibrio fischeri constructed by the method of Shaw and Kado, as described in Biotechnology 4: 560-564) were grown from a frozen stock in 5 ml of low salt medium (LB (5 g/ml NaCl)+glycerol+MgSO\u2084) for 24 hours.",
-      "text": "1. Bioluminescent genetically modified E. coil strain HB101 (E. coli HB101 made bioluminescent by transformation with a plasmid carrying the lux operon of Vibrio fischeri constructed by the method of Shaw and Kado, as described in Biotechnology 4: 560-564) were grown from a frozen stock in 5 ml of low salt medium (LB (5 g/ml NaCl)+glycerol+MgSO\u2084) for 24 hours."
+      "orig": "1. Bioluminescent genetically modified E. coil strain HB101 (E. coli HB101 made bioluminescent by transformation with a plasmid carrying the lux operon of Vibrio fischeri constructed by the method of Shaw and Kado, as described in Biotechnology 4: 560-564) were grown from a frozen stock in 5 ml of low salt medium (LB (5 g/ml NaCl)+glycerol+MgSO₄) for 24 hours.",
+      "text": "1. Bioluminescent genetically modified E. coil strain HB101 (E. coli HB101 made bioluminescent by transformation with a plasmid carrying the lux operon of Vibrio fischeri constructed by the method of Shaw and Kado, as described in Biotechnology 4: 560-564) were grown from a frozen stock in 5 ml of low salt medium (LB (5 g/ml NaCl)+glycerol+MgSO₄) for 24 hours."
     },
     {
       "self_ref": "#/texts/41",
@@ -690,8 +690,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "2. 1 ml of the 5 ml culture was then used to inoculate 200 ml of low salt medium in a shaker flask and the resultant culture grown to an OD\u2086\u2083\u2080 of 0.407 (exponential growth phase).",
-      "text": "2. 1 ml of the 5 ml culture was then used to inoculate 200 ml of low salt medium in a shaker flask and the resultant culture grown to an OD\u2086\u2083\u2080 of 0.407 (exponential growth phase)."
+      "orig": "2. 1 ml of the 5 ml culture was then used to inoculate 200 ml of low salt medium in a shaker flask and the resultant culture grown to an OD₆₃₀ of 0.407 (exponential growth phase).",
+      "text": "2. 1 ml of the 5 ml culture was then used to inoculate 200 ml of low salt medium in a shaker flask and the resultant culture grown to an OD₆₃₀ of 0.407 (exponential growth phase)."
     },
     {
       "self_ref": "#/texts/42",
@@ -714,8 +714,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "4. Zeocin\u2122 was added to the 150 ml of culture in the original shaker flash, to a final concentration of 1.5 mg/ml. At the same time, an equivalent volume of water was added to the 50 ml culture removed from the original flask (control cells).",
-      "text": "4. Zeocin\u2122 was added to the 150 ml of culture in the original shaker flash, to a final concentration of 1.5 mg/ml. At the same time, an equivalent volume of water was added to the 50 ml culture removed from the original flask (control cells)."
+      "orig": "4. Zeocin™ was added to the 150 ml of culture in the original shaker flash, to a final concentration of 1.5 mg/ml. At the same time, an equivalent volume of water was added to the 50 ml culture removed from the original flask (control cells).",
+      "text": "4. Zeocin™ was added to the 150 ml of culture in the original shaker flash, to a final concentration of 1.5 mg/ml. At the same time, an equivalent volume of water was added to the 50 ml culture removed from the original flask (control cells)."
     },
     {
       "self_ref": "#/texts/44",
@@ -726,8 +726,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "5. The time course of cell inactivation was monitored by removing samples from the culture at 5, 60, 120, 180, 240 and 300 minutes after the addition of Zeocin\u2122 and taking measurements of both light output (measured using a Deltatox luminometer) and viable count (per ml, determined using the method given in Example 3 below) for each of the samples. Samples of the control cells were removed at 5 and 300 minutes after the addition of water and measurements of light output and viable count taken as for the Zeocin\u2122 treated cells.",
-      "text": "5. The time course of cell inactivation was monitored by removing samples from the culture at 5, 60, 120, 180, 240 and 300 minutes after the addition of Zeocin\u2122 and taking measurements of both light output (measured using a Deltatox luminometer) and viable count (per ml, determined using the method given in Example 3 below) for each of the samples. Samples of the control cells were removed at 5 and 300 minutes after the addition of water and measurements of light output and viable count taken as for the Zeocin\u2122 treated cells."
+      "orig": "5. The time course of cell inactivation was monitored by removing samples from the culture at 5, 60, 120, 180, 240 and 300 minutes after the addition of Zeocin™ and taking measurements of both light output (measured using a Deltatox luminometer) and viable count (per ml, determined using the method given in Example 3 below) for each of the samples. Samples of the control cells were removed at 5 and 300 minutes after the addition of water and measurements of light output and viable count taken as for the Zeocin™ treated cells.",
+      "text": "5. The time course of cell inactivation was monitored by removing samples from the culture at 5, 60, 120, 180, 240 and 300 minutes after the addition of Zeocin™ and taking measurements of both light output (measured using a Deltatox luminometer) and viable count (per ml, determined using the method given in Example 3 below) for each of the samples. Samples of the control cells were removed at 5 and 300 minutes after the addition of water and measurements of light output and viable count taken as for the Zeocin™ treated cells."
     },
     {
       "self_ref": "#/texts/45",
@@ -738,8 +738,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 1 shows the effect of Zeocin\u2122 treatment on the light output and viable count (per ml) of recombinant bioluminescent E. coil. Zeocin\u2122 was added to a final concentration of 1.5 mg/ml at time zero. The number of viable cells in the culture was observed to decrease with increasing contact cells with Zeocin\u2122, the culture being completely inactivated after 3 hours. The light output from the culture was observed to decrease gradually with increasing Zeocin\u2122 contact time.",
-      "text": "FIG. 1 shows the effect of Zeocin\u2122 treatment on the light output and viable count (per ml) of recombinant bioluminescent E. coil. Zeocin\u2122 was added to a final concentration of 1.5 mg/ml at time zero. The number of viable cells in the culture was observed to decrease with increasing contact cells with Zeocin\u2122, the culture being completely inactivated after 3 hours. The light output from the culture was observed to decrease gradually with increasing Zeocin\u2122 contact time."
+      "orig": "FIG. 1 shows the effect of Zeocin™ treatment on the light output and viable count (per ml) of recombinant bioluminescent E. coil. Zeocin™ was added to a final concentration of 1.5 mg/ml at time zero. The number of viable cells in the culture was observed to decrease with increasing contact cells with Zeocin™, the culture being completely inactivated after 3 hours. The light output from the culture was observed to decrease gradually with increasing Zeocin™ contact time.",
+      "text": "FIG. 1 shows the effect of Zeocin™ treatment on the light output and viable count (per ml) of recombinant bioluminescent E. coil. Zeocin™ was added to a final concentration of 1.5 mg/ml at time zero. The number of viable cells in the culture was observed to decrease with increasing contact cells with Zeocin™, the culture being completely inactivated after 3 hours. The light output from the culture was observed to decrease gradually with increasing Zeocin™ contact time."
     },
     {
       "self_ref": "#/texts/46",
@@ -773,8 +773,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "Five hours after the addition of Zeocin\u2122 or water the remaining bacterial cells in the Zeocin\u2122 treated and control cultures were harvested by the centrifugation, washed (to remove traces of Zeocin\u2122 from the Zeocin\u2122 treated culture), re-centrifuged and resuspended in cryoprotectant to an OD\u2086\u2083\u2080 of 0.25. 200 \u03bcl aliquots of the cells in cryoprotectant were dispensed into single shot vials, and freeze dried. Freeze dried samples of the Zeocin\u2122 treated cells and control cells were reconstituted in 0.2M sucrose to form assay reagents and the light output of the assay reagents measured at various times after reconstitution.",
-      "text": "Five hours after the addition of Zeocin\u2122 or water the remaining bacterial cells in the Zeocin\u2122 treated and control cultures were harvested by the centrifugation, washed (to remove traces of Zeocin\u2122 from the Zeocin\u2122 treated culture), re-centrifuged and resuspended in cryoprotectant to an OD\u2086\u2083\u2080 of 0.25. 200 \u03bcl aliquots of the cells in cryoprotectant were dispensed into single shot vials, and freeze dried. Freeze dried samples of the Zeocin\u2122 treated cells and control cells were reconstituted in 0.2M sucrose to form assay reagents and the light output of the assay reagents measured at various times after reconstitution."
+      "orig": "Five hours after the addition of Zeocin™ or water the remaining bacterial cells in the Zeocin™ treated and control cultures were harvested by the centrifugation, washed (to remove traces of Zeocin™ from the Zeocin™ treated culture), re-centrifuged and resuspended in cryoprotectant to an OD₆₃₀ of 0.25. 200 μl aliquots of the cells in cryoprotectant were dispensed into single shot vials, and freeze dried. Freeze dried samples of the Zeocin™ treated cells and control cells were reconstituted in 0.2M sucrose to form assay reagents and the light output of the assay reagents measured at various times after reconstitution.",
+      "text": "Five hours after the addition of Zeocin™ or water the remaining bacterial cells in the Zeocin™ treated and control cultures were harvested by the centrifugation, washed (to remove traces of Zeocin™ from the Zeocin™ treated culture), re-centrifuged and resuspended in cryoprotectant to an OD₆₃₀ of 0.25. 200 μl aliquots of the cells in cryoprotectant were dispensed into single shot vials, and freeze dried. Freeze dried samples of the Zeocin™ treated cells and control cells were reconstituted in 0.2M sucrose to form assay reagents and the light output of the assay reagents measured at various times after reconstitution."
     },
     {
       "self_ref": "#/texts/48",
@@ -785,8 +785,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "The light output from assay reagent prepared from cells exposed to 1.5 mg/ml Zeocin\u2122 for 5 hours was not significantly different to the light output from assay reagent prepared from control (Zeocin\u2122 untreated) cells, indicating that Zeocin\u2122 treatment does not affect the light output of the reconstituted freeze dried assay reagent. Both Zeocin\u2122 treated and Zeocin\u2122 untreated assay reagents produced stable light output 15 minutes after reconstitution.",
-      "text": "The light output from assay reagent prepared from cells exposed to 1.5 mg/ml Zeocin\u2122 for 5 hours was not significantly different to the light output from assay reagent prepared from control (Zeocin\u2122 untreated) cells, indicating that Zeocin\u2122 treatment does not affect the light output of the reconstituted freeze dried assay reagent. Both Zeocin\u2122 treated and Zeocin\u2122 untreated assay reagents produced stable light output 15 minutes after reconstitution."
+      "orig": "The light output from assay reagent prepared from cells exposed to 1.5 mg/ml Zeocin™ for 5 hours was not significantly different to the light output from assay reagent prepared from control (Zeocin™ untreated) cells, indicating that Zeocin™ treatment does not affect the light output of the reconstituted freeze dried assay reagent. Both Zeocin™ treated and Zeocin™ untreated assay reagents produced stable light output 15 minutes after reconstitution.",
+      "text": "The light output from assay reagent prepared from cells exposed to 1.5 mg/ml Zeocin™ for 5 hours was not significantly different to the light output from assay reagent prepared from control (Zeocin™ untreated) cells, indicating that Zeocin™ treatment does not affect the light output of the reconstituted freeze dried assay reagent. Both Zeocin™ treated and Zeocin™ untreated assay reagents produced stable light output 15 minutes after reconstitution."
     },
     {
       "self_ref": "#/texts/49",
@@ -797,8 +797,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 2 shows the light output from five separate vials of reconstituted Zeocin\u2122 treated assay reagent inactivated according to the method of Example 1(A) and processed into assay reagent as described in Example 1(B). Reconstitution solution was added at time zero and thereafter light output was observed to increase steadily before stabilising out at around 15 minutes after reconstitution. All five vials were observed to give similar light profiles after reconstitution.",
-      "text": "FIG. 2 shows the light output from five separate vials of reconstituted Zeocin\u2122 treated assay reagent inactivated according to the method of Example 1(A) and processed into assay reagent as described in Example 1(B). Reconstitution solution was added at time zero and thereafter light output was observed to increase steadily before stabilising out at around 15 minutes after reconstitution. All five vials were observed to give similar light profiles after reconstitution."
+      "orig": "FIG. 2 shows the light output from five separate vials of reconstituted Zeocin™ treated assay reagent inactivated according to the method of Example 1(A) and processed into assay reagent as described in Example 1(B). Reconstitution solution was added at time zero and thereafter light output was observed to increase steadily before stabilising out at around 15 minutes after reconstitution. All five vials were observed to give similar light profiles after reconstitution.",
+      "text": "FIG. 2 shows the light output from five separate vials of reconstituted Zeocin™ treated assay reagent inactivated according to the method of Example 1(A) and processed into assay reagent as described in Example 1(B). Reconstitution solution was added at time zero and thereafter light output was observed to increase steadily before stabilising out at around 15 minutes after reconstitution. All five vials were observed to give similar light profiles after reconstitution."
     },
     {
       "self_ref": "#/texts/50",
@@ -901,8 +901,8 @@
       "content_layer": "body",
       "label": "section_header",
       "prov": [],
-      "orig": "Sensitivity of Zeocin\u2122 Treated Assay Reagent to Toxicant Method",
-      "text": "Sensitivity of Zeocin\u2122 Treated Assay Reagent to Toxicant Method",
+      "orig": "Sensitivity of Zeocin™ Treated Assay Reagent to Toxicant Method",
+      "text": "Sensitivity of Zeocin™ Treated Assay Reagent to Toxicant Method",
       "level": 2
     },
     {
@@ -914,8 +914,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "1. Bioluminescent genetically modified E. coil strain HB101 (E. coli HB101 made bioluminescent by transformation with a plasmid carrying the lux operon of vibrio fischeri constructed by the method of Shaw and Kado, as described in Biotechnology 4: 560-564) was grown in fermenter as a batch culture in low salt medium (LB(5 g/ml NaCl)+glycerol+MgSO\u2084).",
-      "text": "1. Bioluminescent genetically modified E. coil strain HB101 (E. coli HB101 made bioluminescent by transformation with a plasmid carrying the lux operon of vibrio fischeri constructed by the method of Shaw and Kado, as described in Biotechnology 4: 560-564) was grown in fermenter as a batch culture in low salt medium (LB(5 g/ml NaCl)+glycerol+MgSO\u2084)."
+      "orig": "1. Bioluminescent genetically modified E. coil strain HB101 (E. coli HB101 made bioluminescent by transformation with a plasmid carrying the lux operon of vibrio fischeri constructed by the method of Shaw and Kado, as described in Biotechnology 4: 560-564) was grown in fermenter as a batch culture in low salt medium (LB(5 g/ml NaCl)+glycerol+MgSO₄).",
+      "text": "1. Bioluminescent genetically modified E. coil strain HB101 (E. coli HB101 made bioluminescent by transformation with a plasmid carrying the lux operon of vibrio fischeri constructed by the method of Shaw and Kado, as described in Biotechnology 4: 560-564) was grown in fermenter as a batch culture in low salt medium (LB(5 g/ml NaCl)+glycerol+MgSO₄)."
     },
     {
       "self_ref": "#/texts/53",
@@ -926,8 +926,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "2. Two aliquots of the culture were removed from the fermenter into separate sterile shaker flasks at each of three different stages of growth i.e. at OD\u2086\u2083\u2080 values of 0.038 (lag phase growth), 1.31 (mid-exponential phase growth) and 2.468 (stationary phase growth).",
-      "text": "2. Two aliquots of the culture were removed from the fermenter into separate sterile shaker flasks at each of three different stages of growth i.e. at OD\u2086\u2083\u2080 values of 0.038 (lag phase growth), 1.31 (mid-exponential phase growth) and 2.468 (stationary phase growth)."
+      "orig": "2. Two aliquots of the culture were removed from the fermenter into separate sterile shaker flasks at each of three different stages of growth i.e. at OD₆₃₀ values of 0.038 (lag phase growth), 1.31 (mid-exponential phase growth) and 2.468 (stationary phase growth).",
+      "text": "2. Two aliquots of the culture were removed from the fermenter into separate sterile shaker flasks at each of three different stages of growth i.e. at OD₆₃₀ values of 0.038 (lag phase growth), 1.31 (mid-exponential phase growth) and 2.468 (stationary phase growth)."
     },
     {
       "self_ref": "#/texts/54",
@@ -938,8 +938,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "3. One aliquot of culture for each of the three growth stages was inactivated by contact with Zeocin\u2122 (1 mg Zeocin\u2122 added per 2.5\u00d710\u2076 cells, i.e. the concentration of Zeocin\u2122 per cell is kept constant) for 300 minutes and then processed into assay reagent by freeze drying and reconstitution, as described in part (B) of Example 1.",
-      "text": "3. One aliquot of culture for each of the three growth stages was inactivated by contact with Zeocin\u2122 (1 mg Zeocin\u2122 added per 2.5\u00d710\u2076 cells, i.e. the concentration of Zeocin\u2122 per cell is kept constant) for 300 minutes and then processed into assay reagent by freeze drying and reconstitution, as described in part (B) of Example 1."
+      "orig": "3. One aliquot of culture for each of the three growth stages was inactivated by contact with Zeocin™ (1 mg Zeocin™ added per 2.5×10⁶ cells, i.e. the concentration of Zeocin™ per cell is kept constant) for 300 minutes and then processed into assay reagent by freeze drying and reconstitution, as described in part (B) of Example 1.",
+      "text": "3. One aliquot of culture for each of the three growth stages was inactivated by contact with Zeocin™ (1 mg Zeocin™ added per 2.5×10⁶ cells, i.e. the concentration of Zeocin™ per cell is kept constant) for 300 minutes and then processed into assay reagent by freeze drying and reconstitution, as described in part (B) of Example 1."
     },
     {
       "self_ref": "#/texts/55",
@@ -962,8 +962,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "5. Samples of each of the three Zeocin\u2122 treated and three control assay reagents were then evaluated for sensitivity to toxicant (ZnSO\u2084) according to the following assay protocol:",
-      "text": "5. Samples of each of the three Zeocin\u2122 treated and three control assay reagents were then evaluated for sensitivity to toxicant (ZnSO\u2084) according to the following assay protocol:"
+      "orig": "5. Samples of each of the three Zeocin™ treated and three control assay reagents were then evaluated for sensitivity to toxicant (ZnSO₄) according to the following assay protocol:",
+      "text": "5. Samples of each of the three Zeocin™ treated and three control assay reagents were then evaluated for sensitivity to toxicant (ZnSO₄) according to the following assay protocol:"
     },
     {
       "self_ref": "#/texts/57",
@@ -974,8 +974,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "ZnSO\u2084 Sensitivity Assay",
-      "text": "ZnSO\u2084 Sensitivity Assay"
+      "orig": "ZnSO₄ Sensitivity Assay",
+      "text": "ZnSO₄ Sensitivity Assay"
     },
     {
       "self_ref": "#/texts/58",
@@ -986,8 +986,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "1. ZnSO\u2084 solutions were prepared in pure water at 30, 10, 3, 1, 0.3 and 0.1 ppm. Pure water was also used as a control.",
-      "text": "1. ZnSO\u2084 solutions were prepared in pure water at 30, 10, 3, 1, 0.3 and 0.1 ppm. Pure water was also used as a control."
+      "orig": "1. ZnSO₄ solutions were prepared in pure water at 30, 10, 3, 1, 0.3 and 0.1 ppm. Pure water was also used as a control.",
+      "text": "1. ZnSO₄ solutions were prepared in pure water at 30, 10, 3, 1, 0.3 and 0.1 ppm. Pure water was also used as a control."
     },
     {
       "self_ref": "#/texts/59",
@@ -998,8 +998,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "2. Seven vials of each of the three Zeocin\u2122 treated and each of the three control assay reagents (i.e. one for each of the six ZnSO\u2084 solutions and one for the pure water control) were reconstituted using 0.5 ml of reconstitution solution (eg 0.2M sucrose) and then left to stand at room temperature for 15 minutes to allow the light output to stabilize. Base line (time zero) readings of light output were then measured for each of the reconstituted reagents.",
-      "text": "2. Seven vials of each of the three Zeocin\u2122 treated and each of the three control assay reagents (i.e. one for each of the six ZnSO\u2084 solutions and one for the pure water control) were reconstituted using 0.5 ml of reconstitution solution (eg 0.2M sucrose) and then left to stand at room temperature for 15 minutes to allow the light output to stabilize. Base line (time zero) readings of light output were then measured for each of the reconstituted reagents."
+      "orig": "2. Seven vials of each of the three Zeocin™ treated and each of the three control assay reagents (i.e. one for each of the six ZnSO₄ solutions and one for the pure water control) were reconstituted using 0.5 ml of reconstitution solution (eg 0.2M sucrose) and then left to stand at room temperature for 15 minutes to allow the light output to stabilize. Base line (time zero) readings of light output were then measured for each of the reconstituted reagents.",
+      "text": "2. Seven vials of each of the three Zeocin™ treated and each of the three control assay reagents (i.e. one for each of the six ZnSO₄ solutions and one for the pure water control) were reconstituted using 0.5 ml of reconstitution solution (eg 0.2M sucrose) and then left to stand at room temperature for 15 minutes to allow the light output to stabilize. Base line (time zero) readings of light output were then measured for each of the reconstituted reagents."
     },
     {
       "self_ref": "#/texts/60",
@@ -1010,8 +1010,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "3. 0.5 ml aliquots of each of the six ZnSO\u2084 solutions and the pure water control were added to separate vials of reconstituted assay reagent. This was repeated for each of the different Zeocin\u2122 treated and control assay reagents.",
-      "text": "3. 0.5 ml aliquots of each of the six ZnSO\u2084 solutions and the pure water control were added to separate vials of reconstituted assay reagent. This was repeated for each of the different Zeocin\u2122 treated and control assay reagents."
+      "orig": "3. 0.5 ml aliquots of each of the six ZnSO₄ solutions and the pure water control were added to separate vials of reconstituted assay reagent. This was repeated for each of the different Zeocin™ treated and control assay reagents.",
+      "text": "3. 0.5 ml aliquots of each of the six ZnSO₄ solutions and the pure water control were added to separate vials of reconstituted assay reagent. This was repeated for each of the different Zeocin™ treated and control assay reagents."
     },
     {
       "self_ref": "#/texts/61",
@@ -1022,8 +1022,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "4. The vials were incubated at room temperature and light output readings were taken 5, 10, 15, 20, 25 and 30 minutes after addition of ZnSO\u2084 solution.",
-      "text": "4. The vials were incubated at room temperature and light output readings were taken 5, 10, 15, 20, 25 and 30 minutes after addition of ZnSO\u2084 solution."
+      "orig": "4. The vials were incubated at room temperature and light output readings were taken 5, 10, 15, 20, 25 and 30 minutes after addition of ZnSO₄ solution.",
+      "text": "4. The vials were incubated at room temperature and light output readings were taken 5, 10, 15, 20, 25 and 30 minutes after addition of ZnSO₄ solution."
     },
     {
       "self_ref": "#/texts/62",
@@ -1046,8 +1046,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "where: C\u2092=light in control at time zero",
-      "text": "where: C\u2092=light in control at time zero"
+      "orig": "where: Cₒ=light in control at time zero",
+      "text": "where: Cₒ=light in control at time zero"
     },
     {
       "self_ref": "#/texts/64",
@@ -1070,8 +1070,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "S\u2092=light in sample at time zero",
-      "text": "S\u2092=light in sample at time zero"
+      "orig": "Sₒ=light in sample at time zero",
+      "text": "Sₒ=light in sample at time zero"
     },
     {
       "self_ref": "#/texts/66",
@@ -1094,8 +1094,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "The results of toxicity assays for sensitivity to ZnSO\u2084 for all the Zeocin\u2122 treated and control assay reagents are shown in FIGS. 3 to 8:",
-      "text": "The results of toxicity assays for sensitivity to ZnSO\u2084 for all the Zeocin\u2122 treated and control assay reagents are shown in FIGS. 3 to 8:"
+      "orig": "The results of toxicity assays for sensitivity to ZnSO₄ for all the Zeocin™ treated and control assay reagents are shown in FIGS. 3 to 8:",
+      "text": "The results of toxicity assays for sensitivity to ZnSO₄ for all the Zeocin™ treated and control assay reagents are shown in FIGS. 3 to 8:"
     },
     {
       "self_ref": "#/texts/68",
@@ -1118,8 +1118,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 4: Zeocin\u2122 treated cells, lag phase.",
-      "text": "FIG. 4: Zeocin\u2122 treated cells, lag phase."
+      "orig": "FIG. 4: Zeocin™ treated cells, lag phase.",
+      "text": "FIG. 4: Zeocin™ treated cells, lag phase."
     },
     {
       "self_ref": "#/texts/70",
@@ -1142,8 +1142,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 6: Zeocin\u2122 treated cells, mid-exponential growth.",
-      "text": "FIG. 6: Zeocin\u2122 treated cells, mid-exponential growth."
+      "orig": "FIG. 6: Zeocin™ treated cells, mid-exponential growth.",
+      "text": "FIG. 6: Zeocin™ treated cells, mid-exponential growth."
     },
     {
       "self_ref": "#/texts/72",
@@ -1166,8 +1166,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "FIG. 8: Zeocin\u2122 treated cells, stationary phase.",
-      "text": "FIG. 8: Zeocin\u2122 treated cells, stationary phase."
+      "orig": "FIG. 8: Zeocin™ treated cells, stationary phase.",
+      "text": "FIG. 8: Zeocin™ treated cells, stationary phase."
     },
     {
       "self_ref": "#/texts/74",
@@ -1178,8 +1178,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "In each case, separate graphs of % toxic effect against log\u2081\u2080 concentration of ZnSO\u2084 were plotted on the same axes for each value of time (minutes) after addition of Zeocin\u2122 or water. The sensitivities of the various reagents, expressed as an EC\u2085\u2080 value for 15 minutes exposed to ZnSO\u2084, are summarised in Table 1 below.",
-      "text": "In each case, separate graphs of % toxic effect against log\u2081\u2080 concentration of ZnSO\u2084 were plotted on the same axes for each value of time (minutes) after addition of Zeocin\u2122 or water. The sensitivities of the various reagents, expressed as an EC\u2085\u2080 value for 15 minutes exposed to ZnSO\u2084, are summarised in Table 1 below."
+      "orig": "In each case, separate graphs of % toxic effect against log₁₀ concentration of ZnSO₄ were plotted on the same axes for each value of time (minutes) after addition of Zeocin™ or water. The sensitivities of the various reagents, expressed as an EC₅₀ value for 15 minutes exposed to ZnSO₄, are summarised in Table 1 below.",
+      "text": "In each case, separate graphs of % toxic effect against log₁₀ concentration of ZnSO₄ were plotted on the same axes for each value of time (minutes) after addition of Zeocin™ or water. The sensitivities of the various reagents, expressed as an EC₅₀ value for 15 minutes exposed to ZnSO₄, are summarised in Table 1 below."
     },
     {
       "self_ref": "#/texts/75",
@@ -1190,8 +1190,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "Table 1: Sensitivity of the different assay reagents to ZnSo\u2084 expressed as EC\u2085\u2080 values for 15 minutes exposure to ZNSO\u2084.",
-      "text": "Table 1: Sensitivity of the different assay reagents to ZnSo\u2084 expressed as EC\u2085\u2080 values for 15 minutes exposure to ZNSO\u2084."
+      "orig": "Table 1: Sensitivity of the different assay reagents to ZnSo₄ expressed as EC₅₀ values for 15 minutes exposure to ZNSO₄.",
+      "text": "Table 1: Sensitivity of the different assay reagents to ZnSo₄ expressed as EC₅₀ values for 15 minutes exposure to ZNSO₄."
     },
     {
       "self_ref": "#/texts/76",
@@ -1202,8 +1202,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "The results of the toxicity assays indicate that Zeocin\u2122 treatment does not significantly affect the sensitivity of a recombinant bioluminescent E. coli derived assay reagent to ZnSO\u2084. Similar results could be expected with other toxic substances which have an effect on signal-generating metabolic activities.",
-      "text": "The results of the toxicity assays indicate that Zeocin\u2122 treatment does not significantly affect the sensitivity of a recombinant bioluminescent E. coli derived assay reagent to ZnSO\u2084. Similar results could be expected with other toxic substances which have an effect on signal-generating metabolic activities."
+      "orig": "The results of the toxicity assays indicate that Zeocin™ treatment does not significantly affect the sensitivity of a recombinant bioluminescent E. coli derived assay reagent to ZnSO₄. Similar results could be expected with other toxic substances which have an effect on signal-generating metabolic activities.",
+      "text": "The results of the toxicity assays indicate that Zeocin™ treatment does not significantly affect the sensitivity of a recombinant bioluminescent E. coli derived assay reagent to ZnSO₄. Similar results could be expected with other toxic substances which have an effect on signal-generating metabolic activities."
     },
     {
       "self_ref": "#/texts/77",
@@ -1280,8 +1280,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "3. Serial dilutions of the bacterial cell suspension from 10\u207b\u00b9 to 10\u207b\u2077 were prepared in M9 medium.",
-      "text": "3. Serial dilutions of the bacterial cell suspension from 10\u207b\u00b9 to 10\u207b\u2077 were prepared in M9 medium."
+      "orig": "3. Serial dilutions of the bacterial cell suspension from 10⁻¹ to 10⁻⁷ were prepared in M9 medium.",
+      "text": "3. Serial dilutions of the bacterial cell suspension from 10⁻¹ to 10⁻⁷ were prepared in M9 medium."
     },
     {
       "self_ref": "#/texts/82",
@@ -1292,8 +1292,8 @@
       "content_layer": "body",
       "label": "paragraph",
       "prov": [],
-      "orig": "4. Three separate 10 \u03bcl aliquots of each of the serial dilutions were plated out on standard agar plates and the plates incubated at 37\u00b0 C.",
-      "text": "4. Three separate 10 \u03bcl aliquots of each of the serial dilutions were plated out on standard agar plates and the plates incubated at 37\u00b0 C."
+      "orig": "4. Three separate 10 μl aliquots of each of the serial dilutions were plated out on standard agar plates and the plates incubated at 37° C.",
+      "text": "4. Three separate 10 μl aliquots of each of the serial dilutions were plated out on standard agar plates and the plates incubated at 37° C."
     },
     {
       "self_ref": "#/texts/83",

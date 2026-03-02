@@ -4735,8 +4735,8 @@
           ]
         }
       ],
-      "orig": "7KHUHGLYPH<c=3,font=/AAAAAH+ArialMT>ZDVGLYPH<c=3,font=/AAAAAH+ArialMT>DGLYPH<c=3,font=/AAAAAH+ArialMT>FKDQJHGLYPH<c=3,font=/AAAAAH+ArialMT>WRGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>7(536GLYPH<c=3,font=/AAAAAH+ArialMT>FULWHULDGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>GLYPH<c=21,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=20,font=/AAAAAH+ArialMT>GLYPH<c=21,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>WKDWGLYPH<c=3,font=/AAAAAH+ArialMT>D\u1087HFWVGLYPH<c=3,font=/AAAAAH+ArialMT>FLUFOLQJGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDGLYPH<c=3,font=/AAAAAH+ArialMT>GLPHQVLRQGLYPH<c=3,font=/AAAAAH+ArialMT>E\\GLYPH<c=3,font=/AAAAAH+ArialMT>H[SDQGLQJGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDVGLYPH<c=3,font=/AAAAAH+ArialMT>WRGLYPH<c=3,font=/AAAAAH+ArialMT>SURYLGHGLYPH<c=3,font=/AAAAAH+ArialMT>",
-      "text": "7KHUHGLYPH<c=3,font=/AAAAAH+ArialMT>ZDVGLYPH<c=3,font=/AAAAAH+ArialMT>DGLYPH<c=3,font=/AAAAAH+ArialMT>FKDQJHGLYPH<c=3,font=/AAAAAH+ArialMT>WRGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>7(536GLYPH<c=3,font=/AAAAAH+ArialMT>FULWHULDGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>GLYPH<c=21,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=20,font=/AAAAAH+ArialMT>GLYPH<c=21,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>WKDWGLYPH<c=3,font=/AAAAAH+ArialMT>D\u1087HFWVGLYPH<c=3,font=/AAAAAH+ArialMT>FLUFOLQJGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDGLYPH<c=3,font=/AAAAAH+ArialMT>GLPHQVLRQGLYPH<c=3,font=/AAAAAH+ArialMT>E\\GLYPH<c=3,font=/AAAAAH+ArialMT>H[SDQGLQJGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDVGLYPH<c=3,font=/AAAAAH+ArialMT>WRGLYPH<c=3,font=/AAAAAH+ArialMT>SURYLGHGLYPH<c=3,font=/AAAAAH+ArialMT>"
+      "orig": "7KHUHGLYPH<c=3,font=/AAAAAH+ArialMT>ZDVGLYPH<c=3,font=/AAAAAH+ArialMT>DGLYPH<c=3,font=/AAAAAH+ArialMT>FKDQJHGLYPH<c=3,font=/AAAAAH+ArialMT>WRGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>7(536GLYPH<c=3,font=/AAAAAH+ArialMT>FULWHULDGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>GLYPH<c=21,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=20,font=/AAAAAH+ArialMT>GLYPH<c=21,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>WKDWGLYPH<c=3,font=/AAAAAH+ArialMT>DႇHFWVGLYPH<c=3,font=/AAAAAH+ArialMT>FLUFOLQJGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDGLYPH<c=3,font=/AAAAAH+ArialMT>GLPHQVLRQGLYPH<c=3,font=/AAAAAH+ArialMT>E\\GLYPH<c=3,font=/AAAAAH+ArialMT>H[SDQGLQJGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDVGLYPH<c=3,font=/AAAAAH+ArialMT>WRGLYPH<c=3,font=/AAAAAH+ArialMT>SURYLGHGLYPH<c=3,font=/AAAAAH+ArialMT>",
+      "text": "7KHUHGLYPH<c=3,font=/AAAAAH+ArialMT>ZDVGLYPH<c=3,font=/AAAAAH+ArialMT>DGLYPH<c=3,font=/AAAAAH+ArialMT>FKDQJHGLYPH<c=3,font=/AAAAAH+ArialMT>WRGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>7(536GLYPH<c=3,font=/AAAAAH+ArialMT>FULWHULDGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>GLYPH<c=21,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=20,font=/AAAAAH+ArialMT>GLYPH<c=21,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>WKDWGLYPH<c=3,font=/AAAAAH+ArialMT>DႇHFWVGLYPH<c=3,font=/AAAAAH+ArialMT>FLUFOLQJGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDGLYPH<c=3,font=/AAAAAH+ArialMT>GLPHQVLRQGLYPH<c=3,font=/AAAAAH+ArialMT>E\\GLYPH<c=3,font=/AAAAAH+ArialMT>H[SDQGLQJGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDVGLYPH<c=3,font=/AAAAAH+ArialMT>WRGLYPH<c=3,font=/AAAAAH+ArialMT>SURYLGHGLYPH<c=3,font=/AAAAAH+ArialMT>"
     },
     {
       "self_ref": "#/texts/155",
@@ -4843,8 +4843,8 @@
           ]
         }
       ],
-      "orig": "7KHGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKHVGLYPH<c=3,font=/AAAAAH+ArialMT>XVLQJGLYPH<c=3,font=/AAAAAH+ArialMT>VWDQGDUGGLYPH<c=3,font=/AAAAAH+ArialMT>FLUFOLQJGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDVGLYPH<c=3,font=/AAAAAH+ArialMT>FDQGLYPH<c=3,font=/AAAAAH+ArialMT>EHGLYPH<c=3,font=/AAAAAH+ArialMT>LGHQWL\u00bfHGGLYPH<c=3,font=/AAAAAH+ArialMT>E\\GLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>DEVHQFHGLYPH<c=3,font=/AAAAAH+ArialMT>RIGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>",
-      "text": "7KHGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKHVGLYPH<c=3,font=/AAAAAH+ArialMT>XVLQJGLYPH<c=3,font=/AAAAAH+ArialMT>VWDQGDUGGLYPH<c=3,font=/AAAAAH+ArialMT>FLUFOLQJGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDVGLYPH<c=3,font=/AAAAAH+ArialMT>FDQGLYPH<c=3,font=/AAAAAH+ArialMT>EHGLYPH<c=3,font=/AAAAAH+ArialMT>LGHQWL\u00bfHGGLYPH<c=3,font=/AAAAAH+ArialMT>E\\GLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>DEVHQFHGLYPH<c=3,font=/AAAAAH+ArialMT>RIGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>"
+      "orig": "7KHGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKHVGLYPH<c=3,font=/AAAAAH+ArialMT>XVLQJGLYPH<c=3,font=/AAAAAH+ArialMT>VWDQGDUGGLYPH<c=3,font=/AAAAAH+ArialMT>FLUFOLQJGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDVGLYPH<c=3,font=/AAAAAH+ArialMT>FDQGLYPH<c=3,font=/AAAAAH+ArialMT>EHGLYPH<c=3,font=/AAAAAH+ArialMT>LGHQWL¿HGGLYPH<c=3,font=/AAAAAH+ArialMT>E\\GLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>DEVHQFHGLYPH<c=3,font=/AAAAAH+ArialMT>RIGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>",
+      "text": "7KHGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKHVGLYPH<c=3,font=/AAAAAH+ArialMT>XVLQJGLYPH<c=3,font=/AAAAAH+ArialMT>VWDQGDUGGLYPH<c=3,font=/AAAAAH+ArialMT>FLUFOLQJGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKGLYPH<c=3,font=/AAAAAH+ArialMT>DUHDVGLYPH<c=3,font=/AAAAAH+ArialMT>FDQGLYPH<c=3,font=/AAAAAH+ArialMT>EHGLYPH<c=3,font=/AAAAAH+ArialMT>LGHQWL¿HGGLYPH<c=3,font=/AAAAAH+ArialMT>E\\GLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>DEVHQFHGLYPH<c=3,font=/AAAAAH+ArialMT>RIGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>"
     },
     {
       "self_ref": "#/texts/159",
@@ -5626,8 +5626,8 @@
           ]
         }
       ],
-      "orig": "2WKHUGLYPH<c=3,font=/AAAAAH+ArialMT>LQIRUPDWLRQGLYPH<c=3,font=/AAAAAH+ArialMT>FRQFHUQLQJGLYPH<c=3,font=/AAAAAH+ArialMT>OLJKWLQJGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>\u00bfQDOGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKGLYPH<c=3,font=/AAAAAH+ArialMT>EHDULQJVGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>DLUSRUWGLYPH<c=3,font=/AAAAAH+ArialMT>EHDFRQGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>REVWDFOHVGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>FRQWUROGLYPH<c=3,font=/AAAAAH+ArialMT>WRZHU GLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>1$ 9 $,'VGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>KHOL",
-      "text": "2WKHUGLYPH<c=3,font=/AAAAAH+ArialMT>LQIRUPDWLRQGLYPH<c=3,font=/AAAAAH+ArialMT>FRQFHUQLQJGLYPH<c=3,font=/AAAAAH+ArialMT>OLJKWLQJGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>\u00bfQDOGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKGLYPH<c=3,font=/AAAAAH+ArialMT>EHDULQJVGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>DLUSRUWGLYPH<c=3,font=/AAAAAH+ArialMT>EHDFRQGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>REVWDFOHVGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>FRQWUROGLYPH<c=3,font=/AAAAAH+ArialMT>WRZHU GLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>1$ 9 $,'VGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>KHOL"
+      "orig": "2WKHUGLYPH<c=3,font=/AAAAAH+ArialMT>LQIRUPDWLRQGLYPH<c=3,font=/AAAAAH+ArialMT>FRQFHUQLQJGLYPH<c=3,font=/AAAAAH+ArialMT>OLJKWLQJGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>¿QDOGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKGLYPH<c=3,font=/AAAAAH+ArialMT>EHDULQJVGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>DLUSRUWGLYPH<c=3,font=/AAAAAH+ArialMT>EHDFRQGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>REVWDFOHVGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>FRQWUROGLYPH<c=3,font=/AAAAAH+ArialMT>WRZHU GLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>1$ 9 $,'VGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>KHOL",
+      "text": "2WKHUGLYPH<c=3,font=/AAAAAH+ArialMT>LQIRUPDWLRQGLYPH<c=3,font=/AAAAAH+ArialMT>FRQFHUQLQJGLYPH<c=3,font=/AAAAAH+ArialMT>OLJKWLQJGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>¿QDOGLYPH<c=3,font=/AAAAAH+ArialMT>DSSURDFKGLYPH<c=3,font=/AAAAAH+ArialMT>EHDULQJVGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>DLUSRUWGLYPH<c=3,font=/AAAAAH+ArialMT>EHDFRQGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>REVWDFOHVGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>FRQWUROGLYPH<c=3,font=/AAAAAH+ArialMT>WRZHU GLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>1$ 9 $,'VGLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>KHOL"
     },
     {
       "self_ref": "#/texts/188",
@@ -5788,8 +5788,8 @@
           ]
         }
       ],
-      "orig": "DLUSRUW\u00b6VGLYPH<c=3,font=/AAAAAH+ArialMT>XVDEOHGLYPH<c=3,font=/AAAAAH+ArialMT>UXQZD\\VGLYPH<c=3,font=/AAAAAH+ArialMT>PHDVXUHGGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>IHHWGLYPH<c=3,font=/AAAAAH+ArialMT>IURPGLYPH<c=3,font=/AAAAAH+ArialMT>PHDQGLYPH<c=3,font=/AAAAAH+ArialMT>VHDGLYPH<c=3,font=/AAAAAH+ArialMT>OHYHOGLYPH<c=17,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>7KHGLYPH<c=3,font=/AAAAAH+ArialMT>7'=(GLYPH<c=3,font=/AAAAAH+ArialMT>LVGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>KLJKHVWGLYPH<c=3,font=/AAAAAH+ArialMT>HOHYDWLRQGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>\u00bfUVWGLYPH<c=3,font=/AAAAAH+ArialMT>GLYPH<c=22,font=/AAAAAH+ArialMT>GLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>IHHWGLYPH<c=3,font=/AAAAAH+ArialMT>RIGLYPH<c=3,font=/AAAAAH+ArialMT>",
-      "text": "DLUSRUW\u00b6VGLYPH<c=3,font=/AAAAAH+ArialMT>XVDEOHGLYPH<c=3,font=/AAAAAH+ArialMT>UXQZD\\VGLYPH<c=3,font=/AAAAAH+ArialMT>PHDVXUHGGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>IHHWGLYPH<c=3,font=/AAAAAH+ArialMT>IURPGLYPH<c=3,font=/AAAAAH+ArialMT>PHDQGLYPH<c=3,font=/AAAAAH+ArialMT>VHDGLYPH<c=3,font=/AAAAAH+ArialMT>OHYHOGLYPH<c=17,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>7KHGLYPH<c=3,font=/AAAAAH+ArialMT>7'=(GLYPH<c=3,font=/AAAAAH+ArialMT>LVGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>KLJKHVWGLYPH<c=3,font=/AAAAAH+ArialMT>HOHYDWLRQGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>\u00bfUVWGLYPH<c=3,font=/AAAAAH+ArialMT>GLYPH<c=22,font=/AAAAAH+ArialMT>GLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>IHHWGLYPH<c=3,font=/AAAAAH+ArialMT>RIGLYPH<c=3,font=/AAAAAH+ArialMT>"
+      "orig": "DLUSRUW¶VGLYPH<c=3,font=/AAAAAH+ArialMT>XVDEOHGLYPH<c=3,font=/AAAAAH+ArialMT>UXQZD\\VGLYPH<c=3,font=/AAAAAH+ArialMT>PHDVXUHGGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>IHHWGLYPH<c=3,font=/AAAAAH+ArialMT>IURPGLYPH<c=3,font=/AAAAAH+ArialMT>PHDQGLYPH<c=3,font=/AAAAAH+ArialMT>VHDGLYPH<c=3,font=/AAAAAH+ArialMT>OHYHOGLYPH<c=17,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>7KHGLYPH<c=3,font=/AAAAAH+ArialMT>7'=(GLYPH<c=3,font=/AAAAAH+ArialMT>LVGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>KLJKHVWGLYPH<c=3,font=/AAAAAH+ArialMT>HOHYDWLRQGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>¿UVWGLYPH<c=3,font=/AAAAAH+ArialMT>GLYPH<c=22,font=/AAAAAH+ArialMT>GLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>IHHWGLYPH<c=3,font=/AAAAAH+ArialMT>RIGLYPH<c=3,font=/AAAAAH+ArialMT>",
+      "text": "DLUSRUW¶VGLYPH<c=3,font=/AAAAAH+ArialMT>XVDEOHGLYPH<c=3,font=/AAAAAH+ArialMT>UXQZD\\VGLYPH<c=3,font=/AAAAAH+ArialMT>PHDVXUHGGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>IHHWGLYPH<c=3,font=/AAAAAH+ArialMT>IURPGLYPH<c=3,font=/AAAAAH+ArialMT>PHDQGLYPH<c=3,font=/AAAAAH+ArialMT>VHDGLYPH<c=3,font=/AAAAAH+ArialMT>OHYHOGLYPH<c=17,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>7KHGLYPH<c=3,font=/AAAAAH+ArialMT>7'=(GLYPH<c=3,font=/AAAAAH+ArialMT>LVGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>KLJKHVWGLYPH<c=3,font=/AAAAAH+ArialMT>HOHYDWLRQGLYPH<c=3,font=/AAAAAH+ArialMT>LQGLYPH<c=3,font=/AAAAAH+ArialMT>WKHGLYPH<c=3,font=/AAAAAH+ArialMT>¿UVWGLYPH<c=3,font=/AAAAAH+ArialMT>GLYPH<c=22,font=/AAAAAH+ArialMT>GLYPH<c=15,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=19,font=/AAAAAH+ArialMT>GLYPH<c=3,font=/AAAAAH+ArialMT>IHHWGLYPH<c=3,font=/AAAAAH+ArialMT>RIGLYPH<c=3,font=/AAAAAH+ArialMT>"
     },
     {
       "self_ref": "#/texts/194",
@@ -7840,8 +7840,8 @@
           ]
         }
       ],
-      "orig": "\u2022  Signs",
-      "text": "\u2022  Signs"
+      "orig": "•  Signs",
+      "text": "•  Signs"
     },
     {
       "self_ref": "#/texts/270",
@@ -8569,8 +8569,8 @@
           ]
         }
       ],
-      "orig": "\u2022  Signals",
-      "text": "\u2022  Signals"
+      "orig": "•  Signals",
+      "text": "•  Signals"
     },
     {
       "self_ref": "#/texts/297",
@@ -8731,8 +8731,8 @@
           ]
         }
       ],
-      "orig": "\u2022  Road markings",
-      "text": "\u2022  Road markings"
+      "orig": "•  Road markings",
+      "text": "•  Road markings"
     },
     {
       "self_ref": "#/texts/303",
@@ -9194,8 +9194,8 @@
           ]
         }
       ],
-      "orig": "\u00b7 Informationsystems \u2192 Documentstructure ; \u00b7 Appliedcomputing \u2192 Document analysis ; \u00b7 Computing methodologies \u2192 Machine learning ; Computer vision ; Object detection ;",
-      "text": "\u00b7 Informationsystems \u2192 Documentstructure ; \u00b7 Appliedcomputing \u2192 Document analysis ; \u00b7 Computing methodologies \u2192 Machine learning ; Computer vision ; Object detection ;"
+      "orig": "· Informationsystems → Documentstructure ; · Appliedcomputing → Document analysis ; · Computing methodologies → Machine learning ; Computer vision ; Object detection ;",
+      "text": "· Informationsystems → Documentstructure ; · Appliedcomputing → Document analysis ; · Computing methodologies → Machine learning ; Computer vision ; Object detection ;"
     },
     {
       "self_ref": "#/texts/320",
@@ -9275,8 +9275,8 @@
           ]
         }
       ],
-      "orig": "\u00a9 2022 Copyright held by the owner/author(s).",
-      "text": "\u00a9 2022 Copyright held by the owner/author(s)."
+      "orig": "© 2022 Copyright held by the owner/author(s).",
+      "text": "© 2022 Copyright held by the owner/author(s)."
     },
     {
       "self_ref": "#/texts/323",
@@ -10476,8 +10476,8 @@
           ]
         }
       ],
-      "orig": "In order to accommodate the different types of models currently in use by the community, we provide DocLayNet in an augmented COCO format [16]. This entails the standard COCO ground-truth file (in JSON format) with the associated page images (in PNG format, 1025 \u00d7 1025 pixels). Furthermore, custom fields have been added to each COCO record to specify document category, original document filename and page number. In addition, we also provide the original PDF pages, as well as sidecar files containing parsed PDF text and text-cell coordinates (in JSON). All additional files are linked to the primary page images by their matching filenames.",
-      "text": "In order to accommodate the different types of models currently in use by the community, we provide DocLayNet in an augmented COCO format [16]. This entails the standard COCO ground-truth file (in JSON format) with the associated page images (in PNG format, 1025 \u00d7 1025 pixels). Furthermore, custom fields have been added to each COCO record to specify document category, original document filename and page number. In addition, we also provide the original PDF pages, as well as sidecar files containing parsed PDF text and text-cell coordinates (in JSON). All additional files are linked to the primary page images by their matching filenames."
+      "orig": "In order to accommodate the different types of models currently in use by the community, we provide DocLayNet in an augmented COCO format [16]. This entails the standard COCO ground-truth file (in JSON format) with the associated page images (in PNG format, 1025 × 1025 pixels). Furthermore, custom fields have been added to each COCO record to specify document category, original document filename and page number. In addition, we also provide the original PDF pages, as well as sidecar files containing parsed PDF text and text-cell coordinates (in JSON). All additional files are linked to the primary page images by their matching filenames.",
+      "text": "In order to accommodate the different types of models currently in use by the community, we provide DocLayNet in an augmented COCO format [16]. This entails the standard COCO ground-truth file (in JSON format) with the associated page images (in PNG format, 1025 × 1025 pixels). Furthermore, custom fields have been added to each COCO record to specify document category, original document filename and page number. In addition, we also provide the original PDF pages, as well as sidecar files containing parsed PDF text and text-cell coordinates (in JSON). All additional files are linked to the primary page images by their matching filenames."
     },
     {
       "self_ref": "#/texts/367",
@@ -12341,8 +12341,8 @@
           ]
         }
       ],
-      "orig": "In Table 2, we present baseline experiments (given in mAP) on Mask R-CNN [12], Faster R-CNN [11], and YOLOv5 [13]. Both training and evaluation were performed on RGB images with dimensions of 1025 \u00d7 1025 pixels. For training, we only used one annotation in case of redundantly annotated pages. As one can observe, the variation in mAP between the models is rather low, but overall between 6 and 10% lower than the mAP computed from the pairwise human annotations on triple-annotated pages. This gives a good indication that the DocLayNet dataset poses a worthwhile challenge for the research community to close the gap between human recognition and ML approaches. It is interesting to see that Mask R-CNN and Faster R-CNN produce very comparable mAP scores, indicating that pixel-based image segmentation derived from bounding-boxes does not help to obtain better predictions. On the other hand, the more recent Yolov5x model does very well and even out-performs humans on selected labels such as Text , Table and Picture . This is not entirely surprising, as Text , Table and Picture are abundant and the most visually distinctive in a document.",
-      "text": "In Table 2, we present baseline experiments (given in mAP) on Mask R-CNN [12], Faster R-CNN [11], and YOLOv5 [13]. Both training and evaluation were performed on RGB images with dimensions of 1025 \u00d7 1025 pixels. For training, we only used one annotation in case of redundantly annotated pages. As one can observe, the variation in mAP between the models is rather low, but overall between 6 and 10% lower than the mAP computed from the pairwise human annotations on triple-annotated pages. This gives a good indication that the DocLayNet dataset poses a worthwhile challenge for the research community to close the gap between human recognition and ML approaches. It is interesting to see that Mask R-CNN and Faster R-CNN produce very comparable mAP scores, indicating that pixel-based image segmentation derived from bounding-boxes does not help to obtain better predictions. On the other hand, the more recent Yolov5x model does very well and even out-performs humans on selected labels such as Text , Table and Picture . This is not entirely surprising, as Text , Table and Picture are abundant and the most visually distinctive in a document."
+      "orig": "In Table 2, we present baseline experiments (given in mAP) on Mask R-CNN [12], Faster R-CNN [11], and YOLOv5 [13]. Both training and evaluation were performed on RGB images with dimensions of 1025 × 1025 pixels. For training, we only used one annotation in case of redundantly annotated pages. As one can observe, the variation in mAP between the models is rather low, but overall between 6 and 10% lower than the mAP computed from the pairwise human annotations on triple-annotated pages. This gives a good indication that the DocLayNet dataset poses a worthwhile challenge for the research community to close the gap between human recognition and ML approaches. It is interesting to see that Mask R-CNN and Faster R-CNN produce very comparable mAP scores, indicating that pixel-based image segmentation derived from bounding-boxes does not help to obtain better predictions. On the other hand, the more recent Yolov5x model does very well and even out-performs humans on selected labels such as Text , Table and Picture . This is not entirely surprising, as Text , Table and Picture are abundant and the most visually distinctive in a document.",
+      "text": "In Table 2, we present baseline experiments (given in mAP) on Mask R-CNN [12], Faster R-CNN [11], and YOLOv5 [13]. Both training and evaluation were performed on RGB images with dimensions of 1025 × 1025 pixels. For training, we only used one annotation in case of redundantly annotated pages. As one can observe, the variation in mAP between the models is rather low, but overall between 6 and 10% lower than the mAP computed from the pairwise human annotations on triple-annotated pages. This gives a good indication that the DocLayNet dataset poses a worthwhile challenge for the research community to close the gap between human recognition and ML approaches. It is interesting to see that Mask R-CNN and Faster R-CNN produce very comparable mAP scores, indicating that pixel-based image segmentation derived from bounding-boxes does not help to obtain better predictions. On the other hand, the more recent Yolov5x model does very well and even out-performs humans on selected labels such as Text , Table and Picture . This is not entirely surprising, as Text , Table and Picture are abundant and the most visually distinctive in a document."
     },
     {
       "self_ref": "#/texts/435",
@@ -12532,8 +12532,8 @@
           ]
         }
       ],
-      "orig": "The choice and number of labels can have a significant effect on the overall model performance. Since PubLayNet, DocBank and DocLayNet all have different label sets, it is of particular interest to understand and quantify this influence of the label set on the model performance. We investigate this by either down-mapping labels into more common ones (e.g. Caption \u2192 Text ) or excluding them from the annotations entirely. Furthermore, it must be stressed that all mappings and exclusions were performed on the data before model training. In Table 3, we present the mAP scores for a Mask R-CNN R50 network on different label sets. Where a label is down-mapped, we show its corresponding label, otherwise it was excluded. We present three different label sets, with 6, 5 and 4 different labels respectively. The set of 5 labels contains the same labels as PubLayNet. However, due to the different definition of",
-      "text": "The choice and number of labels can have a significant effect on the overall model performance. Since PubLayNet, DocBank and DocLayNet all have different label sets, it is of particular interest to understand and quantify this influence of the label set on the model performance. We investigate this by either down-mapping labels into more common ones (e.g. Caption \u2192 Text ) or excluding them from the annotations entirely. Furthermore, it must be stressed that all mappings and exclusions were performed on the data before model training. In Table 3, we present the mAP scores for a Mask R-CNN R50 network on different label sets. Where a label is down-mapped, we show its corresponding label, otherwise it was excluded. We present three different label sets, with 6, 5 and 4 different labels respectively. The set of 5 labels contains the same labels as PubLayNet. However, due to the different definition of"
+      "orig": "The choice and number of labels can have a significant effect on the overall model performance. Since PubLayNet, DocBank and DocLayNet all have different label sets, it is of particular interest to understand and quantify this influence of the label set on the model performance. We investigate this by either down-mapping labels into more common ones (e.g. Caption → Text ) or excluding them from the annotations entirely. Furthermore, it must be stressed that all mappings and exclusions were performed on the data before model training. In Table 3, we present the mAP scores for a Mask R-CNN R50 network on different label sets. Where a label is down-mapped, we show its corresponding label, otherwise it was excluded. We present three different label sets, with 6, 5 and 4 different labels respectively. The set of 5 labels contains the same labels as PubLayNet. However, due to the different definition of",
+      "text": "The choice and number of labels can have a significant effect on the overall model performance. Since PubLayNet, DocBank and DocLayNet all have different label sets, it is of particular interest to understand and quantify this influence of the label set on the model performance. We investigate this by either down-mapping labels into more common ones (e.g. Caption → Text ) or excluding them from the annotations entirely. Furthermore, it must be stressed that all mappings and exclusions were performed on the data before model training. In Table 3, we present the mAP scores for a Mask R-CNN R50 network on different label sets. Where a label is down-mapped, we show its corresponding label, otherwise it was excluded. We present three different label sets, with 6, 5 and 4 different labels respectively. The set of 5 labels contains the same labels as PubLayNet. However, due to the different definition of"
     },
     {
       "self_ref": "#/texts/442",
@@ -12641,8 +12641,8 @@
           ]
         }
       ],
-      "orig": "Many documents in DocLayNet have a unique styling. In order to avoid overfitting on a particular style, we have split the train-, test- and validation-sets of DocLayNet on document boundaries, i.e. every document contributes pages to only one set. To the best of our knowledge, this was not considered in PubLayNet or DocBank. To quantify how this affects model performance, we trained and evaluated a Mask R-CNN R50 model on a modified dataset version. Here, the train-, test- and validation-sets were obtained by a randomised draw over the individual pages. As can be seen in Table 4, the difference in model performance is surprisingly large: pagewise splitting gains \u02dc 10% in mAP over the document-wise splitting. Thus, random page-wise splitting of DocLayNet can easily lead to accidental overestimation of model performance and should be avoided.",
-      "text": "Many documents in DocLayNet have a unique styling. In order to avoid overfitting on a particular style, we have split the train-, test- and validation-sets of DocLayNet on document boundaries, i.e. every document contributes pages to only one set. To the best of our knowledge, this was not considered in PubLayNet or DocBank. To quantify how this affects model performance, we trained and evaluated a Mask R-CNN R50 model on a modified dataset version. Here, the train-, test- and validation-sets were obtained by a randomised draw over the individual pages. As can be seen in Table 4, the difference in model performance is surprisingly large: pagewise splitting gains \u02dc 10% in mAP over the document-wise splitting. Thus, random page-wise splitting of DocLayNet can easily lead to accidental overestimation of model performance and should be avoided."
+      "orig": "Many documents in DocLayNet have a unique styling. In order to avoid overfitting on a particular style, we have split the train-, test- and validation-sets of DocLayNet on document boundaries, i.e. every document contributes pages to only one set. To the best of our knowledge, this was not considered in PubLayNet or DocBank. To quantify how this affects model performance, we trained and evaluated a Mask R-CNN R50 model on a modified dataset version. Here, the train-, test- and validation-sets were obtained by a randomised draw over the individual pages. As can be seen in Table 4, the difference in model performance is surprisingly large: pagewise splitting gains ˜ 10% in mAP over the document-wise splitting. Thus, random page-wise splitting of DocLayNet can easily lead to accidental overestimation of model performance and should be avoided.",
+      "text": "Many documents in DocLayNet have a unique styling. In order to avoid overfitting on a particular style, we have split the train-, test- and validation-sets of DocLayNet on document boundaries, i.e. every document contributes pages to only one set. To the best of our knowledge, this was not considered in PubLayNet or DocBank. To quantify how this affects model performance, we trained and evaluated a Mask R-CNN R50 model on a modified dataset version. Here, the train-, test- and validation-sets were obtained by a randomised draw over the individual pages. As can be seen in Table 4, the difference in model performance is surprisingly large: pagewise splitting gains ˜ 10% in mAP over the document-wise splitting. Thus, random page-wise splitting of DocLayNet can easily lead to accidental overestimation of model performance and should be avoided."
     },
     {
       "self_ref": "#/texts/446",
@@ -13023,8 +13023,8 @@
           ]
         }
       ],
-      "orig": "[1] Max G\u00f6bel, Tamir Hassan, Ermelinda Oro, and Giorgio Orsi. Icdar 2013 table competition. In 2013 12th International Conference on Document Analysis and Recognition , pages 1449-1453, 2013.",
-      "text": "Max G\u00f6bel, Tamir Hassan, Ermelinda Oro, and Giorgio Orsi. Icdar 2013 table competition. In 2013 12th International Conference on Document Analysis and Recognition , pages 1449-1453, 2013.",
+      "orig": "[1] Max Göbel, Tamir Hassan, Ermelinda Oro, and Giorgio Orsi. Icdar 2013 table competition. In 2013 12th International Conference on Document Analysis and Recognition , pages 1449-1453, 2013.",
+      "text": "Max Göbel, Tamir Hassan, Ermelinda Oro, and Giorgio Orsi. Icdar 2013 table competition. In 2013 12th International Conference on Document Analysis and Recognition , pages 1449-1453, 2013.",
       "enumerated": true,
       "marker": "[1]"
     },
@@ -13081,8 +13081,8 @@
           ]
         }
       ],
-      "orig": "[3] Herv\u00e9 D\u00e9jean, Jean-Luc Meunier, Liangcai Gao, Yilun Huang, Yu Fang, Florian Kleber, and Eva-Maria Lang. ICDAR 2019 Competition on Table Detection and Recognition (cTDaR), April 2019. http://sac.founderit.com/.",
-      "text": "Herv\u00e9 D\u00e9jean, Jean-Luc Meunier, Liangcai Gao, Yilun Huang, Yu Fang, Florian Kleber, and Eva-Maria Lang. ICDAR 2019 Competition on Table Detection and Recognition (cTDaR), April 2019. http://sac.founderit.com/.",
+      "orig": "[3] Hervé Déjean, Jean-Luc Meunier, Liangcai Gao, Yilun Huang, Yu Fang, Florian Kleber, and Eva-Maria Lang. ICDAR 2019 Competition on Table Detection and Recognition (cTDaR), April 2019. http://sac.founderit.com/.",
+      "text": "Hervé Déjean, Jean-Luc Meunier, Liangcai Gao, Yilun Huang, Yu Fang, Florian Kleber, and Eva-Maria Lang. ICDAR 2019 Competition on Table Detection and Recognition (cTDaR), April 2019. http://sac.founderit.com/.",
       "enumerated": true,
       "marker": "[3]"
     },
@@ -13342,8 +13342,8 @@
           ]
         }
       ],
-      "orig": "[12] Kaiming He, Georgia Gkioxari, Piotr Doll\u00e1r, and Ross B. Girshick. Mask R-CNN. In IEEE International Conference on Computer Vision , ICCV, pages 2980-2988. IEEE Computer Society, Oct 2017.",
-      "text": "Kaiming He, Georgia Gkioxari, Piotr Doll\u00e1r, and Ross B. Girshick. Mask R-CNN. In IEEE International Conference on Computer Vision , ICCV, pages 2980-2988. IEEE Computer Society, Oct 2017.",
+      "orig": "[12] Kaiming He, Georgia Gkioxari, Piotr Dollár, and Ross B. Girshick. Mask R-CNN. In IEEE International Conference on Computer Vision , ICCV, pages 2980-2988. IEEE Computer Society, Oct 2017.",
+      "text": "Kaiming He, Georgia Gkioxari, Piotr Dollár, and Ross B. Girshick. Mask R-CNN. In IEEE International Conference on Computer Vision , ICCV, pages 2980-2988. IEEE Computer Society, Oct 2017.",
       "enumerated": true,
       "marker": "[12]"
     },
@@ -14160,8 +14160,8 @@
           ]
         }
       ],
-      "orig": "[16] Tsung-Yi Lin, Michael Maire, Serge J. Belongie, Lubomir D. Bourdev, Ross B. Girshick, James Hays, Pietro Perona, Deva Ramanan, Piotr Doll\u00e1r, and C. Lawrence Zitnick. Microsoft COCO: common objects in context, 2014.",
-      "text": "Tsung-Yi Lin, Michael Maire, Serge J. Belongie, Lubomir D. Bourdev, Ross B. Girshick, James Hays, Pietro Perona, Deva Ramanan, Piotr Doll\u00e1r, and C. Lawrence Zitnick. Microsoft COCO: common objects in context, 2014.",
+      "orig": "[16] Tsung-Yi Lin, Michael Maire, Serge J. Belongie, Lubomir D. Bourdev, Ross B. Girshick, James Hays, Pietro Perona, Deva Ramanan, Piotr Dollár, and C. Lawrence Zitnick. Microsoft COCO: common objects in context, 2014.",
+      "text": "Tsung-Yi Lin, Michael Maire, Serge J. Belongie, Lubomir D. Bourdev, Ross B. Girshick, James Hays, Pietro Perona, Deva Ramanan, Piotr Dollár, and C. Lawrence Zitnick. Microsoft COCO: common objects in context, 2014.",
       "enumerated": true,
       "marker": "[16]"
     },

@@ -701,8 +701,8 @@
           ]
         }
       ],
-      "orig": "Keywords: Table Structure Recognition \u00b7 Data Representation \u00b7 Transformers \u00b7 Optimization.",
-      "text": "Keywords: Table Structure Recognition \u00b7 Data Representation \u00b7 Transformers \u00b7 Optimization."
+      "orig": "Keywords: Table Structure Recognition · Data Representation · Transformers · Optimization.",
+      "text": "Keywords: Table Structure Recognition · Data Representation · Transformers · Optimization."
     },
     {
       "self_ref": "#/texts/8",
@@ -7754,8 +7754,8 @@
           ]
         }
       ],
-      "orig": "Fig. 5. The OTSL model produces more accurate bounding boxes with less overlap (E) than the HTML model (D), when predicting the structure of a sparse table (A), at twice the inference speed because of shorter sequence length (B),(C). \"PMC2807444_006_00.png\" PubTabNet. \u03bc",
-      "text": "Fig. 5. The OTSL model produces more accurate bounding boxes with less overlap (E) than the HTML model (D), when predicting the structure of a sparse table (A), at twice the inference speed because of shorter sequence length (B),(C). \"PMC2807444_006_00.png\" PubTabNet. \u03bc"
+      "orig": "Fig. 5. The OTSL model produces more accurate bounding boxes with less overlap (E) than the HTML model (D), when predicting the structure of a sparse table (A), at twice the inference speed because of shorter sequence length (B),(C). \"PMC2807444_006_00.png\" PubTabNet. μ",
+      "text": "Fig. 5. The OTSL model produces more accurate bounding boxes with less overlap (E) than the HTML model (D), when predicting the structure of a sparse table (A), at twice the inference speed because of shorter sequence length (B),(C). \"PMC2807444_006_00.png\" PubTabNet. μ"
     },
     {
       "self_ref": "#/texts/268",
@@ -8807,8 +8807,8 @@
           ]
         }
       ],
-      "orig": "\u2264",
-      "text": "\u2264"
+      "orig": "≤",
+      "text": "≤"
     },
     {
       "self_ref": "#/texts/307",
@@ -8834,8 +8834,8 @@
           ]
         }
       ],
-      "orig": "\u03bc",
-      "text": "\u03bc"
+      "orig": "μ",
+      "text": "μ"
     },
     {
       "self_ref": "#/texts/308",
@@ -9293,8 +9293,8 @@
           ]
         }
       ],
-      "orig": "\u2265",
-      "text": "\u2265"
+      "orig": "≥",
+      "text": "≥"
     },
     {
       "self_ref": "#/texts/325",
@@ -10103,8 +10103,8 @@
           ]
         }
       ],
-      "orig": "\u03bc",
-      "text": "\u03bc"
+      "orig": "μ",
+      "text": "μ"
     },
     {
       "self_ref": "#/texts/355",
@@ -10130,8 +10130,8 @@
           ]
         }
       ],
-      "orig": "\u2265",
-      "text": "\u2265"
+      "orig": "≥",
+      "text": "≥"
     },
     {
       "self_ref": "#/texts/356",
@@ -10755,8 +10755,8 @@
           ]
         }
       ],
-      "orig": "2. Chen, B., Peng, D., Zhang, J., Ren, Y., Jin, L.: Complex table structure recognition in the wild using transformer and identity matrix-based augmentation. In: Porwal, U., Forn\u00e9s, A., Shafait, F. (eds.) Frontiers in Handwriting Recognition. pp. 545561. Springer International Publishing, Cham (2022)",
-      "text": "Chen, B., Peng, D., Zhang, J., Ren, Y., Jin, L.: Complex table structure recognition in the wild using transformer and identity matrix-based augmentation. In: Porwal, U., Forn\u00e9s, A., Shafait, F. (eds.) Frontiers in Handwriting Recognition. pp. 545561. Springer International Publishing, Cham (2022)",
+      "orig": "2. Chen, B., Peng, D., Zhang, J., Ren, Y., Jin, L.: Complex table structure recognition in the wild using transformer and identity matrix-based augmentation. In: Porwal, U., Fornés, A., Shafait, F. (eds.) Frontiers in Handwriting Recognition. pp. 545561. Springer International Publishing, Cham (2022)",
+      "text": "Chen, B., Peng, D., Zhang, J., Ren, Y., Jin, L.: Complex table structure recognition in the wild using transformer and identity matrix-based augmentation. In: Porwal, U., Fornés, A., Shafait, F. (eds.) Frontiers in Handwriting Recognition. pp. 545561. Springer International Publishing, Cham (2022)",
       "enumerated": true,
       "marker": "2."
     },

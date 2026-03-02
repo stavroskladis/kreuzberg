@@ -984,8 +984,8 @@
           ]
         }
       ],
-      "orig": "\u00a9 Copyright IBM Corp. 2014. All rights reserved.",
-      "text": "\u00a9 Copyright IBM Corp. 2014. All rights reserved."
+      "orig": "© Copyright IBM Corp. 2014. All rights reserved.",
+      "text": "© Copyright IBM Corp. 2014. All rights reserved."
     },
     {
       "self_ref": "#/texts/10",
@@ -1400,8 +1400,8 @@
           ]
         }
       ],
-      "orig": "With combined experiences and direct access to development groups, we're the experts in IBM DB2\u00ae for i. The DB2 for i Center of Excellence (CoE) can help you achieve-perhaps reexamine and exceed-your business requirements and gain more confidence and satisfaction in IBM product data management products and solutions.",
-      "text": "With combined experiences and direct access to development groups, we're the experts in IBM DB2\u00ae for i. The DB2 for i Center of Excellence (CoE) can help you achieve-perhaps reexamine and exceed-your business requirements and gain more confidence and satisfaction in IBM product data management products and solutions."
+      "orig": "With combined experiences and direct access to development groups, we're the experts in IBM DB2® for i. The DB2 for i Center of Excellence (CoE) can help you achieve-perhaps reexamine and exceed-your business requirements and gain more confidence and satisfaction in IBM product data management products and solutions.",
+      "text": "With combined experiences and direct access to development groups, we're the experts in IBM DB2® for i. The DB2 for i Center of Excellence (CoE) can help you achieve-perhaps reexamine and exceed-your business requirements and gain more confidence and satisfaction in IBM product data management products and solutions."
     },
     {
       "self_ref": "#/texts/25",
@@ -1771,8 +1771,8 @@
           ]
         }
       ],
-      "orig": "This IBM\u00ae Redpaper\u2122 publication provides information about the IBM i 7.2 feature of IBM DB2\u00ae for i Row and Column Access Control (RCAC). It offers a broad description of the function and advantages of controlling access to data in a comprehensive and transparent way. This publication helps you understand the capabilities of RCAC and provides examples of defining, creating, and implementing the row permissions and column masks in a relational database environment.",
-      "text": "This IBM\u00ae Redpaper\u2122 publication provides information about the IBM i 7.2 feature of IBM DB2\u00ae for i Row and Column Access Control (RCAC). It offers a broad description of the function and advantages of controlling access to data in a comprehensive and transparent way. This publication helps you understand the capabilities of RCAC and provides examples of defining, creating, and implementing the row permissions and column masks in a relational database environment."
+      "orig": "This IBM® Redpaper™ publication provides information about the IBM i 7.2 feature of IBM DB2® for i Row and Column Access Control (RCAC). It offers a broad description of the function and advantages of controlling access to data in a comprehensive and transparent way. This publication helps you understand the capabilities of RCAC and provides examples of defining, creating, and implementing the row permissions and column masks in a relational database environment.",
+      "text": "This IBM® Redpaper™ publication provides information about the IBM i 7.2 feature of IBM DB2® for i Row and Column Access Control (RCAC). It offers a broad description of the function and advantages of controlling access to data in a comprehensive and transparent way. This publication helps you understand the capabilities of RCAC and provides examples of defining, creating, and implementing the row permissions and column masks in a relational database environment."
     },
     {
       "self_ref": "#/texts/38",
@@ -1879,8 +1879,8 @@
           ]
         }
       ],
-      "orig": "Hernando Bedoya is a Senior IT Specialist at STG Lab Services and Training in Rochester, Minnesota. He writes extensively and teaches IBM classes worldwide in all areas of DB2 for i. Before joining STG Lab Services, he worked in the ITSO for nine years writing multiple IBM Redbooks\u00ae publications. He also worked for IBM Colombia as an IBM AS/400\u00ae IT Specialist doing presales support for the Andean countries. He has 28 years of experience in the computing field and has taught database classes in Colombian universities. He holds a Master's degree in Computer Science from EAFIT, Colombia. His areas of expertise are database technology, performance, and data warehousing. Hernando can be contacted at hbedoya@us.ibm.com .",
-      "text": "Hernando Bedoya is a Senior IT Specialist at STG Lab Services and Training in Rochester, Minnesota. He writes extensively and teaches IBM classes worldwide in all areas of DB2 for i. Before joining STG Lab Services, he worked in the ITSO for nine years writing multiple IBM Redbooks\u00ae publications. He also worked for IBM Colombia as an IBM AS/400\u00ae IT Specialist doing presales support for the Andean countries. He has 28 years of experience in the computing field and has taught database classes in Colombian universities. He holds a Master's degree in Computer Science from EAFIT, Colombia. His areas of expertise are database technology, performance, and data warehousing. Hernando can be contacted at hbedoya@us.ibm.com ."
+      "orig": "Hernando Bedoya is a Senior IT Specialist at STG Lab Services and Training in Rochester, Minnesota. He writes extensively and teaches IBM classes worldwide in all areas of DB2 for i. Before joining STG Lab Services, he worked in the ITSO for nine years writing multiple IBM Redbooks® publications. He also worked for IBM Colombia as an IBM AS/400® IT Specialist doing presales support for the Andean countries. He has 28 years of experience in the computing field and has taught database classes in Colombian universities. He holds a Master's degree in Computer Science from EAFIT, Colombia. His areas of expertise are database technology, performance, and data warehousing. Hernando can be contacted at hbedoya@us.ibm.com .",
+      "text": "Hernando Bedoya is a Senior IT Specialist at STG Lab Services and Training in Rochester, Minnesota. He writes extensively and teaches IBM classes worldwide in all areas of DB2 for i. Before joining STG Lab Services, he worked in the ITSO for nine years writing multiple IBM Redbooks® publications. He also worked for IBM Colombia as an IBM AS/400® IT Specialist doing presales support for the Andean countries. He has 28 years of experience in the computing field and has taught database classes in Colombian universities. He holds a Master's degree in Computer Science from EAFIT, Colombia. His areas of expertise are database technology, performance, and data warehousing. Hernando can be contacted at hbedoya@us.ibm.com ."
     },
     {
       "self_ref": "#/texts/42",
@@ -1934,8 +1934,8 @@
           ]
         }
       ],
-      "orig": "\u00a9 Copyright IBM Corp. 2014. All rights reserved.",
-      "text": "\u00a9 Copyright IBM Corp. 2014. All rights reserved."
+      "orig": "© Copyright IBM Corp. 2014. All rights reserved.",
+      "text": "© Copyright IBM Corp. 2014. All rights reserved."
     },
     {
       "self_ref": "#/texts/44",
@@ -2293,8 +2293,8 @@
           ]
         }
       ],
-      "orig": "\u00a9 Copyright IBM Corp. 2014. All rights reserved.",
-      "text": "\u00a9 Copyright IBM Corp. 2014. All rights reserved."
+      "orig": "© Copyright IBM Corp. 2014. All rights reserved.",
+      "text": "© Copyright IBM Corp. 2014. All rights reserved."
     },
     {
       "self_ref": "#/texts/57",
@@ -6571,8 +6571,8 @@
           ]
         }
       ],
-      "orig": "2. Look at the definition of the EMPLOYEE table, as shown in Figure 3-11. To do this, from the main navigation pane of System i Navigator, click Schemas \uf0ae HR_SCHEMA \uf0ae Tables , right-click the EMPLOYEES table, and click Definition .",
-      "text": "Look at the definition of the EMPLOYEE table, as shown in Figure 3-11. To do this, from the main navigation pane of System i Navigator, click Schemas \uf0ae HR_SCHEMA \uf0ae Tables , right-click the EMPLOYEES table, and click Definition .",
+      "orig": "2. Look at the definition of the EMPLOYEE table, as shown in Figure 3-11. To do this, from the main navigation pane of System i Navigator, click Schemas  HR_SCHEMA  Tables , right-click the EMPLOYEES table, and click Definition .",
+      "text": "Look at the definition of the EMPLOYEE table, as shown in Figure 3-11. To do this, from the main navigation pane of System i Navigator, click Schemas  HR_SCHEMA  Tables , right-click the EMPLOYEES table, and click Definition .",
       "enumerated": true,
       "marker": "2."
     },
@@ -7068,8 +7068,8 @@
           ]
         }
       ],
-      "orig": "\u00ae",
-      "text": "\u00ae"
+      "orig": "®",
+      "text": "®"
     },
     {
       "self_ref": "#/texts/231",
@@ -7122,8 +7122,8 @@
           ]
         }
       ],
-      "orig": "\u2122",
-      "text": "\u2122"
+      "orig": "™",
+      "text": "™"
     },
     {
       "self_ref": "#/texts/233",

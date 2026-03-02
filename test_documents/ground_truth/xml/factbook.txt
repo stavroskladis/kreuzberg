@@ -1,19 +1,18 @@
-United States
-Washington, DC
-Joe Biden
-Baseball
-
-Canada
-Ottawa
-Justin Trudeau
-Hockey
-
-France
-Paris
-Emmanuel Macron
-Soccer
-
-Trinidad & Tobado
-Port of Spain
-Keith Rowley
-Track & Field
+name: United States
+capital: Washington, DC
+leader: Joe Biden
+sport: Baseball
+name: Canada
+capital: Ottawa
+leader: Justin Trudeau
+sport: Hockey
+name: France
+capital: Paris
+leader: Emmanuel Macron
+sport: Soccer
+name: Trinidad
+Tobado
+capital: Port of Spain
+leader: Keith Rowley
+sport: Track
+Field

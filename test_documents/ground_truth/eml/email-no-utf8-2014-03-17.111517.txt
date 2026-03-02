@@ -1,7 +1,8 @@
 Subject: Google Account password changed
 From: no-reply@accounts.google.com
 To: slatest@gmail.com
-Date: Mon, 17 Mar 2014 11:15:04 +0000
+Date: Mon, 17 Mar 2014 11:15:04 +0000 (UTC)
+
 Hi Slava,
 
 The password for your Google Account - slava.Gxyzxyz@gmail.com - was
@@ -33,3 +34,5 @@ about important changes to your Google product or account.
 
   (c) 2014 Google Inc., 1600 Amphitheatre Parkway, Mountain View, CA 94043,
 USA
+
+

@@ -2754,10 +2754,10 @@
           ]
         }
       ],
-      "orig": "\u00b7 We propose TableFormer , a transformer based model that predicts tables structure and bounding boxes for the table content simultaneously in an end-to-end approach.",
+      "orig": "· We propose TableFormer , a transformer based model that predicts tables structure and bounding boxes for the table content simultaneously in an end-to-end approach.",
       "text": "We propose TableFormer , a transformer based model that predicts tables structure and bounding boxes for the table content simultaneously in an end-to-end approach.",
       "enumerated": false,
-      "marker": "\u00b7"
+      "marker": "·"
     },
     {
       "self_ref": "#/texts/71",
@@ -2783,10 +2783,10 @@
           ]
         }
       ],
-      "orig": "\u00b7 Across all benchmark datasets TableFormer significantly outperforms existing state-of-the-art metrics, while being much more efficient in training and inference to existing works.",
+      "orig": "· Across all benchmark datasets TableFormer significantly outperforms existing state-of-the-art metrics, while being much more efficient in training and inference to existing works.",
       "text": "Across all benchmark datasets TableFormer significantly outperforms existing state-of-the-art metrics, while being much more efficient in training and inference to existing works.",
       "enumerated": false,
-      "marker": "\u00b7"
+      "marker": "·"
     },
     {
       "self_ref": "#/texts/72",
@@ -2812,10 +2812,10 @@
           ]
         }
       ],
-      "orig": "\u00b7 We present SynthTabNet a synthetically generated dataset, with various appearance styles and complexity.",
+      "orig": "· We present SynthTabNet a synthetically generated dataset, with various appearance styles and complexity.",
       "text": "We present SynthTabNet a synthetically generated dataset, with various appearance styles and complexity.",
       "enumerated": false,
-      "marker": "\u00b7"
+      "marker": "·"
     },
     {
       "self_ref": "#/texts/73",
@@ -2841,10 +2841,10 @@
           ]
         }
       ],
-      "orig": "\u00b7 An augmented dataset based on PubTabNet [37], FinTabNet [36], and TableBank [17] with generated ground-truth for reproducibility.",
+      "orig": "· An augmented dataset based on PubTabNet [37], FinTabNet [36], and TableBank [17] with generated ground-truth for reproducibility.",
       "text": "An augmented dataset based on PubTabNet [37], FinTabNet [36], and TableBank [17] with generated ground-truth for reproducibility.",
       "enumerated": false,
-      "marker": "\u00b7"
+      "marker": "·"
     },
     {
       "self_ref": "#/texts/74",
@@ -3033,8 +3033,8 @@
           ]
         }
       ],
-      "orig": "Image-to-Text networks : In this type of network, one predicts a sequence of tokens starting from an encoded image. Such sequences of tokens can be HTML table tags [37, 17] or LaTeX symbols[10]. The choice of symbols is ultimately not very important, since one can be transformed into the other. There are however subtle variations in the Image-to-Text networks. The easiest network architectures are 'image-encoder \u2192 text-decoder' (IETD), similar to network architectures that try to provide captions to images [32]. In these IETD networks, one expects as output the LaTeX/HTML string of the entire table, i.e. the symbols necessary for creating the table with the content of the table. Another approach is the 'image-encoder \u2192 dual decoder' (IEDD) networks. In these type of networks, one has two consecutive decoders with different purposes. The first decoder is the tag-decoder , i.e. it only produces the HTML/LaTeX tags which construct an empty table. The second content-decoder uses the encoding of the image in combination with the output encoding of each cell-tag (from the tag-decoder ) to generate the textual content of each table cell. The network architecture of IEDD is certainly more elaborate, but it has the advantage that one can pre-train the",
-      "text": "Image-to-Text networks : In this type of network, one predicts a sequence of tokens starting from an encoded image. Such sequences of tokens can be HTML table tags [37, 17] or LaTeX symbols[10]. The choice of symbols is ultimately not very important, since one can be transformed into the other. There are however subtle variations in the Image-to-Text networks. The easiest network architectures are 'image-encoder \u2192 text-decoder' (IETD), similar to network architectures that try to provide captions to images [32]. In these IETD networks, one expects as output the LaTeX/HTML string of the entire table, i.e. the symbols necessary for creating the table with the content of the table. Another approach is the 'image-encoder \u2192 dual decoder' (IEDD) networks. In these type of networks, one has two consecutive decoders with different purposes. The first decoder is the tag-decoder , i.e. it only produces the HTML/LaTeX tags which construct an empty table. The second content-decoder uses the encoding of the image in combination with the output encoding of each cell-tag (from the tag-decoder ) to generate the textual content of each table cell. The network architecture of IEDD is certainly more elaborate, but it has the advantage that one can pre-train the"
+      "orig": "Image-to-Text networks : In this type of network, one predicts a sequence of tokens starting from an encoded image. Such sequences of tokens can be HTML table tags [37, 17] or LaTeX symbols[10]. The choice of symbols is ultimately not very important, since one can be transformed into the other. There are however subtle variations in the Image-to-Text networks. The easiest network architectures are 'image-encoder → text-decoder' (IETD), similar to network architectures that try to provide captions to images [32]. In these IETD networks, one expects as output the LaTeX/HTML string of the entire table, i.e. the symbols necessary for creating the table with the content of the table. Another approach is the 'image-encoder → dual decoder' (IEDD) networks. In these type of networks, one has two consecutive decoders with different purposes. The first decoder is the tag-decoder , i.e. it only produces the HTML/LaTeX tags which construct an empty table. The second content-decoder uses the encoding of the image in combination with the output encoding of each cell-tag (from the tag-decoder ) to generate the textual content of each table cell. The network architecture of IEDD is certainly more elaborate, but it has the advantage that one can pre-train the",
+      "text": "Image-to-Text networks : In this type of network, one predicts a sequence of tokens starting from an encoded image. Such sequences of tokens can be HTML table tags [37, 17] or LaTeX symbols[10]. The choice of symbols is ultimately not very important, since one can be transformed into the other. There are however subtle variations in the Image-to-Text networks. The easiest network architectures are 'image-encoder → text-decoder' (IETD), similar to network architectures that try to provide captions to images [32]. In these IETD networks, one expects as output the LaTeX/HTML string of the entire table, i.e. the symbols necessary for creating the table with the content of the table. Another approach is the 'image-encoder → dual decoder' (IEDD) networks. In these type of networks, one has two consecutive decoders with different purposes. The first decoder is the tag-decoder , i.e. it only produces the HTML/LaTeX tags which construct an empty table. The second content-decoder uses the encoding of the image in combination with the output encoding of each cell-tag (from the tag-decoder ) to generate the textual content of each table cell. The network architecture of IEDD is certainly more elaborate, but it has the advantage that one can pre-train the"
     },
     {
       "self_ref": "#/texts/81",
@@ -6276,8 +6276,8 @@
           ]
         }
       ],
-      "orig": "[30,  1,  2,  3,  4, \u2026 3,",
-      "text": "[30,  1,  2,  3,  4, \u2026 3,"
+      "orig": "[30,  1,  2,  3,  4, … 3,",
+      "text": "[30,  1,  2,  3,  4, … 3,"
     },
     {
       "self_ref": "#/texts/201",
@@ -7356,7 +7356,7 @@
           ]
         }
       ],
-      "orig": "l box = \u03bb iou l iou + \u03bb l 1 l = \u03bbl s +(1 -\u03bb ) l box (1)",
+      "orig": "l box = λ iou l iou + λ l 1 l = λl s +(1 -λ ) l box (1)",
       "text": ""
     },
     {
@@ -7383,8 +7383,8 @@
           ]
         }
       ],
-      "orig": "where \u03bb \u2208 [0, 1], and \u03bb iou , \u03bb l 1 \u2208 R are hyper-parameters.",
-      "text": "where \u03bb \u2208 [0, 1], and \u03bb iou , \u03bb l 1 \u2208 R are hyper-parameters."
+      "orig": "where λ ∈ [0, 1], and λ iou , λ l 1 ∈ R are hyper-parameters.",
+      "text": "where λ ∈ [0, 1], and λ iou , λ l 1 ∈ R are hyper-parameters."
     },
     {
       "self_ref": "#/texts/242",
@@ -7493,7 +7493,7 @@
           ]
         }
       ],
-      "orig": "Image width and height \u2264 1024 pixels Structural tags length \u2264 512 tokens. (2)",
+      "orig": "Image width and height ≤ 1024 pixels Structural tags length ≤ 512 tokens. (2)",
       "text": ""
     },
     {
@@ -7588,8 +7588,8 @@
           ]
         }
       ],
-      "orig": "For training, TableFormer is trained with 3 Adam optimizers, each one for the CNN Backbone Network , Structure Decoder , and Cell BBox Decoder . Taking the PubTabNet as an example for our parameter set up, the initializing learning rate is 0.001 for 12 epochs with a batch size of 24, and \u03bb set to 0.5. Afterwards, we reduce the learning rate to 0.0001, the batch size to 18 and train for 12 more epochs or convergence.",
-      "text": "For training, TableFormer is trained with 3 Adam optimizers, each one for the CNN Backbone Network , Structure Decoder , and Cell BBox Decoder . Taking the PubTabNet as an example for our parameter set up, the initializing learning rate is 0.001 for 12 epochs with a batch size of 24, and \u03bb set to 0.5. Afterwards, we reduce the learning rate to 0.0001, the batch size to 18 and train for 12 more epochs or convergence."
+      "orig": "For training, TableFormer is trained with 3 Adam optimizers, each one for the CNN Backbone Network , Structure Decoder , and Cell BBox Decoder . Taking the PubTabNet as an example for our parameter set up, the initializing learning rate is 0.001 for 12 epochs with a batch size of 24, and λ set to 0.5. Afterwards, we reduce the learning rate to 0.0001, the batch size to 18 and train for 12 more epochs or convergence.",
+      "text": "For training, TableFormer is trained with 3 Adam optimizers, each one for the CNN Backbone Network , Structure Decoder , and Cell BBox Decoder . Taking the PubTabNet as an example for our parameter set up, the initializing learning rate is 0.001 for 12 epochs with a batch size of 24, and λ set to 0.5. Afterwards, we reduce the learning rate to 0.0001, the batch size to 18 and train for 12 more epochs or convergence."
     },
     {
       "self_ref": "#/texts/249",
@@ -8230,8 +8230,8 @@
           ]
         }
       ],
-      "orig": "\u8ad6\u6587\u30d5\u30a1\u30a4\u30eb",
-      "text": "\u8ad6\u6587\u30d5\u30a1\u30a4\u30eb"
+      "orig": "論文ファイル",
+      "text": "論文ファイル"
     },
     {
       "self_ref": "#/texts/272",
@@ -8257,8 +8257,8 @@
           ]
         }
       ],
-      "orig": "\u53c2\u8003\u6587\u732e",
-      "text": "\u53c2\u8003\u6587\u732e"
+      "orig": "参考文献",
+      "text": "参考文献"
     },
     {
       "self_ref": "#/texts/273",
@@ -8284,8 +8284,8 @@
           ]
         }
       ],
-      "orig": "\u51fa\u5178",
-      "text": "\u51fa\u5178"
+      "orig": "出典",
+      "text": "出典"
     },
     {
       "self_ref": "#/texts/274",
@@ -8311,8 +8311,8 @@
           ]
         }
       ],
-      "orig": "\u30d5\u30a1\u30a4\u30eb\u6570",
-      "text": "\u30d5\u30a1\u30a4\u30eb\u6570"
+      "orig": "ファイル数",
+      "text": "ファイル数"
     },
     {
       "self_ref": "#/texts/275",
@@ -8338,8 +8338,8 @@
           ]
         }
       ],
-      "orig": "\u82f1\u8a9e",
-      "text": "\u82f1\u8a9e"
+      "orig": "英語",
+      "text": "英語"
     },
     {
       "self_ref": "#/texts/276",
@@ -8365,8 +8365,8 @@
           ]
         }
       ],
-      "orig": "\u65e5\u672c\u8a9e",
-      "text": "\u65e5\u672c\u8a9e"
+      "orig": "日本語",
+      "text": "日本語"
     },
     {
       "self_ref": "#/texts/277",
@@ -8392,8 +8392,8 @@
           ]
         }
       ],
-      "orig": "\u82f1\u8a9e",
-      "text": "\u82f1\u8a9e"
+      "orig": "英語",
+      "text": "英語"
     },
     {
       "self_ref": "#/texts/278",
@@ -8419,8 +8419,8 @@
           ]
         }
       ],
-      "orig": "\u65e5\u672c\u8a9e",
-      "text": "\u65e5\u672c\u8a9e"
+      "orig": "日本語",
+      "text": "日本語"
     },
     {
       "self_ref": "#/texts/279",
@@ -8770,8 +8770,8 @@
           ]
         }
       ],
-      "orig": "\u96fb\u6c17\u60c5\u5831\u901a\u4fe1\u5b66\u4f1a",
-      "text": "\u96fb\u6c17\u60c5\u5831\u901a\u4fe1\u5b66\u4f1a"
+      "orig": "電気情報通信学会",
+      "text": "電気情報通信学会"
     },
     {
       "self_ref": "#/texts/292",
@@ -8824,8 +8824,8 @@
           ]
         }
       ],
-      "orig": "\u5e74\u7dcf\u5408\u5927\u4f1a",
-      "text": "\u5e74\u7dcf\u5408\u5927\u4f1a"
+      "orig": "年総合大会",
+      "text": "年総合大会"
     },
     {
       "self_ref": "#/texts/294",
@@ -8986,8 +8986,8 @@
           ]
         }
       ],
-      "orig": "\u60c5\u5831\u51e6\u7406\u5b66\u4f1a\u7b2c",
-      "text": "\u60c5\u5831\u51e6\u7406\u5b66\u4f1a\u7b2c"
+      "orig": "情報処理学会第",
+      "text": "情報処理学会第"
     },
     {
       "self_ref": "#/texts/300",
@@ -9040,8 +9040,8 @@
           ]
         }
       ],
-      "orig": "\u56de\u5168\u56fd\u5927\u4f1a",
-      "text": "\u56de\u5168\u56fd\u5927\u4f1a"
+      "orig": "回全国大会",
+      "text": "回全国大会"
     },
     {
       "self_ref": "#/texts/302",
@@ -9229,8 +9229,8 @@
           ]
         }
       ],
-      "orig": "\u7b2c",
-      "text": "\u7b2c"
+      "orig": "第",
+      "text": "第"
     },
     {
       "self_ref": "#/texts/309",
@@ -9283,8 +9283,8 @@
           ]
         }
       ],
-      "orig": "\u56de\u4eba\u5de5\u77e5\u80fd\u5b66\u4f1a\u5168\u56fd\u5927\u4f1a",
-      "text": "\u56de\u4eba\u5de5\u77e5\u80fd\u5b66\u4f1a\u5168\u56fd\u5927\u4f1a"
+      "orig": "回人工知能学会全国大会",
+      "text": "回人工知能学会全国大会"
     },
     {
       "self_ref": "#/texts/311",
@@ -9472,8 +9472,8 @@
           ]
         }
       ],
-      "orig": "\u81ea\u7136\u8a00\u8a9e\u51e6\u7406\u7814\u7a76\u4f1a\u7b2c",
-      "text": "\u81ea\u7136\u8a00\u8a9e\u51e6\u7406\u7814\u7a76\u4f1a\u7b2c"
+      "orig": "自然言語処理研究会第",
+      "text": "自然言語処理研究会第"
     },
     {
       "self_ref": "#/texts/318",
@@ -9526,8 +9526,8 @@
           ]
         }
       ],
-      "orig": "\u301c",
-      "text": "\u301c"
+      "orig": "〜",
+      "text": "〜"
     },
     {
       "self_ref": "#/texts/320",
@@ -9580,8 +9580,8 @@
           ]
         }
       ],
-      "orig": "\u56de",
-      "text": "\u56de"
+      "orig": "回",
+      "text": "回"
     },
     {
       "self_ref": "#/texts/322",
@@ -9769,8 +9769,8 @@
           ]
         }
       ],
-      "orig": "\u304b\u3089\u53ce\u96c6\u3057\u305f\u8ad6\u6587",
-      "text": "\u304b\u3089\u53ce\u96c6\u3057\u305f\u8ad6\u6587"
+      "orig": "から収集した論文",
+      "text": "から収集した論文"
     },
     {
       "self_ref": "#/texts/329",
@@ -9931,8 +9931,8 @@
           ]
         }
       ],
-      "orig": "\u8a08",
-      "text": "\u8a08"
+      "orig": "計",
+      "text": "計"
     },
     {
       "self_ref": "#/texts/335",
@@ -12856,8 +12856,8 @@
           ]
         }
       ],
-      "orig": "[4] Herv\u00b4 e D\u00b4 ejean, Jean-Luc Meunier, Liangcai Gao, Yilun Huang, Yu Fang, Florian Kleber, and Eva-Maria Lang. ICDAR 2019 Competition on Table Detection and Recognition (cTDaR), Apr. 2019. http://sac.founderit.com/. 2",
-      "text": "Herv\u00b4 e D\u00b4 ejean, Jean-Luc Meunier, Liangcai Gao, Yilun Huang, Yu Fang, Florian Kleber, and Eva-Maria Lang. ICDAR 2019 Competition on Table Detection and Recognition (cTDaR), Apr. 2019. http://sac.founderit.com/. 2",
+      "orig": "[4] Herv´ e D´ ejean, Jean-Luc Meunier, Liangcai Gao, Yilun Huang, Yu Fang, Florian Kleber, and Eva-Maria Lang. ICDAR 2019 Competition on Table Detection and Recognition (cTDaR), Apr. 2019. http://sac.founderit.com/. 2",
+      "text": "Herv´ e D´ ejean, Jean-Luc Meunier, Liangcai Gao, Yilun Huang, Yu Fang, Florian Kleber, and Eva-Maria Lang. ICDAR 2019 Competition on Table Detection and Recognition (cTDaR), Apr. 2019. http://sac.founderit.com/. 2",
       "enumerated": true,
       "marker": "[4]"
     },
@@ -12914,8 +12914,8 @@
           ]
         }
       ],
-      "orig": "[6] MaxG\u00a8 obel, Tamir Hassan, Ermelinda Oro, and Giorgio Orsi. Icdar 2013 table competition. In 2013 12th International Conference on Document Analysis and Recognition , pages 1449-1453, 2013. 2",
-      "text": "MaxG\u00a8 obel, Tamir Hassan, Ermelinda Oro, and Giorgio Orsi. Icdar 2013 table competition. In 2013 12th International Conference on Document Analysis and Recognition , pages 1449-1453, 2013. 2",
+      "orig": "[6] MaxG¨ obel, Tamir Hassan, Ermelinda Oro, and Giorgio Orsi. Icdar 2013 table competition. In 2013 12th International Conference on Document Analysis and Recognition , pages 1449-1453, 2013. 2",
+      "text": "MaxG¨ obel, Tamir Hassan, Ermelinda Oro, and Giorgio Orsi. Icdar 2013 table competition. In 2013 12th International Conference on Document Analysis and Recognition , pages 1449-1453, 2013. 2",
       "enumerated": true,
       "marker": "[6]"
     },
@@ -13117,8 +13117,8 @@
           ]
         }
       ],
-      "orig": "[13] Thotreingam Kasar, Philippine Barlas, Sebastien Adam, Cl\u00b4 ement Chatelain, and Thierry Paquet. Learning to detect tables in scanned document images using line information. In 2013 12th International Conference on Document Analysis and Recognition , pages 1185-1189. IEEE, 2013. 2",
-      "text": "Thotreingam Kasar, Philippine Barlas, Sebastien Adam, Cl\u00b4 ement Chatelain, and Thierry Paquet. Learning to detect tables in scanned document images using line information. In 2013 12th International Conference on Document Analysis and Recognition , pages 1185-1189. IEEE, 2013. 2",
+      "orig": "[13] Thotreingam Kasar, Philippine Barlas, Sebastien Adam, Cl´ ement Chatelain, and Thierry Paquet. Learning to detect tables in scanned document images using line information. In 2013 12th International Conference on Document Analysis and Recognition , pages 1185-1189. IEEE, 2013. 2",
+      "text": "Thotreingam Kasar, Philippine Barlas, Sebastien Adam, Cl´ ement Chatelain, and Thierry Paquet. Learning to detect tables in scanned document images using line information. In 2013 12th International Conference on Document Analysis and Recognition , pages 1185-1189. IEEE, 2013. 2",
       "enumerated": true,
       "marker": "[13]"
     },
@@ -13378,8 +13378,8 @@
           ]
         }
       ],
-      "orig": "[22] Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, Andreas Kopf, Edward Yang, Zachary DeVito, Martin Raison, Alykhan Tejani, Sasank Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, and Soumith Chintala. Pytorch: An imperative style, high-performance deep learning library. In H. Wallach, H. Larochelle, A. Beygelzimer, F. d'Alch\u00b4 e-Buc, E. Fox, and R. Garnett, editors, Advances in Neural Information Processing Systems 32 , pages 8024-8035. Curran Associates, Inc., 2019. 6",
-      "text": "Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, Andreas Kopf, Edward Yang, Zachary DeVito, Martin Raison, Alykhan Tejani, Sasank Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, and Soumith Chintala. Pytorch: An imperative style, high-performance deep learning library. In H. Wallach, H. Larochelle, A. Beygelzimer, F. d'Alch\u00b4 e-Buc, E. Fox, and R. Garnett, editors, Advances in Neural Information Processing Systems 32 , pages 8024-8035. Curran Associates, Inc., 2019. 6",
+      "orig": "[22] Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, Andreas Kopf, Edward Yang, Zachary DeVito, Martin Raison, Alykhan Tejani, Sasank Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, and Soumith Chintala. Pytorch: An imperative style, high-performance deep learning library. In H. Wallach, H. Larochelle, A. Beygelzimer, F. d'Alch´ e-Buc, E. Fox, and R. Garnett, editors, Advances in Neural Information Processing Systems 32 , pages 8024-8035. Curran Associates, Inc., 2019. 6",
+      "text": "Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, Andreas Kopf, Edward Yang, Zachary DeVito, Martin Raison, Alykhan Tejani, Sasank Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, and Soumith Chintala. Pytorch: An imperative style, high-performance deep learning library. In H. Wallach, H. Larochelle, A. Beygelzimer, F. d'Alch´ e-Buc, E. Fox, and R. Garnett, editors, Advances in Neural Information Processing Systems 32 , pages 8024-8035. Curran Associates, Inc., 2019. 6",
       "enumerated": true,
       "marker": "[22]"
     },
@@ -13695,8 +13695,8 @@
           ]
         }
       ],
-      "orig": "[31] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, \u0141 ukasz Kaiser, and Illia Polosukhin. Attention is all you need. In I. Guyon, U. V. Luxburg, S. Bengio, H. Wallach, R. Fergus, S. Vishwanathan, and R. Garnett, editors, Advances in Neural Information Processing Systems 30 , pages 5998-6008. Curran Associates, Inc., 2017. 5",
-      "text": "Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, \u0141 ukasz Kaiser, and Illia Polosukhin. Attention is all you need. In I. Guyon, U. V. Luxburg, S. Bengio, H. Wallach, R. Fergus, S. Vishwanathan, and R. Garnett, editors, Advances in Neural Information Processing Systems 30 , pages 5998-6008. Curran Associates, Inc., 2017. 5",
+      "orig": "[31] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Ł ukasz Kaiser, and Illia Polosukhin. Attention is all you need. In I. Guyon, U. V. Luxburg, S. Bengio, H. Wallach, R. Fergus, S. Vishwanathan, and R. Garnett, editors, Advances in Neural Information Processing Systems 30 , pages 5998-6008. Curran Associates, Inc., 2017. 5",
+      "text": "Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Ł ukasz Kaiser, and Illia Polosukhin. Attention is all you need. In I. Guyon, U. V. Luxburg, S. Bengio, H. Wallach, R. Fergus, S. Vishwanathan, and R. Garnett, editors, Advances in Neural Information Processing Systems 30 , pages 5998-6008. Curran Associates, Inc., 2017. 5",
       "enumerated": true,
       "marker": "[31]"
     },
@@ -16173,10 +16173,10 @@
           ]
         }
       ],
-      "orig": "\u00b7 TableFormer output does not include the table cell content.",
+      "orig": "· TableFormer output does not include the table cell content.",
       "text": "TableFormer output does not include the table cell content.",
       "enumerated": false,
-      "marker": "\u00b7"
+      "marker": "·"
     },
     {
       "self_ref": "#/texts/562",
@@ -16202,10 +16202,10 @@
           ]
         }
       ],
-      "orig": "\u00b7 There are occasional inaccuracies in the predictions of the bounding boxes.",
+      "orig": "· There are occasional inaccuracies in the predictions of the bounding boxes.",
       "text": "There are occasional inaccuracies in the predictions of the bounding boxes.",
       "enumerated": false,
-      "marker": "\u00b7"
+      "marker": "·"
     },
     {
       "self_ref": "#/texts/563",
