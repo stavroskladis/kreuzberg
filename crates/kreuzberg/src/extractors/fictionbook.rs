@@ -76,6 +76,39 @@ fn to_subscript(s: &str) -> String {
     s.chars().map(|c| char_to_subscript(c).unwrap_or(c)).collect()
 }
 
+/// Resolve an XML entity reference name to its character(s).
+fn resolve_entity(name: &str) -> Option<&'static str> {
+    match name {
+        "amp" => Some("&"),
+        "lt" => Some("<"),
+        "gt" => Some(">"),
+        "quot" => Some("\""),
+        "apos" => Some("'"),
+        "nbsp" => Some("\u{00A0}"),
+        _ if name.starts_with('#') => None, // char refs handled separately
+        _ => None,
+    }
+}
+
+/// Resolve an XML general reference (entity or char ref) to a string.
+fn resolve_general_ref(ref_bytes: &[u8]) -> String {
+    let name = String::from_utf8_lossy(ref_bytes);
+    if let Some(entity) = resolve_entity(&name) {
+        return entity.to_string();
+    }
+    if let Some(num) = name.strip_prefix('#') {
+        let code = if let Some(hex) = num.strip_prefix('x') {
+            u32::from_str_radix(hex, 16).ok()
+        } else {
+            num.parse::<u32>().ok()
+        };
+        if let Some(ch) = code.and_then(char::from_u32) {
+            return ch.to_string();
+        }
+    }
+    String::new()
+}
+
 /// FictionBook document extractor.
 ///
 /// Supports FictionBook 2.0 format with proper section hierarchy and inline formatting.
@@ -102,6 +135,7 @@ impl FictionBookExtractor {
         let mut in_sup = false;
         let mut sub_buf = String::new();
         let mut sup_buf = String::new();
+        let mut last_was_open_marker = false;
 
         loop {
             match reader.read_event() {
@@ -109,10 +143,22 @@ impl FictionBookExtractor {
                     let tag = String::from_utf8_lossy(e.name().as_ref()).to_string();
                     depth += 1;
                     match tag.as_str() {
-                        "emphasis" if !plain => text.push('*'),
-                        "strong" if !plain => text.push_str("**"),
-                        "strikethrough" => text.push_str("~~"),
-                        "code" if !plain => text.push('`'),
+                        "emphasis" if !plain => {
+                            text.push('*');
+                            last_was_open_marker = true;
+                        }
+                        "strong" if !plain => {
+                            text.push_str("**");
+                            last_was_open_marker = true;
+                        }
+                        "strikethrough" => {
+                            text.push_str("~~");
+                            last_was_open_marker = true;
+                        }
+                        "code" if !plain => {
+                            text.push('`');
+                            last_was_open_marker = true;
+                        }
                         "sub" if plain => {
                             in_sub = true;
                             sub_buf.clear();
@@ -121,8 +167,14 @@ impl FictionBookExtractor {
                             in_sup = true;
                             sup_buf.clear();
                         }
-                        "sub" => text.push('~'),
-                        "sup" => text.push('^'),
+                        "sub" => {
+                            text.push('~');
+                            last_was_open_marker = true;
+                        }
+                        "sup" => {
+                            text.push('^');
+                            last_was_open_marker = true;
+                        }
                         _ => {}
                     }
                 }
@@ -131,6 +183,7 @@ impl FictionBookExtractor {
                     if tag == "p" && depth <= 1 {
                         break;
                     }
+                    last_was_open_marker = false;
                     match tag.as_str() {
                         "emphasis" if !plain => text.push('*'),
                         "strong" if !plain => text.push_str("**"),
@@ -154,23 +207,53 @@ impl FictionBookExtractor {
                 }
                 Ok(Event::Text(t)) => {
                     let decoded = String::from_utf8_lossy(t.as_ref()).to_string();
-                    let trimmed = decoded.trim();
+                    let had_leading_space = decoded.starts_with(char::is_whitespace);
+                    let had_trailing_space = decoded.ends_with(char::is_whitespace);
+                    let normalized = decoded.split_whitespace().collect::<Vec<_>>().join(" ");
+                    let trimmed = normalized.as_str();
                     if !trimmed.is_empty() {
                         if in_sub {
                             sub_buf.push_str(trimmed);
                         } else if in_sup {
                             sup_buf.push_str(trimmed);
                         } else {
-                            if !text.is_empty()
+                            let starts_with_punct = trimmed.starts_with(['.', ',', ';', ':', '!', '?', ')', ']', '[']);
+                            let needs_space = !text.is_empty()
                                 && !text.ends_with(' ')
-                                && !text.ends_with('*')
-                                && !text.ends_with('`')
-                                && !text.ends_with('~')
-                                && !text.ends_with('^')
-                            {
+                                && !last_was_open_marker
+                                && !starts_with_punct
+                                && (had_leading_space
+                                    || !text.ends_with(|c: char| {
+                                        c == '&'
+                                            || c == '<'
+                                            || c == '>'
+                                            || c == '"'
+                                            || c == '\''
+                                            || ('\u{2070}'..='\u{209F}').contains(&c)
+                                            || c == '\u{00B9}'
+                                            || c == '\u{00B2}'
+                                            || c == '\u{00B3}'
+                                    }));
+                            if needs_space {
                                 text.push(' ');
                             }
                             text.push_str(trimmed);
+                            if had_trailing_space && !text.ends_with(' ') {
+                                text.push(' ');
+                            }
+                        }
+                        last_was_open_marker = false;
+                    }
+                }
+                Ok(Event::GeneralRef(r)) => {
+                    let resolved = resolve_general_ref(r.as_ref());
+                    if !resolved.is_empty() {
+                        if in_sub {
+                            sub_buf.push_str(&resolved);
+                        } else if in_sup {
+                            sup_buf.push_str(&resolved);
+                        } else {
+                            text.push_str(&resolved);
                         }
                     }
                 }
@@ -218,13 +301,18 @@ impl FictionBookExtractor {
                 }
                 Ok(Event::Text(t)) => {
                     let decoded = String::from_utf8_lossy(t.as_ref()).to_string();
-                    let trimmed = decoded.trim();
+                    let had_trailing_space = decoded.ends_with(char::is_whitespace);
+                    let normalized = decoded.split_whitespace().collect::<Vec<_>>().join(" ");
+                    let trimmed = normalized.as_str();
                     if !trimmed.is_empty() {
-                        if !text.is_empty() && !text.ends_with(' ') && !text.ends_with('\n') {
+                        let starts_with_punct = trimmed.starts_with(['.', ',', ';', ':', '!', '?', ')', ']', '[']);
+                        if !text.is_empty() && !text.ends_with(' ') && !text.ends_with('\n') && !starts_with_punct {
                             text.push(' ');
                         }
                         text.push_str(trimmed);
-                        text.push(' ');
+                        if had_trailing_space {
+                            text.push(' ');
+                        }
                     }
                 }
                 Ok(Event::CData(t)) => {
@@ -235,6 +323,12 @@ impl FictionBookExtractor {
                         }
                         text.push_str(&decoded);
                         text.push('\n');
+                    }
+                }
+                Ok(Event::GeneralRef(r)) => {
+                    let resolved = resolve_general_ref(r.as_ref());
+                    if !resolved.is_empty() {
+                        text.push_str(&resolved);
                     }
                 }
                 Ok(Event::Eof) => break,
@@ -590,6 +684,7 @@ impl FictionBookExtractor {
         let mut in_sup = false;
         let mut sub_buf = String::new();
         let mut sup_buf = String::new();
+        let mut last_was_open_marker = false;
 
         loop {
             match reader.read_event() {
@@ -597,10 +692,22 @@ impl FictionBookExtractor {
                     let tag = String::from_utf8_lossy(e.name().as_ref()).to_string();
                     depth += 1;
                     match tag.as_str() {
-                        "emphasis" if !plain => text.push('*'),
-                        "strong" if !plain => text.push_str("**"),
-                        "strikethrough" => text.push_str("~~"),
-                        "code" if !plain => text.push('`'),
+                        "emphasis" if !plain => {
+                            text.push('*');
+                            last_was_open_marker = true;
+                        }
+                        "strong" if !plain => {
+                            text.push_str("**");
+                            last_was_open_marker = true;
+                        }
+                        "strikethrough" => {
+                            text.push_str("~~");
+                            last_was_open_marker = true;
+                        }
+                        "code" if !plain => {
+                            text.push('`');
+                            last_was_open_marker = true;
+                        }
                         "sub" if plain => {
                             in_sub = true;
                             sub_buf.clear();
@@ -609,8 +716,14 @@ impl FictionBookExtractor {
                             in_sup = true;
                             sup_buf.clear();
                         }
-                        "sub" => text.push('~'),
-                        "sup" => text.push('^'),
+                        "sub" => {
+                            text.push('~');
+                            last_was_open_marker = true;
+                        }
+                        "sup" => {
+                            text.push('^');
+                            last_was_open_marker = true;
+                        }
                         _ => {}
                     }
                 }
@@ -619,6 +732,7 @@ impl FictionBookExtractor {
                     if tag == "v" && depth == 0 {
                         break;
                     }
+                    last_was_open_marker = false;
                     match tag.as_str() {
                         "emphasis" if !plain => text.push('*'),
                         "strong" if !plain => text.push_str("**"),
@@ -642,23 +756,53 @@ impl FictionBookExtractor {
                 }
                 Ok(Event::Text(t)) => {
                     let decoded = String::from_utf8_lossy(t.as_ref()).to_string();
-                    let trimmed = decoded.trim();
+                    let had_leading_space = decoded.starts_with(char::is_whitespace);
+                    let had_trailing_space = decoded.ends_with(char::is_whitespace);
+                    let normalized = decoded.split_whitespace().collect::<Vec<_>>().join(" ");
+                    let trimmed = normalized.as_str();
                     if !trimmed.is_empty() {
                         if in_sub {
                             sub_buf.push_str(trimmed);
                         } else if in_sup {
                             sup_buf.push_str(trimmed);
                         } else {
-                            if !text.is_empty()
+                            let starts_with_punct = trimmed.starts_with(['.', ',', ';', ':', '!', '?', ')', ']', '[']);
+                            let needs_space = !text.is_empty()
                                 && !text.ends_with(' ')
-                                && !text.ends_with('*')
-                                && !text.ends_with('`')
-                                && !text.ends_with('~')
-                                && !text.ends_with('^')
-                            {
+                                && !last_was_open_marker
+                                && !starts_with_punct
+                                && (had_leading_space
+                                    || !text.ends_with(|c: char| {
+                                        c == '&'
+                                            || c == '<'
+                                            || c == '>'
+                                            || c == '"'
+                                            || c == '\''
+                                            || ('\u{2070}'..='\u{209F}').contains(&c)
+                                            || c == '\u{00B9}'
+                                            || c == '\u{00B2}'
+                                            || c == '\u{00B3}'
+                                    }));
+                            if needs_space {
                                 text.push(' ');
                             }
                             text.push_str(trimmed);
+                            if had_trailing_space && !text.ends_with(' ') {
+                                text.push(' ');
+                            }
+                        }
+                        last_was_open_marker = false;
+                    }
+                }
+                Ok(Event::GeneralRef(r)) => {
+                    let resolved = resolve_general_ref(r.as_ref());
+                    if !resolved.is_empty() {
+                        if in_sub {
+                            sub_buf.push_str(&resolved);
+                        } else if in_sup {
+                            sup_buf.push_str(&resolved);
+                        } else {
+                            text.push_str(&resolved);
                         }
                     }
                 }

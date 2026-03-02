@@ -187,7 +187,15 @@ pub fn parse_eml_content(data: &[u8]) -> Result<EmailExtractionResult> {
 
     // Iterate over all body parts to capture content from multipart messages.
     // Also recurse into nested message/rfc822 parts (multipart/digest emails).
-    let plain_text = {
+    //
+    // Important: mail-parser's `body_text()` auto-converts HTML to plain text
+    // using a naive tag-stripping approach that does NOT remove <script> or
+    // <style> content. We only trust `body_text()` when the message has at
+    // least one genuine `text/plain` part (PartType::Text). For HTML-only
+    // emails we fall through to `clean_html_content()` which uses
+    // html-to-markdown-rs or regex-based stripping that properly handles scripts.
+    let has_genuine_text_part = has_genuine_text_body(&message);
+    let plain_text = if has_genuine_text_part {
         let mut all_text = Vec::new();
         let mut i = 0;
         while let Some(text) = message.body_text(i) {
@@ -201,6 +209,8 @@ pub fn parse_eml_content(data: &[u8]) -> Result<EmailExtractionResult> {
         } else {
             Some(all_text.join("\n\n"))
         }
+    } else {
+        None
     };
 
     let html_content = {
@@ -279,6 +289,25 @@ pub fn parse_eml_content(data: &[u8]) -> Result<EmailExtractionResult> {
         attachments,
         metadata,
     })
+}
+
+/// Check whether a message has at least one genuine `text/plain` body part.
+///
+/// `mail-parser`'s `body_text()` auto-converts HTML to plain text using a naive
+/// tag-stripper that doesn't remove `<script>` or `<style>` content. This helper
+/// inspects the actual `PartType` of each `text_body` entry to determine if a
+/// real `text/plain` part exists. For HTML-only messages (all text_body entries
+/// are `PartType::Html`), callers should use `clean_html_content()` instead.
+fn has_genuine_text_body(message: &mail_parser::Message<'_>) -> bool {
+    use mail_parser::PartType;
+    for &part_id in &message.text_body {
+        if let Some(part) = message.parts.get(part_id as usize)
+            && matches!(&part.body, PartType::Text(_))
+        {
+            return true;
+        }
+    }
+    false
 }
 
 /// Recursively collect plain text from nested `message/rfc822` sub-messages.
@@ -1306,5 +1335,87 @@ mod tests {
         let _ = script_regex();
         let _ = style_regex();
         let _ = whitespace_regex();
+    }
+
+    #[test]
+    fn test_clean_html_content_multiline_script() {
+        let html = r#"<html>
+<head>
+    <title>HTML Email</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { color: blue; }
+        .content { margin: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to Our Service</h1>
+    </div>
+
+    <div class="content">
+        <p>This email contains <strong>only HTML</strong> content.</p>
+
+        <p>It includes:</p>
+        <ul>
+            <li>HTML entities: &lt;, &gt;, &amp;, &quot;</li>
+            <li>Special characters: €, ©, ®</li>
+            <li>Formatting: <em>italic</em>, <strong>bold</strong></li>
+        </ul>
+
+        <p>The Rust implementation should clean this HTML and extract meaningful text.</p>
+
+        <script>
+            // This script should be removed during HTML cleaning
+            alert('Should not appear in extracted text');
+        </script>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Example Company</p>
+    </footer>
+</body>
+</html>"#;
+        let cleaned = clean_html_content(html);
+        assert!(
+            !cleaned.contains("script should be removed"),
+            "Script content leaked into output: {}",
+            cleaned
+        );
+        assert!(
+            !cleaned.contains("alert("),
+            "Script content leaked into output: {}",
+            cleaned
+        );
+        assert!(cleaned.contains("Welcome to Our Service"));
+    }
+
+    #[test]
+    fn test_html_only_eml_script_stripping() {
+        // Regression test: HTML-only emails must strip <script> content.
+        // mail-parser's body_text() auto-converts HTML to text via a naive
+        // tag-stripper that preserves script content. We must detect this
+        // case and use clean_html_content() instead.
+        let eml_data = std::fs::read(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../test_documents/email/html_only.eml"
+        ))
+        .expect("html_only.eml should exist");
+        let result = parse_eml_content(&eml_data).unwrap();
+        assert!(
+            !result.cleaned_text.contains("script should be removed"),
+            "Script content leaked into cleaned_text: {}",
+            result.cleaned_text
+        );
+        assert!(
+            !result.cleaned_text.contains("alert("),
+            "Script content leaked into cleaned_text: {}",
+            result.cleaned_text
+        );
+        assert!(
+            result.cleaned_text.contains("Welcome to Our Service"),
+            "Expected content missing from cleaned_text: {}",
+            result.cleaned_text
+        );
     }
 }
