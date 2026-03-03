@@ -472,7 +472,7 @@ public class ContractTest {
               result,
               Arrays.asList(
                   "application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
-          E2EHelpers.Assertions.assertElements(result, 1, Arrays.asList("NarrativeText"));
+          E2EHelpers.Assertions.assertElements(result, 1, Arrays.asList("narrative_text"));
         });
   }
 

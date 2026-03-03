@@ -535,7 +535,7 @@ fn test_config_element_types() {
         &result,
         &["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
     );
-    assertions::assert_elements(&result, Some(1), Some(&["NarrativeText"]));
+    assertions::assert_elements(&result, Some(1), Some(&["narrative_text"]));
 }
 
 #[test]

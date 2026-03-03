@@ -372,7 +372,7 @@ class ContractTest extends TestCase
         $result = $kreuzberg->extractFile($documentPath);
 
         Helpers::assertExpectedMime($result, ['application/vnd.openxmlformats-officedocument.wordprocessingml.document']);
-        Helpers::assertElements($result, 1, ['NarrativeText']);
+        Helpers::assertElements($result, 1, ['narrative_text']);
     }
 
     /**

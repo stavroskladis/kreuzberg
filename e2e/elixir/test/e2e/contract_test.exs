@@ -408,7 +408,7 @@ defmodule E2E.ContractTest do
           |> E2E.Helpers.assert_expected_mime([
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           ])
-          |> E2E.Helpers.assert_elements(min_count: 1, types_include: ["NarrativeText"])
+          |> E2E.Helpers.assert_elements(min_count: 1, types_include: ["narrative_text"])
 
         {:skipped, reason} ->
           IO.puts("SKIPPED: #{reason}")

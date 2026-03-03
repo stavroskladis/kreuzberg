@@ -305,7 +305,7 @@ def test_config_element_types() -> None:
     result = extract_file_sync(document_path, None, config)
 
     helpers.assert_expected_mime(result, ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"])
-    helpers.assert_elements(result, min_count=1, types_include=["NarrativeText"])
+    helpers.assert_elements(result, min_count=1, types_include=["narrative_text"])
     helpers.assert_result_format(result, "element_based")
 
 

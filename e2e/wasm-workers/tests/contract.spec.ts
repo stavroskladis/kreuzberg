@@ -435,7 +435,7 @@ describe("contract", () => {
 			return;
 		}
 		assertions.assertExpectedMime(result, ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]);
-		assertions.assertElements(result, 1, ["NarrativeText"]);
+		assertions.assertElements(result, 1, ["narrative_text"]);
 	});
 
 	it("config_force_ocr", async () => {

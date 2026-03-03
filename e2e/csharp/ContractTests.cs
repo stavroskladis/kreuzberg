@@ -257,7 +257,7 @@ namespace Kreuzberg.E2E.Contract
 
             var result = KreuzbergClient.ExtractFileSync(documentPath, config);
             TestHelpers.AssertExpectedMime(result, new[] { "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-            TestHelpers.AssertElements(result, 1, new[] { "NarrativeText" });
+            TestHelpers.AssertElements(result, 1, new[] { "narrative_text" });
         }
 
         [SkippableFact]

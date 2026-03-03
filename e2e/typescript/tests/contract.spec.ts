@@ -505,7 +505,7 @@ describe("contract fixtures", () => {
 			assertions.assertExpectedMime(result, [
 				"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 			]);
-			chunkAssertions.assertElements(result, 1, ["NarrativeText"]);
+			chunkAssertions.assertElements(result, 1, ["narrative_text"]);
 		},
 		TEST_TIMEOUT_MS,
 	);

@@ -321,16 +321,23 @@ pub mod assertions {
         if let Some(types) = types_include {
             for element_type in types {
                 let found = elements.iter().any(|el| {
-                    format!("{:?}", el.element_type)
-                        .to_lowercase()
-                        .contains(&element_type.to_lowercase())
+                    let serialized = serde_json::to_value(el.element_type)
+                        .ok()
+                        .and_then(|v| v.as_str().map(String::from))
+                        .unwrap_or_default();
+                    serialized.to_lowercase().contains(&element_type.to_lowercase())
                 });
                 assert!(
                     found,
                     "Expected elements to include type {element_type}, found {:?}",
                     elements
                         .iter()
-                        .map(|el| format!("{:?}", el.element_type))
+                        .map(|el| {
+                            serde_json::to_value(el.element_type)
+                                .ok()
+                                .and_then(|v| v.as_str().map(String::from))
+                                .unwrap_or_else(|| format!("{:?}", el.element_type))
+                        })
                         .collect::<Vec<_>>()
                 );
             }
