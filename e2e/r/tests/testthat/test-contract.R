@@ -188,6 +188,20 @@ test_that("config_djot_content", {
   assert_min_content_length(result, 10L)
 })
 
+test_that("config_djot_content_blocks", {
+  skip_if_feature_unavailable("pdf")
+  result <- run_fixture(
+    "config_djot_content_blocks",
+    "pdf/fake_memo.pdf",
+    list(output_format = "djot"),
+    requirements = c("pdf"),
+    notes = NULL,
+    skip_if_missing = TRUE
+  )
+  assert_expected_mime(result, c("application/pdf"))
+  assert_djot_content(result, has_content = TRUE, min_blocks = 1L)
+})
+
 test_that("config_document_structure", {
   result <- run_fixture(
     "config_document_structure",
@@ -212,6 +226,20 @@ test_that("config_document_structure_disabled", {
   )
   assert_expected_mime(result, c("application/pdf"))
   assert_document(result, has_document = FALSE)
+})
+
+test_that("config_document_structure_groups", {
+  skip_if_feature_unavailable("office")
+  result <- run_fixture(
+    "config_document_structure_groups",
+    "docx/unit_test_headers.docx",
+    list(include_document_structure = TRUE),
+    requirements = c("office"),
+    notes = NULL,
+    skip_if_missing = TRUE
+  )
+  assert_expected_mime(result, c("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+  assert_document(result, has_document = TRUE, has_groups = TRUE)
 })
 
 test_that("config_document_structure_headings", {
@@ -296,6 +324,20 @@ test_that("config_images", {
   assert_images(result, min_count = 1L)
 })
 
+test_that("config_images_with_formats", {
+  skip_if_feature_unavailable("office")
+  result <- run_fixture(
+    "config_images_with_formats",
+    "pptx/powerpoint_with_image.pptx",
+    list(images = list(extract_images = TRUE)),
+    requirements = c("office"),
+    notes = NULL,
+    skip_if_missing = TRUE
+  )
+  assert_expected_mime(result, c("application/vnd.openxmlformats-officedocument.presentationml.presentation"))
+  assert_images(result, min_count = 1L, formats_include = c("png"))
+})
+
 test_that("config_keywords", {
   skip_if_feature_unavailable("keywords-yake")
   result <- run_fixture(
@@ -355,6 +397,21 @@ test_that("config_pages", {
   assert_content_contains_any(result, c("PAGE"))
 })
 
+test_that("config_pages_exact_count", {
+  skip_if_feature_unavailable("pdf")
+  result <- run_fixture(
+    "config_pages_exact_count",
+    "pdf/multi_page.pdf",
+    list(pages = list(extract_pages = TRUE)),
+    requirements = c("pdf"),
+    notes = NULL,
+    skip_if_missing = TRUE
+  )
+  assert_expected_mime(result, c("application/pdf"))
+  assert_min_content_length(result, 10L)
+  assert_pages(result, min_count = 2L)
+})
+
 test_that("config_pages_extract", {
   skip_if_feature_unavailable("pdf")
   result <- run_fixture(
@@ -385,6 +442,20 @@ test_that("config_pages_markers", {
   assert_content_contains_any(result, c("PAGE"))
 })
 
+test_that("config_pdf_annotations_count", {
+  skip_if_feature_unavailable("pdf")
+  result <- run_fixture(
+    "config_pdf_annotations_count",
+    "vendored/pdfplumber/pdf/annotations.pdf",
+    list(pdf_options = list(extract_annotations = TRUE)),
+    requirements = c("pdf"),
+    notes = "PDFium ARM Linux binary does not support annotation extraction",
+    skip_if_missing = TRUE
+  )
+  assert_expected_mime(result, c("application/pdf"))
+  assert_annotations(result, has_annotations = TRUE, min_count = 3L)
+})
+
 test_that("config_pdf_hierarchy", {
   skip_if_feature_unavailable("pdf")
   result <- run_fixture(
@@ -399,6 +470,20 @@ test_that("config_pdf_hierarchy", {
   assert_min_content_length(result, 50L)
 })
 
+test_that("config_pdf_margins", {
+  skip_if_feature_unavailable("pdf")
+  result <- run_fixture(
+    "config_pdf_margins",
+    "pdf/fake_memo.pdf",
+    list(pdf_options = list(bottom_margin_fraction = 0.1, top_margin_fraction = 0.1)),
+    requirements = c("pdf"),
+    notes = NULL,
+    skip_if_missing = TRUE
+  )
+  assert_expected_mime(result, c("application/pdf"))
+  assert_min_content_length(result, 5L)
+})
+
 test_that("config_postprocessor", {
   result <- run_fixture(
     "config_postprocessor",
@@ -411,6 +496,20 @@ test_that("config_postprocessor", {
   assert_expected_mime(result, c("application/pdf"))
   assert_min_content_length(result, 10L)
   assert_content_not_empty(result)
+})
+
+test_that("config_processing_warnings_empty", {
+  result <- run_fixture(
+    "config_processing_warnings_empty",
+    "pdf/fake_memo.pdf",
+    NULL,
+    requirements = character(0),
+    notes = NULL,
+    skip_if_missing = TRUE
+  )
+  assert_expected_mime(result, c("application/pdf"))
+  assert_min_content_length(result, 10L)
+  assert_processing_warnings(result, is_empty = TRUE)
 })
 
 test_that("config_quality_disabled", {
@@ -442,6 +541,20 @@ test_that("config_quality_enabled", {
   assert_quality_score(result, has_score = TRUE, min_score = 0, max_score = 1)
 })
 
+test_that("config_quality_score_range", {
+  skip_if_feature_unavailable("quality")
+  result <- run_fixture(
+    "config_quality_score_range",
+    "pdf/fake_memo.pdf",
+    list(enable_quality_processing = TRUE),
+    requirements = c("quality"),
+    notes = NULL,
+    skip_if_missing = TRUE
+  )
+  assert_expected_mime(result, c("application/pdf"))
+  assert_quality_score(result, has_score = TRUE, min_score = 0.1)
+})
+
 test_that("config_structured_output", {
   skip_if_feature_unavailable("pdf")
   result <- run_fixture(
@@ -454,6 +567,20 @@ test_that("config_structured_output", {
   )
   assert_expected_mime(result, c("application/pdf"))
   assert_min_content_length(result, 10L)
+})
+
+test_that("config_tables_content", {
+  result <- run_fixture(
+    "config_tables_content",
+    "docx/docx_tables.docx",
+    NULL,
+    requirements = character(0),
+    notes = NULL,
+    skip_if_missing = TRUE
+  )
+  assert_expected_mime(result, c("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+  assert_table_count(result, minimum = 1L, maximum = NULL)
+  assert_table_content_contains_any(result, c("Header Col"))
 })
 
 test_that("config_use_cache_false", {

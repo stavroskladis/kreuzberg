@@ -5,6 +5,7 @@
 #
 # Tests for structured fixtures.
 
+# rubocop:disable Metrics/BlockLength
 require_relative 'spec_helper'
 
 RSpec.describe 'structured fixtures' do
@@ -22,6 +23,22 @@ RSpec.describe 'structured fixtures' do
         ['text/csv']
       )
       E2ERuby::Assertions.assert_min_content_length(result, 20)
+    end
+  end
+
+  it 'structured_enw_basic' do
+    E2ERuby.run_fixture(
+      'structured_enw_basic',
+      'data_formats/sample.enw',
+      nil,
+      requirements: [],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/x-endnote-refer', 'application/x-endnote+xml', 'text/plain']
+      )
     end
   end
 
@@ -61,6 +78,40 @@ RSpec.describe 'structured fixtures' do
     end
   end
 
+  it 'structured_nbib_basic' do
+    E2ERuby.run_fixture(
+      'structured_nbib_basic',
+      'data_formats/sample.nbib',
+      nil,
+      requirements: [],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/nbib', 'application/x-pubmed', 'text/plain']
+      )
+      E2ERuby::Assertions.assert_content_not_empty(result)
+    end
+  end
+
+  it 'structured_ris_basic' do
+    E2ERuby.run_fixture(
+      'structured_ris_basic',
+      'data_formats/sample.ris',
+      nil,
+      requirements: [],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/x-research-info-systems', 'text/plain']
+      )
+      E2ERuby::Assertions.assert_content_not_empty(result)
+    end
+  end
+
   it 'structured_toml_basic' do
     E2ERuby.run_fixture(
       'structured_toml_basic',
@@ -73,6 +124,23 @@ RSpec.describe 'structured fixtures' do
       E2ERuby::Assertions.assert_expected_mime(
         result,
         ['application/toml', 'text/toml']
+      )
+      E2ERuby::Assertions.assert_min_content_length(result, 10)
+    end
+  end
+
+  it 'structured_tsv_basic' do
+    E2ERuby.run_fixture(
+      'structured_tsv_basic',
+      'data_formats/employees.tsv',
+      nil,
+      requirements: [],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['text/tab-separated-values', 'text/plain']
       )
       E2ERuby::Assertions.assert_min_content_length(result, 10)
     end
@@ -112,3 +180,4 @@ RSpec.describe 'structured fixtures' do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

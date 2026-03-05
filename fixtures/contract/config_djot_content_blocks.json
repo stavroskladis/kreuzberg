@@ -1,0 +1,25 @@
+{
+	"id": "config_djot_content_blocks",
+	"description": "Tests djot output format produces djot_content with block assertions",
+	"tags": ["contract", "config", "djot"],
+	"document": {
+		"path": "pdf/fake_memo.pdf"
+	},
+	"extraction": {
+		"method": "sync",
+		"input_type": "file",
+		"config": {
+			"output_format": "djot"
+		}
+	},
+	"assertions": {
+		"expected_mime": "application/pdf",
+		"djot_content": {
+			"has_content": true,
+			"min_blocks": 1
+		}
+	},
+	"skip": {
+		"requires_feature": ["pdf"]
+	}
+}

@@ -125,6 +125,15 @@ func TestContractConfigDjotContent(t *testing.T) {
 	assertMinContentLength(t, result, 10)
 }
 
+func TestContractConfigDjotContentBlocks(t *testing.T) {
+	skipIfFeatureUnavailable(t, "pdf")
+	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
+"output_format": "djot"
+}`))
+	assertExpectedMime(t, result, []string{"application/pdf"})
+	assertDjotContent(t, result, boolPtr(true), intPtr(1))
+}
+
 func TestContractConfigDocumentStructure(t *testing.T) {
 	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
 "include_document_structure": true
@@ -137,6 +146,15 @@ func TestContractConfigDocumentStructureDisabled(t *testing.T) {
 	result := runExtraction(t, "pdf/fake_memo.pdf", nil)
 	assertExpectedMime(t, result, []string{"application/pdf"})
 	assertDocument(t, result, false, nil, nil, nil)
+}
+
+func TestContractConfigDocumentStructureGroups(t *testing.T) {
+	skipIfFeatureUnavailable(t, "office")
+	result := runExtraction(t, "docx/unit_test_headers.docx", []byte(`{
+"include_document_structure": true
+}`))
+	assertExpectedMime(t, result, []string{"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})
+	assertDocument(t, result, true, nil, nil, boolPtr(true))
 }
 
 func TestContractConfigDocumentStructureHeadings(t *testing.T) {
@@ -195,6 +213,17 @@ func TestContractConfigImages(t *testing.T) {
 	assertImages(t, result, intPtr(1), nil, nil)
 }
 
+func TestContractConfigImagesWithFormats(t *testing.T) {
+	skipIfFeatureUnavailable(t, "office")
+	result := runExtraction(t, "pptx/powerpoint_with_image.pptx", []byte(`{
+"images": {
+	"extract_images": true
+}
+}`))
+	assertExpectedMime(t, result, []string{"application/vnd.openxmlformats-officedocument.presentationml.presentation"})
+	assertImages(t, result, intPtr(1), nil, []string{"png"})
+}
+
 func TestContractConfigKeywords(t *testing.T) {
 	skipIfFeatureUnavailable(t, "keywords-yake")
 	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
@@ -245,6 +274,18 @@ func TestContractConfigPages(t *testing.T) {
 	assertContentContainsAny(t, result, []string{"PAGE"})
 }
 
+func TestContractConfigPagesExactCount(t *testing.T) {
+	skipIfFeatureUnavailable(t, "pdf")
+	result := runExtraction(t, "pdf/multi_page.pdf", []byte(`{
+"pages": {
+	"extract_pages": true
+}
+}`))
+	assertExpectedMime(t, result, []string{"application/pdf"})
+	assertMinContentLength(t, result, 10)
+	assertPages(t, result, intPtr(2), nil)
+}
+
 func TestContractConfigPagesExtract(t *testing.T) {
 	skipIfFeatureUnavailable(t, "pdf")
 	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
@@ -269,6 +310,17 @@ func TestContractConfigPagesMarkers(t *testing.T) {
 	assertContentContainsAny(t, result, []string{"PAGE"})
 }
 
+func TestContractConfigPdfAnnotationsCount(t *testing.T) {
+	skipIfFeatureUnavailable(t, "pdf")
+	result := runExtraction(t, "vendored/pdfplumber/pdf/annotations.pdf", []byte(`{
+"pdf_options": {
+	"extract_annotations": true
+}
+}`))
+	assertExpectedMime(t, result, []string{"application/pdf"})
+	assertAnnotations(t, result, true, intPtr(3))
+}
+
 func TestContractConfigPdfHierarchy(t *testing.T) {
 	skipIfFeatureUnavailable(t, "pdf")
 	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
@@ -286,6 +338,18 @@ func TestContractConfigPdfHierarchy(t *testing.T) {
 	assertMinContentLength(t, result, 50)
 }
 
+func TestContractConfigPdfMargins(t *testing.T) {
+	skipIfFeatureUnavailable(t, "pdf")
+	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
+"pdf_options": {
+	"bottom_margin_fraction": 0.1,
+	"top_margin_fraction": 0.1
+}
+}`))
+	assertExpectedMime(t, result, []string{"application/pdf"})
+	assertMinContentLength(t, result, 5)
+}
+
 func TestContractConfigPostprocessor(t *testing.T) {
 	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
 "postprocessor": {
@@ -295,6 +359,13 @@ func TestContractConfigPostprocessor(t *testing.T) {
 	assertExpectedMime(t, result, []string{"application/pdf"})
 	assertMinContentLength(t, result, 10)
 	assertContentNotEmpty(t, result)
+}
+
+func TestContractConfigProcessingWarningsEmpty(t *testing.T) {
+	result := runExtraction(t, "pdf/fake_memo.pdf", nil)
+	assertExpectedMime(t, result, []string{"application/pdf"})
+	assertMinContentLength(t, result, 10)
+	assertProcessingWarnings(t, result, nil, boolPtr(true))
 }
 
 func TestContractConfigQualityDisabled(t *testing.T) {
@@ -316,6 +387,15 @@ func TestContractConfigQualityEnabled(t *testing.T) {
 	assertQualityScore(t, result, boolPtr(true), floatPtr(0), floatPtr(1))
 }
 
+func TestContractConfigQualityScoreRange(t *testing.T) {
+	skipIfFeatureUnavailable(t, "quality")
+	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
+"enable_quality_processing": true
+}`))
+	assertExpectedMime(t, result, []string{"application/pdf"})
+	assertQualityScore(t, result, boolPtr(true), floatPtr(0.1), nil)
+}
+
 func TestContractConfigStructuredOutput(t *testing.T) {
 	skipIfFeatureUnavailable(t, "pdf")
 	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
@@ -323,6 +403,13 @@ func TestContractConfigStructuredOutput(t *testing.T) {
 }`))
 	assertExpectedMime(t, result, []string{"application/pdf"})
 	assertMinContentLength(t, result, 10)
+}
+
+func TestContractConfigTablesContent(t *testing.T) {
+	result := runExtraction(t, "docx/docx_tables.docx", nil)
+	assertExpectedMime(t, result, []string{"application/vnd.openxmlformats-officedocument.wordprocessingml.document"})
+	assertTableCount(t, result, intPtr(1), nil)
+	assertTableContentContainsAny(t, result, []string{"Header Col"})
 }
 
 func TestContractConfigUseCacheFalse(t *testing.T) {

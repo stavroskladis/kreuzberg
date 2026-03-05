@@ -233,6 +233,21 @@ def test_config_djot_content() -> None:
     helpers.assert_output_format(result, "djot")
 
 
+def test_config_djot_content_blocks() -> None:
+    """Tests djot output format produces djot_content with block assertions"""
+
+    document_path = helpers.resolve_document("pdf/fake_memo.pdf")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_djot_content_blocks: missing document at {document_path}")
+
+    config = helpers.build_config({"output_format": "djot"})
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_expected_mime(result, ["application/pdf"])
+    helpers.assert_djot_content(result, has_content=True, min_blocks=1)
+
+
 def test_config_document_structure() -> None:
     """Tests include_document_structure config produces document tree"""
 
@@ -261,6 +276,21 @@ def test_config_document_structure_disabled() -> None:
 
     helpers.assert_expected_mime(result, ["application/pdf"])
     helpers.assert_document(result, has_document=False)
+
+
+def test_config_document_structure_groups() -> None:
+    """Tests document structure extraction with group node assertion on DOCX with headings"""
+
+    document_path = helpers.resolve_document("docx/unit_test_headers.docx")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_document_structure_groups: missing document at {document_path}")
+
+    config = helpers.build_config({"include_document_structure": True})
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_expected_mime(result, ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"])
+    helpers.assert_document(result, has_document=True, has_groups=True)
 
 
 def test_config_document_structure_headings() -> None:
@@ -355,6 +385,21 @@ def test_config_images() -> None:
     helpers.assert_images(result, min_count=1)
 
 
+def test_config_images_with_formats() -> None:
+    """Tests image extraction with format assertion on PPTX containing images"""
+
+    document_path = helpers.resolve_document("pptx/powerpoint_with_image.pptx")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_images_with_formats: missing document at {document_path}")
+
+    config = helpers.build_config({"images": {"extract_images": True}})
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_expected_mime(result, ["application/vnd.openxmlformats-officedocument.presentationml.presentation"])
+    helpers.assert_images(result, min_count=1, formats_include=["png"])
+
+
 def test_config_keywords() -> None:
     """Tests keyword extraction via YAKE algorithm"""
 
@@ -419,6 +464,22 @@ def test_config_pages() -> None:
     helpers.assert_content_contains_any(result, ["PAGE"])
 
 
+def test_config_pages_exact_count() -> None:
+    """Tests page extraction with exact page count assertion on multi-page PDF"""
+
+    document_path = helpers.resolve_document("pdf/multi_page.pdf")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_pages_exact_count: missing document at {document_path}")
+
+    config = helpers.build_config({"pages": {"extract_pages": True}})
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_expected_mime(result, ["application/pdf"])
+    helpers.assert_min_content_length(result, 10)
+    helpers.assert_pages(result, min_count=2)
+
+
 def test_config_pages_extract() -> None:
     """Tests page extraction config producing per-page content array"""
 
@@ -451,6 +512,21 @@ def test_config_pages_markers() -> None:
     helpers.assert_content_contains_any(result, ["PAGE"])
 
 
+def test_config_pdf_annotations_count() -> None:
+    """Tests PDF annotation extraction with min_count assertion"""
+
+    document_path = helpers.resolve_document("vendored/pdfplumber/pdf/annotations.pdf")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_pdf_annotations_count: missing document at {document_path}")
+
+    config = helpers.build_config({"pdf_options": {"extract_annotations": True}})
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_expected_mime(result, ["application/pdf"])
+    helpers.assert_annotations(result, has_annotations=True, min_count=3)
+
+
 def test_config_pdf_hierarchy() -> None:
     """Tests PDF hierarchy extraction config with block-level structure"""
 
@@ -468,6 +544,21 @@ def test_config_pdf_hierarchy() -> None:
     helpers.assert_min_content_length(result, 50)
 
 
+def test_config_pdf_margins() -> None:
+    """Tests PDF margin exclusion configuration"""
+
+    document_path = helpers.resolve_document("pdf/fake_memo.pdf")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_pdf_margins: missing document at {document_path}")
+
+    config = helpers.build_config({"pdf_options": {"bottom_margin_fraction": 0.1, "top_margin_fraction": 0.1}})
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_expected_mime(result, ["application/pdf"])
+    helpers.assert_min_content_length(result, 5)
+
+
 def test_config_postprocessor() -> None:
     """Tests postprocessor config is accepted and extraction succeeds"""
 
@@ -482,6 +573,22 @@ def test_config_postprocessor() -> None:
     helpers.assert_expected_mime(result, ["application/pdf"])
     helpers.assert_min_content_length(result, 10)
     helpers.assert_content_not_empty(result)
+
+
+def test_config_processing_warnings_empty() -> None:
+    """Tests that a clean PDF extraction produces no processing warnings"""
+
+    document_path = helpers.resolve_document("pdf/fake_memo.pdf")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_processing_warnings_empty: missing document at {document_path}")
+
+    config = helpers.build_config(None)
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_expected_mime(result, ["application/pdf"])
+    helpers.assert_min_content_length(result, 10)
+    helpers.assert_processing_warnings(result, is_empty=True)
 
 
 def test_config_quality_disabled() -> None:
@@ -516,6 +623,21 @@ def test_config_quality_enabled() -> None:
     helpers.assert_quality_score(result, has_score=True, min_score=0, max_score=1)
 
 
+def test_config_quality_score_range() -> None:
+    """Tests quality scoring produces a score with minimum bound assertion"""
+
+    document_path = helpers.resolve_document("pdf/fake_memo.pdf")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_quality_score_range: missing document at {document_path}")
+
+    config = helpers.build_config({"enable_quality_processing": True})
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_expected_mime(result, ["application/pdf"])
+    helpers.assert_quality_score(result, has_score=True, min_score=0.1)
+
+
 def test_config_structured_output() -> None:
     """Tests structured (JSON) output format config"""
 
@@ -530,6 +652,22 @@ def test_config_structured_output() -> None:
     helpers.assert_expected_mime(result, ["application/pdf"])
     helpers.assert_min_content_length(result, 10)
     helpers.assert_output_format(result, "structured")
+
+
+def test_config_tables_content() -> None:
+    """Tests table extraction with content_contains_any assertion on DOCX with tables"""
+
+    document_path = helpers.resolve_document("docx/docx_tables.docx")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_tables_content: missing document at {document_path}")
+
+    config = helpers.build_config(None)
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_expected_mime(result, ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"])
+    helpers.assert_table_count(result, 1, None)
+    helpers.assert_table_content_contains_any(result, ["Header Col"])
 
 
 def test_config_use_cache_false() -> None:

@@ -5,6 +5,7 @@
 #
 # Tests for embeddings fixtures.
 
+# rubocop:disable Metrics/BlockLength
 require_relative 'spec_helper'
 
 RSpec.describe 'embeddings fixtures' do
@@ -88,3 +89,4 @@ RSpec.describe 'embeddings fixtures' do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

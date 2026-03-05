@@ -273,6 +273,26 @@ Deno.test("config_djot_content", { permissions: { read: true, net: true } }, asy
 	assertions.assertMinContentLength(result, 10);
 });
 
+Deno.test("config_djot_content_blocks", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig({ output_format: "djot" });
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("pdf/fake_memo.pdf");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/octet-stream", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "config_djot_content_blocks", ["pdf"], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["application/pdf"]);
+	assertions.assertDjotContent(result, true, 1);
+});
+
 Deno.test("config_document_structure", { permissions: { read: true, net: true } }, async () => {
 	const config = buildConfig({ include_document_structure: true });
 	let result: ExtractionResult | null = null;
@@ -311,6 +331,26 @@ Deno.test("config_document_structure_disabled", { permissions: { read: true, net
 	}
 	assertions.assertExpectedMime(result, ["application/pdf"]);
 	assertions.assertDocument(result, false, null, null, null);
+});
+
+Deno.test("config_document_structure_groups", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig({ include_document_structure: true });
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("docx/unit_test_headers.docx");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/octet-stream", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "config_document_structure_groups", ["office"], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]);
+	assertions.assertDocument(result, true, null, null, true);
 });
 
 Deno.test("config_document_structure_headings", { permissions: { read: true, net: true } }, async () => {
@@ -434,6 +474,26 @@ Deno.test("config_images", { permissions: { read: true, net: true } }, async () 
 	assertions.assertImages(result, 1, null, null);
 });
 
+Deno.test("config_images_with_formats", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig({ images: { extract_images: true } });
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("pptx/powerpoint_with_image.pptx");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/octet-stream", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "config_images_with_formats", ["office"], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["application/vnd.openxmlformats-officedocument.presentationml.presentation"]);
+	assertions.assertImages(result, 1, null, ["png"]);
+});
+
 Deno.test("config_language_detection", { permissions: { read: true, net: true } }, async () => {
 	const config = buildConfig({ language_detection: { enabled: true } });
 	let result: ExtractionResult | null = null;
@@ -497,6 +557,27 @@ Deno.test("config_pages", { permissions: { read: true, net: true } }, async () =
 	assertions.assertContentContainsAny(result, ["PAGE"]);
 });
 
+Deno.test("config_pages_exact_count", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig({ pages: { extract_pages: true } });
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("pdf/multi_page.pdf");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/octet-stream", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "config_pages_exact_count", ["pdf"], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["application/pdf"]);
+	assertions.assertMinContentLength(result, 10);
+	assertions.assertPages(result, 2, null);
+});
+
 Deno.test("config_pages_extract", { permissions: { read: true, net: true } }, async () => {
 	const config = buildConfig({ pages: { extract_pages: true } });
 	let result: ExtractionResult | null = null;
@@ -539,6 +620,33 @@ Deno.test("config_pages_markers", { permissions: { read: true, net: true } }, as
 	assertions.assertContentContainsAny(result, ["PAGE"]);
 });
 
+Deno.test("config_pdf_annotations_count", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig({ pdf_options: { extract_annotations: true } });
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("vendored/pdfplumber/pdf/annotations.pdf");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/octet-stream", config);
+	} catch (error) {
+		if (
+			shouldSkipFixture(
+				error,
+				"config_pdf_annotations_count",
+				["pdf"],
+				"PDFium ARM Linux binary does not support annotation extraction",
+			)
+		) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["application/pdf"]);
+	assertions.assertAnnotations(result, true, 3);
+});
+
 Deno.test("config_pdf_hierarchy", { permissions: { read: true, net: true } }, async () => {
 	const config = buildConfig({
 		pages: { extract_pages: true },
@@ -562,6 +670,26 @@ Deno.test("config_pdf_hierarchy", { permissions: { read: true, net: true } }, as
 	assertions.assertMinContentLength(result, 50);
 });
 
+Deno.test("config_pdf_margins", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig({ pdf_options: { bottom_margin_fraction: 0.1, top_margin_fraction: 0.1 } });
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("pdf/fake_memo.pdf");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/octet-stream", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "config_pdf_margins", ["pdf"], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["application/pdf"]);
+	assertions.assertMinContentLength(result, 5);
+});
+
 Deno.test("config_postprocessor", { permissions: { read: true, net: true } }, async () => {
 	const config = buildConfig({ postprocessor: { enabled: true } });
 	let result: ExtractionResult | null = null;
@@ -581,6 +709,27 @@ Deno.test("config_postprocessor", { permissions: { read: true, net: true } }, as
 	assertions.assertExpectedMime(result, ["application/pdf"]);
 	assertions.assertMinContentLength(result, 10);
 	assertions.assertContentNotEmpty(result);
+});
+
+Deno.test("config_processing_warnings_empty", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig(undefined);
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("pdf/fake_memo.pdf");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/octet-stream", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "config_processing_warnings_empty", [], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["application/pdf"]);
+	assertions.assertMinContentLength(result, 10);
+	assertions.assertProcessingWarnings(result, null, true);
 });
 
 Deno.test("config_quality_disabled", { permissions: { read: true, net: true } }, async () => {
@@ -625,6 +774,26 @@ Deno.test("config_quality_enabled", { permissions: { read: true, net: true } }, 
 	assertions.assertQualityScore(result, true, 0, 1);
 });
 
+Deno.test("config_quality_score_range", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig({ enable_quality_processing: true });
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("pdf/fake_memo.pdf");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/octet-stream", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "config_quality_score_range", ["quality"], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["application/pdf"]);
+	assertions.assertQualityScore(result, true, 0.1, null);
+});
+
 Deno.test("config_structured_output", { permissions: { read: true, net: true } }, async () => {
 	const config = buildConfig({ output_format: "structured" });
 	let result: ExtractionResult | null = null;
@@ -643,6 +812,30 @@ Deno.test("config_structured_output", { permissions: { read: true, net: true } }
 	}
 	assertions.assertExpectedMime(result, ["application/pdf"]);
 	assertions.assertMinContentLength(result, 10);
+});
+
+Deno.test("config_tables_content", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig(undefined);
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("docx/docx_tables.docx");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/octet-stream", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "config_tables_content", [], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]);
+	// Table and bounding box assertions require OCR feature for PDF table extraction
+	if (result.tables.length > 0) {
+		assertions.assertTableCount(result, 1, null);
+		assertions.assertTableContentContainsAny(result, ["Header Col"]);
+	}
 });
 
 Deno.test("config_use_cache_false", { permissions: { read: true, net: true } }, async () => {

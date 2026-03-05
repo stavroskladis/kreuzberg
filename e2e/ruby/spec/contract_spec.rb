@@ -5,6 +5,7 @@
 #
 # Tests for contract fixtures.
 
+# rubocop:disable Metrics/BlockLength
 require_relative 'spec_helper'
 
 RSpec.describe 'contract fixtures' do
@@ -240,6 +241,24 @@ RSpec.describe 'contract fixtures' do
     end
   end
 
+  it 'config_djot_content_blocks' do
+    E2ERuby.skip_if_feature_unavailable('pdf')
+    E2ERuby.run_fixture(
+      'config_djot_content_blocks',
+      'pdf/fake_memo.pdf',
+      { output_format: 'djot' },
+      requirements: %w[pdf],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/pdf']
+      )
+      E2ERuby::Assertions.assert_djot_content(result, has_content: true, min_blocks: 1)
+    end
+  end
+
   it 'config_document_structure' do
     E2ERuby.run_fixture(
       'config_document_structure',
@@ -272,6 +291,24 @@ RSpec.describe 'contract fixtures' do
         ['application/pdf']
       )
       E2ERuby::Assertions.assert_document(result, has_document: false)
+    end
+  end
+
+  it 'config_document_structure_groups' do
+    E2ERuby.skip_if_feature_unavailable('office')
+    E2ERuby.run_fixture(
+      'config_document_structure_groups',
+      'docx/unit_test_headers.docx',
+      { include_document_structure: true },
+      requirements: %w[office],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+      )
+      E2ERuby::Assertions.assert_document(result, has_document: true, has_groups: true)
     end
   end
 
@@ -382,6 +419,24 @@ RSpec.describe 'contract fixtures' do
     end
   end
 
+  it 'config_images_with_formats' do
+    E2ERuby.skip_if_feature_unavailable('office')
+    E2ERuby.run_fixture(
+      'config_images_with_formats',
+      'pptx/powerpoint_with_image.pptx',
+      { images: { extract_images: true } },
+      requirements: %w[office],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/vnd.openxmlformats-officedocument.presentationml.presentation']
+      )
+      E2ERuby::Assertions.assert_images(result, min_count: 1, formats_include: %w[png])
+    end
+  end
+
   it 'config_keywords' do
     E2ERuby.skip_if_feature_unavailable('keywords-yake')
     E2ERuby.run_fixture(
@@ -457,6 +512,25 @@ RSpec.describe 'contract fixtures' do
     end
   end
 
+  it 'config_pages_exact_count' do
+    E2ERuby.skip_if_feature_unavailable('pdf')
+    E2ERuby.run_fixture(
+      'config_pages_exact_count',
+      'pdf/multi_page.pdf',
+      { pages: { extract_pages: true } },
+      requirements: %w[pdf],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/pdf']
+      )
+      E2ERuby::Assertions.assert_min_content_length(result, 10)
+      E2ERuby::Assertions.assert_pages(result, min_count: 2)
+    end
+  end
+
   it 'config_pages_extract' do
     E2ERuby.skip_if_feature_unavailable('pdf')
     E2ERuby.run_fixture(
@@ -495,6 +569,24 @@ RSpec.describe 'contract fixtures' do
     end
   end
 
+  it 'config_pdf_annotations_count' do
+    E2ERuby.skip_if_feature_unavailable('pdf')
+    E2ERuby.run_fixture(
+      'config_pdf_annotations_count',
+      'vendored/pdfplumber/pdf/annotations.pdf',
+      { pdf_options: { extract_annotations: true } },
+      requirements: %w[pdf],
+      notes: 'PDFium ARM Linux binary does not support annotation extraction',
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/pdf']
+      )
+      E2ERuby::Assertions.assert_annotations(result, has_annotations: true, min_count: 3)
+    end
+  end
+
   it 'config_pdf_hierarchy' do
     E2ERuby.skip_if_feature_unavailable('pdf')
     E2ERuby.run_fixture(
@@ -513,6 +605,24 @@ RSpec.describe 'contract fixtures' do
     end
   end
 
+  it 'config_pdf_margins' do
+    E2ERuby.skip_if_feature_unavailable('pdf')
+    E2ERuby.run_fixture(
+      'config_pdf_margins',
+      'pdf/fake_memo.pdf',
+      { pdf_options: { bottom_margin_fraction: 0.1, top_margin_fraction: 0.1 } },
+      requirements: %w[pdf],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/pdf']
+      )
+      E2ERuby::Assertions.assert_min_content_length(result, 5)
+    end
+  end
+
   it 'config_postprocessor' do
     E2ERuby.run_fixture(
       'config_postprocessor',
@@ -528,6 +638,24 @@ RSpec.describe 'contract fixtures' do
       )
       E2ERuby::Assertions.assert_min_content_length(result, 10)
       E2ERuby::Assertions.assert_content_not_empty(result)
+    end
+  end
+
+  it 'config_processing_warnings_empty' do
+    E2ERuby.run_fixture(
+      'config_processing_warnings_empty',
+      'pdf/fake_memo.pdf',
+      nil,
+      requirements: [],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/pdf']
+      )
+      E2ERuby::Assertions.assert_min_content_length(result, 10)
+      E2ERuby::Assertions.assert_processing_warnings(result, is_empty: true)
     end
   end
 
@@ -568,6 +696,24 @@ RSpec.describe 'contract fixtures' do
     end
   end
 
+  it 'config_quality_score_range' do
+    E2ERuby.skip_if_feature_unavailable('quality')
+    E2ERuby.run_fixture(
+      'config_quality_score_range',
+      'pdf/fake_memo.pdf',
+      { enable_quality_processing: true },
+      requirements: %w[quality],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/pdf']
+      )
+      E2ERuby::Assertions.assert_quality_score(result, has_score: true, min_score: 0.1)
+    end
+  end
+
   it 'config_structured_output' do
     E2ERuby.skip_if_feature_unavailable('pdf')
     E2ERuby.run_fixture(
@@ -583,6 +729,24 @@ RSpec.describe 'contract fixtures' do
         ['application/pdf']
       )
       E2ERuby::Assertions.assert_min_content_length(result, 10)
+    end
+  end
+
+  it 'config_tables_content' do
+    E2ERuby.run_fixture(
+      'config_tables_content',
+      'docx/docx_tables.docx',
+      nil,
+      requirements: [],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+      )
+      E2ERuby::Assertions.assert_table_count(result, 1, nil)
+      E2ERuby::Assertions.assert_table_content_contains_any(result, ['Header Col'])
     end
   end
 
@@ -724,3 +888,4 @@ RSpec.describe 'contract fixtures' do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

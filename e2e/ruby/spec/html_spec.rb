@@ -5,6 +5,7 @@
 #
 # Tests for html fixtures.
 
+# rubocop:disable Metrics/BlockLength
 require_relative 'spec_helper'
 
 RSpec.describe 'html fixtures' do
@@ -45,3 +46,4 @@ RSpec.describe 'html fixtures' do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

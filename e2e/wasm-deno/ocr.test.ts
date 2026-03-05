@@ -163,6 +163,30 @@ Deno.test("ocr_tesseract_elements", { permissions: { read: true, net: true } }, 
 	assertions.assertOcrElements(result, true, true, true, null);
 });
 
+Deno.test("ocr_tesseract_elements_min_count", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig({
+		force_ocr: true,
+		ocr: { backend: "tesseract", element_config: { include_elements: true, min_level: "line" }, language: "eng" },
+	});
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("images/test_hello_world.png");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "image/png", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "ocr_tesseract_elements_min_count", ["tesseract"], "Requires Tesseract OCR backend")) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["image/png"]);
+	assertions.assertMinContentLength(result, 5);
+	assertions.assertOcrElements(result, true, null, null, 1);
+});
+
 Deno.test("ocr_tesseract_language_german", { permissions: { read: true, net: true } }, async () => {
 	const config = buildConfig({ force_ocr: true, ocr: { backend: "tesseract", language: "deu" } });
 	let result: ExtractionResult | null = null;

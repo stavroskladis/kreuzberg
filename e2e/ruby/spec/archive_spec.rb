@@ -5,9 +5,27 @@
 #
 # Tests for archive fixtures.
 
+# rubocop:disable Metrics/BlockLength
 require_relative 'spec_helper'
 
 RSpec.describe 'archive fixtures' do
+  it 'archive_gz_basic' do
+    E2ERuby.run_fixture(
+      'archive_gz_basic',
+      'archives/book_war_and_peace_1p.txt.gz',
+      nil,
+      requirements: [],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_expected_mime(
+        result,
+        ['application/gzip', 'application/x-gzip']
+      )
+      E2ERuby::Assertions.assert_min_content_length(result, 10)
+    end
+  end
+
   it 'archive_sevenz_basic' do
     E2ERuby.run_fixture(
       'archive_sevenz_basic',
@@ -59,3 +77,4 @@ RSpec.describe 'archive fixtures' do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength

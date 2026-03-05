@@ -186,6 +186,15 @@ static void test_contract_config_djot_content(void) {
     kreuzberg_free_result(result);
 }
 
+static void test_contract_config_djot_content_blocks(void) {
+    if (skip_if_feature_unavailable("pdf")) return;
+    CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"output_format\":\"djot\"}");
+    if (!result) return; /* skipped */
+    assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
+    assert_djot_content(result, 1, 1, 1, 1);
+    kreuzberg_free_result(result);
+}
+
 static void test_contract_config_document_structure(void) {
     CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"include_document_structure\":true}");
     if (!result) return; /* skipped */
@@ -199,6 +208,15 @@ static void test_contract_config_document_structure_disabled(void) {
     if (!result) return; /* skipped */
     assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
     assert_document(result, 0, 0, 0);
+    kreuzberg_free_result(result);
+}
+
+static void test_contract_config_document_structure_groups(void) {
+    if (skip_if_feature_unavailable("office")) return;
+    CExtractionResult *result = run_extraction("docx/unit_test_headers.docx", "{\"include_document_structure\":true}");
+    if (!result) return; /* skipped */
+    assert_expected_mime(result, (const char *[]){"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}, 1);
+    assert_document(result, 1, 0, 0);
     kreuzberg_free_result(result);
 }
 
@@ -254,6 +272,15 @@ static void test_contract_config_images(void) {
     kreuzberg_free_result(result);
 }
 
+static void test_contract_config_images_with_formats(void) {
+    if (skip_if_feature_unavailable("office")) return;
+    CExtractionResult *result = run_extraction("pptx/powerpoint_with_image.pptx", "{\"images\":{\"extract_images\":true}}");
+    if (!result) return; /* skipped */
+    assert_expected_mime(result, (const char *[]){"application/vnd.openxmlformats-officedocument.presentationml.presentation"}, 1);
+    assert_images(result, 1, 1, 0, 0);
+    kreuzberg_free_result(result);
+}
+
 static void test_contract_config_keywords(void) {
     if (skip_if_feature_unavailable("keywords-yake")) return;
     CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"keywords\":{\"algorithm\":\"yake\",\"max_keywords\":10}}");
@@ -293,6 +320,16 @@ static void test_contract_config_pages(void) {
     kreuzberg_free_result(result);
 }
 
+static void test_contract_config_pages_exact_count(void) {
+    if (skip_if_feature_unavailable("pdf")) return;
+    CExtractionResult *result = run_extraction("pdf/multi_page.pdf", "{\"pages\":{\"extract_pages\":true}}");
+    if (!result) return; /* skipped */
+    assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
+    assert_min_content_length(result, 10);
+    assert_pages(result, 1, 2, 0, 0);
+    kreuzberg_free_result(result);
+}
+
 static void test_contract_config_pages_extract(void) {
     if (skip_if_feature_unavailable("pdf")) return;
     CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"pages\":{\"extract_pages\":true}}");
@@ -313,6 +350,15 @@ static void test_contract_config_pages_markers(void) {
     kreuzberg_free_result(result);
 }
 
+static void test_contract_config_pdf_annotations_count(void) {
+    if (skip_if_feature_unavailable("pdf")) return;
+    CExtractionResult *result = run_extraction("vendored/pdfplumber/pdf/annotations.pdf", "{\"pdf_options\":{\"extract_annotations\":true}}");
+    if (!result) return; /* skipped */
+    assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
+    assert_annotations(result, 1, 1, 3);
+    kreuzberg_free_result(result);
+}
+
 static void test_contract_config_pdf_hierarchy(void) {
     if (skip_if_feature_unavailable("pdf")) return;
     CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"pages\":{\"extract_pages\":true},\"pdf_options\":{\"hierarchy\":{\"enabled\":true,\"include_bbox\":true}}}");
@@ -322,12 +368,30 @@ static void test_contract_config_pdf_hierarchy(void) {
     kreuzberg_free_result(result);
 }
 
+static void test_contract_config_pdf_margins(void) {
+    if (skip_if_feature_unavailable("pdf")) return;
+    CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"pdf_options\":{\"bottom_margin_fraction\":0.1,\"top_margin_fraction\":0.1}}");
+    if (!result) return; /* skipped */
+    assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
+    assert_min_content_length(result, 5);
+    kreuzberg_free_result(result);
+}
+
 static void test_contract_config_postprocessor(void) {
     CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"postprocessor\":{\"enabled\":true}}");
     if (!result) return; /* skipped */
     assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
     assert_min_content_length(result, 10);
     assert_content_not_empty(result);
+    kreuzberg_free_result(result);
+}
+
+static void test_contract_config_processing_warnings_empty(void) {
+    CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", NULL);
+    if (!result) return; /* skipped */
+    assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
+    assert_min_content_length(result, 10);
+    assert_processing_warnings(result, 0, 0, 1, 1);
     kreuzberg_free_result(result);
 }
 
@@ -350,12 +414,29 @@ static void test_contract_config_quality_enabled(void) {
     kreuzberg_free_result(result);
 }
 
+static void test_contract_config_quality_score_range(void) {
+    if (skip_if_feature_unavailable("quality")) return;
+    CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"enable_quality_processing\":true}");
+    if (!result) return; /* skipped */
+    assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
+    assert_quality_score(result, 1, 1, 1, 0.1, 0, 0);
+    kreuzberg_free_result(result);
+}
+
 static void test_contract_config_structured_output(void) {
     if (skip_if_feature_unavailable("pdf")) return;
     CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"output_format\":\"structured\"}");
     if (!result) return; /* skipped */
     assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
     assert_min_content_length(result, 10);
+    kreuzberg_free_result(result);
+}
+
+static void test_contract_config_tables_content(void) {
+    CExtractionResult *result = run_extraction("docx/docx_tables.docx", NULL);
+    if (!result) return; /* skipped */
+    assert_expected_mime(result, (const char *[]){"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}, 1);
+    assert_table_count(result, 1, 1, 0, 0);
     kreuzberg_free_result(result);
 }
 
@@ -436,25 +517,34 @@ int main(void) {
     test_contract_config_chunking_markdown();
     test_contract_config_chunking_small();
     test_contract_config_djot_content();
+    test_contract_config_djot_content_blocks();
     test_contract_config_document_structure();
     test_contract_config_document_structure_disabled();
+    test_contract_config_document_structure_groups();
     test_contract_config_document_structure_headings();
     test_contract_config_document_structure_with_headings();
     test_contract_config_element_types();
     test_contract_config_force_ocr();
     test_contract_config_html_options();
     test_contract_config_images();
+    test_contract_config_images_with_formats();
     test_contract_config_keywords();
     test_contract_config_language_detection();
     test_contract_config_language_multi();
     test_contract_config_pages();
+    test_contract_config_pages_exact_count();
     test_contract_config_pages_extract();
     test_contract_config_pages_markers();
+    test_contract_config_pdf_annotations_count();
     test_contract_config_pdf_hierarchy();
+    test_contract_config_pdf_margins();
     test_contract_config_postprocessor();
+    test_contract_config_processing_warnings_empty();
     test_contract_config_quality_disabled();
     test_contract_config_quality_enabled();
+    test_contract_config_quality_score_range();
     test_contract_config_structured_output();
+    test_contract_config_tables_content();
     test_contract_config_use_cache_false();
     test_contract_output_format_bytes_markdown();
     test_contract_output_format_djot();

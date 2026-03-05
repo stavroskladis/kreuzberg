@@ -38,6 +38,26 @@ Deno.test("office_bibtex_basic", { permissions: { read: true, net: true } }, asy
 	assertions.assertMinContentLength(result, 10);
 });
 
+Deno.test("office_commonmark_basic", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig(undefined);
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("markdown/sample.commonmark");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "text/markdown", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "office_commonmark_basic", [], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, ["text/markdown", "text/plain", "text/x-commonmark"]);
+	assertions.assertMinContentLength(result, 5);
+});
+
 Deno.test("office_djot_basic", { permissions: { read: true, net: true } }, async () => {
 	const config = buildConfig(undefined);
 	let result: ExtractionResult | null = null;
@@ -661,6 +681,29 @@ Deno.test("office_ppt_legacy", { permissions: { read: true, net: true } }, async
 	assertions.assertMinContentLength(result, 10);
 });
 
+Deno.test("office_pptm_basic", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig(undefined);
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("pptx/powerpoint_with_image.pptm");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/vnd.ms-powerpoint.presentation.macroEnabled.12", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "office_pptm_basic", [], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, [
+		"application/vnd.ms-powerpoint.presentation.macroEnabled.12",
+		"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+	]);
+	assertions.assertContentNotEmpty(result);
+});
+
 Deno.test("office_pptx_basic", { permissions: { read: true, net: true } }, async () => {
 	const config = buildConfig(undefined);
 	let result: ExtractionResult | null = null;
@@ -811,6 +854,52 @@ Deno.test("office_xls_legacy", { permissions: { read: true, net: true } }, async
 	}
 	assertions.assertExpectedMime(result, ["application/vnd.ms-excel"]);
 	assertions.assertMinContentLength(result, 10);
+});
+
+Deno.test("office_xlsb_basic", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig(undefined);
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("xlsx/test_xlsb.xlsb");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/vnd.ms-excel.sheet.binary.macroEnabled.12", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "office_xlsb_basic", [], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, [
+		"application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	]);
+	assertions.assertContentNotEmpty(result);
+});
+
+Deno.test("office_xlsm_basic", { permissions: { read: true, net: true } }, async () => {
+	const config = buildConfig(undefined);
+	let result: ExtractionResult | null = null;
+	try {
+		const documentBytes = await resolveDocument("xlsx/test_01.xlsm");
+		// Sync file extraction - WASM uses extractBytes with pre-read bytes
+		result = await extractBytes(documentBytes, "application/vnd.ms-excel.sheet.macroEnabled.12", config);
+	} catch (error) {
+		if (shouldSkipFixture(error, "office_xlsm_basic", [], undefined)) {
+			return;
+		}
+		throw error;
+	}
+	if (result === null) {
+		return;
+	}
+	assertions.assertExpectedMime(result, [
+		"application/vnd.ms-excel.sheet.macroEnabled.12",
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	]);
+	assertions.assertContentNotEmpty(result);
 });
 
 Deno.test("office_xlsx_basic", { permissions: { read: true, net: true } }, async () => {
