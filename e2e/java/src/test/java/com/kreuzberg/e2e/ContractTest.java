@@ -330,7 +330,25 @@ public class ContractTest {
         result -> {
           E2EHelpers.Assertions.assertExpectedMime(result, Arrays.asList("application/pdf"));
           E2EHelpers.Assertions.assertMinContentLength(result, 10);
-          E2EHelpers.Assertions.assertChunks(result, 1, null, true, null);
+          E2EHelpers.Assertions.assertChunks(result, 1, null, true, null, null);
+        });
+  }
+
+  @Test
+  public void configChunkingHeadingContext() throws Exception {
+    JsonNode config =
+        MAPPER.readTree(
+            "{\"chunking\":{\"chunker_type\":\"markdown\",\"max_chars\":300,\"max_overlap\":50}}");
+    E2EHelpers.runFixture(
+        "config_chunking_heading_context",
+        "markdown/extraction_test.md",
+        config,
+        Arrays.asList("chunking"),
+        null,
+        true,
+        result -> {
+          E2EHelpers.Assertions.assertMinContentLength(result, 10);
+          E2EHelpers.Assertions.assertChunks(result, 2, null, true, null, true);
         });
   }
 
@@ -349,7 +367,7 @@ public class ContractTest {
         result -> {
           E2EHelpers.Assertions.assertExpectedMime(result, Arrays.asList("application/pdf"));
           E2EHelpers.Assertions.assertMinContentLength(result, 10);
-          E2EHelpers.Assertions.assertChunks(result, 1, null, true, null);
+          E2EHelpers.Assertions.assertChunks(result, 1, null, true, null, null);
         });
   }
 
@@ -366,7 +384,7 @@ public class ContractTest {
         result -> {
           E2EHelpers.Assertions.assertExpectedMime(result, Arrays.asList("application/pdf"));
           E2EHelpers.Assertions.assertMinContentLength(result, 10);
-          E2EHelpers.Assertions.assertChunks(result, 2, null, true, null);
+          E2EHelpers.Assertions.assertChunks(result, 2, null, true, null, null);
         });
   }
 
@@ -385,7 +403,25 @@ public class ContractTest {
         result -> {
           E2EHelpers.Assertions.assertExpectedMime(result, Arrays.asList("application/pdf"));
           E2EHelpers.Assertions.assertMinContentLength(result, 10);
-          E2EHelpers.Assertions.assertChunks(result, 1, null, true, null);
+          E2EHelpers.Assertions.assertChunks(result, 1, null, true, null, null);
+        });
+  }
+
+  @Test
+  public void configChunkingTokenizer() throws Exception {
+    JsonNode config =
+        MAPPER.readTree(
+            "{\"chunking\":{\"max_chars\":200,\"max_overlap\":40,\"sizing\":{\"model\":\"Xenova/gpt-4o\",\"type\":\"tokenizer\"}}}");
+    E2EHelpers.runFixture(
+        "config_chunking_tokenizer",
+        "markdown/comprehensive.md",
+        config,
+        Arrays.asList("chunking-tokenizers"),
+        "Requires network access for HuggingFace Hub tokenizer download",
+        true,
+        result -> {
+          E2EHelpers.Assertions.assertMinContentLength(result, 10);
+          E2EHelpers.Assertions.assertChunks(result, 2, null, true, null, null);
         });
   }
 

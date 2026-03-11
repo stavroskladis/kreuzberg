@@ -336,7 +336,8 @@ public final class E2EHelpers {
         Integer minCount,
         Integer maxCount,
         Boolean eachHasContent,
-        Boolean eachHasEmbedding) {
+        Boolean eachHasEmbedding,
+        Boolean eachHasHeadingContext) {
       var chunks = result.getChunks();
       int count = chunks != null ? chunks.size() : 0;
       if (minCount != null) {
@@ -358,6 +359,13 @@ public final class E2EHelpers {
       if (chunks != null && eachHasEmbedding != null && eachHasEmbedding) {
         for (var chunk : chunks) {
           assertNotNull(chunk.getEmbedding(), "Expected each chunk to have an embedding");
+        }
+      }
+      if (chunks != null && eachHasHeadingContext != null && eachHasHeadingContext) {
+        for (var chunk : chunks) {
+          assertNotNull(
+              chunk.getMetadata().getHeadingContext(),
+              "Expected each chunk to have heading_context");
         }
       }
     }

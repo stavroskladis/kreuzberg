@@ -627,6 +627,7 @@ mod tests {
                 total_chunks: 1,
                 first_page: Some(1),
                 last_page: Some(1),
+                heading_context: None,
             },
         };
 

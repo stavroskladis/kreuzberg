@@ -230,6 +230,28 @@ defmodule E2E.ContractTest do
       end
     end
 
+    test "config_chunking_heading_context" do
+      case E2E.Helpers.run_fixture(
+             "config_chunking_heading_context",
+             "markdown/extraction_test.md",
+             %{chunking: %{chunker_type: "markdown", max_chars: 300, max_overlap: 50}},
+             requirements: ["chunking"],
+             notes: nil,
+             skip_if_missing: true
+           ) do
+        {:ok, result} ->
+          result
+          |> E2E.Helpers.assert_min_content_length(10)
+          |> E2E.Helpers.assert_chunks(min_count: 2, each_has_content: true, each_has_heading_context: true)
+
+        {:skipped, reason} ->
+          IO.puts("SKIPPED: #{reason}")
+
+        {:error, reason} ->
+          flunk("Extraction failed: #{inspect(reason)}")
+      end
+    end
+
     test "config_chunking_markdown" do
       case E2E.Helpers.run_fixture(
              "config_chunking_markdown",
@@ -290,6 +312,28 @@ defmodule E2E.ContractTest do
           |> E2E.Helpers.assert_expected_mime(["application/pdf"])
           |> E2E.Helpers.assert_min_content_length(10)
           |> E2E.Helpers.assert_chunks(min_count: 1, each_has_content: true)
+
+        {:skipped, reason} ->
+          IO.puts("SKIPPED: #{reason}")
+
+        {:error, reason} ->
+          flunk("Extraction failed: #{inspect(reason)}")
+      end
+    end
+
+    test "config_chunking_tokenizer" do
+      case E2E.Helpers.run_fixture(
+             "config_chunking_tokenizer",
+             "markdown/comprehensive.md",
+             %{chunking: %{max_chars: 200, max_overlap: 40, sizing: %{model: "Xenova/gpt-4o", type: "tokenizer"}}},
+             requirements: ["chunking-tokenizers"],
+             notes: "Requires network access for HuggingFace Hub tokenizer download",
+             skip_if_missing: true
+           ) do
+        {:ok, result} ->
+          result
+          |> E2E.Helpers.assert_min_content_length(10)
+          |> E2E.Helpers.assert_chunks(min_count: 2, each_has_content: true)
 
         {:skipped, reason} ->
           IO.puts("SKIPPED: #{reason}")

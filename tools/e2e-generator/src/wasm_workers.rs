@@ -104,6 +104,9 @@ function mapChunkingConfig(raw: PlainRecord): ChunkingConfig {
     const config: ChunkingConfig = {};
     assignNumberField(config as PlainRecord, raw, "max_chars", "maxChars");
     assignNumberField(config as PlainRecord, raw, "max_overlap", "maxOverlap");
+    if (typeof raw.chunker_type === "string") {
+        (config as PlainRecord).chunkerType = raw.chunker_type;
+    }
     return config;
 }
 
@@ -361,6 +364,7 @@ export const assertions = {
         maxCount: number | null,
         eachHasContent: boolean | null,
         eachHasEmbedding: boolean | null,
+        eachHasHeadingContext: boolean | null,
     ): void {
         const chunks = Array.isArray(result.chunks) ? result.chunks : [];
         if (typeof minCount === "number") {
@@ -377,6 +381,11 @@ export const assertions = {
         if (eachHasEmbedding === true) {
             for (const chunk of chunks) {
                 expect(chunk.embedding !== undefined && chunk.embedding !== null).toBe(true);
+            }
+        }
+        if (eachHasHeadingContext === true) {
+            for (const chunk of chunks) {
+                expect(chunk.metadata?.headingContext !== undefined && chunk.metadata?.headingContext !== null).toBe(true);
             }
         }
     },
@@ -1026,8 +1035,12 @@ fn render_assertions(assertions: &Assertions) -> String {
             .each_has_embedding
             .map(|v| v.to_string())
             .unwrap_or_else(|| "null".into());
+        let each_has_heading_context = chunks
+            .each_has_heading_context
+            .map(|v| v.to_string())
+            .unwrap_or_else(|| "null".into());
         buffer.push_str(&format!(
-            "        assertions.assertChunks(result, {min_count}, {max_count}, {each_has_content}, {each_has_embedding});\n"
+            "        assertions.assertChunks(result, {min_count}, {max_count}, {each_has_content}, {each_has_embedding}, {each_has_heading_context});\n"
         ));
     }
 

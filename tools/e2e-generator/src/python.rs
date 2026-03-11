@@ -50,6 +50,8 @@ def resolve_document(relative: str) -> Path:
 def _build_chunking(chunking_data: dict[str, Any]) -> ChunkingConfig:
     """Convert a chunking dict with nested embedding to ChunkingConfig."""
     cd = dict(chunking_data)
+    # Strip fields not yet exposed in the Python binding
+    cd.pop("sizing", None)
     if "embedding" in cd and isinstance(cd["embedding"], dict):
         emb = dict(cd["embedding"])
         model = None
@@ -291,6 +293,7 @@ def assert_chunks(
     max_count: int | None = None,
     each_has_content: bool | None = None,
     each_has_embedding: bool | None = None,
+    each_has_heading_context: bool | None = None,
 ) -> None:
     chunks = getattr(result, "chunks", None)
     if chunks is None:
@@ -308,6 +311,12 @@ def assert_chunks(
         for i, chunk in enumerate(chunks):
             if not getattr(chunk, "embedding", None):
                 pytest.fail(f"Chunk {i} has no embedding")
+    if each_has_heading_context:
+        for i, chunk in enumerate(chunks):
+            metadata = getattr(chunk, "metadata", None)
+            hc = metadata.get("heading_context") if isinstance(metadata, dict) else getattr(metadata, "heading_context", None)
+            if metadata is None or hc is None:
+                pytest.fail(f"Chunk {i} has no heading_context")
 
 
 def assert_images(
@@ -915,6 +924,12 @@ fn render_assertions(assertions: &Assertions) -> String {
             args.push(format!(
                 "each_has_embedding={}",
                 if has_embedding { "True" } else { "False" }
+            ));
+        }
+        if let Some(has_heading_context) = chunks.each_has_heading_context {
+            args.push(format!(
+                "each_has_heading_context={}",
+                if has_heading_context { "True" } else { "False" }
             ));
         }
         writeln!(buffer, "    helpers.assert_chunks(result, {})", args.join(", ")).unwrap();

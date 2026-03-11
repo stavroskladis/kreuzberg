@@ -891,6 +891,7 @@ class ChunkMetadata(TypedDict, total=False):
     token_count: int | None
     first_page: int
     last_page: int
+    heading_context: HeadingContext | None
 ```
 
 **Fields:**
@@ -902,6 +903,7 @@ class ChunkMetadata(TypedDict, total=False):
 - `token_count` (int | None): Estimated token count (if configured)
 - `first_page` (int): First page this chunk appears on (1-indexed, only when page boundaries available)
 - `last_page` (int): Last page this chunk appears on (1-indexed, only when page boundaries available)
+- `heading_context` (HeadingContext | None): Heading hierarchy when using Markdown chunker. Only populated when chunker_type is set to markdown.
 
 **Page tracking:** When `PageStructure.boundaries` is available and chunking is enabled, `first_page` and `last_page` are automatically calculated based on byte offsets.
 

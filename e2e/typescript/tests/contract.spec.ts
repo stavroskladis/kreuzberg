@@ -281,7 +281,34 @@ describe("contract fixtures", () => {
 			}
 			assertions.assertExpectedMime(result, ["application/pdf"]);
 			assertions.assertMinContentLength(result, 10);
-			chunkAssertions.assertChunks(result, 1, null, true, null);
+			chunkAssertions.assertChunks(result, 1, null, true, null, null);
+		},
+		TEST_TIMEOUT_MS,
+	);
+
+	it(
+		"config_chunking_heading_context",
+		() => {
+			const documentPath = resolveDocument("markdown/extraction_test.md");
+			if (!existsSync(documentPath)) {
+				console.warn("Skipping config_chunking_heading_context: missing document at", documentPath);
+				return;
+			}
+			const config = buildConfig({ chunking: { chunker_type: "markdown", max_chars: 300, max_overlap: 50 } });
+			let result: ExtractionResult | null = null;
+			try {
+				result = extractFileSync(documentPath, null, config);
+			} catch (error) {
+				if (shouldSkipFixture(error, "config_chunking_heading_context", ["chunking"], undefined)) {
+					return;
+				}
+				throw error;
+			}
+			if (result === null) {
+				return;
+			}
+			assertions.assertMinContentLength(result, 10);
+			chunkAssertions.assertChunks(result, 2, null, true, null, true);
 		},
 		TEST_TIMEOUT_MS,
 	);
@@ -309,7 +336,7 @@ describe("contract fixtures", () => {
 			}
 			assertions.assertExpectedMime(result, ["application/pdf"]);
 			assertions.assertMinContentLength(result, 10);
-			chunkAssertions.assertChunks(result, 1, null, true, null);
+			chunkAssertions.assertChunks(result, 1, null, true, null, null);
 		},
 		TEST_TIMEOUT_MS,
 	);
@@ -337,7 +364,7 @@ describe("contract fixtures", () => {
 			}
 			assertions.assertExpectedMime(result, ["application/pdf"]);
 			assertions.assertMinContentLength(result, 10);
-			chunkAssertions.assertChunks(result, 2, null, true, null);
+			chunkAssertions.assertChunks(result, 2, null, true, null, null);
 		},
 		TEST_TIMEOUT_MS,
 	);
@@ -365,7 +392,44 @@ describe("contract fixtures", () => {
 			}
 			assertions.assertExpectedMime(result, ["application/pdf"]);
 			assertions.assertMinContentLength(result, 10);
-			chunkAssertions.assertChunks(result, 1, null, true, null);
+			chunkAssertions.assertChunks(result, 1, null, true, null, null);
+		},
+		TEST_TIMEOUT_MS,
+	);
+
+	it(
+		"config_chunking_tokenizer",
+		() => {
+			const documentPath = resolveDocument("markdown/comprehensive.md");
+			if (!existsSync(documentPath)) {
+				console.warn("Skipping config_chunking_tokenizer: missing document at", documentPath);
+				console.warn("Notes: Requires network access for HuggingFace Hub tokenizer download");
+				return;
+			}
+			const config = buildConfig({
+				chunking: { max_chars: 200, max_overlap: 40, sizing: { model: "Xenova/gpt-4o", type: "tokenizer" } },
+			});
+			let result: ExtractionResult | null = null;
+			try {
+				result = extractFileSync(documentPath, null, config);
+			} catch (error) {
+				if (
+					shouldSkipFixture(
+						error,
+						"config_chunking_tokenizer",
+						["chunking-tokenizers"],
+						"Requires network access for HuggingFace Hub tokenizer download",
+					)
+				) {
+					return;
+				}
+				throw error;
+			}
+			if (result === null) {
+				return;
+			}
+			assertions.assertMinContentLength(result, 10);
+			chunkAssertions.assertChunks(result, 2, null, true, null, null);
 		},
 		TEST_TIMEOUT_MS,
 	);

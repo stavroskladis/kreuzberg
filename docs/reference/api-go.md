@@ -1122,13 +1122,15 @@ type Chunk struct {
 }
 
 type ChunkMetadata struct {
-	ByteEnd     uint64  // UTF-8 byte offset (exclusive)
-	ByteStart   uint64  // UTF-8 byte offset (inclusive)
-	ChunkIndex  uint64  // Index in chunk sequence
-	FirstPage   *uint64 // First page this chunk appears on
-	LastPage    *uint64 // Last page this chunk appears on
-	TokenCount  *uint64 // Token count (if available)
-	TotalChunks uint64  // Total number of chunks in document
+	ByteEnd        uint64           // UTF-8 byte offset (exclusive)
+	ByteStart      uint64           // UTF-8 byte offset (inclusive)
+	CharCount      int              // Number of characters in chunk
+	ChunkIndex     uint64           // Index in chunk sequence
+	FirstPage      *uint64          // First page this chunk appears on
+	LastPage       *uint64          // Last page this chunk appears on
+	TokenCount     *uint64          // Token count (if available)
+	TotalChunks    uint64           // Total number of chunks in document
+	HeadingContext *HeadingContext   // Heading hierarchy (markdown chunker only)
 }
 ```
 
@@ -1140,6 +1142,7 @@ type ChunkMetadata struct {
 - `TokenCount` (\*int): Estimated token count (if configured)
 - `FirstPage` (\*int): First page this chunk appears on (1-indexed, only when page boundaries available)
 - `LastPage` (\*int): Last page this chunk appears on (1-indexed, only when page boundaries available)
+- `HeadingContext` (\*HeadingContext): Heading hierarchy when using Markdown chunker. Only populated when chunker_type is set to markdown.
 
 **Page tracking:** When `PageStructure.Boundaries` is available and chunking is enabled, `FirstPage` and `LastPage` are automatically calculated based on byte offsets.
 

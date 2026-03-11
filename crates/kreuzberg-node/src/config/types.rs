@@ -250,17 +250,24 @@ pub struct JsChunkingConfig {
     pub embedding: Option<JsEmbeddingConfig>,
     /// Optional preset name for chunking parameters
     pub preset: Option<String>,
+    /// Chunker type: "text" (default) or "markdown"
+    pub chunker_type: Option<String>,
 }
 
 impl From<JsChunkingConfig> for RustChunkingConfig {
     fn from(val: JsChunkingConfig) -> Self {
+        let ct = match val.chunker_type.as_deref() {
+            Some("markdown") => ChunkerType::Markdown,
+            _ => ChunkerType::Text,
+        };
         RustChunkingConfig {
             max_characters: val.max_chars.unwrap_or(1000) as usize,
             overlap: val.max_overlap.unwrap_or(200) as usize,
             trim: true,
-            chunker_type: ChunkerType::Text,
+            chunker_type: ct,
             embedding: val.embedding.map(Into::into),
             preset: val.preset,
+            sizing: Default::default(),
         }
     }
 }
@@ -1114,6 +1121,10 @@ impl TryFrom<ExtractionConfig> for JsExtractionConfig {
                     cache_dir: emb.cache_dir.and_then(|p| p.to_str().map(String::from)),
                 }),
                 preset: chunk.preset,
+                chunker_type: match chunk.chunker_type {
+                    ChunkerType::Text => None,
+                    ChunkerType::Markdown => Some("markdown".to_string()),
+                },
             }),
             images: val.images.map(|img| JsImageExtractionConfig {
                 extract_images: Some(img.extract_images),

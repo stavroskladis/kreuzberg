@@ -185,6 +185,21 @@ def test_config_chunking() -> None:
     helpers.assert_chunks(result, min_count=1, each_has_content=True)
 
 
+def test_config_chunking_heading_context() -> None:
+    """Tests markdown chunker populates heading context on chunks"""
+
+    document_path = helpers.resolve_document("markdown/extraction_test.md")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_chunking_heading_context: missing document at {document_path}")
+
+    config = helpers.build_config({"chunking": {"chunker_type": "markdown", "max_chars": 300, "max_overlap": 50}})
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_min_content_length(result, 10)
+    helpers.assert_chunks(result, min_count=2, each_has_content=True, each_has_heading_context=True)
+
+
 def test_config_chunking_markdown() -> None:
     """Tests markdown-aware chunker type"""
 
@@ -231,6 +246,23 @@ def test_config_chunking_text() -> None:
     helpers.assert_expected_mime(result, ["application/pdf"])
     helpers.assert_min_content_length(result, 10)
     helpers.assert_chunks(result, min_count=1, each_has_content=True)
+
+
+def test_config_chunking_tokenizer() -> None:
+    """Tests token-based chunk sizing with HuggingFace tokenizer"""
+
+    document_path = helpers.resolve_document("markdown/comprehensive.md")
+    if not document_path.exists():
+        pytest.skip(f"Skipping config_chunking_tokenizer: missing document at {document_path}")
+
+    config = helpers.build_config(
+        {"chunking": {"max_chars": 200, "max_overlap": 40, "sizing": {"model": "Xenova/gpt-4o", "type": "tokenizer"}}}
+    )
+
+    result = extract_file_sync(document_path, None, config)
+
+    helpers.assert_min_content_length(result, 10)
+    helpers.assert_chunks(result, min_count=2, each_has_content=True)
 
 
 def test_config_djot_content() -> None:

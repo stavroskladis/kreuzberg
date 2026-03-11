@@ -612,20 +612,44 @@ export interface Table {
 	boundingBox?: BoundingBox | null;
 }
 
+/** Heading depth and text for markdown heading context. */
+export interface HeadingLevel {
+	/** Heading depth (1 = h1, 2 = h2, etc.) */
+	level: number;
+	/** Text content of the heading */
+	text: string;
+}
+
+/** Heading hierarchy context for a markdown chunk. */
+export interface HeadingContext {
+	/** Heading hierarchy from document root to this chunk's section */
+	headings: HeadingLevel[];
+}
+
 /**
  * Chunk metadata
  */
 export interface ChunkMetadata {
-	/** Character start position in original content */
-	charStart: number;
-	/** Character end position in original content */
-	charEnd: number;
+	/** Starting byte offset in original content */
+	byteStart: number;
+	/** Ending byte offset in original content */
+	byteEnd: number;
+	/** Character start position in original content (legacy alias) */
+	charStart?: number;
+	/** Character end position in original content (legacy alias) */
+	charEnd?: number;
 	/** Token count if available */
 	tokenCount: number | null;
 	/** Index of this chunk */
 	chunkIndex: number;
 	/** Total number of chunks */
 	totalChunks: number;
+	/** First page number in chunk */
+	firstPage?: number | null;
+	/** Last page number in chunk */
+	lastPage?: number | null;
+	/** Heading context when using markdown chunker */
+	headingContext?: HeadingContext | null;
 }
 
 /**

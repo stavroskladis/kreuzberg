@@ -897,6 +897,20 @@ export interface PageStructure {
  * Tracks where a chunk appears in the original document, including byte offsets
  * and page ranges when page tracking is enabled.
  */
+/** Heading depth and text for markdown heading context. */
+export interface HeadingLevel {
+	/** Heading depth (1 = h1, 2 = h2, etc.) */
+	level: number;
+	/** Text content of the heading */
+	text: string;
+}
+
+/** Heading hierarchy context for a markdown chunk. */
+export interface HeadingContext {
+	/** Heading hierarchy from document root to this chunk's section */
+	headings: HeadingLevel[];
+}
+
 export interface ChunkMetadata {
 	/** Byte offset where this chunk starts in the original text (UTF-8 valid boundary) */
 	byteStart: number;
@@ -912,6 +926,8 @@ export interface ChunkMetadata {
 	firstPage?: number | null;
 	/** Last page number this chunk spans (1-indexed, only when page tracking enabled) */
 	lastPage?: number | null;
+	/** Heading context when using markdown chunker */
+	headingContext?: HeadingContext | null;
 }
 
 /**

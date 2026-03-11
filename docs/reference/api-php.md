@@ -1223,6 +1223,7 @@ readonly class ChunkMetadata
         public ?int $tokenCount = null,
         public ?int $firstPage = null,
         public ?int $lastPage = null,
+        public ?HeadingContext $headingContext = null,
     );
 }
 ```
@@ -1235,6 +1236,7 @@ readonly class ChunkMetadata
 - `$tokenCount` (int|null): Estimated token count (if configured)
 - `$firstPage` (int|null): First page this chunk appears on (1-indexed)
 - `$lastPage` (int|null): Last page this chunk appears on (1-indexed)
+- `$headingContext` (?HeadingContext): Heading hierarchy when using Markdown chunker. Only populated when chunker_type is set to markdown.
 
 ---
 

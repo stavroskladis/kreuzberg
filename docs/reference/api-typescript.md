@@ -940,6 +940,7 @@ interface ChunkMetadata {
   tokenCount?: number;
   firstPage?: number;
   lastPage?: number;
+  headingContext?: HeadingContext;
 }
 ```
 
@@ -951,6 +952,7 @@ interface ChunkMetadata {
 - `tokenCount` (number | undefined): Estimated token count (if configured)
 - `firstPage` (number | undefined): First page this chunk appears on (1-indexed, only when page boundaries available)
 - `lastPage` (number | undefined): Last page this chunk appears on (1-indexed, only when page boundaries available)
+- `headingContext` (HeadingContext | undefined): Heading hierarchy when using Markdown chunker. Only populated when chunker_type is set to markdown.
 
 **Page tracking:** When `PageStructure.boundaries` is available and chunking is enabled, `firstPage` and `lastPage` are automatically calculated based on byte offsets.
 

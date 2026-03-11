@@ -510,6 +510,7 @@ Metadata for a single text chunk.
 - `token_count` (Integer, nil): Estimated token count (if configured)
 - `first_page` (Integer, nil): First page this chunk appears on (1-indexed, only when page boundaries available)
 - `last_page` (Integer, nil): Last page this chunk appears on (1-indexed, only when page boundaries available)
+- `heading_context` (HeadingContext, nil): Heading hierarchy when using Markdown chunker. Only populated when chunker_type is set to markdown.
 
 **Page tracking:** When `PageStructure.boundaries` is available and chunking is enabled, `first_page` and `last_page` are automatically calculated based on byte offsets.
 

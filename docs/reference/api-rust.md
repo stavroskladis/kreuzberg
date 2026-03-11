@@ -663,6 +663,7 @@ pub struct ChunkingConfig {
     pub overlap: usize,
     pub trim: bool,
     pub chunker_type: ChunkerType,
+    pub sizing: ChunkSizing,
     pub embedding: Option<EmbeddingConfig>,
     pub preset: Option<String>,
 }
@@ -679,6 +680,7 @@ pub enum ChunkerType {
 - `overlap` (usize): Overlap between chunks in characters. Default: 200
 - `trim` (bool): Trim whitespace from chunk boundaries. Default: true
 - `chunker_type` (ChunkerType): Text or Markdown-aware splitter. Default: Text
+- `sizing` (ChunkSizing): How chunk size is measured. Default: `Characters` (Unicode character count). Set to `Tokenizer { model }` for token-based sizing (requires `chunking-tokenizers` feature).
 - `embedding` (Option<EmbeddingConfig>): Optional embedding generation for chunks. Default: None
 - `preset` (Option<String>): Named preset overriding individual settings. Default: None
 
@@ -1240,6 +1242,7 @@ pub struct ChunkMetadata {
     pub total_chunks: usize,
     pub first_page: Option<usize>,
     pub last_page: Option<usize>,
+    pub heading_context: Option<HeadingContext>,
 }
 ```
 
@@ -1252,6 +1255,7 @@ pub struct ChunkMetadata {
 - `total_chunks` (usize): Total number of chunks in the document
 - `first_page` (Option<usize>): First page this chunk spans (1-indexed, when page tracking enabled)
 - `last_page` (Option<usize>): Last page this chunk spans (1-indexed, when page tracking enabled)
+- `heading_context` (Option<HeadingContext>): Heading hierarchy when using Markdown chunker. Only populated when `ChunkerType::Markdown` is used.
 
 **Page tracking:** When `PageStructure.boundaries` is available and chunking is enabled, `first_page` and `last_page` are automatically calculated based on byte offsets.
 
@@ -1297,6 +1301,11 @@ fn main() -> kreuzberg::Result<()> {
                 meta.total_chunks,
                 page_info
             );
+            if let Some(ctx) = &chunk.metadata.heading_context {
+                for heading in &ctx.headings {
+                    println!("  h{}: {}", heading.level, heading.text);
+                }
+            }
         }
     }
 

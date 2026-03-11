@@ -184,6 +184,21 @@ RSpec.describe 'contract fixtures' do
     end
   end
 
+  it 'config_chunking_heading_context' do
+    E2ERuby.skip_if_feature_unavailable('chunking')
+    E2ERuby.run_fixture(
+      'config_chunking_heading_context',
+      'markdown/extraction_test.md',
+      { chunking: { chunker_type: 'markdown', max_chars: 300, max_overlap: 50 } },
+      requirements: %w[chunking],
+      notes: nil,
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_min_content_length(result, 10)
+      E2ERuby::Assertions.assert_chunks(result, min_count: 2, each_has_content: true, each_has_heading_context: true)
+    end
+  end
+
   it 'config_chunking_markdown' do
     E2ERuby.skip_if_feature_unavailable('chunking')
     E2ERuby.run_fixture(
@@ -237,6 +252,21 @@ RSpec.describe 'contract fixtures' do
       )
       E2ERuby::Assertions.assert_min_content_length(result, 10)
       E2ERuby::Assertions.assert_chunks(result, min_count: 1, each_has_content: true)
+    end
+  end
+
+  it 'config_chunking_tokenizer' do
+    E2ERuby.skip_if_feature_unavailable('chunking-tokenizers')
+    E2ERuby.run_fixture(
+      'config_chunking_tokenizer',
+      'markdown/comprehensive.md',
+      { chunking: { max_chars: 200, max_overlap: 40, sizing: { model: 'Xenova/gpt-4o', type: 'tokenizer' } } },
+      requirements: %w[chunking-tokenizers],
+      notes: 'Requires network access for HuggingFace Hub tokenizer download',
+      skip_if_missing: true
+    ) do |result|
+      E2ERuby::Assertions.assert_min_content_length(result, 10)
+      E2ERuby::Assertions.assert_chunks(result, min_count: 2, each_has_content: true)
     end
   end
 

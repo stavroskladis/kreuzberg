@@ -109,6 +109,8 @@ export interface ChunkingConfig {
 	maxOverlap?: number;
 	preset?: string;
 	embedding?: EmbeddingConfig;
+	/** Chunker type: "text" (default) or "markdown" */
+	chunkerType?: string;
 }
 
 export interface LanguageDetectionConfig {

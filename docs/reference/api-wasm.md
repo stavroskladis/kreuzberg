@@ -1429,6 +1429,7 @@ Text chunk from chunking operation.
 - `tokenCount` (number | null): Token count if available
 - `firstPage` (number | null): First page this chunk appears on
 - `lastPage` (number | null): Last page this chunk appears on
+- `headingContext` (HeadingContext | null): Heading hierarchy when using Markdown chunker. Only populated when chunker_type is set to markdown.
 
 ---
 

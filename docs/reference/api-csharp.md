@@ -1107,6 +1107,7 @@ Metadata about a chunk.
 - `LastPage` (int?): Last page number (1-indexed) containing this chunk.
 - `TokenCount` (int?): Token count for the chunk.
 - `TotalChunks` (int): Total number of chunks in the document.
+- `HeadingContext` (HeadingContext?): Heading hierarchy when using Markdown chunker. Only populated when chunker_type is set to markdown.
 
 ---
 

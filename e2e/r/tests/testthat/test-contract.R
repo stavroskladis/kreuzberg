@@ -144,6 +144,20 @@ test_that("config_chunking", {
   assert_chunks(result, min_count = 1L, each_has_content = TRUE)
 })
 
+test_that("config_chunking_heading_context", {
+  skip_if_feature_unavailable("chunking")
+  result <- run_fixture(
+    "config_chunking_heading_context",
+    "markdown/comprehensive.md",
+    list(chunking = list(chunker_type = "markdown", max_chars = 300L, max_overlap = 50L)),
+    requirements = c("chunking"),
+    notes = NULL,
+    skip_if_missing = TRUE
+  )
+  assert_min_content_length(result, 10L)
+  assert_chunks(result, min_count = 2L, each_has_content = TRUE, each_has_heading_context = TRUE)
+})
+
 test_that("config_chunking_markdown", {
   skip_if_feature_unavailable("chunking")
   result <- run_fixture(
@@ -186,6 +200,20 @@ test_that("config_chunking_text", {
   assert_expected_mime(result, c("application/pdf"))
   assert_min_content_length(result, 10L)
   assert_chunks(result, min_count = 1L, each_has_content = TRUE)
+})
+
+test_that("config_chunking_tokenizer", {
+  skip_if_feature_unavailable("chunking-tokenizers")
+  result <- run_fixture(
+    "config_chunking_tokenizer",
+    "markdown/comprehensive.md",
+    list(chunking = list(max_chars = 200L, max_overlap = 40L, sizing = list(model = "Xenova/gpt-4o", type = "tokenizer"))),
+    requirements = c("chunking-tokenizers"),
+    notes = "Requires network access for HuggingFace Hub tokenizer download",
+    skip_if_missing = TRUE
+  )
+  assert_min_content_length(result, 10L)
+  assert_chunks(result, min_count = 2L, each_has_content = TRUE)
 })
 
 test_that("config_djot_content", {

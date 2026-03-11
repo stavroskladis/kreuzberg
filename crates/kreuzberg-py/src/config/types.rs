@@ -695,6 +695,7 @@ impl ChunkingConfig {
                 chunker_type: ct,
                 embedding: embedding.map(Into::into),
                 preset,
+                sizing: Default::default(),
             },
         }
     }

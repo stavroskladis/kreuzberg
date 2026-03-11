@@ -142,6 +142,11 @@ enum Commands {
         #[arg(long)]
         chunk_overlap: Option<usize>,
 
+        /// Tokenizer model for token-based chunk sizing (e.g., "Xenova/gpt-4o", "bert-base-uncased").
+        /// Implicitly enables chunking. Requires the chunking-tokenizers feature.
+        #[arg(long)]
+        chunking_tokenizer: Option<String>,
+
         /// Enable quality processing (overrides config file)
         #[arg(long)]
         quality: Option<bool>,
@@ -530,6 +535,7 @@ fn main() -> Result<()> {
             chunk,
             chunk_size,
             chunk_overlap,
+            chunking_tokenizer,
             quality,
             detect_language,
             output_format,
@@ -570,6 +576,7 @@ fn main() -> Result<()> {
                 chunk,
                 chunk_size,
                 chunk_overlap,
+                chunking_tokenizer.as_deref(),
                 quality,
                 detect_language,
                 output_format,
@@ -630,6 +637,7 @@ fn main() -> Result<()> {
                 ocr_language.as_deref(),
                 force_ocr,
                 no_cache,
+                None,
                 None,
                 None,
                 None,

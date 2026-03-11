@@ -374,6 +374,12 @@ defmodule E2E.Helpers do
       end
     end
 
+    if opts[:each_has_heading_context] do
+      if !Enum.all?(chunks, fn chunk -> chunk.metadata && chunk.metadata.heading_context end) do
+        flunk("Not all chunks have heading_context")
+      end
+    end
+
     result
   end
 
@@ -1085,6 +1091,9 @@ fn render_assertions(assertions: &Assertions) -> String {
         }
         if let Some(has_embedding) = chunks.each_has_embedding {
             args.push(format!("each_has_embedding: {}", has_embedding));
+        }
+        if let Some(has_heading_context) = chunks.each_has_heading_context {
+            args.push(format!("each_has_heading_context: {}", has_heading_context));
         }
         if !args.is_empty() {
             pipes.push(format!("E2E.Helpers.assert_chunks({})", args.join(", ")));

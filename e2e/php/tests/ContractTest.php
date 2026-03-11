@@ -208,7 +208,28 @@ class ContractTest extends TestCase
 
         Helpers::assertExpectedMime($result, ['application/pdf']);
         Helpers::assertMinContentLength($result, 10);
-        Helpers::assertChunks($result, 1, null, true, null);
+        Helpers::assertChunks($result, 1, null, true, null, null);
+    }
+
+    /**
+     * Tests markdown chunker populates heading context on chunks
+     */
+    public function test_config_chunking_heading_context(): void
+    {
+        $documentPath = Helpers::resolveDocument('markdown/extraction_test.md');
+        if (!file_exists($documentPath)) {
+            $this->markTestSkipped('Skipping config_chunking_heading_context: missing document at ' . $documentPath);
+        }
+
+        Helpers::skipIfFeatureUnavailable('chunking');
+
+        $config = Helpers::buildConfig(['chunking' => ['chunker_type' => 'markdown', 'max_chars' => 300, 'max_overlap' => 50]]);
+
+        $kreuzberg = new Kreuzberg($config);
+        $result = $kreuzberg->extractFile($documentPath);
+
+        Helpers::assertMinContentLength($result, 10);
+        Helpers::assertChunks($result, 2, null, true, null, true);
     }
 
     /**
@@ -230,7 +251,7 @@ class ContractTest extends TestCase
 
         Helpers::assertExpectedMime($result, ['application/pdf']);
         Helpers::assertMinContentLength($result, 10);
-        Helpers::assertChunks($result, 1, null, true, null);
+        Helpers::assertChunks($result, 1, null, true, null, null);
     }
 
     /**
@@ -252,7 +273,7 @@ class ContractTest extends TestCase
 
         Helpers::assertExpectedMime($result, ['application/pdf']);
         Helpers::assertMinContentLength($result, 10);
-        Helpers::assertChunks($result, 2, null, true, null);
+        Helpers::assertChunks($result, 2, null, true, null, null);
     }
 
     /**
@@ -272,7 +293,28 @@ class ContractTest extends TestCase
 
         Helpers::assertExpectedMime($result, ['application/pdf']);
         Helpers::assertMinContentLength($result, 10);
-        Helpers::assertChunks($result, 1, null, true, null);
+        Helpers::assertChunks($result, 1, null, true, null, null);
+    }
+
+    /**
+     * Tests token-based chunk sizing with HuggingFace tokenizer
+     */
+    public function test_config_chunking_tokenizer(): void
+    {
+        $documentPath = Helpers::resolveDocument('markdown/comprehensive.md');
+        if (!file_exists($documentPath)) {
+            $this->markTestSkipped('Skipping config_chunking_tokenizer: missing document at ' . $documentPath);
+        }
+
+        Helpers::skipIfFeatureUnavailable('chunking-tokenizers');
+
+        $config = Helpers::buildConfig(['chunking' => ['max_chars' => 200, 'max_overlap' => 40, 'sizing' => ['model' => 'Xenova/gpt-4o', 'type' => 'tokenizer']]]);
+
+        $kreuzberg = new Kreuzberg($config);
+        $result = $kreuzberg->extractFile($documentPath);
+
+        Helpers::assertMinContentLength($result, 10);
+        Helpers::assertChunks($result, 2, null, true, null, null);
     }
 
     /**

@@ -241,7 +241,31 @@ describe("contract", () => {
 		}
 		assertions.assertExpectedMime(result, ["application/pdf"]);
 		assertions.assertMinContentLength(result, 10);
-		assertions.assertChunks(result, 1, null, true, null);
+		assertions.assertChunks(result, 1, null, true, null, null);
+	});
+
+	it("config_chunking_heading_context", async () => {
+		const documentBytes = getFixture("markdown/extraction_test.md");
+		if (documentBytes === null) {
+			console.warn("[SKIP] Test skipped: fixture not available in Cloudflare Workers environment");
+			return;
+		}
+
+		const config = buildConfig({ chunking: { chunker_type: "markdown", max_chars: 300, max_overlap: 50 } });
+		let result: ExtractionResult | null = null;
+		try {
+			result = await extractBytes(documentBytes, "application/octet-stream", config);
+		} catch (error) {
+			if (shouldSkipFixture(error, "config_chunking_heading_context", ["chunking"], undefined)) {
+				return;
+			}
+			throw error;
+		}
+		if (result === null) {
+			return;
+		}
+		assertions.assertMinContentLength(result, 10);
+		assertions.assertChunks(result, 2, null, true, null, true);
 	});
 
 	it("config_chunking_markdown", async () => {
@@ -266,7 +290,7 @@ describe("contract", () => {
 		}
 		assertions.assertExpectedMime(result, ["application/pdf"]);
 		assertions.assertMinContentLength(result, 10);
-		assertions.assertChunks(result, 1, null, true, null);
+		assertions.assertChunks(result, 1, null, true, null, null);
 	});
 
 	it("config_chunking_small", async () => {
@@ -291,7 +315,7 @@ describe("contract", () => {
 		}
 		assertions.assertExpectedMime(result, ["application/pdf"]);
 		assertions.assertMinContentLength(result, 10);
-		assertions.assertChunks(result, 2, null, true, null);
+		assertions.assertChunks(result, 2, null, true, null, null);
 	});
 
 	it("config_chunking_text", async () => {
@@ -316,7 +340,7 @@ describe("contract", () => {
 		}
 		assertions.assertExpectedMime(result, ["application/pdf"]);
 		assertions.assertMinContentLength(result, 10);
-		assertions.assertChunks(result, 1, null, true, null);
+		assertions.assertChunks(result, 1, null, true, null, null);
 	});
 
 	it("config_djot_content", async () => {

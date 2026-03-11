@@ -836,6 +836,7 @@ int charCount = metadata.getCharCount();              // Number of characters
 Optional<Integer> tokenCount = metadata.getTokenCount(); // Estimated token count
 Optional<Integer> firstPage = metadata.getFirstPage();   // First page (1-indexed)
 Optional<Integer> lastPage = metadata.getLastPage();     // Last page (1-indexed)
+Optional<HeadingContext> headingContext = metadata.getHeadingContext(); // Heading hierarchy (markdown chunker)
 ```
 
 **Fields:**
@@ -846,6 +847,7 @@ Optional<Integer> lastPage = metadata.getLastPage();     // Last page (1-indexed
 - `tokenCount` (Optional<Integer>): Estimated token count (if configured)
 - `firstPage` (Optional<Integer>): First page this chunk appears on (1-indexed, only when page boundaries available)
 - `lastPage` (Optional<Integer>): Last page this chunk appears on (1-indexed, only when page boundaries available)
+- `headingContext` (Optional<HeadingContext>): Heading hierarchy when using Markdown chunker. Only populated when chunker_type is set to markdown.
 
 **Page tracking:** When `PageStructure.boundaries` is available and chunking is enabled, `firstPage` and `lastPage` are automatically calculated based on byte offsets.
 

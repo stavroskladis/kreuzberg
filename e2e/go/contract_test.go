@@ -86,7 +86,20 @@ func TestContractConfigChunking(t *testing.T) {
 }`))
 	assertExpectedMime(t, result, []string{"application/pdf"})
 	assertMinContentLength(t, result, 10)
-	assertChunks(t, result, intPtr(1), nil, boolPtr(true), nil)
+	assertChunks(t, result, intPtr(1), nil, boolPtr(true), nil, nil)
+}
+
+func TestContractConfigChunkingHeadingContext(t *testing.T) {
+	skipIfFeatureUnavailable(t, "chunking")
+	result := runExtraction(t, "markdown/extraction_test.md", []byte(`{
+"chunking": {
+	"chunker_type": "markdown",
+	"max_chars": 300,
+	"max_overlap": 50
+}
+}`))
+	assertMinContentLength(t, result, 10)
+	assertChunks(t, result, intPtr(2), nil, boolPtr(true), nil, boolPtr(true))
 }
 
 func TestContractConfigChunkingMarkdown(t *testing.T) {
@@ -100,7 +113,7 @@ func TestContractConfigChunkingMarkdown(t *testing.T) {
 }`))
 	assertExpectedMime(t, result, []string{"application/pdf"})
 	assertMinContentLength(t, result, 10)
-	assertChunks(t, result, intPtr(1), nil, boolPtr(true), nil)
+	assertChunks(t, result, intPtr(1), nil, boolPtr(true), nil, nil)
 }
 
 func TestContractConfigChunkingSmall(t *testing.T) {
@@ -113,7 +126,7 @@ func TestContractConfigChunkingSmall(t *testing.T) {
 }`))
 	assertExpectedMime(t, result, []string{"application/pdf"})
 	assertMinContentLength(t, result, 10)
-	assertChunks(t, result, intPtr(2), nil, boolPtr(true), nil)
+	assertChunks(t, result, intPtr(2), nil, boolPtr(true), nil, nil)
 }
 
 func TestContractConfigChunkingText(t *testing.T) {
@@ -126,7 +139,23 @@ func TestContractConfigChunkingText(t *testing.T) {
 }`))
 	assertExpectedMime(t, result, []string{"application/pdf"})
 	assertMinContentLength(t, result, 10)
-	assertChunks(t, result, intPtr(1), nil, boolPtr(true), nil)
+	assertChunks(t, result, intPtr(1), nil, boolPtr(true), nil, nil)
+}
+
+func TestContractConfigChunkingTokenizer(t *testing.T) {
+	skipIfFeatureUnavailable(t, "chunking-tokenizers")
+	result := runExtraction(t, "markdown/comprehensive.md", []byte(`{
+"chunking": {
+	"max_chars": 200,
+	"max_overlap": 40,
+	"sizing": {
+	"model": "Xenova/gpt-4o",
+	"type": "tokenizer"
+	}
+}
+}`))
+	assertMinContentLength(t, result, 10)
+	assertChunks(t, result, intPtr(2), nil, boolPtr(true), nil, nil)
 }
 
 func TestContractConfigDjotContent(t *testing.T) {

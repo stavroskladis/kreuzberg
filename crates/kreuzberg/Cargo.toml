@@ -76,7 +76,8 @@ paddle-ocr = [
     "ocr",
 ]
 language-detection = ["dep:whatlang"]
-chunking = ["dep:text-splitter"]
+chunking = ["dep:text-splitter", "dep:pulldown-cmark"]
+chunking-tokenizers = ["chunking", "dep:tokenizers", "text-splitter/tokenizers"]
 embeddings = ["dep:fastembed", "dep:reqwest", "chunking", "tokio-runtime"]
 stopwords = []
 quality = ["dep:unicode-normalization", "dep:chardetng", "stopwords"]
@@ -119,6 +120,10 @@ formats = [
     "quality",
     "keywords",
     "mdx",
+    "api",
+    "mcp",
+    "otel",
+    "chunking-tokenizers",
 ]
 full = ["formats", "ocr", "paddle-ocr", "embeddings", "api", "mcp", "otel"]
 server = ["pdf", "excel", "html", "ocr", "paddle-ocr", "chunking", "api", "mcp"]
@@ -207,6 +212,7 @@ hayro-jpeg2000 = { version = "0.3", default-features = false, features = [
 hayro-jbig2 = { version = "0.1", default-features = false, features = ["std"], optional = true }
 whatlang = { version = "0.18.0", optional = true }
 text-splitter = { version = "0.29.3", features = ["markdown"], optional = true }
+tokenizers = { version = "0.22", optional = true, default-features = false, features = ["http"] }
 unicode-normalization = { version = "0.1.25", optional = true }
 chardetng = { version = "0.1.17", optional = true }
 encoding_rs = { version = "0.8.35" }

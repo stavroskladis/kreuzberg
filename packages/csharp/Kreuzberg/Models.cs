@@ -791,6 +791,42 @@ public sealed class ChunkMetadata
     /// </summary>
     [JsonPropertyName("last_page")]
     public int? LastPage { get; set; }
+
+    /// <summary>
+    /// Heading hierarchy for this chunk's section, if available (markdown chunker only).
+    /// </summary>
+    [JsonPropertyName("heading_context")]
+    public HeadingContext? HeadingContext { get; set; }
+}
+
+/// <summary>
+/// Heading context for a chunk's section in the document.
+/// </summary>
+public sealed class HeadingContext
+{
+    /// <summary>
+    /// Heading hierarchy from document root to this chunk's section.
+    /// </summary>
+    [JsonPropertyName("headings")]
+    public List<HeadingLevel> Headings { get; set; } = new();
+}
+
+/// <summary>
+/// A single heading in the document hierarchy.
+/// </summary>
+public sealed class HeadingLevel
+{
+    /// <summary>
+    /// Heading depth (1 = h1, 2 = h2, etc.).
+    /// </summary>
+    [JsonPropertyName("level")]
+    public int Level { get; set; }
+
+    /// <summary>
+    /// Text content of the heading.
+    /// </summary>
+    [JsonPropertyName("text")]
+    public string Text { get; set; } = string.Empty;
 }
 
 /// <summary>
