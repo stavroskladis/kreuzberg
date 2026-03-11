@@ -15004,58 +15004,6 @@ impl PdfiumLibraryBindings for WasmPdfiumBindings {
 
         result
     }
-
-    #[allow(non_snake_case)]
-    fn FPDFCatalog_GetLanguage(&self, document: FPDF_DOCUMENT, buffer: *mut c_char, buflen: c_ulong) -> c_ulong {
-        log::debug!("pdfium-render::PdfiumLibraryBindings::FPDFCatalog_GetLanguage(): entering");
-
-        let state = PdfiumRenderWasmState::lock();
-
-        let buffer_length = buflen as usize;
-
-        let buffer_ptr = if buffer_length > 0 {
-            log::debug!(
-                "pdfium-render::PdfiumLibraryBindings::FPDFCatalog_GetLanguage(): allocating buffer of {} bytes in Pdfium's WASM heap",
-                buffer_length
-            );
-
-            state.malloc(buffer_length)
-        } else {
-            0
-        };
-
-        log::debug!(
-            "pdfium-render::PdfiumLibraryBindings::FPDFCatalog_GetLanguage(): calling FPDFCatalog_GetLanguage()"
-        );
-
-        let result = state
-            .call(
-                "FPDFCatalog_GetLanguage",
-                JsFunctionArgumentType::Number,
-                Some(vec![
-                    JsFunctionArgumentType::Pointer,
-                    JsFunctionArgumentType::Pointer,
-                    JsFunctionArgumentType::Number,
-                ]),
-                Some(&JsValue::from(Array::of3(
-                    &Self::js_value_from_document(document),
-                    &Self::js_value_from_offset(buffer_ptr),
-                    &JsValue::from_f64(buffer_length as f64),
-                ))),
-            )
-            .as_f64()
-            .unwrap() as usize;
-
-        if result > 0 && result <= buffer_length {
-            state.copy_struct_from_pdfium(buffer_ptr, result, buffer as *mut c_void);
-        }
-
-        state.free(buffer_ptr);
-
-        log::debug!("pdfium-render::PdfiumLibraryBindings::FPDFCatalog_GetLanguage(): leaving");
-
-        result as c_ulong
-    }
 }
 
 impl Drop for WasmPdfiumBindings {

@@ -3823,12 +3823,6 @@ impl PdfiumLibraryBindings for StaticPdfiumBindings {
 
         unsafe { crate::bindgen::FPDFCatalog_SetLanguage(document, c_language.as_ptr()) }
     }
-
-    #[inline]
-    #[allow(non_snake_case)]
-    fn FPDFCatalog_GetLanguage(&self, document: FPDF_DOCUMENT, buffer: *mut c_char, buflen: c_ulong) -> c_ulong {
-        unsafe { crate::bindgen::FPDFCatalog_GetLanguage(document, buffer, buflen) }
-    }
 }
 
 impl Drop for StaticPdfiumBindings {

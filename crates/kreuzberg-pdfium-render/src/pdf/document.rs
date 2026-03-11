@@ -221,35 +221,6 @@ impl<'a> PdfDocument<'a> {
         self.output_version = Some(version);
     }
 
-    /// Returns the document-level language from the PDF catalog, if set.
-    ///
-    /// The language is an ASCII/UTF-8 string (e.g., "en-US").
-    pub fn language(&self) -> Option<String> {
-        // First call with null buffer to get required size
-        let len = self
-            .bindings
-            .FPDFCatalog_GetLanguage(self.handle, std::ptr::null_mut(), 0);
-
-        if len == 0 {
-            return None;
-        }
-
-        let mut buffer = vec![0 as std::ffi::c_char; len as usize];
-
-        let result = self
-            .bindings
-            .FPDFCatalog_GetLanguage(self.handle, buffer.as_mut_ptr(), len);
-
-        if result == 0 {
-            return None;
-        }
-
-        // Convert c_char buffer to String (strip trailing NUL)
-        let bytes: Vec<u8> = buffer.iter().map(|&c| c as u8).collect();
-        let end = bytes.iter().position(|&b| b == 0).unwrap_or(bytes.len());
-        String::from_utf8(bytes[..end].to_vec()).ok()
-    }
-
     /// Returns `true` if this [PdfDocument] is a tagged PDF.
     pub fn is_tagged(&self) -> bool {
         self.bindings.is_true(self.bindings.FPDFCatalog_IsTagged(self.handle))

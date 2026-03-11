@@ -1231,8 +1231,6 @@ pub(crate) struct DynamicPdfiumBindings {
     extern_FPDFCatalog_IsTagged: unsafe extern "C" fn(document: FPDF_DOCUMENT) -> FPDF_BOOL,
     extern_FPDFCatalog_SetLanguage:
         unsafe extern "C" fn(document: FPDF_DOCUMENT, language: FPDF_BYTESTRING) -> FPDF_BOOL,
-    extern_FPDFCatalog_GetLanguage:
-        unsafe extern "C" fn(document: FPDF_DOCUMENT, buffer: *mut c_char, buflen: c_ulong) -> c_ulong,
 }
 
 impl DynamicPdfiumBindings {
@@ -1758,7 +1756,6 @@ impl DynamicPdfiumBindings {
             extern_FPDFAttachment_GetSubtype: *(Self::bind(&library, "FPDFAttachment_GetSubtype")?),
             extern_FPDFCatalog_IsTagged: *(Self::bind(&library, "FPDFCatalog_IsTagged")?),
             extern_FPDFCatalog_SetLanguage: *(Self::bind(&library, "FPDFCatalog_SetLanguage")?),
-            extern_FPDFCatalog_GetLanguage: *(Self::bind(&library, "FPDFCatalog_GetLanguage")?),
             library,
         })
     }
@@ -5532,12 +5529,6 @@ impl PdfiumLibraryBindings for DynamicPdfiumBindings {
         let c_language = safe_cstring(language);
 
         unsafe { (self.extern_FPDFCatalog_SetLanguage)(document, c_language.as_ptr()) }
-    }
-
-    #[inline]
-    #[allow(non_snake_case)]
-    fn FPDFCatalog_GetLanguage(&self, document: FPDF_DOCUMENT, buffer: *mut c_char, buflen: c_ulong) -> c_ulong {
-        unsafe { (self.extern_FPDFCatalog_GetLanguage)(document, buffer, buflen) }
     }
 }
 
