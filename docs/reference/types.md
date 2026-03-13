@@ -2732,7 +2732,7 @@ type HeadingLevel struct {
 }
 ```
 
-### HeadingContext
+### HeadingContext <span class="version-badge">v4.5.0</span>
 
 Heading hierarchy from root to current section, providing structural context for a chunk within the document.
 
@@ -2776,7 +2776,7 @@ type HeadingContext struct {
 }
 ```
 
-### ChunkSizing
+### ChunkSizing <span class="version-badge">v4.5.0</span>
 
 Chunk size measurement strategy. Defaults to Unicode character count; optionally uses a HuggingFace tokenizer (requires `chunking-tokenizers` feature).
 
