@@ -19,8 +19,9 @@ use super::lines::{is_cjk_char, segments_to_lines};
 use super::paragraphs::{lines_to_paragraphs, merge_continuation_paragraphs, split_embedded_list_items};
 use super::render::inject_image_placeholders;
 use super::text_repair::{
-    apply_ligature_repairs, build_ligature_repair_map, normalize_unicode_text, repair_broken_word_spacing,
-    repair_contextual_ligatures, text_has_broken_word_spacing, text_has_ligature_corruption,
+    apply_ligature_repairs, apply_to_all_segments, build_ligature_repair_map, normalize_unicode_text,
+    repair_broken_word_spacing, repair_contextual_ligatures, text_has_broken_word_spacing,
+    text_has_ligature_corruption,
 };
 use super::types::{LayoutHint, PdfParagraph};
 
@@ -101,13 +102,7 @@ pub fn render_document_as_markdown_with_tables(
                 // Try error-flag-based repair first (most accurate).
                 if let Some(repair_map) = build_ligature_repair_map(&page) {
                     has_font_encoding_issues = true;
-                    for para in &mut paragraphs {
-                        for line in &mut para.lines {
-                            for seg in &mut line.segments {
-                                seg.text = apply_ligature_repairs(&seg.text, &repair_map);
-                            }
-                        }
-                    }
+                    apply_to_all_segments(&mut paragraphs, |t| apply_ligature_repairs(t, &repair_map));
                 }
                 // Then apply contextual ligature repair for fonts where
                 // pdfium doesn't flag encoding errors. Check the actual
@@ -122,33 +117,15 @@ pub fn render_document_as_markdown_with_tables(
                         .collect::<Vec<_>>()
                         .join(" ");
                     if text_has_ligature_corruption(&all_text) {
-                        for para in &mut paragraphs {
-                            for line in &mut para.lines {
-                                for seg in &mut line.segments {
-                                    seg.text = repair_contextual_ligatures(&seg.text);
-                                }
-                            }
-                        }
+                        apply_to_all_segments(&mut paragraphs, repair_contextual_ligatures);
                     }
                     // Repair broken word spacing (single-letter fragments like "M ust")
                     if text_has_broken_word_spacing(&all_text) {
-                        for para in &mut paragraphs {
-                            for line in &mut para.lines {
-                                for seg in &mut line.segments {
-                                    seg.text = repair_broken_word_spacing(&seg.text);
-                                }
-                            }
-                        }
+                        apply_to_all_segments(&mut paragraphs, repair_broken_word_spacing);
                     }
                 }
                 // Normalize Unicode characters (curly quotes, fraction slash, etc.)
-                for para in &mut paragraphs {
-                    for line in &mut para.lines {
-                        for seg in &mut line.segments {
-                            seg.text = normalize_unicode_text(&seg.text);
-                        }
-                    }
-                }
+                apply_to_all_segments(&mut paragraphs, normalize_unicode_text);
                 // Dehyphenate: rejoin trailing hyphens. Use positional
                 // data for full-line checks when bounds are available.
                 let has_positions = paragraphs.iter().any(|p| {
@@ -618,34 +595,16 @@ pub fn render_document_as_markdown_with_tables(
                     .collect::<Vec<_>>()
                     .join(" ");
                 if text_has_ligature_corruption(&all_text) {
-                    for para in &mut paragraphs {
-                        for line in &mut para.lines {
-                            for seg in &mut line.segments {
-                                seg.text = repair_contextual_ligatures(&seg.text);
-                            }
-                        }
-                    }
+                    apply_to_all_segments(&mut paragraphs, repair_contextual_ligatures);
                 }
                 // Repair broken word spacing (single-letter fragments like "M ust")
                 // caused by broken font CMap/ToUnicode tables.
                 if text_has_broken_word_spacing(&all_text) {
-                    for para in &mut paragraphs {
-                        for line in &mut para.lines {
-                            for seg in &mut line.segments {
-                                seg.text = repair_broken_word_spacing(&seg.text);
-                            }
-                        }
-                    }
+                    apply_to_all_segments(&mut paragraphs, repair_broken_word_spacing);
                 }
             }
             // Normalize Unicode characters (curly quotes, fraction slash, etc.)
-            for para in &mut paragraphs {
-                for line in &mut para.lines {
-                    for seg in &mut line.segments {
-                        seg.text = normalize_unicode_text(&seg.text);
-                    }
-                }
-            }
+            apply_to_all_segments(&mut paragraphs, normalize_unicode_text);
             // Dehyphenate: heuristic path has positional data for
             // full-line detection, enabling both hyphen and no-hyphen joins.
             dehyphenate_paragraphs(&mut paragraphs, true);
