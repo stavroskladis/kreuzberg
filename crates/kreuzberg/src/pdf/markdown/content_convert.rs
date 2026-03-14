@@ -211,9 +211,16 @@ fn group_words_to_paragraphs(elements: &[ContentElement]) -> Vec<PdfParagraph> {
             gaps.sort_by(|a, b| a.total_cmp(b));
             let median_gap = gaps[gaps.len() / 2];
             // Use twice the median gap as the paragraph break threshold.
-            // Clamp to at least 1.0 to avoid spurious breaks when text is very
-            // tightly spaced (median_gap ≈ 0).
-            (median_gap * 2.0).max(1.0)
+            // When OCR word bboxes are tightly packed, median_gap can be
+            // near zero, which would make 1.0 px the threshold and flag every
+            // line break as a paragraph break. To avoid this we fall back to a
+            // fraction of the median element height when gaps are near zero.
+            if median_gap > 0.1 {
+                (median_gap * 2.0).max(median_height * 0.3)
+            } else {
+                // Gaps are near-zero: use element height as paragraph-break proxy.
+                median_height * 0.5
+            }
         }
     } else {
         f32::MAX // Single line: no paragraph break possible.
@@ -681,21 +688,18 @@ pub(crate) fn reorder_elements_reading_order(elements: &mut Vec<ContentElement>)
         return;
     }
 
-    // Valid two-column layout: partition all elements into left column, right column,
-    // and header/footer groups (preserving their original relative order within groups).
+    // Valid two-column layout: partition all elements into left column and right column.
+    // Header/footer elements are NOT moved to the front; they stay in their spatial
+    // position (sorted by their own y_max like all other elements). The `is_page_furniture`
+    // flag already causes them to be filtered out during rendering, so forcing them to
+    // output-start would only corrupt the reading order of the body content.
     //
     // Elements without bboxes are assigned to the left column by default.
     let mut left_col: Vec<ContentElement> = Vec::new();
     let mut right_col: Vec<ContentElement> = Vec::new();
-    let mut header_footer: Vec<ContentElement> = Vec::new();
 
     for elem in elements.drain(..) {
-        if matches!(
-            elem.semantic_role,
-            Some(SemanticRole::PageHeader) | Some(SemanticRole::PageFooter)
-        ) {
-            header_footer.push(elem);
-        } else if let Some(r) = elem.bbox {
+        if let Some(r) = elem.bbox {
             let x_center = (r.left + r.right) / 2.0;
             if x_center < split_x {
                 left_col.push(elem);
@@ -720,8 +724,7 @@ pub(crate) fn reorder_elements_reading_order(elements: &mut Vec<ContentElement>)
         yb.total_cmp(&ya)
     });
 
-    // Reassemble: header/footer first, then left column, then right column.
-    elements.extend(header_footer);
+    // Reassemble: left column then right column (no special header/footer hoisting).
     elements.extend(left_col);
     elements.extend(right_col);
 }
@@ -1019,8 +1022,11 @@ mod tests {
     }
 
     #[test]
-    fn test_reorder_header_footer_placed_first() {
-        // Header should appear before column content in output.
+    fn test_reorder_header_footer_stays_in_spatial_position() {
+        // Header/footer elements must NOT be hoisted to the front of the output.
+        // They stay in their spatial (y_max-sorted) position within their column.
+        // The `is_page_furniture` flag filters them during rendering — forcing them
+        // to output-start would corrupt the body content reading order.
         let mut elements = vec![
             make_block("L1", 0.0, 650.0, 662.0, SemanticRole::Paragraph),
             make_block("R1", 400.0, 650.0, 662.0, SemanticRole::Paragraph),
@@ -1030,7 +1036,20 @@ mod tests {
         ];
         reorder_elements_reading_order(&mut elements);
         let texts: Vec<_> = elements.iter().map(|e| e.text.clone()).collect();
-        assert_eq!(texts[0], "Header", "header/footer should come first; got: {:?}", texts);
+        // All elements must be preserved regardless of order.
+        assert_eq!(texts.len(), 5, "all elements must be present; got: {:?}", texts);
+        // Header should NOT be forced to position 0 — it is placed by spatial sort.
+        // (It has y_max=762 so it sorts first in the left column, but the key invariant
+        //  is that we no longer artificially hoist it ahead of all columns.)
+        let header_pos = texts.iter().position(|t| t == "Header").unwrap();
+        // Header lands first in left column (highest y_max in left col), so index 0
+        // in left col, which maps to index 0 overall — that is fine because it is
+        // its true spatial position, not forced hoisting.
+        // The body elements from the left column must follow Header in the left column.
+        let l1_pos = texts.iter().position(|t| t == "L1").unwrap();
+        let l2_pos = texts.iter().position(|t| t == "L2").unwrap();
+        assert!(header_pos < l1_pos, "Header (y=762) should precede L1 (y=662) in spatial order");
+        assert!(l1_pos < l2_pos, "L1 (y=662) should precede L2 (y=612) in spatial order");
     }
 
     #[test]

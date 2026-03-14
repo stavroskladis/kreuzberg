@@ -37,9 +37,12 @@ pub(crate) fn render_paragraph_to_output(para: &PdfParagraph, output: &mut Strin
         output.push_str(&normalized);
     } else if matches!(para.layout_class, Some(LayoutHintClass::Caption)) {
         // Captions are rendered in italic to visually distinguish them from body text.
+        // Asterisks in the caption text must be escaped so they don't break the italic
+        // delimiter (`*...*`) and produce malformed markdown.
         let text = escape_html_entities(&join_line_texts(&para.lines));
+        let escaped = text.replace('*', "\\*");
         output.push('*');
-        output.push_str(&text);
+        output.push_str(&escaped);
         output.push('*');
     } else {
         let text = render_paragraph_with_inline_markup(para);

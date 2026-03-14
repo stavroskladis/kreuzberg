@@ -214,6 +214,9 @@ impl Pix {
 
         // SAFETY: pixGetWpl() is a pure read of the Pix header that is always
         // valid for a correctly-allocated Pix.
+        // For a 32 bpp image, each pixel occupies exactly one 32-bit word, so
+        // wpl == width (no padding bytes). The loop below uses `row * wpl + col`
+        // to index into the pixel data, which is within bounds because col < width <= wpl.
         let wpl = unsafe { pixGetWpl(pix_ptr) } as usize;
 
         // Write RGB pixels into the Leptonica data buffer.

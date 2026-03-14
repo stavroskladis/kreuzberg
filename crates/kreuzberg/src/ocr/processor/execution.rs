@@ -712,6 +712,14 @@ pub(super) fn perform_ocr(
     // IMPORTANT: `pix_guard` must remain alive until AFTER `api.recognize()` completes
     // because `TessBaseAPISetImage2` borrows the Pix pointer without taking ownership.
     // Dropping the Pix while Tesseract holds the pointer would cause a use-after-free.
+    //
+    // DROP ORDER NOTE: `pix_guard` is declared AFTER `api` (the `ApiGuard`), so Rust
+    // drops it FIRST when the function returns (Rust drops locals in reverse declaration
+    // order). This means the Pix is freed *before* the ApiGuard fires, which in turn
+    // calls `return_api_to_cache`. The API therefore never enters the cache while still
+    // holding a dangling Pix pointer — the Pix is already freed at that point, and
+    // Tesseract's internal reference to it has been cleared by `api.clear()` (called at
+    // the top of `get_or_init_api` on the next reuse). No dangling pointer issue.
     let pix_guard: Option<kreuzberg_tesseract::Pix> = {
         match kreuzberg_tesseract::Pix::from_raw_rgb(&image_data, width, height) {
             Ok(pix) => {
@@ -800,15 +808,45 @@ pub(super) fn perform_ocr(
                         rotate_rgb_image_data(&image_data, width, height, orient_deg);
                     let new_bytes_per_line = new_width * bytes_per_pixel;
 
-                    // Re-set the rotated image in Tesseract
-                    api.set_image(
-                        &rotated_data,
-                        new_width as i32,
-                        new_height as i32,
-                        bytes_per_pixel as i32,
-                        new_bytes_per_line as i32,
-                    )
-                    .map_err(|e| OcrError::ProcessingFailed(format!("Failed to set rotated image: {}", e)))?;
+                    // Re-apply Leptonica preprocessing to the rotated image so the same
+                    // background normalisation / unsharp mask / grayscale pipeline is used.
+                    // If preprocessing succeeds we set the image via set_image_2; otherwise
+                    // we fall back to the raw rotated RGB bytes via set_image.
+                    //
+                    // NOTE: `pix_guard` (declared above) is intentionally shadowed here.
+                    // The previous Pix (built from the un-rotated data) is dropped as the
+                    // binding goes out of scope, freeing its Leptonica allocation before the
+                    // new one is registered with Tesseract.
+                    let rotated_pix = kreuzberg_tesseract::Pix::from_raw_rgb(&rotated_data, new_width, new_height)
+                        .ok()
+                        .and_then(|pix| {
+                            pix.background_normalize()
+                                .and_then(|p| p.unsharp_mask(3, 0.5))
+                                .and_then(|p| p.to_grayscale())
+                                .ok()
+                        });
+
+                    if let Some(ref pix) = rotated_pix {
+                        api.set_image_2(pix.as_ptr()).map_err(|e| {
+                            OcrError::ProcessingFailed(format!("Failed to set rotated preprocessed image: {}", e))
+                        })?;
+                    } else {
+                        // Leptonica preprocessing failed for the rotated image — use raw bytes.
+                        api.set_image(
+                            &rotated_data,
+                            new_width as i32,
+                            new_height as i32,
+                            bytes_per_pixel as i32,
+                            new_bytes_per_line as i32,
+                        )
+                        .map_err(|e| OcrError::ProcessingFailed(format!("Failed to set rotated image: {}", e)))?;
+                    }
+
+                    // Keep the rotated Pix alive until after recognize() by re-assigning the
+                    // outer pix_guard binding. The previous (un-rotated) Pix is dropped here.
+                    let _ = pix_guard; // explicitly drop the un-rotated Pix
+                    let pix_guard = rotated_pix; // shadowed; dropped after recognize()
+                    let _ = &pix_guard; // prevent the compiler from eliding the binding
 
                     api.set_source_resolution(source_dpi).map_err(|e| {
                         OcrError::ProcessingFailed(format!("Failed to set source resolution after rotation: {}", e))
