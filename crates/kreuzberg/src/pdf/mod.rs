@@ -63,6 +63,8 @@ pub mod table;
 pub mod table_reconstruct;
 #[cfg(feature = "pdf")]
 pub mod text;
+#[cfg(feature = "pdf")]
+pub(crate) mod oxide_text;
 
 #[cfg(feature = "pdf")]
 pub use crate::core::config::HierarchyConfig;

@@ -283,8 +283,11 @@ impl DocumentExtractor for PdfExtractor {
                     let content_owned = content.to_vec();
                     let span = tracing::Span::current();
                     let config_owned = config.clone();
+                    let oxide_path = crate::pdf::oxide_text::current_pdf_path();
                     let result = tokio::task::spawn_blocking(move || {
                         let _guard = span.entered();
+                        // Propagate PDF path to spawned thread for pdf_oxide extraction.
+                        crate::pdf::oxide_text::set_current_pdf_path(oxide_path);
 
                         let pdfium =
                             crate::pdf::bindings::bind_pdfium(PdfError::MetadataExtractionFailed, "initialize Pdfium")?;
@@ -692,8 +695,14 @@ impl DocumentExtractor for PdfExtractor {
 
     #[cfg(feature = "tokio-runtime")]
     async fn extract_file(&self, path: &Path, mime_type: &str, config: &ExtractionConfig) -> Result<ExtractionResult> {
+        // Set the PDF file path for pdf_oxide text extraction (thread-local).
+        #[cfg(feature = "pdf")]
+        crate::pdf::oxide_text::set_current_pdf_path(Some(path.to_path_buf()));
         let bytes = tokio::fs::read(path).await?;
-        self.extract_bytes(&bytes, mime_type, config).await
+        let result = self.extract_bytes(&bytes, mime_type, config).await;
+        #[cfg(feature = "pdf")]
+        crate::pdf::oxide_text::set_current_pdf_path(None);
+        result
     }
 
     fn supported_mime_types(&self) -> &[&str] {

@@ -79,6 +79,7 @@ criterion = { version = "0.8", features = ["html_reports"] }
 lzma-rust2 = { version = "0.16.2" }
 getrandom = { version = "0.4.2", features = ["wasm_js"] }
 pdfium-render = { package = "kreuzberg-pdfium-render", path = "crates/kreuzberg-pdfium-render", version = "4.3" }
+pdf_oxide = { version = "0.3.17", default-features = false }
 log = "0.4"
 wasm-bindgen = { version = "0.2", features = ["enable-interning"] }
 wasm-bindgen-futures = "0.4"

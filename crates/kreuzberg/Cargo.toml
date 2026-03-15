@@ -27,7 +27,7 @@ simd-utf8 = ["dep:simdutf8"]
 
 tokio-runtime = ["dep:tokio"]
 
-pdf = ["dep:pdfium-render", "dep:lopdf", "dep:image", "html"]
+pdf = ["dep:pdfium-render", "dep:lopdf", "dep:image", "dep:pdf_oxide", "html"]
 static-pdfium = ["pdf"]
 bundled-pdfium = ["pdf"]
 system-pdfium = ["pdf"]
@@ -202,6 +202,7 @@ tokio = { workspace = true, optional = true }
 indexmap = "2.13.0"
 tracing = { workspace = true }
 pdfium-render = { workspace = true, features = ["thread_safe", "image_latest"], optional = true }
+pdf_oxide = { workspace = true, optional = true }
 lopdf = { version = "0.39.0", optional = true }
 calamine = { version = "0.34.0", features = ["dates"], optional = true }
 

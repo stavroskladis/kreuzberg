@@ -557,11 +557,37 @@ pub fn render_document_as_markdown_with_tables(
         extract_structure_tree_pages(pages, page_count)?;
     has_font_encoding_issues |= struct_tree_font_issues;
 
+    // Try pdf_oxide for text extraction on heuristic pages (cleaner word spacing).
+    // pdf_oxide parses PDF content streams directly with adaptive TJ-offset thresholds,
+    // avoiding the broken word spacing pdfium produces for fonts with bad CMaps.
+    let oxide_segments: Option<Vec<Vec<SegmentData>>> = {
+        let t = std::time::Instant::now();
+        let result = crate::pdf::oxide_text::extract_segments_with_oxide(page_count as usize);
+        if let Some(ref segs) = result {
+            let total: usize = segs.iter().map(|s| s.len()).sum();
+            tracing::debug!(
+                total_segments = total,
+                elapsed_ms = t.elapsed().as_secs_f64() * 1000.0,
+                "pdf_oxide text extraction complete"
+            );
+        }
+        result
+    };
+
     // Stage 1: Extract segments from pages that need heuristic extraction.
-    // Uses pdfium's page objects API (via PdfParagraph::from_objects) for spatial analysis
-    // and text grouping, plus image detection for position-aware placeholders.
-    let (mut all_page_segments, all_image_positions) =
-        extract_heuristic_segments(pages, page_count, &heuristic_pages, top_margin, bottom_margin);
+    // Use pdf_oxide segments when available, fall back to pdfium.
+    let (mut all_page_segments, all_image_positions) = if let Some(oxide_segs) = oxide_segments {
+        // Use pdf_oxide segments for heuristic pages, pdfium for images only.
+        let mut all_segs = oxide_segs;
+        // Ensure vector is large enough (pdf_oxide may return fewer pages)
+        all_segs.resize_with(page_count as usize, Vec::new);
+        // Still need pdfium for image positions
+        let (_, image_positions) =
+            extract_heuristic_segments(pages, page_count, &heuristic_pages, top_margin, bottom_margin);
+        (all_segs, image_positions)
+    } else {
+        extract_heuristic_segments(pages, page_count, &heuristic_pages, top_margin, bottom_margin)
+    };
 
     // Detect font encoding issues on heuristic pages.
     for &i in &heuristic_pages {
