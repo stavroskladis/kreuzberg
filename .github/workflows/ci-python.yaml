@@ -344,15 +344,6 @@ jobs:
         shell: bash
         run: task python:test:ci
 
-      - name: Upload coverage
-        if: matrix.coverage
-        continue-on-error: true
-        uses: deepsourcelabs/test-coverage-action@master
-        with:
-          key: python
-          coverage-file: packages/python/coverage.lcov
-          dsn: ${{ secrets.DEEPSOURCE_DSN }}
-
       - name: Run E2E tests
         shell: bash
         env:

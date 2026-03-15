@@ -43,7 +43,7 @@ pub(in crate::pdf::markdown) fn apply_region_class(
 
             if is_near_margin {
                 for para in paragraphs.iter_mut() {
-                    apply_hint_to_paragraph(para, hint);
+                    apply_hint_to_paragraph(para, hint, None);
                 }
             } else {
                 // Region is in the body of the page — treat as Text, not furniture.
@@ -57,7 +57,7 @@ pub(in crate::pdf::markdown) fn apply_region_class(
         _ => {
             // Code, Formula, ListItem, Caption, Other
             for para in paragraphs.iter_mut() {
-                apply_hint_to_paragraph(para, hint);
+                apply_hint_to_paragraph(para, hint, None);
             }
         }
     }

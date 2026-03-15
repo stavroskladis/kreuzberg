@@ -396,7 +396,7 @@ fn process_single_page(
         merge_continuation_paragraphs(&mut paragraphs);
         // Apply layout detection overrides when available.
         if let Some(ref hints) = page_hints {
-            super::layout_classify::apply_layout_overrides(&mut paragraphs, hints, 0.5, 0.2);
+            super::layout_classify::apply_layout_overrides(&mut paragraphs, hints, 0.5, 0.2, doc_body_font_size);
             retain_page_furniture_safely(&mut paragraphs);
         }
         paragraphs
@@ -484,7 +484,7 @@ fn process_single_page(
             // assembly (multi-column, oversized regions, no text-class hints).
             // Without this, layout detection results are silently discarded.
             if let Some(ref hints) = page_hints {
-                super::layout_classify::apply_layout_overrides(&mut paras, hints, 0.5, 0.2);
+                super::layout_classify::apply_layout_overrides(&mut paras, hints, 0.5, 0.2, doc_body_font_size);
             }
             merge_continuation_paragraphs(&mut paras);
             paras

@@ -23,6 +23,7 @@ pub(super) fn apply_layout_overrides(
     hints: &[LayoutHint],
     min_confidence: f32,
     min_containment: f32,
+    body_font_size: Option<f32>,
 ) {
     if hints.is_empty() {
         return;
@@ -33,7 +34,7 @@ pub(super) fn apply_layout_overrides(
 
     if has_any_positions {
         // Spatial matching for paragraphs with positional data
-        apply_spatial_overrides(paragraphs, hints, min_confidence, min_containment);
+        apply_spatial_overrides(paragraphs, hints, min_confidence, min_containment, body_font_size);
     } else {
         // Proportional matching for structure tree pages (no positional data)
         apply_proportional_overrides(paragraphs, hints, min_confidence);
@@ -55,6 +56,7 @@ fn apply_spatial_overrides(
     hints: &[LayoutHint],
     min_confidence: f32,
     min_containment: f32,
+    body_font_size: Option<f32>,
 ) {
     let confident_hints: Vec<&LayoutHint> = hints.iter().filter(|h| h.confidence >= min_confidence).collect();
 
@@ -83,7 +85,7 @@ fn apply_spatial_overrides(
             .max_by(|a, b| a.1.total_cmp(&b.1));
 
         if let Some((hint, _)) = best_2d {
-            apply_hint_to_paragraph(para, hint);
+            apply_hint_to_paragraph(para, hint, body_font_size);
         }
     }
 }
@@ -156,10 +158,10 @@ fn apply_proportional_overrides(paragraphs: &mut [PdfParagraph], hints: &[Layout
 
             match hint.class {
                 LayoutHintClass::PageHeader if i == 0 && overlap_frac > 0.25 => {
-                    apply_hint_to_paragraph(para, hint);
+                    apply_hint_to_paragraph(para, hint, None);
                 }
                 LayoutHintClass::PageFooter if i == n - 1 && overlap_frac > 0.25 => {
-                    apply_hint_to_paragraph(para, hint);
+                    apply_hint_to_paragraph(para, hint, None);
                 }
                 LayoutHintClass::SectionHeader | LayoutHintClass::Title
                     if para.heading_level.is_none()
@@ -261,7 +263,11 @@ pub(super) fn infer_heading_level_from_text(text: &str, hint_class: LayoutHintCl
 }
 
 /// Apply a single hint's classification to a paragraph.
-pub(super) fn apply_hint_to_paragraph(para: &mut PdfParagraph, hint: &LayoutHint) {
+///
+/// `body_font_size`: when provided, used to guard against promoting body-text-sized
+/// paragraphs to headings (unnumbered SectionHeader at body font size is likely a
+/// false positive from the layout model).
+pub(super) fn apply_hint_to_paragraph(para: &mut PdfParagraph, hint: &LayoutHint, body_font_size: Option<f32>) {
     para.layout_class = Some(hint.class);
 
     let para_text: String = para
@@ -310,10 +316,16 @@ pub(super) fn apply_hint_to_paragraph(para: &mut PdfParagraph, hint: &LayoutHint
                     let ends_colon = trimmed.ends_with(':');
                     let is_figure = super::regions::looks_like_figure_label(trimmed);
                     let is_monospace = para.lines.iter().all(|l| l.is_monospace);
-                    let is_list = para.is_list_item;
-                    if !too_long && !ends_period && !ends_colon && !is_figure && !is_monospace && !is_list {
-                        let level = infer_heading_level_from_text(&para_text, hint.class);
-                        para.heading_level = Some(level);
+                    // Guard: unnumbered section headers at body font size are likely
+                    // false positives — the layout model misclassified body text.
+                    // Numbered sections pass through since numbering evidences a heading.
+                    let text_level = infer_heading_level_from_text(&para_text, hint.class);
+                    let at_body_size = body_font_size
+                        .is_some_and(|body| body > 0.0 && para.dominant_font_size <= body + 0.5);
+                    let is_unnumbered = text_level == 2; // No section numbering detected
+                    let body_size_guard = at_body_size && is_unnumbered;
+                    if !too_long && !ends_period && !ends_colon && !is_figure && !is_monospace && !body_size_guard {
+                        para.heading_level = Some(text_level);
                     }
                 }
         LayoutHintClass::Code => {
@@ -468,7 +480,7 @@ mod tests {
     fn test_title_override() {
         let mut paragraphs = vec![make_para(50.0, 750.0, 500.0, 20.0)];
         let hints = vec![make_hint(LayoutHintClass::Title, 0.9, 40.0, 745.0, 560.0, 775.0)];
-        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5);
+        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5, None);
         assert_eq!(paragraphs[0].heading_level, Some(1));
         assert_eq!(paragraphs[0].layout_class, Some(LayoutHintClass::Title));
     }
@@ -484,7 +496,7 @@ mod tests {
             400.0,
             620.0,
         )];
-        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5);
+        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5, None);
         assert_eq!(paragraphs[0].heading_level, Some(2));
     }
 
@@ -492,7 +504,7 @@ mod tests {
     fn test_low_confidence_ignored() {
         let mut paragraphs = vec![make_para(50.0, 750.0, 500.0, 20.0)];
         let hints = vec![make_hint(LayoutHintClass::Title, 0.3, 40.0, 745.0, 560.0, 775.0)];
-        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5);
+        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5, None);
         assert_eq!(paragraphs[0].heading_level, None);
         assert_eq!(paragraphs[0].layout_class, None);
     }
@@ -510,7 +522,7 @@ mod tests {
             560.0,
             775.0,
         )];
-        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5);
+        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5, None);
         assert_eq!(paragraphs[0].heading_level, Some(2)); // SectionHeader → H2
     }
 
@@ -527,14 +539,14 @@ mod tests {
             560.0,
             775.0,
         )];
-        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5);
+        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5, None);
         assert_eq!(paragraphs[0].heading_level, Some(3)); // Preserved
     }
 
     #[test]
     fn test_empty_hints() {
         let mut paragraphs = vec![make_para(50.0, 750.0, 500.0, 20.0)];
-        apply_layout_overrides(&mut paragraphs, &[], 0.5, 0.5);
+        apply_layout_overrides(&mut paragraphs, &[], 0.5, 0.5, None);
         assert_eq!(paragraphs[0].heading_level, None);
     }
 
@@ -639,7 +651,7 @@ mod tests {
 
         // Title hint IS applied via proportional matching (heading level inferred)
         let hints = vec![make_hint(LayoutHintClass::Title, 0.9, 40.0, 0.0, 560.0, 760.0)];
-        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5);
+        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5, None);
         assert_eq!(paragraphs[0].heading_level, Some(1));
         assert_eq!(paragraphs[0].layout_class, Some(LayoutHintClass::Title));
 
@@ -649,7 +661,7 @@ mod tests {
 
         // PageHeader hint SHOULD be applied via proportional matching
         let hints = vec![make_hint(LayoutHintClass::PageHeader, 0.9, 40.0, 0.0, 560.0, 760.0)];
-        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5);
+        apply_layout_overrides(&mut paragraphs, &hints, 0.5, 0.5, None);
         assert!(paragraphs[0].is_page_furniture);
         assert_eq!(paragraphs[0].layout_class, Some(LayoutHintClass::PageHeader));
     }

@@ -426,14 +426,6 @@ jobs:
           time bunx vitest run tests/binding/
           set +x
 
-      - name: Upload coverage
-        if: matrix.coverage
-        uses: deepsourcelabs/test-coverage-action@master
-        with:
-          key: typescript
-          coverage-file: e2e/typescript/coverage/lcov.info
-          dsn: ${{ secrets.DEEPSOURCE_DSN }}
-
       - name: Run E2E tests
         if: matrix.runtime == 'node'
         shell: bash
