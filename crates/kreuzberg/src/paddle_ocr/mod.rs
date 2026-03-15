@@ -38,7 +38,6 @@
 
 mod backend;
 mod config;
-pub mod doc_orientation;
 mod model_manager;
 
 pub use backend::PaddleOcrBackend;

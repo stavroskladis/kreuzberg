@@ -48,7 +48,7 @@ pub struct PaddleOcrBackend {
     /// OcrLite inference methods take `&self`, enabling lock-free concurrent page OCR.
     engine_pool: Mutex<HashMap<String, Arc<OcrLite>>>,
     /// Document orientation detector, lazily initialized.
-    doc_ori_detector: once_cell::sync::OnceCell<super::doc_orientation::DocOrientationDetector>,
+    doc_ori_detector: once_cell::sync::OnceCell<crate::doc_orientation::DocOrientationDetector>,
 }
 
 impl PaddleOcrBackend {
@@ -220,55 +220,11 @@ impl PaddleOcrBackend {
         const MIN_CONFIDENCE: f32 = 0.35;
 
         let detector = self.doc_ori_detector.get_or_try_init(|| {
-            Ok::<_, crate::KreuzbergError>(super::doc_orientation::DocOrientationDetector::new(ModelManager::new(
-                self.config.resolve_cache_dir(),
-            )))
+            let cache_dir = crate::doc_orientation::resolve_cache_dir();
+            Ok::<_, crate::KreuzbergError>(crate::doc_orientation::DocOrientationDetector::new(cache_dir))
         })?;
 
-        let img = crate::extraction::image::load_image_for_ocr(image_bytes)
-            .map_err(|e| crate::KreuzbergError::Ocr {
-                message: format!("Failed to load image for orientation detection: {e}"),
-                source: None,
-            })?
-            .to_rgb8();
-
-        let result = detector.detect(&img)?;
-
-        tracing::debug!(
-            degrees = result.degrees,
-            confidence = result.confidence,
-            "Document orientation detected"
-        );
-
-        if result.degrees == 0 || result.confidence < MIN_CONFIDENCE {
-            return Ok(None);
-        }
-
-        // Rotate the image back to upright (opposite direction of detected orientation).
-        // If the model says the image is at 90° CW, rotate 270° CW to correct it.
-        let rotated = match result.degrees {
-            90 => image::imageops::rotate270(&img),
-            180 => image::imageops::rotate180(&img),
-            270 => image::imageops::rotate90(&img),
-            _ => return Ok(None),
-        };
-
-        // Encode back to PNG bytes
-        let mut buf = std::io::Cursor::new(Vec::new());
-        rotated
-            .write_to(&mut buf, image::ImageFormat::Png)
-            .map_err(|e| crate::KreuzbergError::Ocr {
-                message: format!("Failed to encode rotated image: {e}"),
-                source: None,
-            })?;
-
-        tracing::info!(
-            degrees = result.degrees,
-            confidence = result.confidence,
-            "Auto-rotated document page"
-        );
-
-        Ok(Some(buf.into_inner()))
+        crate::doc_orientation::detect_and_rotate(detector, image_bytes)
     }
 
     /// Perform OCR on image bytes using the appropriate script family engine.

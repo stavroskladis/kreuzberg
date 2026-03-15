@@ -1,8 +1,14 @@
 //! Document orientation detection using PP-LCNet_x1_0_doc_ori.
 //!
-//! Detects page-level orientation (0°, 90°, 180°, 270°) for scanned documents.
-//! Used as a PaddleOCR-native alternative to Tesseract's `DetectOrientationScript`
-//! when `auto_rotate` is enabled with the PaddleOCR backend.
+//! Detects page-level orientation (0°, 90°, 180°, 270°) for scanned documents
+//! and images. Gated behind the `auto-rotate` feature.
+//!
+//! Used by ALL OCR backends when `auto_rotate` is enabled in `OcrConfig`.
+//! More reliable than Tesseract's `DetectOrientationScript` which crashes
+//! on raw images without DPI metadata.
+
+use std::fs;
+use std::path::{Path, PathBuf};
 
 use image::RgbImage;
 use ort::session::Session;
@@ -12,19 +18,22 @@ use ort::value::Tensor;
 use crate::Result;
 use crate::error::KreuzbergError;
 
-use super::model_manager::ModelManager;
+/// HuggingFace repository containing the model.
+const HF_REPO_ID: &str = "Kreuzberg/paddleocr-onnx-models";
+const REMOTE_FILENAME: &str = "v2/classifiers/PP-LCNet_x1_0_doc_ori.onnx";
+const SHA256: &str = "6b742aebce6f0f7f71f747931ac7becfc7c96c51641e14943b291eeb334e7947";
 
-// PP-LCNet_x1_0_doc_ori preprocessing constants.
-// Input: resize short side to 256, center crop 224×224, ImageNet normalize.
+// PP-LCNet preprocessing constants.
+// Input: resize short side to 256, center crop 224×224, ImageNet normalize (BGR).
 const INPUT_SIZE: u32 = 224;
 const RESIZE_SHORT: u32 = 256;
 
-// ImageNet normalization: (pixel - MEAN) * NORM
-const MEAN: [f32; 3] = [0.485 * 255.0, 0.456 * 255.0, 0.406 * 255.0];
-const NORM: [f32; 3] = [1.0 / (0.229 * 255.0), 1.0 / (0.224 * 255.0), 1.0 / (0.225 * 255.0)];
-
 /// Output labels: index -> degrees.
 const ORIENTATION_LABELS: [u32; 4] = [0, 90, 180, 270];
+
+/// PP-LCNet doc_ori outputs ~45% confidence for correct class in a 4-class problem.
+/// Uniform baseline is 25%. A threshold of 0.35 provides good discrimination.
+pub const MIN_CONFIDENCE: f32 = 0.35;
 
 /// Document orientation detection result.
 #[derive(Debug, Clone, Copy)]
@@ -36,18 +45,21 @@ pub struct OrientationResult {
 }
 
 /// Detects document page orientation using the PP-LCNet model.
+///
 /// Thread-safe: uses unsafe pointer cast for ONNX session (same pattern as embedding engine).
+/// The model is downloaded from HuggingFace on first use and cached locally.
 pub struct DocOrientationDetector {
     session: once_cell::sync::OnceCell<Session>,
-    model_manager: ModelManager,
+    cache_dir: PathBuf,
 }
 
 impl DocOrientationDetector {
-    /// Creates a new detector. The model is loaded lazily on first use.
-    pub fn new(model_manager: ModelManager) -> Self {
+    /// Creates a new detector with the given cache directory.
+    /// The model is loaded lazily on first use.
+    pub fn new(cache_dir: PathBuf) -> Self {
         Self {
             session: once_cell::sync::OnceCell::new(),
-            model_manager,
+            cache_dir,
         }
     }
 
@@ -80,7 +92,7 @@ impl DocOrientationDetector {
             source: None,
         })?;
 
-        // Parse output: find argmax
+        // Parse output: argmax over 4 orientation classes
         let (_, output_value) = outputs.iter().next().ok_or_else(|| KreuzbergError::Ocr {
             message: "No output from doc orientation model".to_string(),
             source: None,
@@ -115,11 +127,44 @@ impl DocOrientationDetector {
         })
     }
 
+    /// Ensure the model is downloaded and return the ONNX file path.
+    fn ensure_model(&self) -> Result<PathBuf> {
+        let model_dir = self.cache_dir.join("doc-orientation");
+        let model_file = model_dir.join("model.onnx");
+
+        if model_file.exists() {
+            return Ok(model_file);
+        }
+
+        tracing::info!("Downloading document orientation model...");
+        fs::create_dir_all(&model_dir)?;
+
+        let cached_path =
+            crate::model_download::hf_download(HF_REPO_ID, REMOTE_FILENAME).map_err(|e| KreuzbergError::Plugin {
+                message: e,
+                plugin_name: "auto-rotate".to_string(),
+            })?;
+
+        crate::model_download::verify_sha256(&cached_path, SHA256, "doc_ori").map_err(|e| {
+            KreuzbergError::Validation {
+                message: e,
+                source: None,
+            }
+        })?;
+
+        fs::copy(&cached_path, &model_file).map_err(|e| KreuzbergError::Plugin {
+            message: format!("Failed to copy doc_ori model: {e}"),
+            plugin_name: "auto-rotate".to_string(),
+        })?;
+
+        tracing::info!("Document orientation model saved");
+        Ok(model_file)
+    }
+
     /// Get or initialize the ONNX session (lazy, thread-safe via OnceCell).
     fn get_or_init_session(&self) -> Result<&Session> {
         self.session.get_or_try_init(|| {
-            let model_dir = self.model_manager.ensure_doc_ori_model()?;
-            let model_path = model_dir.join("model.onnx");
+            let model_path = self.ensure_model()?;
 
             crate::ort_discovery::ensure_ort_available();
 
@@ -144,6 +189,67 @@ impl DocOrientationDetector {
             Ok(session)
         })
     }
+}
+
+/// Resolve the cache directory for the auto-rotate model.
+pub fn resolve_cache_dir() -> PathBuf {
+    if let Ok(env_path) = std::env::var("KREUZBERG_CACHE_DIR") {
+        return PathBuf::from(env_path).join("auto-rotate");
+    }
+    std::env::current_dir()
+        .unwrap_or_else(|_| PathBuf::from("."))
+        .join(".kreuzberg")
+        .join("auto-rotate")
+}
+
+/// Detect orientation and return a corrected image if rotation is needed.
+///
+/// Returns `Ok(Some(rotated_bytes))` if rotation was applied,
+/// `Ok(None)` if no rotation needed (0° or low confidence).
+pub fn detect_and_rotate(detector: &DocOrientationDetector, image_bytes: &[u8]) -> Result<Option<Vec<u8>>> {
+    let img = image::load_from_memory(image_bytes)
+        .map_err(|e| KreuzbergError::Ocr {
+            message: format!("Failed to load image for orientation detection: {e}"),
+            source: None,
+        })?
+        .to_rgb8();
+
+    let result = detector.detect(&img)?;
+
+    tracing::debug!(
+        degrees = result.degrees,
+        confidence = result.confidence,
+        "Document orientation detected"
+    );
+
+    if result.degrees == 0 || result.confidence < MIN_CONFIDENCE {
+        return Ok(None);
+    }
+
+    // Rotate the image back to upright (opposite direction of detected orientation).
+    let rotated = match result.degrees {
+        90 => image::imageops::rotate270(&img),
+        180 => image::imageops::rotate180(&img),
+        270 => image::imageops::rotate90(&img),
+        _ => return Ok(None),
+    };
+
+    // Encode back to PNG bytes
+    let mut buf = std::io::Cursor::new(Vec::new());
+    rotated
+        .write_to(&mut buf, image::ImageFormat::Png)
+        .map_err(|e| KreuzbergError::Ocr {
+            message: format!("Failed to encode rotated image: {e}"),
+            source: None,
+        })?;
+
+    tracing::info!(
+        degrees = result.degrees,
+        confidence = result.confidence,
+        "Auto-rotated document page"
+    );
+
+    Ok(Some(buf.into_inner()))
 }
 
 /// Resize short side to 256, then center crop to 224×224.
