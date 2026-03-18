@@ -6,7 +6,6 @@
 
 mod assignment;
 mod heading;
-#[cfg(feature = "layout-detection")]
 pub(super) mod layout_validation;
 mod merge;
 mod reading_order;
@@ -89,8 +88,6 @@ pub(super) fn assemble_region_paragraphs(
 
     let page_height = segments.iter().map(|s| s.y + s.height).fold(0.0_f32, f32::max);
 
-    let extra_unassigned: Vec<usize> = Vec::new();
-
     // Pre-merge fragmented Title/SectionHeader regions before reading order.
     // The layout model sometimes splits a single semantic element (e.g., a multi-line
     // title) into multiple overlapping regions. Merging prevents the reading order
@@ -99,21 +96,47 @@ pub(super) fn assemble_region_paragraphs(
 
     reading_order::order_regions_reading_order(&mut regions, page_height);
 
+    // Partition the owned segments Vec by region assignment.
+    // Each segment is moved (not cloned) into its destination group.
+    // Segments not in any region or unassigned list (whitespace-only) are dropped.
+    let seg_count = segments.len();
+    let num_regions = regions.len();
+    const DEST_UNASSIGNED: usize = usize::MAX - 1;
+    let mut seg_destination = vec![usize::MAX; seg_count]; // MAX = dropped
+    for (region_idx, region) in regions.iter().enumerate() {
+        for &seg_idx in &region.segment_indices {
+            if seg_idx < seg_count {
+                seg_destination[seg_idx] = region_idx;
+            }
+        }
+    }
+    for &idx in &unassigned_indices {
+        if idx < seg_count && seg_destination[idx] == usize::MAX {
+            seg_destination[idx] = DEST_UNASSIGNED;
+        }
+    }
+    let mut region_segments: Vec<Vec<SegmentData>> = (0..num_regions).map(|_| Vec::new()).collect();
+    let mut unassigned_segments: Vec<SegmentData> = Vec::new();
+    for (idx, seg) in segments.into_iter().enumerate() {
+        let dest = seg_destination[idx];
+        if dest < num_regions {
+            region_segments[dest].push(seg);
+        } else if dest == DEST_UNASSIGNED {
+            unassigned_segments.push(seg);
+        }
+        // else: dropped (whitespace-only, suppressed, etc.)
+    }
+
     let mut all_paragraphs: Vec<PdfParagraph> = Vec::new();
 
     // Assemble paragraphs per region
-    for region in &regions {
-        if region.segment_indices.is_empty() {
+    for (ri, region) in regions.iter().enumerate() {
+        let region_segs = std::mem::take(&mut region_segments[ri]);
+        if region_segs.is_empty() {
             continue;
         }
 
-        let region_segments: Vec<SegmentData> = region
-            .segment_indices
-            .iter()
-            .map(|&idx| segments[idx].clone())
-            .collect();
-
-        let lines = segments_to_lines(region_segments);
+        let lines = segments_to_lines(region_segs);
         let mut paragraphs = lines_to_paragraphs(lines);
 
         // For ListItem regions, the layout model identifies one bbox per list item.
@@ -173,11 +196,8 @@ pub(super) fn assemble_region_paragraphs(
         all_paragraphs.extend(paragraphs);
     }
 
-    // Handle unassigned segments (including oversized-region-redirected) via standard pipeline
-    let mut all_unassigned = unassigned_indices;
-    all_unassigned.extend(extra_unassigned);
-    if !all_unassigned.is_empty() {
-        let unassigned_segments: Vec<SegmentData> = all_unassigned.iter().map(|&idx| segments[idx].clone()).collect();
+    // Handle unassigned segments via standard pipeline (already partitioned above)
+    if !unassigned_segments.is_empty() {
         let mut fallback = assemble_fallback(unassigned_segments, heading_map);
         all_paragraphs.append(&mut fallback);
     }
@@ -399,7 +419,7 @@ fn associate_footnotes(paragraphs: &mut [PdfParagraph]) {
 
 /// Standard pipeline fallback for segments not covered by layout regions.
 fn assemble_fallback(segments: Vec<SegmentData>, heading_map: &[(f32, Option<u8>)]) -> Vec<PdfParagraph> {
-    let mut paragraphs = assemble_standard_pipeline(&segments);
+    let mut paragraphs = assemble_standard_pipeline(segments);
     classify_paragraphs(&mut paragraphs, heading_map);
     // Note: merge_continuation_paragraphs is NOT called here — the caller
     // (assemble_region_paragraphs) applies merge_continuation_paragraphs_region_aware
@@ -409,16 +429,32 @@ fn assemble_fallback(segments: Vec<SegmentData>, heading_map: &[(f32, Option<u8>
 
 /// Shared column-splitting → lines → paragraphs assembly used by both
 /// the fallback path in region assembly and the standard pipeline in `pipeline.rs`.
-pub(super) fn assemble_standard_pipeline(segments: &[SegmentData]) -> Vec<PdfParagraph> {
-    let column_groups = split_segments_into_columns(segments);
+pub(super) fn assemble_standard_pipeline(segments: Vec<SegmentData>) -> Vec<PdfParagraph> {
+    let column_groups = split_segments_into_columns(&segments);
     if column_groups.len() <= 1 {
-        let lines = segments_to_lines(segments.to_vec());
+        let lines = segments_to_lines(segments);
         lines_to_paragraphs(lines)
     } else {
+        // Partition segments into columns by index, moving instead of cloning.
+        // Build a mapping from segment index to column, then drain segments.
+        let mut col_map = vec![0usize; segments.len()];
+        for (col_idx, group) in column_groups.iter().enumerate() {
+            for &seg_idx in group {
+                if seg_idx < col_map.len() {
+                    col_map[seg_idx] = col_idx;
+                }
+            }
+        }
+        let num_cols = column_groups.len();
+        let mut col_segments: Vec<Vec<SegmentData>> = (0..num_cols).map(|_| Vec::new()).collect();
+        for (idx, seg) in segments.into_iter().enumerate() {
+            if idx < col_map.len() {
+                col_segments[col_map[idx]].push(seg);
+            }
+        }
         let mut all_paragraphs = Vec::new();
-        for group in column_groups {
-            let col_segments: Vec<_> = group.into_iter().map(|idx| segments[idx].clone()).collect();
-            let lines = segments_to_lines(col_segments);
+        for segs in col_segments {
+            let lines = segments_to_lines(segs);
             all_paragraphs.extend(lines_to_paragraphs(lines));
         }
         all_paragraphs

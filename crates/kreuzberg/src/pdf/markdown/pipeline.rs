@@ -192,7 +192,7 @@ fn extract_heuristic_segments(
         };
 
         let page_t = std::time::Instant::now();
-        let (segments, image_positions) = objects_to_page_data(&page, i + 1, &mut image_offset);
+        let (mut segments, image_positions) = objects_to_page_data(&page, i + 1, &mut image_offset);
         let page_ms = page_t.elapsed().as_secs_f64() * 1000.0;
         if page_ms > 1000.0 {
             tracing::warn!(
@@ -203,59 +203,38 @@ fn extract_heuristic_segments(
             );
         }
 
-        // Filter tiny text (always applied).
-        let font_filtered: Vec<SegmentData> = segments
+        // Filter tiny text in-place (avoids cloning all segments).
+        // Only filter if at least some segments would survive.
+        if segments
             .iter()
-            .filter(|s| s.font_size >= MIN_FONT_SIZE)
-            .cloned()
-            .collect();
-        let font_filtered = if font_filtered.iter().any(|s| !s.text.trim().is_empty()) {
-            font_filtered
-        } else {
-            segments
-        };
+            .any(|s| s.font_size >= MIN_FONT_SIZE && !s.text.trim().is_empty())
+        {
+            segments.retain(|s| s.font_size >= MIN_FONT_SIZE);
+        }
 
         // When layout hints are available, skip geometric margin filtering and
         // standalone page number removal. The layout model handles PageHeader/
         // PageFooter classification more accurately than hard margin cutoffs.
-        // Docling also relies solely on the model for header/footer detection.
-        let mut filtered: Vec<SegmentData> = if has_layout_hints {
-            font_filtered
-        } else {
-            // No layout model — use geometric margin filtering as fallback.
+        if !has_layout_hints {
             let page_height = page.height().value;
             let top_frac = top_margin.unwrap_or(PAGE_TOP_MARGIN_FRACTION).clamp(0.0, 0.5);
             let bottom_frac = bottom_margin.unwrap_or(PAGE_BOTTOM_MARGIN_FRACTION).clamp(0.0, 0.5);
             let top_cutoff = page_height * (1.0 - top_frac);
             let bottom_cutoff = page_height * bottom_frac;
 
-            let has_content = font_filtered.iter().any(|s| !s.text.trim().is_empty());
-
-            if has_content {
-                let mf: Vec<SegmentData> = font_filtered
-                    .iter()
-                    .filter(|s| {
-                        if s.baseline_y == 0.0 {
-                            return true;
-                        }
-                        s.baseline_y <= top_cutoff && s.baseline_y >= bottom_cutoff
-                    })
-                    .cloned()
-                    .collect();
-                if mf.iter().any(|s| !s.text.trim().is_empty()) {
-                    mf
-                } else {
-                    font_filtered
-                }
-            } else {
-                font_filtered
+            // Check if margin filtering would leave content before applying
+            let would_survive = segments.iter().any(|s| {
+                !s.text.trim().is_empty()
+                    && (s.baseline_y == 0.0 || (s.baseline_y <= top_cutoff && s.baseline_y >= bottom_cutoff))
+            });
+            if would_survive {
+                segments
+                    .retain(|s| s.baseline_y == 0.0 || (s.baseline_y <= top_cutoff && s.baseline_y >= bottom_cutoff));
             }
-        };
 
-        // Remove standalone page numbers only when no layout model.
-        if !has_layout_hints {
-            filter_standalone_page_numbers(&mut filtered);
+            filter_standalone_page_numbers(&mut segments);
         }
+        let filtered = segments;
 
         all_page_segments[i] = filtered;
         all_image_positions.extend(image_positions);
@@ -475,7 +454,7 @@ fn process_single_page(
             } else {
                 page_segments
             };
-            let mut paras = super::regions::assemble_standard_pipeline(&page_segments);
+            let mut paras = super::regions::assemble_standard_pipeline(page_segments);
             classify_paragraphs(&mut paras, heading_map);
             // Apply layout hint overrides to the standard pipeline output.
             // This path runs when the page didn't qualify for region-based
@@ -732,9 +711,13 @@ pub fn render_document_as_markdown_with_tables(
                         .map(|tp| {
                             TL_TATR.with(|cell| {
                                 let mut tatr_ref = cell.borrow_mut();
-                                let tatr = tatr_ref.get_or_insert_with(|| {
-                                    crate::layout::take_or_create_tatr().expect("TATR model should be available")
-                                });
+                                if tatr_ref.is_none() {
+                                    *tatr_ref = crate::layout::take_or_create_tatr();
+                                }
+                                let Some(tatr) = tatr_ref.as_mut() else {
+                                    tracing::warn!("TATR model unavailable in worker thread");
+                                    return Vec::new();
+                                };
 
                                 if let (Some(page_image), Some(page_result)) =
                                     (images.get(tp.page_idx), results.get(tp.page_idx))

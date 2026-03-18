@@ -17,6 +17,7 @@ pub(in crate::pdf::markdown) enum RegionValidation {
 }
 
 /// Minimum connected components for a region to be considered text-bearing.
+#[cfg(feature = "layout-detection")]
 const MIN_TEXT_CC_COUNT: i32 = 3;
 
 /// Validate whether a layout region contains text by analyzing the rendered
