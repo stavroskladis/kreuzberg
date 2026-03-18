@@ -154,7 +154,7 @@ fn build_file_items(
     opts: Option<RHash>,
 ) -> Result<Vec<(PathBuf, Option<kreuzberg::FileExtractionConfig>)>, Error> {
     let file_configs_array: Option<RArray> = opts
-        .and_then(|kw| kw.get(magnus::Symbol::new("file_configs")))
+        .and_then(|kw| kw.get(ruby.to_symbol("file_configs")))
         .and_then(|v: Value| {
             match v.equal(ruby.qnil()) {
                 Ok(true) => None,
@@ -195,7 +195,7 @@ fn build_bytes_items(
     opts: Option<RHash>,
 ) -> Result<Vec<(Vec<u8>, String, Option<kreuzberg::FileExtractionConfig>)>, Error> {
     let file_configs_array: Option<RArray> = opts
-        .and_then(|kw| kw.get(magnus::Symbol::new("file_configs")))
+        .and_then(|kw| kw.get(ruby.to_symbol("file_configs")))
         .and_then(|v: Value| {
             match v.equal(ruby.qnil()) {
                 Ok(true) => None,

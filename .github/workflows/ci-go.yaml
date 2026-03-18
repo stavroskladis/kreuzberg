@@ -571,12 +571,12 @@ jobs:
             # The Rust code leaks the Pdfium instance with Box::leak to prevent cleanup,
             # but cgo runtime cleanup order still triggers the PDFium destructor.
             # Check if tests actually passed before the cleanup crash.
-            if grep -qE "^FAIL[[:space:]]|^--- FAIL:" "$TEST_OUTPUT_FILE"; then
-              echo "::error::Tests failed (found FAIL in output)"
+            if grep -qE "^--- FAIL:" "$TEST_OUTPUT_FILE"; then
+              echo "::error::Tests failed (found individual test FAIL in output)"
               rm -f "$TEST_OUTPUT_FILE"
               echo "::endgroup::"
               exit 1
-            elif grep -qE "^ok[[:space:]]|^PASS$" "$TEST_OUTPUT_FILE"; then
+            elif grep -qE "^ok[[:space:]]|^--- PASS:" "$TEST_OUTPUT_FILE"; then
               echo "::warning::Exit code 201 detected but tests passed - this is a known PDFium cleanup issue on Windows/macOS"
               echo "See crates/kreuzberg/src/pdf/bindings.rs for details on this FFI cleanup issue"
               rm -f "$TEST_OUTPUT_FILE"

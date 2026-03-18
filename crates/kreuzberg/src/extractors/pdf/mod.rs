@@ -1057,9 +1057,12 @@ mod tests {
         let pdf_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../test_documents/pdf/multi_page.pdf");
         if let Ok(content) = std::fs::read(pdf_path) {
             let result = extractor.extract_bytes(&content, "application/pdf", &config).await;
-            
+
             if let Err(e) = result {
-                assert!(!e.to_string().contains("OCR config required for force_ocr"), "Should not require manual OCR config when force_ocr is true");
+                assert!(
+                    !e.to_string().contains("OCR config required for force_ocr"),
+                    "Should not require manual OCR config when force_ocr is true"
+                );
             }
         }
     }

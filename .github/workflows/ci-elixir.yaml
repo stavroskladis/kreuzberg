@@ -168,6 +168,21 @@ jobs:
       - name: Install Task
         uses: kreuzberg-dev/actions/install-task@v1
 
+      - name: Stage ONNX Runtime DLL next to FFI output (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          # Windows DLL search order prefers System32 over PATH.
+          # Copy ORT DLL to target/release/ so the NIF finds the correct version.
+          ORT_DLL="${ORT_DYLIB_PATH}"
+          if [ -f "$ORT_DLL" ]; then
+            mkdir -p target/release
+            cp "$ORT_DLL" target/release/
+            echo "Staged onnxruntime.dll to target/release/"
+          else
+            echo "WARNING: ORT_DYLIB_PATH not found: $ORT_DLL"
+          fi
+
       - name: Build FFI library
         id: ffi
         shell: bash
