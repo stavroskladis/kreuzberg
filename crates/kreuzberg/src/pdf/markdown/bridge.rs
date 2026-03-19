@@ -778,8 +778,31 @@ fn extract_segments_cell_merge(page: &PdfPage, page_width: f32) -> Option<Vec<Se
         let right = bounds.right().value;
         let top_val = bounds.top().value;
 
-        // Skip degenerate bounds (zero-width generated spaces, etc.).
+        // Handle ligature sub-characters: when two chars share the same
+        // bounding box (pdfium decomposed a ligature glyph), append the text
+        // to the previous cell instead of creating a new zero-width cell.
         if (right - left).abs() < 0.1 {
+            // Zero-width space or degenerate — skip entirely.
+            if uc == ' ' {
+                continue;
+            }
+            // Ligature sub-char: append to previous cell if positions match.
+            if let Some(prev) = cells.last_mut()
+                && (prev.left - left).abs() < 0.5
+            {
+                prev.text.push(uc);
+                continue;
+            }
+            continue;
+        }
+        // Also handle overlapping bounds from ligature decomposition:
+        // when this char's bounds exactly match the previous cell's bounds.
+        if let Some(prev) = cells.last_mut()
+            && (prev.left - left).abs() < 0.5
+            && (prev.right - right).abs() < 0.5
+            && (prev.bottom - bottom_val).abs() < 0.5
+        {
+            prev.text.push(uc);
             continue;
         }
 
