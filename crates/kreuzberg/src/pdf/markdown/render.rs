@@ -59,7 +59,6 @@ pub(crate) fn render_paragraph_to_output(para: &PdfParagraph, output: &mut Strin
 ///
 /// Paragraphs are separated by double newlines. Returns an empty string when
 /// `paragraphs` is empty.
-#[allow(dead_code)]
 pub(crate) fn render_paragraphs_to_string(paragraphs: &[PdfParagraph]) -> String {
     let mut output = String::new();
     for para in paragraphs {
@@ -205,14 +204,9 @@ fn join_line_texts(lines: &[PdfLine]) -> String {
                     .unwrap_or("")
             };
 
-            let at_line_boundary = word_idx == 0 && line_idx > 0;
-
             // Dehyphenation
             if should_dehyphenate(prev_word, word) {
                 result.pop(); // remove trailing '-'
-                result.push_str(word);
-            } else if at_line_boundary && should_join_broken_word(prev_word, word) {
-                // Word-break repair: join fragments split across PDF lines
                 result.push_str(word);
             } else if needs_space_between(prev_word, word) {
                 result.push(' ');
@@ -230,8 +224,6 @@ fn join_line_texts(lines: &[PdfLine]) -> String {
 /// and the next word starts with a lowercase letter, joins them without space and removes
 /// the trailing hyphen.
 ///
-/// Note: This function does NOT apply word-break repair (it has no line-boundary
-/// context). For line-aware joining, use [`join_texts_cjk_aware_line_aware`].
 #[cfg(test)]
 fn join_texts_cjk_aware(texts: &[&str]) -> String {
     if texts.is_empty() {
@@ -272,77 +264,6 @@ fn should_dehyphenate(prev: &str, next: &str) -> bool {
     }
     // Next word must start with a lowercase letter
     next.chars().next().is_some_and(|c| c.is_lowercase())
-}
-
-/// Detect whether two word fragments at a line boundary were likely a single
-/// word broken by PDF line wrapping (without a hyphen).
-///
-/// PDFs store text as positioned character runs. When a word wraps to the next
-/// line, the PDF renderer may place the first part on one line and the remainder
-/// on the next. Our line-joining logic inserts a space between lines, which
-/// produces artifacts like "soft ware", "recog nition", "docu ment".
-///
-/// This function returns `true` when the two fragments should be merged. It is
-/// deliberately conservative: it only joins when the left fragment is NOT a
-/// common function word (determiner, preposition, conjunction, auxiliary, or
-/// pronoun) that naturally precedes a lowercase word.
-fn should_join_broken_word(_prev: &str, _next: &str) -> bool {
-    // Disabled: the heuristic produces too many false positives (joining
-    // "table" + "structure" → "tablestructure", "hardware" + "in" → "hardwarein").
-    // Word-break repair without a dictionary is unreliable. Only explicit
-    // dehyphenation (trailing hyphen removal) is applied.
-    false
-}
-
-/// Return `true` if `word` (already lowercased) is a common English function
-/// word that naturally precedes a lowercase word and should never be merged
-/// with the next word.
-///
-/// This list covers: articles, prepositions, conjunctions, auxiliary verbs,
-/// pronouns, demonstratives, quantifiers, and a small set of very common
-/// adverbs/adjectives that often precede lowercase nouns.
-#[allow(dead_code)]
-fn is_function_word(word: &str) -> bool {
-    matches!(
-        word,
-        // Articles & determiners
-        "a" | "an" | "the" | "this" | "that" | "these" | "those"
-        | "each" | "every" | "some" | "any" | "no" | "all" | "both"
-        | "few" | "many" | "much" | "more" | "most" | "such" | "what"
-        | "which" | "whose" | "either" | "neither" | "another"
-        // Prepositions
-        | "at" | "by" | "for" | "from" | "in" | "into" | "of" | "off"
-        | "on" | "onto" | "out" | "over" | "per" | "to" | "up" | "via"
-        | "with" | "upon" | "under" | "about" | "above" | "after"
-        | "along" | "among" | "around" | "before" | "behind" | "below"
-        | "beneath" | "beside" | "besides" | "between" | "beyond"
-        | "despite" | "down" | "during" | "except" | "inside"
-        | "near" | "outside" | "past" | "since" | "through"
-        | "throughout" | "toward" | "towards" | "until" | "within"
-        | "without" | "across"
-        // Conjunctions
-        | "and" | "but" | "or" | "nor" | "so" | "yet" | "than"
-        | "although" | "because" | "however" | "therefore" | "whereas"
-        | "while" | "unless" | "whether" | "though" | "hence"
-        // Auxiliary / modal verbs
-        | "am" | "are" | "be" | "been" | "being" | "can" | "could"
-        | "did" | "do" | "does" | "had" | "has" | "have" | "having"
-        | "is" | "may" | "might" | "must" | "shall" | "should" | "was"
-        | "were" | "will" | "would"
-        // Pronouns
-        | "he" | "her" | "hers" | "him" | "his" | "it" | "its" | "me"
-        | "my" | "mine" | "our" | "ours" | "she" | "their" | "theirs"
-        | "them" | "they" | "us" | "we" | "who" | "whom" | "you"
-        | "your" | "yours" | "itself" | "themselves"
-        // Common adverbs / adjectives preceding lowercase words
-        | "also" | "as" | "even" | "if" | "just" | "like" | "not"
-        | "now" | "only" | "other" | "own" | "quite" | "rather"
-        | "still" | "then" | "there" | "too" | "very" | "well"
-        | "where" | "here" | "how" | "when" | "why"
-        // Miscellaneous function words
-        | "already" | "always" | "never" | "often" | "once"
-        | "perhaps" | "really" | "sometimes" | "thus" | "again"
-    )
 }
 
 /// Escape HTML entities in text for safe markdown output.
@@ -411,31 +332,17 @@ fn collapse_inner_spaces(line: &str) -> String {
 }
 
 /// Render an entire body paragraph with inline bold/italic markup.
-///
-/// Tracks which flat segment indices correspond to line boundaries so the
-/// word-break repair heuristic can be applied at the correct positions.
 fn render_paragraph_with_inline_markup(para: &PdfParagraph) -> String {
-    // Build a flat segment list and record which indices start a new line.
-    let mut all_segments: Vec<&SegmentData> = Vec::new();
-    let mut line_start_indices: Vec<usize> = Vec::new();
-    for line in &para.lines {
-        if !line.segments.is_empty() {
-            line_start_indices.push(all_segments.len());
-        }
-        for seg in &line.segments {
-            all_segments.push(seg);
-        }
-    }
-    let rendered = render_segment_refs_with_markup(&all_segments, &line_start_indices);
+    let all_segments: Vec<&SegmentData> = para.lines.iter().flat_map(|l| &l.segments).collect();
+    let rendered = render_segment_refs_with_markup(&all_segments);
     escape_html_entities(&rendered).into_owned()
 }
 
 /// Core inline markup renderer working on segment references.
 ///
 /// Groups consecutive segments sharing the same bold/italic state, wraps groups
-/// in `**...**` or `*...*` as appropriate. `line_starts` contains the flat
-/// indices of segments that begin a new PDF line, used for word-break repair.
-fn render_segment_refs_with_markup(segments: &[&SegmentData], line_starts: &[usize]) -> String {
+/// in `**...**` or `*...*` as appropriate.
+fn render_segment_refs_with_markup(segments: &[&SegmentData]) -> String {
     if segments.is_empty() {
         return String::new();
     }
@@ -453,23 +360,14 @@ fn render_segment_refs_with_markup(segments: &[&SegmentData], line_starts: &[usi
             i += 1;
         }
 
-        // Build words for this run, tracking which word indices fall at line
-        // boundaries within the run.
+        // Build words for this formatting run.
         let mut run_words: Vec<&str> = Vec::new();
-        let mut run_line_word_starts: Vec<usize> = Vec::new();
-        for (seg_idx_in_flat, seg) in segments[run_start..i].iter().enumerate() {
-            let flat_idx = run_start + seg_idx_in_flat;
-            let is_line_start = line_starts.contains(&flat_idx) && flat_idx != 0;
-            let first_word_of_seg = run_words.len();
+        for seg in &segments[run_start..i] {
             for word in seg.text.split_whitespace() {
                 run_words.push(word);
             }
-            // If this segment starts a new line, mark its first word.
-            if is_line_start && run_words.len() > first_word_of_seg {
-                run_line_word_starts.push(first_word_of_seg);
-            }
         }
-        let run_text = join_texts_cjk_aware_line_aware(&run_words, &run_line_word_starts);
+        let run_text = join_texts_cjk_aware_line_aware(&run_words);
 
         if !result.is_empty() {
             let prev_last = segments[run_start - 1]
@@ -479,12 +377,8 @@ fn render_segment_refs_with_markup(segments: &[&SegmentData], line_starts: &[usi
                 .unwrap_or("");
             let next_first = segments[run_start].text.split_whitespace().next().unwrap_or("");
 
-            // Check if this formatting transition also crosses a line boundary.
-            let at_line_boundary = line_starts.contains(&run_start) && run_start != 0;
             if should_dehyphenate(prev_last, next_first) {
                 result.pop(); // remove trailing '-'
-            } else if at_line_boundary && should_join_broken_word(prev_last, next_first) {
-                // Merge broken word across formatting + line boundary — no space.
             } else if needs_space_between(prev_last, next_first) {
                 result.push(' ');
             }
@@ -515,26 +409,18 @@ fn render_segment_refs_with_markup(segments: &[&SegmentData], line_starts: &[usi
     result
 }
 
-/// Join text chunks with spaces, applying dehyphenation and word-break repair
-/// at known line boundaries.
-///
-/// `line_word_starts` contains word indices (within `texts`) that are the first
-/// word of a new PDF line.
-fn join_texts_cjk_aware_line_aware(texts: &[&str], line_word_starts: &[usize]) -> String {
+/// Join text chunks with spaces, applying dehyphenation at word boundaries.
+fn join_texts_cjk_aware_line_aware(texts: &[&str]) -> String {
     if texts.is_empty() {
         return String::new();
     }
     let mut result = String::from(texts[0]);
-    for (idx, pair) in texts.windows(2).enumerate() {
+    for pair in texts.windows(2) {
         let prev = pair[0];
         let next = pair[1];
-        let next_idx = idx + 1;
-        let at_line_boundary = line_word_starts.contains(&next_idx);
 
         if should_dehyphenate(prev, next) {
             result.pop(); // remove '-'
-            result.push_str(next);
-        } else if at_line_boundary && should_join_broken_word(prev, next) {
             result.push_str(next);
         } else {
             if needs_space_between(prev, next) {
@@ -1211,76 +1097,5 @@ mod tests {
 
         let result = render_multiline_para(vec![vec!["they are"], vec!["here"]]);
         assert_eq!(result, "they are here");
-    }
-
-    #[test]
-    fn test_should_join_broken_word_direct() {
-        // Direct tests on the heuristic function.
-        assert!(!should_join_broken_word("soft", "ware"));
-        assert!(!should_join_broken_word("recog", "nition"));
-        assert!(!should_join_broken_word("docu", "ment"));
-        assert!(!should_join_broken_word("struc", "tures"));
-        assert!(!should_join_broken_word("config", "uration"));
-        assert!(!should_join_broken_word("Intro", "duction"));
-
-        // Function words must not be joined.
-        assert!(!should_join_broken_word("the", "software"));
-        assert!(!should_join_broken_word("a", "test"));
-        assert!(!should_join_broken_word("and", "dogs"));
-        assert!(!should_join_broken_word("for", "meaning"));
-        assert!(!should_join_broken_word("with", "data"));
-        assert!(!should_join_broken_word("from", "sources"));
-        assert!(!should_join_broken_word("in", "time"));
-        assert!(!should_join_broken_word("to", "go"));
-        assert!(!should_join_broken_word("is", "correct"));
-        assert!(!should_join_broken_word("are", "here"));
-        assert!(!should_join_broken_word("was", "done"));
-        assert!(!should_join_broken_word("by", "them"));
-        assert!(!should_join_broken_word("or", "not"));
-
-        // Non-alpha: never join.
-        assert!(!should_join_broken_word("123", "abc"));
-        assert!(!should_join_broken_word("abc", "123"));
-        assert!(!should_join_broken_word("foo-", "bar"));
-
-        // Uppercase next: never join.
-        assert!(!should_join_broken_word("soft", "Ware"));
-
-        // Empty strings: never join.
-        assert!(!should_join_broken_word("", "ware"));
-        assert!(!should_join_broken_word("soft", ""));
-    }
-
-    #[test]
-    fn test_is_function_word_coverage() {
-        assert!(is_function_word("the"));
-        assert!(is_function_word("a"));
-        assert!(is_function_word("an"));
-        assert!(is_function_word("in"));
-        assert!(is_function_word("on"));
-        assert!(is_function_word("for"));
-        assert!(is_function_word("with"));
-        assert!(is_function_word("from"));
-        assert!(is_function_word("and"));
-        assert!(is_function_word("but"));
-        assert!(is_function_word("or"));
-        assert!(is_function_word("is"));
-        assert!(is_function_word("are"));
-        assert!(is_function_word("was"));
-        assert!(is_function_word("were"));
-        assert!(is_function_word("their"));
-        assert!(is_function_word("also"));
-        assert!(is_function_word("very"));
-        assert!(is_function_word("just"));
-        assert!(is_function_word("still"));
-
-        // Not function words.
-        assert!(!is_function_word("soft"));
-        assert!(!is_function_word("recog"));
-        assert!(!is_function_word("docu"));
-        assert!(!is_function_word("config"));
-        assert!(!is_function_word("struc"));
-        assert!(!is_function_word("hello"));
-        assert!(!is_function_word("world"));
     }
 }

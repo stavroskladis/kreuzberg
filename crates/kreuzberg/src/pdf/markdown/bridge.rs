@@ -4,7 +4,7 @@
 //! 1. Structure tree: `ExtractedBlock` → `PdfParagraph` (for tagged PDFs)
 //! 2. Page objects: `PdfPage` → `(Vec<SegmentData>, Vec<ImagePosition>)` (heuristic extraction)
 //!
-//! The page objects path uses a Docling-style algorithm as its primary extraction:
+//! The page objects path uses a Segment-based algorithm as its primary extraction:
 //! pdfium segments are grouped into rows, merged horizontally, and text is
 //! re-extracted from merged bounding boxes via `page.text().inside_rect()`.
 //! This produces correct word boundaries (pdfium reassembles fragmented words
@@ -126,7 +126,7 @@ pub(super) fn extracted_blocks_to_paragraphs(blocks: &[ExtractedBlock]) -> Vec<P
 
 /// Extract text segments and image positions from a PDF page.
 ///
-/// Primary path: Docling-style extraction using pdfium's segment API with
+/// Primary path: Segment-based extraction using pdfium's segment API with
 /// row grouping, cell merging, and text re-extraction from merged bounding
 /// boxes. This produces correct word boundaries (pdfium reassembles fragmented
 /// words like "soft"+"ware" into "software" within bounded rects).
@@ -156,19 +156,19 @@ pub(super) fn objects_to_page_data(
         }
     }
 
-    // Primary path: Docling-style segment extraction.
+    // Primary path: Segment-based segment extraction.
     // Uses pdfium's segment API to get text rects, groups into rows,
     // merges adjacent cells, then re-extracts text from merged bboxes
     // using page.text().inside_rect(). This produces correct word
     // boundaries (e.g., "software" instead of "soft ware") because
     // pdfium re-assembles text within the bounded rect.
     let page_height = page.height().value;
-    if let Some(segments) = docling_style_extraction(page, page_height) {
+    if let Some(segments) = extract_segments_merged(page, page_height) {
         return (segments, images);
     }
 
     // Secondary fallback: character-level extraction with column detection.
-    // Used when Docling-style extraction produces nothing (e.g., no segments).
+    // Used when Segment-based extraction produces nothing (e.g., no segments).
     let page_width = page.width().value;
     if let Some(data) = extract_page_text_data(page)
         && let Some(segments) = chars_to_segments_from_data(&data, page_width)
@@ -196,7 +196,7 @@ pub(super) fn objects_to_page_data(
     (segments, images)
 }
 
-// ── Docling-style segment extraction ──
+// ── Segment-based segment extraction ──
 
 /// A text cell extracted from pdfium's segment API, with coordinates
 /// converted to page top-left origin for row grouping.
@@ -254,9 +254,9 @@ struct MergedCellGroup {
     pdf_top: f32,
 }
 
-/// Docling-style text extraction from a PDF page.
+/// Segment-based text extraction from a PDF page.
 ///
-/// Implements the exact Docling pypdfium2 algorithm:
+/// Implements a segment-based cell-merging extraction algorithm:
 /// 1. Extract text rects from pdfium's segment API
 /// 2. Group cells into rows (vertical_threshold = 0.5)
 /// 3. Merge adjacent cells within rows (horizontal_threshold = 1.0)
@@ -267,7 +267,7 @@ struct MergedCellGroup {
 /// (e.g., "soft" + "ware" becomes "software") when given a bounding rect
 /// that spans both fragments. Tight per-group bboxes naturally exclude
 /// sidebar text without explicit filtering.
-fn docling_style_extraction(page: &PdfPage, page_height: f32) -> Option<Vec<SegmentData>> {
+fn extract_segments_merged(page: &PdfPage, page_height: f32) -> Option<Vec<SegmentData>> {
     let text_obj = page.text().ok()?;
     let pdfium_segments = text_obj.segments();
     let seg_count = pdfium_segments.len();
@@ -412,7 +412,7 @@ fn sample_font_from_segment(seg: &pdfium_render::prelude::PdfPageTextSegment<'_>
 
 /// Group cells into rows based on vertical proximity.
 ///
-/// Docling algorithm: a cell belongs to the current row if its top and bottom
+/// cell-merging algorithm: a cell belongs to the current row if its top and bottom
 /// are both within `row_height * vertical_threshold` of the row's top and bottom.
 /// `vertical_threshold = 0.5` (half the row height).
 fn group_cells_into_rows(cells: Vec<TextCell>) -> Vec<TextRow> {
@@ -449,7 +449,7 @@ fn group_cells_into_rows(cells: Vec<TextCell>) -> Vec<TextRow> {
 
 /// Merge adjacent cells within a row based on horizontal proximity.
 ///
-/// Docling algorithm: cells are sorted left-to-right. If the gap between
+/// cell-merging algorithm: cells are sorted left-to-right. If the gap between
 /// consecutive cells is <= `avg_height * horizontal_threshold`, they are
 /// merged into one group. `horizontal_threshold = 1.0`.
 fn merge_cells_in_row(mut row: TextRow) -> Vec<MergedCellGroup> {
@@ -688,7 +688,7 @@ fn build_line_text(chars: &[CharInfo], repair_map: Option<&[(char, &str)]>) -> S
                         (ci.font_size + real_prev.font_size) * 0.3
                     };
                     // Veto the space if gap < 50% of character width.
-                    // This threshold is calibrated from docling-parse's 0.33 on
+                    // This threshold is calibrated from the reference implementation's 0.33 on
                     // advance widths, adjusted up because tight_bounds are narrower.
                     if gap < avg_char_width * 0.5 {
                         // Remove already-pushed space — chars are too close.

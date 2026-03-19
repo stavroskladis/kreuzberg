@@ -4,7 +4,7 @@
 //! between layout regions, then resolves reading order via DFS traversal.
 //! Handles arbitrary column layouts (2+, asymmetric, mixed).
 //!
-//! Inspired by Docling's rule-based ReadingOrderPredictor, adapted to work with
+//! Inspired by the reference rule-based ReadingOrderPredictor, adapted to work with
 //! Kreuzberg's layout region types and PDF coordinate system (y=0 at bottom).
 
 use super::LayoutRegion;
@@ -278,7 +278,7 @@ fn has_interruption(bboxes: &[RegionBbox], i: usize, j: usize) -> bool {
             continue;
         }
 
-        // w must horizontally overlap i OR j individually (Docling semantics)
+        // w must horizontally overlap i OR j individually (standard reading order semantics)
         let overlaps_i = bbox_w.right > bboxes[i].left && bbox_w.left < bboxes[i].right;
         let overlaps_j = bbox_w.right > bboxes[j].left && bbox_w.left < bboxes[j].right;
 
@@ -316,13 +316,13 @@ fn apply_dilation(
         let mut target_left = bboxes[i].left;
         let mut target_right = bboxes[i].right;
 
-        // Expand toward first predecessor only (Docling semantics)
+        // Expand toward first predecessor only (standard reading order semantics)
         if let Some(&pred) = up_map[i].first() {
             target_left = target_left.min(bboxes[pred].left);
             target_right = target_right.max(bboxes[pred].right);
         }
 
-        // Expand toward first successor only (Docling semantics)
+        // Expand toward first successor only (standard reading order semantics)
         if let Some(&succ) = dn_map[i].first() {
             target_left = target_left.min(bboxes[succ].left);
             target_right = target_right.max(bboxes[succ].right);

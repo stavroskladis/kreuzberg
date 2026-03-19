@@ -157,7 +157,7 @@ pub(super) fn build_ligature_repair_map_from_chars(
 /// After replacing ligature characters, collapses spurious spaces that result
 /// from the replacement: e.g., "ﬁ rst" → "fi rst" → "first". When a ligature
 /// expansion is immediately followed by a space and a lowercase letter, the
-/// space is removed (matching Docling's regex-based post-processing).
+/// space is removed (matching the reference regex-based post-processing).
 pub(super) fn apply_ligature_repairs(text: &str, repair_map: &[(char, &str)]) -> String {
     let mut result = String::with_capacity(text.len() + 16);
     for ch in text.chars() {
@@ -473,7 +473,7 @@ pub(super) fn repair_broken_word_spacing(text: &str) -> Cow<'_, str> {
 /// glyph and the continuation of the word (e.g. "ﬁ eld"), which must be absorbed
 /// to produce correct text ("field").
 ///
-/// Matches Docling's approach:
+/// Matches the reference approach:
 /// ```python
 /// _LIGATURE_RE = re.compile(r"([\ufb00-\ufb06])( (?=\w))?")
 /// ```
@@ -525,7 +525,7 @@ pub(super) fn expand_ligatures_with_space_absorption(text: &str) -> Cow<'_, str>
 
 /// Normalize Unicode characters commonly found in PDFs to their ASCII equivalents.
 ///
-/// Matches docling's `sanitize_text()` normalizations for curly quotes, fraction
+/// Standard normalizations for curly quotes, fraction
 /// slash, and bullet characters. This improves TF1 by ensuring extracted text
 /// matches ground truth tokenization.
 pub(super) fn normalize_unicode_text(text: &str) -> Cow<'_, str> {
@@ -574,6 +574,59 @@ pub(super) fn normalize_text_encoding(text: &str) -> Cow<'_, str> {
     }
 
     Cow::Owned(result)
+}
+
+/// Normalize Unicode combining marks to their precomposed (NFC) equivalents.
+///
+/// PDFs sometimes emit base characters followed by combining marks as separate
+/// codepoints (e.g., `u` + `\u{0308}` combining diaeresis instead of `ü`).
+/// This produces visually correct text but breaks string matching and search.
+///
+/// Uses the `unicode-normalization` crate (behind the `quality` feature flag)
+/// for full NFC normalization. Without that feature, implements a heuristic
+/// for the most common case: orphaned combining marks preceded by a space
+/// are reattached to the previous base character.
+///
+/// Returns `Cow::Borrowed` (zero-alloc) when no combining marks are present.
+pub(super) fn normalize_unicode_combining(text: &str) -> Cow<'_, str> {
+    // Fast path: check if any combining marks (U+0300–U+036F) are present.
+    let has_combining = text.chars().any(|c| ('\u{0300}'..='\u{036F}').contains(&c));
+    if !has_combining {
+        return Cow::Borrowed(text);
+    }
+
+    #[cfg(feature = "quality")]
+    {
+        use unicode_normalization::UnicodeNormalization;
+        let normalized: String = text.nfc().collect();
+        if normalized == text {
+            return Cow::Borrowed(text);
+        }
+        Cow::Owned(normalized)
+    }
+
+    #[cfg(not(feature = "quality"))]
+    {
+        // Heuristic: handle the common case of "base space combining" by removing
+        // the space so the combining mark attaches to the base character.
+        // e.g., "u \u{0308}" → "u\u{0308}" which at least keeps them adjacent.
+        let mut result = String::with_capacity(text.len());
+        let mut chars = text.chars().peekable();
+        while let Some(ch) = chars.next() {
+            if ch == ' ' {
+                // If next char is a combining mark, skip the space.
+                if chars.peek().is_some_and(|&c| ('\u{0300}'..='\u{036F}').contains(&c)) {
+                    continue;
+                }
+            }
+            result.push(ch);
+        }
+        if result == text {
+            Cow::Borrowed(text)
+        } else {
+            Cow::Owned(result)
+        }
+    }
 }
 
 /// Apply a text transformation to every segment in every paragraph.
@@ -904,5 +957,47 @@ mod tests {
     fn test_expand_ligatures_no_space_no_absorption() {
         // Ligature directly adjacent to word char — no space to absorb
         assert_eq!(expand_ligatures_with_space_absorption("\u{FB01}nally"), "finally");
+    }
+
+    // --- normalize_unicode_combining ---
+
+    #[test]
+    fn test_combining_diaeresis() {
+        // "Ru\u{0308}schlikon" → "Rüschlikon" (combining diaeresis merges with u)
+        let input = "Ru\u{0308}schlikon";
+        let result = normalize_unicode_combining(input);
+        // With the `quality` feature (NFC normalization), the combining mark merges
+        // into the precomposed character. Without it, the heuristic at least keeps
+        // them adjacent.
+        #[cfg(feature = "quality")]
+        assert_eq!(result, "R\u{00FC}schlikon"); // ü
+        #[cfg(not(feature = "quality"))]
+        assert_eq!(result, input); // no space to remove, stays as decomposed
+    }
+
+    #[test]
+    fn test_orphaned_combining_mark() {
+        // "text \u{0308}" — combining mark after space (orphaned).
+        // With NFC, the space + combining mark stays as-is (no base to attach to).
+        // Without NFC, heuristic removes the space so mark attaches to 't'.
+        let input = "text \u{0308}";
+        let result = normalize_unicode_combining(input);
+        #[cfg(feature = "quality")]
+        {
+            // NFC can't combine space + diaeresis; result depends on normalization
+            // but the combining mark is still present.
+            assert!(result.contains('\u{0308}') || result.contains('\u{00A8}'));
+        }
+        #[cfg(not(feature = "quality"))]
+        assert_eq!(result, "text\u{0308}"); // space removed, mark adjacent to 't'
+    }
+
+    #[test]
+    fn test_no_combining_marks_passthrough() {
+        // Normal text unchanged — should return borrowed (zero-alloc).
+        let input = "hello world";
+        let result = normalize_unicode_combining(input);
+        assert!(matches!(result, Cow::Borrowed(_)));
+        assert_eq!(result, "hello world");
     }
 }

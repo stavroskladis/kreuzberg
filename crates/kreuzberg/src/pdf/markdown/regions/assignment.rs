@@ -7,7 +7,7 @@ use super::LayoutRegion;
 use crate::pdf::markdown::types::{LayoutHint, LayoutHintClass};
 
 /// Minimum intersection-over-self (IoS) for a segment to be assigned to a region.
-/// Matches docling's threshold of 0.2 (20% of the segment's area must overlap).
+/// Matches the reference threshold of 0.2 (20% of the segment's area must overlap).
 const MIN_IOS_THRESHOLD: f32 = 0.2;
 
 /// Minimum alphanumeric character count for Picture region text to be considered

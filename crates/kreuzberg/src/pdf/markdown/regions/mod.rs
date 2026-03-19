@@ -63,7 +63,7 @@ pub(super) fn assemble_region_paragraphs(
     extracted_table_bboxes: &[crate::types::BoundingBox],
     hint_validations: &[layout_validation::RegionValidation],
 ) -> Vec<PdfParagraph> {
-    // Assign segments to layout regions. No quality gates — Docling's approach
+    // Assign segments to layout regions. No quality gates — the reference approach
     // is to always trust the layout model and assign all cells to clusters.
     // Unassigned segments go through the fallback pipeline.
     let (mut regions, unassigned_indices) = assignment::assign_segments_to_regions_refined(
@@ -205,6 +205,13 @@ pub(super) fn assemble_region_paragraphs(
     // Merge continuation paragraphs, but only within same layout class
     merge::merge_continuation_paragraphs_region_aware(&mut all_paragraphs);
 
+    // Merge cross-column text paragraphs broken across adjacent columns.
+    // the reference reading_order_rb.py:171-212 merges consecutive text elements
+    // when the current is strictly left of the next and text patterns suggest
+    // a word broken across columns (e.g., current ends with [a-z,-] and next
+    // starts with [a-z]).
+    merge_cross_column_paragraphs(&mut all_paragraphs);
+
     // Merge consecutive code blocks (layout model often gives one region per line)
     merge::merge_consecutive_code_blocks(&mut all_paragraphs);
 
@@ -222,6 +229,92 @@ pub(super) fn assemble_region_paragraphs(
     associate_footnotes(&mut all_paragraphs);
 
     all_paragraphs
+}
+
+/// Merge consecutive body-text paragraphs broken across columns.
+///
+/// Implements the reference cross-column element merging (reading_order_rb.py:171-212).
+/// After reading order sorts paragraphs, consecutive TEXT paragraphs may represent
+/// a word broken across columns. We merge when:
+/// 1. Both paragraphs are body text (not heading, code, list, formula, etc.)
+/// 2. Current paragraph ends with `[a-z,\-]` (lowercase letter, comma, or hyphen)
+/// 3. Next paragraph starts with `[a-z]` (lowercase letter)
+/// 4. Current paragraph is strictly left of the next (rightmost X < next's leftmost X)
+fn merge_cross_column_paragraphs(paragraphs: &mut Vec<PdfParagraph>) {
+    if paragraphs.len() < 2 {
+        return;
+    }
+
+    let mut i = 0;
+    while i + 1 < paragraphs.len() {
+        // Skip non-text elements to find next TEXT paragraph (matching the reference
+        // approach of skipping non-text elements between current and next).
+        let mut j = i + 1;
+        while j < paragraphs.len() && !is_body_text(&paragraphs[j]) {
+            j += 1;
+        }
+
+        if j >= paragraphs.len() || !is_body_text(&paragraphs[i]) {
+            i += 1;
+            continue;
+        }
+
+        let current = &paragraphs[i];
+        let next = &paragraphs[j];
+
+        // Compute spatial extent from segments.
+        let current_right_x = current
+            .lines
+            .iter()
+            .flat_map(|l| l.segments.iter())
+            .map(|s| s.x + s.width)
+            .fold(f32::NEG_INFINITY, f32::max);
+        let next_left_x = next
+            .lines
+            .iter()
+            .flat_map(|l| l.segments.iter())
+            .map(|s| s.x)
+            .fold(f32::INFINITY, f32::min);
+
+        // Current must be strictly left of next.
+        let strictly_left = current_right_x < next_left_x;
+
+        // Get the trailing text of current and leading text of next.
+        let current_text = paragraph_text(current);
+        let next_text = paragraph_text(next);
+        let current_trimmed = current_text.trim_end();
+        let next_trimmed = next_text.trim_start();
+
+        let ends_with_continuation = current_trimmed
+            .chars()
+            .last()
+            .is_some_and(|c| c.is_ascii_lowercase() || c == ',' || c == '-');
+        let starts_with_lowercase = next_trimmed.chars().next().is_some_and(|c| c.is_ascii_lowercase());
+
+        if strictly_left && ends_with_continuation && starts_with_lowercase {
+            // Merge: append next's lines into current, remove next.
+            let merged = paragraphs.remove(j);
+            paragraphs[i].lines.extend(merged.lines);
+            // Don't advance i — check if more merges are possible.
+        } else {
+            i += 1;
+        }
+    }
+}
+
+/// Check whether a paragraph is body text (not heading, code, list, formula, etc.).
+fn is_body_text(p: &PdfParagraph) -> bool {
+    p.heading_level.is_none() && !p.is_list_item && !p.is_code_block && !p.is_formula && !p.is_page_furniture
+}
+
+/// Gather the full text of a paragraph (all segments across all lines).
+fn paragraph_text(p: &PdfParagraph) -> String {
+    p.lines
+        .iter()
+        .flat_map(|l| l.segments.iter())
+        .map(|s| s.text.as_str())
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 /// Maximum gap (in points) between regions to consider them adjacent for merging.
@@ -389,7 +482,7 @@ fn find_parent_forward(paragraphs: &[PdfParagraph], cap_idx: usize) -> Option<us
 ///
 /// For each table/picture, scans forward for consecutive footnote paragraphs
 /// and associates them. Stops at any non-footnote element (including captions),
-/// matching Docling's behavior.
+/// matching the reference behavior.
 fn associate_footnotes(paragraphs: &mut [PdfParagraph]) {
     // Collect indices of table/picture paragraphs
     let parent_indices: Vec<usize> = paragraphs
@@ -1152,5 +1245,75 @@ mod tests {
         associate_footnotes(&mut paragraphs);
         assert_eq!(paragraphs[1].caption_for, Some(0));
         assert_eq!(paragraphs[3].caption_for, None);
+    }
+
+    // ── Cross-Column Merge Tests ─────────────────────────────────────────────
+
+    /// Helper: build a body-text paragraph with text and spatial position.
+    fn make_body_para(text: &str, x: f32, width: f32) -> PdfParagraph {
+        use super::super::types::PdfLine;
+        PdfParagraph {
+            lines: vec![PdfLine {
+                segments: vec![make_segment(text, x, 700.0, width, 12.0)],
+                baseline_y: 700.0,
+                dominant_font_size: 12.0,
+                is_bold: false,
+                is_monospace: false,
+            }],
+            dominant_font_size: 12.0,
+            heading_level: None,
+            is_bold: false,
+            is_list_item: false,
+            is_code_block: false,
+            is_formula: false,
+            is_page_furniture: false,
+            layout_class: Some(LayoutHintClass::Text),
+            caption_for: None,
+            block_bbox: None,
+        }
+    }
+
+    /// Helper: build a heading paragraph with text and spatial position.
+    fn make_heading_para(text: &str, x: f32, width: f32) -> PdfParagraph {
+        let mut p = make_body_para(text, x, width);
+        p.heading_level = Some(2);
+        p.layout_class = Some(LayoutHintClass::SectionHeader);
+        p
+    }
+
+    #[test]
+    fn test_cross_column_merge_basic() {
+        // "word-" at x=0..100 and "continued" at x=200..300 → merged
+        let mut paragraphs = vec![
+            make_body_para("word-", 0.0, 100.0),
+            make_body_para("continued", 200.0, 100.0),
+        ];
+        merge_cross_column_paragraphs(&mut paragraphs);
+        assert_eq!(paragraphs.len(), 1);
+        let merged_text = paragraph_text(&paragraphs[0]);
+        assert!(merged_text.contains("word-"));
+        assert!(merged_text.contains("continued"));
+    }
+
+    #[test]
+    fn test_cross_column_no_merge_uppercase() {
+        // "sentence." ends with period (not [a-z,-]) → no merge
+        let mut paragraphs = vec![
+            make_body_para("sentence.", 0.0, 100.0),
+            make_body_para("New", 200.0, 100.0),
+        ];
+        merge_cross_column_paragraphs(&mut paragraphs);
+        assert_eq!(paragraphs.len(), 2);
+    }
+
+    #[test]
+    fn test_cross_column_no_merge_heading() {
+        // heading + text → not merged (heading is not body text)
+        let mut paragraphs = vec![
+            make_heading_para("Introduction", 0.0, 100.0),
+            make_body_para("continued", 200.0, 100.0),
+        ];
+        merge_cross_column_paragraphs(&mut paragraphs);
+        assert_eq!(paragraphs.len(), 2);
     }
 }
