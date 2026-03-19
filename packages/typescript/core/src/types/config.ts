@@ -155,6 +155,8 @@ export interface PdfConfig {
 	extractAnnotations?: boolean;
 	topMarginFraction?: number;
 	bottomMarginFraction?: number;
+	/** Allow single-column pseudo tables in extraction results. Default: false */
+	allowSingleColumnTables?: boolean;
 }
 
 export interface ImageExtractionConfig {
@@ -370,6 +372,17 @@ export interface EmailConfig {
 	msgFallbackCodepage?: number;
 }
 
+/**
+ * Concurrency configuration for controlling thread usage.
+ *
+ * Caps all internal thread pools (Rayon, ONNX Runtime intra-op) and batch
+ * concurrency to a single limit.
+ */
+export interface ConcurrencyConfig {
+	/** Maximum number of threads for all internal thread pools. undefined = system defaults. */
+	maxThreads?: number;
+}
+
 export interface ExtractionConfig {
 	useCache?: boolean;
 	enableQualityProcessing?: boolean;
@@ -388,6 +401,8 @@ export interface ExtractionConfig {
 	email?: EmailConfig;
 	securityLimits?: Record<string, number>;
 	maxConcurrentExtractions?: number;
+	/** Concurrency configuration for thread pool control */
+	concurrency?: ConcurrencyConfig;
 	/**
 	 * Content text format (default: Plain).
 	 * Controls the format of the extracted content:

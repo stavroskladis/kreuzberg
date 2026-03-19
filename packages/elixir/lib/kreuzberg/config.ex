@@ -107,6 +107,7 @@ defmodule Kreuzberg.ExtractionConfig do
       %{
         "acceleration" => nil,
         "chunking" => %{"size" => 512},
+        "concurrency" => nil,
         "email" => nil,
         "enable_quality_processing" => true,
         "force_ocr" => false,
@@ -157,6 +158,7 @@ defmodule Kreuzberg.ExtractionConfig do
           acceleration: nested_config,
           security_limits: nested_config,
           email: nested_config,
+          concurrency: nested_config,
           use_cache: boolean(),
           enable_quality_processing: boolean(),
           force_ocr: boolean(),
@@ -182,6 +184,7 @@ defmodule Kreuzberg.ExtractionConfig do
     :acceleration,
     :security_limits,
     :email,
+    :concurrency,
     use_cache: true,
     enable_quality_processing: true,
     force_ocr: false,
@@ -289,6 +292,7 @@ defmodule Kreuzberg.ExtractionConfig do
       %{
         "acceleration" => nil,
         "chunking" => %{"size" => 512},
+        "concurrency" => nil,
         "email" => nil,
         "enable_quality_processing" => true,
         "force_ocr" => false,
@@ -315,6 +319,7 @@ defmodule Kreuzberg.ExtractionConfig do
       %{
         "acceleration" => nil,
         "chunking" => nil,
+        "concurrency" => nil,
         "email" => nil,
         "enable_quality_processing" => true,
         "force_ocr" => false,
@@ -366,6 +371,7 @@ defmodule Kreuzberg.ExtractionConfig do
       "acceleration" => normalize_acceleration_config(config.acceleration),
       "security_limits" => normalize_nested_config(config.security_limits),
       "email" => normalize_email_config(config.email),
+      "concurrency" => normalize_concurrency_config(config.concurrency),
       "use_cache" => config.use_cache,
       "enable_quality_processing" => config.enable_quality_processing,
       "force_ocr" => config.force_ocr,
@@ -534,6 +540,17 @@ defmodule Kreuzberg.ExtractionConfig do
   defp normalize_email_config(other), do: other
 
   @doc false
+  defp normalize_concurrency_config(nil), do: nil
+
+  @doc false
+  defp normalize_concurrency_config(concurrency_config) when is_map(concurrency_config) do
+    normalize_map_keys(concurrency_config)
+  end
+
+  @doc false
+  defp normalize_concurrency_config(other), do: other
+
+  @doc false
   defp normalize_format_value(value) when is_binary(value) do
     String.downcase(value)
   end
@@ -619,7 +636,9 @@ defmodule Kreuzberg.ExtractionConfig do
          :ok <- validate_acceleration_config(config.acceleration),
          :ok <- validate_nested_field(config.security_limits, "security_limits"),
          :ok <- validate_nested_field(config.email, "email"),
-         :ok <- validate_email_config(config.email) do
+         :ok <- validate_email_config(config.email),
+         :ok <- validate_nested_field(config.concurrency, "concurrency"),
+         :ok <- validate_concurrency_config(config.concurrency) do
       {:ok, config}
     end
   end
@@ -748,6 +767,7 @@ defmodule Kreuzberg.ExtractionConfig do
       acceleration: Map.get(map, "acceleration"),
       security_limits: Map.get(map, "security_limits"),
       email: Map.get(map, "email"),
+      concurrency: Map.get(map, "concurrency"),
       use_cache: Map.get(map, "use_cache", true),
       enable_quality_processing: Map.get(map, "enable_quality_processing", true),
       force_ocr: Map.get(map, "force_ocr", false),
@@ -1095,6 +1115,29 @@ defmodule Kreuzberg.ExtractionConfig do
 
       value ->
         {:error, "Field 'acceleration.device_id' must be a non-negative integer, got: #{type_name(value)}"}
+    end
+  end
+
+  @doc false
+  defp validate_concurrency_config(nil), do: :ok
+
+  @doc false
+  defp validate_concurrency_config(config) when is_map(config) do
+    max_threads = Map.get(config, "max_threads") || Map.get(config, :max_threads)
+
+    case max_threads do
+      nil ->
+        :ok
+
+      value when is_integer(value) and value > 0 ->
+        :ok
+
+      value when is_integer(value) ->
+        {:error, "Field 'concurrency.max_threads' must be a positive integer, got: #{value}"}
+
+      value ->
+        {:error,
+         "Field 'concurrency.max_threads' must be a positive integer, got: #{type_name(value)}"}
     end
   end
 

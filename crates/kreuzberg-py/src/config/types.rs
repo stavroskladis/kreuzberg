@@ -60,7 +60,8 @@ impl ExtractionConfig {
         include_document_structure=None,
         layout=None,
         acceleration=None,
-        email=None
+        email=None,
+        concurrency=None
     ))]
     #[allow(clippy::too_many_arguments)]
     fn new(
@@ -84,6 +85,7 @@ impl ExtractionConfig {
         layout: Option<LayoutDetectionConfig>,
         acceleration: Option<AccelerationConfig>,
         email: Option<EmailConfig>,
+        concurrency: Option<ConcurrencyConfig>,
     ) -> PyResult<Self> {
         let (html_options_inner, html_options_dict) = parse_html_options_dict(html_options)?;
         Ok(Self {
@@ -138,6 +140,7 @@ impl ExtractionConfig {
                 layout: layout.map(Into::into),
                 acceleration: acceleration.map(Into::into),
                 email: email.map(Into::into),
+                concurrency: concurrency.map(Into::into),
             },
             html_options_dict,
         })
@@ -364,6 +367,16 @@ impl ExtractionConfig {
     #[setter]
     fn set_email(&mut self, value: Option<EmailConfig>) {
         self.inner.email = value.map(Into::into);
+    }
+
+    #[getter]
+    fn concurrency(&self) -> Option<ConcurrencyConfig> {
+        self.inner.concurrency.clone().map(Into::into)
+    }
+
+    #[setter]
+    fn set_concurrency(&mut self, value: Option<ConcurrencyConfig>) {
+        self.inner.concurrency = value.map(Into::into);
     }
 
     fn __repr__(&self) -> String {
@@ -958,7 +971,7 @@ pub struct PdfConfig {
 #[pymethods]
 impl PdfConfig {
     #[new]
-    #[pyo3(signature = (extract_images=None, passwords=None, extract_metadata=None, hierarchy=None, extract_annotations=None, top_margin_fraction=None, bottom_margin_fraction=None))]
+    #[pyo3(signature = (extract_images=None, passwords=None, extract_metadata=None, hierarchy=None, extract_annotations=None, top_margin_fraction=None, bottom_margin_fraction=None, allow_single_column_tables=None))]
     fn new(
         extract_images: Option<bool>,
         passwords: Option<Vec<String>>,
@@ -967,6 +980,7 @@ impl PdfConfig {
         extract_annotations: Option<bool>,
         top_margin_fraction: Option<f32>,
         bottom_margin_fraction: Option<f32>,
+        allow_single_column_tables: Option<bool>,
     ) -> Self {
         Self {
             inner: kreuzberg::PdfConfig {
@@ -977,6 +991,7 @@ impl PdfConfig {
                 extract_annotations: extract_annotations.unwrap_or(false),
                 top_margin_fraction,
                 bottom_margin_fraction,
+                allow_single_column_tables: allow_single_column_tables.unwrap_or(false),
             },
         }
     }
@@ -1049,6 +1064,16 @@ impl PdfConfig {
     #[setter]
     fn set_bottom_margin_fraction(&mut self, value: Option<f32>) {
         self.inner.bottom_margin_fraction = value;
+    }
+
+    #[getter]
+    fn allow_single_column_tables(&self) -> bool {
+        self.inner.allow_single_column_tables
+    }
+
+    #[setter]
+    fn set_allow_single_column_tables(&mut self, value: bool) {
+        self.inner.allow_single_column_tables = value;
     }
 
     fn __repr__(&self) -> String {
@@ -1993,6 +2018,56 @@ impl EmailConfig {
             "EmailConfig(msg_fallback_codepage={:?})",
             self.inner.msg_fallback_codepage
         )
+    }
+}
+
+/// Concurrency configuration.
+///
+/// Controls thread usage for constrained environments.
+///
+/// Example:
+///     >>> from kreuzberg import ConcurrencyConfig
+///     >>> config = ConcurrencyConfig(max_threads=2)
+#[pyclass(name = "ConcurrencyConfig", module = "kreuzberg", from_py_object)]
+#[derive(Default, Clone)]
+pub struct ConcurrencyConfig {
+    pub inner: kreuzberg::core::config::ConcurrencyConfig,
+}
+
+#[pymethods]
+impl ConcurrencyConfig {
+    #[new]
+    #[pyo3(signature = (max_threads=None))]
+    fn new(max_threads: Option<usize>) -> Self {
+        Self {
+            inner: kreuzberg::core::config::ConcurrencyConfig { max_threads },
+        }
+    }
+
+    #[getter]
+    fn max_threads(&self) -> Option<usize> {
+        self.inner.max_threads
+    }
+
+    #[setter]
+    fn set_max_threads(&mut self, value: Option<usize>) {
+        self.inner.max_threads = value;
+    }
+
+    fn __repr__(&self) -> String {
+        format!("ConcurrencyConfig(max_threads={:?})", self.inner.max_threads)
+    }
+}
+
+impl From<ConcurrencyConfig> for kreuzberg::core::config::ConcurrencyConfig {
+    fn from(val: ConcurrencyConfig) -> Self {
+        val.inner
+    }
+}
+
+impl From<kreuzberg::core::config::ConcurrencyConfig> for ConcurrencyConfig {
+    fn from(val: kreuzberg::core::config::ConcurrencyConfig) -> Self {
+        Self { inner: val }
     }
 }
 

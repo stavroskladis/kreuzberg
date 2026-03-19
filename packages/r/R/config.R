@@ -20,6 +20,7 @@
 #' @param max_concurrent_extractions Integer. Max concurrent extractions.
 #' @param layout Layout detection configuration created by \code{layout_detection_config()}.
 #' @param email Email configuration created by \code{email_config()}.
+#' @param concurrency Concurrency configuration created by \code{concurrency_config()}.
 #' @param ... Additional configuration options passed as named list elements.
 #' @return A named list representing the extraction configuration.
 #' @export
@@ -33,7 +34,8 @@ extraction_config <- function(force_ocr = FALSE, ocr = NULL, chunking = NULL,
                               html_options = NULL, postprocessor = NULL,
                               security_limits = NULL,
                               max_concurrent_extractions = NULL,
-                              layout = NULL, email = NULL, ...) {
+                              layout = NULL, email = NULL,
+                              concurrency = NULL, ...) {
   config <- list()
   if (isTRUE(force_ocr)) config$force_ocr <- TRUE
   if (!is.null(ocr)) config$ocr <- ocr
@@ -67,6 +69,7 @@ extraction_config <- function(force_ocr = FALSE, ocr = NULL, chunking = NULL,
   }
   if (!is.null(layout)) config$layout <- layout
   if (!is.null(email)) config$email <- email
+  if (!is.null(concurrency)) config$concurrency <- concurrency
   extras <- list(...)
   if (length(extras) > 0) config <- c(config, extras)
   config
@@ -137,6 +140,52 @@ layout_detection_config <- function(preset = "fast", confidence_threshold = NULL
       stop("confidence_threshold must be between 0.0 and 1.0", call. = FALSE)
     }
     config$confidence_threshold <- confidence_threshold
+  }
+  extras <- list(...)
+  if (length(extras) > 0) config <- c(config, extras)
+  config
+}
+
+#' Create a concurrency configuration
+#'
+#' @param max_threads Integer or NULL. Maximum number of threads for parallel
+#'   processing. When NULL, the Rust default is used.
+#' @return A named list representing the concurrency configuration.
+#' @export
+concurrency_config <- function(max_threads = NULL) {
+  cfg <- list()
+  if (!is.null(max_threads)) cfg$max_threads <- as.integer(max_threads)
+  cfg
+}
+
+#' Create a PDF extraction configuration
+#'
+#' @param extract_images Logical. Extract images from PDFs. Default FALSE.
+#' @param passwords Character vector or NULL. Passwords for encrypted PDFs.
+#' @param extract_metadata Logical. Extract PDF metadata. Default TRUE.
+#' @param extract_annotations Logical. Extract PDF annotations. Default FALSE.
+#' @param top_margin_fraction Numeric or NULL. Top margin fraction (0.0-1.0).
+#' @param bottom_margin_fraction Numeric or NULL. Bottom margin fraction (0.0-1.0).
+#' @param allow_single_column_tables Logical. Allow single-column tables. Default FALSE.
+#' @param ... Additional PDF options.
+#' @return A named list representing the PDF configuration.
+#' @export
+pdf_config <- function(extract_images = FALSE, passwords = NULL,
+                       extract_metadata = TRUE, extract_annotations = FALSE,
+                       top_margin_fraction = NULL, bottom_margin_fraction = NULL,
+                       allow_single_column_tables = FALSE, ...) {
+  config <- list(
+    extract_images = extract_images,
+    extract_metadata = extract_metadata,
+    extract_annotations = extract_annotations,
+    allow_single_column_tables = allow_single_column_tables
+  )
+  if (!is.null(passwords)) config$passwords <- as.character(passwords)
+  if (!is.null(top_margin_fraction)) {
+    config$top_margin_fraction <- as.double(top_margin_fraction)
+  }
+  if (!is.null(bottom_margin_fraction)) {
+    config$bottom_margin_fraction <- as.double(bottom_margin_fraction)
   }
   extras <- list(...)
   if (length(extras) > 0) config <- c(config, extras)

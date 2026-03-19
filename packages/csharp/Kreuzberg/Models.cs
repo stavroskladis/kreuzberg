@@ -2024,6 +2024,18 @@ public sealed class EmailConfig
 }
 
 /// <summary>
+/// Thread and concurrency limits for constrained environments.
+/// </summary>
+public sealed class ConcurrencyConfig
+{
+    /// <summary>
+    /// Maximum number of threads for all internal thread pools.
+    /// </summary>
+    [JsonPropertyName("max_threads")]
+    public int? MaxThreads { get; init; }
+}
+
+/// <summary>
 /// Hardware acceleration configuration for ONNX Runtime models.
 /// </summary>
 public sealed class AccelerationConfig
@@ -2178,6 +2190,13 @@ public sealed class ExtractionConfig
     /// </summary>
     [JsonPropertyName("email")]
     public EmailConfig? Email { get; init; }
+
+    /// <summary>
+    /// Thread and concurrency limits for constrained environments.
+    /// If null, uses default concurrency settings.
+    /// </summary>
+    [JsonPropertyName("concurrency")]
+    public ConcurrencyConfig? Concurrency { get; init; }
 
 }
 
@@ -2660,6 +2679,13 @@ public sealed class PdfConfig
     /// </summary>
     [JsonPropertyName("bottom_margin_fraction")]
     public float? BottomMarginFraction { get; init; }
+
+    /// <summary>
+    /// Whether to allow single-column tables in PDF extraction output.
+    /// Default: false
+    /// </summary>
+    [JsonPropertyName("allow_single_column_tables")]
+    public bool? AllowSingleColumnTables { get; init; }
 }
 
 /// <summary>

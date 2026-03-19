@@ -40,6 +40,7 @@ class ExtractionConfigBuilder
     private ?PostProcessorConfig $postprocessor = null;
     private ?HtmlConversionOptions $htmlOptions = null;
     private ?int $maxConcurrentExtractions = null;
+    private ?ConcurrencyConfig $concurrency = null;
     private string $resultFormat = 'unified';
     private string $outputFormat = 'plain';
 
@@ -216,6 +217,18 @@ class ExtractionConfigBuilder
     }
 
     /**
+     * Set the concurrency configuration.
+     *
+     * @param ConcurrencyConfig|null $concurrency Concurrency settings
+     * @return self For method chaining
+     */
+    public function withConcurrency(?ConcurrencyConfig $concurrency): self
+    {
+        $this->concurrency = $concurrency;
+        return $this;
+    }
+
+    /**
      * Set the result format for structured output.
      *
      * @param string $resultFormat Result format (e.g., 'unified', 'element_based')
@@ -263,6 +276,7 @@ class ExtractionConfigBuilder
             maxConcurrentExtractions: $this->maxConcurrentExtractions,
             resultFormat: $this->resultFormat,
             outputFormat: $this->outputFormat,
+            concurrency: $this->concurrency,
         );
     }
 }

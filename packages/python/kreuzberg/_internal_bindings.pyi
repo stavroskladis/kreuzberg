@@ -22,6 +22,7 @@ __all__ = [
     "Chunk",
     "ChunkMetadata",
     "ChunkingConfig",
+    "ConcurrencyConfig",
     "ContentLayer",
     "DjotContent",
     "DjotImage",
@@ -429,6 +430,30 @@ class EmailConfig:
         msg_fallback_codepage: int | None = None,
     ) -> None: ...
 
+class ConcurrencyConfig:
+    """Concurrency configuration for controlling thread usage.
+
+    Controls thread usage for constrained environments by capping all internal
+    thread pools (Rayon, ONNX Runtime intra-op) and batch concurrency.
+
+    Attributes:
+        max_threads (int | None): Maximum number of threads for all internal
+            thread pools. None = system defaults. Default: None
+
+    Example:
+        Limit to 2 threads:
+            >>> from kreuzberg import ConcurrencyConfig
+            >>> config = ConcurrencyConfig(max_threads=2)
+    """
+
+    max_threads: int | None
+
+    def __init__(
+        self,
+        *,
+        max_threads: int | None = None,
+    ) -> None: ...
+
 class ExtractionConfig:
     """Main extraction configuration for document processing.
 
@@ -527,6 +552,7 @@ class ExtractionConfig:
     layout: LayoutDetectionConfig | None
     acceleration: AccelerationConfig | None
     email: EmailConfig | None
+    concurrency: ConcurrencyConfig | None
 
     def __init__(
         self,
@@ -552,6 +578,7 @@ class ExtractionConfig:
         layout: LayoutDetectionConfig | None = None,
         acceleration: AccelerationConfig | None = None,
         email: EmailConfig | None = None,
+        concurrency: ConcurrencyConfig | None = None,
     ) -> None: ...
     @staticmethod
     def from_file(path: str | Path) -> ExtractionConfig: ...
@@ -956,6 +983,7 @@ class PdfConfig:
     extract_annotations: bool
     top_margin_fraction: float | None
     bottom_margin_fraction: float | None
+    allow_single_column_tables: bool
 
     def __init__(
         self,
@@ -967,6 +995,7 @@ class PdfConfig:
         extract_annotations: bool | None = None,
         top_margin_fraction: float | None = None,
         bottom_margin_fraction: float | None = None,
+        allow_single_column_tables: bool | None = None,
     ) -> None: ...
 
 class HierarchyConfig:

@@ -70,6 +70,9 @@ type HTMLPreprocessingOption func(*HTMLPreprocessingOptions)
 // HTMLConversionOption is a functional option for configuring HTMLConversionOptions.
 type HTMLConversionOption func(*HTMLConversionOptions)
 
+// ConcurrencyOption is a functional option for configuring ConcurrencyConfig.
+type ConcurrencyOption func(*ConcurrencyConfig)
+
 // PageOption is a functional option for configuring PageConfig.
 type PageOption func(*PageConfig)
 
@@ -94,6 +97,7 @@ type ExtractionConfig struct {
 	SecurityLimits           *SecurityLimitsConfig    `json:"security_limits,omitempty"`
 	Acceleration             *AccelerationConfig      `json:"acceleration,omitempty"`
 	Email                    *EmailConfig             `json:"email,omitempty"`
+	Concurrency              *ConcurrencyConfig       `json:"concurrency,omitempty"`
 	MaxConcurrentExtractions *int                     `json:"max_concurrent_extractions,omitempty"`
 	IncludeDocumentStructure *bool                    `json:"include_document_structure,omitempty"`
 	OutputFormat             string                   `json:"output_format,omitempty"`
@@ -226,8 +230,9 @@ type PdfConfig struct {
 	ExtractMetadata      *bool       `json:"extract_metadata,omitempty"`
 	FontConfig           *FontConfig `json:"font_config,omitempty"`
 	ExtractAnnotations   *bool       `json:"extract_annotations,omitempty"`
-	TopMarginFraction    *float64    `json:"top_margin_fraction,omitempty"`
-	BottomMarginFraction *float64    `json:"bottom_margin_fraction,omitempty"`
+	TopMarginFraction         *float64    `json:"top_margin_fraction,omitempty"`
+	BottomMarginFraction      *float64    `json:"bottom_margin_fraction,omitempty"`
+	AllowSingleColumnTables   *bool       `json:"allow_single_column_tables,omitempty"`
 }
 
 // HierarchyConfig controls PDF hierarchy extraction based on font sizes.
@@ -367,6 +372,12 @@ type AccelerationConfig struct {
 type EmailConfig struct {
 	// MsgFallbackCodepage is the fallback code page for MSG email body decoding.
 	MsgFallbackCodepage *uint32 `json:"msg_fallback_codepage,omitempty"`
+}
+
+// ConcurrencyConfig controls thread and concurrency limits for constrained environments.
+type ConcurrencyConfig struct {
+	// MaxThreads sets the maximum number of threads for all internal thread pools.
+	MaxThreads *int `json:"max_threads,omitempty"`
 }
 
 // PageConfig configures page tracking and extraction.

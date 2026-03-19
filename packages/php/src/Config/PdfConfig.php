@@ -82,6 +82,18 @@ readonly class PdfConfig
          * @default null
          */
         public ?float $bottomMarginFraction = null,
+
+        /**
+         * Allow extraction of single-column tables.
+         *
+         * When enabled, tables with only one column are included in extraction results.
+         * By default, single-column tables are filtered out as they typically represent
+         * layout artifacts rather than actual tabular data.
+         *
+         * @var bool
+         * @default false
+         */
+        public bool $allowSingleColumnTables = false,
     ) {
     }
 
@@ -136,6 +148,13 @@ readonly class PdfConfig
             $bottomMarginFraction = (float) $data['bottom_margin_fraction'];
         }
 
+        /** @var bool $allowSingleColumnTables */
+        $allowSingleColumnTables = $data['allow_single_column_tables'] ?? false;
+        if (!is_bool($allowSingleColumnTables)) {
+            /** @var bool $allowSingleColumnTables */
+            $allowSingleColumnTables = (bool) $allowSingleColumnTables;
+        }
+
         return new self(
             extractImages: $extractImages,
             passwords: $passwords,
@@ -144,6 +163,7 @@ readonly class PdfConfig
             extractAnnotations: $extractAnnotations,
             topMarginFraction: $topMarginFraction,
             bottomMarginFraction: $bottomMarginFraction,
+            allowSingleColumnTables: $allowSingleColumnTables,
         );
     }
 
@@ -183,7 +203,7 @@ readonly class PdfConfig
      */
     public function toArray(): array
     {
-        return array_filter([
+        $result = array_filter([
             'extract_images' => $this->extractImages,
             'passwords' => $this->passwords,
             'extract_metadata' => $this->extractMetadata,
@@ -192,6 +212,12 @@ readonly class PdfConfig
             'top_margin_fraction' => $this->topMarginFraction,
             'bottom_margin_fraction' => $this->bottomMarginFraction,
         ], static fn ($value): bool => $value !== null);
+
+        if ($this->allowSingleColumnTables) {
+            $result['allow_single_column_tables'] = true;
+        }
+
+        return $result;
     }
 
     /**

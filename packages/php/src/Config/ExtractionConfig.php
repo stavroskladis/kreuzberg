@@ -249,6 +249,17 @@ readonly class ExtractionConfig
          * @default null
          */
         public ?EmailConfig $email = null,
+
+        /**
+         * Concurrency configuration for thread pool management.
+         *
+         * Controls the maximum number of threads used for parallel processing
+         * during document extraction.
+         *
+         * @var ConcurrencyConfig|null
+         * @default null
+         */
+        public ?ConcurrencyConfig $concurrency = null,
     ) {
     }
 
@@ -404,6 +415,13 @@ readonly class ExtractionConfig
             $email = EmailConfig::fromArray($emailData);
         }
 
+        $concurrency = null;
+        if (isset($data['concurrency']) && is_array($data['concurrency'])) {
+            /** @var array<string, mixed> $concurrencyData */
+            $concurrencyData = $data['concurrency'];
+            $concurrency = ConcurrencyConfig::fromArray($concurrencyData);
+        }
+
         $securityLimits = null;
         if (isset($data['security_limits']) && is_array($data['security_limits'])) {
             /** @var array<string, mixed> $securityLimitsData */
@@ -432,6 +450,7 @@ readonly class ExtractionConfig
             includeDocumentStructure: $includeDocumentStructure,
             acceleration: $acceleration,
             email: $email,
+            concurrency: $concurrency,
         );
     }
 
@@ -601,6 +620,7 @@ readonly class ExtractionConfig
             'token_reduction' => $this->tokenReduction?->toArray(),
             'acceleration' => $this->acceleration?->toArray(),
             'email' => $this->email?->toArray(),
+            'concurrency' => $this->concurrency?->toArray(),
         ];
 
         // Add simple boolean/string fields only if explicitly set to non-default values

@@ -20,6 +20,7 @@ public final class PdfConfig {
 	private final boolean extractAnnotations;
 	private final Double topMarginFraction;
 	private final Double bottomMarginFraction;
+	private final Boolean allowSingleColumnTables;
 
 	private PdfConfig(Builder builder) {
 		this.extractImages = builder.extractImages;
@@ -32,6 +33,7 @@ public final class PdfConfig {
 		this.extractAnnotations = builder.extractAnnotations;
 		this.topMarginFraction = builder.topMarginFraction;
 		this.bottomMarginFraction = builder.bottomMarginFraction;
+		this.allowSingleColumnTables = builder.allowSingleColumnTables;
 	}
 
 	public static Builder builder() {
@@ -70,6 +72,15 @@ public final class PdfConfig {
 		return bottomMarginFraction;
 	}
 
+	/**
+	 * Check whether single-column tables are allowed in PDF extraction output.
+	 *
+	 * @return true if single-column tables are allowed, or null if not set
+	 */
+	public Boolean getAllowSingleColumnTables() {
+		return allowSingleColumnTables;
+	}
+
 	public Map<String, Object> toMap() {
 		Map<String, Object> map = new HashMap<>();
 		map.put("extract_images", extractImages);
@@ -90,6 +101,9 @@ public final class PdfConfig {
 		if (bottomMarginFraction != null) {
 			map.put("bottom_margin_fraction", bottomMarginFraction);
 		}
+		if (allowSingleColumnTables != null) {
+			map.put("allow_single_column_tables", allowSingleColumnTables);
+		}
 		return map;
 	}
 
@@ -102,6 +116,7 @@ public final class PdfConfig {
 		private boolean extractAnnotations = false;
 		private Double topMarginFraction;
 		private Double bottomMarginFraction;
+		private Boolean allowSingleColumnTables;
 
 		private Builder() {
 		}
@@ -154,6 +169,18 @@ public final class PdfConfig {
 			return this;
 		}
 
+		/**
+		 * Set whether to allow single-column tables in PDF extraction output.
+		 *
+		 * @param allowSingleColumnTables
+		 *            true to allow single-column tables
+		 * @return this builder for chaining
+		 */
+		public Builder allowSingleColumnTables(Boolean allowSingleColumnTables) {
+			this.allowSingleColumnTables = allowSingleColumnTables;
+			return this;
+		}
+
 		public PdfConfig build() {
 			return new PdfConfig(this);
 		}
@@ -195,6 +222,10 @@ public final class PdfConfig {
 		Object bottomMarginValue = map.get("bottom_margin_fraction");
 		if (bottomMarginValue instanceof Number) {
 			builder.bottomMarginFraction(((Number) bottomMarginValue).doubleValue());
+		}
+		Object allowSingleColumnTablesValue = map.get("allow_single_column_tables");
+		if (allowSingleColumnTablesValue instanceof Boolean) {
+			builder.allowSingleColumnTables((Boolean) allowSingleColumnTablesValue);
 		}
 		@SuppressWarnings("unchecked")
 		Map<String, Object> fontConfigMap = map.get("font_config") instanceof Map

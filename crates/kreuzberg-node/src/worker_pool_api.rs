@@ -160,7 +160,7 @@ pub async fn extract_file_in_worker(
 
     pool_clone.increment_active();
 
-    let mut rust_config = resolve_config(config)?;
+    let rust_config = resolve_config(config)?;
 
     // Spawn the extraction in a blocking thread
     let result = tokio::task::spawn_blocking(move || {

@@ -334,8 +334,9 @@ module Kreuzberg
       attr_reader extract_annotations: bool
       attr_reader top_margin_fraction: Float?
       attr_reader bottom_margin_fraction: Float?
+      attr_reader allow_single_column_tables: bool
 
-      def initialize: (?extract_images: bool, ?passwords: (Array[String] | String)?, ?extract_metadata: bool, ?font_config: (FontConfig | Hash[Symbol, untyped])?, ?hierarchy: (Hierarchy | Hash[Symbol, untyped])?, ?extract_annotations: bool, ?top_margin_fraction: Float?, ?bottom_margin_fraction: Float?) -> void
+      def initialize: (?extract_images: bool, ?passwords: (Array[String] | String)?, ?extract_metadata: bool, ?font_config: (FontConfig | Hash[Symbol, untyped])?, ?hierarchy: (Hierarchy | Hash[Symbol, untyped])?, ?extract_annotations: bool, ?top_margin_fraction: Float?, ?bottom_margin_fraction: Float?, ?allow_single_column_tables: bool) -> void
       def to_h: () -> Hash[Symbol, untyped]
     end
 
@@ -467,6 +468,13 @@ module Kreuzberg
       def to_h: () -> Hash[Symbol, untyped]
     end
 
+    class Concurrency
+      attr_reader max_threads: Integer?
+
+      def initialize: (?max_threads: Integer?) -> void
+      def to_h: () -> Hash[Symbol, untyped]
+    end
+
     class Extraction
       attr_reader use_cache: bool
       attr_reader enable_quality_processing: bool
@@ -483,6 +491,7 @@ module Kreuzberg
       attr_reader html_options: HtmlOptions?
       attr_reader pages: PageConfig?
       attr_reader layout: LayoutDetection?
+      attr_reader concurrency: Concurrency?
       attr_reader max_concurrent_extractions: Integer?
       attr_reader output_format: String?
       attr_reader result_format: String?
@@ -508,6 +517,7 @@ module Kreuzberg
         ?html_options: (HtmlOptions | Hash[Symbol, untyped])?,
         ?pages: (PageConfig | Hash[Symbol, untyped])?,
         ?layout: (LayoutDetection | Hash[Symbol, untyped])?,
+        ?concurrency: (Concurrency | Hash[Symbol, untyped])?,
         ?max_concurrent_extractions: Integer?,
         ?output_format: String?,
         ?result_format: String?

@@ -354,6 +354,7 @@ pub struct JsPdfConfig {
     pub extract_annotations: Option<bool>,
     pub top_margin_fraction: Option<f64>,
     pub bottom_margin_fraction: Option<f64>,
+    pub allow_single_column_tables: Option<bool>,
 }
 
 impl From<JsPdfConfig> for RustPdfConfig {
@@ -366,6 +367,7 @@ impl From<JsPdfConfig> for RustPdfConfig {
             extract_annotations: val.extract_annotations.unwrap_or(false),
             top_margin_fraction: val.top_margin_fraction.map(|v| v as f32),
             bottom_margin_fraction: val.bottom_margin_fraction.map(|v| v as f32),
+            allow_single_column_tables: val.allow_single_column_tables.unwrap_or(false),
         }
     }
 }
@@ -958,6 +960,21 @@ fn keyword_algorithm_to_string(algo: RustKeywordAlgorithm) -> &'static str {
     }
 }
 
+/// Concurrency configuration for Node.js bindings.
+#[napi(object)]
+pub struct JsConcurrencyConfig {
+    /// Maximum number of threads for all internal thread pools.
+    pub max_threads: Option<u32>,
+}
+
+impl From<JsConcurrencyConfig> for kreuzberg::core::config::ConcurrencyConfig {
+    fn from(val: JsConcurrencyConfig) -> Self {
+        kreuzberg::core::config::ConcurrencyConfig {
+            max_threads: val.max_threads.map(|v| v as usize),
+        }
+    }
+}
+
 /// Email extraction configuration for Node.js bindings.
 #[napi(object)]
 pub struct JsEmailConfig {
@@ -1132,6 +1149,8 @@ pub struct JsExtractionConfig {
     pub acceleration: Option<JsAccelerationConfig>,
     /// Security limits to guard against DoS attacks
     pub security_limits: Option<JsSecurityLimits>,
+    /// Concurrency configuration for thread pool control
+    pub concurrency: Option<JsConcurrencyConfig>,
 }
 
 impl TryFrom<JsPageConfig> for kreuzberg::core::config::PageConfig {
@@ -1213,6 +1232,7 @@ impl TryFrom<JsExtractionConfig> for ExtractionConfig {
             layout: val.layout.map(Into::into),
             acceleration: val.acceleration.map(Into::into),
             email: val.email.map(Into::into),
+            concurrency: val.concurrency.map(Into::into),
         })
     }
 }
@@ -1329,6 +1349,7 @@ impl TryFrom<ExtractionConfig> for JsExtractionConfig {
                 extract_annotations: Some(pdf.extract_annotations),
                 top_margin_fraction: pdf.top_margin_fraction.map(|v| v as f64),
                 bottom_margin_fraction: pdf.bottom_margin_fraction.map(|v| v as f64),
+                allow_single_column_tables: Some(pdf.allow_single_column_tables),
             }),
             token_reduction: val.token_reduction.map(|tr| JsTokenReductionConfig {
                 mode: Some(tr.mode),
@@ -1378,6 +1399,9 @@ impl TryFrom<ExtractionConfig> for JsExtractionConfig {
                 max_iterations: Some(sl.max_iterations as u32),
                 max_xml_depth: Some(sl.max_xml_depth as u32),
                 max_table_cells: Some(sl.max_table_cells as u32),
+            }),
+            concurrency: val.concurrency.map(|c| JsConcurrencyConfig {
+                max_threads: c.max_threads.map(|v| v as u32),
             }),
         })
     }
@@ -1673,6 +1697,7 @@ impl TryFrom<FileExtractionConfig> for JsFileExtractionConfig {
                 extract_annotations: Some(pdf.extract_annotations),
                 top_margin_fraction: pdf.top_margin_fraction.map(|v| v as f64),
                 bottom_margin_fraction: pdf.bottom_margin_fraction.map(|v| v as f64),
+                allow_single_column_tables: Some(pdf.allow_single_column_tables),
             }),
             token_reduction: val.token_reduction.map(|tr| JsTokenReductionConfig {
                 mode: Some(tr.mode),

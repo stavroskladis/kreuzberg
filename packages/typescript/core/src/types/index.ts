@@ -14,9 +14,12 @@
 export * from "../constants/index.js";
 export * from "../utils/index.js";
 export type {
+	AccelerationConfig,
 	ChunkingConfig,
+	ConcurrencyConfig,
 	EmbeddingConfig,
 	EmbeddingModelType,
+	EmailConfig,
 	ExtractedKeyword,
 	ExtractionConfig,
 	HierarchyConfig,

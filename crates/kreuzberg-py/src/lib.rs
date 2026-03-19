@@ -82,6 +82,7 @@ fn _internal_bindings(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<config::LayoutDetectionConfig>()?;
     m.add_class::<config::AccelerationConfig>()?;
     m.add_class::<config::EmailConfig>()?;
+    m.add_class::<config::ConcurrencyConfig>()?;
     m.add_class::<config::FileExtractionConfig>()?;
 
     m.add_class::<keywords::YakeParams>()?;
