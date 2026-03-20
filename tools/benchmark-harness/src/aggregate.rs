@@ -40,6 +40,15 @@ pub struct ComparisonData {
     pub cpu_ranking: Vec<RankedFramework>,
     /// Frameworks ranked by quality score (highest first)
     pub quality_ranking: Vec<RankedFramework>,
+    /// PDF-only: frameworks ranked by overall quality score (highest first)
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub pdf_quality_ranking: Vec<RankedFramework>,
+    /// PDF-only: frameworks ranked by text F1 / TF1 (highest first)
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub pdf_tf1_ranking: Vec<RankedFramework>,
+    /// PDF-only: frameworks ranked by structural F1 / SF1 (highest first)
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub pdf_sf1_ranking: Vec<RankedFramework>,
     /// Performance deltas relative to the fastest framework
     pub deltas_vs_baseline: HashMap<String, DeltaMetrics>,
 }
@@ -161,6 +170,8 @@ pub struct QualityPercentiles {
     pub f1_text_p50: f64,
     /// Median F1 numeric score
     pub f1_numeric_p50: f64,
+    /// Median F1 layout/structural score (SF1)
+    pub f1_layout_p50: f64,
     /// Median overall quality score
     pub quality_score_p50: f64,
 }
@@ -210,6 +221,9 @@ pub fn aggregate_new_format(results: &[BenchmarkResult]) -> NewConsolidatedResul
                 memory_ranking: Vec::new(),
                 cpu_ranking: Vec::new(),
                 quality_ranking: Vec::new(),
+                pdf_quality_ranking: Vec::new(),
+                pdf_tf1_ranking: Vec::new(),
+                pdf_sf1_ranking: Vec::new(),
                 deltas_vs_baseline: HashMap::new(),
             },
             metadata: ConsolidationMetadata {
@@ -465,6 +479,11 @@ fn calculate_percentiles(results: &[&BenchmarkResult]) -> PerformancePercentiles
             .filter_map(|r| r.quality.as_ref().map(|q| q.f1_score_numeric))
             .filter(|v| !v.is_nan() && v.is_finite())
             .collect();
+        let mut f1_layouts: Vec<f64> = successful
+            .iter()
+            .filter_map(|r| r.quality.as_ref().map(|q| q.f1_score_layout))
+            .filter(|v| !v.is_nan() && v.is_finite())
+            .collect();
         let mut quality_scores: Vec<f64> = successful
             .iter()
             .filter_map(|r| r.quality.as_ref().map(|q| q.quality_score))
@@ -474,11 +493,13 @@ fn calculate_percentiles(results: &[&BenchmarkResult]) -> PerformancePercentiles
         if !quality_scores.is_empty() {
             f1_texts.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
             f1_numerics.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+            f1_layouts.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
             quality_scores.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
 
             Some(QualityPercentiles {
                 f1_text_p50: sanitize_f64(calculate_percentile_value(&f1_texts, 0.50)),
                 f1_numeric_p50: sanitize_f64(calculate_percentile_value(&f1_numerics, 0.50)),
+                f1_layout_p50: sanitize_f64(calculate_percentile_value(&f1_layouts, 0.50)),
                 quality_score_p50: sanitize_f64(calculate_percentile_value(&quality_scores, 0.50)),
             })
         } else {
@@ -746,12 +767,76 @@ fn build_comparison(by_framework_mode: &HashMap<String, FrameworkModeAggregation
         }
     }
 
+    // PDF-specific quality rankings (quality, TF1, SF1)
+    // Collect PDF quality metrics per framework:mode
+    let mut pdf_metrics: Vec<(String, f64, f64, f64)> = Vec::new(); // (key, quality, tf1, sf1)
+    for (key, agg) in by_framework_mode {
+        if let Some(pdf_ft) = agg.by_file_type.get("pdf") {
+            let mut qualities: Vec<(f64, usize)> = Vec::new();
+            let mut tf1s: Vec<(f64, usize)> = Vec::new();
+            let mut sf1s: Vec<(f64, usize)> = Vec::new();
+            for perf in [&pdf_ft.no_ocr, &pdf_ft.with_ocr].into_iter().flatten() {
+                if perf.successful_sample_count == 0 {
+                    continue;
+                }
+                if let Some(q) = &perf.quality {
+                    let w = perf.successful_sample_count;
+                    qualities.push((q.quality_score_p50, w));
+                    tf1s.push((q.f1_text_p50, w));
+                    sf1s.push((q.f1_layout_p50, w));
+                }
+            }
+            let weighted_avg = |items: &[(f64, usize)]| -> f64 {
+                let finite: Vec<(f64, usize)> = items.iter().copied().filter(|(v, _)| v.is_finite()).collect();
+                let total_weight: usize = finite.iter().map(|(_, w)| w).sum();
+                if total_weight == 0 {
+                    f64::NAN
+                } else {
+                    finite.iter().map(|(v, w)| v * (*w as f64)).sum::<f64>() / total_weight as f64
+                }
+            };
+            let q = weighted_avg(&qualities);
+            let t = weighted_avg(&tf1s);
+            let s = weighted_avg(&sf1s);
+            if q.is_finite() {
+                pdf_metrics.push((key.clone(), q, t, s));
+            }
+        }
+    }
+
+    let build_ranking = |items: &mut Vec<(String, f64)>| -> Vec<RankedFramework> {
+        items.retain(|(_, v)| v.is_finite());
+        items.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
+        let best = items.first().map(|r| r.1).unwrap_or(1.0);
+        items
+            .iter()
+            .enumerate()
+            .map(|(i, (k, v))| RankedFramework {
+                framework_mode: k.clone(),
+                rank: i + 1,
+                value: *v,
+                relative: if best > 0.0 { *v / best } else { 1.0 },
+            })
+            .collect()
+    };
+
+    let mut pdf_qual_items: Vec<(String, f64)> = pdf_metrics.iter().map(|(k, q, _, _)| (k.clone(), *q)).collect();
+    let mut pdf_tf1_items: Vec<(String, f64)> = pdf_metrics.iter().map(|(k, _, t, _)| (k.clone(), *t)).collect();
+    let mut pdf_sf1_items: Vec<(String, f64)> = pdf_metrics.iter().map(|(k, _, _, s)| (k.clone(), *s)).collect();
+
+    let pdf_quality_ranking = build_ranking(&mut pdf_qual_items);
+    let pdf_tf1_ranking = build_ranking(&mut pdf_tf1_items);
+    let pdf_sf1_ranking = build_ranking(&mut pdf_sf1_items);
+
     ComparisonData {
         performance_ranking,
         throughput_ranking,
         memory_ranking,
         cpu_ranking,
         quality_ranking,
+        pdf_quality_ranking,
+        pdf_tf1_ranking,
+        pdf_sf1_ranking,
         deltas_vs_baseline,
     }
 }

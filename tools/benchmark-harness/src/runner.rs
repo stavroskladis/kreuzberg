@@ -904,16 +904,23 @@ impl BenchmarkRunner {
 
         // Apply quality scoring if enabled
         if self.config.measure_quality {
-            // Build mapping from document path -> ground truth text
+            // Build mapping from document path -> ground truth text and markdown
             let mut ground_truth_map: HashMap<PathBuf, String> = HashMap::new();
+            let mut markdown_gt_map: HashMap<PathBuf, String> = HashMap::new();
             for (fixture_path, fixture) in self.fixtures.fixtures() {
                 let fixture_dir = fixture_path.parent().unwrap_or_else(|| std::path::Path::new("."));
+                let doc_path = fixture.resolve_document_path(fixture_dir);
                 if let Some(gt_path) = fixture.resolve_ground_truth_path(fixture_dir)
                     && gt_path.exists()
                     && let Ok(gt_text) = std::fs::read_to_string(&gt_path)
                 {
-                    let doc_path = fixture.resolve_document_path(fixture_dir);
-                    ground_truth_map.insert(doc_path, gt_text);
+                    ground_truth_map.insert(doc_path.clone(), gt_text);
+                }
+                if let Some(md_path) = fixture.resolve_ground_truth_markdown_path(fixture_dir)
+                    && md_path.exists()
+                    && let Ok(md_text) = std::fs::read_to_string(&md_path)
+                {
+                    markdown_gt_map.insert(doc_path, md_text);
                 }
             }
 
@@ -921,7 +928,10 @@ impl BenchmarkRunner {
                 if let Some(ref extracted) = result.extracted_text
                     && let Some(gt_text) = ground_truth_map.get(&result.file_path)
                 {
-                    result.quality = Some(crate::quality::compute_quality(extracted, gt_text));
+                    let md_gt = markdown_gt_map.get(&result.file_path).map(|s| s.as_str());
+                    result.quality = Some(crate::quality::compute_quality_with_structure(
+                        extracted, gt_text, md_gt,
+                    ));
                 }
             }
         }
