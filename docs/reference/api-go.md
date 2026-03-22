@@ -1,4 +1,4 @@
-# Go API Reference <span class="version-badge">v4.5.3</span>
+# Go API Reference <span class="version-badge">v4.5.2</span>
 
 Complete reference for the Kreuzberg Go bindings using cgo to access the Rust-powered extraction pipeline.
 
@@ -270,7 +270,7 @@ for i, result := range results {
 
 ---
 
-### BatchExtractFilesWithConfigs <span class="version-badge">v4.5.3</span>
+### BatchExtractFilesWithConfigs <span class="version-badge">v4.5.2</span>
 
 Batch extract multiple files with per-file configuration overrides (asynchronous).
 
@@ -288,7 +288,7 @@ func BatchExtractFilesWithConfigs(ctx context.Context, items []FileWithConfig, c
 
 ---
 
-### BatchExtractFilesWithConfigsSync <span class="version-badge">v4.5.3</span>
+### BatchExtractFilesWithConfigsSync <span class="version-badge">v4.5.2</span>
 
 Synchronous variant of `BatchExtractFilesWithConfigs`.
 
@@ -300,13 +300,13 @@ func BatchExtractFilesWithConfigsSync(items []FileWithConfig, config *Extraction
 
 ---
 
-### BatchExtractBytesWithConfigs / BatchExtractBytesWithConfigsSync <span class="version-badge">v4.5.3</span>
+### BatchExtractBytesWithConfigs / BatchExtractBytesWithConfigsSync <span class="version-badge">v4.5.2</span>
 
 Batch extract multiple byte arrays with per-file configuration overrides. Async and sync variants follow the same pattern.
 
 ---
 
-### FileExtractionConfig <span class="version-badge">v4.5.3</span>
+### FileExtractionConfig <span class="version-badge">v4.5.2</span>
 
 Per-file extraction configuration overrides for batch operations. All fields are pointers — `nil` means "use the batch-level default."
 
@@ -714,7 +714,7 @@ PDF-specific extraction options.
 
 ```go title="Go"
 type PdfConfig struct {
-	AllowSingleColumnTables *bool       // <span class="version-badge">v4.5.3</span> Allow extraction of single-column tables
+	AllowSingleColumnTables *bool       // <span class="version-badge">v4.5.2</span> Allow extraction of single-column tables
 	BottomMarginFraction    *float64    // Bottom margin to ignore during extraction
 	ExtractAnnotations      *bool       // Extract PDF annotations
 	ExtractImages           *bool       // Extract embedded images
@@ -727,7 +727,7 @@ type PdfConfig struct {
 
 ---
 
-### ConcurrencyConfig <span class="version-badge">v4.5.3</span>
+### ConcurrencyConfig <span class="version-badge">v4.5.2</span>
 
 Concurrency configuration for controlling parallel extraction.
 
@@ -806,7 +806,7 @@ type RakeParams struct {
 
 ---
 
-### LayoutDetectionConfig <span class="version-badge">v4.5.3</span>
+### LayoutDetectionConfig <span class="version-badge">v4.5.2</span>
 
 Configure ONNX-based document layout detection.
 

@@ -133,7 +133,7 @@ The fastest way to try Kreuzberg - no SDK, no code, just your terminal.
     [API Reference](../reference/api-ruby.md){ .install-btn .install-btn--ghost }
     [:material-lightning-bolt: Quick Start](quickstart.md){ .install-btn .install-btn--solid }
 
--   :material-language-csharp:{ .lg .middle } **C# / .NET** <span class="version-badge v4.5.3">Unreleased</span>
+-   :material-language-csharp:{ .lg .middle } **C# / .NET**
 
     ---
 
@@ -144,7 +144,7 @@ The fastest way to try Kreuzberg - no SDK, no code, just your terminal.
     [API Reference](../reference/api-csharp.md){ .install-btn .install-btn--ghost }
     [:material-lightning-bolt: Quick Start](../guides/csharp.md){ .install-btn .install-btn--solid }
 
--   :fontawesome-brands-php:{ .lg .middle } **PHP** <span class="version-badge v4.5.3">Unreleased</span>
+-   :fontawesome-brands-php:{ .lg .middle } **PHP**
 
     ---
 
@@ -166,7 +166,7 @@ The fastest way to try Kreuzberg - no SDK, no code, just your terminal.
     [API Reference](../reference/api-elixir.md){ .install-btn .install-btn--ghost }
     [:material-lightning-bolt: Quick Start](#elixir){ .install-btn .install-btn--solid }
 
--   :simple-r:{ .lg .middle } **R** <span class="version-badge v4.5.3">Unreleased</span>
+-   :simple-r:{ .lg .middle } **R**
 
     ---
 
@@ -178,7 +178,7 @@ The fastest way to try Kreuzberg - no SDK, no code, just your terminal.
     [API Reference](../reference/api-r.md){ .install-btn .install-btn--ghost }
     [:material-lightning-bolt: Quick Start](quickstart.md){ .install-btn .install-btn--solid }
 
--   :simple-cplusplus:{ .lg .middle } **C / C++** <span class="version-badge v4.5.3">Unreleased</span>
+-   :simple-cplusplus:{ .lg .middle } **C / C++**
 
     ---
 
@@ -338,7 +338,7 @@ Or pin a version in `Cargo.toml`:
 implementation 'dev.kreuzberg:kreuzberg:4.5.3'
 ```
 
-### C / C++ <span class="version-badge v4.5.3">Unreleased</span>
+### C / C++
 
 Build the FFI library from source:
 
