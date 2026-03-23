@@ -3250,6 +3250,7 @@ dependencies = [
  "lopdf",
  "mail-parser",
  "memchr",
+ "memmap2",
  "mime_guess",
  "ndarray",
  "num_cpus",

@@ -19,6 +19,7 @@ use crate::Result;
 use crate::core::config::ExtractionConfig;
 use crate::extraction::{cells_to_markdown, cells_to_text};
 use crate::plugins::{DocumentExtractor, Plugin};
+use crate::text::utf8_validation;
 use crate::types::{ExtractionResult, Metadata, Table};
 use async_trait::async_trait;
 use quick_xml::Reader;
@@ -635,7 +636,7 @@ fn extract_element_text_with_inline(reader: &mut Reader<&[u8]>, plain: bool) -> 
                 }
             }
             Ok(Event::CData(t)) => {
-                let decoded = std::str::from_utf8(t.as_ref()).unwrap_or("").to_string();
+                let decoded = utf8_validation::from_utf8(t.as_ref()).unwrap_or("").to_string();
                 if !decoded.trim().is_empty() {
                     if !text.is_empty() {
                         text.push(' ');
@@ -825,7 +826,7 @@ fn extract_para_with_annotations(
                 }
             }
             Ok(Event::CData(t)) => {
-                let decoded = std::str::from_utf8(t.as_ref()).unwrap_or("").to_string();
+                let decoded = utf8_validation::from_utf8(t.as_ref()).unwrap_or("").to_string();
                 if !decoded.trim().is_empty() {
                     if !text.is_empty() {
                         text.push(' ');
@@ -874,7 +875,7 @@ fn extract_element_text(reader: &mut Reader<&[u8]>) -> Result<String> {
                 }
             }
             Ok(Event::CData(t)) => {
-                let decoded = std::str::from_utf8(t.as_ref()).unwrap_or("").to_string();
+                let decoded = utf8_validation::from_utf8(t.as_ref()).unwrap_or("").to_string();
                 if !decoded.trim().is_empty() {
                     if !text.is_empty() {
                         text.push(' ');
@@ -937,7 +938,7 @@ impl DocumentExtractor for DocbookExtractor {
             config.output_format,
             crate::core::config::OutputFormat::Plain | crate::core::config::OutputFormat::Structured
         );
-        let docbook_content = std::str::from_utf8(content)
+        let docbook_content = utf8_validation::from_utf8(content)
             .map(|s| s.to_string())
             .unwrap_or_else(|_| String::from_utf8_lossy(content).to_string());
 

@@ -20,6 +20,7 @@ mod parser;
 use crate::Result;
 use crate::core::config::ExtractionConfig;
 use crate::plugins::{DocumentExtractor, Plugin};
+use crate::text::utf8_validation;
 use crate::types::{ExtractionResult, Metadata};
 use async_trait::async_trait;
 use quick_xml::Reader;
@@ -137,7 +138,7 @@ fn extract_para_with_annotations_jats(
                 }
             }
             Ok(Event::CData(t)) => {
-                let decoded = std::str::from_utf8(t.as_ref()).unwrap_or("").to_string();
+                let decoded = utf8_validation::from_utf8(t.as_ref()).unwrap_or("").to_string();
                 if !decoded.trim().is_empty() {
                     if !text.is_empty() {
                         text.push(' ');
@@ -383,7 +384,7 @@ impl DocumentExtractor for JatsExtractor {
         mime_type: &str,
         config: &ExtractionConfig,
     ) -> Result<ExtractionResult> {
-        let jats_content = std::str::from_utf8(content)
+        let jats_content = utf8_validation::from_utf8(content)
             .map(|s| s.to_string())
             .unwrap_or_else(|_| String::from_utf8_lossy(content).to_string());
 

@@ -20,6 +20,7 @@ pub mod pages;
 
 use crate::Result;
 use crate::error::KreuzbergError;
+use crate::text::utf8_validation;
 use std::io::Cursor;
 use std::io::Read;
 
@@ -185,7 +186,7 @@ pub fn extract_text_from_proto(data: &[u8]) -> Vec<String> {
                 i = end;
 
                 // Attempt UTF-8 decode — only keep strings ≥ 3 chars of printable content
-                if let Ok(s) = std::str::from_utf8(payload) {
+                if let Ok(s) = utf8_validation::from_utf8(payload) {
                     let trimmed = s.trim();
                     if trimmed.len() >= 3 && trimmed.chars().any(|c| c.is_alphabetic() || c.is_numeric()) {
                         texts.push(trimmed.to_string());

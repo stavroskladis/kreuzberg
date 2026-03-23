@@ -28,6 +28,7 @@ use bytes::Bytes;
 use encoding_rs::Encoding;
 
 use crate::error::{KreuzbergError, Result};
+use crate::text::utf8_validation;
 use crate::types::{EmailAttachment, EmailExtractionResult};
 use mail_parser::MimeHeaders;
 use regex::Regex;
@@ -886,7 +887,7 @@ fn read_msg_recip_type<F: std::io::Read + std::io::Seek>(comp: &mut cfb::Compoun
 /// Scans for `Date:` in the header section (before the blank line that separates
 /// headers from body) and returns the raw value, handling continuation lines.
 fn extract_raw_date_header(data: &[u8]) -> Option<String> {
-    let text = std::str::from_utf8(data).ok()?;
+    let text = utf8_validation::from_utf8(data).ok()?;
 
     // Find the end of headers (blank line)
     let header_end = text
@@ -921,7 +922,7 @@ fn extract_raw_date_header(data: &[u8]) -> Option<String> {
 /// and List-Unsubscribe headers in the header section.
 fn extract_raw_headers(data: &[u8]) -> HashMap<String, String> {
     let mut headers = HashMap::new();
-    let text = match std::str::from_utf8(data) {
+    let text = match utf8_validation::from_utf8(data) {
         Ok(s) => s,
         Err(_) => return headers,
     };

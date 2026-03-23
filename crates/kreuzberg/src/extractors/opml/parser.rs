@@ -4,6 +4,7 @@
 //! and recursive processing of `<outline>` elements in the `<body>` section.
 
 use crate::Result;
+use crate::text::utf8_validation;
 use ahash::AHashMap;
 use std::borrow::Cow;
 
@@ -26,7 +27,7 @@ pub(crate) fn extract_content_and_metadata(
     content: &[u8],
 ) -> Result<(String, AHashMap<Cow<'static, str>, serde_json::Value>)> {
     let doc = roxmltree::Document::parse(
-        std::str::from_utf8(content)
+        utf8_validation::from_utf8(content)
             .map_err(|e| crate::KreuzbergError::Other(format!("Invalid UTF-8 in OPML: {}", e)))?,
     )
     .map_err(|e| crate::KreuzbergError::Other(format!("Failed to parse OPML: {}", e)))?;
@@ -172,7 +173,7 @@ pub(crate) fn build_document_structure(content: &[u8]) -> Result<crate::types::d
     use crate::types::builder::DocumentStructureBuilder;
 
     let doc = roxmltree::Document::parse(
-        std::str::from_utf8(content)
+        utf8_validation::from_utf8(content)
             .map_err(|e| crate::KreuzbergError::Other(format!("Invalid UTF-8 in OPML: {}", e)))?,
     )
     .map_err(|e| crate::KreuzbergError::Other(format!("Failed to parse OPML: {}", e)))?;

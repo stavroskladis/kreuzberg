@@ -6,6 +6,7 @@
 use crate::Result;
 use crate::core::config::ExtractionConfig;
 use crate::plugins::{DocumentExtractor, Plugin};
+use crate::text::utf8_validation;
 use crate::types::{ExtractionResult, Metadata, Table};
 use async_trait::async_trait;
 
@@ -274,7 +275,7 @@ fn parse_csv(text: &str, delimiter: char) -> Vec<Vec<String>> {
 /// encoding detection. Without it, tries common encodings in order.
 fn decode_csv_bytes(content: &[u8]) -> String {
     // Fast path: valid UTF-8.
-    if let Ok(s) = std::str::from_utf8(content) {
+    if let Ok(s) = utf8_validation::from_utf8(content) {
         return s.to_string();
     }
 
