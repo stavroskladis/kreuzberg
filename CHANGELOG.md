@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [4.5.4] - 2026-03-23
 
 ### Fixed
 
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Ruby binding missing `table_model` field**: Added `table_model` parsing to `LayoutDetectionConfig` initializer in Ruby native extension.
 - **WASM module resolution in Supabase/Deno edge functions** (#551): Added explicit `package.json` exports for `pkg/kreuzberg_wasm.js` and WASM binary. Extended `wasm-loader.ts` with Deno detection and clear error messaging for restricted edge runtimes.
 - **`zip` dependency pinned below 7.4**: Avoids let-chain build failures on some stable Rust toolchains (#549).
+- **Vendored HWP text extraction**: Replaced external `hwpers` crate with vendored subset (~1,650 lines). Eliminates `zip 2.x` transitive dependency that caused WASM and CI Validate build failures.
 
 ### Added
 

@@ -99,6 +99,21 @@ DOCX XML parser vendored into `crates/kreuzberg/src/extraction/docx/parser.rs`:
 
 ---
 
+## hwpers
+
+Vendored HWP text extraction code from the hwpers crate:
+
+- **Source**: https://github.com/Indosaram/hwpers
+- **License**: MIT OR Apache-2.0
+- **Authors**: HWP Parser Contributors
+- **Vendored Version**: 0.5.0
+- **Location**: `crates/kreuzberg/src/extraction/hwp/`
+- **Purpose**: Text extraction from Korean Hangul Word Processor (.hwp) files
+- **Scope**: Minimal subset — CFB reader, binary record parser, text extraction only
+- **Excluded**: HWPX (XML/ZIP), writer, renderer, crypto, preview modules
+
+---
+
 ## paddle-ocr-rs
 
 Vendored source code from the paddle-ocr-rs crate for PaddleOCR via ONNX Runtime integration:
