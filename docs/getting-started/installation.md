@@ -333,6 +333,9 @@ go get github.com/kreuzberg-dev/kreuzberg/packages/go/v4@latest
 !!! warning "Windows"
     The Go binding links against ONNX Runtime dynamically on Windows. `onnxruntime.dll` must be on your `PATH` at runtime — see the note at the top of this page.
 
+!!! note "Windows feature limitations"
+    The Go and C/C++ bindings on Windows (MinGW/GNU target) do not include **PaddleOCR**, **layout detection**, or **auto-rotate**. Tesseract OCR and all other features work normally. These limitations apply only to Windows; Linux and macOS builds include the full feature set.
+
 ### Rust
 
 Enable features selectively:
