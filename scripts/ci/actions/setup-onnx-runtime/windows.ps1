@@ -74,8 +74,13 @@ foreach ($Dir in $DllDirs) {
 $RustFlags = if ($env:RUSTFLAGS) { "$env:RUSTFLAGS -L $OrtLib" } else { "-L $OrtLib" }
 
 if ($Strategy -eq "bundled") {
-  Write-Host "Using bundled ORT strategy - letting ort-sys download-binaries handle static linking"
+  # ort-sys has no prebuilt static binaries for x86_64-pc-windows-gnu (MSYS2/MinGW).
+  # Use the pre-downloaded Microsoft ORT with dynamic linking for Windows GNU targets.
+  Write-Host "Using bundled ORT strategy (Windows) - dynamic linking against pre-downloaded ORT (no static binaries for windows-gnu)"
   @(
+    "ORT_LIB_LOCATION=$OrtLib"
+    "ORT_PREFER_DYNAMIC_LINK=1"
+    "RUSTFLAGS=$RustFlags"
     "LIB=$OrtLib;$env:LIB"
     "LIBRARY_PATH=$OrtLib;$env:LIBRARY_PATH"
     "PATH=$Dest;$env:PATH"
