@@ -168,6 +168,13 @@ repos:
     hooks:
       - id: shellcheck
 
+  # Markdown: linting
+  - repo: https://github.com/rvben/rumdl-pre-commit
+    rev: "v0.1.62"
+    hooks:
+      - id: rumdl-fmt
+        exclude: '^(tests/test_apps/|tools/benchmark-harness/vendored/)'
+
   # GitHub Actions: linting
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.11
