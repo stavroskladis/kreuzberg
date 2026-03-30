@@ -103,15 +103,13 @@ pub async fn extract_ooxml_embedded_objects(
         }
 
         // Detect MIME type from magic bytes first, then fall back to extension.
-        let detected_mime = crate::core::mime::detect_mime_type_from_bytes(&data)
-            .ok()
-            .or_else(|| {
-                std::path::Path::new(&filename)
-                    .extension()
-                    .and_then(|ext| ext.to_str())
-                    .and_then(|ext| mime_guess::from_ext(ext).first())
-                    .map(|m| m.to_string())
-            });
+        let detected_mime = crate::core::mime::detect_mime_type_from_bytes(&data).ok().or_else(|| {
+            std::path::Path::new(&filename)
+                .extension()
+                .and_then(|ext| ext.to_str())
+                .and_then(|ext| mime_guess::from_ext(ext).first())
+                .map(|m| m.to_string())
+        });
 
         let file_mime = match detected_mime {
             Some(m) if m != "application/octet-stream" => m,

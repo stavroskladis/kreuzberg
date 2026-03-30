@@ -68,9 +68,9 @@ impl RstExtractor {
         metadata.title = additional
             .remove(&Cow::Borrowed("title"))
             .and_then(|v| v.as_str().map(|s| s.to_string()));
-        metadata.authors = additional.remove(&Cow::Borrowed("author")).and_then(|v| {
-            v.as_str().map(|s| vec![s.to_string()])
-        });
+        metadata.authors = additional
+            .remove(&Cow::Borrowed("author"))
+            .and_then(|v| v.as_str().map(|s| vec![s.to_string()]));
         metadata.created_at = additional
             .remove(&Cow::Borrowed("date"))
             .and_then(|v| v.as_str().map(|s| s.to_string()));

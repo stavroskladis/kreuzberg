@@ -27,9 +27,7 @@ use crate::extraction::ooxml_constants::DRAWINGML_NAMESPACE;
 ///
 /// Returns `(PptxMetadata, HashMap<String, String>)` where the second element
 /// contains office metadata keys (title, author, created_by, etc.).
-pub(super) fn extract_metadata<R: Read + Seek>(
-    archive: &mut ZipArchive<R>,
-) -> (PptxMetadata, HashMap<String, String>) {
+pub(super) fn extract_metadata<R: Read + Seek>(archive: &mut ZipArchive<R>) -> (PptxMetadata, HashMap<String, String>) {
     #[cfg(feature = "office")]
     {
         let mut metadata_map = HashMap::new();

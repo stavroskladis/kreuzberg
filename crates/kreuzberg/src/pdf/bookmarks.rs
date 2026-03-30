@@ -92,13 +92,10 @@ fn walk_outline_items_inner(
         };
 
         // Extract title.
-        let title = dict
-            .get(b"Title")
-            .ok()
-            .and_then(|obj| match obj {
-                Object::String(bytes, _) => Some(decode_pdf_string(bytes)),
-                _ => None,
-            });
+        let title = dict.get(b"Title").ok().and_then(|obj| match obj {
+            Object::String(bytes, _) => Some(decode_pdf_string(bytes)),
+            _ => None,
+        });
 
         // Extract destination: try /Dest first, then /A (action).
         let uri = extract_destination(document, dict, title.as_deref())
@@ -116,19 +113,12 @@ fn walk_outline_items_inner(
         }
 
         // Move to next sibling iteratively.
-        current_id = dict
-            .get(b"Next")
-            .ok()
-            .and_then(|obj| obj.as_reference().ok());
+        current_id = dict.get(b"Next").ok().and_then(|obj| obj.as_reference().ok());
     }
 }
 
 /// Extract a URI from a /Dest entry (page destination).
-fn extract_destination(
-    document: &Document,
-    dict: &lopdf::Dictionary,
-    title: Option<&str>,
-) -> Option<Uri> {
+fn extract_destination(document: &Document, dict: &lopdf::Dictionary, title: Option<&str>) -> Option<Uri> {
     let dest = dict.get(b"Dest").ok()?;
     let label = title.map(|s| s.to_string());
 
@@ -154,30 +144,24 @@ fn extract_destination(
             Some(uri)
         }
         // Reference to a destination object.
-        Object::Reference(id) => {
-            match document.get_object(*id) {
-                Ok(Object::Array(arr)) => {
-                    let page_num = resolve_page_number(document, arr);
-                    let url = format!("#page={}", page_num.unwrap_or(1));
-                    let mut uri = Uri::anchor(url, label);
-                    if let Some(p) = page_num {
-                        uri.page = Some(p);
-                    }
-                    Some(uri)
+        Object::Reference(id) => match document.get_object(*id) {
+            Ok(Object::Array(arr)) => {
+                let page_num = resolve_page_number(document, arr);
+                let url = format!("#page={}", page_num.unwrap_or(1));
+                let mut uri = Uri::anchor(url, label);
+                if let Some(p) = page_num {
+                    uri.page = Some(p);
                 }
-                _ => None,
+                Some(uri)
             }
-        }
+            _ => None,
+        },
         _ => None,
     }
 }
 
 /// Extract a URI from an /A (action) entry.
-fn extract_action(
-    document: &Document,
-    dict: &lopdf::Dictionary,
-    title: Option<&str>,
-) -> Option<Uri> {
+fn extract_action(document: &Document, dict: &lopdf::Dictionary, title: Option<&str>) -> Option<Uri> {
     let action_obj = dict.get(b"A").ok()?;
     let action_dict = match action_obj {
         Object::Dictionary(d) => d,
@@ -199,13 +183,10 @@ fn extract_action(
     match action_type.as_deref() {
         Some("URI") => {
             // External URL.
-            let url = action_dict
-                .get(b"URI")
-                .ok()
-                .and_then(|o| match o {
-                    Object::String(bytes, _) => Some(String::from_utf8_lossy(bytes).into_owned()),
-                    _ => None,
-                })?;
+            let url = action_dict.get(b"URI").ok().and_then(|o| match o {
+                Object::String(bytes, _) => Some(String::from_utf8_lossy(bytes).into_owned()),
+                _ => None,
+            })?;
             Some(Uri::hyperlink(url, label))
         }
         Some("GoTo") => {

@@ -17,4 +17,3 @@ pub fn extraction_result_to_list(result: ExtractionResult) -> extendr_api::Resul
     result_robj.set_class(&["kreuzberg_result", "list"]).map_err(to_r_error)?;
     List::try_from(result_robj).map_err(to_r_error)
 }
-

@@ -71,4 +71,3 @@ pub fn results_to_js_value(results: &[ExtractionResult]) -> Result<JsValue, JsVa
         .map_err(|e| JsValue::from_str(&format!("Failed to serialize results: {e}")))?;
     js_sys::JSON::parse(&json_string).map_err(|e| JsValue::from_str(&format!("Failed to parse results JSON: {e:?}")))
 }
-

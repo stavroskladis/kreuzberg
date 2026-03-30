@@ -310,11 +310,13 @@ impl DocumentExtractor for PptxExtractor {
 
         // Recursively extract embedded objects from ppt/embeddings/
         if config.max_archive_depth > 0 {
-            let (children, embed_warnings) =
-                crate::extraction::ooxml_embedded::extract_ooxml_embedded_objects(
-                    content, "ppt/embeddings/", "pptx", config,
-                )
-                .await;
+            let (children, embed_warnings) = crate::extraction::ooxml_embedded::extract_ooxml_embedded_objects(
+                content,
+                "ppt/embeddings/",
+                "pptx",
+                config,
+            )
+            .await;
             if !children.is_empty() {
                 doc.children = Some(children);
             }

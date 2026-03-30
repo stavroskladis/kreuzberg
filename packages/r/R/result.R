@@ -150,4 +150,3 @@ metadata_field.kreuzberg_result <- function(x, name, ...) {
   }
   x$metadata[[name]]
 }
-

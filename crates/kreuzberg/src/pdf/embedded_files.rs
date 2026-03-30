@@ -69,7 +69,12 @@ fn collect_from_name_tree(document: &Document, dict: &lopdf::Dictionary, files: 
     collect_from_name_tree_inner(document, dict, files, 0);
 }
 
-fn collect_from_name_tree_inner(document: &Document, dict: &lopdf::Dictionary, files: &mut Vec<EmbeddedFile>, depth: usize) {
+fn collect_from_name_tree_inner(
+    document: &Document,
+    dict: &lopdf::Dictionary,
+    files: &mut Vec<EmbeddedFile>,
+    depth: usize,
+) {
     if depth > MAX_NAME_TREE_DEPTH {
         return;
     }
@@ -146,9 +151,7 @@ fn extract_file_from_filespec(
     };
 
     // Try to decompress. lopdf's `get_decompressed_content` returns decoded bytes.
-    let data = stream
-        .decompressed_content()
-        .unwrap_or_else(|_| stream.content.clone());
+    let data = stream.decompressed_content().unwrap_or_else(|_| stream.content.clone());
 
     // Size guard: reject decompressed files exceeding the limit.
     if data.len() > MAX_EMBEDDED_FILE_SIZE {

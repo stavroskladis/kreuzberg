@@ -382,4 +382,3 @@ pub fn config_from_file<'a>(env: Env<'a>, file_path: String) -> NifResult<Term<'
         Err(e) => Ok((atoms::error(), format!("Failed to load config from file: {}", e)).encode(env)),
     }
 }
-

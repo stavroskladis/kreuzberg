@@ -196,11 +196,7 @@ fn map_annotations(annotations: &[html_to_markdown_rs::types::TextAnnotation]) -
 }
 
 /// Extract URIs from link annotations and push them into the builder.
-fn push_link_uris_from_annotations(
-    annotations: &[TextAnnotation],
-    text: &str,
-    b: &mut InternalDocumentBuilder,
-) {
+fn push_link_uris_from_annotations(annotations: &[TextAnnotation], text: &str, b: &mut InternalDocumentBuilder) {
     for ann in annotations {
         if let crate::types::document_structure::AnnotationKind::Link { url, .. } = &ann.kind {
             if url.is_empty() {
@@ -208,7 +204,11 @@ fn push_link_uris_from_annotations(
             }
             let label = if ann.start < ann.end && (ann.end as usize) <= text.len() {
                 let slice = &text[ann.start as usize..ann.end as usize];
-                if slice.is_empty() { None } else { Some(slice.to_string()) }
+                if slice.is_empty() {
+                    None
+                } else {
+                    Some(slice.to_string())
+                }
             } else {
                 None
             };

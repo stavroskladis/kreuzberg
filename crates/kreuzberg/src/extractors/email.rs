@@ -223,8 +223,7 @@ impl DocumentExtractor for EmailExtractor {
                 // Also extract nested message/rfc822 parts (e.g. from multipart/digest)
                 // as separate ArchiveEntry children for recursive processing.
                 if mime_type == "message/rfc822" {
-                    let (nested_children, nested_warnings) =
-                        extract_nested_message_children(content, config).await;
+                    let (nested_children, nested_warnings) = extract_nested_message_children(content, config).await;
                     children.extend(nested_children);
                     doc.processing_warnings.extend(nested_warnings);
                 }

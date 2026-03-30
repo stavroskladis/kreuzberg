@@ -143,7 +143,7 @@ __all__ = [
     "register_ocr_backend",
     "register_post_processor",
     "register_validator",
-"unregister_document_extractor",
+    "unregister_document_extractor",
     "unregister_ocr_backend",
     "unregister_post_processor",
     "unregister_validator",

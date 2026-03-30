@@ -1346,11 +1346,13 @@ impl DocumentExtractor for DocxExtractor {
 
         // Recursively extract embedded objects from word/embeddings/
         if config.max_archive_depth > 0 {
-            let (children, embed_warnings) =
-                crate::extraction::ooxml_embedded::extract_ooxml_embedded_objects(
-                    content, "word/embeddings/", "docx", config,
-                )
-                .await;
+            let (children, embed_warnings) = crate::extraction::ooxml_embedded::extract_ooxml_embedded_objects(
+                content,
+                "word/embeddings/",
+                "docx",
+                config,
+            )
+            .await;
             if !children.is_empty() {
                 internal_doc.children = Some(children);
             }
