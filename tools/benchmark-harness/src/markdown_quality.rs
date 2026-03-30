@@ -317,14 +317,45 @@ pub fn parse_markdown_blocks(md: &str) -> Vec<MdBlock> {
             Event::HardBreak => {
                 current_text.push('\n');
             }
-            Event::InlineMath(text) | Event::DisplayMath(text) => {
+            Event::InlineMath(text) => {
                 current_text.push_str(&text);
             }
+            Event::DisplayMath(text) => {
+                // Display math ($$...$$) is a formula block
+                flush_text(&mut current_text, &mut blocks, &mut index, MdBlockType::Paragraph);
+                let trimmed = text.trim();
+                if !trimmed.is_empty() {
+                    blocks.push(MdBlock {
+                        block_type: MdBlockType::Formula,
+                        content: trimmed.to_string(),
+                        index,
+                    });
+                    index += 1;
+                }
+            }
             Event::Html(html) => {
-                // Skip HTML blocks — they're not markdown content
+                // Extract text content from HTML blocks instead of skipping them.
+                // This handles cases where GT or extraction contains <b>, <table>,
+                // <p>, etc. instead of markdown equivalents.
+                let text = strip_html_tags(&html);
+                let trimmed = text.trim();
+                if !trimmed.is_empty() {
+                    flush_text(&mut current_text, &mut blocks, &mut index, MdBlockType::Paragraph);
+                    blocks.push(MdBlock {
+                        block_type: MdBlockType::Paragraph,
+                        content: trimmed.to_string(),
+                        index,
+                    });
+                    index += 1;
+                }
             }
             Event::InlineHtml(html) => {
-                // Skip inline HTML
+                // Strip HTML tags but keep text content for inline HTML.
+                // e.g., <b>bold</b> → "bold", <br> → ""
+                let text = strip_html_tags(&html);
+                if !text.is_empty() {
+                    current_text.push_str(&text);
+                }
             }
             _ => {}
         }
@@ -341,13 +372,35 @@ fn flush_text(text: &mut String, blocks: &mut Vec<MdBlock>, index: &mut usize, b
     let content = std::mem::take(text);
     let trimmed = content.trim();
     if !trimmed.is_empty() {
+        // If the block is a paragraph but looks like a math formula, classify as Formula.
+        let actual_type = if block_type == MdBlockType::Paragraph && looks_like_formula(trimmed) {
+            MdBlockType::Formula
+        } else {
+            block_type
+        };
         blocks.push(MdBlock {
-            block_type,
+            block_type: actual_type,
             content: trimmed.to_string(),
             index: *index,
         });
         *index += 1;
     }
+}
+
+/// Check if content looks like a math/LaTeX formula.
+fn looks_like_formula(content: &str) -> bool {
+    content.contains("\\frac")
+        || content.contains("\\sum")
+        || content.contains("\\int")
+        || content.contains("\\begin{")
+        || content.contains("\\end{")
+        || content.contains("\\left")
+        || content.contains("\\right")
+        || content.contains("\\sqrt")
+        || content.contains("\\mathbb")
+        || content.contains("\\mathcal")
+        || (content.starts_with("\\") && content.len() > 2)
+        || (content.contains("^{") && content.contains("}"))
 }
 
 // Old manual parsing helpers removed — pulldown-cmark handles everything.
@@ -418,8 +471,51 @@ fn type_compat(ext_block: &MdBlock, gt_block: &MdBlock) -> f64 {
         return 0.25;
     }
 
+    // Image ↔ Paragraph: image references sometimes rendered as paragraph text
+    if (ext == MdBlockType::Image && gt == MdBlockType::Paragraph)
+        || (ext == MdBlockType::Paragraph && gt == MdBlockType::Image)
+    {
+        return 0.5;
+    }
+
+    // Table ↔ ListItem: table content sometimes extracted as list items
+    if (ext == MdBlockType::Table && gt == MdBlockType::ListItem)
+        || (ext == MdBlockType::ListItem && gt == MdBlockType::Table)
+    {
+        return 0.3;
+    }
+
     // Everything else cross-category: incompatible
     0.0
+}
+
+/// Strip HTML tags from a string, preserving text content.
+///
+/// Handles common HTML formatting tags that appear in pandoc output or
+/// ground truth. Converts `<br>` and `<br/>` to spaces.
+fn strip_html_tags(html: &str) -> String {
+    let mut result = String::with_capacity(html.len());
+    let mut in_tag = false;
+    let mut tag_name = String::new();
+
+    for ch in html.chars() {
+        if ch == '<' {
+            in_tag = true;
+            tag_name.clear();
+        } else if ch == '>' && in_tag {
+            in_tag = false;
+            // Convert <br> / <br/> to space
+            let lower = tag_name.to_lowercase();
+            if lower == "br" || lower == "br/" || lower == "/br" {
+                result.push(' ');
+            }
+        } else if in_tag {
+            tag_name.push(ch);
+        } else {
+            result.push(ch);
+        }
+    }
+    result
 }
 
 /// Check if content is bold-wrapped (e.g., `**Title**` or `__Title__`).

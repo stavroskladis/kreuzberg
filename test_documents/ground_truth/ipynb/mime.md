@@ -6,23 +6,18 @@ from __future__ import annotations
 from dataclasses import dataclass
 ```
 
-
 ``` python
 ```
 
-
     7.29.0
 
-
 Supported IPython display formatters:
-
 
 ``` python
 ip = get_ipython()
 for mime in ip.display_formatter.formatters:
     pass
 ```
-
 
     text/plain
     text/html
@@ -35,9 +30,7 @@ for mime in ip.display_formatter.formatters:
     application/json
     application/javascript
 
-
 Let's write a simple class that will output different mime:
-
 
 ``` python
 @dataclass
@@ -70,20 +63,15 @@ class Mime:
         return data
 ```
 
-
 ``` python
 mime = Mime("E = mc^2")
 ```
-
 
 ``` python
 mime
 ```
 
-
     E = mc^2
 
-
 Note that \#7561 made ipynb reader aware of this, and \#7563 made ipynb writer aware of this.
-
 

@@ -25,18 +25,14 @@ Build nest on ground |
 | *Fly* |  |
 | Quack | 
 
-
 Type
 Sound
-
 
 Short
 “quak”
 
-
 Long
 “quaaaaaack”
-
 
  |
 

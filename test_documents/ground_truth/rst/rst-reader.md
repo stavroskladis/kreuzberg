@@ -270,17 +270,11 @@ phone
 
 Simple block on one line:
 
-<div>foo</div>
+foo
 
 Now, nested:
 
-<div>
-    <div>
-        <div>
-            foo
-        </div>
-    </div>
-</div>
+foo
 
 ### LaTeX Block
 
@@ -288,7 +282,7 @@ Now, nested:
 
 This is *emphasized*. This is **strong**.
 
-This is code: `>`, `$`, `\`, `$`, `<html>`.
+This is code: `>`, `$`, `\`, `$`, ``.
 
 This is~subscripted~ and this is ^superscripted^.
 

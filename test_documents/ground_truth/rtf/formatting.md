@@ -12,6 +12,6 @@ underlined
 
 ~~strikeout~~
 
-x<sup>superscript</sup>
+xsuperscript
 
-x<sub>subscript</sub>
+xsubscript

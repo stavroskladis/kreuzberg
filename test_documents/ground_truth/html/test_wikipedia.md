@@ -1,14 +1,10 @@
 
 
-
  Toggle the table of contents
-
 
 # Microsoft
 
-
  154 languages
-
 
 - [Afrikaans](https://af.wikipedia.org/wiki/Microsoft)
 - [Alemannisch](https://als.wikipedia.org/wiki/Microsoft)
@@ -165,43 +161,32 @@
 - [Zazaki](https://diq.wikipedia.org/wiki/Microsoft)
 - [中文](https://zh.wikipedia.org/wiki/%E5%BE%AE%E8%BD%AF)
 
-
 [Edit links](https://www.wikidata.org/wiki/Special:EntityPage/Q2283#sitelinks-wikipedia)
-
 
 - [Article](/wiki/Microsoft)
 - [Talk](/wiki/Talk:Microsoft)
 
-
 English
-
 
 - [Read](/wiki/Microsoft)
 - [View source](/w/index.php?title=Microsoft&action=edit)
 - [View history](/w/index.php?title=Microsoft&action=history)
 
-
 Tools
 
-
 Tools
-
 
 move to sidebar
 
 hide
 
-
 Actions
-
 
 - [Read](/wiki/Microsoft)
 - [View source](/w/index.php?title=Microsoft&action=edit)
 - [View history](/w/index.php?title=Microsoft&action=history)
 
-
 General
-
 
 - [What links here](/wiki/Special:WhatLinksHere/Microsoft)
 - [Related changes](/wiki/Special:RecentChangesLinked/Microsoft)
@@ -214,33 +199,24 @@ General
 - [Download QR code](/w/index.php?title=Special:QrCode&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMicrosoft)
 - [Wikidata item](https://www.wikidata.org/wiki/Special:EntityPage/Q2283)
 
-
 Print/export
-
 
 - [Download as PDF](/w/index.php?title=Special:DownloadAsPdf&page=Microsoft&action=show-download-screen "Download this page as a PDF file")
 - [Printable version](/w/index.php?title=Microsoft&printable=yes)
 
-
 In other projects
-
 
 - [Wikimedia Commons](https://commons.wikimedia.org/wiki/Microsoft)
 - [Wikinews](https://en.wikinews.org/wiki/Category:Microsoft)
 - [Wikiquote](https://en.wikiquote.org/wiki/Microsoft)
 
-
 [Coordinates](/wiki/Geographic_coordinate_system "Geographic coordinate system"): [47°38′23″N 122°7′42″W﻿ / ﻿47.63972°N 122.12833°W﻿ / 47.63972; -122.12833](https://geohack.toolforge.org/geohack.php?pagename=Microsoft&params=47_38_23_N_122_7_42_W_region:US_dim:540)
-
 
 [![Page semi-protected](//upload.wikimedia.org/wikipedia/en/thumb/1/1b/Semi-protection-shackle.svg/20px-Semi-protection-shackle.svg.png)](/wiki/Wikipedia:Protection_policy#semi "This article is semi-protected due to vandalism")
 
-
 From Wikipedia, the free encyclopedia
 
-
 American multinational technology corporation
-
 
 | [![A square divided into four sub-squares, colored red-orange, green, yellow and blue (clockwise), with the company name appearing to its right](//upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/250px-Microsoft_logo_%282012%29.svg.png)](/wiki/File:Microsoft_logo_(2012).svg) |  |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
@@ -328,15 +304,12 @@ Bill Gates
 | **Footnotes / references** 
 Financials as of June 30, 2023[[update]](https://en.wikipedia.org/w/index.php?title=Microsoft&action=edit)[[1]](#cite_note-1) |  |
 
-
 | 
-
 
 [](/wiki/File:Bill_Gates_2017_(cropped).jpg)
 This article is part of
 a series about
 [Bill Gates](/wiki/Bill_Gates)
-
 
  |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -346,9 +319,7 @@ a series about
 [Public image](/wiki/Bill_Gates#Public_image)
 [Residence](/wiki/Bill_Gates%27s_house)
 
-
 Companies
-
 
 [Traf-O-Data](/wiki/Traf-O-Data)
 Microsoft ([criticism](/wiki/Criticism_of_Microsoft))
@@ -357,9 +328,7 @@ Microsoft ([criticism](/wiki/Criticism_of_Microsoft))
 [TerraPower](/wiki/TerraPower)
 [Gates Ventures](/wiki/Gates_Ventures)
 
-
 Charitable organizations
-
 
 [Bill & Melinda Gates Foundation](/wiki/Bill_%26_Melinda_Gates_Foundation)
 [Match for Africa](/wiki/Match_for_Africa)
@@ -368,9 +337,7 @@ Charitable organizations
 [Breakthrough Energy](/wiki/Breakthrough_Energy)
 [Mission Innovation](/wiki/Mission_Innovation)
 
-
 Writings
-
 
 "[An Open Letter to Hobbyists](/wiki/An_Open_Letter_to_Hobbyists)"
 *[The Road Ahead](/wiki/The_Road_Ahead_(Gates_book))*
@@ -378,9 +345,7 @@ Writings
 *[How to Avoid a Climate Disaster](/wiki/How_to_Avoid_a_Climate_Disaster)*
 *[How to Prevent the Next Pandemic](/wiki/How_to_Prevent_the_Next_Pandemic)*
 
-
 Related
-
 
 [Bill Gates' flower fly](/wiki/Bill_Gates%27_flower_fly)
 [Codex Leicester](/wiki/Codex_Leicester)
@@ -406,27 +371,20 @@ Microsoft [has been criticized](/wiki/Criticism_of_Microsoft "Criticism of Micro
 
 ## History
 
-
 Main article: [History of Microsoft](/wiki/History_of_Microsoft "History of Microsoft")
-
 
 For a chronological guide, see [Timeline of Microsoft](/wiki/Timeline_of_Microsoft "Timeline of Microsoft").
 
-
 ### 1972–1985: Founding
-
 
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Altair_8800_and_Model_33_ASR_Teletype_.jpg/256px-Altair_8800_and_Model_33_ASR_Teletype_.jpg)](/wiki/File:Altair_8800_and_Model_33_ASR_Teletype_.jpg)
 An Altair 8800 computer (left) with the popular Model 33 ASR Teletype as terminal, paper tape reader, and paper tape punch
 
-
 [![](//upload.wikimedia.org/wikipedia/en/thumb/4/4f/1981BillPaul.jpg/220px-1981BillPaul.jpg)](/wiki/File:1981BillPaul.jpg)
 [Paul Allen](/wiki/Paul_Allen) and [Bill Gates](/wiki/Bill_Gates) on October 19, 1981, after signing a pivotal contract with [IBM](/wiki/IBM)[[14]](#cite_note-Allan_2001-14): 228 
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Bill_Gates_and_Paul_Allen_Business_Cards.jpg/220px-Bill_Gates_and_Paul_Allen_Business_Cards.jpg)](/wiki/File:Bill_Gates_and_Paul_Allen_Business_Cards.jpg)
 Bill Gates and Paul Allen's Original Business Cards located in the Microsoft Visitor Center.
-
 
 Childhood friends [Bill Gates](/wiki/Bill_Gates "Bill Gates") and [Paul Allen](/wiki/Paul_Allen "Paul Allen") sought to make a business using their skills in [computer programming](/wiki/Computer_programming "Computer programming").[\[15\]](#cite_note-15) In 1972, they founded [Traf-O-Data](/wiki/Traf-O-Data "Traf-O-Data"), which sold a rudimentary computer to track and analyze automobile traffic data. Gates enrolled at [Harvard University](/wiki/Harvard_University "Harvard University") while Allen pursued a degree in computer science at [Washington State University](/wiki/Washington_State_University "Washington State University"), though he later dropped out to work at [Honeywell](/wiki/Honeywell "Honeywell").[\[16\]](#cite_note-16) The January 1975 issue of *[Popular Electronics](/wiki/Popular_Electronics "Popular Electronics")* featured [Micro Instrumentation and Telemetry Systems](/wiki/Micro_Instrumentation_and_Telemetry_Systems "Micro Instrumentation and Telemetry Systems")'s (MITS) [Altair 8800](/wiki/Altair_8800 "Altair 8800") microcomputer,[\[17\]](#cite_note-17) which inspired Allen to suggest that they could program a [BASIC](/wiki/BASIC "BASIC") interpreter for the device. Gates called MITS and claimed that he had a working interpreter, and MITS requested a demonstration. Allen worked on a simulator for the Altair while Gates developed the interpreter, and it worked flawlessly when they demonstrated it to MITS in March 1975 in [Albuquerque, New Mexico](/wiki/Albuquerque,_New_Mexico "Albuquerque, New Mexico"). MITS agreed to distribute it, marketing it as [Altair BASIC](/wiki/Altair_BASIC "Altair BASIC").[\[14\]](#cite_note-Allan_2001-14): 108, 112–114  Gates and Allen established Microsoft on April 4, 1975, with Gates as CEO,[\[18\]](#cite_note-BBCTL-18) and Allen suggested the name "Micro-Soft," short for micro-computer software.[\[19\]](#cite_note-19)[\[20\]](#cite_note-20) In August 1977, the company formed an agreement with ASCII Magazine in Japan, resulting in its first international office of [ASCII Microsoft](/wiki/ASCII_Corporation "ASCII Corporation").[\[21\]](#cite_note-21) Microsoft moved its headquarters to [Bellevue, Washington](/wiki/Bellevue,_Washington "Bellevue, Washington"), in January 1979.[\[18\]](#cite_note-BBCTL-18)
 
@@ -434,10 +392,8 @@ Microsoft entered the operating system (OS) business in 1980 with its own versio
 
 ### 1985–1994: Windows and Office
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Microsoft_Windows_1.0_pages2_3.jpg/220px-Microsoft_Windows_1.0_pages2_3.jpg)](/wiki/File:Microsoft_Windows_1.0_pages2_3.jpg)
 [Windows 1.0](/wiki/Windows_1.0) was released on November 20, 1985, as the first version of the Windows line.
-
 
 Microsoft released [Windows](/wiki/Windows) on November 20, 1985, as a graphical extension for [MS-DOS](/wiki/MS-DOS "MS-DOS"),[\[14\]](#cite_note-Allan_2001-14): 242–243, 246  despite having begun jointly developing [OS/2](/wiki/OS/2 "OS/2") with IBM that August.[\[29\]](#cite_note-29) Microsoft moved its headquarters from Bellevue to [Redmond, Washington](/wiki/Redmond,_Washington "Redmond, Washington"), on February 26, 1986, and went public on March 13,[\[30\]](#cite_note-CBSCHRON-30) with the resulting rise in stock making an estimated four billionaires and 12,000 millionaires from Microsoft employees.[\[31\]](#cite_note-31) Microsoft released its version of OS/2 to original equipment manufacturers (OEMs) on April 2, 1987.[\[14\]](#cite_note-Allan_2001-14) In 1990, the Federal Trade Commission examined Microsoft for possible collusion due to the partnership with IBM, marking the beginning of more than a decade of legal clashes with the government.[\[32\]](#cite_note-32) : 243–244  Meanwhile, the company was at work on Microsoft [Windows NT](/wiki/Windows_NT "Windows NT"), which was heavily based on their copy of the OS/2 code. It shipped on July 21, 1993, with a new modular [kernel](/wiki/Kernel_(operating_system) "Kernel (operating system)") and the [32-bit](/wiki/32-bit_computing "32-bit computing") [Win32](/wiki/Windows_API "Windows API") application programming interface (API), making it easier to port from [16-bit](/wiki/16-bit_computing "16-bit computing") (MS-DOS-based) Windows. Microsoft informed IBM of Windows NT, and the OS/2 partnership deteriorated.[\[33\]](#cite_note-33)
 
@@ -447,19 +403,15 @@ On July 27, 1994, the [Department of Justice's Antitrust Division](/wiki/United_
 
 ### 1995–2007: Foray into the Web, Windows 95, Windows XP, and Xbox
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/e/e9/300lx.jpg/220px-300lx.jpg)](/wiki/File:300lx.jpg)
 In 1996, Microsoft released Windows CE, a version of the operating system meant for personal digital assistants and other tiny computers, shown here on the [HP 300LX](/wiki/HP_300LX).
-
 
 Following Bill Gates's internal "Internet Tidal Wave memo" on May 26, 1995, Microsoft began to redefine its offerings and expand its product line into [computer networking](/wiki/Computer_network "Computer network") and the [World Wide Web](/wiki/World_Wide_Web "World Wide Web").[\[38\]](#cite_note-38) With a few exceptions of new companies, like [Netscape](/wiki/Netscape "Netscape"), Microsoft was the only major and established company that acted fast enough to be a part of the World Wide Web practically from the start. Other companies like [Borland](/wiki/Borland "Borland"), [WordPerfect](/wiki/WordPerfect "WordPerfect"), [Novell](/wiki/Novell "Novell"), [IBM](/wiki/IBM "IBM") and [Lotus](/wiki/Lotus_Software "Lotus Software"), being much slower to adapt to the new situation, would give Microsoft market dominance.[\[39\]](#cite_note-39)
 
 The company released [Windows 95](/wiki/Windows_95 "Windows 95") on August 24, 1995, featuring [pre-emptive multitasking](/wiki/Preemption_(computing)#PREEMPTIVE "Preemption (computing)"), a completely new user interface with a novel [start button](/wiki/Start_menu "Start menu"), and 32-bit compatibility; similar to NT, it provided the Win32 API.[\[40\]](#cite_note-40)[\[41\]](#cite_note-41): 20  Windows 95 came bundled with the [online service](/wiki/Online_service_provider "Online service provider") [MSN](/wiki/MSN "MSN"), which was at first intended to be a competitor to the Internet,\[*[dubious](/wiki/Wikipedia:Accuracy_dispute#Disputed_statement "Wikipedia:Accuracy dispute")  – [discuss](/wiki/Talk:Microsoft#Dubious "Talk:Microsoft")*\] and (for OEMs) [Internet Explorer](/wiki/Internet_Explorer "Internet Explorer"), a [Web browser](/wiki/Web_browser "Web browser"). Internet Explorer has not bundled with the retail Windows 95 boxes, because the boxes were printed before the team finished the Web browser, and instead were included in the Windows 95 Plus! pack.[\[42\]](#cite_note-42) Backed by a high-profile marketing campaign[\[43\]](#cite_note-43) and what *[The New York Times](/wiki/The_New_York_Times "The New York Times")* called "the splashiest, most frenzied, most expensive introduction of a computer product in the industry's history,"[\[44\]](#cite_note-44) Windows 95 quickly became a success.[\[45\]](#cite_note-45) Branching out into new markets in 1996, Microsoft and [General Electric](/wiki/General_Electric "General Electric")'s [NBC](/wiki/NBC "NBC") unit created a new [24/7](/wiki/24/7_service "24/7 service") cable news channel, [MSNBC](/wiki/MSNBC "MSNBC").[\[46\]](#cite_note-46) Microsoft created [Windows CE 1.0](/wiki/Windows_Embedded_Compact#Versions "Windows Embedded Compact"), a new OS designed for devices with low memory and other constraints, such as [personal digital assistants](/wiki/Personal_digital_assistant "Personal digital assistant").[\[47\]](#cite_note-47) In October 1997, the Justice Department filed a motion in the Federal [District Court](/wiki/United_States_district_court "United States district court"), stating that Microsoft violated an agreement signed in 1994 and asked the court to stop the bundling of [Internet Explorer](/wiki/Internet_Explorer "Internet Explorer") with Windows.[\[14\]](#cite_note-Allan_2001-14): 323–324 
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/4/43/Xbox-console.jpg/220px-Xbox-console.jpg)](/wiki/File:Xbox-console.jpg)
 Microsoft released the first installment in the [Xbox](/wiki/Xbox) series of consoles in 2001. The [Xbox](/wiki/Xbox_(console)), graphically powerful compared to its rivals, featured a standard PC's 733 MHz Intel Pentium III processor.
-
 
 On January 13, 2000, Bill Gates handed over the CEO position to [Steve Ballmer](/wiki/Steve_Ballmer "Steve Ballmer"), an old college friend of Gates and employee of the company since 1980, while creating a new position for himself as Chief [Software Architect](/wiki/Software_architect "Software architect").[\[14\]](#cite_note-Allan_2001-14): 111, 228 [\[18\]](#cite_note-BBCTL-18) Various companies including Microsoft formed the [Trusted Computing Platform Alliance](/wiki/Trusted_Computing_Group "Trusted Computing Group") in October 1999 to (among other things) increase security and protect [intellectual property](/wiki/Intellectual_property "Intellectual property") through identifying changes in hardware and software. Critics decried the alliance as a way to enforce indiscriminate restrictions over how consumers use software, and over how computers behave, and as a form of [digital rights management](/wiki/Digital_rights_management "Digital rights management"): for example, the scenario where a computer is not only secured for its owner but also secured against its owner as well.[\[48\]](#cite_note-48)[\[49\]](#cite_note-49) On April 3, 2000, a judgment was handed down in the case of *[United States v. Microsoft Corp.](/wiki/United_States_v._Microsoft_Corp. "United States v. Microsoft Corp.")*,[\[50\]](#cite_note-50) calling the company an "abusive monopoly."[\[51\]](#cite_note-51) Microsoft later settled with the U.S. Department of Justice in 2004.[\[30\]](#cite_note-CBSCHRON-30)
 
@@ -469,14 +421,11 @@ Increasingly present in the hardware business following Xbox, Microsoft 2006 rel
 
 ### 2007–2011: Microsoft Azure, Windows Vista, Windows 7, and Microsoft Stores
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/1/10/Steve_Ballmer_-_MIX_2008.jpg/220px-Steve_Ballmer_-_MIX_2008.jpg)](/wiki/File:Steve_Ballmer_-_MIX_2008.jpg)
 CEO [Steve Ballmer](/wiki/Steve_Ballmer) at the [MIX](/wiki/MIX_(Microsoft)) event in 2008. In an interview about his management style in 2005, he mentioned that his first priority was to get the people he delegates to in order. Ballmer also emphasized the need to continue pursuing new technologies even if initial attempts fail, citing the original attempts with Windows as an example.[[58]](#cite_note-58)
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Belgique_-_Bruxelles_-_Schuman_-_Berlaymont_-_01.jpg/220px-Belgique_-_Bruxelles_-_Schuman_-_Berlaymont_-_01.jpg)](/wiki/File:Belgique_-_Bruxelles_-_Schuman_-_Berlaymont_-_01.jpg)
 Headquarters of the European Commission, which has imposed several fines on Microsoft
-
 
 Released in January 2007, the next version of Windows, [Vista](/wiki/Windows_Vista "Windows Vista"), focused on features, security and a redesigned user interface dubbed [Aero](/wiki/Windows_Aero "Windows Aero").[\[59\]](#cite_note-59)[\[60\]](#cite_note-60) [Microsoft Office 2007](/wiki/Microsoft_Office_2007 "Microsoft Office 2007"), released at the same time, featured a "[Ribbon](/wiki/Ribbon_(computing) "Ribbon (computing)")" user interface which was a significant departure from its predecessors. Relatively strong sales of both products helped to produce a record profit in 2007.[\[61\]](#cite_note-61) The European Union imposed another fine of €899 million ($1.4 billion) for Microsoft's lack of compliance with the March 2004 judgment on February 27, 2008, saying that the company charged rivals unreasonable prices for key information about its [workgroup](/wiki/Microsoft_SQL_Server "Microsoft SQL Server") and [backoffice](/wiki/Microsoft_BackOffice_Server "Microsoft BackOffice Server") servers.[\[62\]](#cite_note-62) Microsoft stated that it was in compliance and that "these fines are about the past issues that have been resolved".[\[63\]](#cite_note-63) 2007 also saw the creation of a multi-core unit at Microsoft, following the steps of server companies such as Sun and IBM.[\[64\]](#cite_note-64)
 
@@ -486,10 +435,8 @@ As the smartphone industry boomed in the late 2000s, Microsoft had struggled to 
 
 ### 2011–2014: Windows 8/8.1, Xbox One, Outlook.com, and Surface devices
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/1/1a/SurfacePro3.JPG/220px-SurfacePro3.JPG)](/wiki/File:SurfacePro3.JPG)
 [Surface Pro 3](/wiki/Surface_Pro_3), part of the [Surface](/wiki/Microsoft_Surface) series of laplets by Microsoft
-
 
 Following the release of [Windows Phone](/wiki/Windows_Phone "Windows Phone"), Microsoft undertook a gradual [rebranding](/wiki/Rebranding "Rebranding") of its product range throughout 2011 and 2012, with the corporation's logos, products, services, and websites adopting the principles and concepts of the [Metro design language](/wiki/Metro_(design_language) "Metro (design language)").[\[78\]](#cite_note-78) Microsoft unveiled [Windows 8](/wiki/Windows_8 "Windows 8"), an operating system designed to power both personal computers and [tablet computers](/wiki/Tablet_computer "Tablet computer"), in Taipei in June 2011.[\[79\]](#cite_note-79) A developer preview was released on September 13, which was subsequently replaced by a consumer preview on February 29, 2012, and released to the public in May.[\[80\]](#cite_note-80) The [Surface](/wiki/Microsoft_Surface "Microsoft Surface") was unveiled on June 18, becoming the first computer in the company's history to have its hardware made by Microsoft.[\[81\]](#cite_note-81)[\[82\]](#cite_note-VF2012-82) On June 25, Microsoft paid US$1.2 billion to buy the social network [Yammer](/wiki/Yammer).[\[83\]](#cite_note-83) On July 31, they launched the [Outlook.com](/wiki/Outlook.com "Outlook.com") [webmail service](/wiki/Webmail "Webmail") to compete with [Gmail](/wiki/Gmail "Gmail").[\[84\]](#cite_note-84) On September 4, 2012, Microsoft released [Windows Server 2012](/wiki/Windows_Server_2012 "Windows Server 2012").[\[85\]](#cite_note-85)
 
@@ -497,22 +444,17 @@ In July 2012, Microsoft sold its 50% stake in MSNBC, which it had run as a joint
 
 In August 2012, the [New York City Police Department](/wiki/New_York_City_Police_Department "New York City Police Department") announced a partnership with Microsoft for the development of the [Domain Awareness System](/wiki/Domain_Awareness_System "Domain Awareness System") which is used for [Police surveillance in New York City](/wiki/Police_surveillance_in_New_York_City "Police surveillance in New York City").[\[92\]](#cite_note-92)
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/0/05/Microsoft-Xbox-One-Console-Set-wKinect.jpg/220px-Microsoft-Xbox-One-Console-Set-wKinect.jpg)](/wiki/File:Microsoft-Xbox-One-Console-Set-wKinect.jpg)
 The [Xbox One](/wiki/Xbox_One) console, released in 2013
-
 
 The [Kinect](/wiki/Kinect "Kinect"), a motion-sensing input device made by Microsoft and designed as a [video game controller](/wiki/Game_controller "Game controller"), first introduced in November 2010, was upgraded for the 2013 release of the [Xbox One](/wiki/Xbox_One "Xbox One") video game console. Kinect's capabilities were revealed in May 2013: an ultra-wide 1080p camera, function in the dark due to an infrared sensor, higher-end processing power and new software, the ability to distinguish between fine movements (such as a thumb movement), and determining a user's heart rate by looking at their face.[\[93\]](#cite_note-93) Microsoft filed a patent application in 2011 that suggests that the corporation may use the Kinect camera system to monitor the behavior of television viewers as part of a plan to make the viewing experience more interactive. On July 19, 2013, Microsoft stocks suffered their biggest one-day percentage sell-off since the year 2000, after its fourth-quarter report raised concerns among investors on the poor showings of both Windows 8 and the Surface tablet. Microsoft suffered a loss of more than US$32 billion.[\[94\]](#cite_note-94)
 
 In line with the maturing PC business, in July 2013, Microsoft announced that it would reorganize the business into four new business divisions, namely Operating systems, Apps, Cloud, and Devices. All previous divisions will be dissolved into new divisions without any workforce cuts.[\[95\]](#cite_note-95) On September 3, 2013, Microsoft agreed to buy [Nokia](/wiki/Nokia "Nokia")'s mobile unit for $7 billion,[\[96\]](#cite_note-96) following [Amy Hood](/wiki/Amy_Hood "Amy Hood") taking the role of CFO.[\[97\]](#cite_note-97)
 
-
 ### 2014–2020: Windows 10, Microsoft Edge, and HoloLens
-
 
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/1/19/Satya_smiling-print.jpg/220px-Satya_smiling-print.jpg)](/wiki/File:Satya_smiling-print.jpg)
 [Satya Nadella](/wiki/Satya_Nadella) succeeded [Steve Ballmer](/wiki/Steve_Ballmer) as the [CEO](/wiki/Chief_executive_officer) of Microsoft in February 2014.
-
 
 On February 4, 2014, [Steve Ballmer](/wiki/Steve_Ballmer "Steve Ballmer") stepped down as [CEO](/wiki/Chief_executive_officer "Chief executive officer") of Microsoft and was succeeded by [Satya Nadella](/wiki/Satya_Nadella "Satya Nadella"), who previously led Microsoft's Cloud and Enterprise division.[\[98\]](#cite_note-98) On the same day, [John W. Thompson](/wiki/John_W._Thompson "John W. Thompson") took on the role of chairman, in place of Bill Gates, who continued to participate as a technology advisor.[\[99\]](#cite_note-chairex-99) Thompson became the second chairman in Microsoft's history.[\[100\]](#cite_note-100) On April 25, 2014, Microsoft acquired Nokia Devices and Services for $7.2 billion.[\[101\]](#cite_note-101) This new subsidiary was renamed Microsoft Mobile Oy.[\[102\]](#cite_note-102) On September 15, 2014, Microsoft acquired the video game development company [Mojang](/wiki/Mojang), best known for *[Minecraft](/wiki/Minecraft "Minecraft")*, for $2.5 billion.[\[103\]](#cite_note-103) On June 8, 2017, Microsoft acquired [Hexadite](/wiki/Hexadite), an Israeli security firm, for $100 million.[\[104\]](#cite_note-104)[\[105\]](#cite_note-105)
 
@@ -522,19 +464,15 @@ On March 1, 2016, Microsoft announced the merger of its PC and Xbox divisions, w
 
 In June 2016, Microsoft announced a project named Microsoft Azure Information Protection. It aims to help enterprises protect their data as it moves between servers and devices.[\[114\]](#cite_note-114) In November 2016, Microsoft joined the [Linux Foundation](/wiki/Linux_Foundation "Linux Foundation") as a Platinum member during Microsoft's Connect(); developer event in New York.[\[115\]](#cite_note-115) The cost of each Platinum membership is US$500,000 per year.[\[116\]](#cite_note-116) Some analysts deemed this unthinkable ten years prior, however, as in 2001 then-CEO Steve Ballmer called Linux "cancer".[\[117\]](#cite_note-117) Microsoft planned to launch a preview of Intune for Education "in the coming weeks," with general availability scheduled for spring 2017, priced at $30 per device, or through volume licensing agreements.[\[118\]](#cite_note-118)
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Nokia_%26_Microsoft_Lumia_devices.png/220px-Nokia_%26_Microsoft_Lumia_devices.png)](/wiki/File:Nokia_%26_Microsoft_Lumia_devices.png)
 The [Nokia Lumia 1320](/wiki/Nokia_Lumia_1320), the [Microsoft Lumia 535](/wiki/Microsoft_Lumia_535) and the [Nokia Lumia 530](/wiki/Nokia_Lumia_530), which all run on one of the now-discontinued [Windows Phone](/wiki/Windows_Phone) operating systems
-
 
 In January 2018, Microsoft patched [Windows 10](/wiki/Windows_10 "Windows 10") to account for CPU problems related to [Intel's Meltdown security breach](/wiki/Meltdown_(security_vulnerability) "Meltdown (security vulnerability)"). The patch led to issues with the [Microsoft Azure](/wiki/Microsoft_Azure "Microsoft Azure") virtual machines reliant on Intel's CPU architecture. On January 12, Microsoft released [PowerShell Core 6.0](/wiki/PowerShell "PowerShell") for the [macOS](/wiki/MacOS "MacOS") and [Linux](/wiki/Linux "Linux") operating systems.[\[119\]](#cite_note-auto-119) In February 2018, Microsoft killed notification support for their [Windows Phone](/wiki/Windows_Phone "Windows Phone") devices which effectively ended firmware updates for the discontinued devices.[\[119\]](#cite_note-auto-119) In March 2018, Microsoft recalled [Windows 10 S](/wiki/Windows_10_editions#Discontinued_editions "Windows 10 editions") to change it to a mode for the Windows operating system rather than a separate and unique operating system. In March the company also established guidelines that censor users of [Office 365](/wiki/Office_365) from using [profanity](/wiki/Profanity "Profanity") in private documents.[\[119\]](#cite_note-auto-119)
 
 In April 2018, Microsoft released the source code for Windows [File Manager](/wiki/File_Manager_(Windows)) under the [MIT License](/wiki/MIT_License "MIT License") to celebrate the program's 20th anniversary. In April the company further expressed willingness to embrace open source initiatives by announcing [Azure Sphere](/wiki/Azure_Sphere "Azure Sphere") as its own derivative of the [Linux](/wiki/Linux "Linux") operating system.[\[119\]](#cite_note-auto-119) In May 2018, Microsoft partnered with 17 American intelligence agencies to develop [cloud computing](/wiki/Cloud_computing "Cloud computing") products. The project is dubbed "Azure Government" and has ties to the [Joint Enterprise Defense Infrastructure](/wiki/Joint_Enterprise_Defense_Infrastructure "Joint Enterprise Defense Infrastructure") (JEDI) surveillance program.[\[119\]](#cite_note-auto-119) On June 4, 2018, Microsoft officially announced the acquisition of [GitHub](/wiki/GitHub "GitHub") for $7.5 billion, a deal that closed on October 26, 2018.[\[120\]](#cite_note-120)[\[121\]](#cite_note-121) On July 10, 2018, Microsoft revealed the [Surface Go](/wiki/Microsoft_Surface_Go) platform to the public. Later in the month, it converted [Microsoft Teams](/wiki/Microsoft_Teams "Microsoft Teams") to [gratis](/wiki/Gratis_versus_libre "Gratis versus libre").[\[119\]](#cite_note-auto-119) In August 2018, Microsoft released two projects called Microsoft AccountGuard and Defending Democracy. It also unveiled [Snapdragon 850](/wiki/Qualcomm_Snapdragon "Qualcomm Snapdragon") compatibility for [Windows 10](/wiki/Windows_10 "Windows 10") on the [ARM architecture](/wiki/ARM_architecture).[\[122\]](#cite_note-122)[\[123\]](#cite_note-123)[\[119\]](#cite_note-auto-119)
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Apollo_11_astronaut_Buzz_Aldrin_tries_out_Microsoft_HoloLens_%2829794543715%29.jpg/170px-Apollo_11_astronaut_Buzz_Aldrin_tries_out_Microsoft_HoloLens_%2829794543715%29.jpg)](/wiki/File:Apollo_11_astronaut_Buzz_Aldrin_tries_out_Microsoft_HoloLens_(29794543715).jpg)
 [Apollo 11](/wiki/Apollo_11) astronaut [Buzz Aldrin](/wiki/Buzz_Aldrin) using a [Microsoft HoloLens](/wiki/Microsoft_HoloLens) mixed reality headset in September 2016
-
 
 In August 2018, [Toyota Tsusho](/wiki/Toyota_Tsusho "Toyota Tsusho") began a partnership with Microsoft to create [fish farming](/wiki/Fish_farming "Fish farming") tools using the Microsoft Azure application suite for [Internet of things](/wiki/Internet_of_things "Internet of things") (IoT) technologies related to water management. Developed in part by researchers from [Kindai University](/wiki/Kindai_University "Kindai University"), the water pump mechanisms use [artificial intelligence](/wiki/Artificial_intelligence "Artificial intelligence") to count the number of fish on a [conveyor belt](/wiki/Conveyor_belt "Conveyor belt"), analyze the number of fish, and deduce the effectiveness of water flow from the data the fish provide. The specific [computer programs](/wiki/Computer_program "Computer program") used in the process fall under the Azure Machine Learning and the Azure IoT Hub platforms.[\[124\]](#cite_note-124)
 
@@ -544,9 +482,7 @@ On February 20, 2019, Microsoft Corp said it will offer its cyber security servi
 
 ### 2020–present: Acquisitions, Xbox Series X/S, and Windows 11
 
-
 See also: [Acquisition of Activision Blizzard by Microsoft](/wiki/Acquisition_of_Activision_Blizzard_by_Microsoft "Acquisition of Activision Blizzard by Microsoft")
-
 
 On March 26, 2020, Microsoft announced it was acquiring Affirmed Networks for about $1.35 billion.[\[131\]](#cite_note-131)[\[132\]](#cite_note-132) Due to the [COVID-19 pandemic](/wiki/COVID-19_pandemic "COVID-19 pandemic"), Microsoft closed all of its retail stores indefinitely due to health concerns.[\[133\]](#cite_note-133) On July 22, 2020, Microsoft announced plans to close its [Mixer](/wiki/Mixer_(service) "Mixer (service)") service, planning to move existing partners to [Facebook Gaming](/wiki/Facebook_Gaming).[\[134\]](#cite_note-134)
 
@@ -582,9 +518,7 @@ In January 2024, Microsoft became the most valued publicly traded company. Meanw
 
 ## Corporate affairs
 
-
 See also: [Criticism of Microsoft](/wiki/Criticism_of_Microsoft "Criticism of Microsoft"); [Internet censorship in China](/wiki/Internet_censorship_in_China "Internet censorship in China"); and [Embrace, extend, and extinguish](/wiki/Embrace,_extend,_and_extinguish "Embrace, extend, and extinguish")
-
 
 ### Board of directors
 
@@ -604,10 +538,8 @@ On January 13, 2022, *The Wall Street Journal* reported that Microsoft's board o
 
 ### Financial
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/0/04/Microsoft_5-Year_Stock_History.svg/350px-Microsoft_5-Year_Stock_History.svg.png)](/wiki/File:Microsoft_5-Year_Stock_History.svg)
 Five year history graph of [Nasdaq](/wiki/Nasdaq): [MSFT](https://www.nasdaq.com/market-activity/stocks/msft) stock on July 17, 2013[[175]](#cite_note-175)
-
 
 When Microsoft went public and launched its [initial public offering](/wiki/Initial_public_offering "Initial public offering") (IPO) in 1986, the opening [stock](/wiki/Stock "Stock") price was $21; after the [trading day](/wiki/Trading_day "Trading day"), the price closed at $27.75. As of July 2010, with the company's nine [stock splits](/wiki/Stock_split "Stock split"), any IPO [shares](/wiki/Share_(finance) "Share (finance)") would be multiplied by 288; if one were to buy the IPO today, given the splits and other factors, it would cost about 9 cents.[\[14\]](#cite_note-Allan_2001-14): 235–236 [\[176\]](#cite_note-176)[\[177\]](#cite_note-177) The stock price peaked in 1999 at around $119 ($60.928, adjusting for splits).[\[178\]](#cite_note-stocksheet-178) The company began to offer a [dividend](/wiki/Dividend "Dividend") on January 16, 2003, starting at eight cents per share for the fiscal year followed by a dividend of sixteen cents per share the subsequent year, switching from yearly to quarterly dividends in 2005 with eight cents a share per quarter and a [special one-time payout](/wiki/Special_dividend "Special dividend") of three dollars per share for the second quarter of the fiscal year.[\[178\]](#cite_note-stocksheet-178)[\[179\]](#cite_note-dividendfaq-179) Though the company had subsequent increases in dividend payouts, the price of Microsoft's stock remained steady for years.[\[179\]](#cite_note-dividendfaq-179)[\[180\]](#cite_note-180)
 
@@ -675,10 +607,8 @@ The 10 largest shareholder of Microsoft in early 2024 were:[\[184\]](#cite_note-
 
 ### Marketing
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Windows_8_Launch_Event_in_Akihabara%2C_Tokyo.jpg/220px-Windows_8_Launch_Event_in_Akihabara%2C_Tokyo.jpg)](/wiki/File:Windows_8_Launch_Event_in_Akihabara,_Tokyo.jpg)
 [Windows 8](/wiki/Windows_8) Launch Event in [Akihabara](/wiki/Akihabara), Tokyo on October 25, 2012
-
 
 In 2004, Microsoft commissioned research firms to do independent studies comparing the [total cost of ownership](/wiki/Total_cost_of_ownership "Total cost of ownership") (TCO) of [Windows Server 2003](/wiki/Windows_Server_2003 "Windows Server 2003") to [Linux](/wiki/Linux "Linux"); the firms concluded that companies found Windows easier to administrate than Linux, thus those using Windows would administrate faster resulting in lower costs for their company (i.e. lower TCO).[\[194\]](#cite_note-194) This spurred a wave of related studies; a study by the [Yankee Group](/wiki/Yankee_Group "Yankee Group") concluded that upgrading from one version of Windows Server to another costs a fraction of the [switching costs](/wiki/Switching_barriers "Switching barriers") from Windows Server to Linux, although companies surveyed noted the increased security and reliability of Linux servers and concern about being locked into using Microsoft products.[\[195\]](#cite_note-195) Another study, released by the [Open Source Development Labs](/wiki/Open_Source_Development_Labs "Open Source Development Labs"), claimed that the Microsoft studies were "simply outdated and one-sided" and their survey concluded that the TCO of Linux was lower due to Linux administrators managing more servers on average and other reasons.[\[196\]](#cite_note-196)
 
@@ -736,19 +666,15 @@ In September 2023, Microsoft announced that it purchased $200 million in [carbon
 
 ### Headquarters
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Aerial_Microsoft_West_Campus_August_2009.jpg/220px-Aerial_Microsoft_West_Campus_August_2009.jpg)](/wiki/File:Aerial_Microsoft_West_Campus_August_2009.jpg)
 The west campus of the [Microsoft Redmond campus](/wiki/Microsoft_Redmond_campus)
-
 
 The corporate headquarters, informally known as the [Microsoft Redmond campus](/wiki/Microsoft_Redmond_campus), is located at One Microsoft Way in Redmond, Washington. Microsoft initially moved onto the grounds of the campus on February 26, 1986, weeks before the company went public on March 13. The headquarters has since experienced multiple expansions since its establishment. It is estimated to encompass over 8 million ft2 (750,000 m2) of office space and 30,000–40,000 employees.[\[256\]](#cite_note-257) Additional offices are located in [Bellevue](/wiki/Bellevue,_Washington "Bellevue, Washington") and [Issaquah, Washington](/wiki/Issaquah,_Washington "Issaquah, Washington") (90,000 employees worldwide). The company is planning to upgrade its Mountain View, California, campus on a grand scale. The company has occupied this campus since 1981. In 2016, the company bought the 32-acre (13 ha) campus, with plans to renovate and expand it by 25%.[\[257\]](#cite_note-258) Microsoft operates an East Coast headquarters in [Charlotte, North Carolina](/wiki/Charlotte,_North_Carolina "Charlotte, North Carolina"),[\[258\]](#cite_note-259) where the construction of a data center led to the destruction of a historic black cemetery.[\[259\]](#cite_note-260)
 
 ### Flagship stores
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/f/f7/TorontoMicrosoftStore8.JPG/220px-TorontoMicrosoftStore8.JPG)](/wiki/File:TorontoMicrosoftStore8.JPG)
 Microsoft's [Toronto](/wiki/Toronto) flagship store
-
 
 On October 26, 2015, the company opened its retail location on Fifth Avenue in New York City. The location features a five-story glass storefront and is 22,270 square feet.[\[260\]](#cite_note-261) As per company executives, Microsoft had been on the lookout for a flagship location since 2009.[\[261\]](#cite_note-262) The company's retail locations are part of a greater strategy to help build a connection with its consumers. The opening of the store coincided with the launch of the Surface Book and Surface Pro 4.[\[262\]](#cite_note-263) On November 12, 2015, Microsoft opened a second flagship store, located in Sydney's Pitt Street Mall.[\[263\]](#cite_note-264)
 
@@ -766,48 +692,36 @@ On August 23, 2012, Microsoft unveiled a new corporate logo at the opening of it
 
   [![April 4, 1975–1980: First Microsoft logo](//upload.wikimedia.org/wikipedia/commons/thumb/6/60/Microsoft_logo_%281975%29.svg/200px-Microsoft_logo_%281975%29.svg.png)](/wiki/File:Microsoft_logo_(1975).svg)
 
-
   April 4, 1975–1980: First Microsoft logo
-
 
 - 
 
   [![1980–June 25, 1982: Second Microsoft logo](//upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Microsoft_logo_%281980%29.svg/200px-Microsoft_logo_%281980%29.svg.png)](/wiki/File:Microsoft_logo_(1980).svg)
 
-
   1980–June 25, 1982: Second Microsoft logo
-
 
 - 
 
   [![June 25, 1982–February 26, 1987: Third Microsoft logo](//upload.wikimedia.org/wikipedia/commons/thumb/4/47/Microsoft_logo_%281982%29.svg/200px-Microsoft_logo_%281982%29.svg.png)](/wiki/File:Microsoft_logo_(1982).svg)
 
-
   June 25, 1982–February 26, 1987: Third Microsoft logo
-
 
 - 
 
   [![February 26, 1987–August 23, 2012: Microsoft "Pac-Man" logo, designed by Scott Baker[266][267]](//upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Microsoft_logo_%281987%29.svg/200px-Microsoft_logo_%281987%29.svg.png)](/wiki/File:Microsoft_logo_(1987).svg)
 
-
   February 26, 1987–August 23, 2012: Microsoft "[Pac-Man](/wiki/Pac-Man "Pac-Man")" logo, designed by Scott Baker[\[266\]](#cite_note-wherego1-267)[\[267\]](#cite_note-potentialpassion1-268)
-
 
 - 
 
   [![August 23, 2012–present: Fifth and current Microsoft logo[275]](//upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/200px-Microsoft_logo_%282012%29.svg.png)](/wiki/File:Microsoft_logo_(2012).svg)
 
-
   August 23, 2012–present: Fifth and current Microsoft logo[\[275\]](#cite_note-276)
-
 
 ### Sponsorship
 
-
 [![Toyota Yaris WRC.jpg](//upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Toyota_Yaris_WRC.jpg/220px-Toyota_Yaris_WRC.jpg)](/wiki/File:Toyota_Yaris_WRC.jpg)
 Toyota Yaris WRC
-
 
 The company was the official jersey sponsor of [Finland's national basketball team](/wiki/Finland_national_basketball_team) at [EuroBasket 2015](/wiki/EuroBasket_2015 "EuroBasket 2015").[\[276\]](#cite_note-277)
 
@@ -825,9 +739,7 @@ During [2022 Russian invasion of Ukraine](/wiki/2022_Russian_invasion_of_Ukraine
 
 ### Controversies
 
-
 Main articles: [Microsoft litigation](/wiki/Microsoft_litigation "Microsoft litigation") and [Criticism of Microsoft](/wiki/Criticism_of_Microsoft "Criticism of Microsoft")
-
 
 Criticism of Microsoft has followed various aspects of its products and business practices. Frequently criticized are the [ease of use](/wiki/Ease_of_use), [robustness](/wiki/Robustness_(computer_science) "Robustness (computer science)"), and [security](/wiki/Computer_security "Computer security") of the company's software. They have also been criticized for the use of [permatemp](/wiki/Permatemp "Permatemp") employees (employees employed for years as "temporary," and therefore without medical benefits), the use of [forced retention](/wiki/Forced_retention) tactics, which means that employees would be sued if they tried to leave.[\[282\]](#cite_note-283) Historically, Microsoft has also been accused of overworking employees, in many cases, leading to [burnout](/wiki/Occupational_burnout "Occupational burnout") within just a few years of joining the company. The company is often referred to as a "Velvet Sweatshop", a term which originated in a 1989 *[Seattle Times](/wiki/Seattle_Times)* article,[\[283\]](#cite_note-284) and later became used to describe the company by some of Microsoft's own employees.[\[284\]](#cite_note-285) This characterization is derived from the perception that Microsoft provides nearly everything for its employees in a convenient place, but in turn overworks them to a point where it would be bad for their (possibly long-term) health.
 
@@ -853,7 +765,6 @@ In 2020, [Salesforce](/wiki/Salesforce "Salesforce"), the manufacturer of the [S
 
 ## References
 
-
 1.  **[^](#cite_ref-1)** ["Microsoft Corporation Form 10-K"](https://www.sec.gov/ix?doc=/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm). [U.S. Securities and Exchange Commission](/wiki/U.S._Securities_and_Exchange_Commission "U.S. Securities and Exchange Commission"). July 27, 2023. pp. 9, 58, 60.
 2.  **[^](#cite_ref-2)** ["Microsoft Investor Relations - FAQs"](https://www.microsoft.com/en-us/investor/faq.aspx). *Microsoft*.
 3.  **[^](#cite_ref-3)** ["Fortune 500 Companies 2019: Who Made the List"](https://fortune.com/fortune500/2022/search/). [Fortune](/wiki/Fortune_(magazine) "Fortune (magazine)"). Retrieved July 1, 2022.
@@ -864,18 +775,14 @@ In 2020, [Salesforce](/wiki/Salesforce "Salesforce"), the manufacturer of the [S
 8.  **[^](#cite_ref-8)** Blodget, Henry (August 23, 2013). ["And Microsoft Is Giving Up On The Software Business!"](https://www.businessinsider.com.au/microsoft-device-and-services-2013-8). *Business Insider Australia*. [Archived](https://web.archive.org/web/20170802165822/https://www.businessinsider.com.au/microsoft-device-and-services-2013-8) from the original on August 2, 2017. Retrieved August 2, 2017.
 9.  **[^](#cite_ref-9)** ["Notify The Next Of Kin"](http://www.informationweek.com/applications/notify-the-next-of-kin/d/d-id/1090416). *[InformationWeek](/wiki/InformationWeek "InformationWeek")*. June 30, 2010. [Archived](https://web.archive.org/web/20140424124515/http://www.informationweek.com/applications/notify-the-next-of-kin/d/d-id/1090416) from the original on April 24, 2014. Retrieved April 24, 2014.
 
-
 Bundled references
 
-
 1.  **[^](#cite_ref-MicrosoftClimeworks_253-0)** [\[248\]](#cite_note-248)[\[249\]](#cite_note-249)[\[250\]](#cite_note-250)[\[251\]](#cite_note-251)[\[252\]](#cite_note-252)
-
 
 ## External links
 
 - [Official website](https://www.microsoft.com/) [![Edit this at Wikidata](//upload.wikimedia.org/wikipedia/en/thumb/8/8a/OOjs_UI_icon_edit-ltr-progressive.svg/10px-OOjs_UI_icon_edit-ltr-progressive.svg.png)](https://www.wikidata.org/wiki/Q2283#P856 "Edit this at Wikidata")
 - Business data for Microsoft Corporation:
-
 
   - [Bloomberg](https://www.bloomberg.com/quote/MSFT:US)
   - [Google](https://www.google.com/finance/quote/MSFT:NASDAQ)
@@ -883,14 +790,11 @@ Bundled references
   - [SEC filings](https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=789019)
   - [Yahoo!](https://finance.yahoo.com/quote/MSFT)
 
-
 - [Microsoft companies](https://opencorporates.com/corporate_groupings/Microsoft) grouped at [OpenCorporates](/wiki/OpenCorporates "OpenCorporates")
-
 
 | [v](/wiki/Template:Microsoft)
 [t](/wiki/Template_talk:Microsoft)
 [e](/wiki/Special:EditPage/Template:Microsoft)
-
 
 Microsoft |  |
 |------------------------------------------------------------------------------------------------------------------------------|---|
@@ -898,16 +802,12 @@ Microsoft |  |
 [Outline](/wiki/Outline_of_Microsoft) |  |
 | People | 
 
-
 Founders
-
 
 [Bill Gates](/wiki/Bill_Gates)
 [Paul Allen](/wiki/Paul_Allen)
 
-
 Board of directors
-
 
 [Satya Nadella](/wiki/Satya_Nadella) (Chairman and CEO)
 [John W. Thompson](/wiki/John_W._Thompson)
@@ -920,9 +820,7 @@ Board of directors
 [Emma Walmsley](/wiki/Emma_Walmsley)
 [Padmasree Warrior](/wiki/Padmasree_Warrior)
 
-
 Senior leadership team
-
 
 [Satya Nadella](/wiki/Satya_Nadella) (CEO)
 [Chris Capossela](/wiki/Chris_Capossela) (CMO)
@@ -934,29 +832,22 @@ Senior leadership team
 [Phil Spencer](/wiki/Phil_Spencer_(business_executive))
 [Kathleen Hogan](/wiki/Kathleen_Hogan) (CPO)
 
-
 Corporate VPs
-
 
 [Joe Belfiore](/wiki/Joe_Belfiore)
 [Richard Rashid](/wiki/Richard_Rashid) (SVP)
 [César Cernuda](/wiki/C%C3%A9sar_Cernuda)
 [Panos Panay](/wiki/Panos_Panay_(Microsoft)) (CVP)
 
-
 Employee groups
-
 
 [Global LGBTQIA+ Employee & Allies at Microsoft](/wiki/Global_LGBTQIA%2B_Employee_%26_Allies_at_Microsoft)
 [Microsoft and unions](/wiki/Microsoft_and_unions)
 
-
  |
 | Products | 
 
-
 [Hardware](/wiki/Microsoft_hardware)
-
 
 [Azure Kinect](/wiki/Azure_Kinect)
 [HoloLens](/wiki/Microsoft_HoloLens)
@@ -974,9 +865,7 @@ Employee groups
 
 [Xbox](/wiki/Xbox)
 
-
 [Software](/wiki/List_of_Microsoft_software)
-
 
 [365](/wiki/Microsoft_365)
 [Clipchamp](/wiki/Clipchamp)
@@ -993,10 +882,8 @@ Employee groups
 [Windows](/wiki/Microsoft_Windows)
 [Xbox OS](/wiki/Xbox_system_software)
 
-
 Programming
 languages
-
 
 [BASIC](/wiki/BASIC)
 
@@ -1017,9 +904,7 @@ languages
 [Visual J#](/wiki/Visual_J_Sharp)
 [Visual J++](/wiki/Visual_J%2B%2B)
 
-
 Web properties
-
 
 [Azure](/wiki/Microsoft_Azure)
 [Bing](/wiki/Microsoft_Bing)
@@ -1039,13 +924,10 @@ Web properties
 [Store](/wiki/Microsoft_Store)
 [Translator](/wiki/Microsoft_Translator)
 
-
  |
 | Company | 
 
-
 Conferences
-
 
 [Build](/wiki/Microsoft_Build)
 [Ignite](/wiki/Microsoft_Ignite)
@@ -1054,9 +936,7 @@ Conferences
 [PDC](/wiki/Professional_Developers_Conference)
 [WinHEC](/wiki/Windows_Hardware_Engineering_Conference)
 
-
 Divisions
-
 
 [Engineering groups](/wiki/Microsoft_engineering_groups)
 
@@ -1076,15 +956,12 @@ Divisions
 [ZeniMax Media](/wiki/ZeniMax_Media)
 [Activision Blizzard](/wiki/Activision_Blizzard)
 
-
 Estates
-
 
 [Microsoft campus](/wiki/Microsoft_campus)
 [Microsoft Egypt](/wiki/Microsoft_Egypt)
 [Microsoft India](/wiki/Microsoft_India)
 [Microsoft Japan](/wiki/Microsoft_Japan)
-
 
  |
 | Campaigns | *[Where do you want to go today?](/wiki/Where_do_you_want_to_go_today%3F)* (1994)
@@ -1114,9 +991,7 @@ Estates
 *[Microsoft v. United States](/wiki/Microsoft_Corp._v._United_States)* (2018 data privacy case) |
 | [Acquisitions](/wiki/List_of_mergers_and_acquisitions_by_Microsoft) | 
 
-
 Completed
-
 
 [6Wunderkinder](/wiki/Wunderlist)
 [Access Software](/wiki/Access_Software)
@@ -1204,23 +1079,18 @@ Completed
 [Yupi](/wiki/Yupi)
 [ZeniMax Media](/wiki/ZeniMax_Media)
 
-
  |
 | ![](//upload.wikimedia.org/wikipedia/en/thumb/9/96/Symbol_category_class.svg/16px-Symbol_category_class.svg.png) [Category](/wiki/Category:Microsoft) |  |
-
 
 | Links to related articles |  |
 |---------------------------|---|
 | 
 
-
 [v](/wiki/Template:Dow_Jones_Industrial_Average_companies)
 [t](/wiki/Template_talk:Dow_Jones_Industrial_Average_companies)
 [e](/wiki/Special:EditPage/Template:Dow_Jones_Industrial_Average_companies)
 
-
 Components of the [Dow Jones Industrial Average](/wiki/Dow_Jones_Industrial_Average)
-
 
 [3M](/wiki/3M)
 [Amazon](/wiki/Amazon_(company))
@@ -1253,14 +1123,11 @@ Microsoft
 [Visa](/wiki/Visa_Inc.)
 [Walmart](/wiki/Walmart)
 
-
 [v](/wiki/Template:Nasdaq-100)
 [t](/wiki/Template_talk:Nasdaq-100)
 [e](/wiki/Special:EditPage/Template:Nasdaq-100)
 
-
 Companies of the [Nasdaq-100](/wiki/Nasdaq-100) index
-
 
 [Adobe](/wiki/Adobe_Inc.)
 [ADP](/wiki/ADP,_Inc.)
@@ -1363,17 +1230,13 @@ Microsoft
 [Xcel Energy](/wiki/Xcel_Energy)
 [Zscaler](/wiki/Zscaler)
 
-
 [v](/wiki/Template:Seattle_Corporations)
 [t](/wiki/Template_talk:Seattle_Corporations)
 [e](/wiki/Special:EditPage/Template:Seattle_Corporations)
 
-
 [Seattle-based Corporations](/wiki/List_of_companies_based_in_Seattle) (within the [Seattle metropolitan area](/wiki/Seattle_metropolitan_area))
 
-
 [Seattle](/wiki/Seattle) and [SeaTac](/wiki/SeaTac,_Washington)-based [Fortune 1000](/wiki/Fortune_1000) corporations
-
 
 [Alaska Airlines](/wiki/Alaska_Airlines) (#360)
 [Amazon.com](/wiki/Amazon_(company)) (#2)
@@ -1383,19 +1246,15 @@ Microsoft
 [Starbucks](/wiki/Starbucks) (#114)
 [Weyerhaeuser](/wiki/Weyerhaeuser) (#457)
 
-
 [Puget Sound](/wiki/Puget_Sound_region)-based [Fortune 1000](/wiki/Fortune_1000) corporations
-
 
 Companies listed above, plus: [Costco Wholesale](/wiki/Costco) (#14)
 Microsoft (#21)
 [Paccar](/wiki/Paccar) (#118)
 [Puget Sound Energy](/wiki/Puget_Sound_Energy) (#710)
 
-
 Major [Seattle](/wiki/Seattle)- and [Puget Sound](/wiki/Puget_Sound_region)-based non-public
 or externally owned corporations
-
 
 [Big Fish Games](/wiki/Big_Fish_Games)
 [Darigold](/wiki/Darigold)
@@ -1408,20 +1267,15 @@ or externally owned corporations
 [Safeco](/wiki/Safeco)
 [T-Mobile US](/wiki/T-Mobile_US)
 
-
 [v](/wiki/Template:Electronics_industry_in_the_United_States)
 [t](/wiki/Template_talk:Electronics_industry_in_the_United_States)
 [e](/wiki/Special:EditPage/Template:Electronics_industry_in_the_United_States)
 
-
 [Electronics industry in the United States](/wiki/Electronics_industry_in_the_United_States)
-
 
 Companies
 
-
 [Home appliances](/wiki/Home_appliance)
-
 
 [Apple](/wiki/Apple_Inc.)
 [Bose](/wiki/Bose_Corporation)
@@ -1465,9 +1319,7 @@ Microsoft
 [Westinghouse Electronics](/wiki/Westinghouse_Electronics)
 [Xerox](/wiki/Xerox)
 
-
 [Electronic components](/wiki/Electronic_component)
-
 
 [3M](/wiki/3M)
 [Achronix](/wiki/Achronix)
@@ -1487,9 +1339,7 @@ Microsoft
 [Sanmina](/wiki/Sanmina_Corporation)
 [Vishay](/wiki/Vishay_Intertechnology)
 
-
 [Semiconductor devices](/wiki/Semiconductor_device)
-
 
 [AMD](/wiki/AMD)
 [Ampere Computing](/wiki/Ampere_Computing)
@@ -1522,18 +1372,14 @@ Microsoft
 [Xilinx](/wiki/Xilinx)
 [Zilog](/wiki/Zilog)
 
-
 [Mobile devices](/wiki/Mobile_device)
-
 
 [Apple](/wiki/Apple_Inc)
 [BLU](/wiki/BLU_Products)
 [Google](/wiki/Google)
 [Lenovo](/wiki/Lenovo) ([Motorola Mobility](/wiki/Motorola_Mobility))
 
-
 Other
-
 
 [Cadence Design Systems](/wiki/Cadence_Design_Systems)
 [Cray](/wiki/Cray)
@@ -1544,9 +1390,7 @@ Other
 [Oracle Corporation](/wiki/Oracle_Corporation)
 [Synopsys](/wiki/Synopsys)
 
-
 Defunct
-
 
 [Actel](/wiki/Actel)
 [Atari Corporation](/wiki/Atari_Corporation)
@@ -1566,21 +1410,16 @@ Defunct
 [Sun Microsystems](/wiki/Sun_Microsystems)
 [Zenith Electronics](/wiki/Zenith_Electronics)
 
-
 [v](/wiki/Template:Major_computer_hardware_companies)
 [t](/wiki/Template_talk:Major_computer_hardware_companies)
 [e](/wiki/Special:EditPage/Template:Major_computer_hardware_companies)
 
-
 Major personal computer, server, and mainframe hardware companies
-
 
 Companies with an annual revenue of over US$3 billion
 
-
 Personal computers
 and servers
-
 
 [Acer](/wiki/Acer_Inc.)
 [Apple](/wiki/Apple_Inc.)
@@ -1600,9 +1439,7 @@ Microsoft
 [Sharp](/wiki/Sharp_Corporation) ([Dynabook](/wiki/Dynabook_Inc.))
 [Vaio](/wiki/Vaio)
 
-
 Servers only
-
 
 [Cisco](/wiki/Cisco)
 [Dell EMC](/wiki/Dell_EMC)
@@ -1612,45 +1449,33 @@ Servers only
 [NetApp](/wiki/NetApp)
 [Oracle](/wiki/Oracle_Corporation)
 
-
 Mainframes
-
 
 [Fujitsu](/wiki/Fujitsu)
 [HPE](/wiki/Hewlett_Packard_Enterprise)
 [IBM](/wiki/IBM)
 
-
 See also
 
 [Largest IT companies](/wiki/List_of_largest_information_technology_companies_by_revenue)
 
-
 [Computer hardware manufacturers](/wiki/List_of_computer_hardware_manufacturers)
-
 
 [Home computer hardware companies](/wiki/Category:Home_computer_hardware_companies)
 
-
 [Server hardware](/wiki/Category:Server_hardware)
 
-
 [Mainframe computers](/wiki/Category:Mainframe_computers)
-
 
 [v](/wiki/Template:Major_Internet_companies)
 [t](/wiki/Template_talk:Major_Internet_companies)
 [e](/wiki/Special:EditPage/Template:Major_Internet_companies)
 
-
 Major [Internet](/wiki/Internet) companies
-
 
 Companies with an annual revenue of over US$4 billion
 
-
 [Internet](/wiki/List_of_largest_Internet_companies)
-
 
 [Adobe](/wiki/Adobe_Inc.)
 [Alibaba](/wiki/Alibaba_Group)
@@ -1674,9 +1499,7 @@ Microsoft
 [Tencent](/wiki/Tencent)
 [Yandex](/wiki/Yandex)
 
-
 Cloud computing
-
 
 [Akamai](/wiki/Akamai_Technologies)
 [Alibaba Cloud](/wiki/Alibaba_Cloud)
@@ -1689,9 +1512,7 @@ Cloud computing
 [Salesforce](/wiki/Salesforce)
 [ServiceNow](/wiki/ServiceNow)
 
-
 E-commerce
-
 
 [Amazon.com](/wiki/Amazon_(company))
 [Apple](/wiki/Apple_Inc.)
@@ -1713,9 +1534,7 @@ E-commerce
 [Wayfair](/wiki/Wayfair)
 [Zalando](/wiki/Zalando)
 
-
 Media
-
 
 [Bloomberg](/wiki/Bloomberg_L.P.)
 [BuzzFeed](/wiki/BuzzFeed)
@@ -1727,17 +1546,13 @@ Media
 [Spotify](/wiki/Spotify)
 [Warner Bros. Discovery](/wiki/Warner_Bros._Discovery)
 
-
 [v](/wiki/Template:Major_software_companies)
 [t](/wiki/Template_talk:Major_software_companies)
 [e](/wiki/Special:EditPage/Template:Major_software_companies)
 
-
 Major [software](/wiki/Software) companies
 
-
 Companies with annual software revenue of over US$3 billion
-
 
 [Adobe](/wiki/Adobe_Inc.)
 [Amadeus IT Group](/wiki/Amadeus_IT_Group)
@@ -1758,38 +1573,29 @@ Microsoft
 [SAP](/wiki/SAP)
 [Tencent](/wiki/Tencent)
 
-
 See also
 
 [Largest IT companies](/wiki/List_of_largest_technology_companies_by_revenue)
 
-
 [Largest software companies](/wiki/List_of_the_largest_software_companies)
-
 
 [Category:Software companies](/wiki/Category:Software_companies)
 
-
  |  |
-
 
 [Portals](/wiki/Wikipedia:Contents/Portals "Wikipedia:Contents/Portals"):
 
 - ![](//upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Industry5.svg/19px-Industry5.svg.png) [Companies](/wiki/Portal:Companies "Portal:Companies")
 - ![flag](//upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/21px-Flag_of_the_United_States.svg.png) [United States](/wiki/Portal:United_States "Portal:United States")
 
-
 **Microsoft** at Wikipedia's [sister projects](/wiki/Wikipedia:Wikimedia_sister_projects "Wikipedia:Wikimedia sister projects"):
-
 
 - ![](//upload.wikimedia.org/wikipedia/en/thumb/4/4a/Commons-logo.svg/14px-Commons-logo.svg.png)**[Media](https://commons.wikimedia.org/wiki/Category:Microsoft)** from Commons
 - ![](//upload.wikimedia.org/wikipedia/commons/thumb/2/24/Wikinews-logo.svg/21px-Wikinews-logo.svg.png)**[News](https://en.wikinews.org/wiki/Category:Microsoft)** from Wikinews
 - ![](//upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikiquote-logo.svg/16px-Wikiquote-logo.svg.png)**[Quotations](https://en.wikiquote.org/wiki/Microsoft)** from Wikiquote
 - ![](//upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Wikiversity_logo_2017.svg/21px-Wikiversity_logo_2017.svg.png)**[Resources](https://en.wikiversity.org/wiki/Portal:_Microsoft)** from Wikiversity
 
-
 [47°38′23″N 122°7′42″W﻿ / ﻿47.63972°N 122.12833°W﻿ / 47.63972; -122.12833](https://geohack.toolforge.org/geohack.php?pagename=Microsoft&params=47_38_23_N_122_7_42_W_region:US_dim:540)
-
 
 | [Authority control databases](/wiki/Help:Authority_control) [![Edit this at Wikidata](//upload.wikimedia.org/wikipedia/en/thumb/8/8a/OOjs_UI_icon_edit-ltr-progressive.svg/10px-OOjs_UI_icon_edit-ltr-progressive.svg.png)](https://www.wikidata.org/wiki/Q2283#identifiers) |  |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
@@ -1818,12 +1624,9 @@ See also
 | Other | [Encyclopedia of Modern Ukraine](http://esu.com.ua/search_articles.php?id=60519)
 [IdRef](https://www.idref.fr/030109434) |
 
-
 ![](https://login.wikimedia.org/wiki/Special:CentralAutoLogin/start?type=1x1)
 
-
 Retrieved from "[https://en.wikipedia.org/w/index.php?title=Microsoft&oldid=1213513440](https://en.wikipedia.org/w/index.php?title=Microsoft&oldid=1213513440)"
-
 
 [Categories](/wiki/Help:Category "Help:Category"):
 
@@ -1857,7 +1660,6 @@ Retrieved from "[https://en.wikipedia.org/w/index.php?title=Microsoft&oldid=1213
 - [Technology companies established in 1975](/wiki/Category:Technology_companies_established_in_1975 "Category:Technology companies established in 1975")
 - [Technology companies of the United States](/wiki/Category:Technology_companies_of_the_United_States "Category:Technology companies of the United States")
 - [Web service providers](/wiki/Category:Web_service_providers "Category:Web service providers")
-
 
 Hidden categories:
 
@@ -1909,5 +1711,4 @@ Hidden categories:
 - [Articles with Trove identifiers](/wiki/Category:Articles_with_Trove_identifiers "Category:Articles with Trove identifiers")
 - [Articles with EMU identifiers](/wiki/Category:Articles_with_EMU_identifiers "Category:Articles with EMU identifiers")
 - [Articles with SUDOC identifiers](/wiki/Category:Articles_with_SUDOC_identifiers "Category:Articles with SUDOC identifiers")
-
 

@@ -1,14 +1,10 @@
 
 
-
  Toggle the table of contents
-
 
 # Taylor Swift
 
-
  145 languages
-
 
 - [Afrikaans](https://af.wikipedia.org/wiki/Taylor_Swift)
 - [Alemannisch](https://als.wikipedia.org/wiki/Taylor_Swift)
@@ -156,43 +152,32 @@
 - [Kadazandusun](https://dtp.wikipedia.org/wiki/Taylor_Swift)
 - [Jaku Iban](https://iba.wikipedia.org/wiki/Taylor_Swift)
 
-
 [Edit links](https://www.wikidata.org/wiki/Special:EntityPage/Q26876#sitelinks-wikipedia)
-
 
 - [Article](/wiki/Taylor_Swift)
 - [Talk](/wiki/Talk:Taylor_Swift)
 
-
 English
-
 
 - [Read](/wiki/Taylor_Swift)
 - [View source](/w/index.php?title=Taylor_Swift&action=edit)
 - [View history](/w/index.php?title=Taylor_Swift&action=history)
 
-
 Tools
 
-
 Tools
-
 
 move to sidebar
 
 hide
 
-
 Actions
-
 
 - [Read](/wiki/Taylor_Swift)
 - [View source](/w/index.php?title=Taylor_Swift&action=edit)
 - [View history](/w/index.php?title=Taylor_Swift&action=history)
 
-
 General
-
 
 - [What links here](/wiki/Special:WhatLinksHere/Taylor_Swift)
 - [Related changes](/wiki/Special:RecentChangesLinked/Taylor_Swift)
@@ -203,44 +188,32 @@ General
 - [Get shortened URL](/w/index.php?title=Special:UrlShortener&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FTaylor_Swift)
 - [Download QR code](/w/index.php?title=Special:QrCode&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FTaylor_Swift)
 
-
 Print/export
-
 
 - [Download as PDF](/w/index.php?title=Special:DownloadAsPdf&page=Taylor_Swift&action=show-download-screen "Download this page as a PDF file")
 - [Printable version](/w/index.php?title=Taylor_Swift&printable=yes)
 
-
 In other projects
-
 
 - [Wikimedia Commons](https://commons.wikimedia.org/wiki/Taylor_Swift)
 - [Wikiquote](https://en.wikiquote.org/wiki/Taylor_Swift)
 - [Wikidata item](https://www.wikidata.org/wiki/Special:EntityPage/Q26876)
 
-
 Appearance
-
 
 move to sidebar
 
 hide
 
-
 [![Featured article](//upload.wikimedia.org/wikipedia/en/thumb/e/e7/Cscr-featured.svg/20px-Cscr-featured.svg.png)](/wiki/Wikipedia:Featured_articles* "This is a featured article. Click here for more information.")
-
 
 [![Page extended-confirmed-protected](//upload.wikimedia.org/wikipedia/en/thumb/8/8c/Extended-protection-shackle.svg/20px-Extended-protection-shackle.svg.png)](/wiki/Wikipedia:Protection_policy#extended "This article is extended-confirmed-protected to promote compliance with the policy on biographies of living persons")
 
-
 From Wikipedia, the free encyclopedia
-
 
 American singer-songwriter (born 1989)
 
-
 For other uses, see [Taylor Swift (disambiguation)](/wiki/Taylor_Swift_(disambiguation)).
-
 
 | Taylor Swift |  |
 |--------------|---|
@@ -249,9 +222,7 @@ For other uses, see [Taylor Swift (disambiguation)](/wiki/Taylor_Swift_(disambig
 Swift in 2023 |  |
 | Born | Taylor Alison Swift
 
-
  (1989-12-13) December 13, 1989 (age 35) 
-
 
 [West Reading, Pennsylvania](/wiki/West_Reading,_Pennsylvania), US |
 | Occupations | Singer-songwriter
@@ -294,12 +265,9 @@ Shifting to [Republic Records](/wiki/Republic_Records "Republic Records") in 201
 
 Swift is a subject of [extensive media coverage](/wiki/Public_image_of_Taylor_Swift "Public image of Taylor Swift") and has a global fanbase of [Swifties](/wiki/Swifties "Swifties"). Publications such as *[Rolling Stone](/wiki/Rolling_Stone "Rolling Stone")* and [*Billboard*](/wiki/Billboard_(magazine) "Billboard (magazine)") have listed her amongst history's greatest artists; she is the only individual from [the arts](/wiki/The_arts "The arts") to have been named the [*Time* Person of the Year](/wiki/Time_Person_of_the_Year "Time Person of the Year") (2023). [Among other accolades](/wiki/List_of_awards_and_nominations_received_by_Taylor_Swift "List of awards and nominations received by Taylor Swift"), Swift has received 14 [Grammy Awards](/wiki/Grammy_Awards "Grammy Awards") (including a record four [Album of the Year](/wiki/Grammy_Award_for_Album_of_the_Year "Grammy Award for Album of the Year") wins), a record five [IFPI Global Recording Artist of the Year](/wiki/IFPI_Global_Recording_Artist_of_the_Year) awards, a [Primetime Emmy Award](/wiki/Primetime_Emmy_Award), and a string of *[Guinness World Records](/wiki/Guinness_World_Records "Guinness World Records")*. She is the most-awarded artist of the [American Music Awards](/wiki/American_Music_Awards "American Music Awards") (40), the [*Billboard* Music Awards](/wiki/Billboard_Music_Awards "Billboard Music Awards") (49), and the [MTV Video Music Awards](/wiki/MTV_Video_Music_Awards "MTV Video Music Awards") (30).
 
-
 ## Life and career
 
-
 ### Early life
-
 
 Taylor Alison Swift was born on December 13, 1989, in [West Reading, Pennsylvania](/wiki/West_Reading,_Pennsylvania "West Reading, Pennsylvania").[\[1\]](#cite_note-Sutherland-2015-2) She is named after the singer-songwriter [James Taylor](/wiki/James_Taylor "James Taylor") and was purposefully given a unisex first name.[\[2\]](#cite_note-3)[\[3\]](#cite_note-vpvprollingstone-4) Her father, Scott Kingsley Swift, was a [stockbroker](/wiki/Stockbroker "Stockbroker") for [Merrill Lynch](/wiki/Merrill_Lynch), and her mother, Andrea Gardner Swift ([née](/wiki/Birth_name#Maiden_and_married_names "Birth name") Finlay), worked as a [mutual fund](/wiki/Mutual_fund "Mutual fund") marketing executive.[\[4\]](#cite_note-FOOTNOTEJepson20131-5) Swift's younger brother, [Austin](/wiki/Austin_Swift "Austin Swift"), is an actor.[\[5\]](#cite_note-6) The siblings are of Scottish, English, and German descent, with distant Italian and Irish ancestry.[\[6\]](#cite_note-7)[\[7\]](#cite_note-scottish-heritage-8)[\[8\]](#cite_note-9) Their maternal grandmother, [Marjorie Finlay](/wiki/Marjorie_Finlay "Marjorie Finlay") ([née](/wiki/Birth_name#Maiden_and_married_names "Birth name") Moehlenkamp), was an opera singer,[\[9\]](#cite_note-10) whose singing in church became one of Swift's earliest memories of music that shaped her career.[\[4\]](#cite_note-FOOTNOTEJepson20131-5)
 
@@ -307,16 +275,12 @@ Swift spent her early years on a [Christmas tree farm](/wiki/Christmas_tree_farm
 
 At 11, Swift traveled to Nashville with her mother to visit record labels and submit demo tapes of [Dolly Parton](/wiki/Dolly_Parton "Dolly Parton") and Dixie Chicks karaoke covers.[\[22\]](#cite_note-CMT_2008-11-26-23) She was rejected by all the labels, which led her to focus on songwriting.[\[23\]](#cite_note-americansongwriter2-24) She started learning the guitar at 12 with the help of Ronnie Cremer, a computer repairman and local musician who also assisted Swift with writing an original song.[\[24\]](#cite_note-25) In 2003, Swift and her parents started working with the talent manager Dan Dymtrow. With his help, Swift modeled for [Abercrombie & Fitch](/wiki/Abercrombie_%26_Fitch "Abercrombie & Fitch") and had an original song included on a [Maybelline](/wiki/Maybelline "Maybelline") compilation CD.[\[25\]](#cite_note-26) After performing original songs at an [RCA Records](/wiki/RCA_Records "RCA Records") showcase, 13-year-old Swift was given an artist development deal and began to travel regularly to Nashville with her mother.[\[26\]](#cite_note-27)[\[27\]](#cite_note-Willman-2007-28) To help Swift break into the country music scene, her father transferred to Merrill Lynch's Nashville office when she was 14 years old, and the family relocated to [Hendersonville, Tennessee](/wiki/Hendersonville,_Tennessee "Hendersonville, Tennessee").[\[28\]](#cite_note-widdicombe1-29)[\[29\]](#cite_note-telltale-30) Swift attended [Hendersonville High School](/wiki/Hendersonville_High_School_(Tennessee) "Hendersonville High School (Tennessee)")[\[30\]](#cite_note-31) before transferring to Aaron Academy after two years, which better accommodated her touring schedule through homeschooling. She graduated one year early.[\[3\]](#cite_note-vpvprollingstone-4)[\[31\]](#cite_note-32)
 
-
 ### 2004–2008: Career beginnings and first album
-
 
 In Nashville, Swift worked with experienced [Music Row](/wiki/Music_Row "Music Row") songwriters such as [Troy Verges](/wiki/Troy_Verges "Troy Verges"), [Brett Beavers](/wiki/Brett_Beavers "Brett Beavers"), [Brett James](/wiki/Brett_James "Brett James"), [Mac McAnally](/wiki/Mac_McAnally "Mac McAnally"), and [the Warren Brothers](/wiki/The_Warren_Brothers "The Warren Brothers")[\[32\]](#cite_note-33)[\[33\]](#cite_note-sonydeal-34) and formed a lasting working relationship with [Liz Rose](/wiki/Liz_Rose "Liz Rose").[\[34\]](#cite_note-americansongwriter1-35) They began meeting for two-hour writing sessions every Tuesday afternoon after school.[\[35\]](#cite_note-majorlyindie1-36) Rose called the sessions "some of the easiest I've ever done. Basically, I was just her editor. She'd write about what happened in school that day. She had such a clear vision of what she was trying to say. And she'd come in with the most incredible hooks." At 14, Swift became the youngest artist signed by [Sony/ATV Tree Music Publishing](/wiki/Sony/ATV_Music_Publishing).[\[36\]](#cite_note-37) She left RCA Records due to the label's lack of care and their "cut\[ting\] other people's stuff". She was also concerned that development deals can shelve artists[\[27\]](#cite_note-Willman-2007-28)[\[20\]](#cite_note-albuminfo-21) and recalled: "I genuinely felt that I was running out of time. I wanted to capture these years of my life on an album while they still represented what I was going through."[\[37\]](#cite_note-Preston-2009-38)
 
-
 [![Taylor Swift singing on a microphone and playing a guitar](//upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Swift%2C_Taylor_%282007%29.jpg/250px-Swift%2C_Taylor_%282007%29.jpg)](/wiki/File:Swift,_Taylor_(2007).jpg)
 Swift opening for [Brad Paisley](/wiki/Brad_Paisley) in 2007. To promote her [first album](/wiki/Taylor_Swift_(album)), she opened tours for other country musicians in 2007 and 2008.[[38]](#cite_note-vh1country-39)
-
 
 At an industry showcase at Nashville's [Bluebird Cafe](/wiki/Bluebird_Cafe) in 2005, Swift caught the attention of [Scott Borchetta](/wiki/Scott_Borchetta "Scott Borchetta"), a [DreamWorks Records](/wiki/DreamWorks_Records "DreamWorks Records") executive who was preparing to form an independent record label, [Big Machine Records](/wiki/Big_Machine_Records "Big Machine Records"). She had first met Borchetta in 2004.[\[39\]](#cite_note-40) Swift was one of Big Machine's first signings,[\[27\]](#cite_note-Willman-2007-28) and her father purchased a three-percent stake in the company for an estimated $120,000.[\[40\]](#cite_note-Taylor_in_Wonderland-41)[\[41\]](#cite_note-Greenburg-2013-42) She began working on her [eponymous debut album](/wiki/Taylor_Swift_(album) "Taylor Swift (album)") with [Nathan Chapman](/wiki/Nathan_Chapman_(record_producer) "Nathan Chapman (record producer)").[\[20\]](#cite_note-albuminfo-21) Swift wrote or co-wrote all album tracks, and co-writers included Rose, [Robert Ellis Orrall](/wiki/Robert_Ellis_Orrall "Robert Ellis Orrall"), Brian Maher, and [Angelo Petraglia](/wiki/Angelo_Petraglia "Angelo Petraglia").[\[42\]](#cite_note-liner-43) Released in October 2006, *[Taylor Swift](/wiki/Taylor_Swift_(album) "Taylor Swift (album)")* peaked at number five on the US [*Billboard* 200](/wiki/Billboard_200 "Billboard 200"), on which it spent 157 weeks—the longest stay on the chart by any release in the US in the 2000s decade.[\[43\]](#cite_note-44)[\[44\]](#cite_note-45) Swift became the first female country music artist to write or co-write every track on a [platinum-certified](/wiki/Platinum-certified) debut album.[\[45\]](#cite_note-46)
 
@@ -326,13 +290,10 @@ Following "[Tim McGraw](/wiki/Tim_McGraw_(song) "Tim McGraw (song)")", four more
 
 Swift won multiple accolades for *Taylor Swift*. She was one of the recipients of the [Nashville Songwriters Association](/wiki/Nashville_Songwriters_Association_International "Nashville Songwriters Association International")'s Songwriter/Artist of the Year in 2007, becoming the youngest person given the title.[\[58\]](#cite_note-GAC-2007-59) She also won the [Country Music Association](/wiki/Country_Music_Association "Country Music Association")'s Horizon Award for Best New Artist,[\[59\]](#cite_note-60) the [Academy of Country Music Awards](/wiki/Academy_of_Country_Music_Awards "Academy of Country Music Awards")' Top New Female Vocalist,[\[60\]](#cite_note-61) and the [American Music Awards](/wiki/American_Music_Awards "American Music Awards")' Favorite Country Female Artist honor.[\[61\]](#cite_note-62) She was also nominated for [Best New Artist](/wiki/Best_New_Artist) at the [50th Annual Grammy Awards](/wiki/50th_Annual_Grammy_Awards "50th Annual Grammy Awards").[\[62\]](#cite_note-63) In 2008, she opened for [Rascal Flatts](/wiki/Rascal_Flatts "Rascal Flatts") again[\[63\]](#cite_note-64) and briefly dated the singer [Joe Jonas](/wiki/Joe_Jonas "Joe Jonas").[\[64\]](#cite_note-65)
 
-
 ### 2008–2010: *Fearless*
-
 
 [![Taylor Swift in 2009](//upload.wikimedia.org/wikipedia/commons/thumb/e/e8/TaylorSwiftApr09.jpg/250px-TaylorSwiftApr09.jpg)](/wiki/File:TaylorSwiftApr09.jpg)
 Swift at the 2009 premiere of [Hannah Montana: The Movie](/wiki/Hannah_Montana:_The_Movie). She had a cameo appearance in the film and wrote two songs for [its soundtrack](/wiki/Hannah_Montana:_The_Movie_(soundtrack)).
-
 
 Swift's second studio album, *[Fearless](/wiki/Fearless_(Taylor_Swift_album) "Fearless (Taylor Swift album)")*, was released in November 2008 in North America,[\[65\]](#cite_note-66) and in March 2009 in other markets.[\[66\]](#cite_note-67) On the *Billboard* 200, *Fearless* spent 11 weeks at number one, becoming Swift's first chart topper and the longest-running number-one female country album.[\[67\]](#cite_note-68) It was the bestselling album of 2009 in the US.[\[68\]](#cite_note-69) Its lead single, "[Love Story](/wiki/Love_Story_(Taylor_Swift_song) "Love Story (Taylor Swift song)")", was her first number one in Australia and the first country song to top *Billboard*'s [Pop Songs](/wiki/Pop_Songs) chart,[\[69\]](#cite_note-AUSchart-70)[\[70\]](#cite_note-71) and its third single, "[You Belong with Me](/wiki/You_Belong_with_Me "You Belong with Me")", was the first country song to top *Billboard*'s all-genre [Radio Songs](/wiki/Radio_Songs_(chart) "Radio Songs (chart)") chart.[\[71\]](#cite_note-72) Three other singles were released in 2008–2010: "[White Horse](/wiki/White_Horse_(Taylor_Swift_song) "White Horse (Taylor Swift song)")", "[Fifteen](/wiki/Fifteen_(song) "Fifteen (song)")", and "[Fearless](/wiki/Fearless_(Taylor_Swift_song) "Fearless (Taylor Swift song)")". All five singles were Hot Country Songs top 10 entries, with "Love Story" and "You Belong with Me" topping the chart.[\[72\]](#cite_note-country_songs-73) In 2009, Swift toured as an opening act for [Keith Urban](/wiki/Keith_Urban "Keith Urban") and embarked on her first headlining tour, the [Fearless Tour](/wiki/Fearless_Tour "Fearless Tour").[\[73\]](#cite_note-74)
 
@@ -340,34 +301,26 @@ Swift's second studio album, *[Fearless](/wiki/Fearless_(Taylor_Swift_album) "Fe
 
 Throughout 2009, Swift featured on and wrote other musicians' releases. She featured on "[Half of My Heart](/wiki/Half_of_My_Heart "Half of My Heart")" by [John Mayer](/wiki/John_Mayer "John Mayer"), whom she was romantically linked with in late 2009.[\[81\]](#cite_note-82)[\[82\]](#cite_note-:12-83) She wrote "[Best Days of Your Life](/wiki/Best_Days_of_Your_Life "Best Days of Your Life")" for [Kellie Pickler](/wiki/Kellie_Pickler "Kellie Pickler"),[\[83\]](#cite_note-84) co-wrote and featured on [Boys Like Girls](/wiki/Boys_Like_Girls "Boys Like Girls")' "[Two Is Better Than One](/wiki/Two_Is_Better_Than_One "Two Is Better Than One"),[\[84\]](#cite_note-85) and wrote two songs—"[You'll Always Find Your Way Back Home](/wiki/You%27ll_Always_Find_Your_Way_Back_Home "You'll Always Find Your Way Back Home")" and "[Crazier](/wiki/Crazier "Crazier")"—for the [soundtrack](/wiki/Hannah_Montana:_The_Movie_(soundtrack) "Hannah Montana: The Movie (soundtrack)") of *[Hannah Montana: The Movie](/wiki/Hannah_Montana:_The_Movie "Hannah Montana: The Movie")*, in which she had a cameo appearance.[\[85\]](#cite_note-86)[\[86\]](#cite_note-87) She wrote and recorded "[Today Was a Fairytale](/wiki/Today_Was_a_Fairytale "Today Was a Fairytale")" for the [soundtrack](/wiki/Valentine%27s_Day_(soundtrack) "Valentine's Day (soundtrack)") of *[Valentine's Day](/wiki/Valentine%27s_Day_(2010_film) "Valentine's Day (2010 film)")* (2010), in which she had her acting debut.[\[87\]](#cite_note-slate-88) "Today Was a Fairytale" was her first number-one single on the [Canadian Hot 100](/wiki/Canadian_Hot_100 "Canadian Hot 100").[\[88\]](#cite_note-canada-89) While shooting *Valentine's Day* in October 2009, Swift dated co-star [Taylor Lautner](/wiki/Taylor_Lautner "Taylor Lautner").[\[89\]](#cite_note-90) On television, she made her debut as a rebellious teenager in an *[CSI: Crime Scene Investigation](/wiki/CSI:_Crime_Scene_Investigation "CSI: Crime Scene Investigation")* episode[\[90\]](#cite_note-91) and hosted and performed as the musical guest on *[Saturday Night Live](/wiki/Saturday_Night_Live "Saturday Night Live")*; she was the first host ever to write their own opening monologue.[\[91\]](#cite_note-92)[\[92\]](#cite_note-93)
 
-
 ### 2010–2014: *Speak Now* and *Red*
-
 
 [![Swift singing into a mic while playing a guitar, dressed in a purple dress](//upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Taylor_Swift_2011crop.jpg/250px-Taylor_Swift_2011crop.jpg)](/wiki/File:Taylor_Swift_2011crop.jpg)
 Swift on the [Speak Now World Tour](/wiki/Speak_Now_World_Tour) in 2011
-
 
 Swift's third studio album, *[Speak Now](/wiki/Speak_Now "Speak Now")*, was released in October 2010.[\[93\]](#cite_note-94) Written solely by Swift,[\[94\]](#cite_note-NYT-95) the album debuted the *Billboard* 200 with over one million US copies sold first week[\[95\]](#cite_note-96) and became the fastest-selling digital album by a female artist.[\[96\]](#cite_note-97) *Speak Now* was supported by six singles: "[Mine](/wiki/Mine_(Taylor_Swift_song) "Mine (Taylor Swift song)")", "[Back to December](/wiki/Back_to_December "Back to December")", "[Mean](/wiki/Mean_(Taylor_Swift_song))", "[The Story of Us](/wiki/The_Story_of_Us_(song) "The Story of Us (song)")", "[Sparks Fly](/wiki/Sparks_Fly_(song) "Sparks Fly (song)")", and "[Ours](/wiki/Ours_(song) "Ours (song)")". "Mine" peaked at number three and was the highest-charting single on the *Billboard* Hot 100,[\[97\]](#cite_note-Billboard-98) the first three singles reached the top 10 in Canada,[\[88\]](#cite_note-canada-89) and the last two reached number one on Hot Country Songs.[\[72\]](#cite_note-country_songs-73) Swift promoted *Speak Now* with the [Speak Now World Tour](/wiki/Speak_Now_World_Tour "Speak Now World Tour") from February 2011 to March 2012[\[98\]](#cite_note-billboard1-99) and the live album *[Speak Now World Tour – Live](/wiki/Speak_Now_World_Tour_%E2%80%93_Live "Speak Now World Tour – Live")*.[\[99\]](#cite_note-announcement-100) At the [54th Annual Grammy Awards](/wiki/54th_Annual_Grammy_Awards "54th Annual Grammy Awards") in 2012, Swift performed "Mean", which won Best Country Song and [Best Country Solo Performance](/wiki/Best_Country_Solo_Performance).[\[100\]](#cite_note-54th_Grammys-101) She was named Songwriter/Artist of the Year by the Nashville Songwriters Association (2010 and 2011),[\[101\]](#cite_note-102)[\[102\]](#cite_note-103) Woman of the Year by *Billboard* (2011),[\[103\]](#cite_note-billboard2-104) and Entertainer of the Year by the [Academy of Country Music](/wiki/Academy_of_Country_Music "Academy of Country Music") (2011 and 2012)[\[104\]](#cite_note-105) and the Country Music Association in 2011.[\[105\]](#cite_note-106) At the [American Music Awards of 2011](/wiki/American_Music_Awards_of_2011 "American Music Awards of 2011"), Swift won Artist of the Year and Favorite Country Album.[\[106\]](#cite_note-107) *Rolling Stone* named *Speak Now* on its list of "50 Best Female Albums of All Time" (2012).[\[107\]](#cite_note-108)
 
 *[Red](/wiki/Red_(Taylor_Swift_album) "Red (Taylor Swift album)")*, Swift's fourth studio album, was released in October 2012.[\[108\]](#cite_note-109) On *Red*, Swift worked with Chapman and new producers including [Max Martin](/wiki/Max_Martin "Max Martin"), [Shellback](/wiki/Shellback_(record_producer) "Shellback (record producer)"), [Dan Wilson](/wiki/Dan_Wilson_(musician) "Dan Wilson (musician)"), [Jeff Bhasker](/wiki/Jeff_Bhasker "Jeff Bhasker"), [Dann Huff](/wiki/Dann_Huff "Dann Huff"), and [Butch Walker](/wiki/Butch_Walker "Butch Walker"), resulting in a genre-spanning record that incorporated eclectic styles of pop and rock such as [Britrock](/wiki/Britrock), [dubstep](/wiki/Dubstep "Dubstep"), and [dance-pop](/wiki/Dance-pop "Dance-pop").[\[109\]](#cite_note-110)[\[110\]](#cite_note-English-2017-111) The album opened at number one on the *Billboard* 200 with 1.21 million sales[\[111\]](#cite_note-112) and was Swift's first number-one album in the UK.[\[112\]](#cite_note-113) Its lead single, "[We Are Never Ever Getting Back Together](/wiki/We_Are_Never_Ever_Getting_Back_Together "We Are Never Ever Getting Back Together")", was her first number one on the *Billboard* Hot 100,[\[113\]](#cite_note-114) and its third single, "[I Knew You Were Trouble](/wiki/I_Knew_You_Were_Trouble "I Knew You Were Trouble")", reached the top five on charts worldwide.[\[114\]](#cite_note-:9-115) Other singles from *Red* were "[Begin Again](/wiki/Begin_Again_(Taylor_Swift_song) "Begin Again (Taylor Swift song)")", "[22](/wiki/22_(Taylor_Swift_song) "22 (Taylor Swift song)")", "[Everything Has Changed](/wiki/Everything_Has_Changed "Everything Has Changed")", "[The Last Time](/wiki/The_Last_Time_(Taylor_Swift_song) "The Last Time (Taylor Swift song)")", and "[Red](/wiki/Red_(Taylor_Swift_song) "Red (Taylor Swift song)")".[\[115\]](#cite_note-chart_history-116)
 
-
 [![Swift in a red marching-band outfit holding a mic](//upload.wikimedia.org/wikipedia/commons/thumb/d/de/Taylor_Swift_RED_Tour_%288642419792%29_%28cropped%29.jpg/250px-Taylor_Swift_RED_Tour_%288642419792%29_%28cropped%29.jpg)](/wiki/File:Taylor_Swift_RED_Tour_(8642419792)_(cropped).jpg)
 Swift on [the Red Tour](/wiki/The_Red_Tour) in 2013
-
 
 *Red* and its single "Begin Again" received three nominations at the [56th Annual Grammy Awards](/wiki/56th_Annual_Grammy_Awards "56th Annual Grammy Awards") (2014).[\[116\]](#cite_note-117) Swift received American Music Awards for Best Female Country Artist in [2012](/wiki/American_Music_Awards_of_2012 "American Music Awards of 2012"), Artist of the Year in [2013](/wiki/American_Music_Awards_of_2013 "American Music Awards of 2013"),[\[117\]](#cite_note-118)[\[118\]](#cite_note-119) and the Nashville Songwriters Association's Songwriter/Artist Award for the fifth and sixth consecutive years.[\[119\]](#cite_note-120) At the [2014 Country Music Association Awards](/wiki/2014_Country_Music_Association_Awards), Swift was honored with the Pinnacle Award, making her the second recipient in history after [Garth Brooks](/wiki/Garth_Brooks "Garth Brooks").[\[120\]](#cite_note-121) [The Red Tour](/wiki/The_Red_Tour "The Red Tour") ran from March 2013 to June 2014 and became the highest-grossing country tour upon completion.[\[121\]](#cite_note-Allen-2014-122)
 
 Swift continued writing songs for films and featuring on other artists' releases. On the [soundtrack album](/wiki/The_Hunger_Games:_Songs_from_District_12_and_Beyond "The Hunger Games: Songs from District 12 and Beyond") to [*The Hunger Games*](/wiki/The_Hunger_Games_(film) "The Hunger Games (film)") (2012), Swift wrote and recorded ["Eyes Open"](/wiki/Eyes_Open_(song) "Eyes Open (song)") and "[Safe & Sound](/wiki/Safe_%26_Sound_(Taylor_Swift_song) "Safe & Sound (Taylor Swift song)")"; the latter of which was co-written with [the Civil Wars](/wiki/The_Civil_Wars "The Civil Wars") and [T-Bone Burnett](/wiki/T-Bone_Burnett). "Safe & Sound" won the [Grammy Award for Best Song Written for Visual Media](/wiki/Grammy_Award_for_Best_Song_Written_for_Visual_Media "Grammy Award for Best Song Written for Visual Media").[\[122\]](#cite_note-123) She wrote and produced "[Sweeter than Fiction](/wiki/Sweeter_than_Fiction "Sweeter than Fiction")" with [Jack Antonoff](/wiki/Jack_Antonoff "Jack Antonoff") for the soundtrack to *[One Chance](/wiki/One_Chance_(film) "One Chance (film)")* (2013).[\[123\]](#cite_note-124) Swift featured on [B.o.B](/wiki/B.o.B "B.o.B")'s "[Both of Us](/wiki/Both_of_Us "Both of Us")" (2012)[\[124\]](#cite_note-125) and provided vocals for Tim McGraw's "[Highway Don't Care](/wiki/Highway_Don%27t_Care "Highway Don't Care")" (2013), also featuring Keith Urban.[\[125\]](#cite_note-126) She was a voice actress in *[The Lorax](/wiki/The_Lorax_(film) "The Lorax (film)")* (2012),[\[126\]](#cite_note-127) made a cameo in the sitcom *[New Girl](/wiki/New_Girl "New Girl")* (2013),[\[127\]](#cite_note-128) and had a supporting role in the [dystopian](/wiki/Dystopia "Dystopia") film [*The Giver*](/wiki/The_Giver_(film) "The Giver (film)") (2014).[\[128\]](#cite_note-129) From 2010 to 2013, Swift was romantically involved with the actor [Jake Gyllenhaal](/wiki/Jake_Gyllenhaal "Jake Gyllenhaal"), the political heir [Conor Kennedy](/wiki/Kennedy_family "Kennedy family"), and the singer [Harry Styles](/wiki/Harry_Styles "Harry Styles").[\[82\]](#cite_note-:12-83)
 
-
 ### 2014–2018: *1989* and *Reputation*
-
 
 [![Swift performing on a mic, dressed in white shorts and top](//upload.wikimedia.org/wikipedia/commons/thumb/0/04/Taylor_Swift_045_%2817682880264%29.jpg/250px-Taylor_Swift_045_%2817682880264%29.jpg)](/wiki/File:Taylor_Swift_045_(17682880264).jpg)
 Swift at [the 1989 World Tour](/wiki/The_1989_World_Tour), the highest-grossing tour of 2015
-
 
 In March 2014, Swift began living in New York City, which she credited as a creative influence on her fifth studio album, *[1989](/wiki/1989_(album) "1989 (album)")*.[\[b\]](#cite_note-132) She described *1989* as her first "official pop album" and produced it with Jack Antonoff, Max Martin, Shellback, [Imogen Heap](/wiki/Imogen_Heap "Imogen Heap"), [Ryan Tedder](/wiki/Ryan_Tedder "Ryan Tedder"), and [Ali Payami](/wiki/Ali_Payami "Ali Payami").[\[131\]](#cite_note-133) Released in October 2014, the album opened atop the *Billboard* 200 with 1.28 million copies sold.[\[132\]](#cite_note-134) Its singles "[Shake It Off](/wiki/Shake_It_Off "Shake It Off")", "[Blank Space](/wiki/Blank_Space "Blank Space")", and "[Bad Blood](/wiki/Bad_Blood_(Taylor_Swift_song) "Bad Blood (Taylor Swift song)")" reached number one in Australia, Canada, and the US, with the first two making Swift [the first woman to replace herself at the Hot 100 top spot](/wiki/List_of_Billboard_Hot_100_chart_achievements_and_milestones "List of Billboard Hot 100 chart achievements and milestones").[\[133\]](#cite_note-135) Other singles include "[Style](/wiki/Style_(Taylor_Swift_song) "Style (Taylor Swift song)")", "[Wildest Dreams](/wiki/Wildest_Dreams "Wildest Dreams")", "[Out of the Woods](/wiki/Out_of_the_Woods "Out of the Woods")", and "[New Romantics](/wiki/New_Romantics_(song) "New Romantics (song)")".[\[134\]](#cite_note-US-singles-136) [The 1989 World Tour](/wiki/The_1989_World_Tour "The 1989 World Tour") (2015) was the [highest-grossing tour of the year](/wiki/List_of_highest-grossing_concert_tours#Highest-grossing_tours_by_year "List of highest-grossing concert tours") with $250 million in total revenue.[\[135\]](#cite_note-137)
 
@@ -375,10 +328,8 @@ After publishing an [op-ed](/wiki/Op-ed "Op-ed") in *[The Wall Street Journal](/
 
 Swift was named *Billboard*'s Woman of the Year in 2014, becoming the first artist to win the award twice.[\[142\]](#cite_note-144) At the [2014 American Music Awards](/wiki/2014_American_Music_Awards), Swift received the inaugural [Dick Clark](/wiki/Dick_Clark "Dick Clark") Award for Excellence.[\[143\]](#cite_note-145) On her 25th birthday in 2014, the [Grammy Museum at L.A. Live](/wiki/Grammy_Museum_at_L.A._Live "Grammy Museum at L.A. Live") opened an exhibit in her honor in Los Angeles that ran until October 4, 2015.[\[144\]](#cite_note-146)[\[145\]](#cite_note-147) In 2015, Swift won the [Brit Award for International Female Solo Artist](/wiki/Brit_Award_for_International_Female_Solo_Artist "Brit Award for International Female Solo Artist").[\[146\]](#cite_note-Jonze-148) "Bad Blood" won [Video of the Year](/wiki/MTV_Video_Music_Award_for_Video_of_the_Year "MTV Video Music Award for Video of the Year") and [Best Collaboration](/wiki/MTV_Video_Music_Award_for_Best_Collaboration "MTV Video Music Award for Best Collaboration") at the [2015 MTV Video Music Awards](/wiki/2015_MTV_Video_Music_Awards "2015 MTV Video Music Awards").[\[147\]](#cite_note-149) At the [58th Grammy Awards](/wiki/58th_Grammy_Awards) (2016), *1989* won Album of the Year and [Best Pop Vocal Album](/wiki/Best_Pop_Vocal_Album), making Swift the first woman to win Album of the Year twice.[\[148\]](#cite_note-150)
 
-
 [![Swift in a snake-embroiled bodysuit](//upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Taylor_Swift_Reputation_Tour1_%28cropped%29.jpg/250px-Taylor_Swift_Reputation_Tour1_%28cropped%29.jpg)](/wiki/File:Taylor_Swift_Reputation_Tour1_(cropped).jpg)
 Swift on her [Reputation Stadium Tour](/wiki/Reputation_Stadium_Tour) (2018), the highest-grossing North American tour at the time
-
 
 Swift dated the DJ [Calvin Harris](/wiki/Calvin_Harris "Calvin Harris") from March 2015 to June 2016.[\[149\]](#cite_note-151) They co-wrote the song "[This Is What You Came For](/wiki/This_Is_What_You_Came_For "This Is What You Came For")", featuring vocals from [Rihanna](/wiki/Rihanna "Rihanna"); Swift was initially credited under the pseudonym Nils Sjöberg.[\[150\]](#cite_note-152) She recorded "[I Don't Wanna Live Forever](/wiki/I_Don%27t_Wanna_Live_Forever "I Don't Wanna Live Forever")" with [Zayn Malik](/wiki/Zayn_Malik "Zayn Malik") for [the soundtrack](/wiki/Fifty_Shades_Darker:_Original_Motion_Picture_Soundtrack "Fifty Shades Darker: Original Motion Picture Soundtrack") to *[Fifty Shades Darker](/wiki/Fifty_Shades_Darker_(film) "Fifty Shades Darker (film)")* (2017)[\[151\]](#cite_note-153) and won a [Country Music Association Award](/wiki/51st_Annual_Country_Music_Association_Awards "51st Annual Country Music Association Awards") for Song of the Year with "[Better Man](/wiki/Better_Man_(Little_Big_Town_song) "Better Man (Little Big Town song)")", which she wrote for the band [Little Big Town](/wiki/Little_Big_Town "Little Big Town").[\[152\]](#cite_note-154) In April 2016, Kanye West released the single "[Famous](/wiki/Famous_(Kanye_West_song) "Famous (Kanye West song)")", in which he references Swift in the line, "I made that bitch famous." Swift criticized West and said she never consented to the lyric, but West claimed that he had received her approval and his then-wife [Kim Kardashian](/wiki/Kim_Kardashian "Kim Kardashian") released video clips of Swift and West discussing the song amicably over the phone. The controversy made Swift a subject of an online "[cancel](/wiki/Cancel_culture "Cancel culture")" movement.[\[153\]](#cite_note-Vogue-155) In late 2016, after briefly dating [Tom Hiddleston](/wiki/Tom_Hiddleston "Tom Hiddleston"), Swift began a six-year relationship with [Joe Alwyn](/wiki/Joe_Alwyn "Joe Alwyn") and retreated herself from the public spotlight.[\[154\]](#cite_note-156)[\[155\]](#cite_note-157)
 
@@ -386,16 +337,12 @@ In August 2017, Swift [successfully countersued](/wiki/Taylor_Swift_sexual_assau
 
 At the [2018 American Music Awards](/wiki/2018_American_Music_Awards), Swift won four awards, which made her accumulate 23 trophies in total and become the AMAs' most awarded female musician, surpassing [Whitney Houston](/wiki/Whitney_Houston "Whitney Houston").[\[166\]](#cite_note-AMA_Record-168) The same year, she embarked on her [Reputation Stadium Tour](/wiki/Reputation_Stadium_Tour "Reputation Stadium Tour"),[\[167\]](#cite_note-169) which became the highest-grossing North American concert tour in history and grossed $345.7 million worldwide.[\[168\]](#cite_note-170)
 
-
 ### 2018–2021: *Lover*, *Folklore*, and *Evermore*
-
 
 In November 2018, Swift signed a new deal with [Universal Music Group](/wiki/Universal_Music_Group "Universal Music Group"), which promoted her subsequent albums under [Republic Records](/wiki/Republic_Records "Republic Records")' imprint.[\[169\]](#cite_note-171) The contract included a provision for Swift to maintain ownership of her [masters](/wiki/Mastering_(audio) "Mastering (audio)"). In addition, in the event that Universal sold any part of its stake in Spotify, it agreed to distribute a non-recoupable portion of the proceeds among its artists.[\[170\]](#cite_note-172)[\[171\]](#cite_note-173)
 
-
 [![A portrait of Swift](//upload.wikimedia.org/wikipedia/commons/thumb/d/d9/191125_Taylor_Swift_at_the_2019_American_Music_Awards.png/250px-191125_Taylor_Swift_at_the_2019_American_Music_Awards.png)](/wiki/File:191125_Taylor_Swift_at_the_2019_American_Music_Awards.png)
 Swift at the [American Music Awards of 2019](/wiki/American_Music_Awards_of_2019), where she was named Artist of the Decade
-
 
 Swift's first album with Republic Records, *[Lover](/wiki/Lover_(album) "Lover (album)")*, was released in August 2019.[\[172\]](#cite_note-174) She produced the album with Antonoff, [Louis Bell](/wiki/Louis_Bell "Louis Bell"), [Frank Dukes](/wiki/Frank_Dukes "Frank Dukes"), and [Joel Little](/wiki/Joel_Little "Joel Little").[\[173\]](#cite_note-Catucci-175) *Lover* peaked atop the charts of such countries as Australia, Canada, Ireland, Mexico, Norway, Sweden, the UK, and the US.[\[174\]](#cite_note-176) The album spawned five singles: "[Me!](/wiki/Me! "Me!")", "[You Need to Calm Down](/wiki/You_Need_to_Calm_Down "You Need to Calm Down")", "[Lover](/wiki/Lover_(Taylor_Swift_song) "Lover (Taylor Swift song)")", "[The Man](/wiki/The_Man_(Taylor_Swift_song) "The Man (Taylor Swift song)")", and "[Cruel Summer](/wiki/Cruel_Summer_(Taylor_Swift_song) "Cruel Summer (Taylor Swift song)")"; the first two singles peaked at number two on the *Billboard* Hot 100, and the lattermost single became a resurgent success in 2023, reaching number one.[\[175\]](#cite_note-177) *Lover* was 2019's best selling album in the US and best selling album by a solo artist worldwide.[\[176\]](#cite_note-178) The album and its singles earned three nominations at the [62nd Annual Grammy Awards](/wiki/62nd_Annual_Grammy_Awards "62nd Annual Grammy Awards") in 2020.[\[177\]](#cite_note-179) At the [2019 MTV Video Music Awards](/wiki/2019_MTV_Video_Music_Awards "2019 MTV Video Music Awards"), Swift won three awards including Video of the Year for "You Need to Calm Down", becoming the first female and second artist overall to win the category for a self-directed video.[\[178\]](#cite_note-180)
 
@@ -405,16 +352,12 @@ In February 2020, Swift signed a global publishing deal with [Universal Music Pu
 
 According to *Billboard*, Swift was the highest-paid musician in the US and highest-paid solo musician worldwide of 2020.*[\[188\]](#cite_note-190) Folklore* made Swift the first woman to win the Grammy Award for Album of the Year three times, winning the category at the [63rd Annual Grammy Awards](/wiki/63rd_Annual_Grammy_Awards "63rd Annual Grammy Awards") (2021).[\[189\]](#cite_note-folklorevariety-191) At the American Music Awards, Swift won three awards including Artist of the Year for a third record time ([2020](/wiki/American_Music_Awards_of_2020 "American Music Awards of 2020"))[\[190\]](#cite_note-192) and Favorite Pop/Rock Female Artist and Favorite Pop/Rock Album ([2021](/wiki/American_Music_Awards_of_2021 "American Music Awards of 2021")).[\[191\]](#cite_note-193) Swift played [Bombalurina](/wiki/Bombalurina "Bombalurina") in the [film adaptation](/wiki/Cats_(2019_film) "Cats (2019 film)") of [Andrew Lloyd Webber](/wiki/Andrew_Lloyd_Webber "Andrew Lloyd Webber")'s musical *[Cats](/wiki/Cats_(musical) "Cats (musical)")* (2019), for which she co-wrote and recorded the Golden Globe-nominated original song "[Beautiful Ghosts](/wiki/Beautiful_Ghosts "Beautiful Ghosts")".[\[192\]](#cite_note-194)[\[193\]](#cite_note-195) The documentary *[Miss Americana](/wiki/Miss_Americana "Miss Americana")*, which chronicled parts of Swift's life and career, premiered at the [2020 Sundance Film Festival](/wiki/2020_Sundance_Film_Festival "2020 Sundance Film Festival").[\[194\]](#cite_note-billboard-20-196)
 
-
 ### 2021–2023: Re-recordings and *Midnights*
-
 
 Swift's [re-recordings](/wiki/Re-recording_(music) "Re-recording (music)") of her first six studio albums began with *[Fearless (Taylor's Version)](/wiki/Fearless_(Taylor%27s_Version) "Fearless (Taylor's Version)")* and *[Red (Taylor's Version)](/wiki/Red_(Taylor%27s_Version) "Red (Taylor's Version)")*, which were released in April and November 2021. Both peaked atop the *Billboard* 200, and the former was the first re-recorded album to do so.[\[195\]](#cite_note-197) *Fearless (Taylor's Version)* was preceded by "[Love Story (Taylor's Version)](/wiki/Love_Story_(Taylor%27s_Version))", which made Swift the second artist after [Dolly Parton](/wiki/Dolly_Parton "Dolly Parton") to have both the original and re-recorded versions of a song reach number one on Hot Country Songs.[\[196\]](#cite_note-198) *Red (Taylor's Version)* was supported by "[All Too Well (10 Minute Version)](/wiki/All_Too_Well_(10_Minute_Version))", which became the longest song in history to top the Hot 100.[\[197\]](#cite_note-time_2023numbers-199)
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/7/76/Taylor_Swift_2022_infobox.jpg/250px-Taylor_Swift_2022_infobox.jpg)](/wiki/File:Taylor_Swift_2022_infobox.jpg)
 Swift performing in 2022
-
 
 Swift's tenth studio album, *[Midnights](/wiki/Midnights "Midnights")*, was released in October 2022.[\[198\]](#cite_note-The_Guardian-2022-200) The album incorporates a restrained electropop[\[199\]](#cite_note-:02-201) and synth-pop sound[\[200\]](#cite_note-Guardian-202) with elements of hip hop, R&B, and [electronica](/wiki/Electronica "Electronica").[\[198\]](#cite_note-The_Guardian-2022-200)[\[201\]](#cite_note-203) In the US, *Midnights* was her fifth to open atop the *Billboard* 200 with first-week sales of over one million copies, and its tracks, led by the single "[Anti-Hero](/wiki/Anti-Hero_(song) "Anti-Hero (song)")", made Swift the first artist to monopolize the top 10 of the Hot 100.[\[202\]](#cite_note-Dailey-2022-204) Globally, the album broke the record for the [most single-day streams and most single-week streams](/wiki/List_of_Spotify_streaming_records "List of Spotify streaming records") on Spotify and peaked atop the charts of at least 14 countries.[\[203\]](#cite_note-Young-2022-205) The album's two further singles, "[Lavender Haze](/wiki/Lavender_Haze "Lavender Haze")" and "[Karma](/wiki/Karma_(Taylor_Swift_song) "Karma (Taylor Swift song)")", both peaked at number two on the *Billboard* Hot 100.[\[204\]](#cite_note-206)
 
@@ -424,16 +367,12 @@ Swift's next two re-recorded albums, *[Speak Now (Taylor's Version)](/wiki/Speak
 
 In 2023, Swift was the most streamed artist on Spotify,[\[221\]](#cite_note-223) Apple Music,[\[222\]](#cite_note-224) and Amazon Music;[\[223\]](#cite_note-225) and the first act to place number one on the year-end *Billboard* top artists list in three different decades (2009, 2015 and 2023).[\[224\]](#cite_note-226) She had five out of the 10 best-selling albums of 2023 in the US, a record since [Luminate](/wiki/Luminate_(company) "Luminate (company)") began tracking US music sales in 1991.[\[225\]](#cite_note-227)
 
-
 ### 2023–present: The Eras Tour and *The Tortured Poets Department*
-
 
 In March 2023, Swift embarked on [the Eras Tour](/wiki/The_Eras_Tour "The Eras Tour"), a retrospective tour covering all her studio albums. Media outlets extensively covered the tour's [global cultural and economic impact](/wiki/Impact_of_the_Eras_Tour "Impact of the Eras Tour"),[\[226\]](#cite_note-228) and its US leg broke the record for the [most tickets sold in a day](/wiki/List_of_fastest-selling_concert_tours).[\[202\]](#cite_note-Dailey-2022-204) [Ticketmaster](/wiki/Ticketmaster "Ticketmaster") received [public and political criticisms](/wiki/Taylor_Swift%E2%80%93Ticketmaster_controversy "Taylor Swift–Ticketmaster controversy") for mishandling the tour's ticket sales.[\[227\]](#cite_note-:8-229) The Eras Tour became [the highest-grossing tour in history](/wiki/List_of_highest-grossing_concert_tours "List of highest-grossing concert tours").[\[228\]](#cite_note-eras_gross-230)[\[229\]](#cite_note-231) [Its concert film](/wiki/Taylor_Swift:_The_Eras_Tour "Taylor Swift: The Eras Tour"), released to theaters worldwide on October 13, 2023, grossed over $250 million to become [the highest-grossing concert film](/wiki/Concert_film#Highest-grossing_concert_films "Concert film") and was nominated for the [Golden Globe Award](/wiki/Golden_Globe_Award) for Cinematic and Box Office Achievement.[\[230\]](#cite_note-232)[\[231\]](#cite_note-233) A [photobook](/wiki/Photobook), *[The Eras Tour Book](/wiki/The_Eras_Tour_Book "The Eras Tour Book")*, was released on November 29, 2024, and sold over a million copies in its first week in the US alone.[\[232\]](#cite_note-234)
 
-
 [![Swift singing into a mic](//upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Taylor_Swift_Eras_Tour_-_Arlington%2C_TX_-_Folklore_act_cropped.jpg/250px-Taylor_Swift_Eras_Tour_-_Arlington%2C_TX_-_Folklore_act_cropped.jpg)](/wiki/File:Taylor_Swift_Eras_Tour_-_Arlington,_TX_-_Folklore_act_cropped.jpg)
 Swift on [the Eras Tour](/wiki/The_Eras_Tour) in 2023
-
 
 Swift's eleventh studio album, *[The Tortured Poets Department](/wiki/The_Tortured_Poets_Department "The Tortured Poets Department")*, was released on April 19, 2024.[\[233\]](#cite_note-235) Topping charts globally, the album broke a string of records: it marked the first album ever to amass 1 billion Spotify streams in a week; sold 2.6 million units in its first week in the US; made Swift the first artist to monopolize the top 14 of the *Billboard* Hot 100 and the top 10 of Australia's [ARIA Singles Chart](/wiki/ARIA_Singles_Chart); and went on to spend 17 weeks atop the *Billboard* 200—Swift's longest-running number-one album on the chart. The lead single, "[Fortnight](/wiki/Fortnight_(song) "Fortnight (song)")", featuring [Post Malone](/wiki/Post_Malone "Post Malone"), became Swift's 12th number-one song on the Hot 100.[\[234\]](#cite_note-236)[\[235\]](#cite_note-237)[\[236\]](#cite_note-238)
 
@@ -441,12 +380,9 @@ After the pandemic, Swift's music releases, touring, and related activities culm
 
 Swift began dating the American football player [Travis Kelce](/wiki/Travis_Kelce "Travis Kelce") in 2023.[\[244\]](#cite_note-246) In January 2024, [AI-generated pornographic images portraying Swift](/wiki/Taylor_Swift_deepfake_pornography_controversy "Taylor Swift deepfake pornography controversy") in a football context were posted to [Twitter](/wiki/Twitter "Twitter") and spread to other social media platforms, spurring criticism and demands for legal reform.[\[245\]](#cite_note-247) In July 2024, Swift and Kelce received death threats from a [stalker](/wiki/Stalking "Stalking") in [Gelsenkirchen](/wiki/Gelsenkirchen "Gelsenkirchen"), Germany,[\[246\]](#cite_note-248) and [three children were killed in a stabbing attack](/wiki/2024_Southport_stabbing) at a Swift-themed workshop in [Southport](/wiki/Southport "Southport"), England, leading to [civil unrest in the UK](/wiki/2024_United_Kingdom_riots "2024 United Kingdom riots").[\[247\]](#cite_note-CNN-Picheta-05Aug24-249) In August, all three of the Eras Tour concerts in [Vienna](/wiki/Vienna "Vienna") were canceled following the arrest of suspects who planned an [Islamic State](/wiki/Islamic_State "Islamic State")-inspired [terrorist attack in the city](/wiki/2024_Vienna_terrorism_plot "2024 Vienna terrorism plot"). The plan was uncovered by [US intelligence](/wiki/United_States_Intelligence_Community "United States Intelligence Community") and was thwarted by [Austrian police](/wiki/Federal_Police_(Austria) "Federal Police (Austria)") forces.[\[248\]](#cite_note-250)
 
-
 ## Artistry
 
-
 ### Musical styles
-
 
 Swift has ventured into diverse genres throughout her career, with critics mostly labelling her songs as [pop](/wiki/Pop_music "Pop music"),[\[c\]](#cite_note-254) [country](/wiki/Country_music "Country music"),[\[d\]](#cite_note-259) [folk](/wiki/Folk_music "Folk music"),[\[e\]](#cite_note-263) [rock](/wiki/Rock_music "Rock music"),[\[f\]](#cite_note-267) or [alternative](/wiki/Alternative_music "Alternative music").[\[g\]](#cite_note-272) Her early musical influences were 1990s female country musicians such as Shania Twain, Faith Hill, LeAnn Rimes, and the Dixie Chicks,[\[266\]](#cite_note-FOOTNOTESpencer201016–18-273) and Keith Urban's country crossover sounds incorporating rock, pop, and blues.[\[267\]](#cite_note-274) She self-identified as a country musician and achieved prominence as a [country pop](/wiki/Country_pop "Country pop") singer with her first four studio albums, from *Taylor Swift* to *Red*.[\[268\]](#cite_note-FOOTNOTEMcNutt202077Gasser2019310-275) The albums feature country signifiers such as banjo, six-string banjo, [mandolin](/wiki/Mandolin "Mandolin"), [fiddle](/wiki/Fiddle "Fiddle"), and a slight vocal [twang](/wiki/Twang "Twang"), in addition to pop melodies and rock influences;[\[269\]](#cite_note-FOOTNOTEHughes2017206Perone201733-276)[\[270\]](#cite_note-Caramanica-2021-277) *Speak Now* draws on rock styles such as [pop rock](/wiki/Pop_rock "Pop rock"), [pop-punk](/wiki/Pop-punk "Pop-punk"), and 1980s [arena rock](/wiki/Arena_rock "Arena rock").[\[94\]](#cite_note-NYT-95)[\[271\]](#cite_note-FOOTNOTEPerone201746,_49-278) Some critics argued that country was an indicator of Swift's narrative songwriting rather than musical direction[\[272\]](#cite_note-279)[\[273\]](#cite_note-Prodigy-NY-280) and accused her of causing mainstream country music to stray away from its traditional sound.[\[274\]](#cite_note-FOOTNOTEHughes2017206-281)[\[275\]](#cite_note-282)
 
@@ -456,41 +392,29 @@ Her 2020 alternative albums *Folklore* and *Evermore* explored [indie folk](/wik
 
 With continuous musical reinventions,[\[291\]](#cite_note-FOOTNOTEFranssen202290-298) Swift was described by *Time* and the BBC as a musical "chameleon".[\[292\]](#cite_note-299)[\[293\]](#cite_note-300) [Jody Rosen](/wiki/Jody_Rosen "Jody Rosen") commented that by originating her career in Nashville, Swift made a "bait-and-switch maneuver, planting roots in loamy country soil, then pivoting to pop".[\[294\]](#cite_note-Rosen-301) *[Clash](/wiki/Clash_(magazine) "Clash (magazine)")* wrote that she has the versatility to "no longer \[...\] be defined by any genre or sound label".[\[295\]](#cite_note-302) According to [Ann Powers](/wiki/Ann_Powers "Ann Powers"), Swift's sound is genre-agnostic, blending and "reconfiguring" elements of country, R&B, [indie pop](/wiki/Indie_pop "Indie pop"), and hip hop.[\[296\]](#cite_note-Powers-2022-303)[\[297\]](#cite_note-304)
 
-
 ### Voice
-
 
 ![](//upload.wikimedia.org/wikipedia/commons/thumb/8/87/Gnome-mime-sound-openclipart.svg/60px-Gnome-mime-sound-openclipart.svg.png)
 
-
 ["Our Song" (2006)](/wiki/File:Taylor_Swift_-_Our_Song.ogg "File:Taylor Swift - Our Song.ogg")
-
 
 Swift sings with a [Southern](/wiki/Southern_American_English "Southern American English") accent and a light [country](/wiki/Country_music "Country music") [twang](/wiki/Twang "Twang") in her early songs such as "[Our Song](/wiki/Our_Song_(Taylor_Swift_song))".[\[298\]](#cite_note-305)[\[299\]](#cite_note-306)
 
-
 ------------------------------------------------------------------------
-
 
 ["Cardigan" (2020)](/wiki/File:Cardigan_by_Taylor_Swift.ogg "File:Cardigan by Taylor Swift.ogg")
 
-
 Swift uses her lower [register](/wiki/Register_(music) "Register (music)") in the alternative ballad "[Cardigan](/wiki/Cardigan_(song) "Cardigan (song)")".[\[300\]](#cite_note-307)
-
 
 ------------------------------------------------------------------------
 
-
 ["Lavender Haze" (2022)](/wiki/File:Taylor_Swift_%22Lavender_Haze%22_sample.ogg "File:Taylor Swift "Lavender Haze" sample.ogg")
 
-
 The [R&B](/wiki/Contemporary_R%26B "Contemporary R&B")-leaning pop track "[Lavender Haze](/wiki/Lavender_Haze "Lavender Haze")" features Swift's [falsetto](/wiki/Falsetto "Falsetto") vocals in the [refrain](/wiki/Refrain "Refrain").[\[301\]](#cite_note-Willman-Midnights-308)
-
 
 ------------------------------------------------------------------------
 
 *Problems playing these files? See [media help](/wiki/Help:Media "Help:Media").*
-
 
 Swift possesses a [mezzo-soprano](/wiki/Mezzo-soprano "Mezzo-soprano") [vocal range](/wiki/Voice_type "Voice type")[\[302\]](#cite_note-FOOTNOTEFulford2014192-309) and a generally soft and breathy [timbre](/wiki/Timbre "Timbre") that *Rolling Stone* deemed versatile.[\[303\]](#cite_note-310)[\[304\]](#cite_note-Rolling_Stone-2023-311) Reviews of Swift's early country albums criticized her vocals as weak and strained compared to those of other female country singers.[\[305\]](#cite_note-FOOTNOTEProvenzano2018173-312) Despite the criticism, most reviewers appreciated that Swift refrained from correcting her [pitch](/wiki/Pitch_(music) "Pitch (music)") with [Auto-Tune](/wiki/Auto-Tune "Auto-Tune") and how she prioritized "intimacy over power and nuance" to communicate the messages of her songs with her audience[\[306\]](#cite_note-FOOTNOTEProvenzano2018173–174-313)—a style that has been described as conversational.[\[307\]](#cite_note-Powers1989-314)[\[308\]](#cite_note-315) According to Powers, Swift's defining vocal feature was her attention to detail to convey an exact feeling—"the line that slides down like a contented sigh or up like a raised eyebrow".[\[309\]](#cite_note-LAT-316)
 
@@ -498,9 +422,7 @@ On *Red* and *1989*, Swift's vocals are electronically processed to accompany th
 
 Reviews in *The New York Times*, *Variety* and *The Atlantic* were more appreciative of Swift's vocals in her later albums.[\[270\]](#cite_note-Caramanica-2021-277)[\[313\]](#cite_note-320)[\[314\]](#cite_note-321)[\[315\]](#cite_note-322) She ranked 102nd on *Rolling Stone*'s 2023 list of the 200 Greatest Singers of All Time: "A decade ago, including her on this list would have been a controversial move, but recent releases like *Folklore*, *Evermore*, and *Midnights* officially settled the argument."[\[304\]](#cite_note-Rolling_Stone-2023-311) Laura Snapes of *The Guardian* said that Swift's "vocal trademarks" include a "yo-yoing vocal yelp" and "climactic, processed *cri de coeur*".[\[316\]](#cite_note-323) [Amanda Petrusich](/wiki/Amanda_Petrusich "Amanda Petrusich") praised how the clarity and tone of Swift's live vocals accentuate her lyrics.[\[317\]](#cite_note-:2-324)
 
-
 ### Songwriting
-
 
 Swift's fascination with songwriting began in her childhood. She credited her mother with igniting confidence and early songwriting interests by helping her prepare for class presentations.[\[318\]](#cite_note-325)[\[319\]](#cite_note-sessionsinterview-326) She enjoyed [Disney](/wiki/Disney) film soundtracks and would make up lyrics once she had run out of words singing them.[\[320\]](#cite_note-theaustralian1-327) Her lyrical influences include [Patsy Cline](/wiki/Patsy_Cline "Patsy Cline"), [Loretta Lynn](/wiki/Loretta_Lynn "Loretta Lynn"), [Tammy Wynette](/wiki/Tammy_Wynette "Tammy Wynette"), [Dolly Parton](/wiki/Dolly_Parton "Dolly Parton"),[\[19\]](#cite_note-Rolling_Stone_2008-12-08-20)[\[103\]](#cite_note-billboard2-104) [Melissa Etheridge](/wiki/Melissa_Etheridge "Melissa Etheridge"), [Sarah McLachlan](/wiki/Sarah_McLachlan "Sarah McLachlan"), [Alanis Morissette](/wiki/Alanis_Morissette "Alanis Morissette"),[\[321\]](#cite_note-328) [Joni Mitchell](/wiki/Joni_Mitchell "Joni Mitchell"),[\[322\]](#cite_note-329) and [Fall Out Boy](/wiki/Fall_Out_Boy "Fall Out Boy").[\[323\]](#cite_note-Hiatt-2019-330) She listed [Paul McCartney](/wiki/Paul_McCartney "Paul McCartney"), [Bruce Springsteen](/wiki/Bruce_Springsteen "Bruce Springsteen"), [Emmylou Harris](/wiki/Emmylou_Harris "Emmylou Harris"), and [Kris Kristofferson](/wiki/Kris_Kristofferson "Kris Kristofferson") as career role models for their evolving and consistent songwriting outputs.[\[28\]](#cite_note-widdicombe1-29)[\[324\]](#cite_note-usatoday1-331) Her literary influences include the authors [William Shakespeare](/wiki/William_Shakespeare "William Shakespeare"), [Nathaniel Hawthorne](/wiki/Nathaniel_Hawthorne "Nathaniel Hawthorne"), [F. Scott Fitzgerald](/wiki/F._Scott_Fitzgerald "F. Scott Fitzgerald"),[\[325\]](#cite_note-332) and the poets [William Wordsworth](/wiki/William_Wordsworth "William Wordsworth"), [Robert Frost](/wiki/Robert_Frost "Robert Frost"), and [Emily Dickinson](/wiki/Emily_Dickinson "Emily Dickinson");[\[326\]](#cite_note-Bate-2023-333) the last of whom was a distant cousin of Swift.[\[327\]](#cite_note-334)
 
@@ -514,27 +436,20 @@ Swift divides her writing into three types: "[quill](/wiki/Quill "Quill") lyrics
 
 Critics have analyzed the distinctive qualities and thematic depth in Swift's songwriting. Critic [Kitty Empire](/wiki/Kitty_Empire "Kitty Empire") opined in 2024 that Swift is "a profoundly old-fashioned artist", whose songs "tell a story, in succinct, emotive ways that often scan meticulously" unlike most pop music of the time; Empire attributed it to Swift's country beginnings.[\[358\]](#cite_note-365) Swift's [bridges](/wiki/Bridge_(music) "Bridge (music)") are often noted as one of the best aspects of her songs,[\[359\]](#cite_note-366)[\[352\]](#cite_note-Siroky-20212-359) earning her the title ["Queen of Bridges"](/wiki/Honorific_nicknames_in_popular_music#S "Honorific nicknames in popular music") from *Time*.[\[360\]](#cite_note-367) *[Mojo](/wiki/Mojo_(magazine) "Mojo (magazine)")* dubbed her "a sharp narrator with a gift for the [extended metaphor](/wiki/Extended_metaphor "Extended metaphor")".[\[361\]](#cite_note-368) Academics have variably described her as a [poet laureate](/wiki/Poet_laureate "Poet laureate"),[\[362\]](#cite_note-:72-369) [philosopher](/wiki/Philosopher),[\[363\]](#cite_note-:202-370) and [bard](/wiki/Bard "Bard").[\[294\]](#cite_note-Rosen-301)
 
-
 ### Performances
-
 
 Further information: [List of Taylor Swift live performances](/wiki/List_of_Taylor_Swift_live_performances "List of Taylor Swift live performances")
 
-
 [![Swift singing while playing a piano](//upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Taylor_Swift_-_Reputation_Tour_Seattle_-_Long_Live-New_Years_Day_%28cropped%29.jpg/250px-Taylor_Swift_-_Reputation_Tour_Seattle_-_Long_Live-New_Years_Day_%28cropped%29.jpg)](/wiki/File:Taylor_Swift_-_Reputation_Tour_Seattle_-_Long_Live-New_Years_Day_(cropped).jpg)
 Swift performing on the Reputation Stadium Tour in [Seattle](/wiki/Seattle) in May 2018
-
 
 Swift commands large audiences on stage,[\[364\]](#cite_note-371)[\[365\]](#cite_note-:7-372)[\[366\]](#cite_note-McCormick-2023-373) captivating them through emotional storytelling and vocal delivery rather than relying on elaborate dance choreography.[\[367\]](#cite_note-374) According to [*V*](/wiki/V_(American_magazine) "V (American magazine)") magazine's Greg Krelenstein, she possesses "a rare gift of turning a stadium spectacle into an intimate setting", irrespective of whether she is "plucking a guitar or leading an army of dancers".[\[368\]](#cite_note-VMagazine-375) In a 2008 review of Swift's early performances, [Sasha Frere-Jones](/wiki/Sasha_Frere-Jones "Sasha Frere-Jones") of *The New Yorker* called Swift a "preternaturally skilled" entertainer with a vibrant stage presence, adding "she returned the crowd's energy with the professionalism she has shown since the age of fourteen."[\[273\]](#cite_note-Prodigy-NY-280) In 2023, Adrian Horton of *The Guardian* noted her "seemingly endless stamina" on the Eras Tour,[\[369\]](#cite_note-Horton-2023-376) and *i* critic Ilana Kaplan called her showmanship "unparalleled".[\[370\]](#cite_note-377)
 
 Swift's concert productions have been characterized by elaborate [Broadway](/wiki/Broadway_theatre "Broadway theatre") theatricality and [high technology](/wiki/High_tech "High tech"),[\[371\]](#cite_note-378) and her performances frequently incorporate a live band, with whom she has played and toured since 2007.[\[372\]](#cite_note-379) Swift also often accompanies herself with musical instruments such as [electric guitar](/wiki/Electric_guitar "Electric guitar");[\[373\]](#cite_note-380) acoustic guitar; piano;[\[374\]](#cite_note-Burgham_2018-381) and sometimes [twelve-string guitar](/wiki/Twelve-string_guitar "Twelve-string guitar"),[\[375\]](#cite_note-382)[\[376\]](#cite_note-383) [six-string banjo](/wiki/Banjo_guitar "Banjo guitar"),[\[377\]](#cite_note-384) or [ukulele](/wiki/Ukulele "Ukulele").[\[378\]](#cite_note-385) Interacting frequently with the audience, her solo acoustic performances are considered intimate and emotionally resonant, complementing her story-based lyrics and fan connection.[\[317\]](#cite_note-:2-324)[\[379\]](#cite_note-386) Lydia Burgham of *[The Spinoff](/wiki/The_Spinoff "The Spinoff")* opined that this intimacy remains "integral to her singer-songwriter origins".[\[380\]](#cite_note-387)[\[374\]](#cite_note-Burgham_2018-381) Chris Willman of *[Variety](/wiki/Variety_(magazine) "Variety (magazine)")* called Swift "pop's most approachable superstar",[\[381\]](#cite_note-388) and the 21st century's most popular performer.[\[382\]](#cite_note-Willman-2023-389)
 
-
 ### Video and film
 
-
 Further information: [Taylor Swift videography](/wiki/Taylor_Swift_videography "Taylor Swift videography")
-
 
 Swift emphasizes visuals as a key creative component of her music-making process.[\[383\]](#cite_note-Ordoña-2022-390) She has collaborated with different directors to produce her music videos, and over time, she has become more involved with writing and directing. She developed the concept and [treatment](/wiki/Film_treatment "Film treatment") for "Mean" in 2011[\[384\]](#cite_note-391) and co-directed the music video for "Mine" with [Roman White](/wiki/Roman_White "Roman White") the year before.[\[385\]](#cite_note-392) In an interview, White said that Swift "was keenly involved in writing the treatment, casting and wardrobe. And she stayed for both the 15-hour shooting days, even when she wasn't in the scenes."[\[386\]](#cite_note-393)
 
@@ -542,16 +457,12 @@ From 2014 to 2018, Swift collaborated with director [Joseph Kahn](/wiki/Joseph_K
 
 Her [production company](/wiki/Production_company "Production company"), [Taylor Swift Productions](/wiki/Taylor_Swift_Productions "Taylor Swift Productions"), is credited with producing all of her visual media, starting with the 2018 concert documentary *Reputation Stadium Tour*.[\[390\]](#cite_note-397) She continued to co-direct music videos for the *Lover* singles "Me!" with [Dave Meyers](/wiki/Dave_Meyers_(director) "Dave Meyers (director)"), and "You Need to Calm Down" (also serving as a co-executive producer) and "Lover" with Drew Kirsch,[\[391\]](#cite_note-398) but first ventured into solo direction with the video for "The Man" (which won her the [MTV Video Music Award for Best Direction](/wiki/MTV_Video_Music_Award_for_Best_Direction "MTV Video Music Award for Best Direction")).[\[392\]](#cite_note-399) After *[Folklore: The Long Pond Studio Sessions](/wiki/Folklore:_The_Long_Pond_Studio_Sessions "Folklore: The Long Pond Studio Sessions")*, Swift debuted as a filmmaker with *All Too Well: The Short Film*,[\[202\]](#cite_note-Dailey-2022-204) which made her the first artist to win the Grammy Award for Best Music Video as a solo director.[\[393\]](#cite_note-400) Swift has cited [Chloé Zhao](/wiki/Chlo%C3%A9_Zhao "Chloé Zhao"), [Greta Gerwig](/wiki/Greta_Gerwig "Greta Gerwig"), [Nora Ephron](/wiki/Nora_Ephron "Nora Ephron"), [Guillermo del Toro](/wiki/Guillermo_del_Toro "Guillermo del Toro"), [John Cassavetes](/wiki/John_Cassavetes "John Cassavetes"), and [Noah Baumbach](/wiki/Noah_Baumbach "Noah Baumbach") as filmmaking influences.[\[383\]](#cite_note-Ordoña-2022-390)
 
-
 ## Achievements
-
 
 Further information: [List of awards and nominations received by Taylor Swift](/wiki/List_of_awards_and_nominations_received_by_Taylor_Swift "List of awards and nominations received by Taylor Swift")
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Taylor_Swift_2009_MTV_VMA_%28cropped%29.jpg/250px-Taylor_Swift_2009_MTV_VMA_%28cropped%29.jpg)](/wiki/File:Taylor_Swift_2009_MTV_VMA_(cropped).jpg)
 In 2009, Swift became the first country singer to win an [MTV Video Music Award](/wiki/MTV_Video_Music_Awards).
-
 
 Swift's discography is a "critically hailed songbook", as per *Time*'s [Sam Lansky](/wiki/Sam_Lansky "Sam Lansky").[\[394\]](#cite_note-time_poty2023-401) She has won 14 [Grammy Awards](/wiki/Grammy_Award) (including four for Album of the Year—the [most](/wiki/Grammy_Award_records#Most_Album_of_the_Year_wins) won by an artist),[\[395\]](#cite_note-402) an [Emmy Award](/wiki/Emmy_Award),[\[396\]](#cite_note-403) 40 American Music Awards (the most won by an artist),[\[397\]](#cite_note-404) 49 [Billboard Music Awards](/wiki/Billboard_Music_Award) (the most won by an artist),[\[398\]](#cite_note-405) 118 *[Guinness World Records](/wiki/Guinness_World_Records "Guinness World Records")*,[\[399\]](#cite_note-406) 30 [MTV Video Music Awards](/wiki/MTV_Video_Music_Awards "MTV Video Music Awards") (including five Video of the Year wins—the most by an act),[\[400\]](#cite_note-407) 12 [Country Music Association Awards](/wiki/Country_Music_Association_Awards "Country Music Association Awards") (including the Pinnacle Award),[\[401\]](#cite_note-Lewis-2013-408) eight Academy of Country Music Awards,[\[402\]](#cite_note-409) and two [Brit Awards](/wiki/Brit_Awards "Brit Awards").[\[146\]](#cite_note-Jonze-148) As a songwriter, she has been honored by the Nashville Songwriters Association,[\[58\]](#cite_note-GAC-2007-59)[\[403\]](#cite_note-410) the [Songwriters Hall of Fame](/wiki/Songwriters_Hall_of_Fame "Songwriters Hall of Fame"), and the National Music Publishers' Association and was the youngest person on *Rolling Stone*'s list of the [100 Greatest Songwriters of All Time](/wiki/Rolling_Stone%27s_100_Greatest_Songwriters_of_All_Time "Rolling Stone's 100 Greatest Songwriters of All Time") in 2015.[\[404\]](#cite_note-411)[\[405\]](#cite_note-Rolling_Stone_100_Greatest_Songwriters-412) At the 64th [BMI Awards](/wiki/BMI_Awards) in 2016, Swift was the first woman to be honored with an award named after its recipient.[\[406\]](#cite_note-413)
 
@@ -561,16 +472,12 @@ From available data, Swift has amassed over 50 million album sales and 150 mil
 
 Swift has appeared in various power listings. *Time* included her on its annual list of the [100 most influential people](/wiki/Time_100 "Time 100") in 2010, 2015, and 2019.[\[454\]](#cite_note-464) She was one of the "Silence Breakers" that the magazine spotlighted as [Person of the Year](/wiki/Time_Person_of_the_Year "Time Person of the Year") in 2017 for speaking up about sexual assault,[\[455\]](#cite_note-465) and she received the honor again in 2023 for her cultural domination that year.[\[394\]](#cite_note-time_poty2023-401) *Time* described Swift as the first Person of the Year to be recognized for "achievement in [the arts](/wiki/The_arts "The arts")", as well as the first woman to be recognized and appear on a Person of the Year cover more than once.[\[456\]](#cite_note-466)[\[394\]](#cite_note-time_poty2023-401) She received an [honorary](/wiki/Honorary_degree "Honorary degree") [Doctor of Fine Arts](/wiki/Doctor_of_Fine_Arts "Doctor of Fine Arts") degree from New York University and served as its [commencement speaker](/wiki/Commencement_speaker) on May 18, 2022.[\[202\]](#cite_note-Dailey-2022-204)
 
-
 ## Cultural status
-
 
 Main articles: [Cultural impact of Taylor Swift](/wiki/Cultural_impact_of_Taylor_Swift "Cultural impact of Taylor Swift") and [Public image of Taylor Swift](/wiki/Public_image_of_Taylor_Swift "Public image of Taylor Swift")
 
-
 [![](//upload.wikimedia.org/wikipedia/commons/thumb/0/0a/5.3.10TaylorSwiftByDavidShankbone.jpg/250px-5.3.10TaylorSwiftByDavidShankbone.jpg)](/wiki/File:5.3.10TaylorSwiftByDavidShankbone.jpg)
 Swift at the 2010 [Time 100](/wiki/Time_100) Gala
-
 
 Swift has been credited with making a profound impact on the [music industry](/wiki/Music_industry "Music industry"), [popular culture](/wiki/Popular_culture "Popular culture"), and the economy.[\[457\]](#cite_note-467)[\[458\]](#cite_note-Khan-2021-468) She dominates cultural conversations,[\[459\]](#cite_note-469)[\[460\]](#cite_note-470) leading some publications to describe her as a cultural "vitality" or [zeitgeist](/wiki/Zeitgeist "Zeitgeist").[\[461\]](#cite_note-471)[\[462\]](#cite_note-:1-472)[\[363\]](#cite_note-:202-370) Her music, life, and public image are points of attention in global [celebrity culture](/wiki/Celebrity_culture "Celebrity culture").[\[291\]](#cite_note-FOOTNOTEFranssen202290-298) Initially a [teen idol](/wiki/Teen_idol "Teen idol"),[\[463\]](#cite_note-473) she has been referred to as a [pop icon](/wiki/Pop_icon "Pop icon");[\[279\]](#cite_note-Levine-286)[\[464\]](#cite_note-474) publications describe her enormous popularity and longevity as unwitnessed since the 20th century.[\[465\]](#cite_note-475)[\[466\]](#cite_note-476) In 2013, *New York* magazine's Jody Rosen dubbed Swift the "world's biggest pop star" and opined that the trajectory of her stardom has defied established patterns. Rosen added that Swift "falls between [genres](/wiki/Genre "Genre"), eras, [demographics](/wiki/Demographics), [paradigms](/wiki/Paradigm "Paradigm"), trends", leaving her contemporaries "vying for second place".[\[294\]](#cite_note-Rosen-301) Critics regard Swift as a rare yet successful combination of the pop star and singer-songwriter archetypes.[\[467\]](#cite_note-477)
 
@@ -580,15 +487,11 @@ Although labeled by the media in her early career as "[America's Sweetheart](/wi
 
 Swift's [private jet](/wiki/Private_jet) use has drawn scrutiny for its [carbon emissions](/wiki/Carbon_emissions).[\[481\]](#cite_note-491)[\[482\]](#cite_note-492) In 2023, a spokesperson for Swift stated that she had purchased more than double the required [carbon credits](/wiki/Carbon_credits) to offset all tour travel and personal flights.[\[483\]](#cite_note-493)[\[484\]](#cite_note-494) In December 2023, Swift's lawyers sent a [cease and desist](/wiki/Cease_and_desist "Cease and desist") letter to American programmer [Jack Sweeney](/wiki/Jack_Sweeney "Jack Sweeney") over tracking her private jet, alleging stalking and safety risks. Media outlets have reported that the information posted by Sweeney is a synthesis of publicly available data.[\[485\]](#cite_note-Blistein-495)[\[486\]](#cite_note-496) In February 2024, it was reported that Swift had sold one of her two private jets.[\[487\]](#cite_note-497)
 
-
 ### Legacy
-
 
 > "You have different artists dominating different sectors of the industry: Some are huge at streaming, some are big draws on the road. But we're at this moment where there's no one better than Taylor Swift, whether that's on the radio, with streaming, ticket sales or just [cultural impact](/wiki/Cultural_impact_of_Taylor_Swift "Cultural impact of Taylor Swift")."
 
-
 – Jason Lipshutz, *[Billboard](/wiki/Billboard_(magazine) "Billboard (magazine)")* executive director, 2023[\[488\]](#cite_note-Eras_film-498)
-
 
 Swift helped shape the modern country music scene,[\[489\]](#cite_note-guardian_country-499) having extended her success beyond the [Anglosphere](/wiki/Anglosphere "Anglosphere"),[\[294\]](#cite_note-Rosen-301)[\[489\]](#cite_note-guardian_country-499) pioneered the use of the internet ([Myspace](/wiki/Myspace "Myspace")) as a [marketing](/wiki/Marketing "Marketing") tool,[\[27\]](#cite_note-Willman-2007-28)[\[46\]](#cite_note-EW1-47) and introduced the genre to a younger generation.[\[490\]](#cite_note-Roland-2016-500)[\[294\]](#cite_note-Rosen-301) Country labels have since become interested in signing young singers who write their own music;[\[491\]](#cite_note-501) her guitar performances contributed to the "Taylor Swift factor": a phenomenon to which an upsurge in guitar sales to women, a previously ignored demographic, is attributed.[\[492\]](#cite_note-502)[\[493\]](#cite_note-503)
 
@@ -596,28 +499,21 @@ According to *[Pitchfork](/wiki/Pitchfork_(website) "Pitchfork (website)")*, Swi
 
 Swift has [influenced numerous music artists](/wiki/Cultural_impact_of_Taylor_Swift#Creative_inspiration "Cultural impact of Taylor Swift"), and her albums have inspired a generation of singer-songwriters.[\[490\]](#cite_note-Roland-2016-500)[\[285\]](#cite_note-Indie_rock-292)[\[500\]](#cite_note-BI_March_2022-510) Journalists praise her ability to reform industry practices, noting how her actions changed streaming policies, prompted awareness of intellectual property in new musicians,[\[501\]](#cite_note-511)[\[502\]](#cite_note-Smith-512) and reshaped ticketing models.[\[503\]](#cite_note-513) Various sources deem Swift's music a paradigm representing the [millennial generation](/wiki/Millennial_generation);[\[504\]](#cite_note-514) *Vox* and *The Daily Telegraph* likened her to Bruce Springsteen,[\[505\]](#cite_note-VanDerWerff-2020-515)[\[339\]](#cite_note-:0-346) and *[The Times](/wiki/The_Times "The Times")* named her "the [Bob Dylan](/wiki/Bob_Dylan "Bob Dylan") of our age".[\[506\]](#cite_note-516) Swift earned the title [Woman of the Decade](/wiki/Billboard_Women_in_Music#Woman_of_the_Decade_Award "Billboard Women in Music") (2010s) from *Billboard*,[\[507\]](#cite_note-517) [Artist of the Decade](/wiki/American_Music_Awards#Artist_of_the_Decade "American Music Awards") (2010s) at the American Music Awards,[\[508\]](#cite_note-518) and [Global Icon](/wiki/Brit_Award_for_Outstanding_Contribution_to_Music "Brit Award for Outstanding Contribution to Music") at the Brit Awards for her impact.[\[411\]](#cite_note-BRIT_Awards-2021-418) Senior artists such as [Madonna](/wiki/Madonna "Madonna"),[\[509\]](#cite_note-519) [Stevie Nicks](/wiki/Stevie_Nicks "Stevie Nicks"),[\[510\]](#cite_note-520) [Jon Bon Jovi](/wiki/Jon_Bon_Jovi "Jon Bon Jovi"),[\[511\]](#cite_note-521) Dolly Parton,[\[512\]](#cite_note-522) and [Elton John](/wiki/Elton_John "Elton John") have praised her musicianship.[\[513\]](#cite_note-523) [Carole King](/wiki/Carole_King "Carole King") regards Swift as her "professional granddaughter" and thanked Swift for "carrying the torch forward".[\[514\]](#cite_note-:3-524) Springsteen called her a "tremendous" writer,[\[515\]](#cite_note-:6-525) while [Elvis Costello](/wiki/Elvis_Costello "Elvis Costello") compared Swift's songwriting to that of Bob Dylan,[\[516\]](#cite_note-526) and [Billy Joel](/wiki/Billy_Joel "Billy Joel") considered Swift the Beatles' successor.[\[517\]](#cite_note-:5-527)
 
-
 ### Entrepreneurship
-
 
 Media outlets describe Swift as a savvy businesswoman;[\[518\]](#cite_note-528)[\[519\]](#cite_note-Steele-529) in 2024, she topped *Billboard*'s annual Power 100 ranking of the top music industry executives.[\[520\]](#cite_note-530) Swift is known for her traditional album rollouts, consisting of a variety of promotional activities that *Rolling Stone* termed as an inescapable "[multimedia](/wiki/Multimedia "Multimedia") bonanza".[\[521\]](#cite_note-Curto-2020-531)[\[522\]](#cite_note-532) [Easter eggs](/wiki/Easter_egg_(media) "Easter egg (media)") and cryptic teasers became a common practice in contemporary pop music because of Swift.[\[523\]](#cite_note-533) Publications describe her discography as a music "[universe](/wiki/Shared_universe "Shared universe")" subject to analysis by fans, critics, and journalists.[\[524\]](#cite_note-534)[\[525\]](#cite_note-EWMay2-535)[\[526\]](#cite_note-Yahr-2022-536) Swift maintains an active presence on social media and a close relationship with fans, to which many journalists attribute her success.[\[527\]](#cite_note-537)[\[458\]](#cite_note-Khan-2021-468)[\[528\]](#cite_note-538) Her in-house [management](/wiki/Management "Management") team is called 13 Management.[\[529\]](#cite_note-539)
 
 Swift has endorsed many brands and businesses, having launched clothing lines with [L.E.I.](/wiki/L.E.I. "L.E.I.") and [Stella McCartney](/wiki/Stella_McCartney "Stella McCartney"),[\[530\]](#cite_note-540)[\[531\]](#cite_note-541) designed [American Greetings](/wiki/American_Greetings "American Greetings") cards and [Jakks Pacific](/wiki/Jakks_Pacific "Jakks Pacific") dolls,[\[532\]](#cite_note-542)[\[533\]](#cite_note-543) released a number of fragrances with [Elizabeth Arden](/wiki/Elizabeth_Arden "Elizabeth Arden"),[\[534\]](#cite_note-544) and signed multi-year deals with [AT&T](/wiki/AT%26T "AT&T") and [Capital One](/wiki/Capital_One "Capital One").[\[535\]](#cite_note-545)[\[536\]](#cite_note-546) She was a spokesperson for the [National Hockey League](/wiki/National_Hockey_League "National Hockey League")'s [Nashville Predators](/wiki/Nashville_Predators "Nashville Predators") and [Sony Cyber-shot](/wiki/Sony_Cyber-shot) digital cameras,[\[537\]](#cite_note-547)[\[538\]](#cite_note-548) and became the global ambassador for New York City in 2014 and [Record Store Day](/wiki/Record_Store_Day "Record Store Day") in 2022.[\[539\]](#cite_note-549)[\[540\]](#cite_note-Kaufman-2022-550)
 
-
 ### Social activism
 
-
 Further information: [Political impact of Taylor Swift](/wiki/Political_impact_of_Taylor_Swift "Political impact of Taylor Swift")
-
 
 Swift identifies as a [pro-choice](/wiki/Pro-choice) [feminist](/wiki/Feminist),[\[541\]](#cite_note-GuardianInterview2019-551) and is a founding signatory of the [Time's Up](/wiki/Time%27s_Up_(organization) "Time's Up (organization)") movement against sexual harassment.[\[542\]](#cite_note-552) Specifically, she criticized the [US Supreme Court](/wiki/US_Supreme_Court)'s [decision to end federal abortion rights](/wiki/Dobbs_v._Jackson_Women%27s_Health_Organization "Dobbs v. Jackson Women's Health Organization") in 2022.[\[543\]](#cite_note-553) Swift also advocates for [LGBT rights](/wiki/LGBT_rights),[\[544\]](#cite_note-554) and has called for the passing of the [Equality Act](/wiki/Equality_Act_(United_States) "Equality Act (United States)"), which prohibits discrimination based on sex, sexual orientation, and gender identity.[\[545\]](#cite_note-555)[\[546\]](#cite_note-Pride2020-556) She performed during [WorldPride NYC 2019](/wiki/WorldPride_NYC_2019) at the [Stonewall Inn](/wiki/Stonewall_Inn "Stonewall Inn"), a [gay rights](/wiki/Gay_rights) monument, and has donated to the LGBT organizations [Tennessee Equality Project](/wiki/Tennessee_Equality_Project "Tennessee Equality Project") and [GLAAD](/wiki/GLAAD "GLAAD").[\[547\]](#cite_note-TaylorSwiftLGBTQAlly-557)[\[548\]](#cite_note-558)[\[549\]](#cite_note-559)
 
 A supporter of the [March for Our Lives](/wiki/March_for_Our_Lives "March for Our Lives") movement and [gun control reform](/wiki/Gun_politics_in_the_United_States "Gun politics in the United States") in the US,[\[550\]](#cite_note-560) Swift is a vocal critic of [white supremacy](/wiki/White_supremacy "White supremacy"), racism, and [police brutality](/wiki/Police_brutality "Police brutality").[\[323\]](#cite_note-Hiatt-2019-330)[\[541\]](#cite_note-GuardianInterview2019-551) Following the [George Floyd protests](/wiki/George_Floyd_protests "George Floyd protests"), she donated to the [NAACP Legal Defense and Educational Fund](/wiki/NAACP_Legal_Defense_and_Educational_Fund "NAACP Legal Defense and Educational Fund") and the [Black Lives Matter](/wiki/Black_Lives_Matter "Black Lives Matter") movement,[\[551\]](#cite_note-561) called for the [removal](/wiki/Removal_of_Confederate_monuments_and_memorials "Removal of Confederate monuments and memorials") of [Confederate](/wiki/Confederate_States_of_America "Confederate States of America") monuments in Tennessee,[\[552\]](#cite_note-562) and advocated for [Juneteenth](/wiki/Juneteenth "Juneteenth") to become a national holiday.[\[553\]](#cite_note-563) She has openly criticized president [Donald Trump](/wiki/Donald_Trump "Donald Trump").[\[554\]](#cite_note-Schuster_5/19/2023-564) In 2020, Swift urged her fans to check their voter registration ahead of elections, which resulted in 65,000 people registering to vote within one day of her post,[\[555\]](#cite_note-Haag18-565) and endorsed [Joe Biden](/wiki/Joe_Biden "Joe Biden") and [Kamala Harris](/wiki/Kamala_Harris "Kamala Harris") in the [2020 US presidential election](/wiki/2020_US_presidential_election).[\[556\]](#cite_note-566) For the [2024 election](/wiki/2024_US_presidential_election), she endorsed Harris and [Tim Walz](/wiki/Tim_Walz "Tim Walz").[\[557\]](#cite_note-567)[\[558\]](#cite_note-568)
 
-
 ## Wealth and philanthropy
-
 
 Swift became a billionaire in October 2023, becoming the world's first musician to achieve the status "solely based on her songs and performances".[\[559\]](#cite_note-569)[\[560\]](#cite_note-570) As of June 2025, *[Forbes](/wiki/Forbes "Forbes")* estimates her net worth at $1.6 billion,[\[561\]](#cite_note-Forbes-Profile-571) making her the [richest female musician in the world](/wiki/List_of_music_artists_by_net_worth "List of music artists by net worth"),[\[562\]](#cite_note-572) and one of the [wealthiest celebrities](/wiki/List_of_celebrities_by_net_worth "List of celebrities by net worth"). *Forbes* had previously named her the annual [top-earning female musician](/wiki/Forbes_list_of_highest-earning_musicians#Female) in 2016, 2019, 2021, and 2022.[\[563\]](#cite_note-573) She was the [highest-paid celebrity](/wiki/Forbes_Celebrity_100 "Forbes Celebrity 100") of 2016 with $170 million—a feat recognized by *[Guinness World Records](/wiki/Guinness_World_Records "Guinness World Records")* as the highest annual earnings ever for a female musician,[\[564\]](#cite_note-574) which she herself surpassed with $185 million in 2019.[\[565\]](#cite_note-575) Overall, Swift was listed as the *Forbes* [highest-paid female artist of the 2010s](/wiki/Forbes_list_of_highest-earning_musicians#2010s), earning $825 million.[\[566\]](#cite_note-576) She has also developed a real estate portfolio worth $150 million as of 2023, with residential properties in Nashville, New York City, Los Angeles ([Samuel Goldwyn Estate](/wiki/Samuel_Goldwyn_Estate "Samuel Goldwyn Estate")), and [Rhode Island](/wiki/Rhode_Island "Rhode Island") ([High Watch](/wiki/High_Watch "High Watch")).[\[567\]](#cite_note-577)
 
@@ -631,12 +527,9 @@ She has also provided one-off donations. In 2007, she partnered with the Tenness
 
 During the Eras Tour, Swift donated to food banks in Florida, Arizona, and Las Vegas;[\[603\]](#cite_note-613) she also employed local businesses throughout the tour and gave $197 million in [bonus payments](/wiki/Bonus_payment "Bonus payment") to her entire crew.[\[604\]](#cite_note-614)[\[605\]](#cite_note-615)[\[606\]](#cite_note-616) In February 2024, she donated $100,000 to the family of a woman who died in a [shooting at the Kansas City Chiefs' Super Bowl parade](/wiki/2024_Kansas_City_parade_shooting "2024 Kansas City parade shooting").[\[607\]](#cite_note-617)[\[608\]](#cite_note-618) In December 2024, a week before Christmas, Swift donated $250,000 to Operation Breakthrough. The funds were directed to workforce development, childcare, and early learning programs.[\[609\]](#cite_note-619)
 
-
 ## Discography
 
-
 Main articles: [Taylor Swift albums discography](/wiki/Taylor_Swift_albums_discography "Taylor Swift albums discography"), [Taylor Swift singles discography](/wiki/Taylor_Swift_singles_discography "Taylor Swift singles discography"), and [List of songs by Taylor Swift](/wiki/List_of_songs_by_Taylor_Swift "List of songs by Taylor Swift")
-
 
 | **Studio albums**
 
@@ -658,15 +551,11 @@ Main articles: [Taylor Swift albums discography](/wiki/Taylor_Swift_albums_disco
 *[1989 (Taylor's Version)](/wiki/1989_(Taylor%27s_Version))* (2023) |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
-
 ## Filmography
-
 
 Main article: [Taylor Swift videography](/wiki/Taylor_Swift_videography "Taylor Swift videography")
 
-
 This section lists select works only. Refer to the main article for further information.
-
 
 | **Films**
 
@@ -683,12 +572,9 @@ This section lists select works only. Refer to the main article for further info
 *[Taylor Swift: The Eras Tour](/wiki/Taylor_Swift:_The_Eras_Tour)* (2023) |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
-
 ## Tours
 
-
 Main article: [List of Taylor Swift live performances](/wiki/List_of_Taylor_Swift_live_performances "List of Taylor Swift live performances")
-
 
 - [Fearless Tour](/wiki/Fearless_Tour "Fearless Tour") (2009–2010)
 - [Speak Now World Tour](/wiki/Speak_Now_World_Tour "Speak Now World Tour") (2011–2012)
@@ -697,19 +583,14 @@ Main article: [List of Taylor Swift live performances](/wiki/List_of_Taylor_Swif
 - [Reputation Stadium Tour](/wiki/Reputation_Stadium_Tour "Reputation Stadium Tour") (2018)
 - [The Eras Tour](/wiki/The_Eras_Tour "The Eras Tour") (2023–2024)
 
-
 ## See also
 
-
 - [![icon](//upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Audio-input-microphone.png/40px-Audio-input-microphone.png)](/wiki/File:Audio-input-microphone.png)[Pop music portal](/wiki/Portal:Pop_music "Portal:Pop music")
-
 
 - [List of American Grammy Award winners and nominees](/wiki/List_of_American_Grammy_Award_winners_and_nominees "List of American Grammy Award winners and nominees")
 - [List of highest-certified music artists in the United States](/wiki/List_of_highest-certified_music_artists_in_the_United_States "List of highest-certified music artists in the United States")
 
-
 ## Footnotes
-
 
 1.  **[^](#cite_ref-1)** Namely, *[Fearless (Taylor's Version)](/wiki/Fearless_(Taylor%27s_Version) "Fearless (Taylor's Version)")* and *[Red (Taylor's Version)](/wiki/Red_(Taylor%27s_Version) "Red (Taylor's Version)")* in 2021, followed by *[Speak Now (Taylor's Version)](/wiki/Speak_Now_(Taylor%27s_Version) "Speak Now (Taylor's Version)")* and *[1989 (Taylor's Version)](/wiki/1989_(Taylor%27s_Version) "1989 (Taylor's Version)")* in 2023.
 2.  **[^](#cite_ref-132)** Though Swift has properties throughout the US, she identifies Nashville as her home.[\[129\]](#cite_note-130)[\[130\]](#cite_note-131)
@@ -722,9 +603,7 @@ Main article: [List of Taylor Swift live performances](/wiki/List_of_Taylor_Swif
 9.  **[^](#cite_ref-451)** Tied with [Ariana Grande](/wiki/Ariana_Grande "Ariana Grande").[\[442\]](#cite_note-450)
 10. **[^](#cite_ref-457)** Swift has charted seven titles in the top 10 of the Top Album Sales chart twice—on the issues dated January 6, 2024, and January 20, 2024.[\[447\]](#cite_note-456)
 
-
 ## References
-
 
 1.  **[^](#cite_ref-Sutherland-2015_2-0)** Sutherland, Mark (May 23, 2015). ["Taylor Swift interview: 'A relationship? No one's going to sign up for this'"](https://www.telegraph.co.uk/culture/music/rockandpopfeatures/11430433/Taylor-Swift-interview-A-relationship-No-ones-going-to-sign-up-for-this.html). *[The Daily Telegraph](/wiki/The_Daily_Telegraph "The Daily Telegraph")*. [Archived](https://ghostarchive.org/archive/20220110/https://www.telegraph.co.uk/culture/music/rockandpopfeatures/11430433/Taylor-Swift-interview-A-relationship-No-ones-going-to-sign-up-for-this.html) from the original on January 10, 2022. Retrieved April 20, 2020.
 2.  **[^](#cite_ref-3)** Scott, Walter (June 11, 2015). ["What Famous Pop Star Is Named After James Taylor?"](https://parade.com/404291/walterscott/what-famous-pop-star-is-named-after-james-taylor/). *[Parade](/wiki/Parade_(magazine) "Parade (magazine)")*. [Archived](https://web.archive.org/web/20161015232256/https://parade.com/404291/walterscott/what-famous-pop-star-is-named-after-james-taylor/) from the original on October 15, 2016. Retrieved December 12, 2018.
@@ -1375,9 +1254,7 @@ Main article: [List of Taylor Swift live performances](/wiki/List_of_Taylor_Swif
 608. **[^](#cite_ref-618)** Willman, Chris (February 16, 2024). ["Taylor Swift Donates $100K to GoFundMe for Family of Woman Killed at Chiefs Victory Parade"](https://variety.com/2024/music/news/taylor-swift-donation-gofundme-victim-killed-chiefs-parade-1235913423/). *[Variety](/wiki/Variety_(magazine) "Variety (magazine)")*. Retrieved February 16, 2024.
 609. **[^](#cite_ref-619)** West, Bryan (December 21, 2024). ["Taylor Swift donates $250,000 to organization Travis Kelce has supported for last decade"](https://eu.usatoday.com/story/entertainment/music/2024/12/22/taylor-swift-kansas-city-operation-breakthrough-donation/77134418007/). *USA Today*. Retrieved December 22, 2024.
 
-
 ### Cited literature
-
 
 - Cullen, Shaun (2016). "The Innocent and the Runaway: Kanye West, Taylor Swift, and the Cultural Politics of Racial Melodrama". *Journal of Popular Music Studies*. **28** (1): 33–50. [doi](/wiki/Doi_(identifier)):[10.1111/jpms.12160](https://doi.org/10.1111%2Fjpms.12160). [ISSN](/wiki/ISSN_(identifier)) [1524-2226](https://search.worldcat.org/issn/1524-2226).
 - Fischer, Nancy; Seidman, Steven (2016). *Introducing the New Sexuality Studies* (3rd ed.). [Routledge](/wiki/Routledge "Routledge"). [ISBN](/wiki/ISBN_(identifier)) [978-1-317-44918-8](/wiki/Special:BookSources/978-1-317-44918-8 "Special:BookSources/978-1-317-44918-8"). [OCLC](/wiki/OCLC_(identifier)) [953030187](https://search.worldcat.org/oclc/953030187).
@@ -1395,33 +1272,26 @@ Main article: [List of Taylor Swift live performances](/wiki/List_of_Taylor_Swif
 - Spencer, Liv (2010). *Taylor Swift: Every Day Is a Fairytale – The Unofficial Story*. [ECW Press](/wiki/ECW_Press "ECW Press"). [ISBN](/wiki/ISBN_(identifier)) [978-1-55022-931-8](/wiki/Special:BookSources/978-1-55022-931-8 "Special:BookSources/978-1-55022-931-8").
 - [Stone, Alison](/wiki/Alison_Stone "Alison Stone") (2023). "Feminism, Gender and Popular Music". In Partridge, Christopher; Moberg, Marcus (eds.). *The Bloomsbury Handbook of Religion and Popular Music*. [Bloomsbury Academic](/wiki/Bloomsbury_Academic). pp. 57–68. [ISBN](/wiki/ISBN_(identifier)) [9781350286979](/wiki/Special:BookSources/9781350286979 "Special:BookSources/9781350286979").
 
-
 ## External links
 
-
 **Taylor Swift** at Wikipedia's [sister projects](/wiki/Wikipedia:Wikimedia_sister_projects "Wikipedia:Wikimedia sister projects")
-
 
 - ![](//upload.wikimedia.org/wikipedia/en/thumb/4/4a/Commons-logo.svg/20px-Commons-logo.svg.png)[Media](https://commons.wikimedia.org/wiki/Taylor_Swift) from Commons
 - ![](//upload.wikimedia.org/wikipedia/commons/thumb/2/24/Wikinews-logo.svg/40px-Wikinews-logo.svg.png)[News](https://en.wikinews.org/wiki/Category:Taylor_Swift) from Wikinews
 - ![](//upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Wikiquote-logo.svg/40px-Wikiquote-logo.svg.png)[Quotations](https://en.wikiquote.org/wiki/Taylor_Swift) from Wikiquote
 - ![](//upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Wikidata-logo.svg/40px-Wikidata-logo.svg.png)[Data](https://www.wikidata.org/wiki/Q26876) from Wikidata
 
-
 - [Official website](https://taylorswift.com) [![Edit this at Wikidata](//upload.wikimedia.org/wikipedia/en/thumb/8/8a/OOjs_UI_icon_edit-ltr-progressive.svg/20px-OOjs_UI_icon_edit-ltr-progressive.svg.png)](https://www.wikidata.org/wiki/Q26876#P856 "Edit this at Wikidata")
 - [Taylor Swift](https://www.allmusic.com/artist/mn0000472102) at [AllMusic](/wiki/AllMusic_(identifier)) [![Edit this at Wikidata](//upload.wikimedia.org/wikipedia/en/thumb/8/8a/OOjs_UI_icon_edit-ltr-progressive.svg/20px-OOjs_UI_icon_edit-ltr-progressive.svg.png)](https://www.wikidata.org/wiki/Q26876#P1728 "Edit this at Wikidata")
 - [Taylor Swift](https://music.amazon.com/artists/B00157GJ20) at [Amazon Music](/wiki/Amazon_Music "Amazon Music")
-
 
 - [Taylor Swift](https://www.discogs.com/artist/1124645) discography at [Discogs](/wiki/Discogs "Discogs") [![Edit this at Wikidata](//upload.wikimedia.org/wikipedia/en/thumb/8/8a/OOjs_UI_icon_edit-ltr-progressive.svg/20px-OOjs_UI_icon_edit-ltr-progressive.svg.png)](https://www.wikidata.org/wiki/Q26876#P1953 "Edit this at Wikidata")
 - [Taylor Swift](https://www.imdb.com/name/nm2357847/) at [IMDb](/wiki/IMDb_(identifier)) [![Edit this at Wikidata](//upload.wikimedia.org/wikipedia/en/thumb/8/8a/OOjs_UI_icon_edit-ltr-progressive.svg/20px-OOjs_UI_icon_edit-ltr-progressive.svg.png)](https://www.wikidata.org/wiki/Q26876#P345 "Edit this at Wikidata")
 - [Taylor Swift](https://musicbrainz.org/artist/20244d07-534f-4eff-b4d4-930878889970) discography at [MusicBrainz](/wiki/MusicBrainz "MusicBrainz") [![Edit this at Wikidata](//upload.wikimedia.org/wikipedia/en/thumb/8/8a/OOjs_UI_icon_edit-ltr-progressive.svg/20px-OOjs_UI_icon_edit-ltr-progressive.svg.png)](https://www.wikidata.org/wiki/Q26876#P434 "Edit this at Wikidata")
 
-
 | [v](/wiki/Template:Taylor_Swift)
 [t](/wiki/Template_talk:Taylor_Swift)
 [e](/wiki/Special:EditPage/Template:Taylor_Swift)
-
 
 Taylor Swift |  |
 |------------------------------------------------------------------------------------------------------------------------------------------|---|
@@ -1491,11 +1361,9 @@ Taylor Swift |  |
 *[Taylor Swift vs Scooter Braun: Bad Blood](/wiki/Taylor_Swift_vs_Scooter_Braun:_Bad_Blood)* |
 | ![](//upload.wikimedia.org/wikipedia/en/thumb/9/96/Symbol_category_class.svg/20px-Symbol_category_class.svg.png) **[Category](/wiki/Category:Taylor_Swift)** |  |
 
-
 | [v](/wiki/Template:Taylor_Swift_songs)
 [t](/wiki/Template_talk:Taylor_Swift_songs)
 [e](/wiki/Special:EditPage/Template:Taylor_Swift_songs)
-
 
 Taylor Swift [songs](/wiki/List_of_songs_by_Taylor_Swift) |  |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
@@ -1519,14 +1387,11 @@ Taylor Swift [songs](/wiki/List_of_songs_by_Taylor_Swift) |  |
 "[The Best Day](/wiki/The_Best_Day_(Taylor_Swift_song))"
 "[Change](/wiki/Change_(Taylor_Swift_song))"
 
-
 [Taylor's Version](/wiki/Fearless_(Taylor%27s_Version))
-
 
 "[You All Over Me](/wiki/You_All_Over_Me)"
 "[Mr. Perfectly Fine](/wiki/Mr._Perfectly_Fine)"
 "[That's When](/wiki/That%27s_When)"
-
 
  |
 | *[Speak Now](/wiki/Speak_Now)* | "[Mine](/wiki/Mine_(Taylor_Swift_song))"
@@ -1545,15 +1410,12 @@ Taylor Swift [songs](/wiki/List_of_songs_by_Taylor_Swift) |  |
 "[Ours](/wiki/Ours_(song))"
 "[If This Was a Movie](/wiki/If_This_Was_a_Movie)"
 
-
 [Taylor's Version](/wiki/Speak_Now_(Taylor%27s_Version))
-
 
 "[Electric Touch](/wiki/Electric_Touch_(song))"
 "[When Emma Falls in Love](/wiki/When_Emma_Falls_in_Love)"
 "[I Can See You](/wiki/I_Can_See_You_(song))"
 "[Castles Crumbling](/wiki/Castles_Crumbling)"
-
 
  |
 | *[Red](/wiki/Red_(Taylor_Swift_album))* | "[State of Grace](/wiki/State_of_Grace_(song))"
@@ -1569,15 +1431,12 @@ Taylor Swift [songs](/wiki/List_of_songs_by_Taylor_Swift) |  |
 "[Starlight](/wiki/Starlight_(Taylor_Swift_song))"
 "[Begin Again](/wiki/Begin_Again_(Taylor_Swift_song))"
 
-
 [Taylor's Version](/wiki/Red_(Taylor%27s_Version))
-
 
 "[Nothing New](/wiki/Nothing_New_(song))"
 "[Message in a Bottle](/wiki/Message_in_a_Bottle_(Taylor_Swift_song))"
 "[I Bet You Think About Me](/wiki/I_Bet_You_Think_About_Me)"
 "[Forever Winter](/wiki/Forever_Winter)"
-
 
  |
 | *[1989](/wiki/1989_(album))* | "[Welcome to New York](/wiki/Welcome_to_New_York_(song))"
@@ -1597,16 +1456,13 @@ Taylor Swift [songs](/wiki/List_of_songs_by_Taylor_Swift) |  |
 "[You Are in Love](/wiki/You_Are_in_Love)"
 "[New Romantics](/wiki/New_Romantics_(song))"
 
-
 [Taylor's Version](/wiki/1989_(Taylor%27s_Version))
-
 
 "['Slut!'](/wiki/%22Slut!%22)"
 "[Say Don't Go](/wiki/Say_Don%27t_Go)"
 "[Now That We Don't Talk](/wiki/Now_That_We_Don%27t_Talk)"
 "[Suburban Legends](/wiki/Suburban_Legends_(song))"
 "[Is It Over Now?](/wiki/Is_It_Over_Now%3F)"
-
 
  |
 | *[Reputation](/wiki/Reputation_(album))* | "[...Ready for It?](/wiki/...Ready_for_It%3F)"
@@ -1702,16 +1558,13 @@ Department__LINK_END__* | "[Fortnight](/wiki/Fortnight_(song))"
 "[The Alchemy](/wiki/The_Alchemy)"
 "[Clara Bow](/wiki/Clara_Bow_(song))"
 
-
 The Anthology
-
 
 "[The Black Dog](/wiki/The_Black_Dog_(song))"
 "[Imgonnagetyouback](/wiki/Imgonnagetyouback)"
 "[How Did It End?](/wiki/How_Did_It_End%3F)"
 "[So High School](/wiki/So_High_School)"
 "[Thank You Aimee](/wiki/Thank_You_Aimee)"
-
 
  |
 | Soundtrack songs | "[Crazier](/wiki/Crazier)"
@@ -1740,19 +1593,15 @@ The Anthology
 "[All of the Girls You Loved Before](/wiki/All_of_the_Girls_You_Loved_Before)" |
 | ![](//upload.wikimedia.org/wikipedia/en/thumb/9/96/Symbol_category_class.svg/20px-Symbol_category_class.svg.png) **[Category](/wiki/Category:Taylor_Swift_songs)** |  |
 
-
 | [Awards for Taylor Swift](/wiki/List_of_awards_and_nominations_received_by_Taylor_Swift) |  |
 |------------------------------------------------------------------------------------------|---|
 | 
-
 
 [v](/wiki/Template:Academy_of_Country_Music_Award_for_Entertainer_of_the_Year)
 [t](/wiki/Template_talk:Academy_of_Country_Music_Award_for_Entertainer_of_the_Year)
 [e](/wiki/Special:EditPage/Template:Academy_of_Country_Music_Award_for_Entertainer_of_the_Year)
 
-
 [Academy of Country Music Award for Entertainer of the Year](/wiki/Academy_of_Country_Music_Award_for_Entertainer_of_the_Year)
-
 
 [Merle Haggard](/wiki/Merle_Haggard) (1970)
 [Freddie Hart](/wiki/Freddie_Hart) (1971)
@@ -1811,14 +1660,11 @@ Taylor Swift (2012)
 [Chris Stapleton](/wiki/Chris_Stapleton) (2023)
 [Lainey Wilson](/wiki/Lainey_Wilson) (2024)
 
-
 [v](/wiki/Template:American_Music_Award_for_Artist_of_the_Year)
 [t](/wiki/Template_talk:American_Music_Award_for_Artist_of_the_Year)
 [e](/wiki/Special:EditPage/Template:American_Music_Award_for_Artist_of_the_Year)
 
-
 [American Music Award for Artist of the Year](/wiki/American_Music_Award_for_Artist_of_the_Year)
-
 
 [TLC](/wiki/TLC_(group)) (1996)
 [Garth Brooks](/wiki/Garth_Brooks) (1999)
@@ -1846,14 +1692,11 @@ Taylor Swift (2020)
 Taylor Swift (2022)
 [Billie Eilish](/wiki/Billie_Eilish) (2025)
 
-
 [v](/wiki/Template:American_Music_Award_for_Favorite_Adult_Contemporary_Artist)
 [t](/wiki/Template_talk:American_Music_Award_for_Favorite_Adult_Contemporary_Artist)
 [e](/wiki/Special:EditPage/Template:American_Music_Award_for_Favorite_Adult_Contemporary_Artist)
 
-
 [American Music Award for Favorite Adult Contemporary Artist](/wiki/American_Music_Award_for_Favorite_Adult_Contemporary_Artist)
-
 
 [Natalie Cole](/wiki/Natalie_Cole) (1992)
 [Michael Bolton](/wiki/Michael_Bolton) (1993)
@@ -1886,14 +1729,11 @@ Taylor Swift (2015)
 Taylor Swift (2019)
 [Jonas Brothers](/wiki/Jonas_Brothers) (2020)
 
-
 [v](/wiki/Template:American_Music_Award_for_Favorite_Country_Female_Artist)
 [t](/wiki/Template_talk:American_Music_Award_for_Favorite_Country_Female_Artist)
 [e](/wiki/Special:EditPage/Template:American_Music_Award_for_Favorite_Country_Female_Artist)
 
-
 [American Music Award for Favorite Country Female Artist](/wiki/American_Music_Award_for_Favorite_Country_Female_Artist)
-
 
 [Lynn Anderson](/wiki/Lynn_Anderson) (1974)
 [Olivia Newton-John](/wiki/Olivia_Newton-John) (1975)
@@ -1947,14 +1787,11 @@ Taylor Swift (2013)
 Taylor Swift (2022)
 [Beyoncé](/wiki/Beyonc%C3%A9) (2025)
 
-
 [v](/wiki/Template:American_Music_Award_for_Favorite_Pop/Rock_Female_Artist)
 [t](/wiki/Template_talk:American_Music_Award_for_Favorite_Pop/Rock_Female_Artist)
 [e](/wiki/Special:EditPage/Template:American_Music_Award_for_Favorite_Pop/Rock_Female_Artist)
 
-
 [American Music Award for Favorite Pop/Rock Female Artist](/wiki/American_Music_Award_for_Favorite_Pop/Rock_Female_Artist)
-
 
 [Helen Reddy](/wiki/Helen_Reddy) (1974)
 [Olivia Newton-John](/wiki/Olivia_Newton-John) (1975)
@@ -2008,14 +1845,11 @@ Taylor Swift (2021)
 Taylor Swift (2022)
 [Billie Eilish](/wiki/Billie_Eilish) (2025)
 
-
 [v](/wiki/Template:Brit_International_Female)
 [t](/wiki/Template_talk:Brit_International_Female)
 [e](/wiki/Special:EditPage/Template:Brit_International_Female)
 
-
 [Brit Award for International Female Solo Artist](/wiki/Brit_Award_for_International_Female_Solo_Artist)
-
 
 [Tracy Chapman](/wiki/Tracy_Chapman) (1989)
 [Sinéad O'Connor](/wiki/Sin%C3%A9ad_O%27Connor) (1991)
@@ -2048,14 +1882,11 @@ Taylor Swift (2015)
 [Billie Eilish](/wiki/Billie_Eilish) (2020)
 [Billie Eilish](/wiki/Billie_Eilish) (2021)
 
-
 [v](/wiki/Template:CMA_Entertainer_of_the_Year)
 [t](/wiki/Template_talk:CMA_Entertainer_of_the_Year)
 [e](/wiki/Special:EditPage/Template:CMA_Entertainer_of_the_Year)
 
-
 [CMA Entertainer of the Year](/wiki/Country_Music_Association_Award_for_Entertainer_of_the_Year)
-
 
 [Eddy Arnold](/wiki/Eddy_Arnold) (1967)
 [Glen Campbell](/wiki/Glen_Campbell) (1968)
@@ -2116,14 +1947,11 @@ Taylor Swift (2011)
 [Lainey Wilson](/wiki/Lainey_Wilson) (2023)
 [Morgan Wallen](/wiki/Morgan_Wallen) (2024)
 
-
 [v](/wiki/Template:CMA_Female_Vocalist_of_the_Year)
 [t](/wiki/Template_talk:CMA_Female_Vocalist_of_the_Year)
 [e](/wiki/Special:EditPage/Template:CMA_Female_Vocalist_of_the_Year)
 
-
 [CMA Female Vocalist of the Year](/wiki/Country_Music_Association_Award_for_Female_Vocalist_of_the_Year)
-
 
 [Loretta Lynn](/wiki/Loretta_Lynn) (1967)
 [Tammy Wynette](/wiki/Tammy_Wynette) (1968)
@@ -2184,14 +2012,11 @@ Taylor Swift (2009)
 [Lainey Wilson](/wiki/Lainey_Wilson) (2023)
 [Lainey Wilson](/wiki/Lainey_Wilson) (2024)
 
-
 [v](/wiki/Template:CMA_New_Artist)
 [t](/wiki/Template_talk:CMA_New_Artist)
 [e](/wiki/Special:EditPage/Template:CMA_New_Artist)
 
-
 [CMA New Artist of the Year](/wiki/Country_Music_Association_Award_for_New_Artist_of_the_Year)
-
 
 [Terri Gibbs](/wiki/Terri_Gibbs) (1981)
 [Ricky Skaggs](/wiki/Ricky_Skaggs) (1982)
@@ -2238,26 +2063,20 @@ Taylor Swift (2007)
 [Jelly Roll](/wiki/Jelly_Roll_(singer)) (2023)
 [Megan Moroney](/wiki/Megan_Moroney) (2024)
 
-
 [v](/wiki/Template:CMA_Album_of_the_Year)
 [t](/wiki/Template_talk:CMA_Album_of_the_Year)
 [e](/wiki/Special:EditPage/Template:CMA_Album_of_the_Year)
 
-
 [CMA Album of the Year](/wiki/Country_Music_Association_Award_for_Album_of_the_Year)
 
-
 1967−1970
-
 
 [There Goes My Everything](/wiki/There_Goes_My_Everything_(album)) – [Jack Greene](/wiki/Jack_Greene) (1967)
 [Johnny Cash at Folsom Prison](/wiki/At_Folsom_Prison) – [Johnny Cash](/wiki/Johnny_Cash) (1968)
 [Johnny Cash At San Quentin](/wiki/At_San_Quentin) – [Johnny Cash](/wiki/Johnny_Cash) (1969)
 [Okie from Muskogee](/wiki/Okie_from_Muskogee) – [Merle Haggard](/wiki/Merle_Haggard) and [the Strangers](/wiki/The_Strangers_(American_band)) (1970)
 
-
 1971−1980
-
 
 [I Won't Mention It Again](/wiki/I_Won%27t_Mention_It_Again_(album)) – [Ray Price](/wiki/Ray_Price) (1971)
 [Let Me Tell You About a Song](/wiki/Let_Me_Tell_You_About_a_Song) – [Merle Haggard](/wiki/Merle_Haggard) and [the Strangers](/wiki/The_Strangers_(American_band)) (1972)
@@ -2270,9 +2089,7 @@ Taylor Swift (2007)
 [The Gambler](/wiki/The_Gambler_(album)) – [Kenny Rogers](/wiki/Kenny_Rogers) (1979)
 [Coal Miner's Daughter](/wiki/Coal_Miner%27s_Daughter_(soundtrack)) – Various artists (1980)
 
-
 1981−1990
-
 
 [I Believe in You](/wiki/I_Believe_in_You_(Don_Williams_album)) – [Don Williams](/wiki/Don_Williams) (1981)
 [Always on My Mind](/wiki/Always_on_My_Mind_(Willie_Nelson_album)) – [Willie Nelson](/wiki/Willie_Nelson) (1982)
@@ -2285,9 +2102,7 @@ Taylor Swift (2007)
 [Will the Circle Be Unbroken: Volume Two](/wiki/Will_the_Circle_Be_Unbroken:_Volume_Two) – [Nitty Gritty Dirt Band](/wiki/Nitty_Gritty_Dirt_Band) (1989)
 [Pickin' on Nashville](/wiki/Pickin%27_on_Nashville) – [The Kentucky Headhunters](/wiki/The_Kentucky_Headhunters) (1990)
 
-
 1991−2000
-
 
 [No Fences](/wiki/No_Fences) – [Garth Brooks](/wiki/Garth_Brooks) (1991)
 [Ropin' the Wind](/wiki/Ropin%27_the_Wind) – [Garth Brooks](/wiki/Garth_Brooks) (1992)
@@ -2300,9 +2115,7 @@ Taylor Swift (2007)
 [A Place in the Sun](/wiki/A_Place_in_the_Sun_(Tim_McGraw_album)) – [Tim McGraw](/wiki/Tim_McGraw) (1999)
 [Fly](/wiki/Fly_(Dixie_Chicks_album)) – [The Dixie Chicks](/wiki/The_Chicks) (2000)
 
-
 2001−2010
-
 
 [O Brother, Where Art Thou?](/wiki/O_Brother,_Where_Art_Thou%3F_(soundtrack)) – Various artists (2001)
 [Drive](/wiki/Drive_(Alan_Jackson_album)) – [Alan Jackson](/wiki/Alan_Jackson) (2002)
@@ -2315,9 +2128,7 @@ Taylor Swift (2007)
 [Fearless](/wiki/Fearless_(Taylor_Swift_album)) – Taylor Swift (2009)
 [Revolution](/wiki/Revolution_(Miranda_Lambert_album)) – [Miranda Lambert](/wiki/Miranda_Lambert) (2010)
 
-
 2011−2020
-
 
 [My Kinda Party](/wiki/My_Kinda_Party) – [Jason Aldean](/wiki/Jason_Aldean) (2011)
 [Chief](/wiki/Chief_(Eric_Church_album)) – [Eric Church](/wiki/Eric_Church) (2012)
@@ -2330,35 +2141,27 @@ Taylor Swift (2007)
 [Girl](/wiki/Girl_(Maren_Morris_album)) – [Maren Morris](/wiki/Maren_Morris) (2019)
 [What You See Is What You Get](/wiki/What_You_See_Is_What_You_Get_(Luke_Combs_album)) – [Luke Combs](/wiki/Luke_Combs) (2020)
 
-
 2021−2030
-
 
 [Starting Over](/wiki/Starting_Over_(Chris_Stapleton_album)) – [Chris Stapleton](/wiki/Chris_Stapleton) (2021)
 [Growin' Up](/wiki/Growin%27_Up_(Luke_Combs_album)) – [Luke Combs](/wiki/Luke_Combs) (2022)
 [Bell Bottom Country](/wiki/Bell_Bottom_Country) - [Lainey Wilson](/wiki/Lainey_Wilson) (2023)
 [Leather](/wiki/Leather_(album)) - [Cody Johnson](/wiki/Cody_Johnson) (2024)
 
-
 [v](/wiki/Template:CMA_for_Song_of_the_Year)
 [t](/wiki/Template_talk:CMA_for_Song_of_the_Year)
 [e](/wiki/Special:EditPage/Template:CMA_for_Song_of_the_Year)
 
-
 [CMA Song of the Year](/wiki/Country_Music_Association_Award_for_Song_of_the_Year)
 
-
 1967−1970
-
 
 "[There Goes My Everything](/wiki/There_Goes_My_Everything_(song))" - [Dallas Frazier](/wiki/Dallas_Frazier) (1967)
 "[Honey](/wiki/Honey_(Bobby_Goldsboro_song))" - [Bobby Russell](/wiki/Bobby_Russell) (1968)
 "[The Carroll County Accident](/wiki/The_Carroll_County_Accident)" - [Bob Ferguson](/wiki/Bob_Ferguson_(musician)) (1969)
 "[Sunday Mornin' Comin' Down](/wiki/Sunday_Mornin%27_Comin%27_Down)" - [Kris Kristofferson](/wiki/Kris_Kristofferson) (1970)
 
-
 1971−1980
-
 
 "[Easy Loving](/wiki/Easy_Loving)" - [Freddie Hart](/wiki/Freddie_Hart) (1971−72)
 "[Behind Closed Doors](/wiki/Behind_Closed_Doors_(Charlie_Rich_song))" - [Kenny O'Dell](/wiki/Kenny_O%27Dell) (1973)
@@ -2370,9 +2173,7 @@ Taylor Swift (2007)
 "[The Gambler](/wiki/The_Gambler_(song))" - [Don Schlitz](/wiki/Don_Schlitz) (1979)
 "[He Stopped Loving Her Today](/wiki/He_Stopped_Loving_Her_Today)" - [Bobby Braddock](/wiki/Bobby_Braddock), [Curly Putman](/wiki/Curly_Putman) (1980)
 
-
 1981−1990
-
 
 "[He Stopped Loving Her Today](/wiki/He_Stopped_Loving_Her_Today)" - [Bobby Braddock](/wiki/Bobby_Braddock), [Curly Putman](/wiki/Curly_Putman) (1981)
 "[Always on My Mind](/wiki/Always_on_My_Mind)" - [Wayne Carson](/wiki/Wayne_Carson), [Johnny Christopher](/wiki/Johnny_Christopher), [Mark James](/wiki/Mark_James_(songwriter)) (1982−83)
@@ -2384,9 +2185,7 @@ Taylor Swift (2007)
 "[Chiseled in Stone](/wiki/Chiseled_in_Stone)" - [Max D. Barnes](/wiki/Max_D._Barnes), [Vern Gosdin](/wiki/Vern_Gosdin) (1989)
 "[Where've You Been](/wiki/Where%27ve_You_Been)" - [Don Henry](/wiki/Don_Henry_(musician)), [Jon Vezner](/wiki/Jon_Vezner) (1990)
 
-
 1991−2000
-
 
 "[When I Call Your Name](/wiki/When_I_Call_Your_Name_(Vince_Gill_song))" - [Tim DuBois](/wiki/Tim_DuBois), [Vince Gill](/wiki/Vince_Gill) (1991)
 "[Look at Us](/wiki/Look_at_Us_(Vince_Gill_song))" - [Vince Gill](/wiki/Vince_Gill), [Max D. Barnes](/wiki/Max_D._Barnes) (1992)
@@ -2399,9 +2198,7 @@ Taylor Swift (2007)
 "[This Kiss](/wiki/This_Kiss_(Faith_Hill_song))" - [Beth Nielsen Chapman](/wiki/Beth_Nielsen_Chapman), Robin Lerner, Annie Roboff (1999)
 "[I Hope You Dance](/wiki/I_Hope_You_Dance)" - [Mark D. Sanders](/wiki/Mark_D._Sanders), [Tia Sillers](/wiki/Tia_Sillers) (2000)
 
-
 2001−2010
-
 
 "[Murder on Music Row](/wiki/Murder_on_Music_Row)" - [Larry Cordle](/wiki/Larry_Cordle), Larry Shell (2001)
 "[Where Were You (When the World Stopped Turning)](/wiki/Where_Were_You_(When_the_World_Stopped_Turning))" - [Alan Jackson](/wiki/Alan_Jackson) (2002)
@@ -2414,9 +2211,7 @@ Taylor Swift (2007)
 "[In Color](/wiki/In_Color_(song))" - [Jamey Johnson](/wiki/Jamey_Johnson), [Lee Thomas Miller](/wiki/Lee_Thomas_Miller), [James Otto](/wiki/James_Otto) (2009)
 "[The House That Built Me](/wiki/The_House_That_Built_Me)" - [Tom Douglas](/wiki/Tom_Douglas_(songwriter)), [Allen Shamblin](/wiki/Allen_Shamblin) (2010)
 
-
 2011−2020
-
 
 "[If I Die Young](/wiki/If_I_Die_Young)" - [Kimberly Perry](/wiki/Kimberly_Perry) (2011)
 "[Over You](/wiki/Over_You_(Miranda_Lambert_song))" - [Miranda Lambert](/wiki/Miranda_Lambert), [Blake Shelton](/wiki/Blake_Shelton) (2012)
@@ -2428,9 +2223,7 @@ Taylor Swift (2007)
 "[Broken Halos](/wiki/Broken_Halos)" - [Mike Henderson](/wiki/Mike_Henderson), [Chris Stapleton](/wiki/Chris_Stapleton) (2018)
 "[Beautiful Crazy](/wiki/Beautiful_Crazy)" - [Luke Combs](/wiki/Luke_Combs), [Wyatt Durrette](/wiki/Wyatt_Durrette_(songwriter)), Robert Williford (2019)
 
-
 2021−2030
-
 
 "[The Bones](/wiki/The_Bones_(song))" - [Maren Morris](/wiki/Maren_Morris), [Jimmy Robbins](/wiki/Jimmy_Robbins), [Laura Veltz](/wiki/Laura_Veltz) (2020)
 "[Starting Over](/wiki/Starting_Over_(Chris_Stapleton_song))" - [Mike Henderson](/wiki/Mike_Henderson), [Chris Stapleton](/wiki/Chris_Stapleton) (2021)
@@ -2438,14 +2231,11 @@ Taylor Swift (2007)
 "[Fast Car](/wiki/Fast_Car)" - [Tracy Chapman](/wiki/Tracy_Chapman) (2023)
 "[White Horse](/wiki/White_Horse_(Chris_Stapleton_song))" - [Chris Stapleton](/wiki/Chris_Stapleton), [Dan Wilson](/wiki/Dan_Wilson_(musician)) (2024)
 
-
 [v](/wiki/Template:GLAAD_Vanguard_Award)
 [t](/wiki/Template_talk:GLAAD_Vanguard_Award)
 [e](/wiki/Special:EditPage/Template:GLAAD_Vanguard_Award)
 
-
 [GLAAD Vanguard Award](/wiki/GLAAD_Vanguard_Award)
-
 
 [Roseanne Barr](/wiki/Roseanne_Barr) & [Tom Arnold](/wiki/Tom_Arnold_(actor)) (1993)
 [Aaron Spelling](/wiki/Aaron_Spelling) (1994)
@@ -2477,23 +2267,17 @@ Taylor Swift (2020)
 [Bad Bunny](/wiki/Bad_Bunny) (2023)
 [Oprah Winfrey](/wiki/Oprah_Winfrey) (2024)
 
-
 [v](/wiki/Template:Grammy_Award_for_Album_of_the_Year)
 [t](/wiki/Template_talk:Grammy_Award_for_Album_of_the_Year)
 [e](/wiki/Special:EditPage/Template:Grammy_Award_for_Album_of_the_Year)
 
-
 [Grammy Award for Album of the Year](/wiki/Grammy_Award_for_Album_of_the_Year)
-
 
 1950s
 
-
 [The Music from Peter Gunn](/wiki/The_Music_from_Peter_Gunn) – [Henry Mancini](/wiki/Henry_Mancini) (1959)
 
-
 1960s
-
 
 [Come Dance with Me!](/wiki/Come_Dance_with_Me!_(album)) – [Frank Sinatra](/wiki/Frank_Sinatra) (1960)
 [The Button-Down Mind of Bob Newhart](/wiki/The_Button-Down_Mind_of_Bob_Newhart) – [Bob Newhart](/wiki/Bob_Newhart) (1961)
@@ -2506,9 +2290,7 @@ Taylor Swift (2020)
 [Sgt. Pepper's Lonely Hearts Club Band](/wiki/Sgt._Pepper%27s_Lonely_Hearts_Club_Band) – [The Beatles](/wiki/The_Beatles) (1968)
 [By the Time I Get to Phoenix](/wiki/By_the_Time_I_Get_to_Phoenix_(Glen_Campbell_album)) – [Glen Campbell](/wiki/Glen_Campbell) (1968)
 
-
 1970s
-
 
 [Blood, Sweat & Tears](/wiki/Blood,_Sweat_%26_Tears_(Blood,_Sweat_%26_Tears_album)) – [Blood, Sweat & Tears](/wiki/Blood,_Sweat_%26_Tears) (1970)
 [Bridge over Troubled Water](/wiki/Bridge_over_Troubled_Water) – [Simon & Garfunkel](/wiki/Simon_%26_Garfunkel) (1971)
@@ -2521,9 +2303,7 @@ Taylor Swift (2020)
 [Rumours](/wiki/Rumours_(album)) – [Fleetwood Mac](/wiki/Fleetwood_Mac) (1978)
 [Saturday Night Fever](/wiki/Saturday_Night_Fever_(soundtrack)) – Various Artists (1979)
 
-
 1980s
-
 
 [52nd Street](/wiki/52nd_Street_(album)) – [Billy Joel](/wiki/Billy_Joel) (1980)
 [Christopher Cross](/wiki/Christopher_Cross_(album)) – [Christopher Cross](/wiki/Christopher_Cross) (1981)
@@ -2536,9 +2316,7 @@ Taylor Swift (2020)
 [The Joshua Tree](/wiki/The_Joshua_Tree) – [U2](/wiki/U2) (1988)
 [Faith](/wiki/Faith_(George_Michael_album)) – [George Michael](/wiki/George_Michael) (1989)
 
-
 1990s
-
 
 [Nick of Time](/wiki/Nick_of_Time_(album)) – [Bonnie Raitt](/wiki/Bonnie_Raitt) (1990)
 [Back on the Block](/wiki/Back_on_the_Block) – [Quincy Jones](/wiki/Quincy_Jones) and Various Artists (1991)
@@ -2551,9 +2329,7 @@ Taylor Swift (2020)
 [Time Out of Mind](/wiki/Time_Out_of_Mind_(Bob_Dylan_album)) – [Bob Dylan](/wiki/Bob_Dylan) (1998)
 [The Miseducation of Lauryn Hill](/wiki/The_Miseducation_of_Lauryn_Hill) – [Lauryn Hill](/wiki/Lauryn_Hill) (1999)
 
-
 2000s
-
 
 [Supernatural](/wiki/Supernatural_(Santana_album)) – [Santana](/wiki/Santana_(band)) (2000)
 [Two Against Nature](/wiki/Two_Against_Nature) – [Steely Dan](/wiki/Steely_Dan) (2001)
@@ -2566,9 +2342,7 @@ Taylor Swift (2020)
 [River: The Joni Letters](/wiki/River:_The_Joni_Letters) – [Herbie Hancock](/wiki/Herbie_Hancock) (2008)
 [Raising Sand](/wiki/Raising_Sand) – [Robert Plant](/wiki/Robert_Plant) & [Alison Krauss](/wiki/Alison_Krauss) (2009)
 
-
 2010s
-
 
 [Fearless](/wiki/Fearless_(Taylor_Swift_album)) – Taylor Swift (2010)
 [The Suburbs](/wiki/The_Suburbs) – [Arcade Fire](/wiki/Arcade_Fire) (2011)
@@ -2581,9 +2355,7 @@ Taylor Swift (2020)
 [24K Magic](/wiki/24K_Magic_(album)) – [Bruno Mars](/wiki/Bruno_Mars) (2018)
 [Golden Hour](/wiki/Golden_Hour_(Kacey_Musgraves_album)) – [Kacey Musgraves](/wiki/Kacey_Musgraves) (2019)
 
-
 2020s
-
 
 [When We All Fall Asleep, Where Do We Go?](/wiki/When_We_All_Fall_Asleep,_Where_Do_We_Go%3F) – [Billie Eilish](/wiki/Billie_Eilish) (2020)
 [Folklore](/wiki/Folklore_(Taylor_Swift_album)) – Taylor Swift (2021)
@@ -2592,26 +2364,20 @@ Taylor Swift (2020)
 [Midnights](/wiki/Midnights) – Taylor Swift (2024)
 [Cowboy Carter](/wiki/Cowboy_Carter) – [Beyoncé](/wiki/Beyonc%C3%A9) (2025)
 
-
 [v](/wiki/Template:Grammy_Award_for_Best_Country_Album)
 [t](/wiki/Template_talk:Grammy_Award_for_Best_Country_Album)
 [e](/wiki/Special:EditPage/Template:Grammy_Award_for_Best_Country_Album)
 
-
 [Grammy Award for Best Contemporary Country Album](/wiki/Grammy_Award_for_Best_Contemporary_Country_Album)
-
 
 1965–1966
 (as Best Country & Western Album)
 
-
 Dang Me/Chug-a-Lug – [Roger Miller](/wiki/Roger_Miller) (1965)
 [The Return of Roger Miller](/wiki/The_Return_of_Roger_Miller) – [Roger Miller](/wiki/Roger_Miller) (1967)
 
-
 1995–2025
 (as Best Country Album)
-
 
 [Stones in the Road](/wiki/Stones_in_the_Road) – [Mary Chapin Carpenter](/wiki/Mary_Chapin_Carpenter) (1995)
 [The Woman in Me](/wiki/The_Woman_in_Me_(album)) – [Shania Twain](/wiki/Shania_Twain) (1996)
@@ -2645,20 +2411,15 @@ Timeless: Hank Williams Tribute – Various Artists (2002)
 [Bell Bottom Country](/wiki/Bell_Bottom_Country) – [Lainey Wilson](/wiki/Lainey_Wilson) (2024)
 [Cowboy Carter](/wiki/Cowboy_Carter) – [Beyoncé](/wiki/Beyonc%C3%A9) (2025)
 
-
 From 1966–1993, the category was retired.
-
 
 [v](/wiki/Template:Grammy_Award_for_Best_Country_Solo_Performance)
 [t](/wiki/Template_talk:Grammy_Award_for_Best_Country_Solo_Performance)
 [e](/wiki/Special:EditPage/Template:Grammy_Award_for_Best_Country_Solo_Performance)
 
-
 [Grammy Award for Best Country Solo Performance](/wiki/Grammy_Award_for_Best_Country_Solo_Performance)
 
-
 2010s
-
 
 "[Mean](/wiki/Mean_(song))" – Taylor Swift (2012)
 "[Blown Away](/wiki/Blown_Away_(Carrie_Underwood_song))" – [Carrie Underwood](/wiki/Carrie_Underwood) (2013)
@@ -2669,9 +2430,7 @@ From 1966–1993, the category was retired.
 "[Either Way](/wiki/Either_Way_(Lee_Ann_Womack_song))" – [Chris Stapleton](/wiki/Chris_Stapleton) (2018)
 "[Butterflies](/wiki/Butterflies_(Kacey_Musgraves_song))" – [Kacey Musgraves](/wiki/Kacey_Musgraves) (2019)
 
-
 2020s
-
 
 "Ride Me Back Home" – [Willie Nelson](/wiki/Willie_Nelson) (2020)
 "When My Amy Prays" – [Vince Gill](/wiki/Vince_Gill) (2021)
@@ -2680,20 +2439,15 @@ From 1966–1993, the category was retired.
 "[White Horse](/wiki/White_Horse_(Chris_Stapleton_song))" – [Chris Stapleton](/wiki/Chris_Stapleton) (2024)
 "It Takes a Woman" – [Chris Stapleton](/wiki/Chris_Stapleton) (2025)
 
-
 [v](/wiki/Template:Grammy_Award_for_Best_Country_Song)
 [t](/wiki/Template_talk:Grammy_Award_for_Best_Country_Song)
 [e](/wiki/Special:EditPage/Template:Grammy_Award_for_Best_Country_Song)
 
-
 [Grammy Award for Best Country Song](/wiki/Grammy_Award_for_Best_Country_Song)
-
 
 Awarded to songwriters
 
-
 1960s
-
 
 "[Dang Me](/wiki/Dang_Me)" – [Roger Miller](/wiki/Roger_Miller) (1965)
 "[King of the Road](/wiki/King_of_the_Road_(song))" – [Roger Miller](/wiki/Roger_Miller) (1966)
@@ -2701,9 +2455,7 @@ Awarded to songwriters
 "[Gentle on My Mind](/wiki/Gentle_on_My_Mind)" – [John Hartford](/wiki/John_Hartford) (1968)
 "[Little Green Apples](/wiki/Little_Green_Apples)" – [Bobby Russell](/wiki/Bobby_Russell) (1969)
 
-
 1970s
-
 
 "[A Boy Named Sue](/wiki/A_Boy_Named_Sue)" – [Shel Silverstein](/wiki/Shel_Silverstein) (1970)
 "[My Woman, My Woman, My Wife](/wiki/My_Woman,_My_Woman,_My_Wife)" – [Marty Robbins](/wiki/Marty_Robbins) (1971)
@@ -2716,9 +2468,7 @@ Awarded to songwriters
 "[Don't It Make My Brown Eyes Blue](/wiki/Don%27t_It_Make_My_Brown_Eyes_Blue)" – [Richard Leigh](/wiki/Richard_Leigh_(songwriter)) (1978)
 "[The Gambler](/wiki/The_Gambler_(song))" – [Don Schlitz](/wiki/Don_Schlitz) (1979)
 
-
 1980s
-
 
 "[You Decorated My Life](/wiki/You_Decorated_My_Life)" – Debbie Hupp & [Bob Morrison](/wiki/Bob_Morrison_(songwriter)) (1980)
 "[On the Road Again](/wiki/On_the_Road_Again_(Willie_Nelson_song))" – [Willie Nelson](/wiki/Willie_Nelson) (1981)
@@ -2731,9 +2481,7 @@ Awarded to songwriters
 "[Forever and Ever, Amen](/wiki/Forever_and_Ever,_Amen)" – [Paul Overstreet](/wiki/Paul_Overstreet) & [Don Schlitz](/wiki/Don_Schlitz) (1988)
 "[Hold Me](/wiki/Hold_Me_(K._T._Oslin_song))" – [K. T. Oslin](/wiki/K._T._Oslin) (1989)
 
-
 1990s
-
 
 "[After All This Time](/wiki/After_All_This_Time_(Rodney_Crowell_song))" – [Rodney Crowell](/wiki/Rodney_Crowell) (1980)
 "[Where've You Been](/wiki/Where%27ve_You_Been)" – [Don Henry](/wiki/Don_Henry_(musician)) & [Jon Vezner](/wiki/Jon_Vezner) (1991)
@@ -2746,9 +2494,7 @@ Awarded to songwriters
 "[Butterfly Kisses](/wiki/Butterfly_Kisses_(song))" – [Bob Carlisle](/wiki/Bob_Carlisle) & [Randy Thomas](/wiki/Randy_Thomas_(musician)) (1998)
 "[You're Still the One](/wiki/You%27re_Still_the_One)" – [Robert John "Mutt" Lange](/wiki/Mutt_Lange) & [Shania Twain](/wiki/Shania_Twain) (1999)
 
-
 2000s
-
 
 "[Come On Over](/wiki/Come_On_Over_(Shania_Twain_song))" – [Robert John "Mutt" Lange](/wiki/Mutt_Lange) & [Shania Twain](/wiki/Shania_Twain) (2000)
 "[I Hope You Dance](/wiki/I_Hope_You_Dance)" – [Mark D. Sanders](/wiki/Mark_D._Sanders) & [Tia Sillers](/wiki/Tia_Sillers) (2001)
@@ -2761,9 +2507,7 @@ Awarded to songwriters
 "[Before He Cheats](/wiki/Before_He_Cheats)" – [Chris Tompkins](/wiki/Chris_Tompkins) & [Josh Kear](/wiki/Josh_Kear) (2008)
 "[Stay](/wiki/Stay_(Sugarland_song))" – [Jennifer Nettles](/wiki/Jennifer_Nettles) (2009)
 
-
 2010s
-
 
 "[White Horse](/wiki/White_Horse_(Taylor_Swift_song))" – [Liz Rose](/wiki/Liz_Rose) & Taylor Swift (2010)
 "[Need You Now](/wiki/Need_You_Now_(Lady_Antebellum_song))" – [Dave Haywood](/wiki/Dave_Haywood), [Josh Kear](/wiki/Josh_Kear), [Charles Kelley](/wiki/Charles_Kelley) & [Hillary Scott](/wiki/Hillary_Scott) (2011)
@@ -2776,9 +2520,7 @@ Awarded to songwriters
 "[Broken Halos](/wiki/Broken_Halos)" – [Mike Henderson](/wiki/Mike_Henderson) & [Chris Stapleton](/wiki/Chris_Stapleton) (2018)
 "[Space Cowboy](/wiki/Space_Cowboy_(Kacey_Musgraves_song))" – [Luke Laird](/wiki/Luke_Laird), [Shane McAnally](/wiki/Shane_McAnally), & [Kacey Musgraves](/wiki/Kacey_Musgraves) (2019)
 
-
 2020s
-
 
 "[Bring My Flowers Now](/wiki/Bring_My_Flowers_Now)" – [Brandi Carlile](/wiki/Brandi_Carlile), [Phil Hanseroth, Tim Hanseroth](/wiki/Phil_and_Tim_Hanseroth), & [Tanya Tucker](/wiki/Tanya_Tucker) (2020)
 "Crowded Table" – [Brandi Carlile](/wiki/Brandi_Carlile), [Natalie Hemby](/wiki/Natalie_Hemby) & [Lori McKenna](/wiki/Lori_McKenna) (2021)
@@ -2787,26 +2529,20 @@ Awarded to songwriters
 "[White Horse](/wiki/White_Horse_(Chris_Stapleton_song))" – [Chris Stapleton](/wiki/Chris_Stapleton) & [Dan Wilson](/wiki/Dan_Wilson_(musician)) (2024)
 "[The Architect](/wiki/The_Architect_(Kacey_Musgraves_song))" – [Shane McAnally](/wiki/Shane_McAnally), [Kacey Musgraves](/wiki/Kacey_Musgraves) & [Josh Osborne](/wiki/Josh_Osborne) (2025)
 
-
 [v](/wiki/Template:Grammy_Award_for_Best_Music_Video)
 [t](/wiki/Template_talk:Grammy_Award_for_Best_Music_Video)
 [e](/wiki/Special:EditPage/Template:Grammy_Award_for_Best_Music_Video)
 
-
 [Grammy Award for Best Music Video](/wiki/Grammy_Award_for_Best_Music_Video)
 
-
 1980s
-
 
 "[Girls on Film](/wiki/Girls_on_Film)" / "[Hungry Like the Wolf](/wiki/Hungry_Like_the_Wolf)" – [Duran Duran](/wiki/Duran_Duran) (1984)
 "[Jazzin' for Blue Jean](/wiki/Jazzin%27_for_Blue_Jean)" – [David Bowie](/wiki/David_Bowie) (1985)
 "[We Are the World](/wiki/We_Are_the_World)" – [USA for Africa](/wiki/USA_for_Africa) (1986)
 "[Brothers in Arms](/wiki/Brothers_in_Arms_(song))" – [Dire Straits](/wiki/Dire_Straits) (1987)
 
-
 1990s
-
 
 "[Leave Me Alone](/wiki/Leave_Me_Alone_(Michael_Jackson_song))" – [Michael Jackson](/wiki/Michael_Jackson) (1990)
 "[Opposites Attract](/wiki/Opposites_Attract)" – [Paula Abdul](/wiki/Paula_Abdul) (1991)
@@ -2819,9 +2555,7 @@ Awarded to songwriters
 "[Got 'til It's Gone](/wiki/Got_%27til_It%27s_Gone)" – [Janet Jackson](/wiki/Janet_Jackson) (1998)
 "[Ray of Light](/wiki/Ray_of_Light_(song))" – [Madonna](/wiki/Madonna) (1999)
 
-
 2000s
-
 
 "[Freak on a Leash](/wiki/Freak_on_a_Leash)" – [Korn](/wiki/Korn) (2000)
 "[Learn to Fly](/wiki/Learn_to_Fly)" – [Foo Fighters](/wiki/Foo_Fighters) (2001)
@@ -2834,9 +2568,7 @@ Awarded to songwriters
 "[God's Gonna Cut You Down](/wiki/God%27s_Gonna_Cut_You_Down)" – [Johnny Cash](/wiki/Johnny_Cash) (2008)
 "[Pork and Beans](/wiki/Pork_and_Beans_(song))" – [Weezer](/wiki/Weezer) (2009)
 
-
 2010s
-
 
 "[Boom Boom Pow](/wiki/Boom_Boom_Pow)" – [Black Eyed Peas](/wiki/Black_Eyed_Peas) (2010)
 "[Bad Romance](/wiki/Bad_Romance)" – [Lady Gaga](/wiki/Lady_Gaga) (2011)
@@ -2849,9 +2581,7 @@ Awarded to songwriters
 "[Humble](/wiki/Humble_(song))" – [Kendrick Lamar](/wiki/Kendrick_Lamar) (2018)
 "[This Is America](/wiki/This_Is_America_(song))" – [Childish Gambino](/wiki/Donald_Glover) (2019)
 
-
 2020s
-
 
 "[Old Town Road](/wiki/Old_Town_Road)" – [Lil Nas X](/wiki/Lil_Nas_X) featuring [Billy Ray Cyrus](/wiki/Billy_Ray_Cyrus) (2020)
 "[Brown Skin Girl](/wiki/Brown_Skin_Girl)" – [Beyoncé](/wiki/Beyonc%C3%A9), [Blue Ivy](/wiki/Blue_Ivy_Carter) & [Wizkid](/wiki/Wizkid) (2021)
@@ -2860,23 +2590,17 @@ Awarded to songwriters
 "[I'm Only Sleeping](/wiki/I%27m_Only_Sleeping)" – [The Beatles](/wiki/The_Beatles) (2024)
 "[Not Like Us](/wiki/Not_Like_Us)" – [Kendrick Lamar](/wiki/Kendrick_Lamar) (2025)
 
-
 [v](/wiki/Template:Grammy_Award_for_Best_Pop_Vocal_Album)
 [t](/wiki/Template_talk:Grammy_Award_for_Best_Pop_Vocal_Album)
 [e](/wiki/Special:EditPage/Template:Grammy_Award_for_Best_Pop_Vocal_Album)
 
-
 [Grammy Award for Best Pop Vocal Album](/wiki/Grammy_Award_for_Best_Pop_Vocal_Album)
-
 
 1960s
 
-
 [Sgt. Pepper's Lonely Hearts Club Band](/wiki/Sgt._Pepper%27s_Lonely_Hearts_Club_Band) – [The Beatles](/wiki/The_Beatles) (1968)
 
-
 1990s
-
 
 [Longing in Their Hearts](/wiki/Longing_in_Their_Hearts) – [Bonnie Raitt](/wiki/Bonnie_Raitt) (1995)
 [Turbulent Indigo](/wiki/Turbulent_Indigo) – [Joni Mitchell](/wiki/Joni_Mitchell) (1996)
@@ -2884,9 +2608,7 @@ Awarded to songwriters
 [Hourglass](/wiki/Hourglass_(James_Taylor_album)) – [James Taylor](/wiki/James_Taylor) (1998)
 [Ray of Light](/wiki/Ray_of_Light) – [Madonna](/wiki/Madonna) (1999)
 
-
 2000s
-
 
 [Brand New Day](/wiki/Brand_New_Day_(Sting_album)) – [Sting](/wiki/Sting_(musician)) (2000)
 [Two Against Nature](/wiki/Two_Against_Nature) – [Steely Dan](/wiki/Steely_Dan) (2001)
@@ -2899,9 +2621,7 @@ Awarded to songwriters
 [Back to Black](/wiki/Back_to_Black) – [Amy Winehouse](/wiki/Amy_Winehouse) (2008)
 [Rockferry](/wiki/Rockferry) – [Duffy](/wiki/Duffy_(singer)) (2009)
 
-
 2010s
-
 
 [The E.N.D.](/wiki/The_E.N.D.) – [Black Eyed Peas](/wiki/Black_Eyed_Peas) (2010)
 [The Fame Monster](/wiki/The_Fame_Monster) – [Lady Gaga](/wiki/Lady_Gaga) (2011)
@@ -2914,9 +2634,7 @@ Awarded to songwriters
 [÷](/wiki/%C3%B7_(album)) – [Ed Sheeran](/wiki/Ed_Sheeran) (2018)
 [Sweetener](/wiki/Sweetener_(album)) – [Ariana Grande](/wiki/Ariana_Grande) (2018)
 
-
 2020s
-
 
 [When We All Fall Asleep, Where Do We Go?](/wiki/When_We_All_Fall_Asleep,_Where_Do_We_Go%3F) – [Billie Eilish](/wiki/Billie_Eilish) (2020)
 [Future Nostalgia](/wiki/Future_Nostalgia) – [Dua Lipa](/wiki/Dua_Lipa) (2021)
@@ -2925,27 +2643,20 @@ Awarded to songwriters
 [Midnights](/wiki/Midnights) – Taylor Swift (2024)
 [Short n' Sweet](/wiki/Short_n%27_Sweet) – [Sabrina Carpenter](/wiki/Sabrina_Carpenter) (2025)
 
-
 From 1968–1993, the category was discontinued.
-
 
 [v](/wiki/Template:Grammy_Award_for_Best_Song_Written_for_Visual_Media)
 [t](/wiki/Template_talk:Grammy_Award_for_Best_Song_Written_for_Visual_Media)
 [e](/wiki/Special:EditPage/Template:Grammy_Award_for_Best_Song_Written_for_Visual_Media)
 
-
 [Grammy Award for Best Song Written for Visual Media](/wiki/Grammy_Award_for_Best_Song_Written_for_Visual_Media)
 
-
 1980s
-
 
 "[Somewhere Out There](/wiki/Somewhere_Out_There_(An_American_Tail_song))" – [James Horner](/wiki/James_Horner), [Barry Mann](/wiki/Barry_Mann) & [Cynthia Weil](/wiki/Cynthia_Weil) (songwriters) (1988)
 "[Two Hearts](/wiki/Two_Hearts_(Phil_Collins_song))" – [Phil Collins](/wiki/Phil_Collins) & [Lamont Dozier](/wiki/Lamont_Dozier) (songwriters) (1989)
 
-
 1990s
-
 
 "[Let the River Run](/wiki/Let_the_River_Run)" – [Carly Simon](/wiki/Carly_Simon) (songwriter) (1990)
 "[Under the Sea](/wiki/Under_the_Sea)" – [Alan Menken](/wiki/Alan_Menken) & [Howard Ashman](/wiki/Howard_Ashman) (songwriters) (1991)
@@ -2958,9 +2669,7 @@ From 1968–1993, the category was discontinued.
 "[I Believe I Can Fly](/wiki/I_Believe_I_Can_Fly)" – [R. Kelly](/wiki/R._Kelly) (songwriter) (1998)
 "[My Heart Will Go On](/wiki/My_Heart_Will_Go_On)" – [James Horner](/wiki/James_Horner) & [Will Jennings](/wiki/Will_Jennings) (songwriters) (1999)
 
-
 2000s
-
 
 "[Beautiful Stranger](/wiki/Beautiful_Stranger)" – [Madonna](/wiki/Madonna) & [William Orbit](/wiki/William_Orbit) (songwriters) (2000)
 "[When She Loved Me](/wiki/When_She_Loved_Me)" – [Randy Newman](/wiki/Randy_Newman) (songwriter) (2001)
@@ -2973,9 +2682,7 @@ From 1968–1993, the category was discontinued.
 "[Love You I Do](/wiki/Love_You_I_Do)" – [Siedah Garrett](/wiki/Siedah_Garrett) & [Henry Krieger](/wiki/Henry_Krieger) (songwriters) (2008)
 "[Down to Earth](/wiki/Down_to_Earth_(Peter_Gabriel_song))" – [Peter Gabriel](/wiki/Peter_Gabriel) & [Thomas Newman](/wiki/Thomas_Newman) (songwriters) (2009)
 
-
 2010s
-
 
 "[Jai Ho](/wiki/Jai_Ho_(song))" – [Gulzar](/wiki/Gulzar), [A. R. Rahman](/wiki/A._R._Rahman) & [Tanvi Shah](/wiki/Tanvi_Shah) (songwriters) (2010)
 "[The Weary Kind](/wiki/The_Weary_Kind)" – [Ryan Bingham](/wiki/Ryan_Bingham) & [T Bone Burnett](/wiki/T_Bone_Burnett) (songwriters) (2011)
@@ -2988,9 +2695,7 @@ From 1968–1993, the category was discontinued.
 "[How Far I'll Go](/wiki/How_Far_I%27ll_Go)" – [Lin-Manuel Miranda](/wiki/Lin-Manuel_Miranda) (songwriter) (2018)
 "[Shallow](/wiki/Shallow_(Lady_Gaga_and_Bradley_Cooper_song))" – [Lady Gaga](/wiki/Lady_Gaga), [Mark Ronson](/wiki/Mark_Ronson), [Anthony Rossomando](/wiki/Anthony_Rossomando) & [Andrew Wyatt](/wiki/Andrew_Wyatt) (songwriters) (2019)
 
-
 2020s
-
 
 "[I'll Never Love Again](/wiki/I%27ll_Never_Love_Again)" – [Lady Gaga](/wiki/Lady_Gaga), [Natalie Hemby](/wiki/Natalie_Hemby), [Hillary Lindsey](/wiki/Hillary_Lindsey) & Aaron Raitiere (songwriters) (2020)
 "[No Time to Die](/wiki/No_Time_to_Die_(song))" – [Billie Eilish O'Connell](/wiki/Billie_Eilish) & [Finneas O'Connell](/wiki/Finneas_O%27Connell) (songwriters) (2021)
@@ -2999,14 +2704,11 @@ From 1968–1993, the category was discontinued.
 "[What Was I Made For?](/wiki/What_Was_I_Made_For%3F)" – [Billie Eilish O'Connell](/wiki/Billie_Eilish) & [Finneas O'Connell](/wiki/Finneas_O%27Connell) (songwriters) (2024)
 "[It Never Went Away](/wiki/It_Never_Went_Away)" – [Jon Batiste](/wiki/Jon_Batiste) & [Dan Wilson](/wiki/Dan_Wilson_(musician)) (songwriters) (2025)
 
-
 [v](/wiki/Template:Nickelodeon_Kids%27_Choice_Award_for_Favorite_Female_Singer)
 [t](/wiki/Template_talk:Nickelodeon_Kids%27_Choice_Award_for_Favorite_Female_Singer)
 [e](/wiki/Special:EditPage/Template:Nickelodeon_Kids%27_Choice_Award_for_Favorite_Female_Singer)
 
-
 [Kids' Choice Award for Favorite Female Artist](/wiki/Kids%27_Choice_Award_for_Favorite_Female_Artist)
-
 
 [Britney Spears](/wiki/Britney_Spears) (2000–2001)
 [P!nk](/wiki/Pink_(singer)) (2002)
@@ -3028,24 +2730,18 @@ Taylor Swift (2010)
 Taylor Swift (2023–2024)
 [SZA](/wiki/SZA) (2025)
 
-
 [v](/wiki/Template:Nickelodeon_Kids%27_Choice_Award_for_Favorite_Song)
 [t](/wiki/Template_talk:Nickelodeon_Kids%27_Choice_Award_for_Favorite_Song)
 [e](/wiki/Special:EditPage/Template:Nickelodeon_Kids%27_Choice_Award_for_Favorite_Song)
 
-
 [Kids' Choice Award for Favorite Song](/wiki/Kids%27_Choice_Award_for_Favorite_Song)
 
-
 1980s
-
 
 "[La Bamba](/wiki/La_Bamba_(song))" – [Los Lobos](/wiki/Los_Lobos) (1988)
 "[Kokomo](/wiki/Kokomo_(song))" – [The Beach Boys](/wiki/The_Beach_Boys) (1989)
 
-
 1990s
-
 
 "[Hangin' Tough](/wiki/Hangin%27_Tough_(song))" – [New Kids on the Block](/wiki/New_Kids_on_the_Block) (1990)
 "[Ice Ice Baby](/wiki/Ice_Ice_Baby)" – [Vanilla Ice](/wiki/Vanilla_Ice) (1991)
@@ -3058,9 +2754,7 @@ No Award (1993)
 "[MMMBop](/wiki/MMMBop)" – [Hanson](/wiki/Hanson_(band)) (1998)
 "[Everybody (Backstreet's Back)](/wiki/Everybody_(Backstreet%27s_Back))" – [Backstreet Boys](/wiki/Backstreet_Boys) (1999)
 
-
 2000s
-
 
 "[Wild Wild West](/wiki/Wild_Wild_West_(Will_Smith_song))" – [Will Smith](/wiki/Will_Smith) (2000)
 "[Who Let the Dogs Out](/wiki/Who_Let_the_Dogs_Out)" – [Baha Men](/wiki/Baha_Men) (2001)
@@ -3073,9 +2767,7 @@ No Award (1993)
 "[Girlfriend](/wiki/Girlfriend_(Avril_Lavigne_song))" – [Avril Lavigne](/wiki/Avril_Lavigne) (2008)
 "[Single Ladies (Put a Ring on It)](/wiki/Single_Ladies_(Put_a_Ring_on_It))" – [Beyoncé](/wiki/Beyonc%C3%A9) (2009)
 
-
 2010s
-
 
 "[You Belong with Me](/wiki/You_Belong_with_Me)" – Taylor Swift (2010)
 "[Baby](/wiki/Baby_(Justin_Bieber_song))" – [Justin Bieber](/wiki/Justin_Bieber) featuring [Ludacris](/wiki/Ludacris) (2011)
@@ -3088,9 +2780,7 @@ No Award (1993)
 "[Shape of You](/wiki/Shape_of_You)" – [Ed Sheeran](/wiki/Ed_Sheeran) (2018)
 "[Thank U, Next](/wiki/Thank_U,_Next_(song))" – [Ariana Grande](/wiki/Ariana_Grande) (2019)
 
-
 2020s
-
 
 "[Bad Guy](/wiki/Bad_Guy_(Billie_Eilish_song))" – [Billie Eilish](/wiki/Billie_Eilish) (2020)
 "[Dynamite](/wiki/Dynamite_(BTS_song))" – [BTS](/wiki/BTS) (2021)
@@ -3099,14 +2789,11 @@ No Award (1993)
 "[What Was I Made For?](/wiki/What_Was_I_Made_For%3F)" – [Billie Eilish](/wiki/Billie_Eilish) (2024)
 "[Taste](/wiki/Taste_(Sabrina_Carpenter_song))" – [Sabrina Carpenter](/wiki/Sabrina_Carpenter) (2025)
 
-
 [v](/wiki/Template:MTV_Europe_Music_Award_for_Best_Female)
 [t](/wiki/Template_talk:MTV_Europe_Music_Award_for_Best_Female)
 [e](/wiki/Special:EditPage/Template:MTV_Europe_Music_Award_for_Best_Female)
 
-
 [MTV Europe Music Award for Best Female](/wiki/MTV_Europe_Music_Award_for_Best_Female)
-
 
 [Mariah Carey](/wiki/Mariah_Carey) (1994)
 [Björk](/wiki/Bj%C3%B6rk) (1995)
@@ -3128,14 +2815,11 @@ Taylor Swift (2012)
 [Rihanna](/wiki/Rihanna) (2015)
 [Lady Gaga](/wiki/Lady_Gaga) (2016)
 
-
 [v](/wiki/Template:MTV_Europe_Music_Award_for_Best_Live_Act)
 [t](/wiki/Template_talk:MTV_Europe_Music_Award_for_Best_Live_Act)
 [e](/wiki/Special:EditPage/Template:MTV_Europe_Music_Award_for_Best_Live_Act)
 
-
 [MTV Europe Music Award for Best Live Act](/wiki/MTV_Europe_Music_Award_for_Best_Live_Act)
-
 
 [Take That](/wiki/Take_That) (1995)
 [U2](/wiki/U2) (1997)
@@ -3158,14 +2842,11 @@ Taylor Swift (2012)
 Taylor Swift (2023)
 Taylor Swift (2024)
 
-
 [v](/wiki/Template:MTV_Europe_Music_Award_for_Best_Look)
 [t](/wiki/Template_talk:MTV_Europe_Music_Award_for_Best_Look)
 [e](/wiki/Special:EditPage/Template:MTV_Europe_Music_Award_for_Best_Look)
 
-
 [MTV Europe Music Award for Best Look](/wiki/MTV_Europe_Music_Award_for_Best_Look)
-
 
 Taylor Swift (2012)
 [Harry Styles](/wiki/Harry_Styles) (2013)
@@ -3176,14 +2857,11 @@ Taylor Swift (2012)
 [Nicki Minaj](/wiki/Nicki_Minaj) (2018)
 [Halsey](/wiki/Halsey_(singer)) (2019)
 
-
 [v](/wiki/Template:MTV_Europe_Music_Award_for_Best_Pop)
 [t](/wiki/Template_talk:MTV_Europe_Music_Award_for_Best_Pop)
 [e](/wiki/Special:EditPage/Template:MTV_Europe_Music_Award_for_Best_Pop)
 
-
 [MTV Europe Music Award for Best Pop](/wiki/MTV_Europe_Music_Award_for_Best_Pop)
-
 
 [Spice Girls](/wiki/Spice_Girls) (1998)
 [Britney Spears](/wiki/Britney_Spears) (1999)
@@ -3206,14 +2884,11 @@ Taylor Swift (2022)
 [Billie Eilish](/wiki/Billie_Eilish) (2023)
 [Ariana Grande](/wiki/Ariana_Grande) (2024)
 
-
 [v](/wiki/Template:MTV_Europe_Music_Award_for_Best_US_Act)
 [t](/wiki/Template_talk:MTV_Europe_Music_Award_for_Best_US_Act)
 [e](/wiki/Special:EditPage/Template:MTV_Europe_Music_Award_for_Best_US_Act)
 
-
 [MTV Europe Music Award for Best US Act](/wiki/MTV_Europe_Music_Award_for_Best_US_Act)
-
 
 [MGK](/wiki/Machine_Gun_Kelly_(rapper)) (2012)
 [Miley Cyrus](/wiki/Miley_Cyrus) (2013)
@@ -3225,14 +2900,11 @@ Taylor Swift (2015, 2019, 2021, 2024)
 [Billie Eilish](/wiki/Billie_Eilish) (2022)
 [Nicki Minaj](/wiki/Nicki_Minaj) (2023)
 
-
 [v](/wiki/Template:MTV_Video_Music_Award_for_Artist_of_the_Year)
 [t](/wiki/Template_talk:MTV_Video_Music_Award_for_Artist_of_the_Year)
 [e](/wiki/Special:EditPage/Template:MTV_Video_Music_Award_for_Artist_of_the_Year)
 
-
 [MTV Video Music Award for Artist of the Year](/wiki/MTV_Video_Music_Award_for_Artist_of_the_Year)
-
 
 [Ed Sheeran](/wiki/Ed_Sheeran) (2017)
 [Camila Cabello](/wiki/Camila_Cabello) (2018)
@@ -3243,25 +2915,19 @@ Taylor Swift (2015, 2019, 2021, 2024)
 Taylor Swift (2023)
 Taylor Swift (2024)
 
-
 [v](/wiki/Template:MTV_Video_Music_Award_for_Best_Collaboration)
 [t](/wiki/Template_talk:MTV_Video_Music_Award_for_Best_Collaboration)
 [e](/wiki/Special:EditPage/Template:MTV_Video_Music_Award_for_Best_Collaboration)
 
-
 [MTV Video Music Award for Best Collaboration](/wiki/MTV_Video_Music_Award_for_Best_Collaboration)
 
-
 2000s
-
 
 [Beyoncé](/wiki/Beyonc%C3%A9) and [Shakira](/wiki/Shakira) – "[Beautiful Liar](/wiki/Beautiful_Liar)" (2007)
 No Award (2008)
 No Award (2009)
 
-
 2010s
-
 
 [Lady Gaga](/wiki/Lady_Gaga) featuring [Beyoncé](/wiki/Beyonc%C3%A9) – "[Telephone](/wiki/Telephone_(song))" (2010)
 [Katy Perry](/wiki/Katy_Perry) featuring [Kanye West](/wiki/Kanye_West) – [E.T.](/wiki/E.T._(song)) (2011)
@@ -3274,9 +2940,7 @@ Taylor Swift featuring [Kendrick Lamar](/wiki/Kendrick_Lamar) – "[Bad Blood](/
 [Jennifer Lopez](/wiki/Jennifer_Lopez) featuring [DJ Khaled](/wiki/DJ_Khaled) and [Cardi B](/wiki/Cardi_B) – "[Dinero](/wiki/Dinero_(Jennifer_Lopez_song))" (2018)
 [Shawn Mendes](/wiki/Shawn_Mendes) and [Camila Cabello](/wiki/Camila_Cabello) – "[Señorita](/wiki/Se%C3%B1orita_(Shawn_Mendes_and_Camila_Cabello_song))" (2019)
 
-
 2020s
-
 
 [Lady Gaga](/wiki/Lady_Gaga) and [Ariana Grande](/wiki/Ariana_Grande) – "[Rain on Me](/wiki/Rain_on_Me_(Lady_Gaga_and_Ariana_Grande_song))" (2020)
 [Doja Cat](/wiki/Doja_Cat) featuring [SZA](/wiki/SZA) – "[Kiss Me More](/wiki/Kiss_Me_More)" (2021)
@@ -3284,14 +2948,11 @@ Taylor Swift featuring [Kendrick Lamar](/wiki/Kendrick_Lamar) – "[Bad Blood](/
 [Karol G](/wiki/Karol_G) and [Shakira](/wiki/Shakira) – "[TQG](/wiki/TQG)" (2023)
 Taylor Swift featuring [Post Malone](/wiki/Post_Malone) – "[Fortnight](/wiki/Fortnight_(song))" (2024)
 
-
 [v](/wiki/Template:MTV_Video_Music_Award_for_Best_Direction)
 [t](/wiki/Template_talk:MTV_Video_Music_Award_for_Best_Direction)
 [e](/wiki/Special:EditPage/Template:MTV_Video_Music_Award_for_Best_Direction)
 
-
 [MTV Video Music Award for Best Direction](/wiki/MTV_Video_Music_Award_for_Best_Direction)
-
 
 Tim Newman (1984)
 [Jean-Baptiste Mondino](/wiki/Jean-Baptiste_Mondino) (1985)
@@ -3335,14 +2996,11 @@ Taylor Swift (2022)
 Taylor Swift (2023)
 Taylor Swift (2024)
 
-
 [v](/wiki/Template:MTV_Video_Music_Award_for_Best_Pop_Video)
 [t](/wiki/Template_talk:MTV_Video_Music_Award_for_Best_Pop_Video)
 [e](/wiki/Special:EditPage/Template:MTV_Video_Music_Award_for_Best_Pop_Video)
 
-
 [MTV Video Music Award for Best Pop Video](/wiki/MTV_Video_Music_Award_for_Best_Pop_Video)
-
 
 [Ricky Martin](/wiki/Ricky_Martin) – "[Livin' la Vida Loca](/wiki/Livin%27_la_Vida_Loca)" (1999)
 [NSYNC](/wiki/NSYNC) – "[Bye Bye Bye](/wiki/Bye_Bye_Bye)" (2000)
@@ -3370,17 +3028,13 @@ Taylor Swift – "[Blank Space](/wiki/Blank_Space)" (2015)
 Taylor Swift – "[Anti-Hero](/wiki/Anti-Hero_(song))" (2023)
 Taylor Swift (2024)
 
-
 [v](/wiki/Template:MTV_Video_Music_Award_for_Best_Video_with_a_Social_Message)
 [t](/wiki/Template_talk:MTV_Video_Music_Award_for_Best_Video_with_a_Social_Message)
 [e](/wiki/Special:EditPage/Template:MTV_Video_Music_Award_for_Best_Video_with_a_Social_Message)
 
-
 [MTV Video Music Award for Best Video with a Social Message](/wiki/MTV_Video_Music_Award_for_Best_Video_with_a_Social_Message)
 
-
 2010s
-
 
 "[Born This Way](/wiki/Born_This_Way_(song))" by [Lady Gaga](/wiki/Lady_Gaga) (2011)
 "[Skyscraper](/wiki/Skyscraper_(song))" by [Demi Lovato](/wiki/Demi_Lovato) (2012)
@@ -3392,9 +3046,7 @@ No award (2016)
 "[This Is America](/wiki/This_Is_America_(song))" by [Childish Gambino](/wiki/Donald_Glover) (2018)
 "[You Need to Calm Down](/wiki/You_Need_to_Calm_Down)" by Taylor Swift (2019)
 
-
 2020s
-
 
 "[I Can't Breathe](/wiki/I_Can%27t_Breathe_(H.E.R._song))" by [H.E.R.](/wiki/H.E.R.) (2020)
 "[Your Power](/wiki/Your_Power)" by [Billie Eilish](/wiki/Billie_Eilish) (2021)
@@ -3402,17 +3054,13 @@ No award (2016)
 "Breakfast" by [Dove Cameron](/wiki/Dove_Cameron) (2023)
 "[What Was I Made For?](/wiki/What_Was_I_Made_For%3F)" by [Billie Eilish](/wiki/Billie_Eilish) (2024)
 
-
 [v](/wiki/Template:MTV_Video_Music_Award_for_Song_of_Summer)
 [t](/w/index.php?title=Template_talk:MTV_Video_Music_Award_for_Song_of_Summer&action=edit&redlink=1)
 [e](/wiki/Special:EditPage/Template:MTV_Video_Music_Award_for_Song_of_Summer)
 
-
 [MTV Video Music Award for Song of Summer](/wiki/MTV_Video_Music_Award_for_Song_of_Summer)
 
-
 2010s
-
 
 "[Best Song Ever](/wiki/Best_Song_Ever)" – [One Direction](/wiki/One_Direction) (2013)
 "[She's Kinda Hot](/wiki/She%27s_Kinda_Hot)" – [5 Seconds of Summer](/wiki/5_Seconds_of_Summer) (2015)
@@ -3421,9 +3069,7 @@ No award (2016)
 "[I Like It](/wiki/I_Like_It_(Cardi_B,_Bad_Bunny_and_J_Balvin_song))" – [Cardi B](/wiki/Cardi_B), [Bad Bunny](/wiki/Bad_Bunny) and [J Balvin](/wiki/J_Balvin) (2018)
 "[Boyfriend](/wiki/Boyfriend_(Ariana_Grande_and_Social_House_song))" – [Ariana Grande](/wiki/Ariana_Grande) and [Social House](/wiki/Social_House) (2019)
 
-
 2020s
-
 
 "[How You Like That](/wiki/How_You_Like_That)" – [Blackpink](/wiki/Blackpink) (2020)
 "[Butter](/wiki/Butter_(song))" – [BTS](/wiki/BTS) (2021)
@@ -3431,24 +3077,18 @@ No award (2016)
 "[Seven](/wiki/Seven_(Jungkook_song))" – [Jungkook](/wiki/Jungkook) featuring [Latto](/wiki/Latto) (2023)
 "[Fortnight](/wiki/Fortnight_(song))" – Taylor Swift featuring [Post Malone](/wiki/Post_Malone) (2024)
 
-
 [v](/wiki/Template:MTV_Video_Music_Award_for_Song_of_the_Year)
 [t](/wiki/Template_talk:MTV_Video_Music_Award_for_Song_of_the_Year)
 [e](/wiki/Special:EditPage/Template:MTV_Video_Music_Award_for_Song_of_the_Year)
 
-
 [MTV Video Music Award for Song of the Year](/wiki/MTV_Video_Music_Award_for_Song_of_the_Year)
 
-
 2010s
-
 
 "[Rockstar](/wiki/Rockstar_(Post_Malone_song))" – [Post Malone](/wiki/Post_Malone) featuring [21 Savage](/wiki/21_Savage) (2018)
 "[Old Town Road (Remix)](/wiki/Old_Town_Road)" – [Lil Nas X](/wiki/Lil_Nas_X) featuring [Billy Ray Cyrus](/wiki/Billy_Ray_Cyrus) (2019)
 
-
 2020s
-
 
 "[Rain on Me](/wiki/Rain_on_Me_(Lady_Gaga_and_Ariana_Grande_song))" – [Lady Gaga](/wiki/Lady_Gaga) and [Ariana Grande](/wiki/Ariana_Grande) (2020)
 "[Drivers License](/wiki/Drivers_License_(song))" – [Olivia Rodrigo](/wiki/Olivia_Rodrigo) (2021)
@@ -3456,17 +3096,13 @@ No award (2016)
 "[Anti-Hero](/wiki/Anti-Hero_(song))" – Taylor Swift (2023)
 "[Espresso](/wiki/Espresso_(song))" – [Sabrina Carpenter](/wiki/Sabrina_Carpenter) (2024)
 
-
 [v](/wiki/Template:MTV_Video_Music_Award_for_Video_of_the_Year)
 [t](/wiki/Template_talk:MTV_Video_Music_Award_for_Video_of_the_Year)
 [e](/wiki/Special:EditPage/Template:MTV_Video_Music_Award_for_Video_of_the_Year)
 
-
 [MTV Video Music Award for Video of the Year](/wiki/MTV_Video_Music_Award_for_Video_of_the_Year)
 
-
 1980s
-
 
 "[You Might Think](/wiki/You_Might_Think)" – [The Cars](/wiki/The_Cars) (1984)
 "[The Boys of Summer](/wiki/The_Boys_of_Summer_(song))" – [Don Henley](/wiki/Don_Henley) (1985)
@@ -3475,9 +3111,7 @@ No award (2016)
 "[Need You Tonight](/wiki/Need_You_Tonight)" / "[Mediate](/wiki/Mediate_(song))" – [INXS](/wiki/INXS) (1988)
 "[This Note's for You](/wiki/This_Note%27s_for_You)" – [Neil Young](/wiki/Neil_Young) (1989)
 
-
 1990s
-
 
 "[Nothing Compares 2 U](/wiki/Nothing_Compares_2_U)" – [Sinéad O'Connor](/wiki/Sin%C3%A9ad_O%27Connor) (1990)
 "[Losing My Religion](/wiki/Losing_My_Religion)" – [R.E.M.](/wiki/R.E.M.) (1991)
@@ -3490,9 +3124,7 @@ No award (2016)
 "[Ray of Light](/wiki/Ray_of_Light_(song))" – [Madonna](/wiki/Madonna) (1998)
 "[Doo Wop (That Thing)](/wiki/Doo_Wop_(That_Thing))" – [Lauryn Hill](/wiki/Lauryn_Hill) (1999)
 
-
 2000s
-
 
 "[The Real Slim Shady](/wiki/The_Real_Slim_Shady)" – [Eminem](/wiki/Eminem) (2000)
 "[Lady Marmalade](/wiki/Lady_Marmalade)" – [Christina Aguilera](/wiki/Christina_Aguilera), [Lil' Kim](/wiki/Lil%27_Kim), [Mýa](/wiki/M%C3%BDa), and [Pink](/wiki/Pink_(singer)) (2001)
@@ -3505,9 +3137,7 @@ No award (2016)
 "[Piece of Me](/wiki/Piece_of_Me)" – [Britney Spears](/wiki/Britney_Spears) (2008)
 "[Single Ladies (Put a Ring on It)](/wiki/Single_Ladies_(Put_a_Ring_on_It))" – [Beyoncé](/wiki/Beyonc%C3%A9) (2009)
 
-
 2010s
-
 
 "[Bad Romance](/wiki/Bad_Romance)" – [Lady Gaga](/wiki/Lady_Gaga) (2010)
 "[Firework](/wiki/Firework_(song))" – [Katy Perry](/wiki/Katy_Perry) (2011)
@@ -3520,9 +3150,7 @@ No award (2016)
 "[Havana](/wiki/Havana_(Camila_Cabello_song))" – [Camila Cabello](/wiki/Camila_Cabello) featuring [Young Thug](/wiki/Young_Thug) (2018)
 "[You Need to Calm Down](/wiki/You_Need_to_Calm_Down)" – Taylor Swift (2019)
 
-
 2020s
-
 
 "[Blinding Lights](/wiki/Blinding_Lights)" – [The Weeknd](/wiki/The_Weeknd) (2020)
 "[Montero (Call Me by Your Name)](/wiki/Montero_(Call_Me_by_Your_Name))" – [Lil Nas X](/wiki/Lil_Nas_X) (2021)
@@ -3530,25 +3158,19 @@ No award (2016)
 "[Anti-Hero](/wiki/Anti-Hero_(song))" – Taylor Swift (2023)
 "[Fortnight](/wiki/Fortnight_(song))" – Taylor Swift featuring [Post Malone](/wiki/Post_Malone) (2024)
 
-
 [v](/wiki/Template:People%27s_Choice_Award_for_Favorite_Female_Artist)
 [t](/wiki/Template_talk:People%27s_Choice_Award_for_Favorite_Female_Artist)
 [e](/wiki/Special:EditPage/Template:People%27s_Choice_Award_for_Favorite_Female_Artist)
 
-
 [People's Choice Award for Favorite Female Artist](/wiki/People%27s_Choice_Award_for_Favorite_Female_Artist)
 
-
 1970s
-
 
 [Lynn Anderson](/wiki/Lynn_Anderson), [Olivia Newton-John](/wiki/Olivia_Newton-John) (1975)
 [Olivia Newton-John](/wiki/Olivia_Newton-John) (1977)
 [Olivia Newton-John](/wiki/Olivia_Newton-John) (1979)
 
-
 1980s
-
 
 [Pat Benatar](/wiki/Pat_Benatar) (1981)
 [Barbara Mandrell](/wiki/Barbara_Mandrell) (1982)
@@ -3558,9 +3180,7 @@ No award (2016)
 [Whitney Houston](/wiki/Whitney_Houston) (1988)
 [Whitney Houston](/wiki/Whitney_Houston) (1989)
 
-
 1990s
-
 
 [Paula Abdul](/wiki/Paula_Abdul) (1990)
 [Paula Abdul](/wiki/Paula_Abdul) (1991)
@@ -3573,15 +3193,11 @@ No award (2016)
 [Whitney Houston](/wiki/Whitney_Houston), [Reba McEntire](/wiki/Reba_McEntire) (1998)
 [Celine Dion](/wiki/Celine_Dion) (1999)
 
-
 2000s
-
 
 [Shania Twain](/wiki/Shania_Twain) (2000)
 
-
 2010s
-
 
 Taylor Swift (2010)
 [Katy Perry](/wiki/Katy_Perry) (2011)
@@ -3594,23 +3210,18 @@ Taylor Swift (2016)
 [Nicki Minaj](/wiki/Nicki_Minaj) (2018)
 [Billie Eilish](/wiki/Billie_Eilish) (2019)
 
-
 2020s
-
 
 [Ariana Grande](/wiki/Ariana_Grande) (2020)
 [Adele](/wiki/Adele) (2021)
 Taylor Swift (2022)
 Taylor Swift (2024)
 
-
 [v](/wiki/Template:People%27s_Choice_Award_for_Favorite_Music_Video)
 [t](/w/index.php?title=Template_talk:People%27s_Choice_Award_for_Favorite_Music_Video&action=edit&redlink=1)
 [e](/wiki/Special:EditPage/Template:People%27s_Choice_Award_for_Favorite_Music_Video)
 
-
 [People's Choice Award for Favorite Music Video](/wiki/People%27s_Choice_Award_for_Favorite_Music_Video)
-
 
 "[Love the Way You Lie](/wiki/Love_the_Way_You_Lie)" – [Eminem](/wiki/Eminem) featuring [Rihanna](/wiki/Rihanna) (2011)
 "[Last Friday Night (T.G.I.F.)](/wiki/Last_Friday_Night_(T.G.I.F.))" – [Katy Perry](/wiki/Katy_Perry) (2012)
@@ -3622,28 +3233,22 @@ Taylor Swift (2024)
 "[Butter](/wiki/Butter_(song))" – [BTS](/wiki/BTS) (2021)
 "[Anti-Hero](/wiki/Anti-Hero_(song))" – Taylor Swift (2022)
 
-
 [v](/wiki/Template:People%27s_Choice_Award_for_Favorite_Concert_Tour)
 [t](/w/index.php?title=Template_talk:People%27s_Choice_Award_for_Favorite_Concert_Tour&action=edit&redlink=1)
 [e](/wiki/Special:EditPage/Template:People%27s_Choice_Award_for_Favorite_Concert_Tour)
 
-
 [People's Choice Award for Favorite Concert Tour](/wiki/People%27s_Choice_Award_for_Favorite_Concert_Tour)
-
 
 Taylor Swift – [Reputation Stadium Tour](/wiki/Reputation_Stadium_Tour) (2018)
 [Blackpink](/wiki/Blackpink) – [In Your Area World Tour](/wiki/In_Your_Area_World_Tour) (2019)
 [BTS](/wiki/BTS) – [Permission to Dance on Stage](/wiki/Permission_to_Dance_on_Stage) (2022)
 Taylor Swift – [The Eras Tour](/wiki/The_Eras_Tour) (2024)
 
-
 [v](/wiki/Template:Teen_Choice_Award_for_Choice_Music_%E2%80%93_Female_Artist)
 [t](/wiki/Template_talk:Teen_Choice_Award_for_Choice_Music_%E2%80%93_Female_Artist)
 [e](/wiki/Special:EditPage/Template:Teen_Choice_Award_for_Choice_Music_%E2%80%93_Female_Artist)
 
-
 [Teen Choice Award for Choice Music Female Artist](/wiki/Teen_Choice_Award_for_Choice_Music_%E2%80%93_Female_Artist)
-
 
 [Brandy](/wiki/Brandy_Norwood) (1999)
 [Britney Spears](/wiki/Britney_Spears) (2000)
@@ -3667,17 +3272,13 @@ Taylor Swift (2012)
 [Camila Cabello](/wiki/Camila_Cabello) (2018)
 [Billie Eilish](/wiki/Billie_Eilish) (2019)
 
-
 [v](/wiki/Template:Teen_Choice_Award_for_Choice_Music_Single)
 [t](/w/index.php?title=Template_talk:Teen_Choice_Award_for_Choice_Music_Single&action=edit&redlink=1)
 [e](/wiki/Special:EditPage/Template:Teen_Choice_Award_for_Choice_Music_Single)
 
-
 [Teen Choice Award for Choice Music Single](/wiki/Teen_Choice_Award_for_Choice_Music_%E2%80%93_Single)
 
-
 1999-2011
-
 
 "[...Baby One More Time](/wiki/...Baby_One_More_Time)" – [Britney Spears](/wiki/Britney_Spears) (1999)
 "[Bye Bye Bye](/wiki/Bye_Bye_Bye)" – [NSYNC](/wiki/NSYNC) (2000)
@@ -3693,156 +3294,113 @@ Taylor Swift (2012)
 "[California Gurls](/wiki/California_Gurls)" – [Katy Perry](/wiki/Katy_Perry) (2010)
 "[Who Says](/wiki/Who_Says_(Selena_Gomez_%26_the_Scene_song))" – [Selena Gomez & the Scene](/wiki/Selena_Gomez_%26_the_Scene) (2011)
 
-
 2012–2019
 
-
 2012
-
 
 "[Boyfriend](/wiki/Boyfriend_(Justin_Bieber_song))" – [Justin Bieber](/wiki/Justin_Bieber) (Male)
 "[Eyes Open](/wiki/Eyes_Open_(song))" – Taylor Swift (Female)
 "[We Are Young](/wiki/We_Are_Young)" – [Fun.](/wiki/Fun_(band)) featuring [Janelle Monáe](/wiki/Janelle_Mon%C3%A1e) (Group)
 
-
 2013
-
 
 "[Beauty and a Beat](/wiki/Beauty_and_a_Beat)" – [Justin Bieber](/wiki/Justin_Bieber) featuring [Nicki Minaj](/wiki/Nicki_Minaj) (Male)
 "[Heart Attack](/wiki/Heart_Attack_(Demi_Lovato_song))" – [Demi Lovato](/wiki/Demi_Lovato) (Female)
 "[Live While We're Young](/wiki/Live_While_We%27re_Young)" – [One Direction](/wiki/One_Direction) (Group)
 
-
 2014
-
 
 "[Sing](/wiki/Sing_(Ed_Sheeran_song))" – [Ed Sheeran](/wiki/Ed_Sheeran) (Male)
 "[Problem](/wiki/Problem_(Ariana_Grande_song))" – [Ariana Grande](/wiki/Ariana_Grande) featuring [Iggy Azalea](/wiki/Iggy_Azalea) (Female)
 "[Story of My Life](/wiki/Story_of_My_Life_(One_Direction_song))" – [One Direction](/wiki/One_Direction) (Group)
 
-
 2015
-
 
 "[Thinking Out Loud](/wiki/Thinking_Out_Loud_(Ed_Sheeran_song))" – [Ed Sheeran](/wiki/Ed_Sheeran) (Male)
 "[One Last Time](/wiki/One_Last_Time_(Ariana_Grande_song))" – [Ariana Grande](/wiki/Ariana_Grande) (Female)
 "[Steal My Girl](/wiki/Steal_My_Girl)" – [One Direction](/wiki/One_Direction) (Group)
 
-
 2016
-
 
 "[Sorry](/wiki/Sorry_(Justin_Bieber_song))" – [Justin Bieber](/wiki/Justin_Bieber) (Male)
 "[Dangerous Woman](/wiki/Dangerous_Woman_(song))" – [Ariana Grande](/wiki/Ariana_Grande) (Female)
 "[Home](/wiki/Home_(One_Direction_song))" – [One Direction](/wiki/One_Direction) (Group)
 
-
 2017
-
 
 "[Slow Hands](/wiki/Slow_Hands_(Niall_Horan_song))" – [Niall Horan](/wiki/Niall_Horan) (Male)
 "[Crying in the Club](/wiki/Crying_in_the_Club)" – [Camila Cabello](/wiki/Camila_Cabello) (Female)
 "[Down](/wiki/Down_(Fifth_Harmony_song))" – [Fifth Harmony](/wiki/Fifth_Harmony) featuring [Gucci Mane](/wiki/Gucci_Mane) (Group)
 
-
 2018
-
 
 "[Perfect](/wiki/Perfect_(Ed_Sheeran_song))" – [Ed Sheeran](/wiki/Ed_Sheeran) (Male)
 "[Havana](/wiki/Havana_(Camila_Cabello_song))" – [Camila Cabello](/wiki/Camila_Cabello) featuring [Young Thug](/wiki/Young_Thug) (Female)
 "[Youngblood](/wiki/Youngblood_(5_Seconds_of_Summer_song))" – [5 Seconds of Summer](/wiki/5_Seconds_of_Summer) (Group)
 
-
 2019
-
 
 "[Two of Us](/wiki/Two_of_Us_(Louis_Tomlinson_song))" – [Louis Tomlinson](/wiki/Louis_Tomlinson) (Male)
 "[Expectations](/wiki/Expectations_(Lauren_Jauregui_song))" – [Lauren Jauregui](/wiki/Lauren_Jauregui) (Female)
 "[Ddu-Du Ddu-Du](/wiki/Ddu-Du_Ddu-Du)" – [Blackpink](/wiki/Blackpink) (Group)
 
-
 [v](/wiki/Template:YTMAs)
 [t](/wiki/Template_talk:YTMAs)
 [e](/wiki/Special:EditPage/Template:YTMAs)
 
-
 [YouTube Music Awards](/wiki/YouTube_Music_Awards)
 
-
 Ceremonies
-
 
 [2013](/wiki/2013_YouTube_Music_Awards)
 [2015](/wiki/2015_YouTube_Music_Awards)
 
-
 Hosts
-
 
 [Jason Schwartzman](/wiki/Jason_Schwartzman) and [Reggie Watts](/wiki/Reggie_Watts) (2013)
 [Tyler Oakley](/wiki/Tyler_Oakley) (2015)
 
-
 Awards
-
 
 Videos of the Year
 
-
 "[I Got a Boy](/wiki/I_Got_a_Boy_(song))" by [Girls' Generation](/wiki/Girls%27_Generation) (2013)
-
 
 Artists of the Year
 
-
 [Eminem](/wiki/Eminem) (2013)
-
 
 Responses of the Year
 
-
 "[Radioactive](/wiki/Radioactive_(Imagine_Dragons_song))" by [Lindsey Stirling](/wiki/Lindsey_Stirling) and [Pentatonix](/wiki/Pentatonix) (2013)
-
 
 YouTube Phenomenons
 
-
 "[I Knew You Were Trouble](/wiki/I_Knew_You_Were_Trouble)" by Taylor Swift (2013)
-
 
 YouTube Breakthroughs
 
-
 [Macklemore & Ryan Lewis](/wiki/Macklemore_%26_Ryan_Lewis) (2013)
-
 
 Innovations of the Year
 
-
 "See Me Standing" by [DeStorm](/wiki/DeStorm_Power) (2013)
 
-
 Related articles
-
 
 [Kia](/wiki/Kia)
 [Spike Jonze](/wiki/Spike_Jonze)
 [YouTube Awards](/wiki/YouTube_Awards)
 
-
 [YouTube](/wiki/YouTube)
-
 
 [v](/wiki/Template:Time_Persons_of_the_Year)
 [t](/wiki/Template_talk:Time_Persons_of_the_Year)
 [e](/wiki/Special:EditPage/Template:Time_Persons_of_the_Year)
 
-
 [Time Persons of the Year](/wiki/Time_Person_of_the_Year)
 
-
 1927–1950
-
 
 [Charles Lindbergh](/wiki/Charles_Lindbergh) (1927)
 [Walter Chrysler](/wiki/Walter_Chrysler) (1928)
@@ -3869,9 +3427,7 @@ Related articles
 [Winston Churchill](/wiki/Winston_Churchill) (1949)
 [The American Fighting-Man](/wiki/Korean_War) (1950)
 
-
 1951–1975
-
 
 [Mohammed Mosaddeq](/wiki/Mohammad_Mosaddegh) (1951)
 [Elizabeth II](/wiki/Elizabeth_II) (1952)
@@ -3899,9 +3455,7 @@ Related articles
 [King Faisal](/wiki/Faisal_of_Saudi_Arabia) (1974)
  American Women: [Susan Brownmiller](/wiki/Susan_Brownmiller) / [Kathleen Byerly](/wiki/Kathleen_Byerly) / [Alison Cheek](/wiki/Alison_Cheek) / [Jill Conway](/wiki/Jill_Ker_Conway) / [Betty Ford](/wiki/Betty_Ford) / [Ella Grasso](/wiki/Ella_Grasso) / [Carla Hills](/wiki/Carla_Anderson_Hills) / [Barbara Jordan](/wiki/Barbara_Jordan) / [Billie Jean King](/wiki/Billie_Jean_King) / [Susie Sharp](/wiki/Susie_Sharp) / [Carol Sutton](/wiki/Carol_Sutton_(journalist)) / [Addie Wyatt](/wiki/Addie_L._Wyatt)  (1975)
 
-
 1976–2000
-
 
 [Jimmy Carter](/wiki/Jimmy_Carter) (1976)
 [Anwar Sadat](/wiki/Anwar_Sadat) (1977)
@@ -3929,9 +3483,7 @@ Related articles
 [Jeff Bezos](/wiki/Jeff_Bezos) (1999)
 [George W. Bush](/wiki/George_W._Bush) (2000)
 
-
 2001–present
-
 
 [Rudolph Giuliani](/wiki/Rudy_Giuliani) (2001)
  The Whistleblowers: [Cynthia Cooper](/wiki/Cynthia_Cooper_(accountant)) / [Coleen Rowley](/wiki/Coleen_Rowley) / [Sherron Watkins](/wiki/Sherron_Watkins)  (2002)
@@ -3958,14 +3510,11 @@ Related articles
 Taylor Swift (2023)
 [Donald Trump](/wiki/Donald_Trump) (2024)
 
-
  |  |
-
 
 | [v](/wiki/Template:IFPI_Global_Year-End)
 [t](/wiki/Template_talk:IFPI_Global_Year-End)
 [e](/wiki/Special:EditPage/Template:IFPI_Global_Year-End)
-
 
 [IFPI](/wiki/International_Federation_of_the_Phonographic_Industry) Global Year-End Charts |  |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
@@ -4021,11 +3570,9 @@ Taylor Swift (2022–2024) |
 "[Flowers](/wiki/Flowers_(Miley_Cyrus_song))" – [Miley Cyrus](/wiki/Miley_Cyrus) (2023)
 "[Beautiful Things](/wiki/Beautiful_Things_(Benson_Boone_song))" – [Benson Boone](/wiki/Benson_Boone) (2024) |
 
-
 | [v](/wiki/Template:Billboard_Year-End_number_one_albums)
 [t](/wiki/Template_talk:Billboard_Year-End_number_one_albums)
 [e](/wiki/Special:EditPage/Template:Billboard_Year-End_number_one_albums)
-
 
 [*Billboard* Year-End](/wiki/Billboard_Year-End) [number one albums](/wiki/List_of_Billboard_Year-End_number-one_singles_and_albums) |  |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
@@ -4099,11 +3646,9 @@ Taylor Swift (2022–2024) |
 2023: *[One Thing at a Time](/wiki/One_Thing_at_a_Time)* – [Morgan Wallen](/wiki/Morgan_Wallen)
 2024: *[The Tortured Poets Department](/wiki/The_Tortured_Poets_Department)* – Taylor Swift |
 
-
 | [v](/wiki/Template:Billboard_Year-End_Top_Artists)
 [t](/wiki/Template_talk:Billboard_Year-End_Top_Artists)
 [e](/wiki/Special:EditPage/Template:Billboard_Year-End_Top_Artists)
-
 
 [*Billboard* Year-End](/wiki/Billboard_Year-End) [Top Artist](/wiki/Billboard_Year-End_Top_Artist) |  |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
@@ -4152,7 +3697,6 @@ Taylor Swift (2022–2024) |
 2023: Taylor Swift
 2024: Taylor Swift |
 
-
 | [Authority control databases](/wiki/Help:Authority_control) [![Edit this at Wikidata](//upload.wikimedia.org/wikipedia/en/thumb/8/8a/OOjs_UI_icon_edit-ltr-progressive.svg/20px-OOjs_UI_icon_edit-ltr-progressive.svg.png)](https://www.wikidata.org/wiki/Q26876#identifiers) |  |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
 | International | [ISNI](https://isni.org/isni/0000000078519858)
@@ -4184,12 +3728,9 @@ Taylor Swift (2022–2024) |
 | Other | [IdRef](https://www.idref.fr/171403037)
 [SNAC](https://snaccooperative.org/ark:/99166/w6jv0hk7) |
 
-
 ![](https://en.wikipedia.org/wiki/Special:CentralAutoLogin/start?type=1x1&usesul3=1)
 
-
 Retrieved from "[https://en.wikipedia.org/w/index.php?title=Taylor_Swift&oldid=1298261106](https://en.wikipedia.org/w/index.php?title=Taylor_Swift&oldid=1298261106)"
-
 
 [Categories](/wiki/Help:Category "Help:Category"):
 
@@ -4268,7 +3809,6 @@ Retrieved from "[https://en.wikipedia.org/w/index.php?title=Taylor_Swift&oldid=1
 - [Time Person of the Year](/wiki/Category:Time_Person_of_the_Year "Category:Time Person of the Year")
 - [Universal Music Group artists](/wiki/Category:Universal_Music_Group_artists "Category:Universal Music Group artists")
 
-
 Hidden categories:
 
 - [CS1 German-language sources (de)](/wiki/Category:CS1_German-language_sources_(de) "Category:CS1 German-language sources (de)")
@@ -4289,5 +3829,4 @@ Hidden categories:
 - [Pages using Sister project links with hidden wikidata](/wiki/Category:Pages_using_Sister_project_links_with_hidden_wikidata "Category:Pages using Sister project links with hidden wikidata")
 - [MusicBrainz artist same as Wikidata](/wiki/Category:MusicBrainz_artist_same_as_Wikidata "Category:MusicBrainz artist same as Wikidata")
 - [Articles with MusicBrainz artist links](/wiki/Category:Articles_with_MusicBrainz_artist_links "Category:Articles with MusicBrainz artist links")
-
 

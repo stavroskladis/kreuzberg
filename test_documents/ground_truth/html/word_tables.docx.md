@@ -46,4 +46,3 @@ A non-uniform table with all kinds of spans and empty cells
 |  |  |  |  |  |
 |  |  |  |  | Cell 8.4 |
 
-

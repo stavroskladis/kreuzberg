@@ -1,20 +1,14 @@
 
 
-
 # Does Model and Inference Parameter Matter in LLM Applications? - A Case Study for MATH
-
 
 April 21, 2023 · 6 min read
 
-
 [![Chi Wang](https://github.com/sonichi.png)](https://www.linkedin.com/in/chi-wang-49b15b16/)
-
 
 [Chi Wang](https://www.linkedin.com/in/chi-wang-49b15b16/)
 
-
 Principal Researcher at Microsoft Research
-
 
 ![level 2 algebra](/autogen/assets/images/level2algebra-659ba95286432d9945fc89e84d606797.png)
 
@@ -84,20 +78,15 @@ The need for model selection, parameter tuning and cost saving is not specific t
 
 *Do you have any experience to share about LLM applications? Do you like to see more support or research of LLM optimization or automation? Please join our [Discord](https://discord.gg/pAbnFJrkgZ) server for discussion.*
 
-
 **Tags:**
 
 - [LLM](/autogen/blog/tags/llm)
 - [GPT](/autogen/blog/tags/gpt)
 - [research](/autogen/blog/tags/research)
 
-
 [](/autogen/blog/2023/05/18/GPT-adaptive-humaneval)
-
 
 Newer Post
 
-
 Achieve More, Pay Less - Use GPT-4 Smartly
-
 

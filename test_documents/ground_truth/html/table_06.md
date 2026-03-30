@@ -6,40 +6,30 @@ This is the first paragraph.
 |---|---|
 | 
 
-
 A1
 B1
 C1
 
-
 D1
-
 
 I
 II
 
-
 III
 IV
 
-
 V
-
 
 E1
 E2
 
-
 E3
 E4
-
 
 VII
 VIII
 
-
 F1
-
 
  | 2... |
 

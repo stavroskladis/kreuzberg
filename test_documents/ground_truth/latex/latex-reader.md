@@ -1,8 +1,6 @@
 This is a set of tests for pandoc. Most of them are adapted from John Gruber’s markdown test suite.
 
-
 ------------------------------------------------------------------------
-
 
 # Headers
 
@@ -26,9 +24,7 @@ with no blank line
 
 with no blank line
 
-
 ------------------------------------------------------------------------
-
 
 # Paragraphs
 
@@ -41,9 +37,7 @@ Here’s one with a bullet. \* criminey.
 There should be a hard line break\
 here.
 
-
 ------------------------------------------------------------------------
-
 
 # Block Quotes
 
@@ -91,9 +85,7 @@ Here’s a nested one:
 
 And a following paragraph.
 
-
 ------------------------------------------------------------------------
-
 
 # Code Blocks
 
@@ -116,9 +108,7 @@ And:
 this has *two\
 lines*
 
-
 ------------------------------------------------------------------------
-
 
 # Lists
 
@@ -302,9 +292,7 @@ M.A. 2007
 
 B. Williams
 
-
 ------------------------------------------------------------------------
-
 
 # Definition Lists
 
@@ -367,13 +355,13 @@ This is *emphasized* And this is **strong** Here’s a simple block:
 
 foo This should be a code block, though:
 
-    <div>
+    
         foo
-    </div>
+    
 
 As should this:
 
-    <div>foo</div>
+    foo
 
 Now, nested:
 
@@ -389,13 +377,11 @@ Just plain comment, with trailing spaces on the line:
 
 Code:
 
-    <hr />
+    ---
 
 Hr’s:
 
-
 ------------------------------------------------------------------------
-
 
 # Inline Markup
 
@@ -413,7 +399,7 @@ So is ***this*** word.
 
 So is ***this*** word.
 
-This is code: `>`, `$`, `\`, `$`, `<html>`.
+This is code: `>`, `$`, `\`, `$`, ``.
 
 ~~This is *strikeout*.~~
 
@@ -423,9 +409,7 @@ Subscripts: H~2~O, H~23~O, H~many of them~O.
 
 These should not be superscripts or subscripts, because of the unescaped spaces: a^b c^d, a$`\sim`$b c$`\sim`$d.
 
-
 ------------------------------------------------------------------------
-
 
 # Smart quotes, ellipses, dashes
 
@@ -445,9 +429,7 @@ Dashes between numbers: 5–7, 255–66, 1987–1999.
 
 Ellipses…and…and….
 
-
 ------------------------------------------------------------------------
-
 
 # LaTeX
 
@@ -491,9 +473,7 @@ A table with one column:
 |  Animal   |
 | Vegetable |
 
-
 ------------------------------------------------------------------------
-
 
 # Special Characters
 
@@ -551,9 +531,7 @@ Plus: +
 
 Minus: -
 
-
 ------------------------------------------------------------------------
-
 
 # Links
 
@@ -631,9 +609,7 @@ Auto-links should not occur here: `<http://example.com/>`
 
     or here: <http://example.com/>
 
-
 ------------------------------------------------------------------------
-
 
 # Images
 
@@ -643,9 +619,7 @@ From “Voyage dans la Lune” by Georges Melies (1902):
 
 Here is a movie ![image](movie.jpg) icon.
 
-
 ------------------------------------------------------------------------
-
 
 # Footnotes
 
