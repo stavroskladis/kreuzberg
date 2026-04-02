@@ -1763,6 +1763,58 @@ pub fn get_extensions_for_mime(mime_type: &str) -> Result<Vec<String>>
 
 ---
 
+## Code Intelligence
+
+Kreuzberg uses [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev) to parse and analyze source code files across 248 programming languages. When extracting code files, the result metadata includes structural analysis, imports, exports, symbols, diagnostics, and semantic code chunks.
+
+Code intelligence data is available via `FormatMetadata::Code` in the `metadata.format` field. Requires the `tree-sitter` feature flag.
+
+```rust title="code_intelligence.rs"
+use kreuzberg::{
+    extract_file_sync, ExtractionConfig, TreeSitterConfig, TreeSitterProcessConfig,
+    types::FormatMetadata,
+};
+
+fn main() -> kreuzberg::Result<()> {
+    let config = ExtractionConfig {
+        tree_sitter: Some(TreeSitterConfig {
+            process: TreeSitterProcessConfig {
+                structure: true,
+                imports: true,
+                exports: true,
+                comments: true,
+                docstrings: true,
+                ..Default::default()
+            },
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
+
+    let result = extract_file_sync("app.py", None, &config)?;
+
+    if let Some(FormatMetadata::Code(ref code)) = result.metadata.format {
+        println!("Language: {}", code.language);
+        println!("Functions/classes: {}", code.structure.len());
+        println!("Imports: {}", code.imports.len());
+
+        for item in &code.structure {
+            println!("  {:?}: {:?} at line {}", item.kind, item.name, item.span.start_line);
+        }
+
+        for chunk in &code.chunks {
+            println!("Chunk: {}...", &chunk.content[..50.min(chunk.content.len())]);
+        }
+    }
+
+    Ok(())
+}
+```
+
+For configuration details, see the [Code Intelligence Guide](../guides/code-intelligence.md).
+
+---
+
 ## Complete Documentation
 
 For complete Rust API documentation with all types, traits, and functions:

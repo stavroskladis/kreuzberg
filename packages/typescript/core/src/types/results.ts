@@ -5,7 +5,7 @@
  * including extracted content, metadata, tables, chunks, images, and keywords.
  */
 
-import type { ExtractedKeyword } from "./config.js";
+import type { CodeProcessResult, ExtractedKeyword } from "./config.js";
 import type { Metadata } from "./metadata.js";
 
 // ============================================================================
@@ -652,4 +652,6 @@ export interface ExtractionResult {
 	children?: ArchiveEntry[];
 	/** URIs/links discovered during document extraction */
 	uris?: Uri[];
+	/** Code intelligence results from tree-sitter processing */
+	codeIntelligence?: CodeProcessResult | null;
 }

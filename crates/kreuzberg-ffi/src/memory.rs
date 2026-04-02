@@ -243,6 +243,9 @@ pub unsafe extern "C" fn kreuzberg_free_result(result: *mut CExtractionResult) {
         if !result_box.uris_json.is_null() {
             unsafe { drop(CString::from_raw(result_box.uris_json)) };
         }
+        if !result_box.code_intelligence_json.is_null() {
+            unsafe { drop(CString::from_raw(result_box.code_intelligence_json)) };
+        }
     }
 }
 
@@ -276,6 +279,7 @@ mod tests {
             processing_warnings_json: ptr::null_mut(),
             annotations_json: ptr::null_mut(),
             uris_json: ptr::null_mut(),
+            code_intelligence_json: ptr::null_mut(),
             success: true,
             _padding1: [0u8; 7],
         }))
@@ -306,6 +310,7 @@ mod tests {
             processing_warnings_json: ptr::null_mut(),
             annotations_json: ptr::null_mut(),
             uris_json: ptr::null_mut(),
+            code_intelligence_json: ptr::null_mut(),
             success: true,
             _padding1: [0u8; 7],
         }))
@@ -407,6 +412,7 @@ mod tests {
             processing_warnings_json: ptr::null_mut(),
             annotations_json: ptr::null_mut(),
             uris_json: ptr::null_mut(),
+            code_intelligence_json: ptr::null_mut(),
             success: true,
             _padding1: [0u8; 7],
         }));
@@ -443,6 +449,7 @@ mod tests {
             processing_warnings_json: ptr::null_mut(),
             annotations_json: ptr::null_mut(),
             uris_json: ptr::null_mut(),
+            code_intelligence_json: ptr::null_mut(),
             success: true,
             _padding1: [0u8; 7],
         }));

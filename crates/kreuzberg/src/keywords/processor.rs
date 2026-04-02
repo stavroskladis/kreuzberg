@@ -123,6 +123,8 @@ machine learning that uses neural networks with multiple layers.
             annotations: None,
             children: None,
             uris: None,
+            #[cfg(feature = "tree-sitter")]
+            code_intelligence: None,
             formatted_content: None,
         };
 
@@ -164,6 +166,8 @@ machine learning that uses neural networks with multiple layers.
             annotations: None,
             children: None,
             uris: None,
+            #[cfg(feature = "tree-sitter")]
+            code_intelligence: None,
             formatted_content: None,
         };
 
@@ -201,6 +205,8 @@ machine learning that uses neural networks with multiple layers.
             annotations: None,
             children: None,
             uris: None,
+            #[cfg(feature = "tree-sitter")]
+            code_intelligence: None,
             formatted_content: None,
         };
 
@@ -238,6 +244,8 @@ machine learning that uses neural networks with multiple layers.
             annotations: None,
             children: None,
             uris: None,
+            #[cfg(feature = "tree-sitter")]
+            code_intelligence: None,
             formatted_content: None,
         };
 
@@ -286,6 +294,8 @@ machine learning that uses neural networks with multiple layers.
             annotations: None,
             children: None,
             uris: None,
+            #[cfg(feature = "tree-sitter")]
+            code_intelligence: None,
             formatted_content: None,
         };
 
@@ -323,6 +333,8 @@ machine learning that uses neural networks with multiple layers.
             annotations: None,
             children: None,
             uris: None,
+            #[cfg(feature = "tree-sitter")]
+            code_intelligence: None,
             formatted_content: None,
         };
 
@@ -346,6 +358,8 @@ machine learning that uses neural networks with multiple layers.
             annotations: None,
             children: None,
             uris: None,
+            #[cfg(feature = "tree-sitter")]
+            code_intelligence: None,
             formatted_content: None,
         };
 

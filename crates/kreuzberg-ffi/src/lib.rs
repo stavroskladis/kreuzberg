@@ -223,6 +223,7 @@ mod tests {
             processing_warnings_json: ptr::null_mut(),
             annotations_json: ptr::null_mut(),
             uris_json: ptr::null_mut(),
+            code_intelligence_json: ptr::null_mut(),
             success: true,
             _padding1: [0u8; 7],
         }))
@@ -549,6 +550,7 @@ mod tests {
                 processing_warnings_json: ptr::null_mut(),
                 annotations_json: ptr::null_mut(),
                 uris_json: ptr::null_mut(),
+                code_intelligence_json: ptr::null_mut(),
                 success: true,
                 _padding1: [0u8; 7],
             }));
@@ -588,6 +590,7 @@ mod tests {
                     .into_raw(),
                 annotations_json: ptr::null_mut(),
                 uris_json: ptr::null_mut(),
+                code_intelligence_json: ptr::null_mut(),
                 success: true,
                 _padding1: [0u8; 7],
             }));

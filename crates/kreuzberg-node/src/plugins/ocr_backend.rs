@@ -149,6 +149,7 @@ impl RustOcrBackend for JsOcrBackend {
             annotations: None,
             children: None,
             uris: None,
+            code_intelligence: None,
             formatted_content: None,
         })
     }

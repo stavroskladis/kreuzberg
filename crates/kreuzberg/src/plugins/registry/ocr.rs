@@ -283,6 +283,8 @@ mod tests {
                 annotations: None,
                 children: None,
                 uris: None,
+                #[cfg(feature = "tree-sitter")]
+                code_intelligence: None,
                 formatted_content: None,
             })
         }
@@ -420,6 +422,8 @@ mod tests {
                 annotations: None,
                 children: None,
                 uris: None,
+                #[cfg(feature = "tree-sitter")]
+                code_intelligence: None,
                 formatted_content: None,
             })
         }

@@ -229,6 +229,9 @@ pub struct JsExtractionResult {
     #[serde(skip)]
     pub children: Vec<JsArchiveEntry>,
     pub uris: Vec<JsUri>,
+    /// Code intelligence results from tree-sitter processing.
+    #[napi(ts_type = "CodeProcessResult | null", js_name = "codeIntelligence")]
+    pub code_intelligence: serde_json::Value,
 }
 
 impl TryFrom<RustExtractionResult> for JsExtractionResult {
@@ -612,6 +615,9 @@ impl TryFrom<RustExtractionResult> for JsExtractionResult {
             annotations,
             children,
             uris,
+            // code_intelligence will be populated once the core ExtractionResult
+            // adds the field; for now, always null.
+            code_intelligence: serde_json::Value::Null,
         })
     }
 }
@@ -959,6 +965,7 @@ impl TryFrom<JsExtractionResult> for RustExtractionResult {
                         .collect(),
                 )
             },
+            code_intelligence: None,
             formatted_content: None,
         })
     }

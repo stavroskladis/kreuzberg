@@ -17,6 +17,7 @@ public final class TreeSitterProcessConfig {
 	private final Boolean symbols;
 	private final Boolean diagnostics;
 	private final Integer chunkMaxSize;
+	private final String contentMode;
 
 	private TreeSitterProcessConfig(Builder builder) {
 		this.structure = builder.structure;
@@ -27,6 +28,7 @@ public final class TreeSitterProcessConfig {
 		this.symbols = builder.symbols;
 		this.diagnostics = builder.diagnostics;
 		this.chunkMaxSize = builder.chunkMaxSize;
+		this.contentMode = builder.contentMode;
 	}
 
 	public static Builder builder() {
@@ -105,6 +107,16 @@ public final class TreeSitterProcessConfig {
 		return chunkMaxSize;
 	}
 
+	/**
+	 * Get the content rendering mode for code extraction.
+	 *
+	 * @return the content mode ("chunks", "raw", or "structure"), or null if not
+	 *         set
+	 */
+	public String getContentMode() {
+		return contentMode;
+	}
+
 	public Map<String, Object> toMap() {
 		Map<String, Object> map = new HashMap<>();
 		if (structure != null) {
@@ -131,6 +143,9 @@ public final class TreeSitterProcessConfig {
 		if (chunkMaxSize != null) {
 			map.put("chunk_max_size", chunkMaxSize);
 		}
+		if (contentMode != null) {
+			map.put("content_mode", contentMode);
+		}
 		return map;
 	}
 
@@ -143,6 +158,7 @@ public final class TreeSitterProcessConfig {
 		private Boolean symbols;
 		private Boolean diagnostics;
 		private Integer chunkMaxSize;
+		private String contentMode;
 
 		private Builder() {
 		}
@@ -243,6 +259,18 @@ public final class TreeSitterProcessConfig {
 			return this;
 		}
 
+		/**
+		 * Set the content rendering mode for code extraction.
+		 *
+		 * @param contentMode
+		 *            the content mode ("chunks", "raw", or "structure")
+		 * @return this builder for chaining
+		 */
+		public Builder contentMode(String contentMode) {
+			this.contentMode = contentMode;
+			return this;
+		}
+
 		public TreeSitterProcessConfig build() {
 			return new TreeSitterProcessConfig(this);
 		}
@@ -298,6 +326,10 @@ public final class TreeSitterProcessConfig {
 		Object chunkMaxSizeValue = map.get("chunk_max_size");
 		if (chunkMaxSizeValue instanceof Number) {
 			builder.chunkMaxSize(((Number) chunkMaxSizeValue).intValue());
+		}
+		Object contentModeValue = map.get("content_mode");
+		if (contentModeValue instanceof String) {
+			builder.contentMode((String) contentModeValue);
 		}
 		return builder.build();
 	}

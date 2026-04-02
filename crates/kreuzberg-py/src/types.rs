@@ -80,6 +80,8 @@ pub struct ExtractionResult {
     children: Option<Py<PyList>>,
 
     uris: Option<Py<PyList>>,
+
+    code_intelligence: Option<Py<PyAny>>,
 }
 
 #[pymethods]
@@ -158,6 +160,11 @@ impl ExtractionResult {
     #[getter]
     fn uris<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyList>> {
         self.uris.as_ref().map(|u| u.bind(py).clone())
+    }
+
+    #[getter]
+    fn code_intelligence<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyAny>> {
+        self.code_intelligence.as_ref().map(|c| c.bind(py).clone())
     }
 
     fn __repr__(&self) -> String {
@@ -754,6 +761,9 @@ impl ExtractionResult {
             annotations,
             children,
             uris,
+            // code_intelligence will be populated once the core ExtractionResult
+            // adds the field; for now, always None.
+            code_intelligence: None,
         })
     }
 }
@@ -803,6 +813,7 @@ mod tests {
                 children: None,
                 uris: None,
                 formatted_content: None,
+                code_intelligence: None,
             };
 
             let py_result =

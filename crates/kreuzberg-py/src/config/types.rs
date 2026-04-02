@@ -2384,7 +2384,8 @@ impl TreeSitterProcessConfig {
         docstrings=None,
         symbols=None,
         diagnostics=None,
-        chunk_max_size=None
+        chunk_max_size=None,
+        content_mode=None
     ))]
     #[allow(clippy::too_many_arguments)]
     fn new(
@@ -2396,7 +2397,16 @@ impl TreeSitterProcessConfig {
         symbols: Option<bool>,
         diagnostics: Option<bool>,
         chunk_max_size: Option<usize>,
+        content_mode: Option<String>,
     ) -> Self {
+        let content_mode = content_mode
+            .and_then(|s| match s.as_str() {
+                "chunks" => Some(kreuzberg::core::config::CodeContentMode::Chunks),
+                "raw" => Some(kreuzberg::core::config::CodeContentMode::Raw),
+                "structure" => Some(kreuzberg::core::config::CodeContentMode::Structure),
+                _ => None,
+            })
+            .unwrap_or_default();
         Self {
             inner: kreuzberg::core::config::TreeSitterProcessConfig {
                 structure: structure.unwrap_or(true),
@@ -2407,6 +2417,7 @@ impl TreeSitterProcessConfig {
                 symbols: symbols.unwrap_or(false),
                 diagnostics: diagnostics.unwrap_or(false),
                 chunk_max_size,
+                content_mode,
             },
         }
     }
@@ -2491,9 +2502,27 @@ impl TreeSitterProcessConfig {
         self.inner.chunk_max_size = value;
     }
 
+    #[getter]
+    fn content_mode(&self) -> String {
+        match self.inner.content_mode {
+            kreuzberg::core::config::CodeContentMode::Chunks => "chunks".to_string(),
+            kreuzberg::core::config::CodeContentMode::Raw => "raw".to_string(),
+            kreuzberg::core::config::CodeContentMode::Structure => "structure".to_string(),
+        }
+    }
+
+    #[setter]
+    fn set_content_mode(&mut self, value: String) {
+        self.inner.content_mode = match value.as_str() {
+            "raw" => kreuzberg::core::config::CodeContentMode::Raw,
+            "structure" => kreuzberg::core::config::CodeContentMode::Structure,
+            _ => kreuzberg::core::config::CodeContentMode::Chunks,
+        };
+    }
+
     fn __repr__(&self) -> String {
         format!(
-            "TreeSitterProcessConfig(structure={}, imports={}, exports={}, comments={}, docstrings={}, symbols={}, diagnostics={}, chunk_max_size={:?})",
+            "TreeSitterProcessConfig(structure={}, imports={}, exports={}, comments={}, docstrings={}, symbols={}, diagnostics={}, chunk_max_size={:?}, content_mode={:?})",
             self.inner.structure,
             self.inner.imports,
             self.inner.exports,
@@ -2501,7 +2530,8 @@ impl TreeSitterProcessConfig {
             self.inner.docstrings,
             self.inner.symbols,
             self.inner.diagnostics,
-            self.inner.chunk_max_size
+            self.inner.chunk_max_size,
+            self.inner.content_mode
         )
     }
 }
@@ -2526,21 +2556,33 @@ pub struct TreeSitterConfig {
 #[pymethods]
 impl TreeSitterConfig {
     #[new]
-    #[pyo3(signature = (cache_dir=None, languages=None, groups=None, process=None))]
+    #[pyo3(signature = (cache_dir=None, languages=None, groups=None, process=None, enabled=None))]
     fn new(
         cache_dir: Option<String>,
         languages: Option<Vec<String>>,
         groups: Option<Vec<String>>,
         process: Option<TreeSitterProcessConfig>,
+        enabled: Option<bool>,
     ) -> Self {
         Self {
             inner: kreuzberg::core::config::TreeSitterConfig {
+                enabled: enabled.unwrap_or(true),
                 cache_dir: cache_dir.map(std::path::PathBuf::from),
                 languages,
                 groups,
                 process: process.map(Into::into).unwrap_or_default(),
             },
         }
+    }
+
+    #[getter]
+    fn enabled(&self) -> bool {
+        self.inner.enabled
+    }
+
+    #[setter]
+    fn set_enabled(&mut self, value: bool) {
+        self.inner.enabled = value;
     }
 
     #[getter]

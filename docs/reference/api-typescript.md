@@ -1468,6 +1468,50 @@ for (const file of files) {
 
 ---
 
+## Code Intelligence
+
+Kreuzberg uses [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev) to parse and analyze source code files across 248 programming languages. When extracting code files, the result metadata includes structural analysis, imports, exports, symbols, diagnostics, and semantic code chunks.
+
+Code intelligence data is available in `result.metadata.format` when `formatType` is `"code"`.
+
+```typescript title="code_intelligence.ts"
+import { extractFileSync, ExtractionConfig } from "@kreuzberg/node";
+
+const config: ExtractionConfig = {
+  treeSitter: {
+    process: {
+      structure: true,
+      imports: true,
+      exports: true,
+      comments: true,
+      docstrings: true,
+    },
+  },
+};
+
+const result = extractFileSync("app.ts", config);
+
+// Access code intelligence from format metadata
+const fmt = result.metadata?.format;
+if (fmt && fmt.formatType === "code") {
+  console.log(`Language: ${fmt.language}`);
+  console.log(`Functions/classes: ${fmt.structure.length}`);
+  console.log(`Imports: ${fmt.imports.length}`);
+
+  for (const item of fmt.structure) {
+    console.log(`  ${item.kind}: ${item.name} at line ${item.span.startLine}`);
+  }
+
+  for (const chunk of fmt.chunks ?? []) {
+    console.log(`Chunk: ${chunk.content.slice(0, 50)}...`);
+  }
+}
+```
+
+For configuration details, see the [Code Intelligence Guide](../guides/code-intelligence.md).
+
+---
+
 ## System Requirements
 
 **Node.js:** 16.x or higher

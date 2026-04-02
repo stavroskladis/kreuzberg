@@ -11,6 +11,7 @@ const OPTIONAL_FIELDS: &[&str] = &[
     "annotations",
     "children",
     "chunks",
+    "code_intelligence",
     "detected_languages",
     "djot_content",
     "document",

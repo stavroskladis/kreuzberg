@@ -438,6 +438,7 @@ fn sample_extraction_result() -> Value {
         children: Some(vec![archive_entry]),
         uris: Some(vec![uri]),
         formatted_content: None,
+        code_intelligence: None,
     };
 
     serde_json::to_value(&result).expect("ExtractionResult serialization")

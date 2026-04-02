@@ -11,12 +11,14 @@ import java.util.Map;
  * @since 4.7.0
  */
 public final class TreeSitterConfig {
+	private final Boolean enabled;
 	private final String cacheDir;
 	private final List<String> languages;
 	private final List<String> groups;
 	private final TreeSitterProcessConfig process;
 
 	private TreeSitterConfig(Builder builder) {
+		this.enabled = builder.enabled;
 		this.cacheDir = builder.cacheDir;
 		this.languages = builder.languages;
 		this.groups = builder.groups;
@@ -25,6 +27,15 @@ public final class TreeSitterConfig {
 
 	public static Builder builder() {
 		return new Builder();
+	}
+
+	/**
+	 * Whether code intelligence processing is enabled.
+	 *
+	 * @return true if enabled, or null if not set (defaults to true)
+	 */
+	public Boolean getEnabled() {
+		return enabled;
 	}
 
 	/**
@@ -65,6 +76,9 @@ public final class TreeSitterConfig {
 
 	public Map<String, Object> toMap() {
 		Map<String, Object> map = new HashMap<>();
+		if (enabled != null) {
+			map.put("enabled", enabled);
+		}
 		if (cacheDir != null) {
 			map.put("cache_dir", cacheDir);
 		}
@@ -81,12 +95,25 @@ public final class TreeSitterConfig {
 	}
 
 	public static final class Builder {
+		private Boolean enabled;
 		private String cacheDir;
 		private List<String> languages;
 		private List<String> groups;
 		private TreeSitterProcessConfig process;
 
 		private Builder() {
+		}
+
+		/**
+		 * Enable or disable code intelligence processing.
+		 *
+		 * @param enabled
+		 *            true to enable, false to disable
+		 * @return this builder for chaining
+		 */
+		public Builder enabled(Boolean enabled) {
+			this.enabled = enabled;
+			return this;
 		}
 
 		/**
@@ -148,6 +175,10 @@ public final class TreeSitterConfig {
 			return null;
 		}
 		Builder builder = builder();
+		Object enabledValue = map.get("enabled");
+		if (enabledValue instanceof Boolean) {
+			builder.enabled((Boolean) enabledValue);
+		}
 		Object cacheDirValue = map.get("cache_dir");
 		if (cacheDirValue instanceof String) {
 			builder.cacheDir((String) cacheDirValue);

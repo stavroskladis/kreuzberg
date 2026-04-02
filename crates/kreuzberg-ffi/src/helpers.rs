@@ -103,6 +103,7 @@ pub fn to_c_extraction_result(result: ExtractionResult) -> std::result::Result<*
         formatted_content: _,
         children,
         uris,
+        code_intelligence: _,
     } = result;
 
     let sanitized_content = if content.contains('\0') {
@@ -346,6 +347,9 @@ pub fn to_c_extraction_result(result: ExtractionResult) -> std::result::Result<*
         subject: subject_guard.map_or(ptr::null_mut(), |g| g.into_raw()),
         tables_json: tables_json_guard.map_or(ptr::null_mut(), |g| g.into_raw()),
         uris_json: uris_json_guard.map_or(ptr::null_mut(), |g| g.into_raw()),
+        // code_intelligence will be populated once the core ExtractionResult
+        // adds the field; for now, always null.
+        code_intelligence_json: ptr::null_mut(),
         success: true,
         _padding1: [0u8; 7],
     })))
@@ -513,6 +517,7 @@ mod tests {
             children: None,
             uris: None,
             formatted_content: None,
+            code_intelligence: None,
         };
 
         let c_result = to_c_extraction_result(result);
@@ -561,6 +566,7 @@ mod tests {
             children: None,
             uris: None,
             formatted_content: None,
+            code_intelligence: None,
         };
 
         let c_result = to_c_extraction_result(result);
@@ -619,6 +625,7 @@ mod tests {
             children: None,
             uris: None,
             formatted_content: None,
+            code_intelligence: None,
         };
 
         let c_result = to_c_extraction_result(result);
@@ -713,6 +720,7 @@ mod tests {
             children: None,
             uris: None,
             formatted_content: None,
+            code_intelligence: None,
         };
 
         let c_result = to_c_extraction_result(result);

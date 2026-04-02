@@ -60,6 +60,7 @@ readonly class ExtractionResult
         public ?array $processingWarnings = null,
         /** @var array<PdfAnnotation>|null */
         public ?array $annotations = null,
+        public ?CodeProcessResult $codeIntelligence = null,
     ) {
     }
 
@@ -208,6 +209,13 @@ readonly class ExtractionResult
             );
         }
 
+        $codeIntelligence = null;
+        if (isset($data['code_intelligence'])) {
+            /** @var array<string, mixed> $codeIntelligenceData */
+            $codeIntelligenceData = $data['code_intelligence'];
+            $codeIntelligence = CodeProcessResult::fromArray($codeIntelligenceData);
+        }
+
         return new self(
             content: $content,
             mimeType: $mimeType,
@@ -230,6 +238,7 @@ readonly class ExtractionResult
             qualityScore: $qualityScore,
             processingWarnings: $processingWarnings,
             annotations: $annotations,
+            codeIntelligence: $codeIntelligence,
         );
     }
 }

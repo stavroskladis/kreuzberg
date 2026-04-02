@@ -186,6 +186,7 @@ pub fn kreuzberg_extract_bytes(
                         children: None,
                         uris: None,
                         formatted_content: None,
+                        code_intelligence: None,
                     };
 
                     return ExtractionResult::from_rust(rust_result);

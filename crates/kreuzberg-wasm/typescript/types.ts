@@ -251,6 +251,8 @@ export interface TreeSitterProcessConfig {
 	diagnostics?: boolean;
 	/** Maximum chunk size in bytes. undefined disables chunking */
 	chunkMaxSize?: number;
+	/** Content rendering mode: "chunks" (default), "raw", or "structure" */
+	contentMode?: "chunks" | "raw" | "structure";
 }
 
 /**
@@ -259,6 +261,8 @@ export interface TreeSitterProcessConfig {
  * Controls grammar download behavior and code analysis options.
  */
 export interface TreeSitterConfig {
+	/** Enable code intelligence processing. Default: true */
+	enabled?: boolean;
 	/** Custom cache directory for downloaded grammars */
 	cacheDir?: string;
 	/** Languages to pre-download on init (e.g., ["python", "rust"]) */
@@ -869,6 +873,8 @@ export interface ExtractionResult {
 	document?: DocumentStructure | null;
 	/** PDF annotations (text notes, highlights, links, stamps) */
 	annotations?: PdfAnnotation[] | null;
+	/** Code intelligence results from tree-sitter processing */
+	codeIntelligence?: CodeProcessResult | null;
 }
 
 /**

@@ -6,6 +6,22 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
+/// Content rendering mode for code extraction.
+///
+/// Controls how extracted code content is represented in the `content` field
+/// of `ExtractionResult`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum CodeContentMode {
+    /// Use TSLP semantic chunks as content (default).
+    #[default]
+    Chunks,
+    /// Use raw source code as content.
+    Raw,
+    /// Emit function/class headings + docstrings (no code bodies).
+    Structure,
+}
+
 /// Configuration for tree-sitter language pack integration.
 ///
 /// Controls grammar download behavior and code analysis options.
@@ -22,8 +38,15 @@ use std::path::PathBuf;
 /// comments = true
 /// docstrings = true
 /// ```
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TreeSitterConfig {
+    /// Enable code intelligence processing (default: true).
+    ///
+    /// When `false`, tree-sitter analysis is completely skipped even if
+    /// the config section is present.
+    #[serde(default = "default_true")]
+    pub enabled: bool,
+
     /// Custom cache directory for downloaded grammars.
     ///
     /// When `None`, uses the default: `~/.cache/tree-sitter-language-pack/v{version}/libs/`.
@@ -79,6 +102,22 @@ pub struct TreeSitterProcessConfig {
     /// Maximum chunk size in bytes. `None` disables chunking.
     #[serde(default)]
     pub chunk_max_size: Option<usize>,
+
+    /// Content rendering mode for code extraction.
+    #[serde(default)]
+    pub content_mode: CodeContentMode,
+}
+
+impl Default for TreeSitterConfig {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            cache_dir: None,
+            languages: None,
+            groups: None,
+            process: TreeSitterProcessConfig::default(),
+        }
+    }
 }
 
 impl Default for TreeSitterProcessConfig {
@@ -92,6 +131,7 @@ impl Default for TreeSitterProcessConfig {
             symbols: false,
             diagnostics: false,
             chunk_max_size: None,
+            content_mode: CodeContentMode::default(),
         }
     }
 }

@@ -773,18 +773,20 @@ module Kreuzberg
       attr_reader symbols: bool
       attr_reader diagnostics: bool
       attr_reader chunk_max_size: Integer?
+      attr_reader content_mode: String?
 
-      def initialize: (?structure: bool, ?imports: bool, ?exports: bool, ?comments: bool, ?docstrings: bool, ?symbols: bool, ?diagnostics: bool, ?chunk_max_size: Integer?) -> void
+      def initialize: (?structure: bool, ?imports: bool, ?exports: bool, ?comments: bool, ?docstrings: bool, ?symbols: bool, ?diagnostics: bool, ?chunk_max_size: Integer?, ?content_mode: String?) -> void
       def to_h: () -> Hash[Symbol, untyped]
     end
 
     class TreeSitterConfig
+      attr_reader enabled: bool?
       attr_reader cache_dir: String?
       attr_reader languages: Array[String]?
       attr_reader groups: Array[String]?
       attr_reader process: TreeSitterProcessConfig?
 
-      def initialize: (?cache_dir: String?, ?languages: Array[String]?, ?groups: Array[String]?, ?process: (TreeSitterProcessConfig | Hash[Symbol, untyped])?) -> void
+      def initialize: (?enabled: bool?, ?cache_dir: String?, ?languages: Array[String]?, ?groups: Array[String]?, ?process: (TreeSitterProcessConfig | Hash[Symbol, untyped])?) -> void
       def to_h: () -> Hash[Symbol, untyped]
     end
 

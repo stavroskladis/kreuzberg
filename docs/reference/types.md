@@ -2059,6 +2059,283 @@ type OcrMetadata struct {
 }
 ```
 
+### Code Metadata (ProcessResult)
+
+Complete code analysis result from [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev). Available when `format_type == "code"` (i.e., when extracting source code files). Contains structural analysis, imports, exports, comments, docstrings, symbols, diagnostics, and semantic code chunks.
+
+#### Rust
+
+```rust title="process_result.rs"
+pub struct ProcessResult {
+    pub language: String,
+    pub metrics: FileMetrics,
+    pub structure: Vec<StructureItem>,
+    pub imports: Vec<ImportInfo>,
+    pub exports: Vec<ExportInfo>,
+    pub comments: Vec<CommentInfo>,
+    pub docstrings: Vec<DocstringInfo>,
+    pub symbols: Vec<SymbolInfo>,
+    pub diagnostics: Vec<Diagnostic>,
+    pub chunks: Vec<CodeChunk>,
+}
+
+pub struct FileMetrics {
+    pub total_lines: usize,
+    pub code_lines: usize,
+    pub comment_lines: usize,
+    pub blank_lines: usize,
+    pub total_bytes: usize,
+    pub node_count: usize,
+    pub error_count: usize,
+    pub max_depth: usize,
+}
+
+pub struct StructureItem {
+    pub kind: StructureKind,
+    pub name: Option<String>,
+    pub visibility: Option<String>,
+    pub span: Span,
+    pub children: Vec<StructureItem>,
+    pub decorators: Vec<String>,
+    pub doc_comment: Option<String>,
+    pub signature: Option<String>,
+    pub body_span: Option<Span>,
+}
+
+pub struct ImportInfo {
+    pub source: String,
+    pub items: Vec<String>,
+    pub alias: Option<String>,
+    pub is_wildcard: bool,
+    pub span: Span,
+}
+
+pub struct ExportInfo {
+    pub name: String,
+    pub kind: ExportKind,
+    pub span: Span,
+}
+
+pub struct SymbolInfo {
+    pub name: String,
+    pub kind: SymbolKind,
+    pub type_annotation: Option<String>,
+    pub span: Span,
+}
+
+pub struct Diagnostic {
+    pub message: String,
+    pub severity: DiagnosticSeverity,
+    pub span: Span,
+}
+
+pub struct CodeChunk {
+    pub content: String,
+    pub language: String,
+    pub span: Span,
+    pub context: Option<ChunkContext>,
+}
+
+pub struct Span {
+    pub start_line: usize,
+    pub start_column: usize,
+    pub end_line: usize,
+    pub end_column: usize,
+    pub start_byte: usize,
+    pub end_byte: usize,
+}
+```
+
+#### Python
+
+```python title="process_result.py"
+class ProcessResult(TypedDict):
+    language: str
+    metrics: FileMetrics
+    structure: list[StructureItem]
+    imports: list[ImportInfo]
+    exports: list[ExportInfo]
+    comments: list[CommentInfo]
+    docstrings: list[DocstringInfo]
+    symbols: list[SymbolInfo]
+    diagnostics: list[Diagnostic]
+    chunks: list[CodeChunk]
+
+class StructureItem(TypedDict):
+    kind: str  # "function", "class", "struct", "method", "module", etc.
+    name: str | None
+    visibility: str | None
+    span: Span
+    children: list[StructureItem]
+    decorators: list[str]
+    doc_comment: str | None
+    signature: str | None
+
+class ImportInfo(TypedDict):
+    source: str
+    items: list[str]
+    alias: str | None
+    is_wildcard: bool
+    span: Span
+
+class ExportInfo(TypedDict):
+    name: str
+    kind: str  # "function", "class", "variable", "type", "default"
+    span: Span
+
+class SymbolInfo(TypedDict):
+    name: str
+    kind: str  # "variable", "constant", "type_alias", "enum_variant"
+    type_annotation: str | None
+    span: Span
+
+class CodeChunk(TypedDict):
+    content: str
+    language: str
+    span: Span
+    context: ChunkContext | None
+
+class Span(TypedDict):
+    start_line: int
+    start_column: int
+    end_line: int
+    end_column: int
+    start_byte: int
+    end_byte: int
+```
+
+#### TypeScript
+
+```typescript title="process_result.ts"
+export interface ProcessResult {
+  language: string;
+  metrics: FileMetrics;
+  structure: StructureItem[];
+  imports: ImportInfo[];
+  exports: ExportInfo[];
+  comments: CommentInfo[];
+  docstrings: DocstringInfo[];
+  symbols: SymbolInfo[];
+  diagnostics: Diagnostic[];
+  chunks: CodeChunk[];
+}
+
+export interface StructureItem {
+  kind: string;
+  name?: string | null;
+  visibility?: string | null;
+  span: Span;
+  children: StructureItem[];
+  decorators: string[];
+  docComment?: string | null;
+  signature?: string | null;
+}
+
+export interface ImportInfo {
+  source: string;
+  items: string[];
+  alias?: string | null;
+  isWildcard: boolean;
+  span: Span;
+}
+
+export interface ExportInfo {
+  name: string;
+  kind: string;
+  span: Span;
+}
+
+export interface SymbolInfo {
+  name: string;
+  kind: string;
+  typeAnnotation?: string | null;
+  span: Span;
+}
+
+export interface CodeChunk {
+  content: string;
+  language: string;
+  span: Span;
+  context?: ChunkContext | null;
+}
+
+export interface Span {
+  startLine: number;
+  startColumn: number;
+  endLine: number;
+  endColumn: number;
+  startByte: number;
+  endByte: number;
+}
+```
+
+#### Go
+
+```go title="process_result.go"
+type CodeProcessResult struct {
+    Language    string              `json:"language"`
+    Metrics     CodeFileMetrics     `json:"metrics"`
+    Structure   []CodeStructureItem `json:"structure"`
+    Imports     []CodeImportInfo    `json:"imports"`
+    Exports     []CodeExportInfo    `json:"exports"`
+    Comments    []CodeCommentInfo   `json:"comments"`
+    Docstrings  []CodeDocstringInfo `json:"docstrings"`
+    Symbols     []CodeSymbolInfo    `json:"symbols"`
+    Diagnostics []CodeDiagnostic    `json:"diagnostics"`
+    Chunks      []CodeChunk         `json:"chunks"`
+}
+
+type CodeStructureItem struct {
+    Kind       string              `json:"kind"`
+    Name       *string             `json:"name,omitempty"`
+    Visibility *string             `json:"visibility,omitempty"`
+    Span       CodeSpan            `json:"span"`
+    Children   []CodeStructureItem `json:"children"`
+    Decorators []string            `json:"decorators"`
+    DocComment *string             `json:"doc_comment,omitempty"`
+    Signature  *string             `json:"signature,omitempty"`
+}
+
+type CodeImportInfo struct {
+    Source     string   `json:"source"`
+    Items      []string `json:"items"`
+    Alias      *string  `json:"alias,omitempty"`
+    IsWildcard bool     `json:"is_wildcard"`
+    Span       CodeSpan `json:"span"`
+}
+
+type CodeExportInfo struct {
+    Name string   `json:"name"`
+    Kind string   `json:"kind"`
+    Span CodeSpan `json:"span"`
+}
+
+type CodeSymbolInfo struct {
+    Name           string   `json:"name"`
+    Kind           string   `json:"kind"`
+    TypeAnnotation *string  `json:"type_annotation,omitempty"`
+    Span           CodeSpan `json:"span"`
+}
+
+type CodeChunk struct {
+    Content  string            `json:"content"`
+    Language string            `json:"language"`
+    Span     CodeSpan          `json:"span"`
+    Context  *CodeChunkContext `json:"context,omitempty"`
+}
+
+type CodeSpan struct {
+    StartLine   int `json:"start_line"`
+    StartColumn int `json:"start_column"`
+    EndLine     int `json:"end_line"`
+    EndColumn   int `json:"end_column"`
+    StartByte   int `json:"start_byte"`
+    EndByte     int `json:"end_byte"`
+}
+```
+
+---
+
 ## Table
 
 Structured table data extracted from documents with cell contents in 2D array format, markdown representation, and source page number.

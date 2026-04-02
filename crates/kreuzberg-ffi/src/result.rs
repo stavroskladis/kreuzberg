@@ -438,6 +438,7 @@ mod tests {
             annotations: None,
             children: None,
             uris: None,
+            code_intelligence: None,
             formatted_content: None,
         }
     }

@@ -505,6 +505,7 @@ class TreeSitterProcessConfig:
     symbols: bool
     diagnostics: bool
     chunk_max_size: int | None
+    content_mode: str
 
     def __init__(
         self,
@@ -517,6 +518,7 @@ class TreeSitterProcessConfig:
         symbols: bool | None = None,
         diagnostics: bool | None = None,
         chunk_max_size: int | None = None,
+        content_mode: str | None = None,
     ) -> None: ...
 
 class TreeSitterConfig:
@@ -534,6 +536,7 @@ class TreeSitterConfig:
             ... )
     """
 
+    enabled: bool
     cache_dir: str | None
     languages: list[str] | None
     groups: list[str] | None
@@ -546,6 +549,7 @@ class TreeSitterConfig:
         languages: list[str] | None = None,
         groups: list[str] | None = None,
         process: TreeSitterProcessConfig | None = None,
+        enabled: bool | None = None,
     ) -> None: ...
 
 class CodeSpan(TypedDict):
@@ -2336,6 +2340,7 @@ class ExtractionResult:
     quality_score: float | None
     processing_warnings: list[ProcessingWarning]
     annotations: list[PdfAnnotation] | None
+    code_intelligence: Any | None
     def get_page_count(self) -> int: ...
     def get_chunk_count(self) -> int: ...
     def get_detected_language(self) -> str | None: ...

@@ -196,6 +196,8 @@ pub struct JsTreeSitterProcessConfig {
     pub diagnostics: Option<bool>,
     /// Maximum chunk size in bytes. None disables chunking.
     pub chunk_max_size: Option<u32>,
+    /// Content rendering mode: "chunks" (default), "raw", or "structure".
+    pub content_mode: Option<String>,
 }
 
 impl From<JsTreeSitterProcessConfig> for RustTreeSitterProcessConfig {
@@ -225,12 +227,24 @@ impl From<JsTreeSitterProcessConfig> for RustTreeSitterProcessConfig {
         if let Some(v) = val.chunk_max_size {
             config.chunk_max_size = Some(v as usize);
         }
+        if let Some(ref v) = val.content_mode {
+            config.content_mode = match v.as_str() {
+                "raw" => kreuzberg::core::config::CodeContentMode::Raw,
+                "structure" => kreuzberg::core::config::CodeContentMode::Structure,
+                _ => kreuzberg::core::config::CodeContentMode::Chunks,
+            };
+        }
         config
     }
 }
 
 impl From<RustTreeSitterProcessConfig> for JsTreeSitterProcessConfig {
     fn from(val: RustTreeSitterProcessConfig) -> Self {
+        let content_mode = match val.content_mode {
+            kreuzberg::core::config::CodeContentMode::Chunks => "chunks",
+            kreuzberg::core::config::CodeContentMode::Raw => "raw",
+            kreuzberg::core::config::CodeContentMode::Structure => "structure",
+        };
         Self {
             structure: Some(val.structure),
             imports: Some(val.imports),
@@ -240,6 +254,7 @@ impl From<RustTreeSitterProcessConfig> for JsTreeSitterProcessConfig {
             symbols: Some(val.symbols),
             diagnostics: Some(val.diagnostics),
             chunk_max_size: val.chunk_max_size.map(|v| v as u32),
+            content_mode: Some(content_mode.to_string()),
         }
     }
 }
@@ -247,6 +262,8 @@ impl From<RustTreeSitterProcessConfig> for JsTreeSitterProcessConfig {
 /// Tree-sitter language pack configuration for Node.js bindings.
 #[napi(object)]
 pub struct JsTreeSitterConfig {
+    /// Enable code intelligence processing. Default: true.
+    pub enabled: Option<bool>,
     /// Custom cache directory for downloaded grammars.
     pub cache_dir: Option<String>,
     /// Languages to pre-download on init (e.g., ["python", "rust"]).
@@ -260,6 +277,7 @@ pub struct JsTreeSitterConfig {
 impl From<JsTreeSitterConfig> for RustTreeSitterConfig {
     fn from(val: JsTreeSitterConfig) -> Self {
         RustTreeSitterConfig {
+            enabled: val.enabled.unwrap_or(true),
             cache_dir: val.cache_dir.map(std::path::PathBuf::from),
             languages: val.languages,
             groups: val.groups,
@@ -271,6 +289,7 @@ impl From<JsTreeSitterConfig> for RustTreeSitterConfig {
 impl From<RustTreeSitterConfig> for JsTreeSitterConfig {
     fn from(val: RustTreeSitterConfig) -> Self {
         Self {
+            enabled: Some(val.enabled),
             cache_dir: val.cache_dir.and_then(|p| p.to_str().map(String::from)),
             languages: val.languages,
             groups: val.groups,

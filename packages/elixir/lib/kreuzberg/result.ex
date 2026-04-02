@@ -44,7 +44,8 @@ defmodule Kreuzberg.ExtractionResult do
           processing_warnings: list(Kreuzberg.ProcessingWarning.t()),
           annotations: list(Kreuzberg.PdfAnnotation.t()) | nil,
           uris: list(Kreuzberg.Uri.t()) | nil,
-          children: list(t()) | nil
+          children: list(t()) | nil,
+          code_intelligence: Kreuzberg.CodeProcessResult.t() | nil
         }
 
   defstruct [
@@ -61,6 +62,7 @@ defmodule Kreuzberg.ExtractionResult do
     :annotations,
     :uris,
     :children,
+    :code_intelligence,
     content: "",
     processing_warnings: [],
     mime_type: "",
@@ -105,7 +107,8 @@ defmodule Kreuzberg.ExtractionResult do
       processing_warnings: normalize_processing_warnings(Keyword.get(opts, :processing_warnings)),
       annotations: normalize_annotations(Keyword.get(opts, :annotations)),
       uris: normalize_uris(Keyword.get(opts, :uris)),
-      children: Keyword.get(opts, :children)
+      children: Keyword.get(opts, :children),
+      code_intelligence: normalize_code_intelligence(Keyword.get(opts, :code_intelligence))
     }
   end
 
@@ -144,7 +147,13 @@ defmodule Kreuzberg.ExtractionResult do
         maybe_map_list(result.processing_warnings, &Kreuzberg.ProcessingWarning.to_map/1),
       "annotations" => maybe_map_list(result.annotations, &Kreuzberg.PdfAnnotation.to_map/1),
       "uris" => maybe_map_list(result.uris, &Kreuzberg.Uri.to_map/1),
-      "children" => maybe_map_list(result.children, &__MODULE__.to_map/1)
+      "children" => maybe_map_list(result.children, &__MODULE__.to_map/1),
+      "code_intelligence" =>
+        case result.code_intelligence do
+          nil -> nil
+          %Kreuzberg.CodeProcessResult{} = c -> Kreuzberg.CodeProcessResult.to_map(c)
+          other -> other
+        end
     }
   end
 
@@ -276,4 +285,14 @@ defmodule Kreuzberg.ExtractionResult do
       other -> other
     end)
   end
+
+  defp normalize_code_intelligence(nil), do: nil
+
+  defp normalize_code_intelligence(%Kreuzberg.CodeProcessResult{} = c), do: c
+
+  defp normalize_code_intelligence(map) when is_map(map) do
+    Kreuzberg.CodeProcessResult.from_map(map)
+  end
+
+  defp normalize_code_intelligence(_other), do: nil
 end

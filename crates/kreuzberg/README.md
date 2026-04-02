@@ -190,6 +190,54 @@ fn main() -> kreuzberg::Result<()> {
 }
 ```
 
+## Code Intelligence
+
+Kreuzberg integrates [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev) to parse and analyze source code files across **248 programming languages**. When you extract a source code file, Kreuzberg automatically detects the language and produces structured analysis including functions, classes, imports, exports, symbols, diagnostics, and semantic code chunks.
+
+Code intelligence data is available via the `metadata.format` field as a `FormatMetadata::Code` variant containing a `ProcessResult`.
+
+```rust
+use kreuzberg::{extract_file_sync, ExtractionConfig, TreeSitterConfig, TreeSitterProcessConfig};
+
+fn main() -> kreuzberg::Result<()> {
+    let config = ExtractionConfig {
+        tree_sitter: Some(TreeSitterConfig {
+            process: TreeSitterProcessConfig {
+                structure: true,
+                imports: true,
+                exports: true,
+                comments: true,
+                docstrings: true,
+                ..Default::default()
+            },
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
+
+    let result = extract_file_sync("app.py", None, &config)?;
+
+    // Access code intelligence from format metadata
+    if let Some(kreuzberg::types::FormatMetadata::Code(ref code)) = result.metadata.format {
+        println!("Language: {}", code.language);
+        println!("Functions/classes: {}", code.structure.len());
+        println!("Imports: {}", code.imports.len());
+
+        for item in &code.structure {
+            println!("  {:?}: {:?} at line {}", item.kind, item.name, item.span.start_line);
+        }
+
+        for chunk in &code.chunks {
+            println!("Chunk ({} bytes): {}...", chunk.content.len(), &chunk.content[..50.min(chunk.content.len())]);
+        }
+    }
+
+    Ok(())
+}
+```
+
+Requires the `tree-sitter` feature flag (included in `full`). See the [Code Intelligence Guide](https://docs.kreuzberg.dev/guides/code-intelligence/) for configuration details and examples in all languages.
+
 ## Features
 
 The crate uses feature flags for optional functionality:

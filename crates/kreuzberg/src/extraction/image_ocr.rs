@@ -143,6 +143,8 @@ pub async fn process_images_with_ocr(
                     annotations: None,
                     children: None,
                     uris: None,
+                    #[cfg(feature = "tree-sitter")]
+                    code_intelligence: None,
                     formatted_content: None,
                 };
                 images[idx].ocr_result = Some(Box::new(extraction_result));

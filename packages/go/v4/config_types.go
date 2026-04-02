@@ -391,18 +391,20 @@ type EmailConfig struct {
 
 // TreeSitterProcessConfig configures tree-sitter code analysis processing options.
 type TreeSitterProcessConfig struct {
-	Structure    *bool `json:"structure,omitempty"`
-	Imports      *bool `json:"imports,omitempty"`
-	Exports      *bool `json:"exports,omitempty"`
-	Comments     *bool `json:"comments,omitempty"`
-	Docstrings   *bool `json:"docstrings,omitempty"`
-	Symbols      *bool `json:"symbols,omitempty"`
-	Diagnostics  *bool `json:"diagnostics,omitempty"`
-	ChunkMaxSize *int  `json:"chunk_max_size,omitempty"`
+	Structure    *bool   `json:"structure,omitempty"`
+	Imports      *bool   `json:"imports,omitempty"`
+	Exports      *bool   `json:"exports,omitempty"`
+	Comments     *bool   `json:"comments,omitempty"`
+	Docstrings   *bool   `json:"docstrings,omitempty"`
+	Symbols      *bool   `json:"symbols,omitempty"`
+	Diagnostics  *bool   `json:"diagnostics,omitempty"`
+	ChunkMaxSize *int    `json:"chunk_max_size,omitempty"`
+	ContentMode  *string `json:"content_mode,omitempty"`
 }
 
 // TreeSitterConfig configures tree-sitter language pack integration.
 type TreeSitterConfig struct {
+	Enabled   *bool                    `json:"enabled,omitempty"`
 	CacheDir  *string                  `json:"cache_dir,omitempty"`
 	Languages []string                 `json:"languages,omitempty"`
 	Groups    []string                 `json:"groups,omitempty"`

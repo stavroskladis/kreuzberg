@@ -1225,6 +1225,47 @@ with open("first_page.png", "wb") as f:
 
 ---
 
+## Code Intelligence
+
+Kreuzberg uses [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev) to parse and analyze source code files across 248 programming languages. When extracting code files, the result metadata includes structural analysis, imports, exports, symbols, diagnostics, and semantic code chunks.
+
+Code intelligence data is available in `result.metadata["format"]` when `format_type` is `"code"`.
+
+```python title="code_intelligence.py"
+import kreuzberg
+
+config = kreuzberg.ExtractionConfig(
+    tree_sitter={
+        "process": {
+            "structure": True,
+            "imports": True,
+            "exports": True,
+            "comments": True,
+            "docstrings": True,
+        }
+    }
+)
+
+result = kreuzberg.extract_file_sync("app.py", config=config)
+
+# Access code intelligence from format metadata
+fmt = result.metadata.get("format")
+if fmt and fmt.get("format_type") == "code":
+    print(f"Language: {fmt['language']}")
+    print(f"Functions/classes: {len(fmt['structure'])}")
+    print(f"Imports: {len(fmt['imports'])}")
+
+    for item in fmt["structure"]:
+        print(f"  {item['kind']}: {item.get('name')} at line {item['span']['start_line']}")
+
+    for chunk in fmt.get("chunks", []):
+        print(f"Chunk: {chunk['content'][:50]}...")
+```
+
+For configuration details, see the [Code Intelligence Guide](../guides/code-intelligence.md).
+
+---
+
 ## Version Information
 
 ```python title="basic_extraction.py"

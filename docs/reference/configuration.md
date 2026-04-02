@@ -250,6 +250,7 @@ Main extraction configuration controlling all aspects of document processing.
 | `layout`                     | `LayoutDetectionConfig?`   | `None`                 | Layout detection configuration for document structure analysis. Only available with `layout-detection` feature.                                                                                   |
 | `acceleration`               | `AccelerationConfig?`      | `None`                 | Hardware acceleration configuration for ONNX Runtime inference (layout detection and embeddings). See [AccelerationConfig](#accelerationconfig).                                                 |
 | `include_document_structure` | `bool`                     | `false`                | Enable structured document model output. When true, the `document` field on ExtractionResult is populated with a tree-based representation of document content.                                  |
+| `tree_sitter`                | `TreeSitterConfig?`        | `None`                 | Tree-sitter code intelligence configuration. Controls code analysis features when extracting source code files. Only available with `tree-sitter` feature.                                       |
 
 ### Result Format vs Output Format
 
@@ -3599,6 +3600,130 @@ Setting `max_threads: None` disables concurrency limits and allows libraries to 
     {
         Concurrency = new ConcurrencyConfig { MaxThreads = 4 }
     };
+    ```
+
+---
+
+## TreeSitterConfig
+
+Configuration for tree-sitter language pack integration. Controls grammar caching and code analysis options when extracting source code files. Requires the `tree-sitter` feature flag.
+
+### Fields
+
+| Field       | Type                       | Default | Description                                                                                      |
+| ----------- | -------------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `enabled`   | `bool`                     | `true`  | Enable code intelligence processing. When `false`, tree-sitter analysis is skipped even if config is present |
+| `cache_dir` | `PathBuf?`                 | `None`  | Custom cache directory for downloaded grammars. Default: `~/.cache/tree-sitter-language-pack/v{version}/libs/` |
+| `languages` | `Vec<String>?`             | `None`  | Languages to pre-download on init (e.g., `["python", "rust"]`)                                   |
+| `groups`    | `Vec<String>?`             | `None`  | Language groups to pre-download (e.g., `["web", "systems", "scripting"]`)                        |
+| `process`   | `TreeSitterProcessConfig`  | default | Processing options for code analysis                                                             |
+
+### TreeSitterProcessConfig
+
+Controls which analysis features are enabled when extracting code files.
+
+| Field            | Type      | Default | Description                                                         |
+| ---------------- | --------- | ------- | ------------------------------------------------------------------- |
+| `structure`      | `bool`    | `true`  | Extract structural items (functions, classes, structs, etc.)        |
+| `imports`        | `bool`    | `true`  | Extract import statements                                           |
+| `exports`        | `bool`    | `true`  | Extract export statements                                           |
+| `comments`       | `bool`    | `false` | Extract comments                                                    |
+| `docstrings`     | `bool`    | `false` | Extract docstrings                                                  |
+| `symbols`        | `bool`    | `false` | Extract symbol definitions (variables, constants, type aliases)     |
+| `diagnostics`    | `bool`    | `false` | Include parse diagnostics (errors and warnings from tree-sitter)    |
+| `chunk_max_size` | `usize?`  | `None`  | Maximum chunk size in bytes. `None` uses the default chunking size  |
+| `content_mode`   | `CodeContentMode` | `chunks` | Controls how code content is rendered in the `content` field: `chunks` (semantic chunks, default), `raw` (raw source code), or `structure` (function/class headings + docstrings, no code bodies) |
+
+### Configuration Examples
+
+=== "TOML"
+
+    ```toml title="kreuzberg.toml"
+    [tree_sitter]
+    languages = ["python", "rust", "typescript"]
+    groups = ["web"]
+
+    [tree_sitter.process]
+    structure = true
+    imports = true
+    exports = true
+    comments = true
+    docstrings = true
+    symbols = false
+    diagnostics = false
+    ```
+
+=== "Rust"
+
+    ```rust title="tree_sitter_config.rs"
+    use kreuzberg::{ExtractionConfig, TreeSitterConfig, TreeSitterProcessConfig};
+
+    let config = ExtractionConfig {
+        tree_sitter: Some(TreeSitterConfig {
+            process: TreeSitterProcessConfig {
+                structure: true,
+                imports: true,
+                exports: true,
+                comments: true,
+                docstrings: true,
+                ..Default::default()
+            },
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
+    ```
+
+=== "Python"
+
+    ```python title="tree_sitter_config.py"
+    import kreuzberg
+
+    config = kreuzberg.ExtractionConfig(
+        tree_sitter={
+            "process": {
+                "structure": True,
+                "imports": True,
+                "exports": True,
+                "comments": True,
+                "docstrings": True,
+            }
+        }
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript title="tree_sitter_config.ts"
+    import { ExtractionConfig } from "@kreuzberg/node";
+
+    const config: ExtractionConfig = {
+      treeSitter: {
+        process: {
+          structure: true,
+          imports: true,
+          exports: true,
+          comments: true,
+          docstrings: true,
+        },
+      },
+    };
+    ```
+
+=== "Go"
+
+    ```go title="tree_sitter_config.go"
+    config := &kreuzberg.ExtractionConfig{
+        TreeSitter: &kreuzberg.TreeSitterConfig{
+            Process: &kreuzberg.TreeSitterProcessConfig{
+                Structure:  boolPtr(true),
+                Imports:    boolPtr(true),
+                Exports:    boolPtr(true),
+                Comments:   boolPtr(true),
+                Docstrings: boolPtr(true),
+            },
+        },
+    }
     ```
 
 ---

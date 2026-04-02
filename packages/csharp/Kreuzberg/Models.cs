@@ -559,6 +559,12 @@ public sealed class ExtractionResult
     /// </summary>
     [JsonPropertyName("children")]
     public List<ArchiveEntry>? Children { get; set; }
+
+    /// <summary>
+    /// Code intelligence results from tree-sitter processing when the document is a code file.
+    /// </summary>
+    [JsonPropertyName("code_intelligence")]
+    public CodeProcessResult? CodeIntelligence { get; set; }
 }
 
 /// <summary>
@@ -2254,6 +2260,12 @@ public sealed class TreeSitterProcessConfig
     /// </summary>
     [JsonPropertyName("chunk_max_size")]
     public int? ChunkMaxSize { get; init; }
+
+    /// <summary>
+    /// Content rendering mode for code extraction: "chunks" (default), "raw", or "structure".
+    /// </summary>
+    [JsonPropertyName("content_mode")]
+    public string? ContentMode { get; init; }
 }
 
 /// <summary>
@@ -2261,6 +2273,12 @@ public sealed class TreeSitterProcessConfig
 /// </summary>
 public sealed class TreeSitterConfig
 {
+    /// <summary>
+    /// Enable code intelligence processing. Default: true.
+    /// </summary>
+    [JsonPropertyName("enabled")]
+    public bool? Enabled { get; init; }
+
     /// <summary>
     /// Directory for caching tree-sitter language packs.
     /// </summary>

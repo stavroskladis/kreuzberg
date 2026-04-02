@@ -35,4 +35,4 @@ pub use processing::{
     ChunkSizing, ChunkerType, ChunkingConfig, EmbeddingConfig, EmbeddingModelType, PostProcessorConfig,
 };
 #[cfg(feature = "tree-sitter")]
-pub use tree_sitter::{TreeSitterConfig, TreeSitterProcessConfig};
+pub use tree_sitter::{CodeContentMode, TreeSitterConfig, TreeSitterProcessConfig};

@@ -1929,6 +1929,64 @@ func uint32Ptr(u uint32) *uint32 {
 
 ---
 
+## Code Intelligence
+
+Kreuzberg uses [tree-sitter-language-pack](https://docs.tree-sitter-language-pack.kreuzberg.dev) to parse and analyze source code files across 248 programming languages. When extracting code files, the result metadata includes structural analysis, imports, exports, symbols, diagnostics, and semantic code chunks.
+
+Code intelligence data is available via the `CodeProcessResult` type when the format metadata type is `"code"`.
+
+```go title="code_intelligence.go"
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+
+	kreuzberg "github.com/kreuzberg-dev/kreuzberg/packages/go/v4"
+)
+
+func main() {
+	config := &kreuzberg.ExtractionConfig{
+		TreeSitter: &kreuzberg.TreeSitterConfig{
+			Process: &kreuzberg.TreeSitterProcessConfig{
+				Structure:  boolPtr(true),
+				Imports:    boolPtr(true),
+				Exports:    boolPtr(true),
+				Comments:   boolPtr(true),
+				Docstrings: boolPtr(true),
+			},
+		},
+	}
+
+	result, err := kreuzberg.ExtractFileSync("app.py", config)
+	if err != nil {
+		log.Fatalf("extract failed: %v", err)
+	}
+
+	// Access code intelligence from metadata JSON
+	if result.Metadata.Format.Type == "code" {
+		raw, _ := json.Marshal(result.Metadata.Format)
+		var code kreuzberg.CodeProcessResult
+		if err := json.Unmarshal(raw, &code); err == nil {
+			fmt.Printf("Language: %s\n", code.Language)
+			fmt.Printf("Functions/classes: %d\n", len(code.Structure))
+			fmt.Printf("Imports: %d\n", len(code.Imports))
+
+			for _, item := range code.Structure {
+				fmt.Printf("  %s: %v at line %d\n", item.Kind, item.Name, item.Span.StartLine)
+			}
+		}
+	}
+}
+
+func boolPtr(b bool) *bool { return &b }
+```
+
+For configuration details, see the [Code Intelligence Guide](../guides/code-intelligence.md).
+
+---
+
 ## Related Resources
 
 - **Source:** [packages/go/v4/](https://github.com/kreuzberg-dev/kreuzberg/tree/main/packages/go/v4) (Go binding implementation)

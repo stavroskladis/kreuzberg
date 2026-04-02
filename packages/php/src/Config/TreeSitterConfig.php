@@ -29,6 +29,7 @@ namespace Kreuzberg\Config;
 readonly class TreeSitterConfig
 {
     /**
+     * @param bool|null $enabled Enable code intelligence processing. Default true.
      * @param string|null $cacheDir Custom cache directory for downloaded grammars.
      *                              Default is null (use engine default).
      * @param string[]|null $languages Languages to pre-download on init.
@@ -39,6 +40,7 @@ readonly class TreeSitterConfig
      *                                              Default is null (use engine defaults).
      */
     public function __construct(
+        public ?bool $enabled = null,
         public ?string $cacheDir = null,
         public ?array $languages = null,
         public ?array $groups = null,
@@ -53,6 +55,9 @@ readonly class TreeSitterConfig
      */
     public static function fromArray(array $data): self
     {
+        /** @var bool|null $enabled */
+        $enabled = isset($data['enabled']) && is_bool($data['enabled']) ? $data['enabled'] : null;
+
         /** @var string|null $cacheDir */
         $cacheDir = $data['cache_dir'] ?? null;
         if ($cacheDir !== null && !is_string($cacheDir)) {
@@ -86,6 +91,7 @@ readonly class TreeSitterConfig
         }
 
         return new self(
+            enabled: $enabled,
             cacheDir: $cacheDir,
             languages: $languages,
             groups: $groups,
@@ -102,6 +108,9 @@ readonly class TreeSitterConfig
     {
         $result = [];
 
+        if ($this->enabled !== null) {
+            $result['enabled'] = $this->enabled;
+        }
         if ($this->cacheDir !== null) {
             $result['cache_dir'] = $this->cacheDir;
         }

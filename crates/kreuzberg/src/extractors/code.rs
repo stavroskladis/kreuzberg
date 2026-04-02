@@ -60,10 +60,30 @@ impl CodeExtractor {
 
         let mut builder = InternalDocumentBuilder::new("code");
 
-        for paragraph in source.split("\n\n") {
-            let trimmed = paragraph.trim();
-            if !trimmed.is_empty() {
-                builder.push_paragraph(trimmed, vec![], None, None);
+        if result.chunks.is_empty() {
+            // No TSLP chunks (chunk_max_size not configured): emit entire source as a single code block.
+            builder.push_code(source, Some(language), None, None);
+        } else {
+            // Use TSLP chunks as primary content.
+            for chunk in &result.chunks {
+                // Emit context heading from the chunk's context_path if available.
+                if let Some(last_context) = chunk.metadata.context_path.last() {
+                    // Determine heading level from node types in the context.
+                    let level = if chunk.metadata.node_types.iter().any(|t| {
+                        matches!(
+                            t.as_str(),
+                            "class_definition" | "module_definition" | "class_declaration" | "module"
+                        )
+                    }) {
+                        2
+                    } else {
+                        3
+                    };
+                    builder.push_heading(level, last_context, None, None);
+                }
+
+                // Emit code block with language annotation.
+                builder.push_code(&chunk.content, Some(language), None, None);
             }
         }
 

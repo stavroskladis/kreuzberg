@@ -305,7 +305,8 @@ acceleration_config <- function(provider = "auto", device_id = 0L) {
 tree_sitter_process_config <- function(structure = TRUE, imports = TRUE, exports = TRUE,
                                        comments = FALSE, docstrings = FALSE,
                                        symbols = FALSE, diagnostics = FALSE,
-                                       chunk_max_size = NULL) {
+                                       chunk_max_size = NULL,
+                                       content_mode = NULL) {
   config <- list(
     structure = structure,
     imports = imports,
@@ -317,6 +318,10 @@ tree_sitter_process_config <- function(structure = TRUE, imports = TRUE, exports
   )
   if (!is.null(chunk_max_size)) {
     config$chunk_max_size <- as.integer(chunk_max_size)
+  }
+  if (!is.null(content_mode)) {
+    stopifnot(is.character(content_mode), length(content_mode) == 1L)
+    config$content_mode <- content_mode
   }
   config
 }
@@ -330,8 +335,12 @@ tree_sitter_process_config <- function(structure = TRUE, imports = TRUE, exports
 #' @return A named list representing the tree-sitter configuration.
 #' @export
 tree_sitter_config <- function(cache_dir = NULL, languages = NULL, groups = NULL,
-                               process = NULL) {
+                               process = NULL, enabled = NULL) {
   config <- list()
+  if (!is.null(enabled)) {
+    stopifnot(is.logical(enabled), length(enabled) == 1L)
+    config$enabled <- enabled
+  }
   if (!is.null(cache_dir)) {
     stopifnot(is.character(cache_dir), length(cache_dir) == 1L)
     config$cache_dir <- cache_dir

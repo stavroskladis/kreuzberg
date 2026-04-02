@@ -45,6 +45,7 @@ readonly class TreeSitterProcessConfig
         public bool $symbols = false,
         public bool $diagnostics = false,
         public ?int $chunkMaxSize = null,
+        public ?string $contentMode = null,
     ) {
     }
 
@@ -99,6 +100,12 @@ readonly class TreeSitterProcessConfig
 
         $chunkMaxSize = $data['chunk_max_size'] ?? null;
 
+        /** @var string|null $contentMode */
+        $contentMode = $data['content_mode'] ?? null;
+        if ($contentMode !== null && !is_string($contentMode)) {
+            $contentMode = null;
+        }
+
         return new self(
             structure: $structure,
             imports: $imports,
@@ -108,6 +115,7 @@ readonly class TreeSitterProcessConfig
             symbols: $symbols,
             diagnostics: $diagnostics,
             chunkMaxSize: is_int($chunkMaxSize) ? $chunkMaxSize : null,
+            contentMode: $contentMode,
         );
     }
 
@@ -143,6 +151,9 @@ readonly class TreeSitterProcessConfig
         }
         if ($this->chunkMaxSize !== null) {
             $result['chunk_max_size'] = $this->chunkMaxSize;
+        }
+        if ($this->contentMode !== null) {
+            $result['content_mode'] = $this->contentMode;
         }
 
         return $result;

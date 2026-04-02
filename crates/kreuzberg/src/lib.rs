@@ -138,7 +138,7 @@ pub use paddle_ocr::{CacheStats, ModelManager, ModelPaths, PaddleLanguage, Paddl
 pub use core::config::{LayoutDetectionConfig, TableModel};
 
 #[cfg(feature = "tree-sitter")]
-pub use core::config::{TreeSitterConfig, TreeSitterProcessConfig};
+pub use core::config::{CodeContentMode, TreeSitterConfig, TreeSitterProcessConfig};
 #[cfg(feature = "tree-sitter")]
 pub use tree_sitter_language_pack::{
     ChunkContext, CodeChunk, CommentInfo, CommentKind, Diagnostic, DiagnosticSeverity, DocstringFormat, DocstringInfo,

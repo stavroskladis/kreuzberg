@@ -432,12 +432,18 @@ export interface TreeSitterProcessConfig {
 
 	/** Maximum chunk size in bytes. Undefined disables chunking. */
 	chunkMaxSize?: number;
+
+	/** Content rendering mode: "chunks" (default), "raw", or "structure". */
+	contentMode?: "chunks" | "raw" | "structure";
 }
 
 /**
  * Configuration for tree-sitter language pack integration.
  */
 export interface TreeSitterConfig {
+	/** Enable code intelligence processing. Default: true. */
+	enabled?: boolean;
+
 	/** Custom cache directory for downloaded grammars. */
 	cacheDir?: string;
 

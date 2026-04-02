@@ -43,6 +43,8 @@ public final class ExtractionResult {
 	private final List<Uri> uris;
 	@JsonProperty("children")
 	private final List<ArchiveEntry> children;
+	@JsonProperty("code_intelligence")
+	private final CodeProcessResult codeIntelligence;
 
 	ExtractionResult(String content, String mimeType, Metadata metadata, List<Table> tables,
 			List<String> detectedLanguages, List<Chunk> chunks, List<ExtractedImage> images, List<PageContent> pages,
@@ -51,7 +53,7 @@ public final class ExtractionResult {
 			List<ProcessingWarning> processingWarnings, List<PdfAnnotation> annotations, List<Uri> uris) {
 		this(content, mimeType, metadata, tables, detectedLanguages, chunks, images, pages, pageStructure, elements,
 				ocrElements, djotContent, document, extractedKeywords, qualityScore, processingWarnings, annotations,
-				uris, null);
+				uris, null, null);
 	}
 
 	ExtractionResult(String content, String mimeType, Metadata metadata, List<Table> tables,
@@ -60,6 +62,17 @@ public final class ExtractionResult {
 			DocumentStructure document, List<ExtractedKeyword> extractedKeywords, Double qualityScore,
 			List<ProcessingWarning> processingWarnings, List<PdfAnnotation> annotations, List<Uri> uris,
 			List<ArchiveEntry> children) {
+		this(content, mimeType, metadata, tables, detectedLanguages, chunks, images, pages, pageStructure, elements,
+				ocrElements, djotContent, document, extractedKeywords, qualityScore, processingWarnings, annotations,
+				uris, children, null);
+	}
+
+	ExtractionResult(String content, String mimeType, Metadata metadata, List<Table> tables,
+			List<String> detectedLanguages, List<Chunk> chunks, List<ExtractedImage> images, List<PageContent> pages,
+			PageStructure pageStructure, List<Element> elements, List<OcrElement> ocrElements, DjotContent djotContent,
+			DocumentStructure document, List<ExtractedKeyword> extractedKeywords, Double qualityScore,
+			List<ProcessingWarning> processingWarnings, List<PdfAnnotation> annotations, List<Uri> uris,
+			List<ArchiveEntry> children, CodeProcessResult codeIntelligence) {
 		this.content = Objects.requireNonNull(content, "content must not be null");
 		this.mimeType = Objects.requireNonNull(mimeType, "mimeType must not be null");
 		this.metadata = metadata != null ? metadata : Metadata.empty();
@@ -83,6 +96,7 @@ public final class ExtractionResult {
 		this.annotations = annotations != null ? Collections.unmodifiableList(annotations) : null;
 		this.uris = uris != null ? Collections.unmodifiableList(uris) : null;
 		this.children = children != null ? Collections.unmodifiableList(children) : null;
+		this.codeIntelligence = codeIntelligence;
 	}
 
 	public String getContent() {
@@ -295,6 +309,20 @@ public final class ExtractionResult {
 	 */
 	public Optional<List<ArchiveEntry>> getChildren() {
 		return Optional.ofNullable(children);
+	}
+
+	/**
+	 * Get the code intelligence results from tree-sitter processing (optional).
+	 *
+	 * <p>
+	 * Available when the document is a code file and tree-sitter code intelligence
+	 * processing is enabled.
+	 *
+	 * @return optional code process result, or empty if not available
+	 * @since 4.8.0
+	 */
+	public Optional<CodeProcessResult> getCodeIntelligence() {
+		return Optional.ofNullable(codeIntelligence);
 	}
 
 	/**

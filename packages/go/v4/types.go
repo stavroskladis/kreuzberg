@@ -175,6 +175,9 @@ type ExtractionResult struct {
 
 	// Children contains nested extraction results (e.g., from archive entries).
 	Children []ExtractionResult `json:"children,omitempty"`
+
+	// CodeIntelligence contains tree-sitter code analysis results when processing code files.
+	CodeIntelligence *CodeProcessResult `json:"code_intelligence,omitempty"`
 }
 
 // Table represents a detected table in the source document.

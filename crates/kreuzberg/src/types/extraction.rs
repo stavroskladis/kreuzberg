@@ -162,6 +162,16 @@ pub struct ExtractionResult {
     #[serde(default)]
     pub uris: Option<Vec<super::uri::Uri>>,
 
+    /// Code intelligence results from tree-sitter analysis.
+    ///
+    /// Populated when extracting source code files with the `tree-sitter` feature.
+    /// Contains metrics, structural analysis, imports/exports, comments,
+    /// docstrings, symbols, diagnostics, and optionally chunked code segments.
+    #[cfg(feature = "tree-sitter")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(feature = "api", schema(value_type = Option<serde_json::Value>))]
+    pub code_intelligence: Option<tree_sitter_language_pack::ProcessResult>,
+
     /// Pre-rendered content in the requested output format.
     ///
     /// Populated during `derive_extraction_result` before tree derivation consumes

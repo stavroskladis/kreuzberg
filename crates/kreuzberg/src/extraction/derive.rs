@@ -646,6 +646,13 @@ pub fn derive_extraction_result(
         Some(doc.uris)
     };
 
+    // Extract code intelligence from FormatMetadata::Code if present.
+    #[cfg(feature = "tree-sitter")]
+    let code_intelligence = match &doc.metadata.format {
+        Some(crate::types::metadata::FormatMetadata::Code(process_result)) => Some(process_result.clone()),
+        _ => None,
+    };
+
     tracing::debug!(
         content_length = content.len(),
         has_document_structure = document.is_some(),
@@ -671,6 +678,8 @@ pub fn derive_extraction_result(
         annotations: std::mem::take(&mut doc.annotations),
         children: std::mem::take(&mut doc.children),
         uris,
+        #[cfg(feature = "tree-sitter")]
+        code_intelligence,
         formatted_content,
     }
 }

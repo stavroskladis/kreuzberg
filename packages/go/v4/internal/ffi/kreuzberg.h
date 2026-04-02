@@ -348,6 +348,10 @@ typedef struct CExtractionResult {
    */
   char *uris_json;
   /**
+   * JSON-serialized code intelligence results (null-terminated, or null pointer if none, must be freed with kreuzberg_free_string)
+   */
+  char *code_intelligence_json;
+  /**
    * Whether extraction was successful
    */
   bool success;

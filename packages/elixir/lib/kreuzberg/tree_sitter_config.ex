@@ -24,12 +24,14 @@ defmodule Kreuzberg.TreeSitterProcessConfig do
           docstrings: boolean(),
           symbols: boolean(),
           diagnostics: boolean(),
-          chunk_max_size: non_neg_integer() | nil
+          chunk_max_size: non_neg_integer() | nil,
+          content_mode: String.t() | nil
         }
 
   @derive Jason.Encoder
   defstruct [
     :chunk_max_size,
+    :content_mode,
     structure: true,
     imports: true,
     exports: true,
@@ -57,7 +59,8 @@ defmodule Kreuzberg.TreeSitterProcessConfig do
       docstrings: Map.get(data, "docstrings", Map.get(data, :docstrings, false)),
       symbols: Map.get(data, "symbols", Map.get(data, :symbols, false)),
       diagnostics: Map.get(data, "diagnostics", Map.get(data, :diagnostics, false)),
-      chunk_max_size: Map.get(data, "chunk_max_size", Map.get(data, :chunk_max_size))
+      chunk_max_size: Map.get(data, "chunk_max_size", Map.get(data, :chunk_max_size)),
+      content_mode: Map.get(data, "content_mode", Map.get(data, :content_mode))
     }
   end
 
@@ -76,7 +79,8 @@ defmodule Kreuzberg.TreeSitterProcessConfig do
       "docstrings" => config.docstrings,
       "symbols" => config.symbols,
       "diagnostics" => config.diagnostics,
-      "chunk_max_size" => config.chunk_max_size
+      "chunk_max_size" => config.chunk_max_size,
+      "content_mode" => config.content_mode
     }
   end
 end
@@ -98,6 +102,7 @@ defmodule Kreuzberg.TreeSitterConfig do
   alias Kreuzberg.TreeSitterProcessConfig
 
   @type t :: %__MODULE__{
+          enabled: boolean() | nil,
           cache_dir: String.t() | nil,
           languages: [String.t()] | nil,
           groups: [String.t()] | nil,
@@ -106,6 +111,7 @@ defmodule Kreuzberg.TreeSitterConfig do
 
   @derive Jason.Encoder
   defstruct [
+    :enabled,
     :cache_dir,
     :languages,
     :groups,
@@ -130,6 +136,7 @@ defmodule Kreuzberg.TreeSitterConfig do
       end
 
     %__MODULE__{
+      enabled: Map.get(data, "enabled", Map.get(data, :enabled)),
       cache_dir: Map.get(data, "cache_dir", Map.get(data, :cache_dir)),
       languages: Map.get(data, "languages", Map.get(data, :languages)),
       groups: Map.get(data, "groups", Map.get(data, :groups)),
@@ -145,6 +152,7 @@ defmodule Kreuzberg.TreeSitterConfig do
 
   def to_map(%__MODULE__{} = config) do
     %{
+      "enabled" => config.enabled,
       "cache_dir" => config.cache_dir,
       "languages" => config.languages,
       "groups" => config.groups,
