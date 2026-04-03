@@ -126,6 +126,7 @@ machine learning that uses neural networks with multiple layers.
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         processor.process(&mut result, &config).await.unwrap();
@@ -169,6 +170,7 @@ machine learning that uses neural networks with multiple layers.
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         processor.process(&mut result, &config).await.unwrap();
@@ -208,6 +210,7 @@ machine learning that uses neural networks with multiple layers.
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         processor.process(&mut result, &config).await.unwrap();
@@ -247,6 +250,7 @@ machine learning that uses neural networks with multiple layers.
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         processor.process(&mut result, &config).await.unwrap();
@@ -297,6 +301,7 @@ machine learning that uses neural networks with multiple layers.
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config_with_keywords = ExtractionConfig {
@@ -336,6 +341,7 @@ machine learning that uses neural networks with multiple layers.
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let long_result = ExtractionResult {
@@ -361,6 +367,7 @@ machine learning that uses neural networks with multiple layers.
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let short_duration = processor.estimated_duration_ms(&short_result);

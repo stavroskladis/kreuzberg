@@ -195,6 +195,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let markup = extraction_result_to_djot(&result).expect("Should convert");
@@ -226,6 +227,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let markup = extraction_result_to_djot(&result).expect("Should convert");

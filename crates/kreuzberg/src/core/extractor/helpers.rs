@@ -100,6 +100,7 @@ pub(crate) fn error_extraction_result(e: &KreuzbergError, elapsed_ms: Option<u64
         #[cfg(feature = "tree-sitter")]
         code_intelligence: None,
         formatted_content: None,
+        ocr_internal_document: None,
     }
 }
 

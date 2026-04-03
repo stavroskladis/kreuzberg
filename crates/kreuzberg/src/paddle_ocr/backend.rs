@@ -457,6 +457,7 @@ impl OcrBackend for PaddleOcrBackend {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         })
     }
 

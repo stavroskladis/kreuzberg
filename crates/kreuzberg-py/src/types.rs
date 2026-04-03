@@ -814,6 +814,7 @@ mod tests {
                 uris: None,
                 formatted_content: None,
                 code_intelligence: None,
+                ocr_internal_document: None,
             };
 
             let py_result =

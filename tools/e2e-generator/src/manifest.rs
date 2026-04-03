@@ -439,6 +439,7 @@ fn sample_extraction_result() -> Value {
         uris: Some(vec![uri]),
         formatted_content: None,
         code_intelligence: None,
+        ocr_internal_document: None,
     };
 
     serde_json::to_value(&result).expect("ExtractionResult serialization")

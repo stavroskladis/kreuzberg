@@ -290,6 +290,7 @@ impl OcrBackend for TesseractBackend {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: ocr_result.internal_document,
         })
     }
 
@@ -394,6 +395,7 @@ impl OcrBackend for TesseractBackend {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: ocr_result.internal_document,
         })
     }
 

@@ -600,10 +600,9 @@ pub(crate) async fn extract_with_ocr(
     };
 
     let mut page_texts = vec![String::new(); total_pages];
-    // Collect per-page paragraphs when layout detection produces structured data.
-    // Used to build an InternalDocument instead of flat text.
+    // Collect per-page hOCR InternalDocuments for layout classification.
     #[cfg(feature = "layout-detection")]
-    let mut all_page_paragraphs: Vec<Option<Vec<crate::pdf::structure::types::PdfParagraph>>> = vec![None; total_pages];
+    let mut page_ocr_docs: Vec<Option<crate::types::internal::InternalDocument>> = vec![None; total_pages];
     #[allow(unused_mut)]
     let mut collected_tables: Vec<crate::types::Table> = Vec::new();
     let mut all_ocr_elements: Vec<crate::types::OcrElement> = Vec::new();
@@ -723,7 +722,7 @@ pub(crate) async fn extract_with_ocr(
             let page_idx = batch_start + offset;
             let mut ocr_result = batch_ocr_results[offset].take().expect("OCR result missing for page");
             #[cfg(feature = "layout-detection")]
-            let height = encoded_batch[offset].3;
+            let _height = encoded_batch[offset].3;
 
             if let Some(conf_val) = ocr_result
                 .metadata
@@ -805,46 +804,21 @@ pub(crate) async fn extract_with_ocr(
                     }
                 }
 
-                let mut page_content = crate::pdf::structure::adapters::from_ocr_elements(elements, height as f32);
-                crate::pdf::structure::reorder_elements_reading_order(&mut page_content.elements);
-                let mut paragraphs = crate::pdf::structure::content_to_paragraphs(&page_content);
-
-                if let Some(ref scaled_det) = scaled_detection {
-                    let hints = detection_to_layout_hints(scaled_det, height as f32);
-                    // Use higher confidence threshold for OCR path (0.7 vs 0.5 for native).
-                    // OCR paragraphs lack font-size metadata for heading validation,
-                    // so the layout model must be more confident to reclassify.
-                    crate::pdf::structure::layout_classify::apply_layout_overrides(
-                        &mut paragraphs,
-                        &hints,
-                        0.7,
-                        0.2,
-                        None,
-                    );
+                // Use the hOCR InternalDocument from the OCR result.
+                // This preserves tesseract's paragraph structure and reading order,
+                // which is far better than re-deriving paragraphs from word bboxes.
+                if let Some(mut ocr_doc) = ocr_result.ocr_internal_document.take() {
+                    // Apply layout classification to reclassify OcrText elements
+                    // as headings, code, formulas, etc. based on spatial overlap
+                    // with layout detection regions.
+                    if let Some(ref scaled_det) = scaled_detection {
+                        apply_layout_to_ocr_document(&mut ocr_doc, scaled_det, &recognized_tables, page_idx + 1);
+                    }
+                    page_ocr_docs[page_idx] = Some(ocr_doc);
                 }
 
-                let paragraphs: Vec<_> = paragraphs.into_iter().filter(|p| !p.is_page_furniture).collect();
-
-                // Build a plain text fallback for the page (used when not assembling InternalDocument).
-                let page_text: String = paragraphs
-                    .iter()
-                    .filter_map(|p| {
-                        let text: String = p
-                            .lines
-                            .iter()
-                            .flat_map(|l| l.segments.iter())
-                            .map(|s| s.text.as_str())
-                            .collect::<Vec<_>>()
-                            .join(" ");
-                        let trimmed = text.trim().to_string();
-                        if trimmed.is_empty() { None } else { Some(trimmed) }
-                    })
-                    .collect::<Vec<_>>()
-                    .join("\n\n");
-                page_texts[page_idx] = page_text;
-
-                // Store structured paragraphs for InternalDocument assembly.
-                all_page_paragraphs[page_idx] = Some(paragraphs);
+                // Use tesseract's own text output (preserves reading order).
+                page_texts[page_idx] = ocr_result.content;
                 continue;
             }
 
@@ -878,19 +852,30 @@ pub(crate) async fn extract_with_ocr(
 
     // Build an InternalDocument from structured paragraphs when layout detection
     // produced per-page paragraph data.
+    // Merge per-page hOCR InternalDocuments into a single document.
+    // When layout detection enriched the hOCR documents, they already contain
+    // properly classified elements (headings, code, formulas, etc.).
     #[cfg(feature = "layout-detection")]
     let ocr_doc = {
-        let has_structured = all_page_paragraphs.iter().any(|p| p.is_some());
-        if has_structured {
-            let pages: Vec<Vec<crate::pdf::structure::types::PdfParagraph>> = all_page_paragraphs
-                .into_iter()
-                .map(|opt| opt.unwrap_or_default())
-                .collect();
-            Some(crate::pdf::structure::assemble_internal_document(
-                pages,
-                &collected_tables,
-                &[], // no image positions from OCR path
-            ))
+        let has_docs = page_ocr_docs.iter().any(|d| d.is_some());
+        if has_docs {
+            let mut merged = crate::types::internal::InternalDocument::new("pdf");
+            for (page_idx, page_doc) in page_ocr_docs.into_iter().enumerate() {
+                if page_idx > 0 {
+                    merged.push_element(crate::types::internal::InternalElement::text(
+                        crate::types::internal::ElementKind::PageBreak,
+                        "",
+                        0,
+                    ));
+                }
+                if let Some(doc) = page_doc {
+                    for elem in doc.elements {
+                        merged.push_element(elem);
+                    }
+                }
+            }
+            merged.tables = collected_tables.clone();
+            Some(merged)
         } else {
             None
         }
@@ -1226,6 +1211,120 @@ fn detection_to_layout_hints(
             }
         })
         .collect()
+}
+
+/// Apply layout detection classifications to an hOCR-derived `InternalDocument`.
+///
+/// Reclassifies `OcrText` elements as headings, code blocks, formulas, etc.
+/// based on spatial overlap with layout detection regions. This preserves
+/// tesseract's paragraph structure and reading order while adding semantic
+/// classification from the layout model.
+///
+/// Both hOCR bounding boxes and layout detections are in the same pixel
+/// coordinate space (image coordinates, y=0 at top), so no coordinate
+/// conversion is needed for overlap matching.
+#[cfg(all(feature = "ocr", feature = "layout-detection"))]
+fn apply_layout_to_ocr_document(
+    doc: &mut crate::types::internal::InternalDocument,
+    detection: &crate::layout::DetectionResult,
+    _recognized_tables: &[crate::ocr::layout_assembly::RecognizedTable],
+    page_number: usize,
+) {
+    use crate::layout::LayoutClass;
+    use crate::types::document_structure::ContentLayer;
+    use crate::types::internal::ElementKind;
+
+    const MIN_CONFIDENCE: f32 = 0.3;
+
+    let detections: Vec<_> = detection
+        .detections
+        .iter()
+        .filter(|d| d.confidence >= MIN_CONFIDENCE)
+        .collect();
+
+    if detections.is_empty() {
+        return;
+    }
+
+    for elem in doc.elements.iter_mut() {
+        if !matches!(elem.kind, ElementKind::OcrText { .. }) {
+            continue;
+        }
+        if elem.page != Some(page_number as u32) && elem.page.is_some() {
+            continue;
+        }
+
+        let Some(ref bbox) = elem.bbox else {
+            // No bbox — default to Paragraph.
+            elem.kind = ElementKind::Paragraph;
+            continue;
+        };
+
+        // Find the best-matching layout detection by center-point containment,
+        // preferring the smallest containing region (most specific).
+        let cx = (bbox.x0 + bbox.x1) / 2.0;
+        let cy = (bbox.y0 + bbox.y1) / 2.0;
+
+        let mut best_match: Option<&crate::layout::LayoutDetection> = None;
+        let mut best_area = f64::MAX;
+
+        for det in &detections {
+            let dx = det.bbox.x1 as f64;
+            let dy = det.bbox.y1 as f64;
+            let dx2 = det.bbox.x2 as f64;
+            let dy2 = det.bbox.y2 as f64;
+
+            if cx >= dx && cx <= dx2 && cy >= dy && cy <= dy2 {
+                let area = (dx2 - dx) * (dy2 - dy);
+                if area < best_area {
+                    best_area = area;
+                    best_match = Some(det);
+                }
+            }
+        }
+
+        let Some(det) = best_match else {
+            elem.kind = ElementKind::Paragraph;
+            continue;
+        };
+
+        match det.class {
+            LayoutClass::Title => {
+                elem.kind = ElementKind::Heading { level: 1 };
+            }
+            LayoutClass::SectionHeader => {
+                elem.kind = ElementKind::Heading { level: 2 };
+            }
+            LayoutClass::Code => {
+                elem.kind = ElementKind::Code;
+            }
+            LayoutClass::Formula => {
+                elem.kind = ElementKind::Formula;
+            }
+            LayoutClass::ListItem => {
+                elem.kind = ElementKind::ListItem { ordered: false };
+            }
+            LayoutClass::Footnote => {
+                elem.kind = ElementKind::FootnoteDefinition;
+            }
+            LayoutClass::PageHeader => {
+                elem.layer = ContentLayer::Header;
+                elem.kind = ElementKind::Paragraph;
+            }
+            LayoutClass::PageFooter => {
+                elem.layer = ContentLayer::Footer;
+                elem.kind = ElementKind::Paragraph;
+            }
+            LayoutClass::Table => {
+                // Table content is handled via collected_tables + TATR.
+                // Keep the OCR text as paragraph (table markdown is rendered separately).
+                elem.kind = ElementKind::Paragraph;
+            }
+            _ => {
+                elem.kind = ElementKind::Paragraph;
+            }
+        }
+    }
 }
 
 #[cfg(test)]

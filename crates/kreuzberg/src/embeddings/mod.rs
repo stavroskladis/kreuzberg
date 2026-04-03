@@ -577,14 +577,27 @@ pub fn generate_embeddings_for_chunks(
     if config.normalize {
         const PARALLEL_THRESHOLD: usize = 64;
         if embeddings_result.len() >= PARALLEL_THRESHOLD {
-            use rayon::prelude::*;
-            embeddings_result.par_iter_mut().for_each(|embedding| {
-                let magnitude: f32 = embedding.iter().map(|x| x * x).sum::<f32>().sqrt();
-                if magnitude > f32::EPSILON {
-                    let inv_mag = 1.0 / magnitude;
-                    embedding.iter_mut().for_each(|x| *x *= inv_mag);
+            #[cfg(not(target_arch = "wasm32"))]
+            {
+                use rayon::prelude::*;
+                embeddings_result.par_iter_mut().for_each(|embedding| {
+                    let magnitude: f32 = embedding.iter().map(|x| x * x).sum::<f32>().sqrt();
+                    if magnitude > f32::EPSILON {
+                        let inv_mag = 1.0 / magnitude;
+                        embedding.iter_mut().for_each(|x| *x *= inv_mag);
+                    }
+                });
+            }
+            #[cfg(target_arch = "wasm32")]
+            {
+                for embedding in &mut embeddings_result {
+                    let magnitude: f32 = embedding.iter().map(|x| x * x).sum::<f32>().sqrt();
+                    if magnitude > f32::EPSILON {
+                        let inv_mag = 1.0 / magnitude;
+                        embedding.iter_mut().for_each(|x| *x *= inv_mag);
+                    }
                 }
-            });
+            }
         } else {
             for embedding in &mut embeddings_result {
                 let magnitude: f32 = embedding.iter().map(|x| x * x).sum::<f32>().sqrt();

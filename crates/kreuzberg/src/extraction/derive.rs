@@ -681,6 +681,7 @@ pub fn derive_extraction_result(
         #[cfg(feature = "tree-sitter")]
         code_intelligence,
         formatted_content,
+        ocr_internal_document: None,
     }
 }
 

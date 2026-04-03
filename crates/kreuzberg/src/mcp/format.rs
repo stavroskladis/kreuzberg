@@ -277,6 +277,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let formatted = format_extraction_result(&result);
@@ -320,6 +321,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let formatted = format_extraction_result(&result);
@@ -368,6 +370,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let formatted = format_extraction_result(&result);
@@ -402,6 +405,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let formatted = format_extraction_result(&result);

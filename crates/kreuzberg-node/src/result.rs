@@ -967,6 +967,7 @@ impl TryFrom<JsExtractionResult> for RustExtractionResult {
             },
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         })
     }
 }

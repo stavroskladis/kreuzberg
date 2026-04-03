@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **PHP enum registration** — PHP enums (ContentLayer, ElementType, etc.) were registered with `.class()` instead of `.enumeration()`, causing empty case lists. Virtual properties on ExtractionResult and ArchiveEntry now declared via builder modifiers for reflection visibility.
 - **Go macOS FFI linking** — monorepo dev build (`ffi_dev.go`) was missing `-framework Foundation` in CGO LDFLAGS, causing linker failures on macOS with CoreML-enabled ONNX Runtime.
 - **Unified WASM e2e tests** — replaced broken separate Deno/Workers e2e generators with a single vitest-based WASM generator. ORT-dependent features (embeddings, layout, paddle-ocr) gracefully skip.
+- **WASM Rayon thread pool panic** — Rayon's `par_iter()` / `into_par_iter()` and `ThreadPoolBuilder::build_global()` panicked in WASM (`RuntimeError: unreachable`) because WASM has no threading support. All Rayon usages now fall back to sequential iteration on `wasm32` target.
+- **PHP virtual property reflection** — `ClassBuilder::property()` declarations for `__get`-backed fields (metadata, chunks, document, etc.) shadowed the magic method, returning null. Replaced with getter methods that don't interfere with `__get`. Parity test updated to check both `hasProperty()` and getter methods.
 
 ---
 

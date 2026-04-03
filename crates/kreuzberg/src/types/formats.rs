@@ -190,6 +190,11 @@ pub struct OcrExtractionResult {
     /// Available when TSV output is requested or table detection is enabled.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ocr_elements: Option<Vec<super::OcrElement>>,
+    /// Structured document produced from hOCR parsing.
+    /// Carries paragraph structure, bounding boxes, and confidence scores
+    /// that the flattened `content` string discards.
+    #[serde(skip)]
+    pub internal_document: Option<super::internal::InternalDocument>,
 }
 
 /// Table detected via OCR.

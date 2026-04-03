@@ -2075,9 +2075,32 @@ pub fn generate_parity(manifest: &ParityManifest, output_root: &Utf8Path) -> Res
         }
         writeln!(buf, "        ];")?;
         writeln!(buf, "        foreach ($expected as $prop) {{")?;
+        writeln!(
+            buf,
+            "            // hasProperty() only covers #[php_prop] declared fields."
+        )?;
+        writeln!(
+            buf,
+            "            // Virtual properties backed by #[php(getter)] methods are"
+        )?;
+        writeln!(
+            buf,
+            "            // accessible via $obj->prop but only show up as a getter method"
+        )?;
+        writeln!(
+            buf,
+            "            // (getXxx) in ReflectionClass, not as a declared property."
+        )?;
+        writeln!(buf, "            $getter = 'get' . ucfirst($prop);")?;
         writeln!(buf, "            $this->assertTrue(")?;
-        writeln!(buf, "                $ref->hasProperty($prop),")?;
-        writeln!(buf, "                \"{type_name} missing property: {{$prop}}\"")?;
+        writeln!(
+            buf,
+            "                $ref->hasProperty($prop) || $ref->hasMethod($getter),"
+        )?;
+        writeln!(
+            buf,
+            "                \"{type_name} missing property or getter: {{$prop}}\""
+        )?;
         writeln!(buf, "            );")?;
         writeln!(buf, "        }}")?;
         writeln!(buf, "    }}")?;

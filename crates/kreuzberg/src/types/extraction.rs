@@ -179,6 +179,14 @@ pub struct ExtractionResult {
     /// of the pipeline, after post-processors have operated on plain text.
     #[serde(skip)]
     pub formatted_content: Option<String>,
+
+    /// Structured hOCR document for the OCR+layout pipeline.
+    ///
+    /// When tesseract produces hOCR output, the parsed `InternalDocument` carries
+    /// paragraph structure with bounding boxes and confidence scores. The layout
+    /// classification step enriches these elements before final rendering.
+    #[serde(skip)]
+    pub ocr_internal_document: Option<super::internal::InternalDocument>,
 }
 
 /// A single file extracted from an archive.

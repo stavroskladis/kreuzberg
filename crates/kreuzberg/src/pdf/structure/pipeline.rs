@@ -5,6 +5,7 @@ use std::borrow::Cow;
 use crate::pdf::error::Result;
 use crate::pdf::hierarchy::{BoundingBox, SegmentData, TextBlock, assign_heading_levels_smart, cluster_font_sizes};
 use pdfium_render::prelude::*;
+#[cfg(not(target_arch = "wasm32"))]
 use rayon::prelude::*;
 
 use super::assembly::assemble_internal_document;
@@ -709,6 +710,7 @@ pub fn extract_document_structure(
 
             if has_table_model {
                 if let (Some(images), Some(results)) = (layout_images, layout_results) {
+                    #[cfg(not(target_arch = "wasm32"))]
                     let parallel_tables: Vec<Vec<crate::types::Table>> = table_pages
                         .par_iter()
                         .map(|tp| {
@@ -854,6 +856,153 @@ pub fn extract_document_structure(
                                     }
 
                                     // Fallback: heuristic
+                                    let hints = &hints_pages[tp.page_idx];
+                                    super::regions::extract_tables_from_layout_hints(
+                                        &tp.words,
+                                        hints,
+                                        tp.page_idx,
+                                        tp.page_height,
+                                        0.5,
+                                        allow_single_column,
+                                    )
+                                })
+                            }
+                        })
+                        .collect();
+                    #[cfg(target_arch = "wasm32")]
+                    let parallel_tables: Vec<Vec<crate::types::Table>> = table_pages
+                        .iter()
+                        .map(|tp| {
+                            if let Some(variant) = slanet_variant {
+                                // SLANeXT path — ensure models are loaded in thread-local
+                                TL_SLANET.with(|cell| {
+                                    let mut slanet_ref = cell.borrow_mut();
+                                    if slanet_ref.is_none() {
+                                        *slanet_ref = crate::layout::take_or_create_slanet(variant);
+                                    }
+                                });
+                                if is_auto {
+                                    TL_SLANET_ALT.with(|cell| {
+                                        let mut alt_ref = cell.borrow_mut();
+                                        if alt_ref.is_none() {
+                                            *alt_ref = crate::layout::take_or_create_slanet("slanet_wireless");
+                                        }
+                                    });
+                                    TL_CLASSIFIER.with(|cell| {
+                                        let mut cls_ref = cell.borrow_mut();
+                                        if cls_ref.is_none() {
+                                            *cls_ref = crate::layout::take_or_create_table_classifier();
+                                        }
+                                    });
+                                }
+
+                                // Now borrow all needed models and run recognition
+                                TL_SLANET.with(|slanet_cell| {
+                                    let mut slanet_ref = slanet_cell.borrow_mut();
+                                    let Some(slanet) = slanet_ref.as_mut() else {
+                                        tracing::warn!("SLANeXT model unavailable in worker thread");
+                                        return Vec::new();
+                                    };
+
+                                    if let (Some(page_image), Some(page_result)) =
+                                        (images.get(tp.page_idx), results.get(tp.page_idx))
+                                    {
+                                        let hints = &hints_pages[tp.page_idx];
+
+                                        let mut classifier_pair = if is_auto {
+                                            let alt = TL_SLANET_ALT.with(|c| c.borrow_mut().take());
+                                            let cls = TL_CLASSIFIER.with(|c| c.borrow_mut().take());
+                                            match (cls, alt) {
+                                                (Some(c), Some(a)) => Some((c, a)),
+                                                (c, a) => {
+                                                    if let Some(cls) = c {
+                                                        TL_CLASSIFIER.with(|cell| {
+                                                            *cell.borrow_mut() = Some(cls);
+                                                        });
+                                                    }
+                                                    if let Some(alt) = a {
+                                                        TL_SLANET_ALT.with(|cell| {
+                                                            *cell.borrow_mut() = Some(alt);
+                                                        });
+                                                    }
+                                                    None
+                                                }
+                                            }
+                                        } else {
+                                            None
+                                        };
+
+                                        let classifier_arg =
+                                            classifier_pair.as_mut().map(|(cls, alt)| {
+                                                (cls as &mut crate::layout::models::table_classifier::TableClassifier,
+                                                         alt as &mut crate::layout::models::slanet::SlanetModel)
+                                            });
+
+                                        let slanet_tables = super::regions::recognize_tables_slanet(
+                                            page_image,
+                                            hints,
+                                            &tp.words,
+                                            page_result,
+                                            tp.page_height,
+                                            tp.page_idx,
+                                            slanet,
+                                            classifier_arg,
+                                        );
+
+                                        if let Some((cls, alt)) = classifier_pair {
+                                            TL_CLASSIFIER.with(|cell| {
+                                                *cell.borrow_mut() = Some(cls);
+                                            });
+                                            TL_SLANET_ALT.with(|cell| {
+                                                *cell.borrow_mut() = Some(alt);
+                                            });
+                                        }
+
+                                        if !slanet_tables.is_empty() {
+                                            return slanet_tables;
+                                        }
+                                    }
+
+                                    let hints = &hints_pages[tp.page_idx];
+                                    super::regions::extract_tables_from_layout_hints(
+                                        &tp.words,
+                                        hints,
+                                        tp.page_idx,
+                                        tp.page_height,
+                                        0.5,
+                                        allow_single_column,
+                                    )
+                                })
+                            } else {
+                                // TATR path (default)
+                                TL_TATR.with(|cell| {
+                                    let mut tatr_ref = cell.borrow_mut();
+                                    if tatr_ref.is_none() {
+                                        *tatr_ref = crate::layout::take_or_create_tatr();
+                                    }
+                                    let Some(tatr) = tatr_ref.as_mut() else {
+                                        tracing::warn!("TATR model unavailable in worker thread");
+                                        return Vec::new();
+                                    };
+
+                                    if let (Some(page_image), Some(page_result)) =
+                                        (images.get(tp.page_idx), results.get(tp.page_idx))
+                                    {
+                                        let hints = &hints_pages[tp.page_idx];
+                                        let tatr_tables = super::regions::recognize_tables_for_native_page(
+                                            page_image,
+                                            hints,
+                                            &tp.words,
+                                            page_result,
+                                            tp.page_height,
+                                            tp.page_idx,
+                                            tatr,
+                                        );
+                                        if !tatr_tables.is_empty() {
+                                            return tatr_tables;
+                                        }
+                                    }
+
                                     let hints = &hints_pages[tp.page_idx];
                                     super::regions::extract_tables_from_layout_hints(
                                         &tp.words,
@@ -1019,8 +1168,14 @@ pub fn extract_document_structure(
         })
         .collect();
 
+    #[cfg(not(target_arch = "wasm32"))]
     let mut all_page_paragraphs: Vec<Vec<PdfParagraph>> = page_inputs
         .into_par_iter()
+        .map(|input| process_single_page(input, &heading_map, doc_body_font_size))
+        .collect();
+    #[cfg(target_arch = "wasm32")]
+    let mut all_page_paragraphs: Vec<Vec<PdfParagraph>> = page_inputs
+        .into_iter()
         .map(|input| process_single_page(input, &heading_map, doc_body_font_size))
         .collect();
 

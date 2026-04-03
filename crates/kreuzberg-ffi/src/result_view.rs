@@ -466,6 +466,7 @@ mod tests {
             uris: None,
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         }
     }
 
@@ -742,6 +743,7 @@ mod tests {
             uris: None,
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let result_ptr = &result as *const ExtractionResult;

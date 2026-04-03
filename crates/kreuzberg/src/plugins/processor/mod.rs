@@ -88,6 +88,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -152,6 +153,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -233,6 +235,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -277,6 +280,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -318,6 +322,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         assert_eq!(processor.estimated_duration_ms(&result), 0);
@@ -383,6 +388,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let txt_result = ExtractionResult {
@@ -408,6 +414,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         assert!(processor.should_process(&pdf_result, &config));
@@ -452,6 +459,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();

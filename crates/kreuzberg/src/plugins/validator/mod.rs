@@ -83,6 +83,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -116,6 +117,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -151,6 +153,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -201,6 +204,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -263,6 +267,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let txt_result = ExtractionResult {
@@ -288,6 +293,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         assert!(validator.should_validate(&pdf_result, &config));
@@ -386,6 +392,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -432,6 +439,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -474,6 +482,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();
@@ -517,6 +526,7 @@ mod tests {
                 #[cfg(feature = "tree-sitter")]
                 code_intelligence: None,
                 formatted_content: None,
+                ocr_internal_document: None,
             };
 
             assert!(validator.validate(&result, &config).await.is_ok());
@@ -550,6 +560,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         };
 
         let config = ExtractionConfig::default();

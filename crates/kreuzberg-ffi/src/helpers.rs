@@ -104,6 +104,7 @@ pub fn to_c_extraction_result(result: ExtractionResult) -> std::result::Result<*
         children,
         uris,
         code_intelligence: _,
+        ocr_internal_document: _,
     } = result;
 
     let sanitized_content = if content.contains('\0') {
@@ -518,6 +519,7 @@ mod tests {
             uris: None,
             formatted_content: None,
             code_intelligence: None,
+            ocr_internal_document: None,
         };
 
         let c_result = to_c_extraction_result(result);
@@ -567,6 +569,7 @@ mod tests {
             uris: None,
             formatted_content: None,
             code_intelligence: None,
+            ocr_internal_document: None,
         };
 
         let c_result = to_c_extraction_result(result);
@@ -626,6 +629,7 @@ mod tests {
             uris: None,
             formatted_content: None,
             code_intelligence: None,
+            ocr_internal_document: None,
         };
 
         let c_result = to_c_extraction_result(result);
@@ -721,6 +725,7 @@ mod tests {
             uris: None,
             formatted_content: None,
             code_intelligence: None,
+            ocr_internal_document: None,
         };
 
         let c_result = to_c_extraction_result(result);

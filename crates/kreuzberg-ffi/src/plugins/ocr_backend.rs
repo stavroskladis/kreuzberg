@@ -179,6 +179,7 @@ impl OcrBackend for FfiOcrBackend {
             code_intelligence: None,
             formatted_content: None,
             children: None,
+            ocr_internal_document: None,
         })
     }
 

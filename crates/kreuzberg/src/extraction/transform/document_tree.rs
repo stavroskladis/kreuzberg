@@ -559,6 +559,7 @@ mod tests {
             #[cfg(feature = "tree-sitter")]
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         }
     }
 

@@ -440,6 +440,7 @@ mod tests {
             uris: None,
             code_intelligence: None,
             formatted_content: None,
+            ocr_internal_document: None,
         }
     }
 

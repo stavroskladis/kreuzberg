@@ -20,9 +20,14 @@ class ParityTest extends TestCase
             'result',
         ];
         foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
             $this->assertTrue(
-                $ref->hasProperty($prop),
-                "ArchiveEntry missing property: {$prop}"
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "ArchiveEntry missing property or getter: {$prop}"
             );
         }
     }
@@ -38,9 +43,14 @@ class ParityTest extends TestCase
             'y1',
         ];
         foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
             $this->assertTrue(
-                $ref->hasProperty($prop),
-                "BoundingBox missing property: {$prop}"
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "BoundingBox missing property or getter: {$prop}"
             );
         }
     }
@@ -81,9 +91,14 @@ class ParityTest extends TestCase
             'useCache',
         ];
         foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
             $this->assertTrue(
-                $ref->hasProperty($prop),
-                "ExtractionConfig missing property: {$prop}"
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "ExtractionConfig missing property or getter: {$prop}"
             );
         }
     }
@@ -113,9 +128,14 @@ class ParityTest extends TestCase
             'uris',
         ];
         foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
             $this->assertTrue(
-                $ref->hasProperty($prop),
-                "ExtractionResult missing property: {$prop}"
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "ExtractionResult missing property or getter: {$prop}"
             );
         }
     }
@@ -131,9 +151,14 @@ class ParityTest extends TestCase
             'text',
         ];
         foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
             $this->assertTrue(
-                $ref->hasProperty($prop),
-                "Keyword missing property: {$prop}"
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "Keyword missing property or getter: {$prop}"
             );
         }
     }
@@ -149,9 +174,14 @@ class ParityTest extends TestCase
             'pageNumber',
         ];
         foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
             $this->assertTrue(
-                $ref->hasProperty($prop),
-                "PdfAnnotation missing property: {$prop}"
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "PdfAnnotation missing property or getter: {$prop}"
             );
         }
     }
@@ -165,9 +195,14 @@ class ParityTest extends TestCase
             'source',
         ];
         foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
             $this->assertTrue(
-                $ref->hasProperty($prop),
-                "ProcessingWarning missing property: {$prop}"
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "ProcessingWarning missing property or getter: {$prop}"
             );
         }
     }
@@ -183,9 +218,14 @@ class ParityTest extends TestCase
             'pageNumber',
         ];
         foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
             $this->assertTrue(
-                $ref->hasProperty($prop),
-                "Table missing property: {$prop}"
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "Table missing property or getter: {$prop}"
             );
         }
     }
@@ -201,9 +241,14 @@ class ParityTest extends TestCase
             'url',
         ];
         foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
             $this->assertTrue(
-                $ref->hasProperty($prop),
-                "Uri missing property: {$prop}"
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "Uri missing property or getter: {$prop}"
             );
         }
     }

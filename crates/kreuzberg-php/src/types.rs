@@ -4,7 +4,6 @@
 
 use ext_php_rs::builders::ClassBuilder;
 use ext_php_rs::convert::IntoZval;
-use ext_php_rs::flags::PropertyFlags;
 use ext_php_rs::prelude::*;
 use ext_php_rs::types::Zval;
 use std::collections::HashMap;
@@ -13,35 +12,31 @@ use std::collections::HashMap;
 // ClassBuilder modifier functions for virtual properties
 // ---------------------------------------------------------------------------
 
-/// Declare virtual properties on ExtractionResult that are accessible via
-/// `__get()` magic method or `#[php(getter)]` methods but not stored as
-/// `#[php(prop)]` fields. These declarations make `ReflectionClass::hasProperty()`
-/// return true for all fields in the parity manifest.
+/// Declare virtual properties on ExtractionResult for `ReflectionClass::hasProperty()` parity.
+///
+/// All properties declared here have a corresponding `#[php(getter)]` method.
+/// ext-php-rs's `read_property` handler checks the Rust getter registry FIRST,
+/// so the getter is always invoked when reading the property — the null default
+/// declared here is never visible to PHP user code. The declaration is only
+/// needed so that `ReflectionClass::hasProperty()` returns `true`.
 pub fn extraction_result_builder_modifier(builder: ClassBuilder) -> ClassBuilder {
+    // NOTE: Properties backed by #[php(getter)] are already registered by ext-php-rs's
+    // module builder (from T::get_properties()). We do NOT add them again here — double-
+    // declaring via ClassBuilder::property() causes PHP to bypass ext-php-rs's
+    // read_property handler and return null instead of invoking the getter.
+    //
+    // All properties that need ReflectionClass::hasProperty() to return true are
+    // already handled by the auto-registration. This modifier is kept for clarity.
     builder
-        // JSON-backed virtual properties (accessed via __get)
-        .property("metadata", PropertyFlags::Public, None, &[])
-        .property("djotContent", PropertyFlags::Public, None, &[])
-        .property("elements", PropertyFlags::Public, None, &[])
-        .property("document", PropertyFlags::Public, None, &[])
-        .property("ocrElements", PropertyFlags::Public, None, &[])
-        .property("children", PropertyFlags::Public, None, &[])
-        .property("uris", PropertyFlags::Public, None, &[])
-        // Getter-backed virtual properties (#[php(getter)] methods)
-        .property("tables", PropertyFlags::Public, None, &[])
-        .property("images", PropertyFlags::Public, None, &[])
-        .property("chunks", PropertyFlags::Public, None, &[])
-        .property("pages", PropertyFlags::Public, None, &[])
-        .property("extractedKeywords", PropertyFlags::Public, None, &[])
-        .property("annotations", PropertyFlags::Public, None, &[])
-        .property("processingWarnings", PropertyFlags::Public, None, &[])
 }
 
-/// Declare the `result` virtual property on ArchiveEntry. The actual value is
-/// stored in the `result` field and exposed via a `#[php(getter)]` method,
-/// but `ReflectionClass::hasProperty()` requires a declared property.
+/// ArchiveEntry builder modifier.
+///
+/// The `result` property is backed by `#[php(getter)]` `get_result` and is
+/// auto-registered by ext-php-rs's module builder (T::get_properties()). No
+/// additional declarations needed here.
 pub fn archive_entry_builder_modifier(builder: ClassBuilder) -> ClassBuilder {
-    builder.property("result", PropertyFlags::Public, None, &[])
+    builder
 }
 
 // ---------------------------------------------------------------------------
@@ -588,15 +583,83 @@ impl ExtractionResult {
     }
 
     // -----------------------------------------------------------------------
-    // Regular methods
+    // JSON-deserialized virtual properties (via #[php(getter)])
+    // These are backed by raw JSON fields and exposed as typed property
+    // accessors. The getter takes priority over any ClassBuilder::property()
+    // null declaration, ensuring __get is NOT invoked for these names.
     // -----------------------------------------------------------------------
 
-    /// Get metadata as a Metadata object.
+    /// Metadata property getter.
     ///
     /// Returns a Metadata object with common fields accessible as properties.
-    pub fn get_metadata(&self) -> PhpResult<Metadata> {
-        Metadata::from_json(&self.metadata_json)
+    #[php(getter)]
+    pub fn get_metadata(&self) -> Option<Metadata> {
+        Metadata::from_json(&self.metadata_json).ok()
     }
+
+    /// Djot structured content property getter (output_format = 'djot').
+    #[php(getter)]
+    pub fn get_djotContent(&self) -> Option<Zval> {
+        self.djot_content_json.as_deref().and_then(|json| {
+            serde_json::from_str::<serde_json::Value>(json)
+                .ok()
+                .and_then(|v| json_value_to_php(&v).ok())
+        })
+    }
+
+    /// Elements property getter (output_format = 'element_based').
+    #[php(getter)]
+    pub fn get_elements(&self) -> Option<Zval> {
+        self.elements_json.as_deref().and_then(|json| {
+            serde_json::from_str::<serde_json::Value>(json)
+                .ok()
+                .and_then(|v| json_value_to_php(&v).ok())
+        })
+    }
+
+    /// Document structure property getter (include_document_structure = true).
+    #[php(getter)]
+    pub fn get_document(&self) -> Option<Zval> {
+        self.document_json.as_deref().and_then(|json| {
+            serde_json::from_str::<serde_json::Value>(json)
+                .ok()
+                .and_then(|v| json_value_to_php(&v).ok())
+        })
+    }
+
+    /// OCR elements property getter (spatial/confidence metadata).
+    #[php(getter)]
+    pub fn get_ocrElements(&self) -> Option<Zval> {
+        self.ocr_elements_json.as_deref().and_then(|json| {
+            serde_json::from_str::<serde_json::Value>(json)
+                .ok()
+                .and_then(|v| json_value_to_php(&v).ok())
+        })
+    }
+
+    /// Children property getter (nested archive extraction results).
+    #[php(getter)]
+    pub fn get_children(&self) -> Option<Zval> {
+        self.children_json.as_deref().and_then(|json| {
+            serde_json::from_str::<serde_json::Value>(json)
+                .ok()
+                .and_then(|v| json_value_to_php(&v).ok())
+        })
+    }
+
+    /// URIs property getter (links discovered during extraction).
+    #[php(getter)]
+    pub fn get_uris(&self) -> Option<Zval> {
+        self.uris_json.as_deref().and_then(|json| {
+            serde_json::from_str::<serde_json::Value>(json)
+                .ok()
+                .and_then(|v| json_value_to_php(&v).ok())
+        })
+    }
+
+    // -----------------------------------------------------------------------
+    // Regular methods
+    // -----------------------------------------------------------------------
 
     /// Magic getter for accessing properties that are not directly exposed.
     ///
@@ -604,8 +667,12 @@ impl ExtractionResult {
     pub fn __get(&self, name: &str) -> PhpResult<Option<Zval>> {
         match name {
             "metadata" => {
-                let metadata = self.get_metadata()?;
-                Ok(Some(metadata.into_zval(false)?))
+                // Handled by #[php(getter)] get_metadata — this arm is kept for
+                // backward compatibility but will not be reached for declared properties.
+                match self.get_metadata() {
+                    Some(metadata) => Ok(Some(metadata.into_zval(false)?)),
+                    None => Ok(None),
+                }
             }
             "chunks" => {
                 if let Some(chunks) = &self.chunks {
