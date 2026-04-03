@@ -1,15 +1,15 @@
-Simple
+## Simple
 
-Duplicated
+## Duplicated
 
-Font
+## Font
 
-Size
+## Size
 
-Italic
+## Italic
 
-Weight
+## Weight
 
-Horizontal shift
+## Horizontal shift
 
-Vertical shift
+## Vertical shift
