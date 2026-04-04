@@ -3,7 +3,7 @@
   "specifiers": {
     "jsr:@std/assert@*": "1.0.19",
     "jsr:@std/internal@^1.0.12": "1.0.12",
-    "npm:@kreuzberg/wasm@4.6.1": "4.6.1",
+    "npm:@kreuzberg/wasm@4.7.1": "4.7.1",
     "npm:@types/node@20": "20.19.37",
     "npm:vitest@^4.0.16": "4.1.1_@types+node@20.19.37_vite@8.0.3__@types+node@20.19.37"
   },
@@ -41,8 +41,8 @@
     "@jridgewell/sourcemap-codec@1.5.5": {
       "integrity": "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="
     },
-    "@kreuzberg/wasm@4.6.1": {
-      "integrity": "sha512-XoUdsfOa4J9lh+ywCdLXn4Fa5nBqB/HQ9Fz7DEbuCznwPp33lGJal1cXuxg8kKU3PgMAEvp0o1xU3VCJbkaXBw==",
+    "@kreuzberg/wasm@4.7.1": {
+      "integrity": "sha512-WMdP1vLMgKD7/j8krlV5F1LBmaWtVHLZY0boRLJ7Cw+n6fBzZzD+gIbUtwTG2mm+UNDzYhSEH7VUYveRYkbEgw==",
       "optionalDependencies": [
         "tesseract-wasm"
       ]
@@ -491,11 +491,11 @@
   },
   "workspace": {
     "dependencies": [
-      "npm:@kreuzberg/wasm@4.6.1"
+      "npm:@kreuzberg/wasm@4.7.1"
     ],
     "packageJson": {
       "dependencies": [
-        "npm:@kreuzberg/wasm@4.6.1",
+        "npm:@kreuzberg/wasm@4.7.1",
         "npm:@types/node@20",
         "npm:vitest@^4.0.16"
       ]

@@ -338,6 +338,7 @@ mod tests {
 
     // ── hOCR → PdfParagraph tests ──────────────────────────────────────
 
+    #[cfg(feature = "ocr")]
     fn make_ocr_element(
         text: &str,
         page: u32,
@@ -362,6 +363,7 @@ mod tests {
         elem
     }
 
+    #[cfg(feature = "ocr")]
     #[test]
     fn test_ocr_doc_to_paragraphs_basic() {
         let mut doc = crate::types::internal::InternalDocument::new("pdf");
@@ -374,6 +376,7 @@ mod tests {
         assert_eq!(paragraphs[1].text, "Second paragraph");
     }
 
+    #[cfg(feature = "ocr")]
     #[test]
     fn test_ocr_doc_to_paragraphs_bbox_flip() {
         // Image coords: y=0 at top. Element at y=50..100 on a 1000px page.
@@ -390,6 +393,7 @@ mod tests {
         assert_eq!(bbox.3, 950.0, "top = page_height - image_y0 = 1000 - 50");
     }
 
+    #[cfg(feature = "ocr")]
     #[test]
     fn test_ocr_doc_to_paragraphs_multiline() {
         let mut doc = crate::types::internal::InternalDocument::new("pdf");
@@ -410,6 +414,7 @@ mod tests {
         assert_eq!(paragraphs[0].lines[2].segments[0].text, "Line three");
     }
 
+    #[cfg(feature = "ocr")]
     #[test]
     fn test_ocr_doc_to_paragraphs_all_elements() {
         // Each per-page hOCR doc is independent, so all OcrText elements
@@ -422,6 +427,7 @@ mod tests {
         assert_eq!(paragraphs.len(), 2);
     }
 
+    #[cfg(feature = "ocr")]
     #[test]
     fn test_ocr_doc_to_paragraphs_skips_empty() {
         let mut doc = crate::types::internal::InternalDocument::new("pdf");
@@ -434,6 +440,7 @@ mod tests {
         assert_eq!(paragraphs[0].text, "Real text");
     }
 
+    #[cfg(feature = "ocr")]
     #[test]
     fn test_ocr_doc_to_paragraphs_all_flags_default() {
         let mut doc = crate::types::internal::InternalDocument::new("pdf");
@@ -452,6 +459,7 @@ mod tests {
     }
 
     #[cfg(feature = "layout-detection")]
+    #[cfg(feature = "ocr")]
     #[test]
     fn test_ocr_doc_to_paragraphs_with_layout_overrides() {
         use crate::pdf::structure::layout_classify::apply_layout_overrides;
@@ -535,6 +543,7 @@ mod tests {
         );
     }
 
+    #[cfg(feature = "ocr")]
     #[test]
     fn test_ocr_doc_to_paragraphs_coordinate_conversion_accuracy() {
         // Test precise coordinate conversion from image space to PDF space.
