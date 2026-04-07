@@ -218,19 +218,9 @@ async fn test_structured_extraction_gemini() {
     init();
     let api_key = require_env!("GEMINI_API_KEY");
     let text = extract_memo_text().await;
-    // Gemini doesn't support additionalProperties in response_schema —
-    // use a compatible schema without it.
-    let gemini_schema = json!({
-        "type": "object",
-        "properties": {
-            "title": { "type": "string" },
-            "date": { "type": "string" },
-            "summary": { "type": "string" }
-        },
-        "required": ["title", "date", "summary"]
-    });
+    // Schema sanitization now strips additionalProperties automatically for Gemini.
     let config = StructuredExtractionConfig {
-        schema: gemini_schema,
+        schema: memo_schema(),
         schema_name: "memo_data".to_string(),
         schema_description: None,
         strict: false,
