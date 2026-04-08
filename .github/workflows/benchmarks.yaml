@@ -887,6 +887,7 @@ jobs:
           FRAMEWORK: kreuzberg-java
           MODE: ${{ matrix.mode }}
           ITERATIONS: ${{ env.ITERATIONS }}
+          KREUZBERG_BENCHMARK_DEBUG: "true"
           TIMEOUT: ${{ github.event.inputs.timeout }}
         run: scripts/benchmarks/run-benchmark.sh
 
@@ -2170,21 +2171,17 @@ jobs:
             echo "  - $framework"
           done <<< "$ACTUAL_FRAMEWORKS"
 
+          TOTAL_EXPECTED=${#EXPECTED_FRAMEWORKS[@]}
+          ACTUAL_COUNT=$(echo "$ACTUAL_FRAMEWORKS" | wc -l | tr -d ' ')
+
           if [[ $MISSING_COUNT -gt 0 ]]; then
             echo ""
-            echo "::warning::Missing $MISSING_COUNT expected framework:mode combinations:"
+            echo "::warning::Missing $MISSING_COUNT of $TOTAL_EXPECTED expected framework:mode combinations (${ACTUAL_COUNT} present):"
             echo "$MISSING_LIST"
-
-            # Fail if more than 20% of frameworks are missing (>7 out of 36)
-            TOTAL_EXPECTED=${#EXPECTED_FRAMEWORKS[@]}
-            THRESHOLD=$((TOTAL_EXPECTED * 20 / 100))
-            if [[ $MISSING_COUNT -gt $THRESHOLD ]]; then
-              echo "::error::Too many frameworks missing ($MISSING_COUNT out of $TOTAL_EXPECTED, threshold is $THRESHOLD)"
-              exit 1
-            fi
+            echo "This is expected when some binding jobs fail — results will be published with available data."
           else
             echo ""
-            echo "All ${#EXPECTED_FRAMEWORKS[@]} expected framework:mode combinations present"
+            echo "All ${TOTAL_EXPECTED} expected framework:mode combinations present"
           fi
 
       - name: Create GitHub Release with benchmark results

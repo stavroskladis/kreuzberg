@@ -865,6 +865,11 @@ def test_config_llm_embeddings() -> None:
     if not document_path.exists():
         pytest.skip(f"Skipping config_llm_embeddings: missing document at {document_path}")
 
+    import os
+
+    if not os.environ.get("OPENAI_API_KEY"):
+        pytest.skip("Skipping config_llm_embeddings: OPENAI_API_KEY not set (required for liter-llm)")
+
     try:
         config = helpers.build_config(
             {
@@ -900,6 +905,11 @@ def test_config_llm_structured_extraction() -> None:
     document_path = helpers.resolve_document("pdf/fake_memo.pdf")
     if not document_path.exists():
         pytest.skip(f"Skipping config_llm_structured_extraction: missing document at {document_path}")
+
+    import os
+
+    if not os.environ.get("OPENAI_API_KEY"):
+        pytest.skip("Skipping config_llm_structured_extraction: OPENAI_API_KEY not set (required for liter-llm)")
 
     try:
         config = helpers.build_config(
@@ -941,6 +951,13 @@ def test_config_llm_structured_extraction_with_prompt() -> None:
     document_path = helpers.resolve_document("pdf/fake_memo.pdf")
     if not document_path.exists():
         pytest.skip(f"Skipping config_llm_structured_extraction_with_prompt: missing document at {document_path}")
+
+    import os
+
+    if not os.environ.get("OPENAI_API_KEY"):
+        pytest.skip(
+            "Skipping config_llm_structured_extraction_with_prompt: OPENAI_API_KEY not set (required for liter-llm)"
+        )
 
     try:
         config = helpers.build_config(
@@ -985,6 +1002,11 @@ def test_config_llm_vlm_ocr() -> None:
     document_path = helpers.resolve_document("images/test_hello_world.png")
     if not document_path.exists():
         pytest.skip(f"Skipping config_llm_vlm_ocr: missing document at {document_path}")
+
+    import os
+
+    if not os.environ.get("OPENAI_API_KEY"):
+        pytest.skip("Skipping config_llm_vlm_ocr: OPENAI_API_KEY not set (required for liter-llm)")
 
     try:
         config = helpers.build_config(

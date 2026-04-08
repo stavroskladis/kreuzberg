@@ -5,7 +5,8 @@
 
 use crate::error_handling::{kreuzberg_error, runtime_error};
 use crate::helpers::ruby_value_to_json;
-use magnus::{Error, RArray, RHash, Ruby, Value, scan_args::get_kwargs, scan_args::scan_args};
+use magnus::{Error, RArray, RHash, Ruby, TryConvert, Value, scan_args::get_kwargs, scan_args::scan_args};
+use magnus::value::ReprValue;
 
 /// Parse an optional Ruby value (Hash or nil) into a `kreuzberg::EmbeddingConfig`.
 fn parse_embedding_config(ruby: &Ruby, config_val: Option<Value>) -> Result<kreuzberg::EmbeddingConfig, Error> {

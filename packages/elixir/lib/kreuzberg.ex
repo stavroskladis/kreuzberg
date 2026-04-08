@@ -543,7 +543,6 @@ defmodule Kreuzberg do
       true
 
   """
-  @doctest false
   def do_embed(texts, config \\ nil) do
     case config do
       nil -> Native.embed(texts, %{})
@@ -576,7 +575,6 @@ defmodule Kreuzberg do
       true
 
   """
-  @doctest false
   def do_embed!(texts, config \\ nil) do
     case do_embed(texts, config) do
       {:ok, result} ->

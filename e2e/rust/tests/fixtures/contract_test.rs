@@ -1536,6 +1536,10 @@ fn test_config_llm_embeddings() {
         );
         return;
     }
+    if std::env::var("OPENAI_API_KEY").is_err() {
+        println!("Skipping config_llm_embeddings: OPENAI_API_KEY not set (required for liter-llm)");
+        return;
+    }
     let config: ExtractionConfig = serde_json::from_str(
         r#"{
   "chunking": {
@@ -1601,6 +1605,10 @@ fn test_config_llm_structured_extraction() {
             "Skipping config_llm_structured_extraction: missing document at {}",
             document_path.display()
         );
+        return;
+    }
+    if std::env::var("OPENAI_API_KEY").is_err() {
+        println!("Skipping config_llm_structured_extraction: OPENAI_API_KEY not set (required for liter-llm)");
         return;
     }
     let config: ExtractionConfig = serde_json::from_str(
@@ -1669,6 +1677,12 @@ fn test_config_llm_structured_extraction_with_prompt() {
         println!(
             "Skipping config_llm_structured_extraction_with_prompt: missing document at {}",
             document_path.display()
+        );
+        return;
+    }
+    if std::env::var("OPENAI_API_KEY").is_err() {
+        println!(
+            "Skipping config_llm_structured_extraction_with_prompt: OPENAI_API_KEY not set (required for liter-llm)"
         );
         return;
     }
@@ -1741,6 +1755,10 @@ fn test_config_llm_vlm_ocr() {
             "Skipping config_llm_vlm_ocr: missing document at {}",
             document_path.display()
         );
+        return;
+    }
+    if std::env::var("OPENAI_API_KEY").is_err() {
+        println!("Skipping config_llm_vlm_ocr: OPENAI_API_KEY not set (required for liter-llm)");
         return;
     }
     let config: ExtractionConfig = serde_json::from_str(

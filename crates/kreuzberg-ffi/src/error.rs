@@ -64,7 +64,8 @@
 //! - `kreuzberg_error_code_plugin()` -> 5
 //! - `kreuzberg_error_code_unsupported_format()` -> 6
 //! - `kreuzberg_error_code_internal()` -> 7
-//! - `kreuzberg_error_code_count()` -> 8
+//! - `kreuzberg_error_code_embedding()` -> 8
+//! - `kreuzberg_error_code_count()` -> 9
 //! - `kreuzberg_error_code_name(code: u32)` -> *const c_char (error name)
 //!
 //! # Thread Safety

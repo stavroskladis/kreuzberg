@@ -1181,7 +1181,7 @@ mod tests {
         let router = KreuzbergMcp::tool_router();
         let tools = router.list_all();
 
-        assert_eq!(tools.len(), 12, "Expected 12 tools, found {}", tools.len());
+        assert_eq!(tools.len(), 13, "Expected 13 tools, found {}", tools.len());
     }
 
     #[tokio::test]

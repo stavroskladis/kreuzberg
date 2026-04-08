@@ -1199,6 +1199,10 @@ describe("contract fixtures", () => {
 				console.warn("Notes: Requires liter-llm feature and KREUZBERG_LLM_API_KEY env var");
 				return;
 			}
+			if (!process.env.OPENAI_API_KEY) {
+				console.warn("Skipping config_llm_embeddings: OPENAI_API_KEY not set (required for liter-llm)");
+				return;
+			}
 			const config = buildConfig({
 				chunking: {
 					max_chars: 500,
@@ -1239,6 +1243,10 @@ describe("contract fixtures", () => {
 			if (!existsSync(documentPath)) {
 				console.warn("Skipping config_llm_structured_extraction: missing document at", documentPath);
 				console.warn("Notes: Requires liter-llm feature and KREUZBERG_LLM_API_KEY env var");
+				return;
+			}
+			if (!process.env.OPENAI_API_KEY) {
+				console.warn("Skipping config_llm_structured_extraction: OPENAI_API_KEY not set (required for liter-llm)");
 				return;
 			}
 			const config = buildConfig({
@@ -1287,6 +1295,12 @@ describe("contract fixtures", () => {
 				console.warn("Notes: Requires liter-llm feature and KREUZBERG_LLM_API_KEY env var");
 				return;
 			}
+			if (!process.env.OPENAI_API_KEY) {
+				console.warn(
+					"Skipping config_llm_structured_extraction_with_prompt: OPENAI_API_KEY not set (required for liter-llm)",
+				);
+				return;
+			}
 			const config = buildConfig({
 				structured_extraction: {
 					schema: {
@@ -1332,6 +1346,10 @@ describe("contract fixtures", () => {
 			if (!existsSync(documentPath)) {
 				console.warn("Skipping config_llm_vlm_ocr: missing document at", documentPath);
 				console.warn("Notes: Requires liter-llm feature and KREUZBERG_LLM_API_KEY env var");
+				return;
+			}
+			if (!process.env.OPENAI_API_KEY) {
+				console.warn("Skipping config_llm_vlm_ocr: OPENAI_API_KEY not set (required for liter-llm)");
 				return;
 			}
 			const config = buildConfig({ ocr: { backend: "vlm", language: "eng", vlm_config: { model: "openai/gpt-4o" } } });

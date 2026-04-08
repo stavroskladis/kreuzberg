@@ -127,7 +127,7 @@ public final class KreuzbergExtractJava {
                 debugLog("Warmup phase complete", String.valueOf(WARMUP_ITERATIONS) + " iterations");
             }
             System.out.println("{\"status\":\"warmup_complete\"}");
-        } catch (KreuzbergException | RuntimeException | java.io.IOException e) {
+        } catch (KreuzbergException | RuntimeException | java.io.IOException | Error e) {
             if (debug) {
                 debugLog("Warmup failed", e.getClass().getName());
                 e.printStackTrace(System.err);
@@ -168,7 +168,7 @@ public final class KreuzbergExtractJava {
                 String json = toJson(result, elapsedMs, useOcr);
                 System.out.println(json);
                 System.out.flush();
-            } catch (Exception e) {
+            } catch (Exception | Error e) {
                 double elapsedMs = (System.nanoTime() - start) / NANOS_IN_MILLISECOND;
                 String errorJson = String.format("{\"error\":%s,\"_extraction_time_ms\":%.3f,\"_ocr_used\":false}",
                         quote(fullMessage(e)), elapsedMs);
@@ -202,7 +202,7 @@ public final class KreuzbergExtractJava {
                 ExtractionResult result = Kreuzberg.extractFile(path, benchConfig);
                 double fileMs = (System.nanoTime() - fileStart) / NANOS_IN_MILLISECOND;
                 jsonResults.add(toJsonWithBatch(result, fileMs, fileMs, ocrEnabled));
-            } catch (KreuzbergException | RuntimeException | java.io.IOException e) {
+            } catch (KreuzbergException | RuntimeException | java.io.IOException | Error e) {
                 double fileMs = (System.nanoTime() - fileStart) / NANOS_IN_MILLISECOND;
                 if (debug) {
                     debugLog("File extraction failed: " + path, e.getClass().getName() + ": " + e.getMessage());
@@ -260,7 +260,7 @@ public final class KreuzbergExtractJava {
             if (debug) {
                 debugLog("Extraction completed", "");
             }
-        } catch (KreuzbergException | RuntimeException | java.io.IOException e) {
+        } catch (KreuzbergException | RuntimeException | java.io.IOException | Error e) {
             double elapsedMs = (System.nanoTime() - start) / NANOS_IN_MILLISECOND;
             if (debug) {
                 debugLog("Extraction failed with exception", e.getClass().getName());

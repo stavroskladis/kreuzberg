@@ -352,7 +352,7 @@ func parsePluginName(message string) string {
 
 // Phase 2 FFI Error Classification Wrappers
 
-// ErrorCodeCount returns the total number of valid error codes (8).
+// ErrorCodeCount returns the total number of valid error codes (9).
 func ErrorCodeCount() uint32 {
 	return uint32(C.kreuzberg_error_code_count())
 }

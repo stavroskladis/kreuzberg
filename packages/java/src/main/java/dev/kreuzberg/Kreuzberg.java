@@ -1365,11 +1365,13 @@ public final class Kreuzberg {
 				.readCString(result.get(ValueLayout.ADDRESS, KreuzbergFFI.ANNOTATIONS_JSON_OFFSET));
 		String urisJson = KreuzbergFFI
 				.readCString(result.get(ValueLayout.ADDRESS, KreuzbergFFI.URIS_JSON_OFFSET));
+		String djotContentJson = KreuzbergFFI
+				.readCString(result.get(ValueLayout.ADDRESS, KreuzbergFFI.DJOT_CONTENT_JSON_OFFSET));
 
 		return ResultParser.parse(content, mimeType, tablesJson, detectedLanguagesJson, metadataJson, chunksJson,
-				imagesJson, pagesJson, pageStructureJson, elementsJson, ocrElementsJson, null, language, date, subject,
-				documentJson, extractedKeywordsJson, qualityScoreJson, processingWarningsJson, annotationsJson,
-				urisJson);
+				imagesJson, pagesJson, pageStructureJson, elementsJson, ocrElementsJson, djotContentJson, language,
+				date, subject, documentJson, extractedKeywordsJson, qualityScoreJson, processingWarningsJson,
+				annotationsJson, urisJson);
 	}
 
 	/**

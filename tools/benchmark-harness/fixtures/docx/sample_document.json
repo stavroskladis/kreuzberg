@@ -1,7 +1,7 @@
 {
   "document": "../../../../test_documents/docx/sample_document.docx",
   "file_type": "docx",
-  "file_size": 16,
+  "file_size": 103966,
   "expected_frameworks": [
     "kreuzberg"
   ],

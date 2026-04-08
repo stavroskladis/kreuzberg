@@ -269,6 +269,15 @@ fn render_test(fixture: &Fixture) -> Result<String> {
         )?;
     }
 
+    // Emit env-var skip for features that require external API keys
+    if fixture.skip().requires_feature.contains(&"liter-llm".to_string()) {
+        writeln!(
+            test_body,
+            "    if std::env::var(\"OPENAI_API_KEY\").is_err() {{\n        println!(\"Skipping {id}: OPENAI_API_KEY not set (required for liter-llm)\");\n        return;\n    }}",
+            id = fixture.id
+        )?;
+    }
+
     let config_literal = render_config_literal(&extraction.config)?;
     if config_literal.trim().is_empty() || config_literal.trim() == "{}" {
         writeln!(test_body, "    let config = ExtractionConfig::default();\n")?;

@@ -1,7 +1,7 @@
 {
   "document": "../../../../test_documents/user_reports/mp_axmp_rec_en.pdf",
   "file_type": "pdf",
-  "file_size": 408211,
+  "file_size": 408353,
   "expected_frameworks": [
     "kreuzberg"
   ],

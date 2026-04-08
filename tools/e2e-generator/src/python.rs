@@ -1046,6 +1046,18 @@ fn render_test(fixture: &Fixture) -> Result<String> {
         }
     }
 
+    // Emit env-var skip for features that require external API keys
+    if fixture.skip().requires_feature.contains(&"liter-llm".to_string()) {
+        writeln!(code, "    import os")?;
+        writeln!(code, "    if not os.environ.get(\"OPENAI_API_KEY\"):")?;
+        writeln!(
+            code,
+            "        pytest.skip(\"Skipping {}: OPENAI_API_KEY not set (required for liter-llm)\")",
+            fixture.id
+        )?;
+        writeln!(code)?;
+    }
+
     let config_literal = render_config_literal(&extraction.config);
     writeln!(code, "    config = helpers.build_config({})", config_literal)?;
     writeln!(code)?;

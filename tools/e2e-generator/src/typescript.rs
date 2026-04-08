@@ -1315,6 +1315,17 @@ fn render_test(fixture: &Fixture) -> Result<String> {
         }
     }
 
+    // Emit env-var skip for features that require external API keys
+    if fixture.skip().requires_feature.contains(&"liter-llm".to_string()) {
+        writeln!(body, "    if (!process.env.OPENAI_API_KEY) {{")?;
+        writeln!(
+            body,
+            "      console.warn(\"Skipping {}: OPENAI_API_KEY not set (required for liter-llm)\");",
+            escape_ts_string(&fixture.id)
+        )?;
+        writeln!(body, "      return;\n    }}")?;
+    }
+
     match render_config_expression(&extraction.config)? {
         None => writeln!(body, "    const config = buildConfig(undefined);")?,
         Some(config_expr) => writeln!(body, "    const config = buildConfig({config_expr});")?,

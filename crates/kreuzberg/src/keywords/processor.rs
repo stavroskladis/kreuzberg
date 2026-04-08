@@ -110,11 +110,8 @@ machine learning that uses neural networks with multiple layers.
 
         processor.process(&mut result, &config).await.unwrap();
 
-        assert!(result.metadata.additional.contains_key("keywords"));
-        let keywords = result.metadata.additional.get("keywords").unwrap();
-        assert!(keywords.is_array());
-        let kw_array = keywords.as_array().unwrap();
-        assert!(!kw_array.is_empty());
+        let keywords = result.extracted_keywords.as_ref().expect("keywords should be set");
+        assert!(!keywords.is_empty());
     }
 
     #[tokio::test]
@@ -134,11 +131,8 @@ machine learning that uses neural networks with multiple layers.
 
         processor.process(&mut result, &config).await.unwrap();
 
-        assert!(result.metadata.additional.contains_key("keywords"));
-        let keywords = result.metadata.additional.get("keywords").unwrap();
-        assert!(keywords.is_array());
-        let kw_array = keywords.as_array().unwrap();
-        assert!(!kw_array.is_empty());
+        let keywords = result.extracted_keywords.as_ref().expect("keywords should be set");
+        assert!(!keywords.is_empty());
     }
 
     #[tokio::test]
@@ -154,7 +148,7 @@ machine learning that uses neural networks with multiple layers.
 
         processor.process(&mut result, &config).await.unwrap();
 
-        assert!(!result.metadata.additional.contains_key("keywords"));
+        assert!(result.extracted_keywords.is_none());
     }
 
     #[tokio::test]
@@ -174,7 +168,7 @@ machine learning that uses neural networks with multiple layers.
 
         processor.process(&mut result, &config).await.unwrap();
 
-        assert!(!result.metadata.additional.contains_key("keywords"));
+        assert!(result.extracted_keywords.is_none());
     }
 
     #[test]

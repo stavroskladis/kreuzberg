@@ -4,7 +4,7 @@ use extendr_api::prelude::*;
 
 pub fn embed_impl(texts: Strings, config_json: Nullable<&str>) -> extendr_api::Result<List> {
     let config = parse_config_embedding(config_json)?;
-    let texts_vec: Vec<String> = texts.into_iter().collect();
+    let texts_vec: Vec<String> = texts.into_iter().map(|s| s.to_string()).collect();
 
     let result = kreuzberg::embed_texts(&texts_vec, &config).map_err(kreuzberg_error)?;
 

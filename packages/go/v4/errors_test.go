@@ -92,8 +92,8 @@ func TestLoadExtractionConfigFromFileValidation(t *testing.T) {
 
 func TestErrorCodeCount(t *testing.T) {
 	count := ErrorCodeCount()
-	if count != 8 {
-		t.Fatalf("expected 8 error codes, got %d", count)
+	if count != 9 {
+		t.Fatalf("expected 9 error codes, got %d", count)
 	}
 }
 
@@ -110,6 +110,7 @@ func TestErrorCodeName(t *testing.T) {
 		{5, "plugin"},
 		{6, "unsupported_format"},
 		{7, "internal"},
+		{8, "embedding"},
 		{99, "unknown"},
 	}
 	for _, tt := range tests {
@@ -134,6 +135,7 @@ func TestErrorCodeDescription(t *testing.T) {
 		{5, "Plugin error"},
 		{6, "Unsupported format"},
 		{7, "Internal library error"},
+		{8, "Embedding generation error"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.want, func(t *testing.T) {
@@ -157,6 +159,7 @@ func TestErrorCodeStringMethod(t *testing.T) {
 		{ErrorCodePlugin, "plugin"},
 		{ErrorCodeUnsupportedFormat, "unsupported_format"},
 		{ErrorCodeInternal, "internal"},
+		{ErrorCodeEmbedding, "embedding"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.want, func(t *testing.T) {
