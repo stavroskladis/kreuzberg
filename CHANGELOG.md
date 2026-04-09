@@ -2962,6 +2962,10 @@ See [Migration Guide](https://docs.kreuzberg.dev/migration/v3-to-v4/) for detail
 - [Format Support](docs/reference/formats.md) - Supported file formats
 - [Extraction Guide](docs/guides/extraction.md) - Extraction examples
 
+[4.8.1]: https://github.com/kreuzberg-dev/kreuzberg/releases/tag/v4.8.1
+[4.8.0]: https://github.com/kreuzberg-dev/kreuzberg/releases/tag/v4.8.0
+[4.7.4]: https://github.com/kreuzberg-dev/kreuzberg/releases/tag/v4.7.4
+[4.7.3]: https://github.com/kreuzberg-dev/kreuzberg/releases/tag/v4.7.3
 [4.7.2]: https://github.com/kreuzberg-dev/kreuzberg/releases/tag/v4.7.2
 [4.7.1]: https://github.com/kreuzberg-dev/kreuzberg/releases/tag/v4.7.1
 [4.7.0]: https://github.com/kreuzberg-dev/kreuzberg/releases/tag/v4.7.0
