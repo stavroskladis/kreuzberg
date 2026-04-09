@@ -473,7 +473,6 @@ static void test_contract_config_html_options(void) {
 }
 
 static void test_contract_config_html_styled_custom_css(void) {
-    if (skip_if_feature_unavailable("html-styled")) return;
     CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"output_format\":\"html\",\"html_output\":{\"theme\":\"unstyled\",\"css\":\".kb-p { color: red; }\",\"embed_css\":true}}");
     if (!result) return; /* skipped */
     assert_content_contains_all(result, (const char *[]){".kb-p { color: red; }", "kb-doc"}, 2);
@@ -481,7 +480,6 @@ static void test_contract_config_html_styled_custom_css(void) {
 }
 
 static void test_contract_config_html_styled_default(void) {
-    if (skip_if_feature_unavailable("html-styled")) return;
     CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"output_format\":\"html\",\"html_output\":{\"theme\":\"default\",\"embed_css\":true}}");
     if (!result) return; /* skipped */
     assert_expected_mime(result, (const char *[]){"application/pdf"}, 1);
@@ -490,7 +488,6 @@ static void test_contract_config_html_styled_default(void) {
 }
 
 static void test_contract_config_html_styled_no_embed(void) {
-    if (skip_if_feature_unavailable("html-styled")) return;
     CExtractionResult *result = run_extraction("pdf/fake_memo.pdf", "{\"output_format\":\"html\",\"html_output\":{\"theme\":\"default\",\"embed_css\":false}}");
     if (!result) return; /* skipped */
     assert_content_contains_all(result, (const char *[]){"kb-doc", "kb-content"}, 2);

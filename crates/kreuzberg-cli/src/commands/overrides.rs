@@ -248,28 +248,28 @@ pub struct ExtractionOverrides {
 
     // ── HTML styled output ────────────────────────────────────────────
     /// Built-in colour theme for styled HTML output (default, github, dark, light, unstyled).
-    /// Implies --content-format html and enables the html-styled renderer.
-    #[cfg(feature = "html-styled")]
+    /// Implies --content-format html and enables the styled HTML renderer.
+    #[cfg(feature = "html")]
     #[arg(long, value_name = "THEME")]
     pub html_theme: Option<String>,
 
     /// Inline CSS string appended after the theme stylesheet in styled HTML output.
-    #[cfg(feature = "html-styled")]
+    #[cfg(feature = "html")]
     #[arg(long, value_name = "CSS")]
     pub html_css: Option<String>,
 
     /// Path to a CSS file loaded once and appended after the theme stylesheet in styled HTML output.
-    #[cfg(feature = "html-styled")]
+    #[cfg(feature = "html")]
     #[arg(long, value_name = "PATH")]
     pub html_css_file: Option<std::path::PathBuf>,
 
     /// CSS class prefix used on every emitted class name (default: "kb-").
-    #[cfg(feature = "html-styled")]
+    #[cfg(feature = "html")]
     #[arg(long, value_name = "PREFIX")]
     pub html_class_prefix: Option<String>,
 
     /// Suppress the embedded <style> block in styled HTML output.
-    #[cfg(feature = "html-styled")]
+    #[cfg(feature = "html")]
     #[arg(long)]
     pub html_no_embed_css: bool,
 }
@@ -707,7 +707,7 @@ impl ExtractionOverrides {
 
     #[allow(unused_variables)]
     fn apply_html_styled(&self, config: &mut ExtractionConfig) {
-        #[cfg(feature = "html-styled")]
+        #[cfg(feature = "html")]
         {
             let has_flag = self.html_theme.is_some()
                 || self.html_css.is_some()
@@ -716,7 +716,7 @@ impl ExtractionOverrides {
                 || self.html_no_embed_css;
 
             if has_flag {
-                // Force content format to HTML when any html-styled flag is used.
+                // Force content format to HTML when any styled HTML flag is used.
                 config.output_format = kreuzberg::OutputFormat::Html;
 
                 let mut html_cfg = config.html_output.clone().unwrap_or_default();

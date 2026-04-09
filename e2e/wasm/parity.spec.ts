@@ -31,6 +31,7 @@ describe("ExtractionConfig field parity", () => {
 			"cacheTtlSecs",
 			"chunking",
 			"concurrency",
+			"contentFilter",
 			"disableOcr",
 			"email",
 			"enableQualityProcessing",

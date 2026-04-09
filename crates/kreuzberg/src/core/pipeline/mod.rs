@@ -74,9 +74,9 @@ pub async fn run_pipeline(doc: InternalDocument, config: &ExtractionConfig) -> R
     };
 
     // Pre-render styled HTML before `doc` is consumed by `derive_extraction_result`.
-    // When `html-styled` is active and the caller has configured `html_output`, we
+    // When `html` is active and the caller has configured `html_output`, we
     // render the document here and inject the result after derivation.
-    #[cfg(feature = "html-styled")]
+    #[cfg(feature = "html")]
     let styled_html_prerender: Option<String> = {
         use crate::plugins::Renderer as _;
         if config.output_format == crate::core::config::OutputFormat::Html {
@@ -106,7 +106,7 @@ pub async fn run_pipeline(doc: InternalDocument, config: &ExtractionConfig) -> R
         crate::extraction::derive::derive_extraction_result(doc, include_structure, config.output_format.clone());
 
     // Inject pre-rendered styled HTML (overrides the default render_html output).
-    #[cfg(feature = "html-styled")]
+    #[cfg(feature = "html")]
     if let Some(html) = styled_html_prerender {
         result.formatted_content = Some(html);
     }
@@ -250,7 +250,7 @@ pub fn run_pipeline_sync(doc: InternalDocument, config: &ExtractionConfig) -> Re
     };
 
     // Pre-render styled HTML before `doc` is consumed (mirrors async path).
-    #[cfg(feature = "html-styled")]
+    #[cfg(feature = "html")]
     let styled_html_prerender: Option<String> = {
         use crate::plugins::Renderer as _;
         if config.output_format == crate::core::config::OutputFormat::Html {
@@ -280,7 +280,7 @@ pub fn run_pipeline_sync(doc: InternalDocument, config: &ExtractionConfig) -> Re
         crate::extraction::derive::derive_extraction_result(doc, include_structure, config.output_format.clone());
 
     // Inject pre-rendered styled HTML.
-    #[cfg(feature = "html-styled")]
+    #[cfg(feature = "html")]
     if let Some(html) = styled_html_prerender {
         result.formatted_content = Some(html);
     }

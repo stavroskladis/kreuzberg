@@ -510,12 +510,11 @@ test_that("config_html_options", {
 })
 
 test_that("config_html_styled_custom_css", {
-  skip_if_feature_unavailable("html-styled")
   result <- run_fixture(
     "config_html_styled_custom_css",
     "pdf/fake_memo.pdf",
     list(output_format = "html", html_output = list(theme = "unstyled", css = ".kb-p { color: red; }", embed_css = TRUE)),
-    requirements = c("html-styled"),
+    requirements = character(0),
     notes = NULL,
     skip_if_missing = TRUE
   )
@@ -523,12 +522,11 @@ test_that("config_html_styled_custom_css", {
 })
 
 test_that("config_html_styled_default", {
-  skip_if_feature_unavailable("html-styled")
   result <- run_fixture(
     "config_html_styled_default",
     "pdf/fake_memo.pdf",
     list(output_format = "html", html_output = list(theme = "default", embed_css = TRUE)),
-    requirements = c("html-styled"),
+    requirements = character(0),
     notes = NULL,
     skip_if_missing = TRUE
   )
@@ -537,12 +535,11 @@ test_that("config_html_styled_default", {
 })
 
 test_that("config_html_styled_no_embed", {
-  skip_if_feature_unavailable("html-styled")
   result <- run_fixture(
     "config_html_styled_no_embed",
     "pdf/fake_memo.pdf",
     list(output_format = "html", html_output = list(theme = "default", embed_css = FALSE)),
-    requirements = c("html-styled"),
+    requirements = character(0),
     notes = NULL,
     skip_if_missing = TRUE
   )

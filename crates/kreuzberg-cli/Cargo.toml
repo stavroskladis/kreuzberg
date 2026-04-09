@@ -23,7 +23,7 @@ path = "src/main.rs"
 default = [
     "bundled-pdfium",
     "embeddings",
-    "html-styled",
+    "html",
     "liter-llm",
     "ocr",
     "paddle-ocr",
@@ -44,17 +44,17 @@ embeddings = ["kreuzberg/embeddings"]
 paddle-ocr = ["kreuzberg/paddle-ocr"]
 layout-detection = ["kreuzberg/layout-detection"]
 chunking-tokenizers = ["kreuzberg/chunking-tokenizers"]
-html-styled = ["kreuzberg/html-styled"]
+html = ["kreuzberg/html"]
 liter-llm = ["kreuzberg/liter-llm"]
 tree-sitter = ["kreuzberg/tree-sitter", "dep:tree-sitter-language-pack"]
 all = [
     "default",
     "api",
+    "html",
     "mcp",
     "mcp-http",
     "chunking-tokenizers",
     "tree-sitter",
-    "html-styled",
     "liter-llm",
 ]
 

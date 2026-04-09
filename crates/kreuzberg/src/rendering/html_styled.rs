@@ -1,6 +1,6 @@
 //! Styled HTML renderer — direct `InternalDocument` → HTML5 with `kb-*` class hooks.
 //!
-//! Replaces the comrak-based `render_html` when the `html-styled` feature is
+//! Replaces the comrak-based `render_html` when the `html` feature is
 //! active and `ExtractionConfig::html_output` is `Some(...)`.
 //!
 //! # Stability contract
@@ -144,7 +144,7 @@ p .kb-code { background: var(--kb-code-bg); color: var(--kb-code-color); padding
 /// Styled HTML renderer.
 ///
 /// Implements the [`Renderer`] trait; registered as `"html"` when the
-/// `html-styled` feature is active. Configuration is baked in at
+/// `html` feature is active. Configuration is baked in at
 /// construction time — no per-render allocation for CSS resolution.
 pub struct StyledHtmlRenderer {
     config: Arc<HtmlOutputConfig>,
@@ -157,10 +157,51 @@ impl StyledHtmlRenderer {
     ///
     /// Loads `css_file` from disk and concatenates all CSS sources. Returns
     /// an error if `css_file` is set but cannot be read.
+    /// Maximum size in bytes for a CSS file loaded via `css_file`.
+    const MAX_CSS_FILE_SIZE: u64 = 1_048_576; // 1 MiB
+
     pub fn new(config: HtmlOutputConfig) -> Result<Self> {
+        // Validate class_prefix: only allow alphanumerics, hyphens, and underscores
+        // to prevent HTML attribute injection.
+        if !config
+            .class_prefix
+            .chars()
+            .all(|c| c.is_alphanumeric() || c == '-' || c == '_')
+        {
+            return Err(KreuzbergError::validation(format!(
+                "html_output.class_prefix must contain only alphanumerics, hyphens, and underscores, got: {:?}",
+                config.class_prefix
+            )));
+        }
+
+        // Warn when using a non-default class_prefix with a non-unstyled theme,
+        // since built-in theme CSS targets `.kb-*` selectors.
+        if config.class_prefix != "kb-" && config.theme != HtmlTheme::Unstyled {
+            tracing::warn!(
+                "html_output.class_prefix is {:?} but theme is {:?}; \
+                 built-in theme CSS targets `.kb-*` classes and will not match. \
+                 Use theme: \"unstyled\" with a custom prefix.",
+                config.class_prefix,
+                config.theme,
+            );
+        }
+
         let mut css = theme_css(&config.theme).to_owned();
 
         if let Some(ref path) = config.css_file {
+            // Check file size before reading to prevent excessive memory usage.
+            let metadata = std::fs::metadata(path).map_err(|e| KreuzbergError::Parsing {
+                message: format!("html_output.css_file \"{}\": {}", path.display(), e),
+                source: None,
+            })?;
+            if metadata.len() > Self::MAX_CSS_FILE_SIZE {
+                return Err(KreuzbergError::validation(format!(
+                    "html_output.css_file \"{}\": file size {} exceeds maximum of {} bytes",
+                    path.display(),
+                    metadata.len(),
+                    Self::MAX_CSS_FILE_SIZE,
+                )));
+            }
             let file_css = std::fs::read_to_string(path).map_err(|e| KreuzbergError::Parsing {
                 message: format!("html_output.css_file \"{}\": {}", path.display(), e),
                 source: None,
@@ -173,6 +214,11 @@ impl StyledHtmlRenderer {
             css.push('\n');
             css.push_str(inline);
         }
+
+        // Sanitize resolved CSS: strip `</style>` sequences (case-insensitive)
+        // to prevent style block breakout. This is a minimal defense; callers
+        // serving HTML to untrusted users should sanitize CSS at the application layer.
+        let css = css.replace("</style>", "").replace("</STYLE>", "");
 
         Ok(Self {
             config: Arc::new(config),
@@ -260,11 +306,8 @@ fn render_elements(doc: &InternalDocument, p: &str, buf: &mut String) {
                 }
             }
             ElementKind::ListEnd => {
-                state.pop_container(&NestingKind::List {
-                    ordered: false,
-                    item_count: 0,
-                });
                 let ordered = list_ordered_stack.pop().unwrap_or(false);
+                state.pop_container(&NestingKind::List { ordered, item_count: 0 });
                 if ordered {
                     buf.push_str("</ol>");
                 } else {
@@ -378,8 +421,10 @@ fn render_elements(doc: &InternalDocument, p: &str, buf: &mut String) {
 
             // ── Raw / metadata blocks ─────────────────────────────────
             ElementKind::RawBlock => {
-                // The HTML we generate is structurally safe; raw blocks from
-                // our own extractors are emitted verbatim.
+                // SAFETY: RawBlock elements are only created by internal extractors
+                // (e.g. HTML pass-through from email/HTML sources). They are never
+                // populated from untrusted user input. If this invariant changes,
+                // this must be updated to escape content.
                 buf.push_str(&elem.text);
             }
             ElementKind::MetadataBlock => {
@@ -441,7 +486,7 @@ fn render_inline(_doc: &InternalDocument, elem: &crate::types::internal::Interna
             }
             _ => esc(span),
         },
-        |plain| esc(plain),
+        esc,
     )
 }
 
@@ -552,6 +597,7 @@ mod tests {
         let out = render(
             HtmlOutputConfig {
                 embed_css: true,
+                theme: HtmlTheme::Default,
                 ..Default::default()
             },
             &doc,

@@ -129,7 +129,7 @@ pub struct ExtractionConfig {
     /// and optionally embeds theme CSS or user-supplied CSS in a `<style>` block.
     ///
     /// When `None`, the existing plain comrak-based HTML renderer is used.
-    #[cfg(feature = "html-styled")]
+    #[cfg(feature = "html")]
     #[serde(default)]
     pub html_output: Option<crate::core::config::html_output::HtmlOutputConfig>,
 
@@ -284,7 +284,7 @@ impl Default for ExtractionConfig {
             postprocessor: None,
             #[cfg(feature = "html")]
             html_options: None,
-            #[cfg(feature = "html-styled")]
+            #[cfg(feature = "html")]
             html_output: None,
             extraction_timeout_secs: None,
             max_concurrent_extractions: None,

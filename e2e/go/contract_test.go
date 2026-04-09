@@ -369,7 +369,6 @@ func TestContractConfigHtmlOptions(t *testing.T) {
 }
 
 func TestContractConfigHtmlStyledCustomCss(t *testing.T) {
-	skipIfFeatureUnavailable(t, "html-styled")
 	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
 "output_format": "html",
 "html_output": {
@@ -382,7 +381,6 @@ func TestContractConfigHtmlStyledCustomCss(t *testing.T) {
 }
 
 func TestContractConfigHtmlStyledDefault(t *testing.T) {
-	skipIfFeatureUnavailable(t, "html-styled")
 	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
 "output_format": "html",
 "html_output": {
@@ -395,7 +393,6 @@ func TestContractConfigHtmlStyledDefault(t *testing.T) {
 }
 
 func TestContractConfigHtmlStyledNoEmbed(t *testing.T) {
-	skipIfFeatureUnavailable(t, "html-styled")
 	result := runExtraction(t, "pdf/fake_memo.pdf", []byte(`{
 "output_format": "html",
 "html_output": {

@@ -516,7 +516,6 @@ namespace Kreuzberg.E2E.Contract
         [SkippableFact]
         public void ConfigHtmlStyledCustomCss()
         {
-            TestHelpers.SkipIfFeatureUnavailable("html-styled");
             TestHelpers.SkipIfLegacyOfficeDisabled("pdf/fake_memo.pdf");
             TestHelpers.SkipIfOfficeTestOnWindows("pdf/fake_memo.pdf");
             var documentPath = TestHelpers.EnsureDocument("pdf/fake_memo.pdf", true);
@@ -529,7 +528,6 @@ namespace Kreuzberg.E2E.Contract
         [SkippableFact]
         public void ConfigHtmlStyledDefault()
         {
-            TestHelpers.SkipIfFeatureUnavailable("html-styled");
             TestHelpers.SkipIfLegacyOfficeDisabled("pdf/fake_memo.pdf");
             TestHelpers.SkipIfOfficeTestOnWindows("pdf/fake_memo.pdf");
             var documentPath = TestHelpers.EnsureDocument("pdf/fake_memo.pdf", true);
@@ -543,7 +541,6 @@ namespace Kreuzberg.E2E.Contract
         [SkippableFact]
         public void ConfigHtmlStyledNoEmbed()
         {
-            TestHelpers.SkipIfFeatureUnavailable("html-styled");
             TestHelpers.SkipIfLegacyOfficeDisabled("pdf/fake_memo.pdf");
             TestHelpers.SkipIfOfficeTestOnWindows("pdf/fake_memo.pdf");
             var documentPath = TestHelpers.EnsureDocument("pdf/fake_memo.pdf", true);

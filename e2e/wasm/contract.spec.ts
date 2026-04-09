@@ -844,6 +844,77 @@ describe("contract fixtures", () => {
 	);
 
 	it(
+		"config_html_styled_custom_css",
+		async () => {
+			const config = buildConfig({
+				output_format: "html",
+				html_output: { theme: "unstyled", css: ".kb-p { color: red; }", embed_css: true },
+			});
+			let result: ExtractionResult | null = null;
+			try {
+				const documentBytes = new Uint8Array(resolveDocument("pdf/fake_memo.pdf"));
+				result = await extractBytes(documentBytes, "application/octet-stream", config);
+			} catch (error) {
+				if (shouldSkipFixture(error, "config_html_styled_custom_css", [], undefined)) {
+					return;
+				}
+				throw error;
+			}
+			if (result === null) {
+				return;
+			}
+			assertions.assertContentContainsAll(result, [".kb-p { color: red; }", "kb-doc"]);
+		},
+		TEST_TIMEOUT_MS,
+	);
+
+	it(
+		"config_html_styled_default",
+		async () => {
+			const config = buildConfig({ output_format: "html", html_output: { theme: "default", embed_css: true } });
+			let result: ExtractionResult | null = null;
+			try {
+				const documentBytes = new Uint8Array(resolveDocument("pdf/fake_memo.pdf"));
+				result = await extractBytes(documentBytes, "application/octet-stream", config);
+			} catch (error) {
+				if (shouldSkipFixture(error, "config_html_styled_default", [], undefined)) {
+					return;
+				}
+				throw error;
+			}
+			if (result === null) {
+				return;
+			}
+			assertions.assertExpectedMime(result, ["application/pdf"]);
+			assertions.assertContentContainsAll(result, ["kb-doc", "kb-content", "kb-p", "<style>"]);
+		},
+		TEST_TIMEOUT_MS,
+	);
+
+	it(
+		"config_html_styled_no_embed",
+		async () => {
+			const config = buildConfig({ output_format: "html", html_output: { theme: "default", embed_css: false } });
+			let result: ExtractionResult | null = null;
+			try {
+				const documentBytes = new Uint8Array(resolveDocument("pdf/fake_memo.pdf"));
+				result = await extractBytes(documentBytes, "application/octet-stream", config);
+			} catch (error) {
+				if (shouldSkipFixture(error, "config_html_styled_no_embed", [], undefined)) {
+					return;
+				}
+				throw error;
+			}
+			if (result === null) {
+				return;
+			}
+			assertions.assertContentContainsAll(result, ["kb-doc", "kb-content"]);
+			assertions.assertContentContainsNone(result, ["<style>"]);
+		},
+		TEST_TIMEOUT_MS,
+	);
+
+	it(
 		"config_images",
 		async () => {
 			const config = buildConfig({ images: { extract_images: true } });

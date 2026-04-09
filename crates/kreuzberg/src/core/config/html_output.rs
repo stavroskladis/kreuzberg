@@ -46,7 +46,7 @@ pub struct HtmlOutputConfig {
     #[serde(default)]
     pub css_file: Option<PathBuf>,
 
-    /// Built-in colour/typography theme. Default: [`HtmlTheme::Default`].
+    /// Built-in colour/typography theme. Default: [`HtmlTheme::Unstyled`].
     #[serde(default)]
     pub theme: HtmlTheme,
 

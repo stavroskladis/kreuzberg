@@ -136,9 +136,9 @@ pub use core::server_config::ServerConfig;
 #[cfg(feature = "pdf")]
 pub use core::config::{HierarchyConfig, PdfConfig};
 
-#[cfg(feature = "html-styled")]
+#[cfg(feature = "html")]
 pub use core::config::{HtmlOutputConfig, HtmlTheme};
-#[cfg(feature = "html-styled")]
+#[cfg(feature = "html")]
 pub use rendering::StyledHtmlRenderer;
 
 #[cfg(feature = "paddle-ocr")]

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import dev.kreuzberg.ArchiveEntry;
 import dev.kreuzberg.BoundingBox;
+import dev.kreuzberg.ContentFilterConfig;
 import dev.kreuzberg.ExtractionResult;
 import dev.kreuzberg.Keyword;
 import dev.kreuzberg.PdfAnnotation;
@@ -64,6 +65,7 @@ class ParityTest {
       "getCacheTtlSecs",
       "getChunking",
       "getConcurrency",
+      "getContentFilter",
       "isDisableOcr",
       "getEmail",
       "isEnableQualityProcessing",
@@ -111,6 +113,18 @@ class ParityTest {
     for (String getter : allGetters) {
       assertDoesNotThrow(
           () -> BoundingBox.class.getMethod(getter), "BoundingBox missing getter: " + getter);
+    }
+  }
+
+  @Test
+  void testContentFilterConfigAllGetters() throws Exception {
+    String[] allGetters = {
+      "isIncludeFooters", "isIncludeHeaders", "isIncludeWatermarks", "isStripRepeatingText"
+    };
+    for (String getter : allGetters) {
+      assertDoesNotThrow(
+          () -> ContentFilterConfig.class.getMethod(getter),
+          "ContentFilterConfig missing getter: " + getter);
     }
   }
 

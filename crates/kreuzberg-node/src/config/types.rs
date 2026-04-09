@@ -1504,6 +1504,7 @@ impl TryFrom<JsExtractionConfig> for ExtractionConfig {
             max_archive_depth: val.max_archive_depth.map(|v| v as usize).unwrap_or(3),
             tree_sitter: val.tree_sitter.map(Into::into),
             structured_extraction: val.structured_extraction.map(Into::into),
+            html_output: None,
         })
     }
 }

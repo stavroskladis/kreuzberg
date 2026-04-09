@@ -839,7 +839,7 @@ defmodule E2E.ContractTest do
              "config_html_styled_custom_css",
              "pdf/fake_memo.pdf",
              %{output_format: "html", html_output: %{theme: "unstyled", css: ".kb-p { color: red; }", embed_css: true}},
-             requirements: ["html-styled"],
+             requirements: [],
              notes: nil,
              skip_if_missing: true
            ) do
@@ -860,7 +860,7 @@ defmodule E2E.ContractTest do
              "config_html_styled_default",
              "pdf/fake_memo.pdf",
              %{output_format: "html", html_output: %{theme: "default", embed_css: true}},
-             requirements: ["html-styled"],
+             requirements: [],
              notes: nil,
              skip_if_missing: true
            ) do
@@ -882,7 +882,7 @@ defmodule E2E.ContractTest do
              "config_html_styled_no_embed",
              "pdf/fake_memo.pdf",
              %{output_format: "html", html_output: %{theme: "default", embed_css: false}},
-             requirements: ["html-styled"],
+             requirements: [],
              notes: nil,
              skip_if_missing: true
            ) do

@@ -53,6 +53,7 @@ func TestExtractionConfigFieldParity(t *testing.T) {
 		"CacheTTLSecs":             "cache_ttl_secs",
 		"Chunking":                 "chunking",
 		"Concurrency":              "concurrency",
+		"ContentFilter":            "content_filter",
 		"DisableOcr":               "disable_ocr",
 		"Email":                    "email",
 		"EnableQualityProcessing":  "enable_quality_processing",
@@ -103,6 +104,27 @@ func TestBoundingBoxFieldParity(t *testing.T) {
 		field, ok := typ.FieldByName(goName)
 		if !ok {
 			t.Errorf("BoundingBox missing field: %s (json: %s)", goName, jsonTag)
+			continue
+		}
+		tag := field.Tag.Get("json")
+		if tag == "" || (tag != jsonTag && !contains(tag, jsonTag)) {
+			t.Errorf("field %s has wrong json tag: got %q, want to contain %q", goName, tag, jsonTag)
+		}
+	}
+}
+
+func TestContentFilterConfigFieldParity(t *testing.T) {
+	typ := reflect.TypeOf(kreuzberg.ContentFilterConfig{})
+	expectedFields := map[string]string{
+		"IncludeFooters":     "include_footers",
+		"IncludeHeaders":     "include_headers",
+		"IncludeWatermarks":  "include_watermarks",
+		"StripRepeatingText": "strip_repeating_text",
+	}
+	for goName, jsonTag := range expectedFields {
+		field, ok := typ.FieldByName(goName)
+		if !ok {
+			t.Errorf("ContentFilterConfig missing field: %s (json: %s)", goName, jsonTag)
 			continue
 		}
 		tag := field.Tag.Get("json")

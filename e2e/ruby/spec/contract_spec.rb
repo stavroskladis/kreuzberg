@@ -643,12 +643,11 @@ RSpec.describe 'contract fixtures' do
   end
 
   it 'config_html_styled_custom_css' do
-    E2ERuby.skip_if_feature_unavailable('html-styled')
     E2ERuby.run_fixture(
       'config_html_styled_custom_css',
       'pdf/fake_memo.pdf',
       { output_format: 'html', html_output: { theme: 'unstyled', css: '.kb-p { color: red; }', embed_css: true } },
-      requirements: %w[html-styled],
+      requirements: [],
       notes: nil,
       skip_if_missing: true
     ) do |result|
@@ -657,12 +656,11 @@ RSpec.describe 'contract fixtures' do
   end
 
   it 'config_html_styled_default' do
-    E2ERuby.skip_if_feature_unavailable('html-styled')
     E2ERuby.run_fixture(
       'config_html_styled_default',
       'pdf/fake_memo.pdf',
       { output_format: 'html', html_output: { theme: 'default', embed_css: true } },
-      requirements: %w[html-styled],
+      requirements: [],
       notes: nil,
       skip_if_missing: true
     ) do |result|
@@ -675,12 +673,11 @@ RSpec.describe 'contract fixtures' do
   end
 
   it 'config_html_styled_no_embed' do
-    E2ERuby.skip_if_feature_unavailable('html-styled')
     E2ERuby.run_fixture(
       'config_html_styled_no_embed',
       'pdf/fake_memo.pdf',
       { output_format: 'html', html_output: { theme: 'default', embed_css: false } },
-      requirements: %w[html-styled],
+      requirements: [],
       notes: nil,
       skip_if_missing: true
     ) do |result|

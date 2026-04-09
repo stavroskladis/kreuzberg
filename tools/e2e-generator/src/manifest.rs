@@ -486,6 +486,7 @@ fn sample_extraction_config() -> Value {
         max_archive_depth: 3,
         tree_sitter: Some(kreuzberg::TreeSitterConfig::default()),
         structured_extraction: None,
+        html_output: None,
     };
 
     serde_json::to_value(&config).expect("ExtractionConfig serialization")

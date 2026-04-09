@@ -168,6 +168,7 @@ impl ExtractionConfig {
                 max_archive_depth: 3,
                 tree_sitter: tree_sitter.map(Into::into),
                 structured_extraction: structured_extraction.map(|s| s.inner),
+                html_output: None,
             },
             html_options_dict,
         })

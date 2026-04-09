@@ -56,6 +56,29 @@ class ParityTest extends TestCase
     }
 
     #[Test]
+    public function content_filter_config_has_all_expected_properties(): void
+    {
+        $ref = new \ReflectionClass(\Kreuzberg\Types\ContentFilterConfig::class);
+        $expected = [
+            'includeFooters',
+            'includeHeaders',
+            'includeWatermarks',
+            'stripRepeatingText',
+        ];
+        foreach ($expected as $prop) {
+            // hasProperty() only covers #[php_prop] declared fields.
+            // Virtual properties backed by #[php(getter)] methods are
+            // accessible via $obj->prop but only show up as a getter method
+            // (getXxx) in ReflectionClass, not as a declared property.
+            $getter = 'get' . ucfirst($prop);
+            $this->assertTrue(
+                $ref->hasProperty($prop) || $ref->hasMethod($getter),
+                "ContentFilterConfig missing property or getter: {$prop}"
+            );
+        }
+    }
+
+    #[Test]
     public function extraction_config_has_all_expected_properties(): void
     {
         $ref = new \ReflectionClass(\Kreuzberg\Types\ExtractionConfig::class);
@@ -65,6 +88,7 @@ class ParityTest extends TestCase
             'cacheTtlSecs',
             'chunking',
             'concurrency',
+            'contentFilter',
             'disableOcr',
             'email',
             'enableQualityProcessing',

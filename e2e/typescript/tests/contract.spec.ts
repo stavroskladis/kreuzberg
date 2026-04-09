@@ -1038,7 +1038,7 @@ describe("contract fixtures", () => {
 			try {
 				result = extractFileSync(documentPath, null, config);
 			} catch (error) {
-				if (shouldSkipFixture(error, "config_html_styled_custom_css", ["html-styled"], undefined)) {
+				if (shouldSkipFixture(error, "config_html_styled_custom_css", [], undefined)) {
 					return;
 				}
 				throw error;
@@ -1064,7 +1064,7 @@ describe("contract fixtures", () => {
 			try {
 				result = extractFileSync(documentPath, null, config);
 			} catch (error) {
-				if (shouldSkipFixture(error, "config_html_styled_default", ["html-styled"], undefined)) {
+				if (shouldSkipFixture(error, "config_html_styled_default", [], undefined)) {
 					return;
 				}
 				throw error;
@@ -1091,7 +1091,7 @@ describe("contract fixtures", () => {
 			try {
 				result = extractFileSync(documentPath, null, config);
 			} catch (error) {
-				if (shouldSkipFixture(error, "config_html_styled_no_embed", ["html-styled"], undefined)) {
+				if (shouldSkipFixture(error, "config_html_styled_no_embed", [], undefined)) {
 					return;
 				}
 				throw error;

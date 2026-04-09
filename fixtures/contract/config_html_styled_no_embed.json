@@ -21,7 +21,5 @@
 		"content_contains_all": ["kb-doc", "kb-content"],
 		"content_contains_none": ["<style>"]
 	},
-	"skip": {
-		"requires_feature": ["html-styled"]
-	}
+	"skip": {}
 }
