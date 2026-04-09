@@ -7,15 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [4.8.1] - Unreleased
+
+### Added
+
+- **Styled HTML output** — New `HtmlOutputConfig` on `ExtractionConfig` with 5 built-in themes (`default`, `github`, `dark`, `light`, `unstyled`), semantic `kb-*` CSS class hooks on every structural element, CSS custom properties (`--kb-*`), custom CSS injection (inline or file), and configurable class prefix. The existing `Html` output format is upgraded in-place when `html_output` is set (#633, #665)
+- 5 new CLI flags: `--html-theme`, `--html-css`, `--html-css-file`, `--html-class-prefix`, `--html-no-embed-css` — any flag implicitly sets `--content-format html`
+- `HtmlOutputConfig` and `HtmlTheme` types exposed in Rust public API
 
 ### Changed
 
 - **Vendored yake-rust 1.0.3** into kreuzberg core, removing external dependency
   - Fixes #676: `BacktrackLimitExceeded` panic on large files (10+ MB) by replacing regex-based sentence splitting with memchr-based approach
   - Expanded YAKE stopwords from 34 to 64 languages using kreuzberg's unified stopwords module
-  - Optimized with ahash, memchr, and byte-table punctuation lookups
   - Removed 6 transitive dependencies (yake-rust, segtok, fancy-regex, streaming-stats, hashbrown, levenshtein)
+- Styled HTML renderer included in the `html` feature (no separate `html-styled` feature gate)
+
+### Fixed
+
+- **PPTX: panic on non-char-boundary during page boundary recomputation** — byte offsets could land inside multi-byte UTF-8 characters (e.g. `…` U+2026), causing a panic when slicing content (#674)
 
 ---
 

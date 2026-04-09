@@ -130,6 +130,10 @@ flowchart LR
 
 For a deep dive into each stage, see [Extraction Pipeline](concepts/extraction-pipeline.md).
 
+### Output Formats
+
+Kreuzberg supports five output formats: **Plain text**, **Markdown**, **Djot**, **HTML**, and **Structured (JSON)**. The HTML format includes a styled renderer with semantic `kb-*` CSS classes, five built-in themes, and CSS custom properties for full customization. See [HTML Output](guides/html-output.md) for details.
+
 ---
 
 ## OCR Engines

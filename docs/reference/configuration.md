@@ -246,6 +246,7 @@ Main extraction configuration controlling all aspects of document processing.
 | `result_format`              | `OutputFormat`             | `Unified`              | Result structure format: `Unified` (content in single field) or `ElementBased` (semantic elements array)                                                                                         |
 | `output_format`              | `OutputFormat`             | `Plain`                | Output format for extracted text content (Plain, Markdown, Djot, Html, Structured)                                                                                                               |
 | `html_options`               | `ConversionOptions`        | `None`                 | HTML to Markdown conversion options (heading styles, list formatting, code block styles). Only available with `html` feature.                                                                    |
+| `html_output`                | `HtmlOutputConfig?` <span class="version-badge">v4.8.1</span>         | `None`                 | Styled HTML output configuration: theme selection, custom CSS, class prefix. When set alongside `output_format = Html`, activates the styled renderer with `kb-*` class hooks. Only available with `html` feature. |
 | `security_limits`            | `SecurityLimits?`          | `None` (uses defaults) | Archive security thresholds: max archive size (500MB), compression ratio (100:1), file count (10K), nesting depth, content size, XML depth, table cells. Only available with `archives` feature. |
 | `layout`                     | `LayoutDetectionConfig?`   | `None`                 | Layout detection configuration for document structure analysis. Only available with `layout-detection` feature.                                                                                   |
 | `acceleration`               | `AccelerationConfig?`      | `None`                 | Hardware acceleration configuration for ONNX Runtime inference (layout detection and embeddings). See [AccelerationConfig](#accelerationconfig).                                                 |
@@ -291,6 +292,30 @@ Output format for extraction content. Controls how extracted text is formatted i
 | `structured` | Structured JSON with full OCR element data (bounding boxes, confidence) |
 
 **Environment Variable:** `KREUZBERG_OUTPUT_FORMAT` - Set output format via environment (plain, markdown, djot, html, structured)
+
+### HtmlOutputConfig
+
+Configuration for the styled HTML renderer. When set on `ExtractionConfig.html_output` alongside `output_format = Html`, the pipeline produces HTML with semantic `kb-*` class hooks instead of plain HTML.
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `theme` | `HtmlTheme` | `Unstyled` | Built-in colour/typography theme |
+| `css` | `string?` | `None` | Inline CSS string appended after theme stylesheet |
+| `css_file` | `path?` | `None` | CSS file loaded at render time (max 1 MiB) |
+| `class_prefix` | `string` | `"kb-"` | CSS class prefix (alphanumeric + hyphens + underscores only) |
+| `embed_css` | `bool` | `true` | Embed CSS in `<style>` block. Set `false` for external stylesheets |
+
+### HtmlTheme
+
+Built-in theme selection for styled HTML output.
+
+| Value | Description |
+|-------|-------------|
+| `Unstyled` (default) | No built-in stylesheet. CSS custom properties defined on `:root` for user stylesheets |
+| `Default` | System font stack, neutral colours, readable line measure |
+| `GitHub` | GitHub Markdown-inspired palette and spacing |
+| `Dark` | Dark background, light text |
+| `Light` | Minimal light theme with generous whitespace |
 
 ### Example
 
