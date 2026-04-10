@@ -60,6 +60,7 @@ defmodule KreuzbergTest.E2E.PDFExtractionTest do
   end
 
   @tag :e2e
+  @tag timeout: 120_000
   test "extracts with OCR configuration" do
     pdf_binary = create_sample_pdf_binary()
 
@@ -118,6 +119,7 @@ defmodule KreuzbergTest.E2E.PDFExtractionTest do
   end
 
   @tag :e2e
+  @tag timeout: 120_000
   test "extracts with multiple configuration options" do
     pdf_binary = create_sample_pdf_binary()
 

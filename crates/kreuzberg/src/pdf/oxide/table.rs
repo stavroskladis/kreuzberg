@@ -48,10 +48,9 @@ pub(crate) fn extract_words_from_page(
         }
     };
 
-    let confidence = 95.0;
-    if confidence < min_confidence {
-        return Ok(Vec::new());
-    }
+    // Native PDF text has implicit 100% confidence; min_confidence parameter
+    // accepted for API compatibility but not applied.
+    let _ = min_confidence;
 
     let mut words: Vec<HocrWord> = Vec::new();
 
@@ -83,9 +82,7 @@ pub(crate) fn extract_words_from_page(
             font_size: span.font_size,
             is_bold,
             is_italic: span.is_italic,
-            is_monospace: span.font_name.contains("Mono")
-                || span.font_name.contains("Courier")
-                || span.font_name.contains("Consola"),
+            is_monospace: span.is_monospace,
             baseline_y: pdf_baseline_y,
         };
 

@@ -5,9 +5,8 @@
 //! and font metrics for heading hierarchy detection.
 
 pub(crate) mod annotations;
-#[allow(dead_code)]
 pub(crate) mod hierarchy;
-#[allow(dead_code)]
+#[allow(dead_code)] // Not yet wired into dispatch; kept for future use
 pub(crate) mod images;
 pub(crate) mod metadata;
 #[cfg(feature = "pdf-oxide-rendering")]

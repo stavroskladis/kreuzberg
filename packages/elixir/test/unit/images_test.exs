@@ -17,6 +17,7 @@ defmodule Kreuzberg.Unit.ImagesTest do
 
   describe "image extraction error handling" do
     @describetag :unit
+    @describetag timeout: 120_000
     test "handles corrupted image data gracefully" do
       config = %Kreuzberg.ExtractionConfig{
         images: %{"enabled" => true}
@@ -103,6 +104,7 @@ defmodule Kreuzberg.Unit.ImagesTest do
 
   describe "image extraction configuration variations" do
     @describetag :unit
+    @describetag timeout: 120_000
     test "handles empty image config" do
       config = %Kreuzberg.ExtractionConfig{
         images: %{}

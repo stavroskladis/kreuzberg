@@ -70,7 +70,7 @@ pub(crate) fn render_page_to_image(
 
     // Convert raw PNG/JPEG bytes to DynamicImage via the image crate
     let cursor = std::io::Cursor::new(&rendered.data);
-    let img = image::io::Reader::new(cursor)
+    let img = image::ImageReader::new(cursor)
         .with_guessed_format()
         .map_err(|e| PdfError::RenderingFailed(format!("Failed to guess image format: {e}")))?
         .decode()

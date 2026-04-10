@@ -66,7 +66,7 @@ pub(crate) fn extract_segments_from_page(doc: &mut OxideDocument, page_index: us
                 font_size: span.font_size,
                 is_bold,
                 is_italic: span.is_italic,
-                is_monospace: is_monospace_font(&span.font_name),
+                is_monospace: span.is_monospace,
                 baseline_y: pdf_baseline_y,
             }
         })
@@ -100,59 +100,4 @@ pub(crate) fn extract_all_segments(doc: &mut OxideDocument) -> Result<Vec<Vec<Se
     }
 
     Ok(all_pages)
-}
-
-/// Check if a font name indicates a monospace font.
-fn is_monospace_font(font_name: &str) -> bool {
-    let name_lower = font_name.to_lowercase();
-    const MONOSPACE_PATTERNS: &[&str] = &[
-        "mono",
-        "courier",
-        "consolas",
-        "menlo",
-        "source code",
-        "inconsolata",
-        "fira code",
-        "liberation mono",
-        "lucida console",
-        "andale mono",
-        "dejavu sans mono",
-        "roboto mono",
-        "noto mono",
-        "ibm plex mono",
-        "jetbrains mono",
-        "cascadia",
-        "hack",
-    ];
-    MONOSPACE_PATTERNS.iter().any(|p| name_lower.contains(p))
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_is_monospace_font_positive() {
-        assert!(is_monospace_font("Courier"));
-        assert!(is_monospace_font("CourierNew"));
-        assert!(is_monospace_font("Consolas"));
-        assert!(is_monospace_font("DejaVu Sans Mono"));
-        assert!(is_monospace_font("JetBrains Mono"));
-        assert!(is_monospace_font("Source Code Pro"));
-    }
-
-    #[test]
-    fn test_is_monospace_font_negative() {
-        assert!(!is_monospace_font("Helvetica"));
-        assert!(!is_monospace_font("Times New Roman"));
-        assert!(!is_monospace_font("Arial"));
-        assert!(!is_monospace_font("Georgia"));
-    }
-
-    #[test]
-    fn test_is_monospace_font_case_insensitive() {
-        assert!(is_monospace_font("COURIER"));
-        assert!(is_monospace_font("courier"));
-        assert!(is_monospace_font("MONO"));
-    }
 }
