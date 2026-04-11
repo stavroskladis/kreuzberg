@@ -490,14 +490,16 @@ pub(crate) fn extract_all_from_oxide_document(
 
             match crate::pdf::structure::extract_document_structure_from_segments(
                 segments,
-                k,
-                &tables,
-                strip_repeating_text,
-                include_headers,
-                include_footers,
-                used_structure_tree,
-                &image_positions,
-                layout_hints,
+                crate::pdf::structure::SegmentStructureConfig {
+                    k_clusters: k,
+                    tables: &tables,
+                    strip_repeating_text,
+                    include_headers,
+                    include_footers,
+                    used_structure_tree,
+                    image_positions: &image_positions,
+                    layout_hints,
+                },
             ) {
                 Ok(structured_doc) if !structured_doc.elements.is_empty() => {
                     tracing::debug!(

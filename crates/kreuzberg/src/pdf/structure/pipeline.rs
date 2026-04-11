@@ -1379,17 +1379,32 @@ pub fn extract_document_structure(
 ///
 /// Returns the assembled `InternalDocument`.
 #[cfg(feature = "pdf-oxide")]
+pub(crate) struct SegmentStructureConfig<'a> {
+    pub k_clusters: usize,
+    pub tables: &'a [crate::types::Table],
+    pub strip_repeating_text: bool,
+    pub include_headers: bool,
+    pub include_footers: bool,
+    pub used_structure_tree: bool,
+    pub image_positions: &'a [(usize, usize)],
+    pub layout_hints: Option<&'a [Vec<LayoutHint>]>,
+}
+
+#[cfg(feature = "pdf-oxide")]
 pub(crate) fn extract_document_structure_from_segments(
     mut all_page_segments: Vec<Vec<SegmentData>>,
-    k_clusters: usize,
-    tables: &[crate::types::Table],
-    strip_repeating_text: bool,
-    include_headers: bool,
-    include_footers: bool,
-    used_structure_tree: bool,
-    image_positions: &[(usize, usize)],
-    layout_hints: Option<&[Vec<LayoutHint>]>,
+    config: SegmentStructureConfig<'_>,
 ) -> Result<crate::types::internal::InternalDocument> {
+    let SegmentStructureConfig {
+        k_clusters,
+        tables,
+        strip_repeating_text,
+        include_headers,
+        include_footers,
+        used_structure_tree,
+        image_positions,
+        layout_hints,
+    } = config;
     let page_count = all_page_segments.len();
     tracing::debug!(
         page_count,

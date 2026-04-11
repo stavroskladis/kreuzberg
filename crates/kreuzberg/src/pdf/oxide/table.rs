@@ -71,54 +71,6 @@ pub(crate) fn extract_tables_native(doc: &mut OxideDocument) -> Result<Vec<Table
     Ok(all_tables)
 }
 
-/// Extract bounding boxes of all detected table regions for text suppression.
-///
-/// Returns (page_index, BoundingBox) pairs that can be used to exclude table regions
-/// from paragraph text extraction, preventing duplicate content.
-///
-/// # Arguments
-///
-/// * `doc` - Mutable reference to the oxide document
-///
-/// # Returns
-///
-/// A `Vec<(usize, BoundingBox)>` of (zero-based page index, bounding box) pairs.
-pub(crate) fn extract_table_regions(doc: &mut OxideDocument) -> Result<Vec<(usize, BoundingBox)>> {
-    let page_count = doc
-        .doc
-        .page_count()
-        .map_err(|e| PdfError::MetadataExtractionFailed(format!("pdf_oxide: failed to get page count: {e}")))?;
-
-    let config = pdf_oxide::structure::spatial_table_detector::TableDetectionConfig::strict();
-    let mut regions = Vec::new();
-
-    for page_idx in 0..page_count {
-        let extracted = match doc.doc.extract_tables_with_config(page_idx, config.clone()) {
-            Ok(tables) => tables,
-            Err(e) => {
-                tracing::debug!(page = page_idx, "pdf_oxide extract_tables (regions) failed: {e}");
-                continue;
-            }
-        };
-
-        for table in extracted {
-            if let Some(rect) = table.bbox {
-                regions.push((
-                    page_idx,
-                    BoundingBox {
-                        x0: rect.x as f64,
-                        y0: rect.y as f64,
-                        x1: (rect.x + rect.width) as f64,
-                        y1: (rect.y + rect.height) as f64,
-                    },
-                ));
-            }
-        }
-    }
-
-    Ok(regions)
-}
-
 /// Convert a pdf_oxide `ExtractedTable` to kreuzberg's cell grid and markdown.
 ///
 /// Maps rows/cells from the native table structure to a 2D `Vec<Vec<String>>`

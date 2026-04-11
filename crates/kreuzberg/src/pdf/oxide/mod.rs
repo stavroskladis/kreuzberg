@@ -8,8 +8,6 @@ pub(crate) mod annotations;
 pub(crate) mod hierarchy;
 pub(crate) mod images;
 pub(crate) mod metadata;
-#[cfg(feature = "pdf-oxide-rendering")]
-pub(crate) mod rendering;
 pub(crate) mod table;
 pub(crate) mod text;
 

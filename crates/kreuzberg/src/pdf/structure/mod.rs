@@ -27,4 +27,4 @@ pub(crate) use assembly::assemble_internal_document;
 pub(crate) use content_convert::{content_to_paragraphs, reorder_elements_reading_order};
 pub(crate) use pipeline::extract_document_structure;
 #[cfg(feature = "pdf-oxide")]
-pub(crate) use pipeline::extract_document_structure_from_segments;
+pub(crate) use pipeline::{SegmentStructureConfig, extract_document_structure_from_segments};
