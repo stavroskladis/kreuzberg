@@ -16,7 +16,7 @@ That installs all toolchains and dependencies. Safe to re-run anytime — it's i
 
 ### The Pattern
 
-Tasks follow `<language>:<action>`. Once you internalize this, you can guess the command for anything:
+Tasks follow `<language>:<action>`. Once you internalize this, the command for anything is predictable:
 
 ```bash title="Terminal"
 task rust:build           # Build the Rust core
