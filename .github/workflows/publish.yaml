@@ -43,7 +43,7 @@ env:
   CARGO_TERM_COLOR: always
   PDFIUM_VERSION: "7678"
   PDFIUM_STATIC_VERSION: "7678"
-  ORT_VERSION: "1.24.1"
+  ORT_VERSION: "1.24.2"
   MACOSX_DEPLOYMENT_TARGET: "14.0"
 
 permissions:
@@ -468,7 +468,7 @@ jobs:
             os: ubuntu-latest
             artifact: python-wheels-linux-x86_64
             rust_target: x86_64-unknown-linux-gnu
-            manylinux: manylinux_2_28
+            manylinux: manylinux_2_35
             python: "3.10"
             needs_qemu: false
             extra_args: ""
@@ -476,7 +476,7 @@ jobs:
             os: ubuntu-24.04-arm
             artifact: python-wheels-linux-aarch64
             rust_target: aarch64-unknown-linux-gnu
-            manylinux: manylinux_2_28
+            manylinux: manylinux_2_35
             python: "3.10"
             needs_qemu: false
             extra_args: ""
@@ -612,11 +612,11 @@ jobs:
               export OPENSSL_INCLUDE_DIR=/usr/include
             fi
             # Download ORT shared libraries inside the manylinux container so
-            # ort-sys links dynamically against them instead of statically
-            # embedding the glibc 2.38+ binaries it would otherwise download.
+            # ort-sys links dynamically against them instead of using its
+            # bundled download (which may target a newer glibc).
             echo "=== Downloading ORT shared libraries ==="
             ARCH=$(uname -m)
-            ORT_VERSION="1.20.1"
+            ORT_VERSION="${{ env.ORT_VERSION }}"
             if [ "$ARCH" = "aarch64" ]; then
               ORT_ARCHIVE="onnxruntime-linux-aarch64-${ORT_VERSION}.tgz"
             else

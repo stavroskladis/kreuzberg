@@ -424,7 +424,7 @@ fn get_or_init_engine(
         let session = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             let mut builder = ort::session::Session::builder()?;
             builder = builder
-                .with_optimization_level(ort::session::builder::GraphOptimizationLevel::Level3)
+                .with_optimization_level(ort::session::builder::GraphOptimizationLevel::All)
                 .map_err(|e| ort::Error::new(e.message()))?;
             builder = builder
                 .with_intra_threads(thread_budget)
@@ -850,5 +850,19 @@ mod tests {
         let texts = vec![""];
         let err = embed_texts(&texts, &config).unwrap_err();
         assert!(err.to_string().contains("position 1"));
+    }
+
+    /// Regression test for #683: GraphOptimizationLevel::Level3 maps to
+    /// ORT_ENABLE_LAYOUT (3), only valid in ORT >= 1.21. The correct variant
+    /// for "all optimisations" is ::All (ORT_ENABLE_ALL = 99), valid across
+    /// every ORT 1.x release.
+    #[cfg(feature = "embeddings")]
+    #[test]
+    fn test_ort_optimization_level_all_not_level3() {
+        use ort::session::builder::GraphOptimizationLevel;
+        let all_repr = format!("{:?}", GraphOptimizationLevel::All);
+        let level3_repr = format!("{:?}", GraphOptimizationLevel::Level3);
+        assert_eq!(all_repr, "All");
+        assert_ne!(level3_repr, "All", "Level3 must not be the same variant as All");
     }
 }
