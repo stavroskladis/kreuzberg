@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [4.8.3] - 2026-04-12
 
 ### Fixed
 
 - **ONNX session creation fails on Linux x86-64 with "graph_optimization_level is not valid"** — `GraphOptimizationLevel::Level3` maps to `ORT_ENABLE_LAYOUT` (value 3), only valid in ORT >= 1.21. The Linux wheel bundled ORT 1.20.1 due to a hardcoded version override in the publish workflow. Fixed by switching to `GraphOptimizationLevel::All` (ORT_ENABLE_ALL = 99, valid across all ORT 1.x) and aligning all ORT versions to 1.24.2 (matching ort-sys 2.0.0-rc.12). Also upgraded manylinux target from `manylinux_2_28` to `manylinux_2_35` to support the newer ORT binaries. (#683)
+
+### Documentation
+
+- **Documented AVX/AVX2 CPU requirement for ONNX Runtime features** — CPUs without AVX support (e.g. Intel Atom, Celeron N5105/Jasper Lake) cannot use PaddleOCR, layout detection, or embeddings. Added warning and system requirements entry to installation docs. (#691)
 
 ---
 

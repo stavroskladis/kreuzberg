@@ -113,7 +113,7 @@ tasks:
     cmds:
       - echo "Updating Node/TypeScript dependencies across workspace..."
       - corepack up
-      - pnpm up --latest -r
+      - pnpm up --latest -r --filter '!./test_apps/*'
       - pnpm up --latest -w
 
   e2e:generate:

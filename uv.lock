@@ -2058,11 +2058,11 @@ wheels = [
 
 [[package]]
 name = "json-repair"
-version = "0.59.0"
+version = "0.59.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/df/29/0047c51a6f659643fbb1e4dd5cc0f02fc0b3245f52c6e62f85ae6173d72d/json_repair-0.59.0.tar.gz", hash = "sha256:0006a2b4e3842ddfeb2d5b66596a5909507d08a8e6021651f80286655a89db63", size = 46986, upload-time = "2026-04-10T13:26:25.266Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ed/cb/a49f1661737a78098ce33668350590c981a4163055bc9a01e0cc688d896a/json_repair-0.59.2.tar.gz", hash = "sha256:1d8abb2fa94c4035a66ef9892ea3785dace8dcf09c583e6de781cfd31b278b3d", size = 48341, upload-time = "2026-04-11T15:55:41.145Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9f/67/8eeb3ca33510939412f00d12c823b608125db5f1c2ab61b16dee0c02900d/json_repair-0.59.0-py3-none-any.whl", hash = "sha256:1bbb0eb791933da41c1874854fd8646d30c4baee8052908e329174922147f175", size = 45214, upload-time = "2026-04-10T13:26:23.533Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/03/7afcecb4242d93b684708b47fb014abdc1922a01b38c0e30f1117ae74a83/json_repair-0.59.2-py3-none-any.whl", hash = "sha256:6ca6238519c24f671bcb05d1f38a0d6a452bb4ca5af82137595c5c2f1a0fb785", size = 46918, upload-time = "2026-04-11T15:55:39.817Z" },
 ]
 
 [[package]]
@@ -2239,7 +2239,7 @@ wheels = [
 
 [[package]]
 name = "kreuzberg"
-version = "4.8.2"
+version = "4.8.3"
 source = { editable = "packages/python" }
 
 [package.optional-dependencies]
@@ -2297,11 +2297,11 @@ sdist = { url = "https://files.pythonhosted.org/packages/0e/72/a3add0e4eec4eb9e2
 
 [[package]]
 name = "latex2mathml"
-version = "3.79.0"
+version = "3.80.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/dd/8d/2161f46485d9c36c0fa0e1c997faf08bb7843027e59b549598e49f55f8bf/latex2mathml-3.79.0.tar.gz", hash = "sha256:11bde318c2d2d6fcdd105a07509d867cee2208f653278eb80243dec7ea77a0ce", size = 151103, upload-time = "2026-03-12T23:25:08.028Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/98/4a/3d5bd6070990396c6360dcb2664df695d44b2e51160af423c94c0b63b8e4/latex2mathml-3.80.0.tar.gz", hash = "sha256:104b102ed2e16d4eb565f427fffa9c3928a544db9b274149bb821b3baf194e28", size = 148128, upload-time = "2026-04-12T00:16:12.549Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fd/92/56a954dd59637dd2ee013581fa3beea0821f17f2c07f818fc51dcc11fd10/latex2mathml-3.79.0-py3-none-any.whl", hash = "sha256:9f10720d4fcf6b22d1b81f6628237832419a7a29783c13aa92fa8d680165e63d", size = 73945, upload-time = "2026-03-12T23:25:09.466Z" },
+    { url = "https://files.pythonhosted.org/packages/26/c4/660f9df164330e2396baa2facb72a7c492fc729f764f2ccf6e365e070394/latex2mathml-3.80.0-py3-none-any.whl", hash = "sha256:2ddc8269896c1c29257267b74a050676692255def766feaddeab56e8831f1115", size = 76868, upload-time = "2026-04-12T00:16:13.852Z" },
 ]
 
 [[package]]
@@ -3098,7 +3098,7 @@ wheels = [
 
 [[package]]
 name = "modelscope"
-version = "1.35.3"
+version = "1.35.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
@@ -3108,9 +3108,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cc/d9/015d658b1c86f4ca380fb5f1aebf2a74528e8277af305b12ee4b09af004a/modelscope-1.35.3.tar.gz", hash = "sha256:502168541da4a261f94d9d4f491348888fd439f564fd79444bcf4e73f17fe669", size = 4566444, upload-time = "2026-03-27T07:33:33.506Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/80/02/1ae2851caa9249d681001925e9cdf0134b037f7194f9414d1ec90b9deea2/modelscope-1.35.4.tar.gz", hash = "sha256:b787d8d99ddc3fe06e28da0b5ebe394da8341de4b715340ebb1be7bd7c5c8a3a", size = 4566585, upload-time = "2026-04-11T06:18:35.391Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0c/ca/52378c0ae37a77afd1bd48ad2d01a1638ae1192be7bfad31da3359306df9/modelscope-1.35.3-py3-none-any.whl", hash = "sha256:e3f2f14c156d790d65d630279ca7e316d834645dac1066d78383a59160515d9c", size = 6059875, upload-time = "2026-03-27T07:33:30.326Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/52/42859aca8eb123ac6fa1b1a003de873948495f4e86330eaf84a60965d753/modelscope-1.35.4-py3-none-any.whl", hash = "sha256:aaa3a35152856f18bc6773264118c832d0b53c1efac6eeff52f303e537be4698", size = 6060506, upload-time = "2026-04-11T06:18:31.573Z" },
 ]
 
 [[package]]
@@ -5531,7 +5531,7 @@ wheels = [
 
 [[package]]
 name = "rapidocr"
-version = "3.8.0"
+version = "3.8.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorlog" },
@@ -5548,7 +5548,7 @@ dependencies = [
     { name = "tqdm" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/49/1f/5f815e17c0b02b8f937b5b680b85d0ec5f34b195314dfa8f11ed14a6de03/rapidocr-3.8.0-py3-none-any.whl", hash = "sha256:54abb10883d588120a3390bc447566f1590aea641e127f63a4ca44415fecd18a", size = 15082360, upload-time = "2026-04-08T13:42:15.89Z" },
+    { url = "https://files.pythonhosted.org/packages/ea/4a/fa521d947f0fc7bb304bf11bec4cb66266bd81494588b4cb48dc01001719/rapidocr-3.8.1-py3-none-any.whl", hash = "sha256:650044b1fbce9e6bae5cae462dcf8be754cde11e2f23fc51f65dcc08deae2c46", size = 15080319, upload-time = "2026-04-11T07:13:22.56Z" },
 ]
 
 [[package]]
@@ -6032,7 +6032,8 @@ dependencies = [
     { name = "packaging", marker = "python_full_version >= '3.11'" },
     { name = "pillow", marker = "python_full_version >= '3.11'" },
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "tifffile", version = "2026.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "tifffile", version = "2026.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+    { name = "tifffile", version = "2026.4.11", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a1/b4/2528bb43c67d48053a7a649a9666432dc307d66ba02e3a6d5c40f46655df/scikit_image-0.26.0.tar.gz", hash = "sha256:f5f970ab04efad85c24714321fcc91613fcb64ef2a892a13167df2f3e59199fa", size = 22729739, upload-time = "2025-12-20T17:12:21.824Z" }
 wheels = [
@@ -6709,6 +6710,23 @@ name = "tifffile"
 version = "2026.3.3"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
+    "python_full_version == '3.11.*' and platform_machine != 's390x' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 's390x' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform == 'win32'",
+]
+dependencies = [
+    { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c5/cb/2f6d79c7576e22c116352a801f4c3c8ace5957e9aced862012430b62e14f/tifffile-2026.3.3.tar.gz", hash = "sha256:d9a1266bed6f2ee1dd0abde2018a38b4f8b2935cb843df381d70ac4eac5458b7", size = 388745, upload-time = "2026-03-03T19:14:38.134Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1a/e4/e804505f87627cd8cdae9c010c47c4485fd8c1ce31a7dd0ab7fcc4707377/tifffile-2026.3.3-py3-none-any.whl", hash = "sha256:e8be15c94273113d31ecb7aa3a39822189dd11c4967e3cc88c178f1ad2fd1170", size = 243960, upload-time = "2026-03-03T19:14:35.808Z" },
+]
+
+[[package]]
+name = "tifffile"
+version = "2026.4.11"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
     "python_full_version >= '3.14' and platform_machine != 's390x' and sys_platform != 'win32'",
@@ -6719,16 +6737,13 @@ resolution-markers = [
     "python_full_version == '3.12.*' and platform_machine == 's390x' and sys_platform != 'win32'",
     "python_full_version == '3.12.*' and platform_machine != 's390x' and sys_platform == 'win32'",
     "python_full_version == '3.12.*' and platform_machine == 's390x' and sys_platform == 'win32'",
-    "python_full_version == '3.11.*' and platform_machine != 's390x' and sys_platform != 'win32'",
-    "python_full_version == '3.11.*' and platform_machine == 's390x' and sys_platform != 'win32'",
-    "python_full_version == '3.11.*' and sys_platform == 'win32'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c5/cb/2f6d79c7576e22c116352a801f4c3c8ace5957e9aced862012430b62e14f/tifffile-2026.3.3.tar.gz", hash = "sha256:d9a1266bed6f2ee1dd0abde2018a38b4f8b2935cb843df381d70ac4eac5458b7", size = 388745, upload-time = "2026-03-03T19:14:38.134Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d7/4a/e687f5957fead200faad58dbf9c9431a2bbb118040e96f5fb8a55f7ebc50/tifffile-2026.4.11.tar.gz", hash = "sha256:17758ff0c0d4db385792a083ad3ca51fcb0f4d942642f4d8f8bc1287fdcf17bc", size = 394956, upload-time = "2026-04-12T01:57:28.793Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1a/e4/e804505f87627cd8cdae9c010c47c4485fd8c1ce31a7dd0ab7fcc4707377/tifffile-2026.3.3-py3-none-any.whl", hash = "sha256:e8be15c94273113d31ecb7aa3a39822189dd11c4967e3cc88c178f1ad2fd1170", size = 243960, upload-time = "2026-03-03T19:14:35.808Z" },
+    { url = "https://files.pythonhosted.org/packages/3f/9f/74f110b4271ded519c7add4341cbabc824de26817ff1c345b3109df9e99c/tifffile-2026.4.11-py3-none-any.whl", hash = "sha256:9b94ffeddb39e97601af646345e8808f885773de01b299e480ed6d3a41509ec9", size = 248227, upload-time = "2026-04-12T01:57:26.969Z" },
 ]
 
 [[package]]

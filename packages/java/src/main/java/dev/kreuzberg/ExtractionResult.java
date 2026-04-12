@@ -48,6 +48,7 @@ public final class ExtractionResult {
 	@JsonProperty("code_intelligence")
 	private final CodeProcessResult codeIntelligence;
 
+	@SuppressWarnings("CPD-START")
 	ExtractionResult(String content, String mimeType, Metadata metadata, List<Table> tables,
 			List<String> detectedLanguages, List<Chunk> chunks, List<ExtractedImage> images, List<PageContent> pages,
 			PageStructure pageStructure, List<Element> elements, List<OcrElement> ocrElements, DjotContent djotContent,
@@ -80,6 +81,7 @@ public final class ExtractionResult {
 				uris, children, codeIntelligence, null);
 	}
 
+	@SuppressWarnings("CPD-END")
 	ExtractionResult(String content, String mimeType, Metadata metadata, List<Table> tables,
 			List<String> detectedLanguages, List<Chunk> chunks, List<ExtractedImage> images, List<PageContent> pages,
 			PageStructure pageStructure, List<Element> elements, List<OcrElement> ocrElements, DjotContent djotContent,

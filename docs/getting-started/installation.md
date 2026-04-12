@@ -11,6 +11,9 @@ Every package includes **prebuilt binaries** for Linux (x86_64 / aarch64), macOS
 !!! Warning "Windows — ONNX Runtime required for Go, Elixir, and C/C++"
     Go, Elixir, and C/C++ bindings on Windows link against ONNX Runtime dynamically. You must have `onnxruntime.dll` on your `PATH` at runtime. Download it from the [ONNX Runtime releases](https://github.com/microsoft/onnxruntime/releases) (for example `onnxruntime-win-x64-1.24.1.zip`). Python, TypeScript, Java, C#, Ruby, PHP, and WASM are unaffected.
 
+!!! Warning "x86_64 CPU — AVX/AVX2 instruction set required"
+    The bundled ONNX Runtime binaries require **AVX/AVX2** CPU instructions. CPUs without AVX support (e.g. Intel Atom, Celeron N5105/Jasper Lake, older pre-2011 processors) will crash with an `invalid opcode` trap when using ONNX-dependent features. The affected features are **PaddleOCR**, **layout detection**, and **embeddings**. All other Kreuzberg functionality (text extraction, Tesseract OCR, chunking, metadata, etc.) works normally on any x86_64 CPU. ARM platforms (aarch64) are unaffected.
+
 <div class="cli-hero" markdown>
 
 ## :material-console: CLI / Docker { #cli--docker }
@@ -119,7 +122,7 @@ The fastest way to try Kreuzberg - no SDK, no code, just your terminal.
 ---
 
     ```gradle
-    implementation 'dev.kreuzberg:kreuzberg:4.8.2'
+    implementation 'dev.kreuzberg:kreuzberg:4.8.3'
     ```
 
     [API Reference](../reference/api-java.md){ .install-btn .install-btn--ghost }
@@ -202,6 +205,7 @@ Most of the time you won't need anything beyond the install command above. The t
 
 | Dependency | When you need it |
 |---|---|
+| AVX/AVX2 CPU instructions | Required for ONNX Runtime features (PaddleOCR, layout detection, embeddings) on x86_64 |
 | Rust toolchain (`rustup`) | Building any native binding from source |
 | C/C++ compiler | Building native bindings (Xcode CLI tools / `build-essential` / MSVC) |
 | Tesseract OCR | Optional — `brew install tesseract` / `apt install tesseract-ocr` |
@@ -290,14 +294,14 @@ Both work with **pnpm** (`pnpm add`) and **yarn** (`yarn add`) as well.
     <dependency>
         <groupId>dev.kreuzberg</groupId>
         <artifactId>kreuzberg</artifactId>
-        <version>4.8.2</version>
+        <version>4.8.3</version>
     </dependency>
     ```
 
 === "Gradle"
 
     ```gradle
-    implementation 'dev.kreuzberg:kreuzberg:4.8.2'
+    implementation 'dev.kreuzberg:kreuzberg:4.8.3'
     ```
 
 Requires Java 25+ (FFM/Panama API). Native libraries are bundled in the JAR.

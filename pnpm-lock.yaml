@@ -248,51 +248,10 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(@vitest/ui@4.1.4)(jsdom@29.0.2)(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
 
-  test_apps/typescript:
-    dependencies:
-      '@kreuzberg/node':
-        specifier: workspace:*
-        version: link:../../crates/kreuzberg-node
-    devDependencies:
-      '@types/node':
-        specifier: ^25.6.0
-        version: 25.6.0
-      '@vitest/ui':
-        specifier: ^4.1.4
-        version: 4.1.4(vitest@4.1.4)
-      oxlint:
-        specifier: ^1.59.0
-        version: 1.59.0
-      typescript:
-        specifier: ^6.0.2
-        version: 6.0.2
-      vitest:
-        specifier: ^4.1.4
-        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(@vitest/ui@4.1.4)(jsdom@29.0.2)(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
-
-  test_apps/wasm:
-    dependencies:
-      '@kreuzberg/wasm':
-        specifier: workspace:*
-        version: link:../../crates/kreuzberg-wasm
-    devDependencies:
-      '@types/node':
-        specifier: ^25.6.0
-        version: 25.6.0
-      '@vitest/ui':
-        specifier: ^4.1.4
-        version: 4.1.4(vitest@4.1.4)
-      typescript:
-        specifier: ^6.0.2
-        version: 6.0.2
-      vitest:
-        specifier: ^4.1.4
-        version: 4.1.4(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(@vitest/ui@4.1.4)(jsdom@29.0.2)(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
-
 packages:
 
-  '@asamuzakjp/css-color@5.1.9':
-    resolution: {integrity: sha512-zd9c/Wdso6v1U7v6w3i/hbAr4K7NaSHImdpvmLt+Y9ea5BhilnIGNkfhOJ7FEIuPipAnE9tZeDOll05WDT0kgg==}
+  '@asamuzakjp/css-color@5.1.10':
+    resolution: {integrity: sha512-02OhhkKtgNRuicQ/nF3TRnGsxL9wp0r3Y7VlKWyOHHGmGyvXv03y+PnymU8FKFJMTjIr1Bk8U2g1HWSLrpAHww==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   '@asamuzakjp/dom-selector@7.0.9':
@@ -1951,8 +1910,8 @@ packages:
     resolution: {integrity: sha512-2hCgjEmP8YLWQ130n2FerGv7rYpfBmnmp9Uy2Le1vge6X3gZIfSmEzP5QTDElFxcvVcXlEn8Aq6MU/PZygIOog==}
     engines: {node: '>=14.16'}
 
-  brace-expansion@2.0.3:
-    resolution: {integrity: sha512-MCV/fYJEbqx68aE58kv2cA/kiky1G8vux3OR6/jbS+jIMe/6fJWa0DTzJU7dqijOWYwHi1t29FlfYI9uytqlpA==}
+  brace-expansion@2.1.0:
+    resolution: {integrity: sha512-TN1kCZAgdgweJhWWpgKYrQaMNHcDULHkWwQIspdtjV4Y5aurRdZpjAqn6yX3FPqTA9ngHCc4hJxMAMgGfve85w==}
 
   bubble-stream-error@0.0.1:
     resolution: {integrity: sha512-L9hlwJcJ+5p+Bx+FS2VdrOs61bDi9m1rLsZgx/CvUC0J/OPz71tLN/6/sP/X7i7KtQKzm6rzPhdjHdd+I8ZKkQ==}
@@ -4640,7 +4599,7 @@ packages:
 
 snapshots:
 
-  '@asamuzakjp/css-color@5.1.9':
+  '@asamuzakjp/css-color@5.1.10':
     dependencies:
       '@csstools/css-calc': 3.1.1(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
       '@csstools/css-color-parser': 4.0.2(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
@@ -6061,7 +6020,7 @@ snapshots:
       widest-line: 4.0.1
       wrap-ansi: 8.1.0
 
-  brace-expansion@2.0.3:
+  brace-expansion@2.1.0:
     dependencies:
       balanced-match: 1.0.2
 
@@ -6951,7 +6910,7 @@ snapshots:
 
   jsdom@29.0.2:
     dependencies:
-      '@asamuzakjp/css-color': 5.1.9
+      '@asamuzakjp/css-color': 5.1.10
       '@asamuzakjp/dom-selector': 7.0.9
       '@bramus/specificity': 2.4.2
       '@csstools/css-syntax-patches-for-csstree': 1.1.2(css-tree@3.2.1)
@@ -7729,11 +7688,11 @@ snapshots:
 
   minimatch@5.1.9:
     dependencies:
-      brace-expansion: 2.0.3
+      brace-expansion: 2.1.0
 
   minimatch@9.0.9:
     dependencies:
-      brace-expansion: 2.0.3
+      brace-expansion: 2.1.0
 
   minimist-options@4.1.0:
     dependencies:
