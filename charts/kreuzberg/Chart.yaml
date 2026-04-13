@@ -22,3 +22,10 @@ maintainers:
   - name: kreuzberg-dev
     url: https://github.com/kreuzberg-dev
 icon: https://raw.githubusercontent.com/kreuzberg-dev/kreuzberg/main/docs/assets/logo.png
+annotations:
+  artifacthub.io/license: Elastic-2.0
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://kreuzberg.dev
+    - name: Source
+      url: https://github.com/kreuzberg-dev/kreuzberg
