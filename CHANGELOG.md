@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **LLM embedding provider panics in server mode** — `embed_texts` called `block_on` inside a new runtime, which panics when already inside tokio (HTTP server, MCP). Uses `block_in_place` with the current runtime handle when available, falls back to a new runtime for standalone sync callers. (#713)
+- **LLM embedding provider panics in server mode** — `embed_texts` called `block_on` inside a new runtime, which panics when already inside tokio (HTTP server, MCP). Uses `block_in_place` with the current runtime handle when available, falls back to a new runtime for standalone sync callers. (#713, #714)
+- **Duplicate `output_format` key in OCR metadata** — stale `additional` HashMap insert caused a duplicate JSON key violating RFC 8259. The value is already on the typed `Metadata::output_format` field. (#712)
+- **OCR table metadata serialized as strings instead of numbers** — `table_count`, `tables_detected`, `table_rows`, and `table_cols` were `"0"` instead of `0`, breaking numeric comparisons in all bindings. (#712)
 
 ---
 
