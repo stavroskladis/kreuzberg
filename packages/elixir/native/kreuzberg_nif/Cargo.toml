@@ -1,0 +1,24 @@
+[package]
+name = "kreuzberg_nif"
+version = "4.8.5"
+edition = "2024"
+license = "Elastic-2.0"
+
+[package.metadata.cargo-machete]
+ignored = [
+    "serde_json",
+    "tokio",
+    "serde-wasm-bindgen",
+    "pyo3-async-runtimes",
+    "serde_magnus",
+    "wiremock",
+]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+kreuzberg = { path = "../../../../crates/kreuzberg", features = ["full", "pdf", "ocr", "paddle-ocr", "layout-detection", "embeddings", "chunking", "keywords-yake", "keywords-rake", "language-detection", "html", "tree-sitter", "office", "email", "archives", "stopwords", "auto-rotate", "tokio-runtime", "api", "mcp", "liter-llm"] }
+rustler = "0.37"
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }

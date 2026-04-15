@@ -2,11 +2,18 @@
 members = [
     "crates/kreuzberg",
     "crates/kreuzberg-cli",
+    "crates/kreuzberg-ffi",
+    "crates/kreuzberg-node",
     "crates/kreuzberg-paddle-ocr",
     "crates/kreuzberg-pdfium-render",
+    "crates/kreuzberg-php",
+    "crates/kreuzberg-py",
     "crates/kreuzberg-tesseract",
+    "crates/kreuzberg-wasm",
+    "packages/elixir/native/kreuzberg_nif",
     "tools/benchmark-harness",
 ]
+exclude = ["e2e/rust", "packages/r/src/rust", "packages/ruby/ext/kreuzberg_rb"]
 default-members = ["crates/kreuzberg", "crates/kreuzberg-cli"]
 resolver = "2"
 
@@ -63,7 +70,7 @@ serde_json = { version = "1.0.149" }
 serde_toon_format = "0.1"
 tempfile = "3.27.0"
 thiserror = "2.0.18"
-tokio = { version = "1.51.1", features = [
+tokio = { version = "1.52.0", features = [
     "rt",
     "rt-multi-thread",
     "macros",

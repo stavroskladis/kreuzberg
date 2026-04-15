@@ -21,6 +21,7 @@ includes:
 
 vars:
   RUST_LOG: info
+  ALEF: cargo run --manifest-path {{.ROOT_DIR}}/../alef/Cargo.toml --release -p alef-cli --
 
 tasks:
   setup:
@@ -63,3 +64,39 @@ tasks:
     desc: Run all linters and formatters via prek (pre-commit framework)
     cmds:
       - prek run --all-files
+
+  # Alef binding generation tasks
+  alef:generate:
+    desc: Generate all bindings, stubs, scaffolding, and README via alef
+    cmds:
+      - "{{.ALEF}} all --clean"
+
+  alef:verify:
+    desc: Verify all generated bindings are up to date (CI mode)
+    cmds:
+      - "{{.ALEF}} verify --exit-code"
+
+  alef:build:
+    desc: Build all language bindings
+    cmds:
+      - "{{.ALEF}} build"
+
+  alef:e2e:generate:
+    desc: Generate e2e tests from fixtures
+    cmds:
+      - "{{.ALEF}} e2e generate"
+
+  alef:e2e:test:
+    desc: Run e2e tests for all languages
+    cmds:
+      - "{{.ALEF}} test --e2e"
+
+  alef:sync:
+    desc: Sync version from Cargo.toml to all package manifests
+    cmds:
+      - "{{.ALEF}} sync-versions"
+
+  alef:docs:
+    desc: Generate API reference documentation
+    cmds:
+      - "{{.ALEF}} docs --output docs/reference/"

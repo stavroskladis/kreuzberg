@@ -147,6 +147,26 @@ pub use paddle_ocr::{CacheStats, ModelManager, ModelPaths, PaddleLanguage, Paddl
 #[cfg(feature = "layout-detection")]
 pub use core::config::{LayoutDetectionConfig, TableModel};
 
+#[cfg(feature = "layout-detection")]
+pub use layout::types::{BBox, DetectionResult, LayoutClass, LayoutDetection};
+
+#[cfg(feature = "ocr")]
+pub use ocr::types::PSMMode;
+
+pub use core::config::{OcrPipelineConfig, OcrPipelineStage, OcrQualityThresholds};
+
+#[cfg(feature = "auto-rotate")]
+pub use doc_orientation::OrientationResult;
+
+#[cfg(any(feature = "keywords-yake", feature = "keywords-rake"))]
+pub use keywords::{Keyword, KeywordAlgorithm, KeywordConfig, extract_keywords};
+
+#[cfg(feature = "keywords-rake")]
+pub use keywords::RakeParams;
+
+#[cfg(feature = "keywords-yake")]
+pub use keywords::YakeParams;
+
 #[cfg(feature = "tree-sitter")]
 pub use core::config::{CodeContentMode, TreeSitterConfig, TreeSitterProcessConfig};
 #[cfg(feature = "tree-sitter")]

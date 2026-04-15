@@ -1,0 +1,31 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "kreuzberg"
+version = "4.8.5"
+description = "High-performance document intelligence library"
+license = "Elastic-2.0"
+requires-python = ">=3.10"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+authors = [
+    { name = "Na'aman Hirschfeld <naaman@kreuzberg.dev>" }
+]
+keywords = ["document", "extraction", "pdf", "ocr", "text"]
+homepage = "https://kreuzberg.dev"
+[project.urls]
+repository = "https://github.com/kreuzberg-dev/kreuzberg"
+
+[tool.maturin]
+module-name = "kreuzberg._kreuzberg"
+manifest-path = "../../crates/kreuzberg-py/Cargo.toml"
+features = ["pyo3/extension-module"]
+python-packages = ["kreuzberg"]
