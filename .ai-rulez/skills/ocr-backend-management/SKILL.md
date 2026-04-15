@@ -1,5 +1,5 @@
 ---
-description: "ocr uackend management"
+description: "OCR backend selection, image preprocessing, and table detection"
 name: ocr-backend-management
 priority: high
 ---

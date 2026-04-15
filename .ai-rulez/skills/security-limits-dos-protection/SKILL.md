@@ -1,9 +1,8 @@
 ---
-description: "security limits dos protection"
+name: security-limits-dos-protection
+description: "Security validators and DoS protection patterns"
 priority: critical
 ---
-
-## priority: critical
 
 # Security Limits & DoS Protection
 
