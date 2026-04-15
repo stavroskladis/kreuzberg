@@ -61,7 +61,6 @@ nav = [
         { "C#" = "reference/api-csharp.md" },
         { "Go" = "reference/api-go.md" },
         { "Java" = "reference/api-java.md" },
-        { "Rust" = "reference/api-rust.md" },
         { "Ruby" = "reference/api-ruby.md" },
         { "R" = "reference/api-r.md" },
         { "Elixir" = "reference/api-elixir.md" },
