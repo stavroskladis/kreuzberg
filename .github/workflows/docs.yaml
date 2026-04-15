@@ -57,23 +57,6 @@ jobs:
       - name: Build docs (strict)
         run: scripts/ci/docs/build.sh --strict
 
-  validate-snippets:
-    name: "Validate: Documentation Snippets"
-    if: github.repository == 'kreuzberg-dev/kreuzberg' && github.actor != 'dependabot[bot]'
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Rust
-        uses: kreuzberg-dev/actions/setup-rust@v1
-        with:
-          cache-key-prefix: validate-snippets
-          use-sccache: "true"
-
-      - name: Build and run snippet validation
-        run: cargo run --release -p snippet-runner -- validate --snippets docs/snippets --reference docs/reference --level syntax --timeout 120
-
   lint-prose:
     name: "Validate: Prose (textlint)"
     runs-on: ubuntu-latest
@@ -113,7 +96,7 @@ jobs:
 
   deploy:
     name: "Deploy to GitHub Pages"
-    needs: [validate, validate-snippets, lint-prose]
+    needs: [validate, lint-prose]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
       contents: read

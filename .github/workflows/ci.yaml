@@ -266,7 +266,6 @@ jobs:
               - 'rust-toolchain.toml'
               - '.cargo/config.toml'
               - 'fixtures/**'
-              - 'tools/e2e-generator/**'
             rust:
               - 'crates/kreuzberg/**'
               - 'crates/kreuzberg-cli/**'
@@ -276,7 +275,6 @@ jobs:
               - 'e2e/rust/**'
               - 'Cargo.toml'
               - 'Cargo.lock'
-              - 'tools/e2e-generator/**'
               - 'tools/benchmark-harness/**'
             ffi:
               - 'crates/kreuzberg-ffi/**'
