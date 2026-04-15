@@ -30,19 +30,31 @@ and provides context for debugging.
 
 | Variant | Message | Description |
 |---------|---------|-------------|
-| `Io` | IO error: {0} |  |
-| `Parsing` | Parsing error: {message} |  |
-| `Ocr` | OCR error: {message} |  |
-| `Validation` | Validation error: {message} |  |
-| `Cache` | Cache error: {message} |  |
-| `ImageProcessing` | Image processing error: {message} |  |
-| `Serialization` | Serialization error: {message} |  |
-| `MissingDependency` | Missing dependency: {0} |  |
-| `Plugin` | Plugin error in '{plugin_name}': {message} |  |
-| `LockPoisoned` | Lock poisoned: {0} |  |
-| `UnsupportedFormat` | Unsupported format: {0} |  |
-| `Embedding` | Embedding error: {message} |  |
-| `Timeout` | Extraction timed out after {elapsed_ms}ms (limit: {limit_ms}ms) |  |
-| `Other` | {0} |  |
+| `Io` | IO error: {0} | Io errors |
+| `Parsing` | Parsing error: {message} | Parsing errors |
+| `Ocr` | OCR error: {message} | Ocr errors |
+| `Validation` | Validation error: {message} | Validation errors |
+| `Cache` | Cache error: {message} | Cache errors |
+| `ImageProcessing` | Image processing error: {message} | Image processing errors |
+| `Serialization` | Serialization error: {message} | Serialization errors |
+| `MissingDependency` | Missing dependency: {0} | Missing dependency errors |
+| `Plugin` | Plugin error in '{plugin_name}': {message} | Plugin errors |
+| `LockPoisoned` | Lock poisoned: {0} | Lock poisoned errors |
+| `UnsupportedFormat` | Unsupported format: {0} | Unsupported format errors |
+| `Embedding` | Embedding error: {message} | Embedding errors |
+| `Timeout` | Extraction timed out after {elapsed_ms}ms (limit: {limit_ms}ms) | Timeout errors |
+| `Other` | {0} | Other errors |
+
+---
+
+## LayoutError
+
+| Variant | Message | Description |
+|---------|---------|-------------|
+| `Ort` | ORT error: {0} | Ort errors |
+| `Image` | Image error: {0} | Image errors |
+| `SessionNotInitialized` | Session not initialized | Session not initialized errors |
+| `InvalidOutput` | Invalid model output: {0} | Invalid output errors |
+| `ModelDownload` | Model download failed: {0} | Model download errors |
 
 ---

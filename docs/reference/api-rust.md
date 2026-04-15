@@ -1,12 +1,12 @@
 ---
-title: "TypeScript API Reference"
+title: "Rust API Reference"
 ---
 
-# TypeScript API Reference <span class="version-badge">v4.8.5</span>
+# Rust API Reference <span class="version-badge">v4.8.5</span>
 
 ## Functions
 
-### isBatchMode()
+### is_batch_mode()
 
 Check if we're currently in batch processing mode.
 
@@ -14,16 +14,16 @@ Returns `false` if the task-local is not set (single-file mode).
 
 **Signature:**
 
-```typescript
-function isBatchMode(): boolean
+```rust
+pub fn is_batch_mode() -> bool
 ```
 
-**Returns:** `boolean`
+**Returns:** `bool`
 
 
 ---
 
-### resolveThreadBudget()
+### resolve_thread_budget()
 
 Resolve the effective thread budget from config or auto-detection.
 
@@ -32,22 +32,22 @@ capped at 8 for sane defaults in serverless environments.
 
 **Signature:**
 
-```typescript
-function resolveThreadBudget(config?: ConcurrencyConfig): number
+```rust
+pub fn resolve_thread_budget(config: Option<ConcurrencyConfig>) -> usize
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `config` | `ConcurrencyConfig | null` | No | The configuration options |
+| `config` | `Option<ConcurrencyConfig>` | No | The configuration options |
 
-**Returns:** `number`
+**Returns:** `usize`
 
 
 ---
 
-### initThreadPools()
+### init_thread_pools()
 
 Initialize the global Rayon thread pool with the given budget.
 
@@ -56,22 +56,22 @@ calls are silently ignored).
 
 **Signature:**
 
-```typescript
-function initThreadPools(budget: number): void
+```rust
+pub fn init_thread_pools(budget: usize)
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `budget` | `number` | Yes | The budget |
+| `budget` | `usize` | Yes | The budget |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### mergeConfigJson()
+### merge_config_json()
 
 Merge extraction configuration using JSON-level field override.
 
@@ -89,8 +89,8 @@ cannot be deserialized back into `ExtractionConfig` (e.g., wrong field types).
 
 **Signature:**
 
-```typescript
-function mergeConfigJson(base: ExtractionConfig, overrideJson: unknown): ExtractionConfig
+```rust
+pub fn merge_config_json(base: ExtractionConfig, override_json: serde_json::Value) -> Result<ExtractionConfig, String>
 ```
 
 **Parameters:**
@@ -98,26 +98,26 @@ function mergeConfigJson(base: ExtractionConfig, overrideJson: unknown): Extract
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `base` | `ExtractionConfig` | Yes | The extraction config |
-| `overrideJson` | `unknown` | Yes | The override json |
+| `override_json` | `serde_json::Value` | Yes | The override json |
 
 **Returns:** `ExtractionConfig`
 
-**Errors:** Throws `String`.
+**Errors:** Returns `Err(String)`.
 
 
 ---
 
-### buildConfigFromJson()
+### build_config_from_json()
 
 Build extraction config by optionally merging JSON overrides into a base config.
 
-If `override_json` is `null`, returns a clone of `base`. Otherwise delegates
+If `override_json` is `None`, returns a clone of `base`. Otherwise delegates
 to `merge_config_json`.
 
 **Signature:**
 
-```typescript
-function buildConfigFromJson(base: ExtractionConfig, overrideJson?: unknown): ExtractionConfig
+```rust
+pub fn build_config_from_json(base: ExtractionConfig, override_json: Option<serde_json::Value>) -> Result<ExtractionConfig, String>
 ```
 
 **Parameters:**
@@ -125,16 +125,16 @@ function buildConfigFromJson(base: ExtractionConfig, overrideJson?: unknown): Ex
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `base` | `ExtractionConfig` | Yes | The extraction config |
-| `overrideJson` | `unknown | null` | No | The override json |
+| `override_json` | `Option<serde_json::Value>` | No | The override json |
 
 **Returns:** `ExtractionConfig`
 
-**Errors:** Throws `String`.
+**Errors:** Returns `Err(String)`.
 
 
 ---
 
-### isValidFormatField()
+### is_valid_format_field()
 
 Validates whether a field name is in the known formats registry.
 
@@ -147,22 +147,22 @@ providing significant performance improvements for repeated validations.
 
 **Signature:**
 
-```typescript
-function isValidFormatField(field: string): boolean
+```rust
+pub fn is_valid_format_field(field: &str) -> bool
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `field` | `string` | Yes | The field name to validate |
+| `field` | `String` | Yes | The field name to validate |
 
-**Returns:** `boolean`
+**Returns:** `bool`
 
 
 ---
 
-### openFileBytes()
+### open_file_bytes()
 
 Open a file and return its bytes with zero-copy for large files.
 
@@ -179,24 +179,24 @@ Returns `KreuzbergError.Io` for any I/O failure.
 
 **Signature:**
 
-```typescript
-function openFileBytes(path: string): FileBytes
+```rust
+pub fn open_file_bytes(path: PathBuf) -> Result<FileBytes, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `string` | Yes | Path to the file |
+| `path` | `PathBuf` | Yes | Path to the file |
 
 **Returns:** `FileBytes`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### readFileAsync()
+### read_file_async()
 
 Read a file asynchronously.
 
@@ -210,8 +210,8 @@ Returns `KreuzbergError.Io` for I/O errors (these always bubble up).
 
 **Signature:**
 
-```typescript
-function readFileAsync(path: Path): Promise<Buffer>
+```rust
+pub async fn read_file_async(path: Path) -> Result<Vec<u8>, Error>
 ```
 
 **Parameters:**
@@ -220,14 +220,14 @@ function readFileAsync(path: Path): Promise<Buffer>
 |------|------|----------|-------------|
 | `path` | `Path` | Yes | Path to the file to read |
 
-**Returns:** `Buffer`
+**Returns:** `Vec<u8>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### readFileSync()
+### read_file_sync()
 
 Read a file synchronously.
 
@@ -241,8 +241,8 @@ Returns `KreuzbergError.Io` for I/O errors (these always bubble up).
 
 **Signature:**
 
-```typescript
-function readFileSync(path: Path): Buffer
+```rust
+pub fn read_file_sync(path: Path) -> Result<Vec<u8>, Error>
 ```
 
 **Parameters:**
@@ -251,14 +251,14 @@ function readFileSync(path: Path): Buffer
 |------|------|----------|-------------|
 | `path` | `Path` | Yes | Path to the file to read |
 
-**Returns:** `Buffer`
+**Returns:** `Vec<u8>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### fileExists()
+### file_exists()
 
 Check if a file exists.
 
@@ -268,8 +268,8 @@ Check if a file exists.
 
 **Signature:**
 
-```typescript
-function fileExists(path: Path): boolean
+```rust
+pub fn file_exists(path: Path) -> bool
 ```
 
 **Parameters:**
@@ -278,12 +278,12 @@ function fileExists(path: Path): boolean
 |------|------|----------|-------------|
 | `path` | `Path` | Yes | Path to check |
 
-**Returns:** `boolean`
+**Returns:** `bool`
 
 
 ---
 
-### validateFileExists()
+### validate_file_exists()
 
 Validate that a file exists.
 
@@ -293,8 +293,8 @@ Returns `KreuzbergError.Io` if file doesn't exist.
 
 **Signature:**
 
-```typescript
-function validateFileExists(path: Path): void
+```rust
+pub fn validate_file_exists(path: Path) -> Result<(), Error>
 ```
 
 **Parameters:**
@@ -303,14 +303,14 @@ function validateFileExists(path: Path): void
 |------|------|----------|-------------|
 | `path` | `Path` | Yes | Path to validate |
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### findFilesByExtension()
+### find_files_by_extension()
 
 Get all files in a directory with a specific extension.
 
@@ -324,8 +324,8 @@ Returns `KreuzbergError.Io` for I/O errors.
 
 **Signature:**
 
-```typescript
-function findFilesByExtension(dir: Path, extension: string, recursive: boolean): Array<string>
+```rust
+pub fn find_files_by_extension(dir: Path, extension: &str, recursive: bool) -> Result<Vec<PathBuf>, Error>
 ```
 
 **Parameters:**
@@ -333,17 +333,17 @@ function findFilesByExtension(dir: Path, extension: string, recursive: boolean):
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dir` | `Path` | Yes | Directory to search |
-| `extension` | `string` | Yes | File extension to match (without the dot) |
-| `recursive` | `boolean` | Yes | Whether to recursively search subdirectories |
+| `extension` | `String` | Yes | File extension to match (without the dot) |
+| `recursive` | `bool` | Yes | Whether to recursively search subdirectories |
 
-**Returns:** `Array<string>`
+**Returns:** `Vec<PathBuf>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### detectMimeType()
+### detect_mime_type()
 
 Detect MIME type from a file path.
 
@@ -361,8 +361,8 @@ Returns `KreuzbergError.UnsupportedFormat` if MIME type cannot be determined.
 
 **Signature:**
 
-```typescript
-function detectMimeType(path: Path, checkExists: boolean): string
+```rust
+pub fn detect_mime_type(path: Path, check_exists: bool) -> Result<String, Error>
 ```
 
 **Parameters:**
@@ -370,16 +370,16 @@ function detectMimeType(path: Path, checkExists: boolean): string
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `path` | `Path` | Yes | Path to the file |
-| `checkExists` | `boolean` | Yes | Whether to verify file existence |
+| `check_exists` | `bool` | Yes | Whether to verify file existence |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### validateMimeType()
+### validate_mime_type()
 
 Validate that a MIME type is supported.
 
@@ -393,24 +393,24 @@ Returns `KreuzbergError.UnsupportedFormat` if not supported.
 
 **Signature:**
 
-```typescript
-function validateMimeType(mimeType: string): string
+```rust
+pub fn validate_mime_type(mime_type: &str) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `mimeType` | `string` | Yes | The MIME type to validate |
+| `mime_type` | `String` | Yes | The MIME type to validate |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### detectOrValidate()
+### detect_or_validate()
 
 Detect or validate MIME type.
 
@@ -422,25 +422,25 @@ The validated MIME type string.
 
 **Signature:**
 
-```typescript
-function detectOrValidate(path?: string, mimeType?: string): string
+```rust
+pub fn detect_or_validate(path: Option<PathBuf>, mime_type: Option<String>) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `string | null` | No | Optional path to detect MIME type from |
-| `mimeType` | `string | null` | No | Optional explicit MIME type to validate |
+| `path` | `Option<PathBuf>` | No | Optional path to detect MIME type from |
+| `mime_type` | `Option<String>` | No | Optional explicit MIME type to validate |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### detectMimeTypeFromBytes()
+### detect_mime_type_from_bytes()
 
 Detect MIME type from raw file bytes.
 
@@ -460,24 +460,24 @@ Returns `KreuzbergError.UnsupportedFormat` if MIME type cannot be determined.
 
 **Signature:**
 
-```typescript
-function detectMimeTypeFromBytes(content: Buffer): string
+```rust
+pub fn detect_mime_type_from_bytes(content: &[u8]) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `Buffer` | Yes | Raw file bytes |
+| `content` | `Vec<u8>` | Yes | Raw file bytes |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### getExtensionsForMime()
+### get_extensions_for_mime()
 
 Get file extensions for a given MIME type.
 
@@ -489,24 +489,24 @@ A vector of file extensions (without leading dot) for the MIME type.
 
 **Signature:**
 
-```typescript
-function getExtensionsForMime(mimeType: string): Array<string>
+```rust
+pub fn get_extensions_for_mime(mime_type: &str) -> Result<Vec<String>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `mimeType` | `string` | Yes | The MIME type to look up |
+| `mime_type` | `String` | Yes | The MIME type to look up |
 
-**Returns:** `Array<string>`
+**Returns:** `Vec<String>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### listSupportedFormats()
+### list_supported_formats()
 
 List all supported document formats.
 
@@ -517,16 +517,16 @@ The list is sorted alphabetically by file extension.
 
 **Signature:**
 
-```typescript
-function listSupportedFormats(): Array<SupportedFormat>
+```rust
+pub fn list_supported_formats() -> Vec<SupportedFormat>
 ```
 
-**Returns:** `Array<SupportedFormat>`
+**Returns:** `Vec<SupportedFormat>`
 
 
 ---
 
-### runPipeline()
+### run_pipeline()
 
 Run the post-processing pipeline on an `InternalDocument`.
 
@@ -549,8 +549,8 @@ The processed extraction result.
 
 **Signature:**
 
-```typescript
-function runPipeline(doc: InternalDocument, config: ExtractionConfig): Promise<ExtractionResult>
+```rust
+pub async fn run_pipeline(doc: InternalDocument, config: ExtractionConfig) -> Result<ExtractionResult, Error>
 ```
 
 **Parameters:**
@@ -562,12 +562,12 @@ function runPipeline(doc: InternalDocument, config: ExtractionConfig): Promise<E
 
 **Returns:** `ExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### runPipelineSync()
+### run_pipeline_sync()
 
 Run the post-processing pipeline synchronously (WASM-compatible version).
 
@@ -593,8 +593,8 @@ It does NOT handle:
 
 **Signature:**
 
-```typescript
-function runPipelineSync(doc: InternalDocument, config: ExtractionConfig): ExtractionResult
+```rust
+pub fn run_pipeline_sync(doc: InternalDocument, config: ExtractionConfig) -> Result<ExtractionResult, Error>
 ```
 
 **Parameters:**
@@ -606,12 +606,12 @@ function runPipelineSync(doc: InternalDocument, config: ExtractionConfig): Extra
 
 **Returns:** `ExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### isPageTextBlank()
+### is_page_text_blank()
 
 Determine if a page's text content indicates a blank page.
 
@@ -623,34 +623,34 @@ A page is blank if it has fewer than `MIN_NON_WHITESPACE_CHARS` non-whitespace c
 
 **Signature:**
 
-```typescript
-function isPageTextBlank(text: string): boolean
+```rust
+pub fn is_page_text_blank(text: &str) -> bool
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The extracted text content of the page |
+| `text` | `String` | Yes | The extracted text content of the page |
 
-**Returns:** `boolean`
+**Returns:** `bool`
 
 
 ---
 
-### resolveRelationships()
+### resolve_relationships()
 
 Resolve `RelationshipTarget.Key` entries to `RelationshipTarget.Index`.
 
-Builds an anchor index from elements with non-`null` anchors, then resolves
+Builds an anchor index from elements with non-`None` anchors, then resolves
 each key-based relationship target. Unresolvable keys are logged and skipped
 (the relationship is left as `Key` — it will be excluded from the final
 `DocumentStructure` relationships).
 
 **Signature:**
 
-```typescript
-function resolveRelationships(doc: InternalDocument): void
+```rust
+pub fn resolve_relationships(doc: InternalDocument)
 ```
 
 **Parameters:**
@@ -659,12 +659,12 @@ function resolveRelationships(doc: InternalDocument): void
 |------|------|----------|-------------|
 | `doc` | `InternalDocument` | Yes | The internal document |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### deriveDocumentStructure()
+### derive_document_structure()
 
 Derive a hierarchical `DocumentStructure` from the flat internal document.
 
@@ -683,8 +683,8 @@ then builds the tree.
 
 **Signature:**
 
-```typescript
-function deriveDocumentStructure(doc: InternalDocument): DocumentStructure
+```rust
+pub fn derive_document_structure(doc: InternalDocument) -> DocumentStructure
 ```
 
 **Parameters:**
@@ -698,7 +698,7 @@ function deriveDocumentStructure(doc: InternalDocument): DocumentStructure
 
 ---
 
-### deriveExtractionResult()
+### derive_extraction_result()
 
 Derive a complete `ExtractionResult` from an `InternalDocument`.
 
@@ -713,8 +713,8 @@ This is the main entry point for the derivation pipeline. It:
 
 **Signature:**
 
-```typescript
-function deriveExtractionResult(doc: InternalDocument, includeDocumentStructure: boolean, outputFormat: OutputFormat): ExtractionResult
+```rust
+pub fn derive_extraction_result(doc: InternalDocument, include_document_structure: bool, output_format: OutputFormat) -> ExtractionResult
 ```
 
 **Parameters:**
@@ -722,37 +722,37 @@ function deriveExtractionResult(doc: InternalDocument, includeDocumentStructure:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `doc` | `InternalDocument` | Yes | The internal document |
-| `includeDocumentStructure` | `boolean` | Yes | The include document structure |
-| `outputFormat` | `OutputFormat` | Yes | The output format |
+| `include_document_structure` | `bool` | Yes | The include document structure |
+| `output_format` | `OutputFormat` | Yes | The output format |
 
 **Returns:** `ExtractionResult`
 
 
 ---
 
-### parseJson()
+### parse_json()
 
 **Signature:**
 
-```typescript
-function parseJson(data: Buffer, config?: JsonExtractionConfig): StructuredDataResult
+```rust
+pub fn parse_json(data: &[u8], config: Option<JsonExtractionConfig>) -> Result<StructuredDataResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
-| `config` | `JsonExtractionConfig | null` | No | The configuration options |
+| `data` | `Vec<u8>` | Yes | The data |
+| `config` | `Option<JsonExtractionConfig>` | No | The configuration options |
 
 **Returns:** `StructuredDataResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseJsonl()
+### parse_jsonl()
 
 Parse JSONL (newline-delimited JSON) into a structured data result.
 
@@ -767,89 +767,89 @@ or if the input is not valid UTF-8.
 
 **Signature:**
 
-```typescript
-function parseJsonl(data: Buffer, config?: JsonExtractionConfig): StructuredDataResult
+```rust
+pub fn parse_jsonl(data: &[u8], config: Option<JsonExtractionConfig>) -> Result<StructuredDataResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
-| `config` | `JsonExtractionConfig | null` | No | The configuration options |
+| `data` | `Vec<u8>` | Yes | The data |
+| `config` | `Option<JsonExtractionConfig>` | No | The configuration options |
 
 **Returns:** `StructuredDataResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseYaml()
+### parse_yaml()
 
 **Signature:**
 
-```typescript
-function parseYaml(data: Buffer): StructuredDataResult
+```rust
+pub fn parse_yaml(data: &[u8]) -> Result<StructuredDataResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
+| `data` | `Vec<u8>` | Yes | The data |
 
 **Returns:** `StructuredDataResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseToml()
+### parse_toml()
 
 **Signature:**
 
-```typescript
-function parseToml(data: Buffer): StructuredDataResult
+```rust
+pub fn parse_toml(data: &[u8]) -> Result<StructuredDataResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
+| `data` | `Vec<u8>` | Yes | The data |
 
 **Returns:** `StructuredDataResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseText()
+### parse_text()
 
 **Signature:**
 
-```typescript
-function parseText(textBytes: Buffer, isMarkdown: boolean): TextExtractionResult
+```rust
+pub fn parse_text(text_bytes: &[u8], is_markdown: bool) -> Result<TextExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `textBytes` | `Buffer` | Yes | The text bytes |
-| `isMarkdown` | `boolean` | Yes | The is markdown |
+| `text_bytes` | `Vec<u8>` | Yes | The text bytes |
+| `is_markdown` | `bool` | Yes | The is markdown |
 
 **Returns:** `TextExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### transformExtractionResultToElements()
+### transform_extraction_result_to_elements()
 
 Transform an extraction result into semantic elements.
 
@@ -872,8 +872,8 @@ A vector of Elements with proper semantic types and metadata.
 
 **Signature:**
 
-```typescript
-function transformExtractionResultToElements(result: ExtractionResult): Array<Element>
+```rust
+pub fn transform_extraction_result_to_elements(result: ExtractionResult) -> Vec<Element>
 ```
 
 **Parameters:**
@@ -882,12 +882,12 @@ function transformExtractionResultToElements(result: ExtractionResult): Array<El
 |------|------|----------|-------------|
 | `result` | `ExtractionResult` | Yes | Reference to the ExtractionResult to transform |
 
-**Returns:** `Array<Element>`
+**Returns:** `Vec<Element>`
 
 
 ---
 
-### parseBodyText()
+### parse_body_text()
 
 Parse a raw (possibly compressed) BodyText/SectionN stream.
 
@@ -896,25 +896,25 @@ paragraphs that carry the plain-text content.
 
 **Signature:**
 
-```typescript
-function parseBodyText(data: Buffer, isCompressed: boolean): Array<Section>
+```rust
+pub fn parse_body_text(data: &[u8], is_compressed: bool) -> Result<Vec<Section>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
-| `isCompressed` | `boolean` | Yes | The is compressed |
+| `data` | `Vec<u8>` | Yes | The data |
+| `is_compressed` | `bool` | Yes | The is compressed |
 
-**Returns:** `Array<Section>`
+**Returns:** `Vec<Section>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### decompressStream()
+### decompress_stream()
 
 Decompress a raw-deflate stream from an HWP section.
 
@@ -923,24 +923,24 @@ to zlib if raw deflate fails, and returns the data as-is if both fail.
 
 **Signature:**
 
-```typescript
-function decompressStream(data: Buffer): Buffer
+```rust
+pub fn decompress_stream(data: &[u8]) -> Result<Vec<u8>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
+| `data` | `Vec<u8>` | Yes | The data |
 
-**Returns:** `Buffer`
+**Returns:** `Vec<u8>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractHwpText()
+### extract_hwp_text()
 
 Extract all plain text from an HWP 5.0 document given its raw bytes.
 
@@ -951,24 +951,24 @@ if the document is password-encrypted, or if a critical parsing step fails.
 
 **Signature:**
 
-```typescript
-function extractHwpText(bytes: Buffer): string
+```rust
+pub fn extract_hwp_text(bytes: &[u8]) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The bytes |
+| `bytes` | `Vec<u8>` | Yes | The bytes |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### loadImageForOcr()
+### load_image_for_ocr()
 
 Load image bytes for OCR, with JPEG 2000 and JBIG2 fallback support.
 
@@ -979,24 +979,24 @@ for all other formats.
 
 **Signature:**
 
-```typescript
-function loadImageForOcr(imageBytes: Buffer): DynamicImage
+```rust
+pub fn load_image_for_ocr(image_bytes: &[u8]) -> Result<DynamicImage, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `imageBytes` | `Buffer` | Yes | The image bytes |
+| `image_bytes` | `Vec<u8>` | Yes | The image bytes |
 
 **Returns:** `DynamicImage`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractImageMetadata()
+### extract_image_metadata()
 
 Extract metadata from image bytes.
 
@@ -1006,24 +1006,24 @@ pure Rust JP2 box parsing for JPEG 2000 formats if the standard decoder fails.
 
 **Signature:**
 
-```typescript
-function extractImageMetadata(bytes: Buffer): ImageMetadata
+```rust
+pub fn extract_image_metadata(bytes: &[u8]) -> Result<ImageMetadata, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The bytes |
+| `bytes` | `Vec<u8>` | Yes | The bytes |
 
 **Returns:** `ImageMetadata`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractTextFromImageWithOcr()
+### extract_text_from_image_with_ocr()
 
 Extract text from image bytes using OCR with optional page tracking for multi-frame TIFFs.
 
@@ -1038,27 +1038,27 @@ ImageOcrResult with content and optional boundaries for pagination
 
 **Signature:**
 
-```typescript
-function extractTextFromImageWithOcr(bytes: Buffer, mimeType: string, ocrResult: string, pageConfig?: PageConfig): ImageOcrResult
+```rust
+pub fn extract_text_from_image_with_ocr(bytes: &[u8], mime_type: &str, ocr_result: &str, page_config: Option<PageConfig>) -> Result<ImageOcrResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | Image file bytes |
-| `mimeType` | `string` | Yes | MIME type (e.g., "image/tiff") |
-| `ocrResult` | `string` | Yes | OCR backend result containing the text |
-| `pageConfig` | `PageConfig | null` | No | Optional page configuration for boundary tracking |
+| `bytes` | `Vec<u8>` | Yes | Image file bytes |
+| `mime_type` | `String` | Yes | MIME type (e.g., "image/tiff") |
+| `ocr_result` | `String` | Yes | OCR backend result containing the text |
+| `page_config` | `Option<PageConfig>` | No | Optional page configuration for boundary tracking |
 
 **Returns:** `ImageOcrResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### estimateContentCapacity()
+### estimate_content_capacity()
 
 Estimate the capacity needed for content extracted from a file.
 
@@ -1079,23 +1079,23 @@ small files where the overhead of capacity estimation outweighs benefits.
 
 **Signature:**
 
-```typescript
-function estimateContentCapacity(fileSize: number, format: string): number
+```rust
+pub fn estimate_content_capacity(file_size: u64, format: &str) -> usize
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fileSize` | `number` | Yes | The size of the original file in bytes |
-| `format` | `string` | Yes | The file format/extension (e.g., "txt", "html", "docx", "xlsx", "pptx") |
+| `file_size` | `u64` | Yes | The size of the original file in bytes |
+| `format` | `String` | Yes | The file format/extension (e.g., "txt", "html", "docx", "xlsx", "pptx") |
 
-**Returns:** `number`
+**Returns:** `usize`
 
 
 ---
 
-### estimateHtmlMarkdownCapacity()
+### estimate_html_markdown_capacity()
 
 Estimate capacity for HTML to Markdown conversion.
 
@@ -1108,22 +1108,22 @@ An estimated capacity for the Markdown output
 
 **Signature:**
 
-```typescript
-function estimateHtmlMarkdownCapacity(htmlSize: number): number
+```rust
+pub fn estimate_html_markdown_capacity(html_size: u64) -> usize
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `htmlSize` | `number` | Yes | The size of the HTML file in bytes |
+| `html_size` | `u64` | Yes | The size of the HTML file in bytes |
 
-**Returns:** `number`
+**Returns:** `usize`
 
 
 ---
 
-### estimateSpreadsheetCapacity()
+### estimate_spreadsheet_capacity()
 
 Estimate capacity for cell extraction from spreadsheets.
 
@@ -1136,22 +1136,22 @@ An estimated capacity for cell value accumulation
 
 **Signature:**
 
-```typescript
-function estimateSpreadsheetCapacity(fileSize: number): number
+```rust
+pub fn estimate_spreadsheet_capacity(file_size: u64) -> usize
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fileSize` | `number` | Yes | Size of the spreadsheet file (XLSX, ODS, etc.) |
+| `file_size` | `u64` | Yes | Size of the spreadsheet file (XLSX, ODS, etc.) |
 
-**Returns:** `number`
+**Returns:** `usize`
 
 
 ---
 
-### estimatePresentationCapacity()
+### estimate_presentation_capacity()
 
 Estimate capacity for slide content extraction from presentations.
 
@@ -1164,22 +1164,22 @@ An estimated capacity for slide content accumulation
 
 **Signature:**
 
-```typescript
-function estimatePresentationCapacity(fileSize: number): number
+```rust
+pub fn estimate_presentation_capacity(file_size: u64) -> usize
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fileSize` | `number` | Yes | Size of the PPTX file in bytes |
+| `file_size` | `u64` | Yes | Size of the PPTX file in bytes |
 
-**Returns:** `number`
+**Returns:** `usize`
 
 
 ---
 
-### estimateTableMarkdownCapacity()
+### estimate_table_markdown_capacity()
 
 Estimate capacity for markdown table generation.
 
@@ -1192,46 +1192,46 @@ An estimated capacity for the markdown table output
 
 **Signature:**
 
-```typescript
-function estimateTableMarkdownCapacity(rowCount: number, colCount: number): number
+```rust
+pub fn estimate_table_markdown_capacity(row_count: usize, col_count: usize) -> usize
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rowCount` | `number` | Yes | Number of rows in the table |
-| `colCount` | `number` | Yes | Number of columns in the table |
+| `row_count` | `usize` | Yes | Number of rows in the table |
+| `col_count` | `usize` | Yes | Number of columns in the table |
 
-**Returns:** `number`
+**Returns:** `usize`
 
 
 ---
 
-### parseEmlContent()
+### parse_eml_content()
 
 Parse .eml file content (RFC822 format)
 
 **Signature:**
 
-```typescript
-function parseEmlContent(data: Buffer): EmailExtractionResult
+```rust
+pub fn parse_eml_content(data: &[u8]) -> Result<EmailExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
+| `data` | `Vec<u8>` | Yes | The data |
 
 **Returns:** `EmailExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseMsgContent()
+### parse_msg_content()
 
 Parse .msg file content (Outlook format).
 
@@ -1248,57 +1248,57 @@ data range and parse correctly.
 
 **Signature:**
 
-```typescript
-function parseMsgContent(data: Buffer, fallbackCodepage?: number): EmailExtractionResult
+```rust
+pub fn parse_msg_content(data: &[u8], fallback_codepage: Option<u32>) -> Result<EmailExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
-| `fallbackCodepage` | `number | null` | No | The fallback codepage |
+| `data` | `Vec<u8>` | Yes | The data |
+| `fallback_codepage` | `Option<u32>` | No | The fallback codepage |
 
 **Returns:** `EmailExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractEmailContent()
+### extract_email_content()
 
 Extract email content from either .eml or .msg format
 
 **Signature:**
 
-```typescript
-function extractEmailContent(data: Buffer, mimeType: string, fallbackCodepage?: number): EmailExtractionResult
+```rust
+pub fn extract_email_content(data: &[u8], mime_type: &str, fallback_codepage: Option<u32>) -> Result<EmailExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
-| `mimeType` | `string` | Yes | The mime type |
-| `fallbackCodepage` | `number | null` | No | The fallback codepage |
+| `data` | `Vec<u8>` | Yes | The data |
+| `mime_type` | `String` | Yes | The mime type |
+| `fallback_codepage` | `Option<u32>` | No | The fallback codepage |
 
 **Returns:** `EmailExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### buildEmailTextOutput()
+### build_email_text_output()
 
 Build text output from email extraction result
 
 **Signature:**
 
-```typescript
-function buildEmailTextOutput(result: EmailExtractionResult): string
+```rust
+pub fn build_email_text_output(result: EmailExtractionResult) -> String
 ```
 
 **Parameters:**
@@ -1307,12 +1307,12 @@ function buildEmailTextOutput(result: EmailExtractionResult): string
 |------|------|----------|-------------|
 | `result` | `EmailExtractionResult` | Yes | The email extraction result |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### extractPstMessages()
+### extract_pst_messages()
 
 Extract all email messages from a PST file.
 
@@ -1330,67 +1330,67 @@ or if the PST format is invalid.
 
 **Signature:**
 
-```typescript
-function extractPstMessages(pstData: Buffer): VecEmailExtractionResultVecProcessingWarning
+```rust
+pub fn extract_pst_messages(pst_data: &[u8]) -> Result<VecEmailExtractionResultVecProcessingWarning, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pstData` | `Buffer` | Yes | Raw bytes of the PST file |
+| `pst_data` | `Vec<u8>` | Yes | Raw bytes of the PST file |
 
 **Returns:** `VecEmailExtractionResultVecProcessingWarning`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### readExcelFile()
+### read_excel_file()
 
 **Signature:**
 
-```typescript
-function readExcelFile(filePath: string): ExcelWorkbook
+```rust
+pub fn read_excel_file(file_path: &str) -> Result<ExcelWorkbook, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filePath` | `string` | Yes | Path to the file |
+| `file_path` | `String` | Yes | Path to the file |
 
 **Returns:** `ExcelWorkbook`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### readExcelBytes()
+### read_excel_bytes()
 
 **Signature:**
 
-```typescript
-function readExcelBytes(data: Buffer, fileExtension: string): ExcelWorkbook
+```rust
+pub fn read_excel_bytes(data: &[u8], file_extension: &str) -> Result<ExcelWorkbook, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
-| `fileExtension` | `string` | Yes | The file extension |
+| `data` | `Vec<u8>` | Yes | The data |
+| `file_extension` | `String` | Yes | The file extension |
 
 **Returns:** `ExcelWorkbook`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### excelToText()
+### excel_to_text()
 
 Convert an Excel workbook to plain text (space-separated cells, one row per line).
 
@@ -1399,8 +1399,8 @@ This produces text suitable for quality scoring against ground truth.
 
 **Signature:**
 
-```typescript
-function excelToText(workbook: ExcelWorkbook): string
+```rust
+pub fn excel_to_text(workbook: ExcelWorkbook) -> String
 ```
 
 **Parameters:**
@@ -1409,17 +1409,17 @@ function excelToText(workbook: ExcelWorkbook): string
 |------|------|----------|-------------|
 | `workbook` | `ExcelWorkbook` | Yes | The excel workbook |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### excelToMarkdown()
+### excel_to_markdown()
 
 **Signature:**
 
-```typescript
-function excelToMarkdown(workbook: ExcelWorkbook): string
+```rust
+pub fn excel_to_markdown(workbook: ExcelWorkbook) -> String
 ```
 
 **Parameters:**
@@ -1428,12 +1428,12 @@ function excelToMarkdown(workbook: ExcelWorkbook): string
 |------|------|----------|-------------|
 | `workbook` | `ExcelWorkbook` | Yes | The excel workbook |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### extractDocText()
+### extract_doc_text()
 
 Extract text from DOC bytes.
 
@@ -1442,24 +1442,24 @@ and extracts text from the piece table.
 
 **Signature:**
 
-```typescript
-function extractDocText(content: Buffer): DocExtractionResult
+```rust
+pub fn extract_doc_text(content: &[u8]) -> Result<DocExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `Buffer` | Yes | The content to process |
+| `content` | `Vec<u8>` | Yes | The content to process |
 
 **Returns:** `DocExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseDrawing()
+### parse_drawing()
 
 Parse a drawing object starting after the `<w:drawing>` Start event.
 
@@ -1468,8 +1468,8 @@ parsing the drawing type (inline or anchored), extent, properties, and image ref
 
 **Signature:**
 
-```typescript
-function parseDrawing(reader: Reader): Drawing
+```rust
+pub fn parse_drawing(reader: Reader) -> Drawing
 ```
 
 **Parameters:**
@@ -1483,15 +1483,15 @@ function parseDrawing(reader: Reader): Drawing
 
 ---
 
-### collectAndConvertOmathPara()
+### collect_and_convert_omath_para()
 
 Collect an `m:oMathPara` subtree and convert to LaTeX (display math).
 The reader should be positioned right after the `<m:oMathPara>` start tag.
 
 **Signature:**
 
-```typescript
-function collectAndConvertOmathPara(reader: Reader): string
+```rust
+pub fn collect_and_convert_omath_para(reader: Reader) -> String
 ```
 
 **Parameters:**
@@ -1500,20 +1500,20 @@ function collectAndConvertOmathPara(reader: Reader): string
 |------|------|----------|-------------|
 | `reader` | `Reader` | Yes | The reader |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### collectAndConvertOmath()
+### collect_and_convert_omath()
 
 Collect an `m:oMath` subtree and convert to LaTeX (inline math).
 The reader should be positioned right after the `<m:oMath>` start tag.
 
 **Signature:**
 
-```typescript
-function collectAndConvertOmath(reader: Reader): string
+```rust
+pub fn collect_and_convert_omath(reader: Reader) -> String
 ```
 
 **Parameters:**
@@ -1522,65 +1522,65 @@ function collectAndConvertOmath(reader: Reader): string
 |------|------|----------|-------------|
 | `reader` | `Reader` | Yes | The reader |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### parseDocument()
+### parse_document()
 
 Parse a DOCX document from bytes and return the structured document.
 
 **Signature:**
 
-```typescript
-function parseDocument(bytes: Buffer): Document
+```rust
+pub fn parse_document(bytes: &[u8]) -> Result<Document, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The bytes |
+| `bytes` | `Vec<u8>` | Yes | The bytes |
 
 **Returns:** `Document`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractTextFromBytes()
+### extract_text_from_bytes()
 
 Extract text from DOCX bytes.
 
 **Signature:**
 
-```typescript
-function extractTextFromBytes(bytes: Buffer): string
+```rust
+pub fn extract_text_from_bytes(bytes: &[u8]) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The bytes |
+| `bytes` | `Vec<u8>` | Yes | The bytes |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseSectionProperties()
+### parse_section_properties()
 
 Parse a `w:sectPr` XML element (roxmltree node) into `SectionProperties`.
 
 **Signature:**
 
-```typescript
-function parseSectionProperties(node: Node): SectionProperties
+```rust
+pub fn parse_section_properties(node: Node) -> SectionProperties
 ```
 
 **Parameters:**
@@ -1594,7 +1594,7 @@ function parseSectionProperties(node: Node): SectionProperties
 
 ---
 
-### parseSectionPropertiesStreaming()
+### parse_section_properties_streaming()
 
 Parse section properties from a quick_xml event stream.
 
@@ -1606,8 +1606,8 @@ The caller must not attempt to process the `w:sectPr` end event again.
 
 **Signature:**
 
-```typescript
-function parseSectionPropertiesStreaming(reader: Reader): SectionProperties
+```rust
+pub fn parse_section_properties_streaming(reader: Reader) -> SectionProperties
 ```
 
 **Parameters:**
@@ -1621,7 +1621,7 @@ function parseSectionPropertiesStreaming(reader: Reader): SectionProperties
 
 ---
 
-### parseStylesXml()
+### parse_styles_xml()
 
 Parse `word/styles.xml` content into a `StyleCatalog`.
 
@@ -1630,24 +1630,24 @@ office metadata parsing approach used elsewhere in the codebase.
 
 **Signature:**
 
-```typescript
-function parseStylesXml(xml: string): StyleCatalog
+```rust
+pub fn parse_styles_xml(xml: &str) -> Result<StyleCatalog, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `xml` | `string` | Yes | The xml |
+| `xml` | `String` | Yes | The xml |
 
 **Returns:** `StyleCatalog`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseTableProperties()
+### parse_table_properties()
 
 Parse table-level properties from streaming XML reader.
 
@@ -1656,8 +1656,8 @@ Reads all child elements until the matching `</w:tblPr>` end tag.
 
 **Signature:**
 
-```typescript
-function parseTableProperties(reader: Reader): TableProperties
+```rust
+pub fn parse_table_properties(reader: Reader) -> TableProperties
 ```
 
 **Parameters:**
@@ -1671,7 +1671,7 @@ function parseTableProperties(reader: Reader): TableProperties
 
 ---
 
-### parseRowProperties()
+### parse_row_properties()
 
 Parse row-level properties from streaming XML reader.
 
@@ -1679,8 +1679,8 @@ Expects the reader to be positioned just after the `<w:trPr>` start tag.
 
 **Signature:**
 
-```typescript
-function parseRowProperties(reader: Reader): RowProperties
+```rust
+pub fn parse_row_properties(reader: Reader) -> RowProperties
 ```
 
 **Parameters:**
@@ -1694,7 +1694,7 @@ function parseRowProperties(reader: Reader): RowProperties
 
 ---
 
-### parseCellProperties()
+### parse_cell_properties()
 
 Parse cell-level properties from streaming XML reader.
 
@@ -1702,8 +1702,8 @@ Expects the reader to be positioned just after the `<w:tcPr>` start tag.
 
 **Signature:**
 
-```typescript
-function parseCellProperties(reader: Reader): CellProperties
+```rust
+pub fn parse_cell_properties(reader: Reader) -> CellProperties
 ```
 
 **Parameters:**
@@ -1717,7 +1717,7 @@ function parseCellProperties(reader: Reader): CellProperties
 
 ---
 
-### parseTableGrid()
+### parse_table_grid()
 
 Parse table grid (column widths) from streaming XML reader.
 
@@ -1725,8 +1725,8 @@ Expects the reader to be positioned just after the `<w:tblGrid>` start tag.
 
 **Signature:**
 
-```typescript
-function parseTableGrid(reader: Reader): TableGrid
+```rust
+pub fn parse_table_grid(reader: Reader) -> TableGrid
 ```
 
 **Parameters:**
@@ -1740,7 +1740,7 @@ function parseTableGrid(reader: Reader): TableGrid
 
 ---
 
-### parseThemeXml()
+### parse_theme_xml()
 
 Parse `word/theme/theme1.xml` content into a `Theme`.
 
@@ -1752,47 +1752,47 @@ Uses `roxmltree` for tree-based XML parsing of DrawingML theme elements.
 
 **Signature:**
 
-```typescript
-function parseThemeXml(xml: string): Theme
+```rust
+pub fn parse_theme_xml(xml: &str) -> Result<Theme, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `xml` | `string` | Yes | The theme XML content as a string |
+| `xml` | `String` | Yes | The theme XML content as a string |
 
 **Returns:** `Theme`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractText()
+### extract_text()
 
 Extract text from DOCX bytes.
 
 **Signature:**
 
-```typescript
-function extractText(bytes: Buffer): string
+```rust
+pub fn extract_text(bytes: &[u8]) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The bytes |
+| `bytes` | `Vec<u8>` | Yes | The bytes |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractTextWithPageBreaks()
+### extract_text_with_page_breaks()
 
 Extract text and page boundaries from DOCX bytes.
 
@@ -1815,24 +1815,24 @@ Performs two passes: one with docx-lite for text extraction and one for page bre
 
 **Signature:**
 
-```typescript
-function extractTextWithPageBreaks(bytes: Buffer): StringOptionVecPageBoundary
+```rust
+pub fn extract_text_with_page_breaks(bytes: &[u8]) -> Result<StringOptionVecPageBoundary, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The DOCX file contents as bytes |
+| `bytes` | `Vec<u8>` | Yes | The DOCX file contents as bytes |
 
 **Returns:** `StringOptionVecPageBoundary`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### detectPageBreaksFromDocx()
+### detect_page_breaks_from_docx()
 
 Detect explicit page break positions in document.xml and extract full text with page boundaries.
 
@@ -1849,24 +1849,24 @@ break detection. It returns the extracted text along with page boundaries.
 
 **Signature:**
 
-```typescript
-function detectPageBreaksFromDocx(bytes: Buffer): Array<PageBoundary> | null
+```rust
+pub fn detect_page_breaks_from_docx(bytes: &[u8]) -> Result<Option<Vec<PageBoundary>>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The DOCX file contents (ZIP archive) |
+| `bytes` | `Vec<u8>` | Yes | The DOCX file contents (ZIP archive) |
 
-**Returns:** `Array<PageBoundary> | null`
+**Returns:** `Option<Vec<PageBoundary>>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractOoxmlEmbeddedObjects()
+### extract_ooxml_embedded_objects()
 
 Extract embedded objects from an OOXML ZIP archive and recursively process them.
 
@@ -1880,17 +1880,17 @@ Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
 
 **Signature:**
 
-```typescript
-function extractOoxmlEmbeddedObjects(zipBytes: Buffer, embeddingsPrefix: string, sourceLabel: string, config: ExtractionConfig): Promise<VecArchiveEntryVecProcessingWarning>
+```rust
+pub async fn extract_ooxml_embedded_objects(zip_bytes: &[u8], embeddings_prefix: &str, source_label: &str, config: ExtractionConfig) -> VecArchiveEntryVecProcessingWarning
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `zipBytes` | `Buffer` | Yes | The zip bytes |
-| `embeddingsPrefix` | `string` | Yes | The embeddings prefix |
-| `sourceLabel` | `string` | Yes | The source label |
+| `zip_bytes` | `Vec<u8>` | Yes | The zip bytes |
+| `embeddings_prefix` | `String` | Yes | The embeddings prefix |
+| `source_label` | `String` | Yes | The source label |
 | `config` | `ExtractionConfig` | Yes | The configuration options |
 
 **Returns:** `VecArchiveEntryVecProcessingWarning`
@@ -1898,7 +1898,7 @@ function extractOoxmlEmbeddedObjects(zipBytes: Buffer, embeddingsPrefix: string,
 
 ---
 
-### detectImageFormat()
+### detect_image_format()
 
 Detect image format from raw bytes using magic byte signatures.
 
@@ -1906,28 +1906,28 @@ Returns a format string like "jpeg", "png", etc. Used by both DOCX and PPTX extr
 
 **Signature:**
 
-```typescript
-function detectImageFormat(data: Buffer): Str
+```rust
+pub fn detect_image_format(data: &[u8]) -> Str
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
+| `data` | `Vec<u8>` | Yes | The data |
 
 **Returns:** `Str`
 
 
 ---
 
-### processImagesWithOcr()
+### process_images_with_ocr()
 
 Process extracted images with OCR if configured.
 
 For each image, spawns a blocking OCR task and stores the result
 in `image.ocr_result`. If OCR is not configured or fails for an
-individual image, that image's `ocr_result` remains `null`.
+individual image, that image's `ocr_result` remains `None`.
 
 This function is the single shared implementation used by all
 document extractors (DOCX, PPTX, Jupyter, Markdown, etc.).
@@ -1945,25 +1945,25 @@ using a semaphore to prevent resource exhaustion.
 
 **Signature:**
 
-```typescript
-function processImagesWithOcr(images: Array<ExtractedImage>, config: ExtractionConfig): Promise<Array<ExtractedImage>>
+```rust
+pub async fn process_images_with_ocr(images: Vec<ExtractedImage>, config: ExtractionConfig) -> Result<Vec<ExtractedImage>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `images` | `Array<ExtractedImage>` | Yes | The images |
+| `images` | `Vec<ExtractedImage>` | Yes | The images |
 | `config` | `ExtractionConfig` | Yes | The configuration options |
 
-**Returns:** `Array<ExtractedImage>`
+**Returns:** `Vec<ExtractedImage>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractPptText()
+### extract_ppt_text()
 
 Extract text from PPT bytes.
 
@@ -1975,24 +1975,24 @@ like "Click to edit Master title style") is included instead of being skipped.
 
 **Signature:**
 
-```typescript
-function extractPptText(content: Buffer): PptExtractionResult
+```rust
+pub fn extract_ppt_text(content: &[u8]) -> Result<PptExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `Buffer` | Yes | The content to process |
+| `content` | `Vec<u8>` | Yes | The content to process |
 
 **Returns:** `PptExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractPptTextWithOptions()
+### extract_ppt_text_with_options()
 
 Extract text from PPT bytes with configurable master slide inclusion.
 
@@ -2001,25 +2001,25 @@ skipped, so master slide placeholder text is included in the output.
 
 **Signature:**
 
-```typescript
-function extractPptTextWithOptions(content: Buffer, includeMasterSlides: boolean): PptExtractionResult
+```rust
+pub fn extract_ppt_text_with_options(content: &[u8], include_master_slides: bool) -> Result<PptExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `Buffer` | Yes | The content to process |
-| `includeMasterSlides` | `boolean` | Yes | The include master slides |
+| `content` | `Vec<u8>` | Yes | The content to process |
+| `include_master_slides` | `bool` | Yes | The include master slides |
 
 **Returns:** `PptExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractPptxFromPath()
+### extract_pptx_from_path()
 
 Extract PPTX content from a file path.
 
@@ -2029,25 +2029,25 @@ A `PptxExtractionResult` containing extracted content, metadata, and images.
 
 **Signature:**
 
-```typescript
-function extractPptxFromPath(path: string, options: PptxExtractionOptions): PptxExtractionResult
+```rust
+pub fn extract_pptx_from_path(path: &str, options: PptxExtractionOptions) -> Result<PptxExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `string` | Yes | Path to the PPTX file |
+| `path` | `String` | Yes | Path to the PPTX file |
 | `options` | `PptxExtractionOptions` | Yes | Extraction options controlling image extraction, formatting, etc. |
 
 **Returns:** `PptxExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractPptxFromBytes()
+### extract_pptx_from_bytes()
 
 Extract PPTX content from a byte buffer.
 
@@ -2057,25 +2057,25 @@ A `PptxExtractionResult` containing extracted content, metadata, and images.
 
 **Signature:**
 
-```typescript
-function extractPptxFromBytes(data: Buffer, options: PptxExtractionOptions): PptxExtractionResult
+```rust
+pub fn extract_pptx_from_bytes(data: &[u8], options: PptxExtractionOptions) -> Result<PptxExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | Raw PPTX file bytes |
+| `data` | `Vec<u8>` | Yes | Raw PPTX file bytes |
 | `options` | `PptxExtractionOptions` | Yes | Extraction options controlling image extraction, formatting, etc. |
 
 **Returns:** `PptxExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseXmlSvg()
+### parse_xml_svg()
 
 Parse XML with optional SVG mode.
 
@@ -2085,47 +2085,47 @@ Attribute values are also omitted in SVG mode.
 
 **Signature:**
 
-```typescript
-function parseXmlSvg(xmlBytes: Buffer, preserveWhitespace: boolean): XmlExtractionResult
+```rust
+pub fn parse_xml_svg(xml_bytes: &[u8], preserve_whitespace: bool) -> Result<XmlExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `xmlBytes` | `Buffer` | Yes | The xml bytes |
-| `preserveWhitespace` | `boolean` | Yes | The preserve whitespace |
+| `xml_bytes` | `Vec<u8>` | Yes | The xml bytes |
+| `preserve_whitespace` | `bool` | Yes | The preserve whitespace |
 
 **Returns:** `XmlExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### parseXml()
+### parse_xml()
 
 **Signature:**
 
-```typescript
-function parseXml(xmlBytes: Buffer, preserveWhitespace: boolean): XmlExtractionResult
+```rust
+pub fn parse_xml(xml_bytes: &[u8], preserve_whitespace: bool) -> Result<XmlExtractionResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `xmlBytes` | `Buffer` | Yes | The xml bytes |
-| `preserveWhitespace` | `boolean` | Yes | The preserve whitespace |
+| `xml_bytes` | `Vec<u8>` | Yes | The xml bytes |
+| `preserve_whitespace` | `bool` | Yes | The preserve whitespace |
 
 **Returns:** `XmlExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### cellsToText()
+### cells_to_text()
 
 Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table.
 
@@ -2156,41 +2156,41 @@ A `String` containing the plain text table representation
 
 **Signature:**
 
-```typescript
-function cellsToText(cells: Array<Array<string>>): string
+```rust
+pub fn cells_to_text(cells: Vec<Vec<String>>) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `cells` | `Array<Array<string>>` | Yes | A slice of vectors representing table rows, where each inner vector contains cell values |
+| `cells` | `Vec<Vec<String>>` | Yes | A slice of vectors representing table rows, where each inner vector contains cell values |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### cellsToMarkdown()
+### cells_to_markdown()
 
 **Signature:**
 
-```typescript
-function cellsToMarkdown(cells: Array<Array<string>>): string
+```rust
+pub fn cells_to_markdown(cells: Vec<Vec<String>>) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `cells` | `Array<Array<string>>` | Yes | The cells |
+| `cells` | `Vec<Vec<String>>` | Yes | The cells |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### parseJotdownAttributes()
+### parse_jotdown_attributes()
 
 Parse jotdown attributes into our Attributes representation.
 
@@ -2199,8 +2199,8 @@ standardized Attributes struct, handling IDs, classes, and key-value pairs.
 
 **Signature:**
 
-```typescript
-function parseJotdownAttributes(attrs: Attributes): Attributes
+```rust
+pub fn parse_jotdown_attributes(attrs: Attributes) -> Attributes
 ```
 
 **Parameters:**
@@ -2214,7 +2214,7 @@ function parseJotdownAttributes(attrs: Attributes): Attributes
 
 ---
 
-### renderAttributes()
+### render_attributes()
 
 Render attributes to djot attribute syntax.
 
@@ -2223,8 +2223,8 @@ Converts Kreuzberg's Attributes struct back to djot attribute syntax:
 
 **Signature:**
 
-```typescript
-function renderAttributes(attrs: Attributes): string
+```rust
+pub fn render_attributes(attrs: Attributes) -> String
 ```
 
 **Parameters:**
@@ -2233,12 +2233,12 @@ function renderAttributes(attrs: Attributes): string
 |------|------|----------|-------------|
 | `attrs` | `Attributes` | Yes | The attributes |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### djotContentToDjot()
+### djot_content_to_djot()
 
 Convert DjotContent back to djot markup.
 
@@ -2254,8 +2254,8 @@ A String containing valid djot markup
 
 **Signature:**
 
-```typescript
-function djotContentToDjot(content: DjotContent): string
+```rust
+pub fn djot_content_to_djot(content: DjotContent) -> String
 ```
 
 **Parameters:**
@@ -2264,12 +2264,12 @@ function djotContentToDjot(content: DjotContent): string
 |------|------|----------|-------------|
 | `content` | `DjotContent` | Yes | The DjotContent to convert |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### extractionResultToDjot()
+### extraction_result_to_djot()
 
 Convert any ExtractionResult to djot format.
 
@@ -2283,8 +2283,8 @@ A `Result` containing the djot markup string
 
 **Signature:**
 
-```typescript
-function extractionResultToDjot(result: ExtractionResult): string
+```rust
+pub fn extraction_result_to_djot(result: ExtractionResult) -> Result<String, Error>
 ```
 
 **Parameters:**
@@ -2293,14 +2293,14 @@ function extractionResultToDjot(result: ExtractionResult): string
 |------|------|----------|-------------|
 | `result` | `ExtractionResult` | Yes | The ExtractionResult to convert |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### djotToHtml()
+### djot_to_html()
 
 Render djot content to HTML.
 
@@ -2313,93 +2313,93 @@ A `Result` containing the rendered HTML string
 
 **Signature:**
 
-```typescript
-function djotToHtml(djotSource: string): string
+```rust
+pub fn djot_to_html(djot_source: &str) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `djotSource` | `string` | Yes | The djot markup text to render |
+| `djot_source` | `String` | Yes | The djot markup text to render |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### renderBlockToDjot()
+### render_block_to_djot()
 
 Render a single block to djot markup.
 
 **Signature:**
 
-```typescript
-function renderBlockToDjot(output: string, block: FormattedBlock, indentLevel: number): void
+```rust
+pub fn render_block_to_djot(output: &str, block: FormattedBlock, indent_level: usize)
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `output` | `string` | Yes | The output destination |
+| `output` | `String` | Yes | The output destination |
 | `block` | `FormattedBlock` | Yes | The formatted block |
-| `indentLevel` | `number` | Yes | The indent level |
+| `indent_level` | `usize` | Yes | The indent level |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### renderListItem()
+### render_list_item()
 
 Render a list item with the given marker.
 
 **Signature:**
 
-```typescript
-function renderListItem(output: string, item: FormattedBlock, indent: string, marker: string): void
+```rust
+pub fn render_list_item(output: &str, item: FormattedBlock, indent: &str, marker: &str)
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `output` | `string` | Yes | The output destination |
+| `output` | `String` | Yes | The output destination |
 | `item` | `FormattedBlock` | Yes | The formatted block |
-| `indent` | `string` | Yes | The indent |
-| `marker` | `string` | Yes | The marker |
+| `indent` | `String` | Yes | The indent |
+| `marker` | `String` | Yes | The marker |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### renderInlineContent()
+### render_inline_content()
 
 Render inline content to djot markup.
 
 **Signature:**
 
-```typescript
-function renderInlineContent(output: string, elements: Array<InlineElement>): void
+```rust
+pub fn render_inline_content(output: &str, elements: Vec<InlineElement>)
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `output` | `string` | Yes | The output destination |
-| `elements` | `Array<InlineElement>` | Yes | The elements |
+| `output` | `String` | Yes | The output destination |
+| `elements` | `Vec<InlineElement>` | Yes | The elements |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### extractFrontmatter()
+### extract_frontmatter()
 
 Extract YAML frontmatter from document content.
 
@@ -2413,22 +2413,22 @@ Returns a tuple of (parsed YAML value, remaining content after frontmatter).
 
 **Signature:**
 
-```typescript
-function extractFrontmatter(content: string): OptionYamlValueString
+```rust
+pub fn extract_frontmatter(content: &str) -> OptionYamlValueString
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `string` | Yes | The content to process |
+| `content` | `String` | Yes | The content to process |
 
 **Returns:** `OptionYamlValueString`
 
 
 ---
 
-### extractMetadataFromYaml()
+### extract_metadata_from_yaml()
 
 Extract metadata from YAML frontmatter.
 
@@ -2443,8 +2443,8 @@ A `Metadata` struct populated with extracted fields
 
 **Signature:**
 
-```typescript
-function extractMetadataFromYaml(yaml: YamlValue): Metadata
+```rust
+pub fn extract_metadata_from_yaml(yaml: YamlValue) -> Metadata
 ```
 
 **Parameters:**
@@ -2458,7 +2458,7 @@ function extractMetadataFromYaml(yaml: YamlValue): Metadata
 
 ---
 
-### extractTitleFromContent()
+### extract_title_from_content()
 
 Extract first heading as title from content.
 
@@ -2471,22 +2471,22 @@ Some(title) if a heading is found, None otherwise
 
 **Signature:**
 
-```typescript
-function extractTitleFromContent(content: string): string | null
+```rust
+pub fn extract_title_from_content(content: &str) -> Option<String>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `string` | Yes | The document content to search |
+| `content` | `String` | Yes | The document content to search |
 
-**Returns:** `string | null`
+**Returns:** `Option<String>`
 
 
 ---
 
-### collectIwaPaths()
+### collect_iwa_paths()
 
 Collects all .iwa file paths from a ZIP archive.
 
@@ -2496,24 +2496,24 @@ silently skipped (consistent with the per-extractor `filter_map` pattern).
 
 **Signature:**
 
-```typescript
-function collectIwaPaths(content: Buffer): Array<string>
+```rust
+pub fn collect_iwa_paths(content: &[u8]) -> Result<Vec<String>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `Buffer` | Yes | The content to process |
+| `content` | `Vec<u8>` | Yes | The content to process |
 
-**Returns:** `Array<string>`
+**Returns:** `Vec<String>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### readIwaFile()
+### read_iwa_file()
 
 Read and Snappy-decompress a single `.iwa` file from the ZIP archive.
 
@@ -2526,25 +2526,25 @@ Multiple blocks are concatenated to form the decompressed IWA stream.
 
 **Signature:**
 
-```typescript
-function readIwaFile(content: Buffer, path: string): Buffer
+```rust
+pub fn read_iwa_file(content: &[u8], path: &str) -> Result<Vec<u8>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `Buffer` | Yes | The content to process |
-| `path` | `string` | Yes | Path to the file |
+| `content` | `Vec<u8>` | Yes | The content to process |
+| `path` | `String` | Yes | Path to the file |
 
-**Returns:** `Buffer`
+**Returns:** `Vec<u8>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### decodeIwaStream()
+### decode_iwa_stream()
 
 Decode an Apple IWA byte stream into the raw protobuf payload.
 
@@ -2554,24 +2554,24 @@ IWA framing: each block = 1 byte type + 3 bytes LE length + N bytes payload
 
 **Signature:**
 
-```typescript
-function decodeIwaStream(data: Buffer): Buffer
+```rust
+pub fn decode_iwa_stream(data: &[u8]) -> Result<Vec<u8>, String>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
+| `data` | `Vec<u8>` | Yes | The data |
 
-**Returns:** `Buffer`
+**Returns:** `Vec<u8>`
 
-**Errors:** Throws `String`.
+**Errors:** Returns `Err(String)`.
 
 
 ---
 
-### extractTextFromProto()
+### extract_text_from_proto()
 
 Extract all UTF-8 text strings from a raw protobuf byte slice.
 
@@ -2585,22 +2585,22 @@ still extracting human-readable text reliably from iWork documents.
 
 **Signature:**
 
-```typescript
-function extractTextFromProto(data: Buffer): Array<string>
+```rust
+pub fn extract_text_from_proto(data: &[u8]) -> Vec<String>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `Buffer` | Yes | The data |
+| `data` | `Vec<u8>` | Yes | The data |
 
-**Returns:** `Array<string>`
+**Returns:** `Vec<String>`
 
 
 ---
 
-### extractTextFromIwaFiles()
+### extract_text_from_iwa_files()
 
 Extract all text from an iWork ZIP archive by reading specified IWA entries.
 
@@ -2609,25 +2609,25 @@ Returns a flat joined string of all text found across all IWA files.
 
 **Signature:**
 
-```typescript
-function extractTextFromIwaFiles(content: Buffer, iwaPaths: Array<string>): string
+```rust
+pub fn extract_text_from_iwa_files(content: &[u8], iwa_paths: Vec<String>) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `Buffer` | Yes | The content to process |
-| `iwaPaths` | `Array<string>` | Yes | The iwa paths |
+| `content` | `Vec<u8>` | Yes | The content to process |
+| `iwa_paths` | `Vec<String>` | Yes | The iwa paths |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractMetadataFromZip()
+### extract_metadata_from_zip()
 
 Extract metadata from an iWork ZIP archive.
 
@@ -2638,44 +2638,44 @@ or parsed, an empty `Metadata` is returned.
 
 **Signature:**
 
-```typescript
-function extractMetadataFromZip(content: Buffer): Metadata
+```rust
+pub fn extract_metadata_from_zip(content: &[u8]) -> Metadata
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `Buffer` | Yes | The content to process |
+| `content` | `Vec<u8>` | Yes | The content to process |
 
 **Returns:** `Metadata`
 
 
 ---
 
-### dedupText()
+### dedup_text()
 
 Deduplicate a list of text strings while preserving order.
 Adjacent duplicates and near-duplicates are removed.
 
 **Signature:**
 
-```typescript
-function dedupText(texts: Array<string>): Array<string>
+```rust
+pub fn dedup_text(texts: Vec<String>) -> Vec<String>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `texts` | `Array<string>` | Yes | The texts |
+| `texts` | `Vec<String>` | Yes | The texts |
 
-**Returns:** `Array<string>`
+**Returns:** `Vec<String>`
 
 
 ---
 
-### ensureInitialized()
+### ensure_initialized()
 
 Ensure built-in extractors are registered.
 
@@ -2685,18 +2685,18 @@ unless the registry was cleared, in which case extractors are re-registered.
 
 **Signature:**
 
-```typescript
-function ensureInitialized(): void
+```rust
+pub fn ensure_initialized() -> Result<(), Error>
 ```
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### registerDefaultExtractors()
+### register_default_extractors()
 
 Register all built-in extractors with the global registry.
 
@@ -2708,18 +2708,18 @@ Explicit calling is optional.
 
 **Signature:**
 
-```typescript
-function registerDefaultExtractors(): void
+```rust
+pub fn register_default_extractors() -> Result<(), Error>
 ```
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractPanicMessage()
+### extract_panic_message()
 
 Extracts a human-readable message from a panic payload.
 
@@ -2734,29 +2734,29 @@ A string representation of the panic message (truncated if necessary)
 
 **Signature:**
 
-```typescript
-function extractPanicMessage(panicInfo: Any): string
+```rust
+pub fn extract_panic_message(panic_info: Any) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `panicInfo` | `Any` | Yes | The panic payload from catch_unwind |
+| `panic_info` | `Any` | Yes | The panic payload from catch_unwind |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### getOcrBackendRegistry()
+### get_ocr_backend_registry()
 
 Get the global OCR backend registry.
 
 **Signature:**
 
-```typescript
-function getOcrBackendRegistry(): RwLock
+```rust
+pub fn get_ocr_backend_registry() -> RwLock
 ```
 
 **Returns:** `RwLock`
@@ -2764,14 +2764,14 @@ function getOcrBackendRegistry(): RwLock
 
 ---
 
-### getDocumentExtractorRegistry()
+### get_document_extractor_registry()
 
 Get the global document extractor registry.
 
 **Signature:**
 
-```typescript
-function getDocumentExtractorRegistry(): RwLock
+```rust
+pub fn get_document_extractor_registry() -> RwLock
 ```
 
 **Returns:** `RwLock`
@@ -2779,14 +2779,14 @@ function getDocumentExtractorRegistry(): RwLock
 
 ---
 
-### getPostProcessorRegistry()
+### get_post_processor_registry()
 
 Get the global post-processor registry.
 
 **Signature:**
 
-```typescript
-function getPostProcessorRegistry(): RwLock
+```rust
+pub fn get_post_processor_registry() -> RwLock
 ```
 
 **Returns:** `RwLock`
@@ -2794,14 +2794,14 @@ function getPostProcessorRegistry(): RwLock
 
 ---
 
-### getValidatorRegistry()
+### get_validator_registry()
 
 Get the global validator registry.
 
 **Signature:**
 
-```typescript
-function getValidatorRegistry(): RwLock
+```rust
+pub fn get_validator_registry() -> RwLock
 ```
 
 **Returns:** `RwLock`
@@ -2809,14 +2809,14 @@ function getValidatorRegistry(): RwLock
 
 ---
 
-### getRendererRegistry()
+### get_renderer_registry()
 
 Get the global renderer registry.
 
 **Signature:**
 
-```typescript
-function getRendererRegistry(): RwLock
+```rust
+pub fn get_renderer_registry() -> RwLock
 ```
 
 **Returns:** `RwLock`
@@ -2824,7 +2824,7 @@ function getRendererRegistry(): RwLock
 
 ---
 
-### validatePluginsAtStartup()
+### validate_plugins_at_startup()
 
 Validate plugin registries at startup and emit diagnostic logs.
 
@@ -2846,18 +2846,18 @@ troubleshooting in the container logs.
 
 **Signature:**
 
-```typescript
-function validatePluginsAtStartup(): PluginHealthStatus
+```rust
+pub fn validate_plugins_at_startup() -> Result<PluginHealthStatus, Error>
 ```
 
 **Returns:** `PluginHealthStatus`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### sanitizeFilename()
+### sanitize_filename()
 
 Sanitize a file path to return only the filename (no directory).
 
@@ -2865,22 +2865,22 @@ Prevents PII from appearing in traces.
 
 **Signature:**
 
-```typescript
-function sanitizeFilename(path: string): string
+```rust
+pub fn sanitize_filename(path: PathBuf) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `string` | Yes | Path to the file |
+| `path` | `PathBuf` | Yes | Path to the file |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### getMetrics()
+### get_metrics()
 
 Get the global extraction metrics, initialising on first call.
 
@@ -2888,8 +2888,8 @@ Uses the global `opentelemetry.global.meter` to create instruments.
 
 **Signature:**
 
-```typescript
-function getMetrics(): ExtractionMetrics
+```rust
+pub fn get_metrics() -> ExtractionMetrics
 ```
 
 **Returns:** `ExtractionMetrics`
@@ -2897,7 +2897,7 @@ function getMetrics(): ExtractionMetrics
 
 ---
 
-### recordErrorOnCurrentSpan()
+### record_error_on_current_span()
 
 Record an error on the current span using semantic conventions.
 
@@ -2905,8 +2905,8 @@ Sets `otel.status_code = "ERROR"`, `kreuzberg.error.type`, and `error.message`.
 
 **Signature:**
 
-```typescript
-function recordErrorOnCurrentSpan(error: KreuzbergError): void
+```rust
+pub fn record_error_on_current_span(error: KreuzbergError)
 ```
 
 **Parameters:**
@@ -2915,27 +2915,27 @@ function recordErrorOnCurrentSpan(error: KreuzbergError): void
 |------|------|----------|-------------|
 | `error` | `KreuzbergError` | Yes | The kreuzberg error |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### recordSuccessOnCurrentSpan()
+### record_success_on_current_span()
 
 Record extraction success on the current span.
 
 **Signature:**
 
-```typescript
-function recordSuccessOnCurrentSpan(): void
+```rust
+pub fn record_success_on_current_span()
 ```
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### sanitizePath()
+### sanitize_path()
 
 Sanitize a file path to return only the filename.
 
@@ -2944,22 +2944,22 @@ traces by only recording filenames instead of full paths.
 
 **Signature:**
 
-```typescript
-function sanitizePath(path: string): string
+```rust
+pub fn sanitize_path(path: PathBuf) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `string` | Yes | Path to the file |
+| `path` | `PathBuf` | Yes | Path to the file |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### extractorSpan()
+### extractor_span()
 
 Create an extractor-level span with semantic convention fields.
 
@@ -2969,110 +2969,110 @@ lazy recording).
 
 **Signature:**
 
-```typescript
-function extractorSpan(extractorName: string, mimeType: string, sizeBytes: number): Span
+```rust
+pub fn extractor_span(extractor_name: &str, mime_type: &str, size_bytes: usize) -> Span
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `extractorName` | `string` | Yes | The extractor name |
-| `mimeType` | `string` | Yes | The mime type |
-| `sizeBytes` | `number` | Yes | The size bytes |
+| `extractor_name` | `String` | Yes | The extractor name |
+| `mime_type` | `String` | Yes | The mime type |
+| `size_bytes` | `usize` | Yes | The size bytes |
 
 **Returns:** `Span`
 
 
 ---
 
-### pipelineStageSpan()
+### pipeline_stage_span()
 
 Create a pipeline stage span.
 
 **Signature:**
 
-```typescript
-function pipelineStageSpan(stage: string): Span
+```rust
+pub fn pipeline_stage_span(stage: &str) -> Span
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `stage` | `string` | Yes | The stage |
+| `stage` | `String` | Yes | The stage |
 
 **Returns:** `Span`
 
 
 ---
 
-### pipelineProcessorSpan()
+### pipeline_processor_span()
 
 Create a pipeline processor span.
 
 **Signature:**
 
-```typescript
-function pipelineProcessorSpan(stage: string, processorName: string): Span
+```rust
+pub fn pipeline_processor_span(stage: &str, processor_name: &str) -> Span
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `stage` | `string` | Yes | The stage |
-| `processorName` | `string` | Yes | The processor name |
+| `stage` | `String` | Yes | The stage |
+| `processor_name` | `String` | Yes | The processor name |
 
 **Returns:** `Span`
 
 
 ---
 
-### ocrSpan()
+### ocr_span()
 
 Create an OCR operation span.
 
 **Signature:**
 
-```typescript
-function ocrSpan(backend: string, language: string): Span
+```rust
+pub fn ocr_span(backend: &str, language: &str) -> Span
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `backend` | `string` | Yes | The backend |
-| `language` | `string` | Yes | The language |
+| `backend` | `String` | Yes | The backend |
+| `language` | `String` | Yes | The language |
 
 **Returns:** `Span`
 
 
 ---
 
-### modelInferenceSpan()
+### model_inference_span()
 
 Create a model inference span.
 
 **Signature:**
 
-```typescript
-function modelInferenceSpan(modelName: string): Span
+```rust
+pub fn model_inference_span(model_name: &str) -> Span
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `modelName` | `string` | Yes | The model name |
+| `model_name` | `String` | Yes | The model name |
 
 **Returns:** `Span`
 
 
 ---
 
-### fromUtf8()
+### from_utf8()
 
 Validates and converts bytes to string using SIMD when available.
 
@@ -3091,24 +3091,24 @@ SIMD validation (when enabled) is contained within the simdutf8 crate and is saf
 
 **Signature:**
 
-```typescript
-function fromUtf8(bytes: Buffer): string
+```rust
+pub fn from_utf8(bytes: &[u8]) -> Result<String, Utf8Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The byte slice to validate and convert |
+| `bytes` | `Vec<u8>` | Yes | The byte slice to validate and convert |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Utf8Error`.
+**Errors:** Returns `Err(Utf8Error)`.
 
 
 ---
 
-### stringFromUtf8()
+### string_from_utf8()
 
 Validates and converts owned bytes to String using SIMD when available.
 
@@ -3126,24 +3126,24 @@ especially for large text documents.
 
 **Signature:**
 
-```typescript
-function stringFromUtf8(bytes: Buffer): string
+```rust
+pub fn string_from_utf8(bytes: &[u8]) -> Result<String, FromUtf8Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The byte vector to validate and convert |
+| `bytes` | `Vec<u8>` | Yes | The byte vector to validate and convert |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `FromUtf8Error`.
+**Errors:** Returns `Err(FromUtf8Error)`.
 
 
 ---
 
-### isValidUtf8()
+### is_valid_utf8()
 
 Validates bytes as UTF-8 without conversion to string slice.
 
@@ -3160,80 +3160,80 @@ This function is optimized for early exit on invalid sequences.
 
 **Signature:**
 
-```typescript
-function isValidUtf8(bytes: Buffer): boolean
+```rust
+pub fn is_valid_utf8(bytes: &[u8]) -> bool
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `bytes` | `Buffer` | Yes | The byte slice to validate |
+| `bytes` | `Vec<u8>` | Yes | The byte slice to validate |
 
-**Returns:** `boolean`
+**Returns:** `bool`
 
 
 ---
 
-### calculateQualityScore()
+### calculate_quality_score()
 
 **Signature:**
 
-```typescript
-function calculateQualityScore(text: string, metadata?: AHashMap): number
+```rust
+pub fn calculate_quality_score(text: &str, metadata: Option<AHashMap>) -> f64
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text |
-| `metadata` | `AHashMap | null` | No | The a hash map |
+| `text` | `String` | Yes | The text |
+| `metadata` | `Option<AHashMap>` | No | The a hash map |
 
-**Returns:** `number`
+**Returns:** `f64`
 
 
 ---
 
-### cleanExtractedText()
+### clean_extracted_text()
 
 **Signature:**
 
-```typescript
-function cleanExtractedText(text: string): string
+```rust
+pub fn clean_extracted_text(text: &str) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text |
+| `text` | `String` | Yes | The text |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### normalizeSpaces()
+### normalize_spaces()
 
 **Signature:**
 
-```typescript
-function normalizeSpaces(text: string): string
+```rust
+pub fn normalize_spaces(text: &str) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text |
+| `text` | `String` | Yes | The text |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### reduceTokens()
+### reduce_tokens()
 
 Reduces token count in text while preserving meaning and structure.
 
@@ -3251,26 +3251,26 @@ Returns an error if the language hint is invalid or stopwords cannot be loaded.
 
 **Signature:**
 
-```typescript
-function reduceTokens(text: string, config: TokenReductionConfig, languageHint?: string): string
+```rust
+pub fn reduce_tokens(text: &str, config: TokenReductionConfig, language_hint: Option<String>) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The input text to reduce |
+| `text` | `String` | Yes | The input text to reduce |
 | `config` | `TokenReductionConfig` | Yes | Configuration specifying reduction level and options |
-| `languageHint` | `string | null` | No | Optional ISO 639-3 language code (e.g., "eng", "spa") |
+| `language_hint` | `Option<String>` | No | Optional ISO 639-3 language code (e.g., "eng", "spa") |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### batchReduceTokens()
+### batch_reduce_tokens()
 
 Reduces token count for multiple texts efficiently using parallel processing.
 
@@ -3288,26 +3288,26 @@ Returns an error if the language hint is invalid or stopwords cannot be loaded.
 
 **Signature:**
 
-```typescript
-function batchReduceTokens(texts: Array<string>, config: TokenReductionConfig, languageHint?: string): Array<string>
+```rust
+pub fn batch_reduce_tokens(texts: Vec<String>, config: TokenReductionConfig, language_hint: Option<String>) -> Result<Vec<String>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `texts` | `Array<string>` | Yes | Slice of text references to reduce |
+| `texts` | `Vec<String>` | Yes | Slice of text references to reduce |
 | `config` | `TokenReductionConfig` | Yes | Configuration specifying reduction level and options |
-| `languageHint` | `string | null` | No | Optional ISO 639-3 language code (e.g., "eng", "spa") |
+| `language_hint` | `Option<String>` | No | Optional ISO 639-3 language code (e.g., "eng", "spa") |
 
-**Returns:** `Array<string>`
+**Returns:** `Vec<String>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### getReductionStatistics()
+### get_reduction_statistics()
 
 Calculates detailed statistics comparing original and reduced text.
 
@@ -3327,16 +3327,16 @@ Returns a tuple with the following statistics (in order):
 
 **Signature:**
 
-```typescript
-function getReductionStatistics(original: string, reduced: string): F64F64UsizeUsizeUsizeUsize
+```rust
+pub fn get_reduction_statistics(original: &str, reduced: &str) -> F64F64UsizeUsizeUsizeUsize
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `original` | `string` | Yes | The original text before reduction |
-| `reduced` | `string` | Yes | The reduced text after applying token reduction |
+| `original` | `String` | Yes | The original text before reduction |
+| `reduced` | `String` | Yes | The reduced text after applying token reduction |
 
 **Returns:** `F64F64UsizeUsizeUsizeUsize`
 
@@ -3349,16 +3349,16 @@ Create a bold annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function bold(start: number, end: number): TextAnnotation
+```rust
+pub fn bold(start: u32, end: u32) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
 
 **Returns:** `TextAnnotation`
 
@@ -3371,16 +3371,16 @@ Create an italic annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function italic(start: number, end: number): TextAnnotation
+```rust
+pub fn italic(start: u32, end: u32) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
 
 **Returns:** `TextAnnotation`
 
@@ -3393,16 +3393,16 @@ Create an underline annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function underline(start: number, end: number): TextAnnotation
+```rust
+pub fn underline(start: u32, end: u32) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
 
 **Returns:** `TextAnnotation`
 
@@ -3415,18 +3415,18 @@ Create a link annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function link(start: number, end: number, url: string, title?: string): TextAnnotation
+```rust
+pub fn link(start: u32, end: u32, url: &str, title: Option<String>) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
-| `url` | `string` | Yes | The URL to fetch |
-| `title` | `string | null` | No | The title |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
+| `url` | `String` | Yes | The URL to fetch |
+| `title` | `Option<String>` | No | The title |
 
 **Returns:** `TextAnnotation`
 
@@ -3439,16 +3439,16 @@ Create a code (inline) annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function code(start: number, end: number): TextAnnotation
+```rust
+pub fn code(start: u32, end: u32) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
 
 **Returns:** `TextAnnotation`
 
@@ -3461,16 +3461,16 @@ Create a strikethrough annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function strikethrough(start: number, end: number): TextAnnotation
+```rust
+pub fn strikethrough(start: u32, end: u32) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
 
 **Returns:** `TextAnnotation`
 
@@ -3483,16 +3483,16 @@ Create a subscript annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function subscript(start: number, end: number): TextAnnotation
+```rust
+pub fn subscript(start: u32, end: u32) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
 
 **Returns:** `TextAnnotation`
 
@@ -3505,39 +3505,39 @@ Create a superscript annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function superscript(start: number, end: number): TextAnnotation
+```rust
+pub fn superscript(start: u32, end: u32) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
 
 **Returns:** `TextAnnotation`
 
 
 ---
 
-### fontSize()
+### font_size()
 
 Create a font size annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function fontSize(start: number, end: number, value: string): TextAnnotation
+```rust
+pub fn font_size(start: u32, end: u32, value: &str) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
-| `value` | `string` | Yes | The value |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
+| `value` | `String` | Yes | The value |
 
 **Returns:** `TextAnnotation`
 
@@ -3550,17 +3550,17 @@ Create a color annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function color(start: number, end: number, value: string): TextAnnotation
+```rust
+pub fn color(start: u32, end: u32, value: &str) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
-| `value` | `string` | Yes | The value |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
+| `value` | `String` | Yes | The value |
 
 **Returns:** `TextAnnotation`
 
@@ -3573,23 +3573,23 @@ Create a highlight annotation for the given byte range.
 
 **Signature:**
 
-```typescript
-function highlight(start: number, end: number): TextAnnotation
+```rust
+pub fn highlight(start: u32, end: u32) -> TextAnnotation
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `start` | `number` | Yes | The start |
-| `end` | `number` | Yes | The end |
+| `start` | `u32` | Yes | The start |
+| `end` | `u32` | Yes | The end |
 
 **Returns:** `TextAnnotation`
 
 
 ---
 
-### classifyUri()
+### classify_uri()
 
 Classify a URL string into the appropriate `UriKind`.
 
@@ -3599,22 +3599,22 @@ Classify a URL string into the appropriate `UriKind`.
 
 **Signature:**
 
-```typescript
-function classifyUri(url: string): UriKind
+```rust
+pub fn classify_uri(url: &str) -> UriKind
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | Yes | The URL to fetch |
+| `url` | `String` | Yes | The URL to fetch |
 
 **Returns:** `UriKind`
 
 
 ---
 
-### safeDecode()
+### safe_decode()
 
 Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary.
 
@@ -3624,23 +3624,23 @@ mojibake-cleaned string.
 
 **Signature:**
 
-```typescript
-function safeDecode(byteData: Buffer, encoding?: string): string
+```rust
+pub fn safe_decode(byte_data: &[u8], encoding: Option<String>) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `byteData` | `Buffer` | Yes | The byte data |
-| `encoding` | `string | null` | No | The encoding |
+| `byte_data` | `Vec<u8>` | Yes | The byte data |
+| `encoding` | `Option<String>` | No | The encoding |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### calculateTextConfidence()
+### calculate_text_confidence()
 
 Estimate how trustworthy a decoded string is on a 0.0–1.0 scale.
 
@@ -3649,43 +3649,43 @@ point to mojibake, control characters, or suspicious character mixes.
 
 **Signature:**
 
-```typescript
-function calculateTextConfidence(text: string): number
+```rust
+pub fn calculate_text_confidence(text: &str) -> f64
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text |
+| `text` | `String` | Yes | The text |
 
-**Returns:** `number`
+**Returns:** `f64`
 
 
 ---
 
-### fixMojibake()
+### fix_mojibake()
 
 Strip control characters and replacement glyphs that typically arise from mojibake.
 
 **Signature:**
 
-```typescript
-function fixMojibake(text: string): Str
+```rust
+pub fn fix_mojibake(text: &str) -> Str
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text |
+| `text` | `String` | Yes | The text |
 
 **Returns:** `Str`
 
 
 ---
 
-### snakeToCamel()
+### snake_to_camel()
 
 Recursively convert snake_case keys in a JSON Value to camelCase.
 
@@ -3694,8 +3694,8 @@ a consistent camelCase API for consumers even though the Rust core uses snake_ca
 
 **Signature:**
 
-```typescript
-function snakeToCamel(val: Value): Value
+```rust
+pub fn snake_to_camel(val: Value) -> Value
 ```
 
 **Parameters:**
@@ -3709,7 +3709,7 @@ function snakeToCamel(val: Value): Value
 
 ---
 
-### camelToSnake()
+### camel_to_snake()
 
 Recursively convert camelCase keys in a JSON Value to snake_case.
 
@@ -3718,8 +3718,8 @@ camelCase config from JavaScript while the Rust core expects snake_case.
 
 **Signature:**
 
-```typescript
-function camelToSnake(val: Value): Value
+```rust
+pub fn camel_to_snake(val: Value) -> Value
 ```
 
 **Parameters:**
@@ -3733,7 +3733,7 @@ function camelToSnake(val: Value): Value
 
 ---
 
-### createStringBufferPool()
+### create_string_buffer_pool()
 
 Create a pre-configured string buffer pool for batch processing.
 
@@ -3743,23 +3743,23 @@ A pool configured for text accumulation with reasonable defaults.
 
 **Signature:**
 
-```typescript
-function createStringBufferPool(poolSize: number, bufferCapacity: number): StringBufferPool
+```rust
+pub fn create_string_buffer_pool(pool_size: usize, buffer_capacity: usize) -> StringBufferPool
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `poolSize` | `number` | Yes | Maximum number of buffers to keep in the pool |
-| `bufferCapacity` | `number` | Yes | Initial capacity for each buffer in bytes |
+| `pool_size` | `usize` | Yes | Maximum number of buffers to keep in the pool |
+| `buffer_capacity` | `usize` | Yes | Initial capacity for each buffer in bytes |
 
 **Returns:** `StringBufferPool`
 
 
 ---
 
-### createByteBufferPool()
+### create_byte_buffer_pool()
 
 Create a pre-configured byte buffer pool for batch processing.
 
@@ -3769,23 +3769,23 @@ A pool configured for binary data handling with reasonable defaults.
 
 **Signature:**
 
-```typescript
-function createByteBufferPool(poolSize: number, bufferCapacity: number): ByteBufferPool
+```rust
+pub fn create_byte_buffer_pool(pool_size: usize, buffer_capacity: usize) -> ByteBufferPool
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `poolSize` | `number` | Yes | Maximum number of buffers to keep in the pool |
-| `bufferCapacity` | `number` | Yes | Initial capacity for each buffer in bytes |
+| `pool_size` | `usize` | Yes | Maximum number of buffers to keep in the pool |
+| `buffer_capacity` | `usize` | Yes | Initial capacity for each buffer in bytes |
 
 **Returns:** `ByteBufferPool`
 
 
 ---
 
-### estimatePoolSize()
+### estimate_pool_size()
 
 Estimate optimal pool sizing based on file size and document type.
 
@@ -3799,44 +3799,44 @@ A `PoolSizeHint` with recommended pool configuration
 
 **Signature:**
 
-```typescript
-function estimatePoolSize(fileSize: number, mimeType: string): PoolSizeHint
+```rust
+pub fn estimate_pool_size(file_size: u64, mime_type: &str) -> PoolSizeHint
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fileSize` | `number` | Yes | Size of the file in bytes |
-| `mimeType` | `string` | Yes | MIME type of the document (e.g., "application/pdf") |
+| `file_size` | `u64` | Yes | Size of the file in bytes |
+| `mime_type` | `String` | Yes | MIME type of the document (e.g., "application/pdf") |
 
 **Returns:** `PoolSizeHint`
 
 
 ---
 
-### xmlTagName()
+### xml_tag_name()
 
 Converts XML tag name bytes to a string, avoiding allocation when possible.
 
 **Signature:**
 
-```typescript
-function xmlTagName(name: Buffer): Str
+```rust
+pub fn xml_tag_name(name: &[u8]) -> Str
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `Buffer` | Yes | The name |
+| `name` | `Vec<u8>` | Yes | The name |
 
 **Returns:** `Str`
 
 
 ---
 
-### escapeHtmlEntities()
+### escape_html_entities()
 
 Escape `&`, `<`, and `>` in text destined for markdown/HTML output.
 
@@ -3849,44 +3849,44 @@ borrowed `Cow` with no allocation.
 
 **Signature:**
 
-```typescript
-function escapeHtmlEntities(text: string): Str
+```rust
+pub fn escape_html_entities(text: &str) -> Str
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text |
+| `text` | `String` | Yes | The text |
 
 **Returns:** `Str`
 
 
 ---
 
-### normalizeWhitespace()
+### normalize_whitespace()
 
 Normalizes whitespace by collapsing multiple whitespace characters into single spaces.
 Returns Cow.Borrowed if no normalization needed.
 
 **Signature:**
 
-```typescript
-function normalizeWhitespace(s: string): Str
+```rust
+pub fn normalize_whitespace(s: &str) -> Str
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `s` | `string` | Yes | The s |
+| `s` | `String` | Yes | The s |
 
 **Returns:** `Str`
 
 
 ---
 
-### detectColumns()
+### detect_columns()
 
 Detect column positions from word x-coordinates.
 
@@ -3895,23 +3895,23 @@ and returns the median x-position for each detected column, sorted left to right
 
 **Signature:**
 
-```typescript
-function detectColumns(words: Array<HocrWord>, columnThreshold: number): Array<number>
+```rust
+pub fn detect_columns(words: Vec<HocrWord>, column_threshold: u32) -> Vec<u32>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `words` | `Array<HocrWord>` | Yes | The words |
-| `columnThreshold` | `number` | Yes | The column threshold |
+| `words` | `Vec<HocrWord>` | Yes | The words |
+| `column_threshold` | `u32` | Yes | The column threshold |
 
-**Returns:** `Array<number>`
+**Returns:** `Vec<u32>`
 
 
 ---
 
-### detectRows()
+### detect_rows()
 
 Detect row positions from word y-coordinates.
 
@@ -3921,23 +3921,23 @@ by the median word height to determine the grouping threshold.
 
 **Signature:**
 
-```typescript
-function detectRows(words: Array<HocrWord>, rowThresholdRatio: number): Array<number>
+```rust
+pub fn detect_rows(words: Vec<HocrWord>, row_threshold_ratio: f64) -> Vec<u32>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `words` | `Array<HocrWord>` | Yes | The words |
-| `rowThresholdRatio` | `number` | Yes | The row threshold ratio |
+| `words` | `Vec<HocrWord>` | Yes | The words |
+| `row_threshold_ratio` | `f64` | Yes | The row threshold ratio |
 
-**Returns:** `Array<number>`
+**Returns:** `Vec<u32>`
 
 
 ---
 
-### reconstructTable()
+### reconstruct_table()
 
 Reconstruct a table grid from words with bounding box positions.
 
@@ -3951,24 +3951,24 @@ Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
 
 **Signature:**
 
-```typescript
-function reconstructTable(words: Array<HocrWord>, columnThreshold: number, rowThresholdRatio: number): Array<Array<string>>
+```rust
+pub fn reconstruct_table(words: Vec<HocrWord>, column_threshold: u32, row_threshold_ratio: f64) -> Vec<Vec<String>>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `words` | `Array<HocrWord>` | Yes | The words |
-| `columnThreshold` | `number` | Yes | The column threshold |
-| `rowThresholdRatio` | `number` | Yes | The row threshold ratio |
+| `words` | `Vec<HocrWord>` | Yes | The words |
+| `column_threshold` | `u32` | Yes | The column threshold |
+| `row_threshold_ratio` | `f64` | Yes | The row threshold ratio |
 
-**Returns:** `Array<Array<string>>`
+**Returns:** `Vec<Vec<String>>`
 
 
 ---
 
-### tableToMarkdown()
+### table_to_markdown()
 
 Convert a table grid to markdown format.
 
@@ -3977,22 +3977,22 @@ Pipe characters in cell content are escaped.
 
 **Signature:**
 
-```typescript
-function tableToMarkdown(table: Array<Array<string>>): string
+```rust
+pub fn table_to_markdown(table: Vec<Vec<String>>) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `table` | `Array<Array<string>>` | Yes | The table |
+| `table` | `Vec<Vec<String>>` | Yes | The table |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### openapiJson()
+### openapi_json()
 
 Generate OpenAPI JSON schema.
 
@@ -4000,16 +4000,16 @@ Returns the complete OpenAPI 3.1 specification as a JSON string.
 
 **Signature:**
 
-```typescript
-function openapiJson(): string
+```rust
+pub fn openapi_json() -> String
 ```
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### validatePageBoundaries()
+### validate_page_boundaries()
 
 Validates the consistency and correctness of page boundaries.
 
@@ -4026,24 +4026,24 @@ Returns `KreuzbergError.Validation` if any boundary is invalid.
 
 **Signature:**
 
-```typescript
-function validatePageBoundaries(boundaries: Array<PageBoundary>): void
+```rust
+pub fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> Result<(), Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `boundaries` | `Array<PageBoundary>` | Yes | Page boundary markers to validate |
+| `boundaries` | `Vec<PageBoundary>` | Yes | Page boundary markers to validate |
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### calculatePageRange()
+### calculate_page_range()
 
 Calculate which pages a byte range spans.
 
@@ -4058,26 +4058,26 @@ Returns `KreuzbergError.Validation` if boundaries are invalid.
 
 **Signature:**
 
-```typescript
-function calculatePageRange(byteStart: number, byteEnd: number, boundaries: Array<PageBoundary>): OptionUsizeOptionUsize
+```rust
+pub fn calculate_page_range(byte_start: usize, byte_end: usize, boundaries: Vec<PageBoundary>) -> Result<OptionUsizeOptionUsize, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `byteStart` | `number` | Yes | Starting byte offset of the chunk |
-| `byteEnd` | `number` | Yes | Ending byte offset of the chunk |
-| `boundaries` | `Array<PageBoundary>` | Yes | Page boundary markers from the document |
+| `byte_start` | `usize` | Yes | Starting byte offset of the chunk |
+| `byte_end` | `usize` | Yes | Ending byte offset of the chunk |
+| `boundaries` | `Vec<PageBoundary>` | Yes | Page boundary markers from the document |
 
 **Returns:** `OptionUsizeOptionUsize`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### classifyChunk()
+### classify_chunk()
 
 Classify a single chunk based on its content and optional heading context.
 
@@ -4089,23 +4089,23 @@ is returned.
 
 **Signature:**
 
-```typescript
-function classifyChunk(content: string, headingContext?: HeadingContext): ChunkType
+```rust
+pub fn classify_chunk(content: &str, heading_context: Option<HeadingContext>) -> ChunkType
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `string` | Yes | The text content of the chunk (may be trimmed or raw). |
-| `headingContext` | `HeadingContext | null` | No | Optional heading hierarchy this chunk falls under |
+| `content` | `String` | Yes | The text content of the chunk (may be trimmed or raw). |
+| `heading_context` | `Option<HeadingContext>` | No | Optional heading hierarchy this chunk falls under |
 
 **Returns:** `ChunkType`
 
 
 ---
 
-### chunkText()
+### chunk_text()
 
 Split text into chunks with optional page boundary tracking.
 
@@ -4118,26 +4118,26 @@ A ChunkingResult containing all chunks and their metadata.
 
 **Signature:**
 
-```typescript
-function chunkText(text: string, config: ChunkingConfig, pageBoundaries?: Array<PageBoundary>): ChunkingResult
+```rust
+pub fn chunk_text(text: &str, config: ChunkingConfig, page_boundaries: Option<Vec<PageBoundary>>) -> Result<ChunkingResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text to split into chunks |
+| `text` | `String` | Yes | The text to split into chunks |
 | `config` | `ChunkingConfig` | Yes | Chunking configuration (max size, overlap, type) |
-| `pageBoundaries` | `Array<PageBoundary> | null` | No | Optional page boundary markers for mapping chunks to pages |
+| `page_boundaries` | `Option<Vec<PageBoundary>>` | No | Optional page boundary markers for mapping chunks to pages |
 
 **Returns:** `ChunkingResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### chunkTextWithHeadingSource()
+### chunk_text_with_heading_source()
 
 Chunk text with an optional separate markdown source for heading context resolution.
 
@@ -4147,27 +4147,27 @@ the original document had headings that were stripped during rendering.
 
 **Signature:**
 
-```typescript
-function chunkTextWithHeadingSource(text: string, config: ChunkingConfig, pageBoundaries?: Array<PageBoundary>, headingSource?: string): ChunkingResult
+```rust
+pub fn chunk_text_with_heading_source(text: &str, config: ChunkingConfig, page_boundaries: Option<Vec<PageBoundary>>, heading_source: Option<String>) -> Result<ChunkingResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text |
+| `text` | `String` | Yes | The text |
 | `config` | `ChunkingConfig` | Yes | The configuration options |
-| `pageBoundaries` | `Array<PageBoundary> | null` | No | The page boundaries |
-| `headingSource` | `string | null` | No | The heading source |
+| `page_boundaries` | `Option<Vec<PageBoundary>>` | No | The page boundaries |
+| `heading_source` | `Option<String>` | No | The heading source |
 
 **Returns:** `ChunkingResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### chunkTextWithType()
+### chunk_text_with_type()
 
 Chunk text with explicit type specification.
 
@@ -4180,28 +4180,28 @@ A ChunkingResult containing all chunks and their metadata.
 
 **Signature:**
 
-```typescript
-function chunkTextWithType(text: string, maxCharacters: number, overlap: number, trim: boolean, chunkerType: ChunkerType): ChunkingResult
+```rust
+pub fn chunk_text_with_type(text: &str, max_characters: usize, overlap: usize, trim: bool, chunker_type: ChunkerType) -> Result<ChunkingResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text to split into chunks |
-| `maxCharacters` | `number` | Yes | Maximum characters per chunk |
-| `overlap` | `number` | Yes | Character overlap between consecutive chunks |
-| `trim` | `boolean` | Yes | Whether to trim whitespace from boundaries |
-| `chunkerType` | `ChunkerType` | Yes | Type of chunker to use (Text or Markdown) |
+| `text` | `String` | Yes | The text to split into chunks |
+| `max_characters` | `usize` | Yes | Maximum characters per chunk |
+| `overlap` | `usize` | Yes | Character overlap between consecutive chunks |
+| `trim` | `bool` | Yes | Whether to trim whitespace from boundaries |
+| `chunker_type` | `ChunkerType` | Yes | Type of chunker to use (Text or Markdown) |
 
 **Returns:** `ChunkingResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### chunkTextsBatch()
+### chunk_texts_batch()
 
 Batch process multiple texts with the same configuration.
 
@@ -4218,25 +4218,25 @@ Returns an error if chunking any individual text fails.
 
 **Signature:**
 
-```typescript
-function chunkTextsBatch(texts: Array<string>, config: ChunkingConfig): Array<ChunkingResult>
+```rust
+pub fn chunk_texts_batch(texts: Vec<String>, config: ChunkingConfig) -> Result<Vec<ChunkingResult>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `texts` | `Array<string>` | Yes | Slice of text strings to chunk |
+| `texts` | `Vec<String>` | Yes | Slice of text strings to chunk |
 | `config` | `ChunkingConfig` | Yes | Chunking configuration to apply to all texts |
 
-**Returns:** `Array<ChunkingResult>`
+**Returns:** `Vec<ChunkingResult>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### precomputeUtf8Boundaries()
+### precompute_utf8_boundaries()
 
 Pre-computes valid UTF-8 character boundaries for a text string.
 
@@ -4250,22 +4250,22 @@ The BitVec has length `text.len() + 1` (includes the end position).
 
 **Signature:**
 
-```typescript
-function precomputeUtf8Boundaries(text: string): BitVec
+```rust
+pub fn precompute_utf8_boundaries(text: &str) -> BitVec
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text to analyze |
+| `text` | `String` | Yes | The text to analyze |
 
 **Returns:** `BitVec`
 
 
 ---
 
-### validateUtf8Boundaries()
+### validate_utf8_boundaries()
 
 Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries.
 
@@ -4300,25 +4300,25 @@ for large sets.
 
 **Signature:**
 
-```typescript
-function validateUtf8Boundaries(text: string, boundaries: Array<PageBoundary>): void
+```rust
+pub fn validate_utf8_boundaries(text: &str, boundaries: Vec<PageBoundary>) -> Result<(), Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text being chunked |
-| `boundaries` | `Array<PageBoundary>` | Yes | Page boundary markers to validate |
+| `text` | `String` | Yes | The text being chunked |
+| `boundaries` | `Vec<PageBoundary>` | Yes | Page boundary markers to validate |
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### registerChunkingProcessor()
+### register_chunking_processor()
 
 Register the chunking processor with the global registry.
 
@@ -4330,31 +4330,31 @@ Explicit calling is optional.
 
 **Signature:**
 
-```typescript
-function registerChunkingProcessor(): void
+```rust
+pub fn register_chunking_processor() -> Result<(), Error>
 ```
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### createClient()
+### create_client()
 
 Create a liter-llm `DefaultClient` from kreuzberg's `LlmConfig`.
 
 The `model` field from the config is passed as a model hint so that
 liter-llm can resolve the correct provider automatically.
 
-When `api_key` is `null`, liter-llm falls back to the provider's standard
+When `api_key` is `None`, liter-llm falls back to the provider's standard
 environment variable (e.g., `OPENAI_API_KEY`).
 
 **Signature:**
 
-```typescript
-function createClient(config: LlmConfig): DefaultClient
+```rust
+pub fn create_client(config: LlmConfig) -> Result<DefaultClient, Error>
 ```
 
 **Parameters:**
@@ -4365,36 +4365,36 @@ function createClient(config: LlmConfig): DefaultClient
 
 **Returns:** `DefaultClient`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### renderTemplate()
+### render_template()
 
 Render a Jinja2 template with the given context variables.
 
 **Signature:**
 
-```typescript
-function renderTemplate(template: string, context: Value): string
+```rust
+pub fn render_template(template: &str, context: Value) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `template` | `string` | Yes | The template |
+| `template` | `String` | Yes | The template |
 | `context` | `Value` | Yes | The value |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractStructured()
+### extract_structured()
 
 Extract structured data from document content using an LLM with JSON schema.
 
@@ -4414,25 +4414,25 @@ Returns an error if:
 
 **Signature:**
 
-```typescript
-function extractStructured(content: string, config: StructuredExtractionConfig): Promise<LlmUsage>
+```rust
+pub async fn extract_structured(content: &str, config: StructuredExtractionConfig) -> Result<LlmUsage, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `string` | Yes | The extracted document text to send to the LLM. |
+| `content` | `String` | Yes | The extracted document text to send to the LLM. |
 | `config` | `StructuredExtractionConfig` | Yes | Structured extraction configuration including schema and LLM settings. |
 
 **Returns:** `LlmUsage`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### vlmOcr()
+### vlm_ocr()
 
 Perform OCR on an image using a vision language model.
 
@@ -4454,22 +4454,22 @@ Extracted text from the image, or an error if the VLM call fails.
 
 **Signature:**
 
-```typescript
-function vlmOcr(imageBytes: Buffer, imageMimeType: string, language: string, config: LlmConfig): Promise<LlmUsage>
+```rust
+pub async fn vlm_ocr(image_bytes: &[u8], image_mime_type: &str, language: &str, config: LlmConfig) -> Result<LlmUsage, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `imageBytes` | `Buffer` | Yes | Raw image data (JPEG, PNG, WebP, etc.) |
-| `imageMimeType` | `string` | Yes | MIME type of the image (e.g., `"image/png"`) |
-| `language` | `string` | Yes | ISO 639 language code or Tesseract language name |
+| `image_bytes` | `Vec<u8>` | Yes | Raw image data (JPEG, PNG, WebP, etc.) |
+| `image_mime_type` | `String` | Yes | MIME type of the image (e.g., `"image/png"`) |
+| `language` | `String` | Yes | ISO 639 language code or Tesseract language name |
 | `config` | `LlmConfig` | Yes | LLM provider/model configuration |
 
 **Returns:** `LlmUsage`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
@@ -4480,58 +4480,58 @@ L2-normalize a vector.
 
 **Signature:**
 
-```typescript
-function normalize(v: Array<number>): Array<number>
+```rust
+pub fn normalize(v: Vec<f32>) -> Vec<f32>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `v` | `Array<number>` | Yes | The v |
+| `v` | `Vec<f32>` | Yes | The v |
 
-**Returns:** `Array<number>`
+**Returns:** `Vec<f32>`
 
 
 ---
 
-### getPreset()
+### get_preset()
 
 Get a preset by name.
 
 **Signature:**
 
-```typescript
-function getPreset(name: string): EmbeddingPreset | null
+```rust
+pub fn get_preset(name: &str) -> Option<EmbeddingPreset>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | Yes | The name |
+| `name` | `String` | Yes | The name |
 
-**Returns:** `EmbeddingPreset | null`
+**Returns:** `Option<EmbeddingPreset>`
 
 
 ---
 
-### listPresets()
+### list_presets()
 
 List all available preset names.
 
 **Signature:**
 
-```typescript
-function listPresets(): Array<string>
+```rust
+pub fn list_presets() -> Vec<String>
 ```
 
-**Returns:** `Array<string>`
+**Returns:** `Vec<String>`
 
 
 ---
 
-### warmModel()
+### warm_model()
 
 Eagerly download and cache an embedding model without returning the handle.
 
@@ -4545,25 +4545,25 @@ scenarios (e.g., init containers), use `download_model` instead.
 
 **Signature:**
 
-```typescript
-function warmModel(modelType: EmbeddingModelType, cacheDir?: string): void
+```rust
+pub fn warm_model(model_type: EmbeddingModelType, cache_dir: Option<PathBuf>) -> Result<(), Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `modelType` | `EmbeddingModelType` | Yes | The embedding model type |
-| `cacheDir` | `string | null` | No | The cache dir |
+| `model_type` | `EmbeddingModelType` | Yes | The embedding model type |
+| `cache_dir` | `Option<PathBuf>` | No | The cache dir |
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### downloadModel()
+### download_model()
 
 Download an embedding model's files without initializing ONNX Runtime.
 
@@ -4576,25 +4576,25 @@ pre-populate the cache without loading models into memory.
 
 **Signature:**
 
-```typescript
-function downloadModel(modelType: EmbeddingModelType, cacheDir?: string): void
+```rust
+pub fn download_model(model_type: EmbeddingModelType, cache_dir: Option<PathBuf>) -> Result<(), Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `modelType` | `EmbeddingModelType` | Yes | The embedding model type |
-| `cacheDir` | `string | null` | No | The cache dir |
+| `model_type` | `EmbeddingModelType` | Yes | The embedding model type |
+| `cache_dir` | `Option<PathBuf>` | No | The cache dir |
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### generateEmbeddingsForChunks()
+### generate_embeddings_for_chunks()
 
 Generate embeddings for text chunks using the specified configuration.
 
@@ -4608,76 +4608,76 @@ model initialization or embedding generation fails.
 
 **Signature:**
 
-```typescript
-function generateEmbeddingsForChunks(chunks: Array<Chunk>, config: EmbeddingConfig): void
+```rust
+pub fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: EmbeddingConfig) -> Result<(), Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `chunks` | `Array<Chunk>` | Yes | Mutable reference to vector of chunks to generate embeddings for |
+| `chunks` | `Vec<Chunk>` | Yes | Mutable reference to vector of chunks to generate embeddings for |
 | `config` | `EmbeddingConfig` | Yes | Embedding configuration specifying model and parameters |
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### calculateSmartDpi()
+### calculate_smart_dpi()
 
 Calculate smart DPI based on page dimensions, memory constraints, and target DPI
 
 **Signature:**
 
-```typescript
-function calculateSmartDpi(pageWidth: number, pageHeight: number, targetDpi: number, maxDimension: number, maxMemoryMb: number): number
+```rust
+pub fn calculate_smart_dpi(page_width: f64, page_height: f64, target_dpi: i32, max_dimension: i32, max_memory_mb: f64) -> i32
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageWidth` | `number` | Yes | The page width |
-| `pageHeight` | `number` | Yes | The page height |
-| `targetDpi` | `number` | Yes | The target dpi |
-| `maxDimension` | `number` | Yes | The max dimension |
-| `maxMemoryMb` | `number` | Yes | The max memory mb |
+| `page_width` | `f64` | Yes | The page width |
+| `page_height` | `f64` | Yes | The page height |
+| `target_dpi` | `i32` | Yes | The target dpi |
+| `max_dimension` | `i32` | Yes | The max dimension |
+| `max_memory_mb` | `f64` | Yes | The max memory mb |
 
-**Returns:** `number`
+**Returns:** `i32`
 
 
 ---
 
-### calculateOptimalDpi()
+### calculate_optimal_dpi()
 
 Calculate optimal DPI with min/max constraints
 
 **Signature:**
 
-```typescript
-function calculateOptimalDpi(pageWidth: number, pageHeight: number, targetDpi: number, maxDimension: number, minDpi: number, maxDpi: number): number
+```rust
+pub fn calculate_optimal_dpi(page_width: f64, page_height: f64, target_dpi: i32, max_dimension: i32, min_dpi: i32, max_dpi: i32) -> i32
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageWidth` | `number` | Yes | The page width |
-| `pageHeight` | `number` | Yes | The page height |
-| `targetDpi` | `number` | Yes | The target dpi |
-| `maxDimension` | `number` | Yes | The max dimension |
-| `minDpi` | `number` | Yes | The min dpi |
-| `maxDpi` | `number` | Yes | The max dpi |
+| `page_width` | `f64` | Yes | The page width |
+| `page_height` | `f64` | Yes | The page height |
+| `target_dpi` | `i32` | Yes | The target dpi |
+| `max_dimension` | `i32` | Yes | The max dimension |
+| `min_dpi` | `i32` | Yes | The min dpi |
+| `max_dpi` | `i32` | Yes | The max dpi |
 
-**Returns:** `number`
+**Returns:** `i32`
 
 
 ---
 
-### normalizeImageDpi()
+### normalize_image_dpi()
 
 Normalize image DPI based on extraction configuration
 
@@ -4686,35 +4686,35 @@ Normalize image DPI based on extraction configuration
 
 **Signature:**
 
-```typescript
-function normalizeImageDpi(rgbData: Buffer, width: number, height: number, config: ExtractionConfig, currentDpi?: number): NormalizeResult
+```rust
+pub fn normalize_image_dpi(rgb_data: &[u8], width: usize, height: usize, config: ExtractionConfig, current_dpi: Option<f64>) -> Result<NormalizeResult, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rgbData` | `Buffer` | Yes | RGB image data as a flat `Vec<u8>` (height * width * 3 bytes, row-major) |
-| `width` | `number` | Yes | Image width in pixels |
-| `height` | `number` | Yes | Image height in pixels |
+| `rgb_data` | `Vec<u8>` | Yes | RGB image data as a flat `Vec<u8>` (height * width * 3 bytes, row-major) |
+| `width` | `usize` | Yes | Image width in pixels |
+| `height` | `usize` | Yes | Image height in pixels |
 | `config` | `ExtractionConfig` | Yes | Extraction configuration containing DPI settings |
-| `currentDpi` | `number | null` | No | Optional current DPI of the image (defaults to 72 if None) |
+| `current_dpi` | `Option<f64>` | No | Optional current DPI of the image (defaults to 72 if None) |
 
 **Returns:** `NormalizeResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### resizeImage()
+### resize_image()
 
 Resize an image using fast_image_resize with appropriate algorithm based on scale factor
 
 **Signature:**
 
-```typescript
-function resizeImage(image: DynamicImage, newWidth: number, newHeight: number, scaleFactor: number): DynamicImage
+```rust
+pub fn resize_image(image: DynamicImage, new_width: u32, new_height: u32, scale_factor: f64) -> Result<DynamicImage, Error>
 ```
 
 **Parameters:**
@@ -4722,45 +4722,45 @@ function resizeImage(image: DynamicImage, newWidth: number, newHeight: number, s
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `image` | `DynamicImage` | Yes | The dynamic image |
-| `newWidth` | `number` | Yes | The new width |
-| `newHeight` | `number` | Yes | The new height |
-| `scaleFactor` | `number` | Yes | The scale factor |
+| `new_width` | `u32` | Yes | The new width |
+| `new_height` | `u32` | Yes | The new height |
+| `scale_factor` | `f64` | Yes | The scale factor |
 
 **Returns:** `DynamicImage`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### detectLanguages()
+### detect_languages()
 
 Detect languages in text using whatlang.
 
 Returns a list of detected language codes (ISO 639-3 format).
-Returns `null` if no languages could be detected with sufficient confidence.
+Returns `None` if no languages could be detected with sufficient confidence.
 
 **Signature:**
 
-```typescript
-function detectLanguages(text: string, config: LanguageDetectionConfig): Array<string> | null
+```rust
+pub fn detect_languages(text: &str, config: LanguageDetectionConfig) -> Result<Option<Vec<String>>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text to analyze for language detection |
+| `text` | `String` | Yes | The text to analyze for language detection |
 | `config` | `LanguageDetectionConfig` | Yes | Optional configuration for language detection |
 
-**Returns:** `Array<string> | null`
+**Returns:** `Option<Vec<String>>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### registerLanguageDetectionProcessor()
+### register_language_detection_processor()
 
 Register the language detection processor with the global registry.
 
@@ -4772,25 +4772,25 @@ Explicit calling is optional.
 
 **Signature:**
 
-```typescript
-function registerLanguageDetectionProcessor(): void
+```rust
+pub fn register_language_detection_processor() -> Result<(), Error>
 ```
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### getStopwords()
+### get_stopwords()
 
 Get stopwords for a language with normalization.
 
 This function provides a user-friendly interface to the stopwords registry with:
 - **Case-insensitive lookup**: "EN", "en", "En" all work
 - **Locale normalization**: "en-US", "en_GB", "es-ES" extract to "en", "es"
-- **Consistent behavior**: Returns `null` for unsupported languages
+- **Consistent behavior**: Returns `None` for unsupported languages
 
 # Language Code Format
 
@@ -4805,7 +4805,7 @@ All formats are normalized to lowercase two-letter ISO 639-1 codes.
 **Returns:**
 
 - `Some(&HashSet<String>)` if the language is supported (64 languages available)
-- `null` if the language is not supported
+- `None` if the language is not supported
 
 # Performance
 
@@ -4817,22 +4817,22 @@ Total overhead is negligible (~10-50ns on modern CPUs).
 
 **Signature:**
 
-```typescript
-function getStopwords(lang: string): AHashSet | null
+```rust
+pub fn get_stopwords(lang: &str) -> Option<AHashSet>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `lang` | `string` | Yes | The lang |
+| `lang` | `String` | Yes | The lang |
 
-**Returns:** `AHashSet | null`
+**Returns:** `Option<AHashSet>`
 
 
 ---
 
-### getStopwordsWithFallback()
+### get_stopwords_with_fallback()
 
 Get stopwords for a language with fallback support.
 
@@ -4850,7 +4850,7 @@ Both language codes support the same normalization as `get_stopwords()`:
 **Returns:**
 
 - `Some(&HashSet<String>)` if either language is supported
-- `null` if neither language is supported
+- `None` if neither language is supported
 
 # Common Patterns
 
@@ -4865,23 +4865,23 @@ Total overhead is negligible (~10-100ns on modern CPUs).
 
 **Signature:**
 
-```typescript
-function getStopwordsWithFallback(language: string, fallback: string): AHashSet | null
+```rust
+pub fn get_stopwords_with_fallback(language: &str, fallback: &str) -> Option<AHashSet>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `language` | `string` | Yes | Primary language code to try first |
-| `fallback` | `string` | Yes | Fallback language code to use if primary not available |
+| `language` | `String` | Yes | Primary language code to try first |
+| `fallback` | `String` | Yes | Fallback language code to use if primary not available |
 
-**Returns:** `AHashSet | null`
+**Returns:** `Option<AHashSet>`
 
 
 ---
 
-### extractKeywords()
+### extract_keywords()
 
 Extract keywords from text using the specified algorithm.
 
@@ -4900,25 +4900,25 @@ Returns an error if:
 
 **Signature:**
 
-```typescript
-function extractKeywords(text: string, config: KeywordConfig): Array<Keyword>
+```rust
+pub fn extract_keywords(text: &str, config: KeywordConfig) -> Result<Vec<Keyword>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | The text to extract keywords from |
+| `text` | `String` | Yes | The text to extract keywords from |
 | `config` | `KeywordConfig` | Yes | Keyword extraction configuration |
 
-**Returns:** `Array<Keyword>`
+**Returns:** `Vec<Keyword>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### registerKeywordProcessor()
+### register_keyword_processor()
 
 Register the keyword extraction processor with the global registry.
 
@@ -4930,18 +4930,18 @@ Explicit calling is optional.
 
 **Signature:**
 
-```typescript
-function registerKeywordProcessor(): void
+```rust
+pub fn register_keyword_processor() -> Result<(), Error>
 ```
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### textBlockToElement()
+### text_block_to_element()
 
 Convert a PaddleOCR TextBlock to a unified OcrElement.
 
@@ -4964,8 +4964,8 @@ Returns `Ok(None)` if the detection is filtered out due to low `box_score`.
 
 **Signature:**
 
-```typescript
-function textBlockToElement(block: TextBlock, pageNumber: number): OcrElement | null
+```rust
+pub fn text_block_to_element(block: TextBlock, page_number: usize) -> Result<Option<OcrElement>, Error>
 ```
 
 **Parameters:**
@@ -4973,16 +4973,16 @@ function textBlockToElement(block: TextBlock, pageNumber: number): OcrElement | 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `block` | `TextBlock` | Yes | PaddleOCR TextBlock containing OCR results |
-| `pageNumber` | `number` | Yes | 1-indexed page number |
+| `page_number` | `usize` | Yes | 1-indexed page number |
 
-**Returns:** `OcrElement | null`
+**Returns:** `Option<OcrElement>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### tsvRowToElement()
+### tsv_row_to_element()
 
 Convert a Tesseract TSV row to a unified OcrElement.
 
@@ -4997,8 +4997,8 @@ An `OcrElement` with rectangle geometry and Tesseract metadata.
 
 **Signature:**
 
-```typescript
-function tsvRowToElement(row: TsvRow): OcrElement
+```rust
+pub fn tsv_row_to_element(row: TsvRow) -> OcrElement
 ```
 
 **Parameters:**
@@ -5012,7 +5012,7 @@ function tsvRowToElement(row: TsvRow): OcrElement
 
 ---
 
-### iteratorWordToElement()
+### iterator_word_to_element()
 
 Convert a Tesseract iterator WordData to a unified OcrElement with rich metadata.
 
@@ -5026,8 +5026,8 @@ An `OcrElement` at `Word` level with all available font and layout metadata.
 
 **Signature:**
 
-```typescript
-function iteratorWordToElement(word: WordData, blockType?: TessPolyBlockType, paraInfo?: ParaInfo, pageNumber: number): OcrElement
+```rust
+pub fn iterator_word_to_element(word: WordData, block_type: Option<TessPolyBlockType>, para_info: Option<ParaInfo>, page_number: usize) -> OcrElement
 ```
 
 **Parameters:**
@@ -5035,16 +5035,16 @@ function iteratorWordToElement(word: WordData, blockType?: TessPolyBlockType, pa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `word` | `WordData` | Yes | WordData from the Tesseract result iterator |
-| `blockType` | `TessPolyBlockType | null` | No | Optional block type from Tesseract layout analysis |
-| `paraInfo` | `ParaInfo | null` | No | Optional paragraph metadata (justification, list item flag) |
-| `pageNumber` | `number` | Yes | 1-indexed page number |
+| `block_type` | `Option<TessPolyBlockType>` | No | Optional block type from Tesseract layout analysis |
+| `para_info` | `Option<ParaInfo>` | No | Optional paragraph metadata (justification, list item flag) |
+| `page_number` | `usize` | Yes | 1-indexed page number |
 
 **Returns:** `OcrElement`
 
 
 ---
 
-### elementToHocrWord()
+### element_to_hocr_word()
 
 Convert an OcrElement to an HocrWord for table reconstruction.
 
@@ -5057,8 +5057,8 @@ An `HocrWord` suitable for table reconstruction algorithms.
 
 **Signature:**
 
-```typescript
-function elementToHocrWord(element: OcrElement): HocrWord
+```rust
+pub fn element_to_hocr_word(element: OcrElement) -> HocrWord
 ```
 
 **Parameters:**
@@ -5072,7 +5072,7 @@ function elementToHocrWord(element: OcrElement): HocrWord
 
 ---
 
-### elementsToHocrWords()
+### elements_to_hocr_words()
 
 Convert a vector of OcrElements to HocrWords for batch table processing.
 
@@ -5085,23 +5085,23 @@ A vector of HocrWords filtered by confidence and element level.
 
 **Signature:**
 
-```typescript
-function elementsToHocrWords(elements: Array<OcrElement>, minConfidence: number): Array<HocrWord>
+```rust
+pub fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<HocrWord>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `elements` | `Array<OcrElement>` | Yes | Slice of OCR elements to convert |
-| `minConfidence` | `number` | Yes | Minimum recognition confidence threshold (0.0-1.0) |
+| `elements` | `Vec<OcrElement>` | Yes | Slice of OCR elements to convert |
+| `min_confidence` | `f64` | Yes | Minimum recognition confidence threshold (0.0-1.0) |
 
-**Returns:** `Array<HocrWord>`
+**Returns:** `Vec<HocrWord>`
 
 
 ---
 
-### parseHocrToInternalDocument()
+### parse_hocr_to_internal_document()
 
 Parse hOCR HTML into an `InternalDocument` with full spatial and confidence metadata.
 
@@ -5122,27 +5122,27 @@ Page numbers come from the `ppageno` title property (converted to 1-indexed).
 
 **Signature:**
 
-```typescript
-function parseHocrToInternalDocument(hocrHtml: string): InternalDocument
+```rust
+pub fn parse_hocr_to_internal_document(hocr_html: &str) -> InternalDocument
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `hocrHtml` | `string` | Yes | The hocr html |
+| `hocr_html` | `String` | Yes | The hocr html |
 
 **Returns:** `InternalDocument`
 
 
 ---
 
-### assembleOcrMarkdown()
+### assemble_ocr_markdown()
 
 Assemble structured markdown from OCR elements using layout detection results.
 
 Both inputs must be in the same pixel coordinate space (from the same
-rendered page image). Returns plain text join when `detection` is `null`.
+rendered page image). Returns plain text join when `detection` is `None`.
 
 `recognized_tables` provides pre-computed markdown for Table regions
 (from TATR or other table structure recognizer). When empty, Table
@@ -5150,26 +5150,26 @@ regions fall back to heuristic grid reconstruction from OCR elements.
 
 **Signature:**
 
-```typescript
-function assembleOcrMarkdown(elements: Array<OcrElement>, detection?: DetectionResult, imgWidth: number, imgHeight: number, recognizedTables: Array<RecognizedTable>): string
+```rust
+pub fn assemble_ocr_markdown(elements: Vec<OcrElement>, detection: Option<DetectionResult>, img_width: u32, img_height: u32, recognized_tables: Vec<RecognizedTable>) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `elements` | `Array<OcrElement>` | Yes | The elements |
-| `detection` | `DetectionResult | null` | No | The detection result |
-| `imgWidth` | `number` | Yes | The img width |
-| `imgHeight` | `number` | Yes | The img height |
-| `recognizedTables` | `Array<RecognizedTable>` | Yes | The recognized tables |
+| `elements` | `Vec<OcrElement>` | Yes | The elements |
+| `detection` | `Option<DetectionResult>` | No | The detection result |
+| `img_width` | `u32` | Yes | The img width |
+| `img_height` | `u32` | Yes | The img height |
+| `recognized_tables` | `Vec<RecognizedTable>` | Yes | The recognized tables |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### recognizePageTables()
+### recognize_page_tables()
 
 Run TATR table recognition for all Table regions in a page.
 
@@ -5178,25 +5178,25 @@ matches OCR elements to cells, and produces markdown tables.
 
 **Signature:**
 
-```typescript
-function recognizePageTables(pageImage: RgbImage, detection: DetectionResult, elements: Array<OcrElement>, tatrModel: TatrModel): Array<RecognizedTable>
+```rust
+pub fn recognize_page_tables(page_image: RgbImage, detection: DetectionResult, elements: Vec<OcrElement>, tatr_model: TatrModel) -> Vec<RecognizedTable>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageImage` | `RgbImage` | Yes | The rgb image |
+| `page_image` | `RgbImage` | Yes | The rgb image |
 | `detection` | `DetectionResult` | Yes | The detection result |
-| `elements` | `Array<OcrElement>` | Yes | The elements |
-| `tatrModel` | `TatrModel` | Yes | The tatr model |
+| `elements` | `Vec<OcrElement>` | Yes | The elements |
+| `tatr_model` | `TatrModel` | Yes | The tatr model |
 
-**Returns:** `Array<RecognizedTable>`
+**Returns:** `Vec<RecognizedTable>`
 
 
 ---
 
-### extractWordsFromTsv()
+### extract_words_from_tsv()
 
 Extract words from Tesseract TSV output and convert to HocrWord format.
 
@@ -5205,25 +5205,25 @@ converts it to the HocrWord format used for table reconstruction.
 
 **Signature:**
 
-```typescript
-function extractWordsFromTsv(tsvData: string, minConfidence: number): Array<HocrWord>
+```rust
+pub fn extract_words_from_tsv(tsv_data: &str, min_confidence: f64) -> Result<Vec<HocrWord>, OcrError>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tsvData` | `string` | Yes | The tsv data |
-| `minConfidence` | `number` | Yes | The min confidence |
+| `tsv_data` | `String` | Yes | The tsv data |
+| `min_confidence` | `f64` | Yes | The min confidence |
 
-**Returns:** `Array<HocrWord>`
+**Returns:** `Vec<HocrWord>`
 
-**Errors:** Throws `OcrError`.
+**Errors:** Returns `Err(OcrError)`.
 
 
 ---
 
-### computeHash()
+### compute_hash()
 
 Compute a blake3 hash string from input data.
 
@@ -5231,64 +5231,64 @@ Returns a 32-character hex string (128 bits of blake3 output).
 
 **Signature:**
 
-```typescript
-function computeHash(data: string): string
+```rust
+pub fn compute_hash(data: &str) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `string` | Yes | The data |
+| `data` | `String` | Yes | The data |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### validateLanguageCode()
+### validate_language_code()
 
 **Signature:**
 
-```typescript
-function validateLanguageCode(langCode: string): void
+```rust
+pub fn validate_language_code(lang_code: &str) -> Result<(), OcrError>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `langCode` | `string` | Yes | The lang code |
+| `lang_code` | `String` | Yes | The lang code |
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `OcrError`.
+**Errors:** Returns `Err(OcrError)`.
 
 
 ---
 
-### validateTesseractVersion()
+### validate_tesseract_version()
 
 **Signature:**
 
-```typescript
-function validateTesseractVersion(version: number): void
+```rust
+pub fn validate_tesseract_version(version: u32) -> Result<(), OcrError>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version` | `number` | Yes | The version |
+| `version` | `u32` | Yes | The version |
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `OcrError`.
+**Errors:** Returns `Err(OcrError)`.
 
 
 ---
 
-### ensureOrtAvailable()
+### ensure_ort_available()
 
 Ensure ONNX Runtime is discoverable. Safe to call multiple times (no-op after first).
 
@@ -5297,37 +5297,37 @@ official Microsoft release and no system library search is needed.
 
 **Signature:**
 
-```typescript
-function ensureOrtAvailable(): void
+```rust
+pub fn ensure_ort_available()
 ```
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### isLanguageSupported()
+### is_language_supported()
 
 Check if a language code is supported by PaddleOCR.
 
 **Signature:**
 
-```typescript
-function isLanguageSupported(lang: string): boolean
+```rust
+pub fn is_language_supported(lang: &str) -> bool
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `lang` | `string` | Yes | The lang |
+| `lang` | `String` | Yes | The lang |
 
-**Returns:** `boolean`
+**Returns:** `bool`
 
 
 ---
 
-### languageToScriptFamily()
+### language_to_script_family()
 
 Map a PaddleOCR language code to its script family.
 
@@ -5353,58 +5353,58 @@ Chinese simplified, traditional, and Japanese share the `chinese` rec model.
 
 **Signature:**
 
-```typescript
-function languageToScriptFamily(paddleLang: string): string
+```rust
+pub fn language_to_script_family(paddle_lang: &str) -> String
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `paddleLang` | `string` | Yes | The paddle lang |
+| `paddle_lang` | `String` | Yes | The paddle lang |
 
-**Returns:** `string`
+**Returns:** `String`
 
 
 ---
 
-### mapLanguageCode()
+### map_language_code()
 
 Map Kreuzberg language codes to PaddleOCR language codes.
 
 **Signature:**
 
-```typescript
-function mapLanguageCode(kreuzbergCode: string): string | null
+```rust
+pub fn map_language_code(kreuzberg_code: &str) -> Option<String>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `kreuzbergCode` | `string` | Yes | The kreuzberg code |
+| `kreuzberg_code` | `String` | Yes | The kreuzberg code |
 
-**Returns:** `string | null`
+**Returns:** `Option<String>`
 
 
 ---
 
-### resolveCacheDir()
+### resolve_cache_dir()
 
 Resolve the cache directory for the auto-rotate model.
 
 **Signature:**
 
-```typescript
-function resolveCacheDir(): string
+```rust
+pub fn resolve_cache_dir() -> PathBuf
 ```
 
-**Returns:** `string`
+**Returns:** `PathBuf`
 
 
 ---
 
-### detectAndRotate()
+### detect_and_rotate()
 
 Detect orientation and return a corrected image if rotation is needed.
 
@@ -5413,8 +5413,8 @@ Returns `Ok(Some(rotated_bytes))` if rotation was applied,
 
 **Signature:**
 
-```typescript
-function detectAndRotate(detector: DocOrientationDetector, imageBytes: Buffer): Buffer | null
+```rust
+pub fn detect_and_rotate(detector: DocOrientationDetector, image_bytes: &[u8]) -> Result<Option<Vec<u8>>, Error>
 ```
 
 **Parameters:**
@@ -5422,16 +5422,16 @@ function detectAndRotate(detector: DocOrientationDetector, imageBytes: Buffer): 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `detector` | `DocOrientationDetector` | Yes | The doc orientation detector |
-| `imageBytes` | `Buffer` | Yes | The image bytes |
+| `image_bytes` | `Vec<u8>` | Yes | The image bytes |
 
-**Returns:** `Buffer | null`
+**Returns:** `Option<Vec<u8>>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### buildCellGrid()
+### build_cell_grid()
 
 Build a 2D cell grid from TATR detections.
 
@@ -5448,8 +5448,8 @@ If `table_bbox` is provided, it is used to clip the row widening bounds.
 
 **Signature:**
 
-```typescript
-function buildCellGrid(result: TatrResult, tableBbox?: F324): Array<Array<CellBBox>>
+```rust
+pub fn build_cell_grid(result: TatrResult, table_bbox: Option<F324>) -> Vec<Vec<CellBBox>>
 ```
 
 **Parameters:**
@@ -5457,14 +5457,14 @@ function buildCellGrid(result: TatrResult, tableBbox?: F324): Array<Array<CellBB
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `result` | `TatrResult` | Yes | The tatr result |
-| `tableBbox` | `F324 | null` | No | The [f32;4] |
+| `table_bbox` | `Option<F324>` | No | The [f32;4] |
 
-**Returns:** `Array<Array<CellBBox>>`
+**Returns:** `Vec<Vec<CellBBox>>`
 
 
 ---
 
-### applyHeuristics()
+### apply_heuristics()
 
 Apply Docling-style postprocessing heuristics to raw detections.
 
@@ -5476,24 +5476,24 @@ This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
 
 **Signature:**
 
-```typescript
-function applyHeuristics(detections: Array<LayoutDetection>, pageWidth: number, pageHeight: number): void
+```rust
+pub fn apply_heuristics(detections: Vec<LayoutDetection>, page_width: f32, page_height: f32)
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `detections` | `Array<LayoutDetection>` | Yes | The detections |
-| `pageWidth` | `number` | Yes | The page width |
-| `pageHeight` | `number` | Yes | The page height |
+| `detections` | `Vec<LayoutDetection>` | Yes | The detections |
+| `page_width` | `f32` | Yes | The page width |
+| `page_height` | `f32` | Yes | The page height |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### greedyNms()
+### greedy_nms()
 
 Standard greedy Non-Maximum Suppression.
 
@@ -5504,23 +5504,23 @@ This is required for YOLO models. RT-DETR is NMS-free.
 
 **Signature:**
 
-```typescript
-function greedyNms(detections: Array<LayoutDetection>, iouThreshold: number): void
+```rust
+pub fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f32)
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `detections` | `Array<LayoutDetection>` | Yes | The detections |
-| `iouThreshold` | `number` | Yes | The iou threshold |
+| `detections` | `Vec<LayoutDetection>` | Yes | The detections |
+| `iou_threshold` | `f32` | Yes | The iou threshold |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### preprocessImagenet()
+### preprocess_imagenet()
 
 Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
 
@@ -5530,8 +5530,8 @@ Uses a single vectorized pass over contiguous pixel data for maximum throughput.
 
 **Signature:**
 
-```typescript
-function preprocessImagenet(img: RgbImage, targetSize: number): Array4
+```rust
+pub fn preprocess_imagenet(img: RgbImage, target_size: u32) -> Array4
 ```
 
 **Parameters:**
@@ -5539,14 +5539,14 @@ function preprocessImagenet(img: RgbImage, targetSize: number): Array4
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `img` | `RgbImage` | Yes | The rgb image |
-| `targetSize` | `number` | Yes | The target size |
+| `target_size` | `u32` | Yes | The target size |
 
 **Returns:** `Array4`
 
 
 ---
 
-### preprocessImagenetLetterbox()
+### preprocess_imagenet_letterbox()
 
 Preprocess with aspect-preserving letterbox and ImageNet normalization.
 
@@ -5564,8 +5564,8 @@ Returns `(tensor, scale, pad_x, pad_y)`:
 
 **Signature:**
 
-```typescript
-function preprocessImagenetLetterbox(img: RgbImage, targetSize: number): Array4F32F32U32U32
+```rust
+pub fn preprocess_imagenet_letterbox(img: RgbImage, target_size: u32) -> Array4F32F32U32U32
 ```
 
 **Parameters:**
@@ -5573,14 +5573,14 @@ function preprocessImagenetLetterbox(img: RgbImage, targetSize: number): Array4F
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `img` | `RgbImage` | Yes | The rgb image |
-| `targetSize` | `number` | Yes | The target size |
+| `target_size` | `u32` | Yes | The target size |
 
 **Returns:** `Array4F32F32U32U32`
 
 
 ---
 
-### preprocessRescale()
+### preprocess_rescale()
 
 Preprocess with rescale only (no ImageNet normalization).
 
@@ -5588,8 +5588,8 @@ Pipeline: resize to target_size x target_size -> rescale /255 -> NCHW f32.
 
 **Signature:**
 
-```typescript
-function preprocessRescale(img: RgbImage, targetSize: number): Array4
+```rust
+pub fn preprocess_rescale(img: RgbImage, target_size: u32) -> Array4
 ```
 
 **Parameters:**
@@ -5597,14 +5597,14 @@ function preprocessRescale(img: RgbImage, targetSize: number): Array4
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `img` | `RgbImage` | Yes | The rgb image |
-| `targetSize` | `number` | Yes | The target size |
+| `target_size` | `u32` | Yes | The target size |
 
 **Returns:** `Array4`
 
 
 ---
 
-### preprocessLetterbox()
+### preprocess_letterbox()
 
 Letterbox preprocessing for YOLOX-style models.
 
@@ -5616,8 +5616,8 @@ Returns the NCHW tensor and the scale ratio (for rescaling detections back).
 
 **Signature:**
 
-```typescript
-function preprocessLetterbox(img: RgbImage, targetWidth: number, targetHeight: number): Array4F32F32
+```rust
+pub fn preprocess_letterbox(img: RgbImage, target_width: u32, target_height: u32) -> Array4F32F32
 ```
 
 **Parameters:**
@@ -5625,15 +5625,15 @@ function preprocessLetterbox(img: RgbImage, targetWidth: number, targetHeight: n
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `img` | `RgbImage` | Yes | The rgb image |
-| `targetWidth` | `number` | Yes | The target width |
-| `targetHeight` | `number` | Yes | The target height |
+| `target_width` | `u32` | Yes | The target width |
+| `target_height` | `u32` | Yes | The target height |
 
 **Returns:** `Array4F32F32`
 
 
 ---
 
-### buildSession()
+### build_session()
 
 Build an optimized ORT session from an ONNX model file.
 
@@ -5641,7 +5641,7 @@ Build an optimized ORT session from an ONNX model file.
 Pass the result of `crate.core.config.concurrency.resolve_thread_budget`
 to respect the user's `ConcurrencyConfig`.
 
-When `accel` is `null` or `Auto`, uses platform defaults:
+When `accel` is `None` or `Auto`, uses platform defaults:
 - macOS: CoreML (Neural Engine / GPU)
 - Linux: CUDA (GPU)
 - Others: CPU only
@@ -5650,47 +5650,47 @@ ORT silently falls back to CPU if the requested EP is unavailable.
 
 **Signature:**
 
-```typescript
-function buildSession(path: string, accel?: AccelerationConfig, threadBudget: number): Session
+```rust
+pub fn build_session(path: &str, accel: Option<AccelerationConfig>, thread_budget: usize) -> Result<Session, LayoutError>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `string` | Yes | Path to the file |
-| `accel` | `AccelerationConfig | null` | No | The acceleration config |
-| `threadBudget` | `number` | Yes | The thread budget |
+| `path` | `String` | Yes | Path to the file |
+| `accel` | `Option<AccelerationConfig>` | No | The acceleration config |
+| `thread_budget` | `usize` | Yes | The thread budget |
 
 **Returns:** `Session`
 
-**Errors:** Throws `LayoutError`.
+**Errors:** Returns `Err(LayoutError)`.
 
 
 ---
 
-### configFromExtraction()
+### config_from_extraction()
 
 Convert a `LayoutDetectionConfig` into a `LayoutEngineConfig`.
 
 **Signature:**
 
-```typescript
-function configFromExtraction(layoutConfig: LayoutDetectionConfig): LayoutEngineConfig
+```rust
+pub fn config_from_extraction(layout_config: LayoutDetectionConfig) -> LayoutEngineConfig
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `layoutConfig` | `LayoutDetectionConfig` | Yes | The layout detection config |
+| `layout_config` | `LayoutDetectionConfig` | Yes | The layout detection config |
 
 **Returns:** `LayoutEngineConfig`
 
 
 ---
 
-### createEngine()
+### create_engine()
 
 Create a `LayoutEngine` from a `LayoutDetectionConfig`.
 
@@ -5698,24 +5698,24 @@ Ensures ORT is available, then creates the engine with model download.
 
 **Signature:**
 
-```typescript
-function createEngine(layoutConfig: LayoutDetectionConfig): LayoutEngine
+```rust
+pub fn create_engine(layout_config: LayoutDetectionConfig) -> Result<LayoutEngine, LayoutError>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `layoutConfig` | `LayoutDetectionConfig` | Yes | The layout detection config |
+| `layout_config` | `LayoutDetectionConfig` | Yes | The layout detection config |
 
 **Returns:** `LayoutEngine`
 
-**Errors:** Throws `LayoutError`.
+**Errors:** Returns `Err(LayoutError)`.
 
 
 ---
 
-### takeOrCreateEngine()
+### take_or_create_engine()
 
 Take the cached layout engine, or create a new one if the cache is empty.
 
@@ -5725,31 +5725,31 @@ global mutex during inference.
 
 **Signature:**
 
-```typescript
-function takeOrCreateEngine(layoutConfig: LayoutDetectionConfig): LayoutEngine
+```rust
+pub fn take_or_create_engine(layout_config: LayoutDetectionConfig) -> Result<LayoutEngine, LayoutError>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `layoutConfig` | `LayoutDetectionConfig` | Yes | The layout detection config |
+| `layout_config` | `LayoutDetectionConfig` | Yes | The layout detection config |
 
 **Returns:** `LayoutEngine`
 
-**Errors:** Throws `LayoutError`.
+**Errors:** Returns `Err(LayoutError)`.
 
 
 ---
 
-### returnEngine()
+### return_engine()
 
 Return a layout engine to the global cache for reuse by future extractions.
 
 **Signature:**
 
-```typescript
-function returnEngine(engine: LayoutEngine): void
+```rust
+pub fn return_engine(engine: LayoutEngine)
 ```
 
 **Parameters:**
@@ -5758,38 +5758,38 @@ function returnEngine(engine: LayoutEngine): void
 |------|------|----------|-------------|
 | `engine` | `LayoutEngine` | Yes | The layout engine |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### takeOrCreateTatr()
+### take_or_create_tatr()
 
 Take the cached TATR model, or create a new one if the cache is empty.
 
-Returns `null` if the model cannot be loaded. Once a load attempt fails,
-subsequent calls return `null` immediately without retrying, avoiding
+Returns `None` if the model cannot be loaded. Once a load attempt fails,
+subsequent calls return `None` immediately without retrying, avoiding
 repeated download attempts and redundant warning logs.
 
 **Signature:**
 
-```typescript
-function takeOrCreateTatr(): TatrModel | null
+```rust
+pub fn take_or_create_tatr() -> Option<TatrModel>
 ```
 
-**Returns:** `TatrModel | null`
+**Returns:** `Option<TatrModel>`
 
 
 ---
 
-### returnTatr()
+### return_tatr()
 
 Return a TATR model to the global cache for reuse.
 
 **Signature:**
 
-```typescript
-function returnTatr(model: TatrModel): void
+```rust
+pub fn return_tatr(model: TatrModel)
 ```
 
 **Parameters:**
@@ -5798,77 +5798,77 @@ function returnTatr(model: TatrModel): void
 |------|------|----------|-------------|
 | `model` | `TatrModel` | Yes | The tatr model |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### takeOrCreateSlanet()
+### take_or_create_slanet()
 
 Take a cached SLANeXT model for the given variant, or create a new one.
 
 **Signature:**
 
-```typescript
-function takeOrCreateSlanet(variant: string): SlanetModel | null
+```rust
+pub fn take_or_create_slanet(variant: &str) -> Option<SlanetModel>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `variant` | `string` | Yes | The variant |
+| `variant` | `String` | Yes | The variant |
 
-**Returns:** `SlanetModel | null`
+**Returns:** `Option<SlanetModel>`
 
 
 ---
 
-### returnSlanet()
+### return_slanet()
 
 Return a SLANeXT model to the global cache for reuse.
 
 **Signature:**
 
-```typescript
-function returnSlanet(variant: string, model: SlanetModel): void
+```rust
+pub fn return_slanet(variant: &str, model: SlanetModel)
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `variant` | `string` | Yes | The variant |
+| `variant` | `String` | Yes | The variant |
 | `model` | `SlanetModel` | Yes | The slanet model |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### takeOrCreateTableClassifier()
+### take_or_create_table_classifier()
 
 Take a cached table classifier, or create a new one.
 
 **Signature:**
 
-```typescript
-function takeOrCreateTableClassifier(): TableClassifier | null
+```rust
+pub fn take_or_create_table_classifier() -> Option<TableClassifier>
 ```
 
-**Returns:** `TableClassifier | null`
+**Returns:** `Option<TableClassifier>`
 
 
 ---
 
-### returnTableClassifier()
+### return_table_classifier()
 
 Return a table classifier to the global cache for reuse.
 
 **Signature:**
 
-```typescript
-function returnTableClassifier(model: TableClassifier): void
+```rust
+pub fn return_table_classifier(model: TableClassifier)
 ```
 
 **Parameters:**
@@ -5877,12 +5877,12 @@ function returnTableClassifier(model: TableClassifier): void
 |------|------|----------|-------------|
 | `model` | `TableClassifier` | Yes | The table classifier |
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### extractAnnotationsFromDocument()
+### extract_annotations_from_document()
 
 Extract annotations from all pages of a PDF document.
 
@@ -5898,8 +5898,8 @@ A `Vec<PdfAnnotation>` containing all successfully extracted annotations.
 
 **Signature:**
 
-```typescript
-function extractAnnotationsFromDocument(document: PdfDocument): Array<PdfAnnotation>
+```rust
+pub fn extract_annotations_from_document(document: PdfDocument) -> Vec<PdfAnnotation>
 ```
 
 **Parameters:**
@@ -5908,12 +5908,12 @@ function extractAnnotationsFromDocument(document: PdfDocument): Array<PdfAnnotat
 |------|------|----------|-------------|
 | `document` | `PdfDocument` | Yes | A reference to the loaded pdfium `PdfDocument`. |
 
-**Returns:** `Array<PdfAnnotation>`
+**Returns:** `Vec<PdfAnnotation>`
 
 
 ---
 
-### extractBookmarks()
+### extract_bookmarks()
 
 Extract bookmarks (outlines) from a PDF document loaded via lopdf.
 
@@ -5922,8 +5922,8 @@ title and destination. Returns an empty `Vec` if the document has no outlines.
 
 **Signature:**
 
-```typescript
-function extractBookmarks(document: Document): Array<Uri>
+```rust
+pub fn extract_bookmarks(document: Document) -> Vec<Uri>
 ```
 
 **Parameters:**
@@ -5932,12 +5932,12 @@ function extractBookmarks(document: Document): Array<Uri>
 |------|------|----------|-------------|
 | `document` | `Document` | Yes | The document |
 
-**Returns:** `Array<Uri>`
+**Returns:** `Vec<Uri>`
 
 
 ---
 
-### extractBundledPdfium()
+### extract_bundled_pdfium()
 
 Extract bundled PDFium library to temporary directory.
 
@@ -5978,18 +5978,18 @@ Returns `std.io.Error` if:
 
 **Signature:**
 
-```typescript
-function extractBundledPdfium(): string
+```rust
+pub fn extract_bundled_pdfium() -> Result<PathBuf, Error>
 ```
 
-**Returns:** `string`
+**Returns:** `PathBuf`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractEmbeddedFiles()
+### extract_embedded_files()
 
 Extract embedded file descriptors from a PDF document loaded via lopdf.
 
@@ -5998,8 +5998,8 @@ Returns an empty `Vec` if the document has no embedded files.
 
 **Signature:**
 
-```typescript
-function extractEmbeddedFiles(document: Document): Array<EmbeddedFile>
+```rust
+pub fn extract_embedded_files(document: Document) -> Vec<EmbeddedFile>
 ```
 
 **Parameters:**
@@ -6008,12 +6008,12 @@ function extractEmbeddedFiles(document: Document): Array<EmbeddedFile>
 |------|------|----------|-------------|
 | `document` | `Document` | Yes | The document |
 
-**Returns:** `Array<EmbeddedFile>`
+**Returns:** `Vec<EmbeddedFile>`
 
 
 ---
 
-### extractAndProcessEmbeddedFiles()
+### extract_and_process_embedded_files()
 
 Extract embedded files from PDF bytes and recursively process them.
 
@@ -6022,15 +6022,15 @@ suitable for attaching to `InternalDocument.children`.
 
 **Signature:**
 
-```typescript
-function extractAndProcessEmbeddedFiles(pdfBytes: Buffer, config: ExtractionConfig): Promise<VecArchiveEntryVecProcessingWarning>
+```rust
+pub async fn extract_and_process_embedded_files(pdf_bytes: &[u8], config: ExtractionConfig) -> VecArchiveEntryVecProcessingWarning
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
 | `config` | `ExtractionConfig` | Yes | The configuration options |
 
 **Returns:** `VecArchiveEntryVecProcessingWarning`
@@ -6038,7 +6038,7 @@ function extractAndProcessEmbeddedFiles(pdfBytes: Buffer, config: ExtractionConf
 
 ---
 
-### initializeFontCache()
+### initialize_font_cache()
 
 Initialize the global font cache.
 
@@ -6056,18 +6056,18 @@ Ok if initialization succeeds or cache is already initialized, or PdfError if fo
 
 **Signature:**
 
-```typescript
-function initializeFontCache(): void
+```rust
+pub fn initialize_font_cache() -> Result<(), PdfError>
 ```
 
-**Returns:** `void`
+**Returns:** `()`
 
-**Errors:** Throws `PdfError`.
+**Errors:** Returns `Err(PdfError)`.
 
 
 ---
 
-### getFontDescriptors()
+### get_font_descriptors()
 
 Get cached font descriptors for Pdfium configuration.
 
@@ -6085,18 +6085,18 @@ A Vec of FontDescriptor objects suitable for `PdfiumConfig.set_font_provider()`.
 
 **Signature:**
 
-```typescript
-function getFontDescriptors(): Array<FontDescriptor>
+```rust
+pub fn get_font_descriptors() -> Result<Vec<FontDescriptor>, PdfError>
 ```
 
-**Returns:** `Array<FontDescriptor>`
+**Returns:** `Vec<FontDescriptor>`
 
-**Errors:** Throws `PdfError`.
+**Errors:** Returns `Err(PdfError)`.
 
 
 ---
 
-### cachedFontCount()
+### cached_font_count()
 
 Get the number of cached fonts.
 
@@ -6108,16 +6108,16 @@ Number of fonts in the cache, or 0 if not initialized.
 
 **Signature:**
 
-```typescript
-function cachedFontCount(): number
+```rust
+pub fn cached_font_count() -> usize
 ```
 
-**Returns:** `number`
+**Returns:** `usize`
 
 
 ---
 
-### clearFontCache()
+### clear_font_cache()
 
 Clear the font cache (for testing purposes).
 
@@ -6128,59 +6128,59 @@ with deliberate panic injection.
 
 **Signature:**
 
-```typescript
-function clearFontCache(): void
+```rust
+pub fn clear_font_cache()
 ```
 
-**Returns:** `void`
+**Returns:** `()`
 
 
 ---
 
-### extractImagesFromPdf()
+### extract_images_from_pdf()
 
 **Signature:**
 
-```typescript
-function extractImagesFromPdf(pdfBytes: Buffer): Array<PdfImage>
+```rust
+pub fn extract_images_from_pdf(pdf_bytes: &[u8]) -> Result<Vec<PdfImage>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
 
-**Returns:** `Array<PdfImage>`
+**Returns:** `Vec<PdfImage>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractImagesFromPdfWithPassword()
+### extract_images_from_pdf_with_password()
 
 **Signature:**
 
-```typescript
-function extractImagesFromPdfWithPassword(pdfBytes: Buffer, password: string): Array<PdfImage>
+```rust
+pub fn extract_images_from_pdf_with_password(pdf_bytes: &[u8], password: &str) -> Result<Vec<PdfImage>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
-| `password` | `string` | Yes | The password |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
+| `password` | `String` | Yes | The password |
 
-**Returns:** `Array<PdfImage>`
+**Returns:** `Vec<PdfImage>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### reextractRawImagesViaPdfium()
+### reextract_raw_images_via_pdfium()
 
 Re-extract images that have unusable formats (`"raw"`, `"ccitt"`, `"jbig2"`) by
 rendering them through pdfium's bitmap pipeline, which handles all PDF filter
@@ -6190,25 +6190,25 @@ Returns the number of images successfully re-extracted.
 
 **Signature:**
 
-```typescript
-function reextractRawImagesViaPdfium(pdfBytes: Buffer, images: Array<PdfImage>): number
+```rust
+pub fn reextract_raw_images_via_pdfium(pdf_bytes: &[u8], images: Vec<PdfImage>) -> Result<u32, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
-| `images` | `Array<PdfImage>` | Yes | The images |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
+| `images` | `Vec<PdfImage>` | Yes | The images |
 
-**Returns:** `number`
+**Returns:** `u32`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### detectLayoutForDocument()
+### detect_layout_for_document()
 
 Run layout detection on all pages of a PDF document.
 
@@ -6217,25 +6217,25 @@ full-resolution page images in memory simultaneously before detection.
 
 **Signature:**
 
-```typescript
-function detectLayoutForDocument(pdfBytes: Buffer, engine: LayoutEngine): DynamicImage
+```rust
+pub fn detect_layout_for_document(pdf_bytes: &[u8], engine: LayoutEngine) -> Result<DynamicImage, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
 | `engine` | `LayoutEngine` | Yes | The layout engine |
 
 **Returns:** `DynamicImage`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### detectLayoutForImages()
+### detect_layout_for_images()
 
 Run layout detection on pre-rendered images.
 
@@ -6245,25 +6245,25 @@ path) to avoid redundant PDF re-rendering.
 
 **Signature:**
 
-```typescript
-function detectLayoutForImages(images: Array<DynamicImage>, engine: LayoutEngine): Array<DetectionResult>
+```rust
+pub fn detect_layout_for_images(images: Vec<DynamicImage>, engine: LayoutEngine) -> Result<Vec<DetectionResult>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `images` | `Array<DynamicImage>` | Yes | The images |
+| `images` | `Vec<DynamicImage>` | Yes | The images |
 | `engine` | `LayoutEngine` | Yes | The layout engine |
 
-**Returns:** `Array<DetectionResult>`
+**Returns:** `Vec<DetectionResult>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractMetadata()
+### extract_metadata()
 
 Extract PDF-specific metadata from raw bytes.
 
@@ -6271,24 +6271,24 @@ Returns only PDF-specific metadata (version, producer, encryption status, dimens
 
 **Signature:**
 
-```typescript
-function extractMetadata(pdfBytes: Buffer): PdfMetadata
+```rust
+pub fn extract_metadata(pdf_bytes: &[u8]) -> Result<PdfMetadata, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
 
 **Returns:** `PdfMetadata`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractMetadataWithPassword()
+### extract_metadata_with_password()
 
 Extract PDF-specific metadata from raw bytes with optional password.
 
@@ -6296,47 +6296,47 @@ Returns only PDF-specific metadata (version, producer, encryption status, dimens
 
 **Signature:**
 
-```typescript
-function extractMetadataWithPassword(pdfBytes: Buffer, password?: string): PdfMetadata
+```rust
+pub fn extract_metadata_with_password(pdf_bytes: &[u8], password: Option<String>) -> Result<PdfMetadata, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
-| `password` | `string | null` | No | The password |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
+| `password` | `Option<String>` | No | The password |
 
 **Returns:** `PdfMetadata`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractMetadataWithPasswords()
+### extract_metadata_with_passwords()
 
 **Signature:**
 
-```typescript
-function extractMetadataWithPasswords(pdfBytes: Buffer, passwords: Array<string>): PdfMetadata
+```rust
+pub fn extract_metadata_with_passwords(pdf_bytes: &[u8], passwords: Vec<String>) -> Result<PdfMetadata, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
-| `passwords` | `Array<string>` | Yes | The passwords |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
+| `passwords` | `Vec<String>` | Yes | The passwords |
 
 **Returns:** `PdfMetadata`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractMetadataFromDocument()
+### extract_metadata_from_document()
 
 Extract complete PDF metadata from a document.
 
@@ -6346,7 +6346,7 @@ PDF-specific metadata, and optionally builds a PageStructure with boundaries.
   If provided, a PageStructure will be built with these boundaries.
 * `content` - Optional extracted text content, used for blank page detection.
   If provided, `PageInfo.is_blank` will be populated based on text content analysis.
-  If `null`, `is_blank` will be `null` for all pages.
+  If `None`, `is_blank` will be `None` for all pages.
 
 **Returns:**
 
@@ -6355,8 +6355,8 @@ including page structure if boundaries were provided.
 
 **Signature:**
 
-```typescript
-function extractMetadataFromDocument(document: PdfDocument, pageBoundaries?: Array<PageBoundary>, content?: string): PdfExtractionMetadata
+```rust
+pub fn extract_metadata_from_document(document: PdfDocument, page_boundaries: Option<Vec<PageBoundary>>, content: Option<String>) -> Result<PdfExtractionMetadata, Error>
 ```
 
 **Parameters:**
@@ -6364,17 +6364,17 @@ function extractMetadataFromDocument(document: PdfDocument, pageBoundaries?: Arr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `document` | `PdfDocument` | Yes | The PDF document to extract metadata from |
-| `pageBoundaries` | `Array<PageBoundary> | null` | No | Optional vector of PageBoundary entries for building PageStructure. |
-| `content` | `string | null` | No | Optional extracted text content, used for blank page detection. |
+| `page_boundaries` | `Option<Vec<PageBoundary>>` | No | Optional vector of PageBoundary entries for building PageStructure. |
+| `content` | `Option<String>` | No | Optional extracted text content, used for blank page detection. |
 
 **Returns:** `PdfExtractionMetadata`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractCommonMetadataFromDocument()
+### extract_common_metadata_from_document()
 
 Extract common metadata from a PDF document.
 
@@ -6387,8 +6387,8 @@ cached in a single pass.
 
 **Signature:**
 
-```typescript
-function extractCommonMetadataFromDocument(document: PdfDocument): CommonPdfMetadata
+```rust
+pub fn extract_common_metadata_from_document(document: PdfDocument) -> Result<CommonPdfMetadata, Error>
 ```
 
 **Parameters:**
@@ -6399,35 +6399,35 @@ function extractCommonMetadataFromDocument(document: PdfDocument): CommonPdfMeta
 
 **Returns:** `CommonPdfMetadata`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### renderPageToImage()
+### render_page_to_image()
 
 **Signature:**
 
-```typescript
-function renderPageToImage(pdfBytes: Buffer, pageIndex: number, options: PageRenderOptions): DynamicImage
+```rust
+pub fn render_page_to_image(pdf_bytes: &[u8], page_index: usize, options: PageRenderOptions) -> Result<DynamicImage, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
-| `pageIndex` | `number` | Yes | The page index |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
+| `page_index` | `usize` | Yes | The page index |
 | `options` | `PageRenderOptions` | Yes | The options to use |
 
 **Returns:** `DynamicImage`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### renderPdfPageToPng()
+### render_pdf_page_to_png()
 
 Render a single PDF page to a PNG-encoded byte buffer.
 
@@ -6438,27 +6438,27 @@ or if the page fails to render.
 
 **Signature:**
 
-```typescript
-function renderPdfPageToPng(pdfBytes: Buffer, pageIndex: number, dpi?: number, password?: string): Buffer
+```rust
+pub fn render_pdf_page_to_png(pdf_bytes: &[u8], page_index: usize, dpi: Option<i32>, password: Option<String>) -> Result<Vec<u8>, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
-| `pageIndex` | `number` | Yes | The page index |
-| `dpi` | `number | null` | No | The dpi |
-| `password` | `string | null` | No | The password |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
+| `page_index` | `usize` | Yes | The page index |
+| `dpi` | `Option<i32>` | No | The dpi |
+| `password` | `Option<String>` | No | The password |
 
-**Returns:** `Buffer`
+**Returns:** `Vec<u8>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractWordsFromPage()
+### extract_words_from_page()
 
 Extract words with positions from PDF page for table detection.
 
@@ -6474,8 +6474,8 @@ This function requires the "ocr" feature to be enabled. Without it, returns an e
 
 **Signature:**
 
-```typescript
-function extractWordsFromPage(page: PdfPage, minConfidence: number): Array<HocrWord>
+```rust
+pub fn extract_words_from_page(page: PdfPage, min_confidence: f64) -> Result<Vec<HocrWord>, Error>
 ```
 
 **Parameters:**
@@ -6483,16 +6483,16 @@ function extractWordsFromPage(page: PdfPage, minConfidence: number): Array<HocrW
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `PdfPage` | Yes | PDF page to extract words from |
-| `minConfidence` | `number` | Yes | Minimum confidence threshold (0.0-100.0). PDF text has high confidence (95.0). |
+| `min_confidence` | `f64` | Yes | Minimum confidence threshold (0.0-100.0). PDF text has high confidence (95.0). |
 
-**Returns:** `Array<HocrWord>`
+**Returns:** `Vec<HocrWord>`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### segmentToHocrWord()
+### segment_to_hocr_word()
 
 Convert a PDF `SegmentData` to an `HocrWord` for table reconstruction.
 
@@ -6501,8 +6501,8 @@ Convert a PDF `SegmentData` to an `HocrWord` for table reconstruction.
 
 **Signature:**
 
-```typescript
-function segmentToHocrWord(seg: SegmentData, pageHeight: number): HocrWord
+```rust
+pub fn segment_to_hocr_word(seg: SegmentData, page_height: f32) -> HocrWord
 ```
 
 **Parameters:**
@@ -6510,14 +6510,14 @@ function segmentToHocrWord(seg: SegmentData, pageHeight: number): HocrWord
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `seg` | `SegmentData` | Yes | The segment data |
-| `pageHeight` | `number` | Yes | The page height |
+| `page_height` | `f32` | Yes | The page height |
 
 **Returns:** `HocrWord`
 
 
 ---
 
-### splitSegmentToWords()
+### split_segment_to_words()
 
 Split a `SegmentData` into word-level `HocrWord`s for table reconstruction.
 
@@ -6531,8 +6531,8 @@ byte offset within the segment text.
 
 **Signature:**
 
-```typescript
-function splitSegmentToWords(seg: SegmentData, pageHeight: number): Array<HocrWord>
+```rust
+pub fn split_segment_to_words(seg: SegmentData, page_height: f32) -> Vec<HocrWord>
 ```
 
 **Parameters:**
@@ -6540,14 +6540,14 @@ function splitSegmentToWords(seg: SegmentData, pageHeight: number): Array<HocrWo
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `seg` | `SegmentData` | Yes | The segment data |
-| `pageHeight` | `number` | Yes | The page height |
+| `page_height` | `f32` | Yes | The page height |
 
-**Returns:** `Array<HocrWord>`
+**Returns:** `Vec<HocrWord>`
 
 
 ---
 
-### segmentsToWords()
+### segments_to_words()
 
 Convert a page's segments to word-level `HocrWord`s for table extraction.
 
@@ -6556,27 +6556,27 @@ boxes, ensuring each word can be independently matched to table cells.
 
 **Signature:**
 
-```typescript
-function segmentsToWords(segments: Array<SegmentData>, pageHeight: number): Array<HocrWord>
+```rust
+pub fn segments_to_words(segments: Vec<SegmentData>, page_height: f32) -> Vec<HocrWord>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `segments` | `Array<SegmentData>` | Yes | The segments |
-| `pageHeight` | `number` | Yes | The page height |
+| `segments` | `Vec<SegmentData>` | Yes | The segments |
+| `page_height` | `f32` | Yes | The page height |
 
-**Returns:** `Array<HocrWord>`
+**Returns:** `Vec<HocrWord>`
 
 
 ---
 
-### postProcessTable()
+### post_process_table()
 
 Post-process a raw table grid to validate structure and clean up.
 
-Returns `null` if the table fails structural validation.
+Returns `None` if the table fails structural validation.
 
 When `layout_guided` is true, the layout model already confirmed this is
 a table, so validation thresholds are relaxed:
@@ -6591,24 +6591,24 @@ a table, so validation thresholds are relaxed:
 
 **Signature:**
 
-```typescript
-function postProcessTable(table: Array<Array<string>>, layoutGuided: boolean, allowSingleColumn: boolean): Array<Array<string>> | null
+```rust
+pub fn post_process_table(table: Vec<Vec<String>>, layout_guided: bool, allow_single_column: bool) -> Option<Vec<Vec<String>>>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `table` | `Array<Array<string>>` | Yes | The table |
-| `layoutGuided` | `boolean` | Yes | The layout guided |
-| `allowSingleColumn` | `boolean` | Yes | The allow single column |
+| `table` | `Vec<Vec<String>>` | Yes | The table |
+| `layout_guided` | `bool` | Yes | The layout guided |
+| `allow_single_column` | `bool` | Yes | The allow single column |
 
-**Returns:** `Array<Array<string>> | null`
+**Returns:** `Option<Vec<Vec<String>>>`
 
 
 ---
 
-### isWellFormedTable()
+### is_well_formed_table()
 
 Validate whether a reconstructed table grid represents a well-formed table
 rather than multi-column prose or a repeated page element.
@@ -6623,87 +6623,87 @@ The checks catch cases the layout model misidentifies as tables:
 
 **Signature:**
 
-```typescript
-function isWellFormedTable(grid: Array<Array<string>>): boolean
+```rust
+pub fn is_well_formed_table(grid: Vec<Vec<String>>) -> bool
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `grid` | `Array<Array<string>>` | Yes | The grid |
+| `grid` | `Vec<Vec<String>>` | Yes | The grid |
 
-**Returns:** `boolean`
+**Returns:** `bool`
 
 
 ---
 
-### extractTextFromPdf()
+### extract_text_from_pdf()
 
 **Signature:**
 
-```typescript
-function extractTextFromPdf(pdfBytes: Buffer): string
+```rust
+pub fn extract_text_from_pdf(pdf_bytes: &[u8]) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractTextFromPdfWithPassword()
+### extract_text_from_pdf_with_password()
 
 **Signature:**
 
-```typescript
-function extractTextFromPdfWithPassword(pdfBytes: Buffer, password: string): string
+```rust
+pub fn extract_text_from_pdf_with_password(pdf_bytes: &[u8], password: &str) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
-| `password` | `string` | Yes | The password |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
+| `password` | `String` | Yes | The password |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractTextFromPdfWithPasswords()
+### extract_text_from_pdf_with_passwords()
 
 **Signature:**
 
-```typescript
-function extractTextFromPdfWithPasswords(pdfBytes: Buffer, passwords: Array<string>): string
+```rust
+pub fn extract_text_from_pdf_with_passwords(pdf_bytes: &[u8], passwords: Vec<String>) -> Result<String, Error>
 ```
 
 **Parameters:**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pdfBytes` | `Buffer` | Yes | The pdf bytes |
-| `passwords` | `Array<string>` | Yes | The passwords |
+| `pdf_bytes` | `Vec<u8>` | Yes | The pdf bytes |
+| `passwords` | `Vec<String>` | Yes | The passwords |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractTextAndMetadataFromPdfDocument()
+### extract_text_and_metadata_from_pdf_document()
 
 Extract text and metadata from PDF document in a single pass.
 
@@ -6728,8 +6728,8 @@ calling text and metadata extraction separately.
 
 **Signature:**
 
-```typescript
-function extractTextAndMetadataFromPdfDocument(document: PdfDocument, extractionConfig?: ExtractionConfig): PdfUnifiedExtractionResult
+```rust
+pub fn extract_text_and_metadata_from_pdf_document(document: PdfDocument, extraction_config: Option<ExtractionConfig>) -> Result<PdfUnifiedExtractionResult, Error>
 ```
 
 **Parameters:**
@@ -6737,16 +6737,16 @@ function extractTextAndMetadataFromPdfDocument(document: PdfDocument, extraction
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `document` | `PdfDocument` | Yes | The PDF document to extract from |
-| `extractionConfig` | `ExtractionConfig | null` | No | Optional extraction configuration for hierarchy and page tracking |
+| `extraction_config` | `Option<ExtractionConfig>` | No | Optional extraction configuration for hierarchy and page tracking |
 
 **Returns:** `PdfUnifiedExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### extractTextFromPdfDocument()
+### extract_text_from_pdf_document()
 
 Extract text from PDF document with optional page boundary tracking.
 
@@ -6769,8 +6769,8 @@ When page_config is Some, tracks byte offsets using .len() for O(1) performance 
 
 **Signature:**
 
-```typescript
-function extractTextFromPdfDocument(document: PdfDocument, pageConfig?: PageConfig, extractionConfig?: ExtractionConfig): PdfTextExtractionResult
+```rust
+pub fn extract_text_from_pdf_document(document: PdfDocument, page_config: Option<PageConfig>, extraction_config: Option<ExtractionConfig>) -> Result<PdfTextExtractionResult, Error>
 ```
 
 **Parameters:**
@@ -6778,17 +6778,17 @@ function extractTextFromPdfDocument(document: PdfDocument, pageConfig?: PageConf
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `document` | `PdfDocument` | Yes | The PDF document to extract text from |
-| `pageConfig` | `PageConfig | null` | No | Optional page configuration for boundary tracking and page markers |
-| `extractionConfig` | `ExtractionConfig | null` | No | Optional extraction configuration for hierarchy detection |
+| `page_config` | `Option<PageConfig>` | No | Optional page configuration for boundary tracking and page markers |
+| `extraction_config` | `Option<ExtractionConfig>` | No | Optional extraction configuration for hierarchy detection |
 
 **Returns:** `PdfTextExtractionResult`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### serializeToToon()
+### serialize_to_toon()
 
 Serialize an `ExtractionResult` to TOON (Token-Oriented Object Notation).
 
@@ -6797,8 +6797,8 @@ Losslessly convertible to/from JSON but uses fewer tokens.
 
 **Signature:**
 
-```typescript
-function serializeToToon(result: ExtractionResult): string
+```rust
+pub fn serialize_to_toon(result: ExtractionResult) -> Result<String, Error>
 ```
 
 **Parameters:**
@@ -6807,21 +6807,21 @@ function serializeToToon(result: ExtractionResult): string
 |------|------|----------|-------------|
 | `result` | `ExtractionResult` | Yes | The extraction result |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
 
-### serializeToJson()
+### serialize_to_json()
 
 Serialize an `ExtractionResult` to pretty-printed JSON.
 
 **Signature:**
 
-```typescript
-function serializeToJson(result: ExtractionResult): string
+```rust
+pub fn serialize_to_json(result: ExtractionResult) -> Result<String, Error>
 ```
 
 **Parameters:**
@@ -6830,9 +6830,9 @@ function serializeToJson(result: ExtractionResult): string
 |------|------|----------|-------------|
 | `result` | `ExtractionResult` | Yes | The extraction result |
 
-**Returns:** `string`
+**Returns:** `String`
 
-**Errors:** Throws `Error`.
+**Errors:** Returns `Err(Error)`.
 
 
 ---
@@ -6848,8 +6848,8 @@ for inference in layout detection and embedding generation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `provider` | `ExecutionProviderType` | `ExecutionProviderType.Auto` | Execution provider to use for ONNX inference. |
-| `deviceId` | `number` | `null` | GPU device ID (for CUDA/TensorRT). Ignored for CPU/CoreML/Auto. |
+| `provider` | `ExecutionProviderType` | `ExecutionProviderType::Auto` | Execution provider to use for ONNX inference. |
+| `device_id` | `u32` | `Default::default()` | GPU device ID (for CUDA/TensorRT). Ignored for CPU/CoreML/Auto. |
 
 
 ---
@@ -6860,12 +6860,12 @@ Properties for anchored drawings.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `behindDoc` | `boolean` | `null` | Behind doc |
-| `layoutInCell` | `boolean` | `null` | Layout in cell |
-| `relativeHeight` | `number | null` | `null` | Relative height |
-| `positionH` | `Position | null` | `null` | Position h (position) |
-| `positionV` | `Position | null` | `null` | Position v (position) |
-| `wrapType` | `WrapType` | `WrapType.None` | Wrap type (wrap type) |
+| `behind_doc` | `bool` | `Default::default()` | Behind doc |
+| `layout_in_cell` | `bool` | `Default::default()` | Layout in cell |
+| `relative_height` | `Option<i64>` | `Default::default()` | Relative height |
+| `position_h` | `Option<Position>` | `Default::default()` | Position h (position) |
+| `position_v` | `Option<Position>` | `Default::default()` | Position v (position) |
+| `wrap_type` | `WrapType` | `WrapType::None` | Wrap type (wrap type) |
 
 
 ---
@@ -6889,8 +6889,8 @@ enabled, each processable file produces its own full `ExtractionResult`.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `path` | `string` | — | Archive-relative file path (e.g. "folder/document.pdf"). |
-| `mimeType` | `string` | — | Detected MIME type of the file. |
+| `path` | `String` | — | Archive-relative file path (e.g. "folder/document.pdf"). |
+| `mime_type` | `String` | — | Detected MIME type of the file. |
 | `result` | `ExtractionResult` | — | Full extraction result for this file. |
 
 
@@ -6905,10 +6905,10 @@ Extracted from compressed archive files containing file lists and size informati
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `format` | `Str` | — | Archive format ("ZIP", "TAR", "7Z", etc.) |
-| `fileCount` | `number` | — | Total number of files in the archive |
-| `fileList` | `Array<string>` | — | List of file paths within the archive |
-| `totalSize` | `number` | — | Total uncompressed size in bytes |
-| `compressedSize` | `number | null` | `null` | Compressed size in bytes (if available) |
+| `file_count` | `usize` | — | Total number of files in the archive |
+| `file_list` | `Vec<String>` | — | List of file paths within the archive |
+| `total_size` | `usize` | — | Total uncompressed size in bytes |
+| `compressed_size` | `Option<usize>` | `None` | Compressed size in bytes (if available) |
 
 
 ---
@@ -6921,9 +6921,9 @@ Represents the attributes attached to elements using {.class #id key="value"} sy
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `id` | `string | null` | `null` | Element ID (#identifier) |
-| `classes` | `Array<string>` | `[]` | CSS classes (.class1 .class2) |
-| `keyValues` | `Array<StringString>` | `[]` | Key-value pairs (key="value") |
+| `id` | `Option<String>` | `Default::default()` | Element ID (#identifier) |
+| `classes` | `Vec<String>` | `vec![]` | CSS classes (.class1 .class2) |
+| `key_values` | `Vec<StringString>` | `vec![]` | Key-value pairs (key="value") |
 
 
 ---
@@ -6934,10 +6934,10 @@ Bounding box in original image coordinates (x1, y1) top-left, (x2, y2) bottom-ri
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `x1` | `number` | — | X1 |
-| `y1` | `number` | — | Y1 |
-| `x2` | `number` | — | X2 |
-| `y2` | `number` | — | Y2 |
+| `x1` | `f32` | — | X1 |
+| `y1` | `f32` | — | Y1 |
+| `x2` | `f32` | — | X2 |
+| `y2` | `f32` | — | Y2 |
 
 #### Methods
 
@@ -6945,42 +6945,42 @@ Bounding box in original image coordinates (x1, y1) top-left, (x2, y2) bottom-ri
 
 **Signature:**
 
-```typescript
-width(): number
+```rust
+pub fn width(&self) -> f32
 ```
 
 ##### height()
 
 **Signature:**
 
-```typescript
-height(): number
+```rust
+pub fn height(&self) -> f32
 ```
 
 ##### area()
 
 **Signature:**
 
-```typescript
-area(): number
+```rust
+pub fn area(&self) -> f32
 ```
 
 ##### center()
 
 **Signature:**
 
-```typescript
-center(): F32F32
+```rust
+pub fn center(&self) -> F32F32
 ```
 
-##### intersectionArea()
+##### intersection_area()
 
 Area of intersection with another bounding box.
 
 **Signature:**
 
-```typescript
-intersectionArea(other: BBox): number
+```rust
+pub fn intersection_area(&self, other: BBox) -> f32
 ```
 
 ##### iou()
@@ -6989,37 +6989,37 @@ Intersection over Union with another bounding box.
 
 **Signature:**
 
-```typescript
-iou(other: BBox): number
+```rust
+pub fn iou(&self, other: BBox) -> f32
 ```
 
-##### containmentOf()
+##### containment_of()
 
 Fraction of `other` that is contained within `self`.
 Returns 0.0..=1.0 where 1.0 means `other` is fully inside `self`.
 
 **Signature:**
 
-```typescript
-containmentOf(other: BBox): number
+```rust
+pub fn containment_of(&self, other: BBox) -> f32
 ```
 
-##### pageCoverage()
+##### page_coverage()
 
 Fraction of page area this bbox covers.
 
 **Signature:**
 
-```typescript
-pageCoverage(pageWidth: number, pageHeight: number): number
+```rust
+pub fn page_coverage(&self, page_width: f32, page_height: f32) -> f32
 ```
 
 ##### fmt()
 
 **Signature:**
 
-```typescript
-fmt(f: Formatter): Unknown
+```rust
+pub fn fmt(&self, f: Formatter) -> Unknown
 ```
 
 
@@ -7031,10 +7031,10 @@ Batch item result for processing multiple files
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `filePath` | `string` | — | File path |
-| `success` | `boolean` | — | Success |
-| `result` | `OcrExtractionResult | null` | `null` | Result (ocr extraction result) |
-| `error` | `string | null` | `null` | Error |
+| `file_path` | `String` | — | File path |
+| `success` | `bool` | — | Success |
+| `result` | `Option<OcrExtractionResult>` | `None` | Result (ocr extraction result) |
+| `error` | `Option<String>` | `None` | Error |
 
 
 ---
@@ -7054,7 +7054,7 @@ that may not use batch processing immediately or at all.
 
 #### Methods
 
-##### withConfig()
+##### with_config()
 
 Create a new batch processor with custom pool configuration.
 
@@ -7066,11 +7066,11 @@ A new `BatchProcessor` configured with the provided settings.
 
 **Signature:**
 
-```typescript
-static withConfig(config: BatchProcessorConfig): BatchProcessor
+```rust
+pub fn with_config(config: BatchProcessorConfig) -> BatchProcessor
 ```
 
-##### withPoolHint()
+##### with_pool_hint()
 
 Create a batch processor with pool sizes optimized for a specific document.
 
@@ -7084,11 +7084,11 @@ A new `BatchProcessor` configured with the hint-based pool sizes
 
 **Signature:**
 
-```typescript
-static withPoolHint(hint: PoolSizeHint): BatchProcessor
+```rust
+pub fn with_pool_hint(hint: PoolSizeHint) -> BatchProcessor
 ```
 
-##### stringPool()
+##### string_pool()
 
 Get a reference to the string buffer pool.
 
@@ -7097,11 +7097,11 @@ Useful for custom pooling implementations that need direct pool access.
 
 **Signature:**
 
-```typescript
-stringPool(): StringBufferPool
+```rust
+pub fn string_pool(&self) -> StringBufferPool
 ```
 
-##### bytePool()
+##### byte_pool()
 
 Get a reference to the byte buffer pool.
 
@@ -7110,8 +7110,8 @@ Useful for custom pooling implementations that need direct pool access.
 
 **Signature:**
 
-```typescript
-bytePool(): ByteBufferPool
+```rust
+pub fn byte_pool(&self) -> ByteBufferPool
 ```
 
 ##### config()
@@ -7120,31 +7120,31 @@ Get the current configuration.
 
 **Signature:**
 
-```typescript
-config(): BatchProcessorConfig
+```rust
+pub fn config(&self) -> BatchProcessorConfig
 ```
 
-##### stringPoolSize()
+##### string_pool_size()
 
 Get the number of pooled string buffers currently available.
 
 **Signature:**
 
-```typescript
-stringPoolSize(): number
+```rust
+pub fn string_pool_size(&self) -> usize
 ```
 
-##### bytePoolSize()
+##### byte_pool_size()
 
 Get the number of pooled byte buffers currently available.
 
 **Signature:**
 
-```typescript
-bytePoolSize(): number
+```rust
+pub fn byte_pool_size(&self) -> usize
 ```
 
-##### clearPools()
+##### clear_pools()
 
 Clear all pooled objects, forcing new allocations on next acquire.
 
@@ -7153,16 +7153,16 @@ after processing large batches.
 
 **Signature:**
 
-```typescript
-clearPools(): void
+```rust
+pub fn clear_pools(&self)
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): BatchProcessor
+```rust
+pub fn default() -> BatchProcessor
 ```
 
 
@@ -7174,11 +7174,11 @@ Configuration for batch processing with pooling optimizations.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `stringPoolSize` | `number` | `10` | Maximum number of string buffers to maintain in the pool |
-| `stringBufferCapacity` | `number` | `8192` | Initial capacity for pooled string buffers in bytes |
-| `bytePoolSize` | `number` | `10` | Maximum number of byte buffers to maintain in the pool |
-| `byteBufferCapacity` | `number` | `65536` | Initial capacity for pooled byte buffers in bytes |
-| `maxConcurrent` | `number | null` | `null` | Maximum concurrent extractions (for concurrency control) |
+| `string_pool_size` | `usize` | `10` | Maximum number of string buffers to maintain in the pool |
+| `string_buffer_capacity` | `usize` | `8192` | Initial capacity for pooled string buffers in bytes |
+| `byte_pool_size` | `usize` | `10` | Maximum number of byte buffers to maintain in the pool |
+| `byte_buffer_capacity` | `usize` | `65536` | Initial capacity for pooled byte buffers in bytes |
+| `max_concurrent` | `Option<usize>` | `Default::default()` | Maximum concurrent extractions (for concurrency control) |
 
 #### Methods
 
@@ -7186,8 +7186,8 @@ Configuration for batch processing with pooling optimizations.
 
 **Signature:**
 
-```typescript
-static default(): BatchProcessorConfig
+```rust
+pub fn default() -> BatchProcessorConfig
 ```
 
 
@@ -7206,80 +7206,80 @@ entries, authors, publication years, and entry type distribution.
 
 **Signature:**
 
-```typescript
-static default(): BibtexExtractor
+```rust
+pub fn default() -> BibtexExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -7291,11 +7291,11 @@ BibTeX bibliography metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `entryCount` | `number` | `null` | Number of entry |
-| `citationKeys` | `Array<string>` | `[]` | Citation keys |
-| `authors` | `Array<string>` | `[]` | Authors |
-| `yearRange` | `YearRange | null` | `null` | Year range (year range) |
-| `entryTypes` | `Record<string, number> | null` | `{}` | Entry types |
+| `entry_count` | `usize` | `Default::default()` | Number of entry |
+| `citation_keys` | `Vec<String>` | `vec![]` | Citation keys |
+| `authors` | `Vec<String>` | `vec![]` | Authors |
+| `year_range` | `Option<YearRange>` | `Default::default()` | Year range (year range) |
+| `entry_types` | `Option<HashMap<String, usize>>` | `HashMap::new()` | Entry types |
 
 
 ---
@@ -7306,10 +7306,10 @@ A single border specification.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `style` | `string` | — | Style |
-| `size` | `number | null` | `null` | Size in bytes |
-| `color` | `string | null` | `null` | Color |
-| `space` | `number | null` | `null` | Space |
+| `style` | `String` | — | Style |
+| `size` | `Option<i32>` | `None` | Size in bytes |
+| `color` | `Option<String>` | `None` | Color |
+| `space` | `Option<i32>` | `None` | Space |
 
 
 ---
@@ -7320,10 +7320,10 @@ Bounding box coordinates for element positioning.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `x0` | `number` | — | Left x-coordinate |
-| `y0` | `number` | — | Bottom y-coordinate |
-| `x1` | `number` | — | Right x-coordinate |
-| `y1` | `number` | — | Top y-coordinate |
+| `x0` | `f64` | — | Left x-coordinate |
+| `y0` | `f64` | — | Bottom y-coordinate |
+| `x1` | `f64` | — | Right x-coordinate |
+| `y1` | `f64` | — | Top y-coordinate |
 
 
 ---
@@ -7344,11 +7344,11 @@ including size, file count, and age distribution.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `totalFiles` | `number` | — | Total number of cached files |
-| `totalSizeMb` | `number` | — | Total cache size in megabytes |
-| `availableSpaceMb` | `number` | — | Available disk space in megabytes |
-| `oldestFileAgeDays` | `number` | — | Age of the oldest cached file in days |
-| `newestFileAgeDays` | `number` | — | Age of the newest cached file in days |
+| `total_files` | `usize` | — | Total number of cached files |
+| `total_size_mb` | `f64` | — | Total cache size in megabytes |
+| `available_space_mb` | `f64` | — | Available disk space in megabytes |
+| `oldest_file_age_days` | `f64` | — | Age of the oldest cached file in days |
+| `newest_file_age_days` | `f64` | — | Age of the newest cached file in days |
 
 
 ---
@@ -7359,10 +7359,10 @@ A cell bounding box within the reconstructed table grid.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `x1` | `number` | — | X1 |
-| `y1` | `number` | — | Y1 |
-| `x2` | `number` | — | X2 |
-| `y2` | `number` | — | Y2 |
+| `x1` | `f32` | — | X1 |
+| `y1` | `f32` | — | Y1 |
+| `x2` | `f32` | — | X2 |
+| `y2` | `f32` | — | Y2 |
 
 
 ---
@@ -7373,10 +7373,10 @@ Per-cell borders (4 sides).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `top` | `BorderStyle | null` | `null` | Top (border style) |
-| `bottom` | `BorderStyle | null` | `null` | Bottom (border style) |
-| `left` | `BorderStyle | null` | `null` | Left (border style) |
-| `right` | `BorderStyle | null` | `null` | Right (border style) |
+| `top` | `Option<BorderStyle>` | `Default::default()` | Top (border style) |
+| `bottom` | `Option<BorderStyle>` | `Default::default()` | Bottom (border style) |
+| `left` | `Option<BorderStyle>` | `Default::default()` | Left (border style) |
+| `right` | `Option<BorderStyle>` | `Default::default()` | Right (border style) |
 
 
 ---
@@ -7387,10 +7387,10 @@ Cell margins (used for both table-level defaults and per-cell overrides).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `top` | `number | null` | `null` | Top |
-| `bottom` | `number | null` | `null` | Bottom |
-| `left` | `number | null` | `null` | Left |
-| `right` | `number | null` | `null` | Right |
+| `top` | `Option<i32>` | `Default::default()` | Top |
+| `bottom` | `Option<i32>` | `Default::default()` | Bottom |
+| `left` | `Option<i32>` | `Default::default()` | Left |
+| `right` | `Option<i32>` | `Default::default()` | Right |
 
 
 ---
@@ -7401,15 +7401,15 @@ Cell-level properties from `<w:tcPr>`.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `width` | `TableWidth | null` | `null` | Width (table width) |
-| `gridSpan` | `number | null` | `null` | Grid span |
-| `vMerge` | `VerticalMerge | null` | `VerticalMerge.Restart` | V merge (vertical merge) |
-| `borders` | `CellBorders | null` | `null` | Borders (cell borders) |
-| `shading` | `CellShading | null` | `null` | Shading (cell shading) |
-| `margins` | `CellMargins | null` | `null` | Margins (cell margins) |
-| `verticalAlign` | `string | null` | `null` | Vertical align |
-| `textDirection` | `string | null` | `null` | Text direction |
-| `noWrap` | `boolean` | `null` | No wrap |
+| `width` | `Option<TableWidth>` | `Default::default()` | Width (table width) |
+| `grid_span` | `Option<u32>` | `Default::default()` | Grid span |
+| `v_merge` | `Option<VerticalMerge>` | `VerticalMerge::Restart` | V merge (vertical merge) |
+| `borders` | `Option<CellBorders>` | `Default::default()` | Borders (cell borders) |
+| `shading` | `Option<CellShading>` | `Default::default()` | Shading (cell shading) |
+| `margins` | `Option<CellMargins>` | `Default::default()` | Margins (cell margins) |
+| `vertical_align` | `Option<String>` | `Default::default()` | Vertical align |
+| `text_direction` | `Option<String>` | `Default::default()` | Text direction |
+| `no_wrap` | `bool` | `Default::default()` | No wrap |
 
 
 ---
@@ -7420,9 +7420,9 @@ Cell shading/background.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `fill` | `string | null` | `null` | Fill |
-| `color` | `string | null` | `null` | Color |
-| `val` | `string | null` | `null` | Val |
+| `fill` | `Option<String>` | `Default::default()` | Fill |
+| `color` | `Option<String>` | `Default::default()` | Color |
+| `val` | `Option<String>` | `Default::default()` | Val |
 
 
 ---
@@ -7431,14 +7431,14 @@ Cell shading/background.
 
 #### Methods
 
-##### fromBytes()
+##### from_bytes()
 
 Open a CFB compound file from raw bytes.
 
 **Signature:**
 
-```typescript
-static fromBytes(bytes: Buffer): CfbReader
+```rust
+pub fn from_bytes(bytes: Vec<u8>) -> CfbReader
 ```
 
 
@@ -7454,9 +7454,9 @@ is configured), and metadata about its position in the document.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | The text content of this chunk. |
-| `chunkType` | `ChunkType` | — | Semantic structural classification of this chunk. Assigned by the heuristic classifier based on content patterns and heading context. Defaults to `ChunkType.Unknown` when no rule matches. |
-| `embedding` | `Array<number> | null` | `null` | Optional embedding vector for this chunk. Only populated when `EmbeddingConfig` is provided in chunking configuration. The dimensionality depends on the chosen embedding model. |
+| `content` | `String` | — | The text content of this chunk. |
+| `chunk_type` | `ChunkType` | — | Semantic structural classification of this chunk. Assigned by the heuristic classifier based on content patterns and heading context. Defaults to `ChunkType.Unknown` when no rule matches. |
+| `embedding` | `Option<Vec<f32>>` | `None` | Optional embedding vector for this chunk. Only populated when `EmbeddingConfig` is provided in chunking configuration. The dimensionality depends on the chosen embedding model. |
 | `metadata` | `ChunkMetadata` | — | Metadata about this chunk's position and properties. |
 
 
@@ -7468,14 +7468,14 @@ Metadata about a chunk's position in the original document.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `byteStart` | `number` | — | Byte offset where this chunk starts in the original text (UTF-8 valid boundary). |
-| `byteEnd` | `number` | — | Byte offset where this chunk ends in the original text (UTF-8 valid boundary). |
-| `tokenCount` | `number | null` | `null` | Number of tokens in this chunk (if available). This is calculated by the embedding model's tokenizer if embeddings are enabled. |
-| `chunkIndex` | `number` | — | Zero-based index of this chunk in the document. |
-| `totalChunks` | `number` | — | Total number of chunks in the document. |
-| `firstPage` | `number | null` | `null` | First page number this chunk spans (1-indexed). Only populated when page tracking is enabled in extraction configuration. |
-| `lastPage` | `number | null` | `null` | Last page number this chunk spans (1-indexed, equal to first_page for single-page chunks). Only populated when page tracking is enabled in extraction configuration. |
-| `headingContext` | `HeadingContext | null` | `null` | Heading context when using Markdown chunker. Contains the heading hierarchy this chunk falls under. Only populated when `ChunkerType.Markdown` is used. |
+| `byte_start` | `usize` | — | Byte offset where this chunk starts in the original text (UTF-8 valid boundary). |
+| `byte_end` | `usize` | — | Byte offset where this chunk ends in the original text (UTF-8 valid boundary). |
+| `token_count` | `Option<usize>` | `None` | Number of tokens in this chunk (if available). This is calculated by the embedding model's tokenizer if embeddings are enabled. |
+| `chunk_index` | `usize` | — | Zero-based index of this chunk in the document. |
+| `total_chunks` | `usize` | — | Total number of chunks in the document. |
+| `first_page` | `Option<usize>` | `None` | First page number this chunk spans (1-indexed). Only populated when page tracking is enabled in extraction configuration. |
+| `last_page` | `Option<usize>` | `None` | Last page number this chunk spans (1-indexed, equal to first_page for single-page chunks). Only populated when page tracking is enabled in extraction configuration. |
+| `heading_context` | `Option<HeadingContext>` | `None` | Heading context when using Markdown chunker. Contains the heading hierarchy this chunk falls under. Only populated when `ChunkerType.Markdown` is used. |
 
 
 ---
@@ -7491,53 +7491,53 @@ Use `..the default constructor` when constructing to allow for future field addi
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `maxCharacters` | `number` | `1000` | Maximum size per chunk (in units determined by `sizing`). When `sizing` is `Characters` (default), this is the max character count. When using token-based sizing, this is the max token count. Default: 1000 |
-| `overlap` | `number` | `200` | Overlap between chunks (in units determined by `sizing`). Default: 200 |
-| `trim` | `boolean` | `true` | Whether to trim whitespace from chunk boundaries. Default: true |
-| `chunkerType` | `ChunkerType` | `ChunkerType.Text` | Type of chunker to use (Text or Markdown). Default: Text |
-| `embedding` | `EmbeddingConfig | null` | `null` | Optional embedding configuration for chunk embeddings. |
-| `preset` | `string | null` | `null` | Use a preset configuration (overrides individual settings if provided). |
-| `sizing` | `ChunkSizing` | `ChunkSizing.Characters` | How to measure chunk size. Default: `Characters` (Unicode character count). Enable `chunking-tiktoken` or `chunking-tokenizers` features for token-based sizing. |
-| `prependHeadingContext` | `boolean` | `false` | When `True` and `chunker_type` is `Markdown`, prepend the heading hierarchy path (e.g. `"# Title > ## Section\n\n"`) to each chunk's content string. This is useful for RAG pipelines where each chunk needs self-contained context about its position in the document structure. Default: `False` |
+| `max_characters` | `usize` | `1000` | Maximum size per chunk (in units determined by `sizing`). When `sizing` is `Characters` (default), this is the max character count. When using token-based sizing, this is the max token count. Default: 1000 |
+| `overlap` | `usize` | `200` | Overlap between chunks (in units determined by `sizing`). Default: 200 |
+| `trim` | `bool` | `true` | Whether to trim whitespace from chunk boundaries. Default: true |
+| `chunker_type` | `ChunkerType` | `ChunkerType::Text` | Type of chunker to use (Text or Markdown). Default: Text |
+| `embedding` | `Option<EmbeddingConfig>` | `Default::default()` | Optional embedding configuration for chunk embeddings. |
+| `preset` | `Option<String>` | `Default::default()` | Use a preset configuration (overrides individual settings if provided). |
+| `sizing` | `ChunkSizing` | `ChunkSizing::Characters` | How to measure chunk size. Default: `Characters` (Unicode character count). Enable `chunking-tiktoken` or `chunking-tokenizers` features for token-based sizing. |
+| `prepend_heading_context` | `bool` | `false` | When `True` and `chunker_type` is `Markdown`, prepend the heading hierarchy path (e.g. `"# Title > ## Section\n\n"`) to each chunk's content string. This is useful for RAG pipelines where each chunk needs self-contained context about its position in the document structure. Default: `False` |
 
 #### Methods
 
-##### withChunkerType()
+##### with_chunker_type()
 
 Set the chunker type.
 
 **Signature:**
 
-```typescript
-withChunkerType(chunkerType: ChunkerType): ChunkingConfig
+```rust
+pub fn with_chunker_type(&self, chunker_type: ChunkerType) -> ChunkingConfig
 ```
 
-##### withSizing()
+##### with_sizing()
 
 Set the sizing strategy.
 
 **Signature:**
 
-```typescript
-withSizing(sizing: ChunkSizing): ChunkingConfig
+```rust
+pub fn with_sizing(&self, sizing: ChunkSizing) -> ChunkingConfig
 ```
 
-##### withPrependHeadingContext()
+##### with_prepend_heading_context()
 
 Enable or disable prepending heading context to chunk content.
 
 **Signature:**
 
-```typescript
-withPrependHeadingContext(prepend: boolean): ChunkingConfig
+```rust
+pub fn with_prepend_heading_context(&self, prepend: bool) -> ChunkingConfig
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): ChunkingConfig
+```rust
+pub fn default() -> ChunkingConfig
 ```
 
 
@@ -7559,64 +7559,64 @@ This processor:
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### process()
 
 **Signature:**
 
-```typescript
-process(result: ExtractionResult, config: ExtractionConfig): void
+```rust
+pub fn process(&self, result: ExtractionResult, config: ExtractionConfig)
 ```
 
-##### processingStage()
+##### processing_stage()
 
 **Signature:**
 
-```typescript
-processingStage(): ProcessingStage
+```rust
+pub fn processing_stage(&self) -> ProcessingStage
 ```
 
-##### shouldProcess()
+##### should_process()
 
 **Signature:**
 
-```typescript
-shouldProcess(result: ExtractionResult, config: ExtractionConfig): boolean
+```rust
+pub fn should_process(&self, result: ExtractionResult, config: ExtractionConfig) -> bool
 ```
 
-##### estimatedDurationMs()
+##### estimated_duration_ms()
 
 **Signature:**
 
-```typescript
-estimatedDurationMs(result: ExtractionResult): number
+```rust
+pub fn estimated_duration_ms(&self, result: ExtractionResult) -> u64
 ```
 
 
@@ -7630,8 +7630,8 @@ Contains the generated chunks and metadata about the chunking.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `chunks` | `Array<Chunk>` | — | List of text chunks |
-| `chunkCount` | `number` | — | Total number of chunks generated |
+| `chunks` | `Vec<Chunk>` | — | List of text chunks |
+| `chunk_count` | `usize` | — | Total number of chunks generated |
 
 
 ---
@@ -7649,80 +7649,80 @@ entries, authors, publication years, and format-specific metadata.
 
 **Signature:**
 
-```typescript
-static default(): CitationExtractor
+```rust
+pub fn default() -> CitationExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -7734,12 +7734,12 @@ Citation file metadata (RIS, PubMed, EndNote).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `citationCount` | `number` | `null` | Number of citation |
-| `format` | `string | null` | `null` | Format |
-| `authors` | `Array<string>` | `[]` | Authors |
-| `yearRange` | `YearRange | null` | `null` | Year range (year range) |
-| `dois` | `Array<string>` | `[]` | Dois |
-| `keywords` | `Array<string>` | `[]` | Keywords |
+| `citation_count` | `usize` | `Default::default()` | Number of citation |
+| `format` | `Option<String>` | `Default::default()` | Format |
+| `authors` | `Vec<String>` | `vec![]` | Authors |
+| `year_range` | `Option<YearRange>` | `Default::default()` | Year range (year range) |
+| `dois` | `Vec<String>` | `vec![]` | Dois |
+| `keywords` | `Vec<String>` | `vec![]` | Keywords |
 
 
 ---
@@ -7757,104 +7757,104 @@ then uses tree-sitter to parse and extract structural information.
 
 **Signature:**
 
-```typescript
-static default(): CodeExtractor
+```rust
+pub fn default() -> CodeExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
 
@@ -7866,19 +7866,19 @@ Color scheme containing all 12 standard Office theme colors.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string` | `null` | Color scheme name. |
-| `dk1` | `ThemeColor | null` | `ThemeColor.Rgb` | Dark 1 (dark background) color. |
-| `lt1` | `ThemeColor | null` | `ThemeColor.Rgb` | Light 1 (light background) color. |
-| `dk2` | `ThemeColor | null` | `ThemeColor.Rgb` | Dark 2 color. |
-| `lt2` | `ThemeColor | null` | `ThemeColor.Rgb` | Light 2 color. |
-| `accent1` | `ThemeColor | null` | `ThemeColor.Rgb` | Accent color 1. |
-| `accent2` | `ThemeColor | null` | `ThemeColor.Rgb` | Accent color 2. |
-| `accent3` | `ThemeColor | null` | `ThemeColor.Rgb` | Accent color 3. |
-| `accent4` | `ThemeColor | null` | `ThemeColor.Rgb` | Accent color 4. |
-| `accent5` | `ThemeColor | null` | `ThemeColor.Rgb` | Accent color 5. |
-| `accent6` | `ThemeColor | null` | `ThemeColor.Rgb` | Accent color 6. |
-| `hlink` | `ThemeColor | null` | `ThemeColor.Rgb` | Hyperlink color. |
-| `folHlink` | `ThemeColor | null` | `ThemeColor.Rgb` | Followed hyperlink color. |
+| `name` | `String` | `Default::default()` | Color scheme name. |
+| `dk1` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Dark 1 (dark background) color. |
+| `lt1` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Light 1 (light background) color. |
+| `dk2` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Dark 2 color. |
+| `lt2` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Light 2 color. |
+| `accent1` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Accent color 1. |
+| `accent2` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Accent color 2. |
+| `accent3` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Accent color 3. |
+| `accent4` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Accent color 4. |
+| `accent5` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Accent color 5. |
+| `accent6` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Accent color 6. |
+| `hlink` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Hyperlink color. |
+| `fol_hlink` | `Option<ThemeColor>` | `ThemeColor::Rgb` | Followed hyperlink color. |
 
 
 ---
@@ -7889,9 +7889,9 @@ Column layout configuration.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `count` | `number | null` | `null` | Number of columns. |
-| `spaceTwips` | `number | null` | `null` | Space between columns in twips. |
-| `equalWidth` | `boolean | null` | `null` | Whether columns have equal width. |
+| `count` | `Option<i32>` | `Default::default()` | Number of columns. |
+| `space_twips` | `Option<i32>` | `Default::default()` | Space between columns in twips. |
+| `equal_width` | `Option<bool>` | `Default::default()` | Whether columns have equal width. |
 
 
 ---
@@ -7902,13 +7902,13 @@ Common metadata fields extracted from a PDF.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `title` | `string | null` | `null` | Title |
-| `subject` | `string | null` | `null` | Subject |
-| `authors` | `Array<string> | null` | `null` | Authors |
-| `keywords` | `Array<string> | null` | `null` | Keywords |
-| `createdAt` | `string | null` | `null` | Created at |
-| `modifiedAt` | `string | null` | `null` | Modified at |
-| `createdBy` | `string | null` | `null` | Created by |
+| `title` | `Option<String>` | `None` | Title |
+| `subject` | `Option<String>` | `None` | Subject |
+| `authors` | `Option<Vec<String>>` | `None` | Authors |
+| `keywords` | `Option<Vec<String>>` | `None` | Keywords |
+| `created_at` | `Option<String>` | `None` | Created at |
+| `modified_at` | `Option<String>` | `None` | Modified at |
+| `created_by` | `Option<String>` | `None` | Created by |
 
 
 ---
@@ -7922,7 +7922,7 @@ intra-op) and batch concurrency to a single limit.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `maxThreads` | `number | null` | `null` | Maximum number of threads for all internal thread pools. Caps Rayon global pool size, ONNX Runtime intra-op threads, and (when `max_concurrent_extractions` is unset) the batch concurrency semaphore. When `None`, system defaults are used. |
+| `max_threads` | `Option<usize>` | `Default::default()` | Maximum number of threads for all internal thread pools. Caps Rayon global pool size, ONNX Runtime intra-op threads, and (when `max_concurrent_extractions` is unset) the batch concurrency semaphore. When `None`, system defaults are used. |
 
 
 ---
@@ -7936,15 +7936,15 @@ watermarks, repeating text) is included in or stripped from extraction
 results. Applies across all extractors (PDF, DOCX, RTF, ODT, HTML, etc.)
 with format-specific implementation.
 
-When `null` on `ExtractionConfig`, each extractor uses its current
+When `None` on `ExtractionConfig`, each extractor uses its current
 default behavior unchanged.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `includeHeaders` | `boolean` | `false` | Include running headers in extraction output. - PDF: Disables top-margin furniture stripping and prevents the layout model from treating `PageHeader`-classified regions as furniture. - DOCX: Includes document headers in text output. - RTF/ODT: Headers already included; this is a no-op when true. - HTML/EPUB: Keeps `<header>` element content. Default: `False` (headers are stripped or excluded). |
-| `includeFooters` | `boolean` | `false` | Include running footers in extraction output. - PDF: Disables bottom-margin furniture stripping and prevents the layout model from treating `PageFooter`-classified regions as furniture. - DOCX: Includes document footers in text output. - RTF/ODT: Footers already included; this is a no-op when true. - HTML/EPUB: Keeps `<footer>` element content. Default: `False` (footers are stripped or excluded). |
-| `stripRepeatingText` | `boolean` | `true` | Enable the heuristic cross-page repeating text detector. When `True` (default), text that repeats verbatim across a supermajority of pages is classified as furniture and stripped.  Disable this if brand names or repeated headings are being incorrectly removed by the heuristic. Note: when a layout-detection model is active, the model may independently classify page-header / page-footer regions as furniture on a per-page basis. To preserve those regions, set `include_headers = true` and/or `include_footers = true` in addition to disabling this flag. Primarily affects PDF extraction. Default: `True`. |
-| `includeWatermarks` | `boolean` | `false` | Include watermark text in extraction output. - PDF: Keeps watermark artifacts and arXiv identifiers. - Other formats: No effect currently. Default: `False` (watermarks are stripped). |
+| `include_headers` | `bool` | `false` | Include running headers in extraction output. - PDF: Disables top-margin furniture stripping and prevents the layout model from treating `PageHeader`-classified regions as furniture. - DOCX: Includes document headers in text output. - RTF/ODT: Headers already included; this is a no-op when true. - HTML/EPUB: Keeps `<header>` element content. Default: `False` (headers are stripped or excluded). |
+| `include_footers` | `bool` | `false` | Include running footers in extraction output. - PDF: Disables bottom-margin furniture stripping and prevents the layout model from treating `PageFooter`-classified regions as furniture. - DOCX: Includes document footers in text output. - RTF/ODT: Footers already included; this is a no-op when true. - HTML/EPUB: Keeps `<footer>` element content. Default: `False` (footers are stripped or excluded). |
+| `strip_repeating_text` | `bool` | `true` | Enable the heuristic cross-page repeating text detector. When `True` (default), text that repeats verbatim across a supermajority of pages is classified as furniture and stripped.  Disable this if brand names or repeated headings are being incorrectly removed by the heuristic. Note: when a layout-detection model is active, the model may independently classify page-header / page-footer regions as furniture on a per-page basis. To preserve those regions, set `include_headers = true` and/or `include_footers = true` in addition to disabling this flag. Primarily affects PDF extraction. Default: `True`. |
+| `include_watermarks` | `bool` | `false` | Include watermark text in extraction output. - PDF: Keeps watermark artifacts and arXiv identifiers. - Other formats: No effect currently. Default: `False` (watermarks are stripped). |
 
 #### Methods
 
@@ -7952,8 +7952,8 @@ default behavior unchanged.
 
 **Signature:**
 
-```typescript
-static default(): ContentFilterConfig
+```rust
+pub fn default() -> ContentFilterConfig
 ```
 
 
@@ -7965,8 +7965,8 @@ JATS contributor with role.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string` | — | The name |
-| `role` | `string | null` | `null` | Role |
+| `name` | `String` | — | The name |
+| `role` | `Option<String>` | `None` | Role |
 
 
 ---
@@ -7980,21 +7980,21 @@ and Office-specific extensions.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `title` | `string | null` | `null` | Document title |
-| `subject` | `string | null` | `null` | Document subject/topic |
-| `creator` | `string | null` | `null` | Document creator/author |
-| `keywords` | `string | null` | `null` | Keywords or tags |
-| `description` | `string | null` | `null` | Document description/abstract |
-| `lastModifiedBy` | `string | null` | `null` | User who last modified the document |
-| `revision` | `string | null` | `null` | Revision number |
-| `created` | `string | null` | `null` | Creation timestamp (ISO 8601) |
-| `modified` | `string | null` | `null` | Last modification timestamp (ISO 8601) |
-| `category` | `string | null` | `null` | Document category |
-| `contentStatus` | `string | null` | `null` | Content status (Draft, Final, etc.) |
-| `language` | `string | null` | `null` | Document language |
-| `identifier` | `string | null` | `null` | Unique identifier |
-| `version` | `string | null` | `null` | Document version |
-| `lastPrinted` | `string | null` | `null` | Last print timestamp (ISO 8601) |
+| `title` | `Option<String>` | `Default::default()` | Document title |
+| `subject` | `Option<String>` | `Default::default()` | Document subject/topic |
+| `creator` | `Option<String>` | `Default::default()` | Document creator/author |
+| `keywords` | `Option<String>` | `Default::default()` | Keywords or tags |
+| `description` | `Option<String>` | `Default::default()` | Document description/abstract |
+| `last_modified_by` | `Option<String>` | `Default::default()` | User who last modified the document |
+| `revision` | `Option<String>` | `Default::default()` | Revision number |
+| `created` | `Option<String>` | `Default::default()` | Creation timestamp (ISO 8601) |
+| `modified` | `Option<String>` | `Default::default()` | Last modification timestamp (ISO 8601) |
+| `category` | `Option<String>` | `Default::default()` | Document category |
+| `content_status` | `Option<String>` | `Default::default()` | Content status (Draft, Final, etc.) |
+| `language` | `Option<String>` | `Default::default()` | Document language |
+| `identifier` | `Option<String>` | `Default::default()` | Unique identifier |
+| `version` | `Option<String>` | `Default::default()` | Document version |
+| `last_printed` | `Option<String>` | `Default::default()` | Last print timestamp (ISO 8601) |
 
 
 ---
@@ -8012,80 +8012,80 @@ producing space-separated text output and populated `tables` field.
 
 **Signature:**
 
-```typescript
-static default(): CsvExtractor
+```rust
+pub fn default() -> CsvExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -8097,11 +8097,11 @@ CSV/TSV file metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `rowCount` | `number` | `null` | Number of row |
-| `columnCount` | `number` | `null` | Number of column |
-| `delimiter` | `string | null` | `null` | Delimiter |
-| `hasHeader` | `boolean` | `null` | Whether header |
-| `columnTypes` | `Array<string> | null` | `[]` | Column types |
+| `row_count` | `usize` | `Default::default()` | Number of row |
+| `column_count` | `usize` | `Default::default()` | Number of column |
+| `delimiter` | `Option<String>` | `Default::default()` | Delimiter |
+| `has_header` | `bool` | `Default::default()` | Whether header |
+| `column_types` | `Option<Vec<String>>` | `vec![]` | Column types |
 
 
 ---
@@ -8129,80 +8129,80 @@ column headers derived from field names.
 
 **Signature:**
 
-```typescript
-static default(): DbfExtractor
+```rust
+pub fn default() -> DbfExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -8214,8 +8214,8 @@ dBASE field information.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string` | — | The name |
-| `fieldType` | `string` | — | Field type |
+| `name` | `String` | — | The name |
+| `field_type` | `String` | — | Field type |
 
 
 ---
@@ -8226,9 +8226,9 @@ dBASE (DBF) file metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `recordCount` | `number` | `null` | Number of record |
-| `fieldCount` | `number` | `null` | Number of field |
-| `fields` | `Array<DbfFieldInfo>` | `[]` | Fields |
+| `record_count` | `usize` | `Default::default()` | Number of record |
+| `field_count` | `usize` | `Default::default()` | Number of field |
+| `fields` | `Vec<DbfFieldInfo>` | `vec![]` | Fields |
 
 
 ---
@@ -8249,8 +8249,8 @@ Push a level (increase depth).
 
 **Signature:**
 
-```typescript
-push(): void
+```rust
+pub fn push(&self)
 ```
 
 ##### pop()
@@ -8259,18 +8259,18 @@ Pop a level (decrease depth).
 
 **Signature:**
 
-```typescript
-pop(): void
+```rust
+pub fn pop(&self)
 ```
 
-##### currentDepth()
+##### current_depth()
 
 Get current depth.
 
 **Signature:**
 
-```typescript
-currentDepth(): number
+```rust
+pub fn current_depth(&self) -> usize
 ```
 
 
@@ -8282,10 +8282,10 @@ Granular timing breakdown for a single `detect()` call.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `preprocessMs` | `number` | `null` | Time spent in image preprocessing (resize, letterbox, normalize, tensor allocation). |
-| `onnxMs` | `number` | `null` | Time for the ONNX `session.run()` call (actual neural network computation). |
-| `modelTotalMs` | `number` | `null` | Total time from start of model call to end of raw output decoding. |
-| `postprocessMs` | `number` | `null` | Time spent in postprocessing heuristics (confidence filtering, overlap resolution). |
+| `preprocess_ms` | `f64` | `Default::default()` | Time spent in image preprocessing (resize, letterbox, normalize, tensor allocation). |
+| `onnx_ms` | `f64` | `Default::default()` | Time for the ONNX `session.run()` call (actual neural network computation). |
+| `model_total_ms` | `f64` | `Default::default()` | Total time from start of model call to end of raw output decoding. |
+| `postprocess_ms` | `f64` | `Default::default()` | Time spent in postprocessing heuristics (confidence filtering, overlap resolution). |
 
 
 ---
@@ -8296,9 +8296,9 @@ Page-level detection result containing all detections and page metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `pageWidth` | `number` | — | Page width |
-| `pageHeight` | `number` | — | Page height |
-| `detections` | `Array<LayoutDetection>` | — | Detections |
+| `page_width` | `u32` | — | Page width |
+| `page_height` | `u32` | — | Page height |
+| `detections` | `Vec<LayoutDetection>` | — | Detections |
 
 
 ---
@@ -8319,14 +8319,14 @@ Available when the `djot` feature is enabled.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `plainText` | `string` | — | Plain text representation for backwards compatibility |
-| `blocks` | `Array<FormattedBlock>` | — | Structured block-level content |
+| `plain_text` | `String` | — | Plain text representation for backwards compatibility |
+| `blocks` | `Vec<FormattedBlock>` | — | Structured block-level content |
 | `metadata` | `Metadata` | — | Metadata from YAML frontmatter |
-| `tables` | `Array<Table>` | — | Extracted tables as structured data |
-| `images` | `Array<DjotImage>` | — | Extracted images with metadata |
-| `links` | `Array<DjotLink>` | — | Extracted links with URLs |
-| `footnotes` | `Array<Footnote>` | — | Footnote definitions |
-| `attributes` | `Array<StringAttributes>` | — | Attributes mapped by element identifier (if present) |
+| `tables` | `Vec<Table>` | — | Extracted tables as structured data |
+| `images` | `Vec<DjotImage>` | — | Extracted images with metadata |
+| `links` | `Vec<DjotLink>` | — | Extracted links with URLs |
+| `footnotes` | `Vec<Footnote>` | — | Footnote definitions |
+| `attributes` | `Vec<StringAttributes>` | — | Attributes mapped by element identifier (if present) |
 
 
 ---
@@ -8343,102 +8343,102 @@ Parses Djot documents with YAML frontmatter, extracting:
 
 #### Methods
 
-##### buildInternalDocument()
+##### build_internal_document()
 
 Build an `InternalDocument` from jotdown events.
 
 **Signature:**
 
-```typescript
-static buildInternalDocument(events: Array<Event>): InternalDocument
+```rust
+pub fn build_internal_document(events: Vec<Event>) -> InternalDocument
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): DjotExtractor
+```rust
+pub fn default() -> DjotExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -8450,10 +8450,10 @@ Image element in Djot.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `src` | `string` | — | Image source URL or path |
-| `alt` | `string` | — | Alternative text |
-| `title` | `string | null` | `null` | Optional title |
-| `attributes` | `Attributes | null` | `null` | Element attributes |
+| `src` | `String` | — | Image source URL or path |
+| `alt` | `String` | — | Alternative text |
+| `title` | `Option<String>` | `None` | Optional title |
+| `attributes` | `Option<Attributes>` | `None` | Element attributes |
 
 
 ---
@@ -8464,10 +8464,10 @@ Link element in Djot.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | — | Link URL |
-| `text` | `string` | — | Link text content |
-| `title` | `string | null` | `null` | Optional title |
-| `attributes` | `Attributes | null` | `null` | Element attributes |
+| `url` | `String` | — | Link URL |
+| `text` | `String` | — | Link text content |
+| `title` | `Option<String>` | `None` | Optional title |
+| `attributes` | `Option<Attributes>` | `None` | Element attributes |
 
 
 ---
@@ -8478,7 +8478,7 @@ Result of DOC text extraction.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `text` | `string` | — | Extracted text content. |
+| `text` | `String` | — | Extracted text content. |
 | `metadata` | `DocMetadata` | — | Document metadata. |
 
 
@@ -8497,80 +8497,80 @@ requiring LibreOffice, providing ~50x faster extraction.
 
 **Signature:**
 
-```typescript
-static default(): DocExtractor
+```rust
+pub fn default() -> DocExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -8582,13 +8582,13 @@ Metadata extracted from DOC files.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `title` | `string | null` | `null` | Title |
-| `subject` | `string | null` | `null` | Subject |
-| `author` | `string | null` | `null` | Author |
-| `lastAuthor` | `string | null` | `null` | Last author |
-| `created` | `string | null` | `null` | Created |
-| `modified` | `string | null` | `null` | Modified |
-| `revisionNumber` | `string | null` | `null` | Revision number |
+| `title` | `Option<String>` | `Default::default()` | Title |
+| `subject` | `Option<String>` | `Default::default()` | Subject |
+| `author` | `Option<String>` | `Default::default()` | Author |
+| `last_author` | `Option<String>` | `Default::default()` | Last author |
+| `created` | `Option<String>` | `Default::default()` | Created |
+| `modified` | `Option<String>` | `Default::default()` | Modified |
+| `revision_number` | `Option<String>` | `Default::default()` | Revision number |
 
 
 ---
@@ -8611,8 +8611,8 @@ Thread-safe: can be called concurrently from multiple pages.
 
 **Signature:**
 
-```typescript
-detect(image: RgbImage): OrientationResult
+```rust
+pub fn detect(&self, image: RgbImage) -> OrientationResult
 ```
 
 
@@ -8624,9 +8624,9 @@ Document properties from `<wp:docPr>`.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `id` | `string | null` | `null` | Unique identifier |
-| `name` | `string | null` | `null` | The name |
-| `description` | `string | null` | `null` | Human-readable description |
+| `id` | `Option<String>` | `Default::default()` | Unique identifier |
+| `name` | `Option<String>` | `Default::default()` | The name |
+| `description` | `Option<String>` | `Default::default()` | Human-readable description |
 
 
 ---
@@ -8643,64 +8643,64 @@ Supports both DocBook 4.x (no namespace) and 5.x (with namespace) formats.
 
 **Signature:**
 
-```typescript
-static default(): DocbookExtractor
+```rust
+pub fn default() -> DocbookExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -8710,23 +8710,23 @@ priority(): number
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `paragraphs` | `Array<Paragraph>` | `[]` | Paragraphs |
-| `tables` | `Array<Table>` | `[]` | Tables extracted from the document |
-| `headers` | `Array<HeaderFooter>` | `[]` | Headers |
-| `footers` | `Array<HeaderFooter>` | `[]` | Footers |
-| `footnotes` | `Array<Note>` | `[]` | Footnotes |
-| `endnotes` | `Array<Note>` | `[]` | Endnotes |
-| `numberingDefs` | `AHashMap` | `null` | Numbering defs (a hash map) |
-| `elements` | `Array<DocumentElement>` | `[]` | Document elements in their original order. |
-| `styleCatalog` | `StyleCatalog | null` | `null` | Parsed style catalog from `word/styles.xml`, if available. |
-| `theme` | `Theme | null` | `null` | Parsed theme from `word/theme/theme1.xml`, if available. |
-| `sections` | `Array<SectionProperties>` | `[]` | Section properties parsed from `w:sectPr` elements. |
-| `drawings` | `Array<Drawing>` | `[]` | Drawing objects parsed from `w:drawing` elements. |
-| `imageRelationships` | `AHashMap` | `null` | Image relationships (rId → target path) for image extraction. |
+| `paragraphs` | `Vec<Paragraph>` | `vec![]` | Paragraphs |
+| `tables` | `Vec<Table>` | `vec![]` | Tables extracted from the document |
+| `headers` | `Vec<HeaderFooter>` | `vec![]` | Headers |
+| `footers` | `Vec<HeaderFooter>` | `vec![]` | Footers |
+| `footnotes` | `Vec<Note>` | `vec![]` | Footnotes |
+| `endnotes` | `Vec<Note>` | `vec![]` | Endnotes |
+| `numbering_defs` | `AHashMap` | `Default::default()` | Numbering defs (a hash map) |
+| `elements` | `Vec<DocumentElement>` | `vec![]` | Document elements in their original order. |
+| `style_catalog` | `Option<StyleCatalog>` | `Default::default()` | Parsed style catalog from `word/styles.xml`, if available. |
+| `theme` | `Option<Theme>` | `Default::default()` | Parsed theme from `word/theme/theme1.xml`, if available. |
+| `sections` | `Vec<SectionProperties>` | `vec![]` | Section properties parsed from `w:sectPr` elements. |
+| `drawings` | `Vec<Drawing>` | `vec![]` | Drawing objects parsed from `w:drawing` elements. |
+| `image_relationships` | `AHashMap` | `Default::default()` | Image relationships (rId → target path) for image extraction. |
 
 #### Methods
 
-##### resolveHeadingLevel()
+##### resolve_heading_level()
 
 Resolve heading level for a paragraph style using the StyleCatalog.
 
@@ -8736,19 +8736,19 @@ Returns 1-6 (markdown heading levels).
 
 **Signature:**
 
-```typescript
-resolveHeadingLevel(styleId: string): number | null
+```rust
+pub fn resolve_heading_level(&self, style_id: String) -> Option<u8>
 ```
 
-##### extractText()
+##### extract_text()
 
 **Signature:**
 
-```typescript
-extractText(): string
+```rust
+pub fn extract_text(&self) -> String
 ```
 
-##### toMarkdown()
+##### to_markdown()
 
 Render the document as markdown.
 
@@ -8758,18 +8758,18 @@ skipped, which is useful when the caller only wants text.
 
 **Signature:**
 
-```typescript
-toMarkdown(injectPlaceholders: boolean): string
+```rust
+pub fn to_markdown(&self, inject_placeholders: bool) -> String
 ```
 
-##### toPlainText()
+##### to_plain_text()
 
 Render the document as plain text (no markdown formatting).
 
 **Signature:**
 
-```typescript
-toPlainText(): string
+```rust
+pub fn to_plain_text(&self) -> String
 ```
 
 
@@ -8786,14 +8786,14 @@ for tree structure, and metadata like page number, bounding box, and content lay
 |-------|------|---------|-------------|
 | `id` | `NodeId` | — | Deterministic identifier (hash of content + position). |
 | `content` | `NodeContent` | — | Node content — tagged enum, type-specific data only. |
-| `parent` | `number | null` | `null` | Parent node index (`None` = root-level node). |
-| `children` | `Array<number>` | — | Child node indices in reading order. |
-| `contentLayer` | `ContentLayer` | — | Content layer classification. |
-| `page` | `number | null` | `null` | Page number where this node starts (1-indexed). |
-| `pageEnd` | `number | null` | `null` | Page number where this node ends (for multi-page tables/sections). |
-| `bbox` | `BoundingBox | null` | `null` | Bounding box in document coordinates. |
-| `annotations` | `Array<TextAnnotation>` | — | Inline annotations (formatting, links) on this node's text content. Only meaningful for text-carrying nodes; empty for containers. |
-| `attributes` | `Record<string, string> | null` | `null` | Format-specific key-value attributes. Extensible bag for data that doesn't warrant a typed field: CSS classes, LaTeX environment names, Excel cell formulas, slide layout names, etc. |
+| `parent` | `Option<u32>` | `None` | Parent node index (`None` = root-level node). |
+| `children` | `Vec<u32>` | — | Child node indices in reading order. |
+| `content_layer` | `ContentLayer` | — | Content layer classification. |
+| `page` | `Option<u32>` | `None` | Page number where this node starts (1-indexed). |
+| `page_end` | `Option<u32>` | `None` | Page number where this node ends (for multi-page tables/sections). |
+| `bbox` | `Option<BoundingBox>` | `None` | Bounding box in document coordinates. |
+| `annotations` | `Vec<TextAnnotation>` | — | Inline annotations (formatting, links) on this node's text content. Only meaningful for text-carrying nodes; empty for containers. |
+| `attributes` | `Option<HashMap<String, String>>` | `None` | Format-specific key-value attributes. Extensible bag for data that doesn't warrant a typed field: CSS classes, LaTeX environment names, Excel cell formulas, slide layout names, etc. |
 
 
 ---
@@ -8804,8 +8804,8 @@ A resolved relationship between two nodes in the document tree.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `source` | `number` | — | Source node index (the referencing node). |
-| `target` | `number` | — | Target node index (the referenced node). |
+| `source` | `u32` | — | Source node index (the referencing node). |
+| `target` | `u32` | — | Target node index (the referenced node). |
 | `kind` | `RelationshipKind` | — | Semantic kind of the relationship. |
 
 
@@ -8826,33 +8826,33 @@ and parent-child relationships are bidirectionally consistent.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `nodes` | `Array<DocumentNode>` | `[]` | All nodes in document/reading order. |
-| `sourceFormat` | `string | null` | `null` | Origin format identifier (e.g. "docx", "pptx", "html", "pdf"). Allows renderers to apply format-aware heuristics when converting the document tree to output formats. |
-| `relationships` | `Array<DocumentRelationship>` | `[]` | Resolved relationships between nodes (footnote refs, citations, anchor links, etc.). Populated during derivation from the internal document representation. Empty when no relationships are detected. |
+| `nodes` | `Vec<DocumentNode>` | `vec![]` | All nodes in document/reading order. |
+| `source_format` | `Option<String>` | `Default::default()` | Origin format identifier (e.g. "docx", "pptx", "html", "pdf"). Allows renderers to apply format-aware heuristics when converting the document tree to output formats. |
+| `relationships` | `Vec<DocumentRelationship>` | `vec![]` | Resolved relationships between nodes (footnote refs, citations, anchor links, etc.). Populated during derivation from the internal document representation. Empty when no relationships are detected. |
 
 #### Methods
 
-##### withCapacity()
+##### with_capacity()
 
 Create a `DocumentStructure` with pre-allocated capacity.
 
 **Signature:**
 
-```typescript
-static withCapacity(capacity: number): DocumentStructure
+```rust
+pub fn with_capacity(capacity: usize) -> DocumentStructure
 ```
 
-##### pushNode()
+##### push_node()
 
 Push a node and return its `NodeIndex`.
 
 **Signature:**
 
-```typescript
-pushNode(node: DocumentNode): number
+```rust
+pub fn push_node(&self, node: DocumentNode) -> u32
 ```
 
-##### addChild()
+##### add_child()
 
 Add a child to an existing parent node.
 
@@ -8864,8 +8864,8 @@ Panics if either index is out of bounds.
 
 **Signature:**
 
-```typescript
-addChild(parent: number, child: number): void
+```rust
+pub fn add_child(&self, parent: u32, child: u32)
 ```
 
 ##### validate()
@@ -8879,28 +8879,28 @@ Returns a descriptive error string if validation fails.
 
 **Signature:**
 
-```typescript
-validate(): void
+```rust
+pub fn validate(&self)
 ```
 
-##### bodyRoots()
+##### body_roots()
 
 Iterate over root-level body nodes (content_layer == Body, parent == None).
 
 **Signature:**
 
-```typescript
-bodyRoots(): Iterator
+```rust
+pub fn body_roots(&self) -> Iterator
 ```
 
-##### furnitureRoots()
+##### furniture_roots()
 
 Iterate over root-level furniture nodes (non-Body content_layer, parent == None).
 
 **Signature:**
 
-```typescript
-furnitureRoots(): Iterator
+```rust
+pub fn furniture_roots(&self) -> Iterator
 ```
 
 ##### get()
@@ -8909,8 +8909,8 @@ Get a node by index.
 
 **Signature:**
 
-```typescript
-get(index: number): DocumentNode | null
+```rust
+pub fn get(&self, index: u32) -> Option<DocumentNode>
 ```
 
 ##### len()
@@ -8919,26 +8919,26 @@ Get the total number of nodes.
 
 **Signature:**
 
-```typescript
-len(): number
+```rust
+pub fn len(&self) -> usize
 ```
 
-##### isEmpty()
+##### is_empty()
 
 Check if the document structure is empty.
 
 **Signature:**
 
-```typescript
-isEmpty(): boolean
+```rust
+pub fn is_empty(&self) -> bool
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): DocumentStructure
+```rust
+pub fn default() -> DocumentStructure
 ```
 
 
@@ -8955,24 +8955,24 @@ under it. Higher-level headings pop deeper sections off the stack.
 
 #### Methods
 
-##### withCapacity()
+##### with_capacity()
 
 Create a builder with pre-allocated node capacity.
 
 **Signature:**
 
-```typescript
-static withCapacity(capacity: number): DocumentStructureBuilder
+```rust
+pub fn with_capacity(capacity: usize) -> DocumentStructureBuilder
 ```
 
-##### sourceFormat()
+##### source_format()
 
 Set the source format identifier (e.g. "docx", "html", "pptx").
 
 **Signature:**
 
-```typescript
-sourceFormat(format: string): DocumentStructureBuilder
+```rust
+pub fn source_format(&self, format: String) -> DocumentStructureBuilder
 ```
 
 ##### build()
@@ -8981,11 +8981,11 @@ Consume the builder and return the constructed `DocumentStructure`.
 
 **Signature:**
 
-```typescript
-build(): DocumentStructure
+```rust
+pub fn build(&self) -> DocumentStructure
 ```
 
-##### pushHeading()
+##### push_heading()
 
 Push a heading, creating a `Group` container with automatic section nesting.
 
@@ -8996,51 +8996,51 @@ Returns the `NodeIndex` of the `Group` node (not the heading child).
 
 **Signature:**
 
-```typescript
-pushHeading(level: number, text: string, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_heading(&self, level: u8, text: String, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushParagraph()
+##### push_paragraph()
 
 Push a paragraph node. Nested under current section if one exists.
 
 **Signature:**
 
-```typescript
-pushParagraph(text: string, annotations: Array<TextAnnotation>, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_paragraph(&self, text: String, annotations: Vec<TextAnnotation>, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushList()
+##### push_list()
 
 Push a list container. Returns the `NodeIndex` to use with `push_list_item`.
 
 **Signature:**
 
-```typescript
-pushList(ordered: boolean, page: number): number
+```rust
+pub fn push_list(&self, ordered: bool, page: Option<u32>) -> u32
 ```
 
-##### pushListItem()
+##### push_list_item()
 
 Push a list item as a child of the given list node.
 
 **Signature:**
 
-```typescript
-pushListItem(list: number, text: string, page: number): number
+```rust
+pub fn push_list_item(&self, list: u32, text: String, page: Option<u32>) -> u32
 ```
 
-##### pushTable()
+##### push_table()
 
 Push a table node with a structured grid.
 
 **Signature:**
 
-```typescript
-pushTable(grid: TableGrid, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_table(&self, grid: TableGrid, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushTableFromCells()
+##### push_table_from_cells()
 
 Push a table from a simple cell grid (`Vec<Vec<String>>`).
 
@@ -9048,51 +9048,51 @@ Assumes the first row is the header row.
 
 **Signature:**
 
-```typescript
-pushTableFromCells(cells: Array<Array<string>>, page: number): number
+```rust
+pub fn push_table_from_cells(&self, cells: Vec<Vec<String>>, page: Option<u32>) -> u32
 ```
 
-##### pushCode()
+##### push_code()
 
 Push a code block.
 
 **Signature:**
 
-```typescript
-pushCode(text: string, language: string, page: number): number
+```rust
+pub fn push_code(&self, text: String, language: Option<String>, page: Option<u32>) -> u32
 ```
 
-##### pushFormula()
+##### push_formula()
 
 Push a math formula node.
 
 **Signature:**
 
-```typescript
-pushFormula(text: string, page: number): number
+```rust
+pub fn push_formula(&self, text: String, page: Option<u32>) -> u32
 ```
 
-##### pushImage()
+##### push_image()
 
 Push an image reference node.
 
 **Signature:**
 
-```typescript
-pushImage(description: string, imageIndex: number, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_image(&self, description: Option<String>, image_index: Option<u32>, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushImageWithSrc()
+##### push_image_with_src()
 
 Push an image node with source URL.
 
 **Signature:**
 
-```typescript
-pushImageWithSrc(description: string, src: string, imageIndex: number, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_image_with_src(&self, description: Option<String>, src: Option<String>, image_index: Option<u32>, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushQuote()
+##### push_quote()
 
 Push a block quote container and enter it.
 
@@ -9101,31 +9101,31 @@ Subsequent body nodes will be parented under this quote until
 
 **Signature:**
 
-```typescript
-pushQuote(page: number): number
+```rust
+pub fn push_quote(&self, page: Option<u32>) -> u32
 ```
 
-##### pushFootnote()
+##### push_footnote()
 
 Push a footnote node.
 
 **Signature:**
 
-```typescript
-pushFootnote(text: string, page: number): number
+```rust
+pub fn push_footnote(&self, text: String, page: Option<u32>) -> u32
 ```
 
-##### pushPageBreak()
+##### push_page_break()
 
 Push a page break marker (always root-level, never nested under sections).
 
 **Signature:**
 
-```typescript
-pushPageBreak(page: number): number
+```rust
+pub fn push_page_break(&self, page: Option<u32>) -> u32
 ```
 
-##### pushSlide()
+##### push_slide()
 
 Push a slide container (PPTX) and enter it.
 
@@ -9136,41 +9136,41 @@ slide is pushed.
 
 **Signature:**
 
-```typescript
-pushSlide(number: number, title: string): number
+```rust
+pub fn push_slide(&self, number: u32, title: Option<String>) -> u32
 ```
 
-##### pushDefinitionList()
+##### push_definition_list()
 
 Push a definition list container. Use `push_definition_item` for entries.
 
 **Signature:**
 
-```typescript
-pushDefinitionList(page: number): number
+```rust
+pub fn push_definition_list(&self, page: Option<u32>) -> u32
 ```
 
-##### pushDefinitionItem()
+##### push_definition_item()
 
 Push a definition item as a child of the given definition list.
 
 **Signature:**
 
-```typescript
-pushDefinitionItem(list: number, term: string, definition: string, page: number): number
+```rust
+pub fn push_definition_item(&self, list: u32, term: String, definition: String, page: Option<u32>) -> u32
 ```
 
-##### pushCitation()
+##### push_citation()
 
 Push a citation / bibliographic reference.
 
 **Signature:**
 
-```typescript
-pushCitation(key: string, text: string, page: number): number
+```rust
+pub fn push_citation(&self, key: String, text: String, page: Option<u32>) -> u32
 ```
 
-##### pushAdmonition()
+##### push_admonition()
 
 Push an admonition container (note, warning, tip, etc.) and enter it.
 
@@ -9179,92 +9179,92 @@ Subsequent body nodes will be parented under this admonition until
 
 **Signature:**
 
-```typescript
-pushAdmonition(kind: string, title: string, page: number): number
+```rust
+pub fn push_admonition(&self, kind: String, title: Option<String>, page: Option<u32>) -> u32
 ```
 
-##### pushRawBlock()
+##### push_raw_block()
 
 Push a raw block preserved verbatim from the source format.
 
 **Signature:**
 
-```typescript
-pushRawBlock(format: string, content: string, page: number): number
+```rust
+pub fn push_raw_block(&self, format: String, content: String, page: Option<u32>) -> u32
 ```
 
-##### pushMetadataBlock()
+##### push_metadata_block()
 
 Push a metadata block (email headers, frontmatter key-value pairs).
 
 **Signature:**
 
-```typescript
-pushMetadataBlock(entries: Array<StringString>, page: number): number
+```rust
+pub fn push_metadata_block(&self, entries: Vec<StringString>, page: Option<u32>) -> u32
 ```
 
-##### pushHeader()
+##### push_header()
 
 Push a header paragraph (running page header).
 
 **Signature:**
 
-```typescript
-pushHeader(text: string, page: number): number
+```rust
+pub fn push_header(&self, text: String, page: Option<u32>) -> u32
 ```
 
-##### pushFooter()
+##### push_footer()
 
 Push a footer paragraph (running page footer).
 
 **Signature:**
 
-```typescript
-pushFooter(text: string, page: number): number
+```rust
+pub fn push_footer(&self, text: String, page: Option<u32>) -> u32
 ```
 
-##### setAttributes()
+##### set_attributes()
 
 Set format-specific attributes on an existing node.
 
 **Signature:**
 
-```typescript
-setAttributes(index: number, attrs: AHashMap): void
+```rust
+pub fn set_attributes(&self, index: u32, attrs: AHashMap)
 ```
 
-##### addChild()
+##### add_child()
 
 Add a child node to an existing parent (for container nodes like Quote, Slide, Admonition).
 
 **Signature:**
 
-```typescript
-addChild(parent: number, child: number): void
+```rust
+pub fn add_child(&self, parent: u32, child: u32)
 ```
 
-##### pushRaw()
+##### push_raw()
 
 Push a raw `NodeContent` with full control over content layer and annotations.
 Nests under current section unless the content type is a root-level type.
 
 **Signature:**
 
-```typescript
-pushRaw(content: NodeContent, page: number, bbox: BoundingBox, layer: ContentLayer, annotations: Array<TextAnnotation>): number
+```rust
+pub fn push_raw(&self, content: NodeContent, page: Option<u32>, bbox: Option<BoundingBox>, layer: ContentLayer, annotations: Vec<TextAnnotation>) -> u32
 ```
 
-##### clearSections()
+##### clear_sections()
 
 Reset the section stack (e.g. when starting a new page).
 
 **Signature:**
 
-```typescript
-clearSections(): void
+```rust
+pub fn clear_sections(&self)
 ```
 
-##### enterContainer()
+##### enter_container()
 
 Manually push a node onto the container stack.
 
@@ -9273,11 +9273,11 @@ until `exit_container` is called.
 
 **Signature:**
 
-```typescript
-enterContainer(container: number): void
+```rust
+pub fn enter_container(&self, container: u32)
 ```
 
-##### exitContainer()
+##### exit_container()
 
 Pop the most recent container from the container stack.
 
@@ -9286,16 +9286,16 @@ stack, or under the section stack if the container stack is empty.
 
 **Signature:**
 
-```typescript
-exitContainer(): void
+```rust
+pub fn exit_container(&self)
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): DocumentStructureBuilder
+```rust
+pub fn default() -> DocumentStructureBuilder
 ```
 
 
@@ -9309,22 +9309,22 @@ Contains Word-specific document statistics and metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `application` | `string | null` | `null` | Application name (e.g., "Microsoft Office Word") |
-| `appVersion` | `string | null` | `null` | Application version |
-| `template` | `string | null` | `null` | Template filename |
-| `totalTime` | `number | null` | `null` | Total editing time in minutes |
-| `pages` | `number | null` | `null` | Number of pages |
-| `words` | `number | null` | `null` | Number of words |
-| `characters` | `number | null` | `null` | Number of characters (excluding spaces) |
-| `charactersWithSpaces` | `number | null` | `null` | Number of characters (including spaces) |
-| `lines` | `number | null` | `null` | Number of lines |
-| `paragraphs` | `number | null` | `null` | Number of paragraphs |
-| `company` | `string | null` | `null` | Company name |
-| `docSecurity` | `number | null` | `null` | Document security level |
-| `scaleCrop` | `boolean | null` | `null` | Scale crop flag |
-| `linksUpToDate` | `boolean | null` | `null` | Links up to date flag |
-| `sharedDoc` | `boolean | null` | `null` | Shared document flag |
-| `hyperlinksChanged` | `boolean | null` | `null` | Hyperlinks changed flag |
+| `application` | `Option<String>` | `Default::default()` | Application name (e.g., "Microsoft Office Word") |
+| `app_version` | `Option<String>` | `Default::default()` | Application version |
+| `template` | `Option<String>` | `Default::default()` | Template filename |
+| `total_time` | `Option<i32>` | `Default::default()` | Total editing time in minutes |
+| `pages` | `Option<i32>` | `Default::default()` | Number of pages |
+| `words` | `Option<i32>` | `Default::default()` | Number of words |
+| `characters` | `Option<i32>` | `Default::default()` | Number of characters (excluding spaces) |
+| `characters_with_spaces` | `Option<i32>` | `Default::default()` | Number of characters (including spaces) |
+| `lines` | `Option<i32>` | `Default::default()` | Number of lines |
+| `paragraphs` | `Option<i32>` | `Default::default()` | Number of paragraphs |
+| `company` | `Option<String>` | `Default::default()` | Company name |
+| `doc_security` | `Option<i32>` | `Default::default()` | Document security level |
+| `scale_crop` | `Option<bool>` | `Default::default()` | Scale crop flag |
+| `links_up_to_date` | `Option<bool>` | `Default::default()` | Links up to date flag |
+| `shared_doc` | `Option<bool>` | `Default::default()` | Shared document flag |
+| `hyperlinks_changed` | `Option<bool>` | `Default::default()` | Hyperlinks changed flag |
 
 
 ---
@@ -9343,80 +9343,80 @@ This extractor provides:
 
 **Signature:**
 
-```typescript
-static default(): DocxExtractor
+```rust
+pub fn default() -> DocxExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -9431,9 +9431,9 @@ Integrates with `office_metadata` module for core/app/custom properties.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `coreProperties` | `CoreProperties | null` | `null` | Core properties from docProps/core.xml (Dublin Core metadata) Contains title, creator, subject, keywords, dates, etc. Shared format across DOCX/PPTX/XLSX documents. |
-| `appProperties` | `DocxAppProperties | null` | `null` | Application properties from docProps/app.xml (Word-specific statistics) Contains word count, page count, paragraph count, editing time, etc. DOCX-specific variant of Office application properties. |
-| `customProperties` | `Record<string, unknown> | null` | `null` | Custom properties from docProps/custom.xml (user-defined properties) Contains key-value pairs defined by users or applications. Values can be strings, numbers, booleans, or dates. |
+| `core_properties` | `Option<CoreProperties>` | `None` | Core properties from docProps/core.xml (Dublin Core metadata) Contains title, creator, subject, keywords, dates, etc. Shared format across DOCX/PPTX/XLSX documents. |
+| `app_properties` | `Option<DocxAppProperties>` | `None` | Application properties from docProps/app.xml (Word-specific statistics) Contains word count, page count, paragraph count, editing time, etc. DOCX-specific variant of Office application properties. |
+| `custom_properties` | `Option<HashMap<String, serde_json::Value>>` | `None` | Custom properties from docProps/custom.xml (user-defined properties) Contains key-value pairs defined by users or applications. Values can be strings, numbers, booleans, or dates. |
 
 
 ---
@@ -9444,10 +9444,10 @@ A drawing object extracted from `<w:drawing>`.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `drawingType` | `DrawingType` | — | Drawing type (drawing type) |
-| `extent` | `Extent | null` | `null` | Extent (extent) |
-| `docProperties` | `DocProperties | null` | `null` | Doc properties (doc properties) |
-| `imageRef` | `string | null` | `null` | Image ref |
+| `drawing_type` | `DrawingType` | — | Drawing type (drawing type) |
+| `extent` | `Option<Extent>` | `None` | Extent (extent) |
+| `doc_properties` | `Option<DocProperties>` | `None` | Doc properties (doc properties) |
+| `image_ref` | `Option<String>` | `None` | Image ref |
 
 
 ---
@@ -9461,9 +9461,9 @@ unique identifier, and metadata for tracking origin and position.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `elementId` | `ElementId` | — | Unique element identifier |
-| `elementType` | `ElementType` | — | Semantic type of this element |
-| `text` | `string` | — | Text content of the element |
+| `element_id` | `ElementId` | — | Unique element identifier |
+| `element_type` | `ElementType` | — | Semantic type of this element |
+| `text` | `String` | — | Text content of the element |
 | `metadata` | `ElementMetadata` | — | Metadata about the element |
 
 
@@ -9488,24 +9488,24 @@ Returns error if the string is not valid.
 
 **Signature:**
 
-```typescript
-static new(hexStr: string): ElementId
+```rust
+pub fn new(hex_str: String) -> ElementId
 ```
 
-##### asRef()
+##### as_ref()
 
 **Signature:**
 
-```typescript
-asRef(): string
+```rust
+pub fn as_ref(&self) -> String
 ```
 
 ##### fmt()
 
 **Signature:**
 
-```typescript
-fmt(f: Formatter): Unknown
+```rust
+pub fn fmt(&self, f: Formatter) -> Unknown
 ```
 
 
@@ -9517,11 +9517,11 @@ Metadata for a semantic element.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `pageNumber` | `number | null` | `null` | Page number (1-indexed) |
-| `filename` | `string | null` | `null` | Source filename or document name |
-| `coordinates` | `BoundingBox | null` | `null` | Bounding box coordinates if available |
-| `elementIndex` | `number | null` | `null` | Position index in the element sequence |
-| `additional` | `Record<string, string>` | — | Additional custom metadata |
+| `page_number` | `Option<usize>` | `None` | Page number (1-indexed) |
+| `filename` | `Option<String>` | `None` | Source filename or document name |
+| `coordinates` | `Option<BoundingBox>` | `None` | Bounding box coordinates if available |
+| `element_index` | `Option<usize>` | `None` | Position index in the element sequence |
+| `additional` | `HashMap<String, String>` | — | Additional custom metadata |
 
 
 ---
@@ -9534,12 +9534,12 @@ Contains metadata and optionally the content of an email attachment.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string | null` | `null` | Attachment name (from Content-Disposition header) |
-| `filename` | `string | null` | `null` | Filename of the attachment |
-| `mimeType` | `string | null` | `null` | MIME type of the attachment |
-| `size` | `number | null` | `null` | Size in bytes |
-| `isImage` | `boolean` | — | Whether this attachment is an image |
-| `data` | `Buffer | null` | `null` | Attachment data (if extracted). Uses `bytes.Bytes` for cheap cloning of large buffers. |
+| `name` | `Option<String>` | `None` | Attachment name (from Content-Disposition header) |
+| `filename` | `Option<String>` | `None` | Filename of the attachment |
+| `mime_type` | `Option<String>` | `None` | MIME type of the attachment |
+| `size` | `Option<usize>` | `None` | Size in bytes |
+| `is_image` | `bool` | — | Whether this attachment is an image |
+| `data` | `Option<Vec<u8>>` | `None` | Attachment data (if extracted). Uses `bytes.Bytes` for cheap cloning of large buffers. |
 
 
 ---
@@ -9550,7 +9550,7 @@ Configuration for email extraction.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `msgFallbackCodepage` | `number | null` | `null` | Windows codepage number to use when an MSG file contains no codepage property. Defaults to `None`, which falls back to windows-1252. If an unrecognized or invalid codepage number is supplied (including 0), the behavior silently falls back to windows-1252 — the same as when the MSG file itself contains an unrecognized codepage. No error or warning is emitted. Users should verify output when supplying unusual values. Common values: - 1250: Central European (Polish, Czech, Hungarian, etc.) - 1251: Cyrillic (Russian, Ukrainian, Bulgarian, etc.) - 1252: Western European (default) - 1253: Greek - 1254: Turkish - 1255: Hebrew - 1256: Arabic - 932:  Japanese (Shift-JIS) - 936:  Simplified Chinese (GBK) |
+| `msg_fallback_codepage` | `Option<u32>` | `Default::default()` | Windows codepage number to use when an MSG file contains no codepage property. Defaults to `None`, which falls back to windows-1252. If an unrecognized or invalid codepage number is supplied (including 0), the behavior silently falls back to windows-1252 — the same as when the MSG file itself contains an unrecognized codepage. No error or warning is emitted. Users should verify output when supplying unusual values. Common values: - 1250: Central European (Polish, Czech, Hungarian, etc.) - 1251: Cyrillic (Russian, Ukrainian, Bulgarian, etc.) - 1252: Western European (default) - 1253: Greek - 1254: Turkish - 1255: Hebrew - 1256: Arabic - 932:  Japanese (Shift-JIS) - 936:  Simplified Chinese (GBK) |
 
 
 ---
@@ -9564,18 +9564,18 @@ including headers, body content, and attachments.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `subject` | `string | null` | `null` | Email subject line |
-| `fromEmail` | `string | null` | `null` | Sender email address |
-| `toEmails` | `Array<string>` | — | Primary recipient email addresses |
-| `ccEmails` | `Array<string>` | — | CC recipient email addresses |
-| `bccEmails` | `Array<string>` | — | BCC recipient email addresses |
-| `date` | `string | null` | `null` | Email date/timestamp |
-| `messageId` | `string | null` | `null` | Message-ID header value |
-| `plainText` | `string | null` | `null` | Plain text version of the email body |
-| `htmlContent` | `string | null` | `null` | HTML version of the email body |
-| `cleanedText` | `string` | — | Cleaned/processed text content |
-| `attachments` | `Array<EmailAttachment>` | — | List of email attachments |
-| `metadata` | `Record<string, string>` | — | Additional email headers and metadata |
+| `subject` | `Option<String>` | `None` | Email subject line |
+| `from_email` | `Option<String>` | `None` | Sender email address |
+| `to_emails` | `Vec<String>` | — | Primary recipient email addresses |
+| `cc_emails` | `Vec<String>` | — | CC recipient email addresses |
+| `bcc_emails` | `Vec<String>` | — | BCC recipient email addresses |
+| `date` | `Option<String>` | `None` | Email date/timestamp |
+| `message_id` | `Option<String>` | `None` | Message-ID header value |
+| `plain_text` | `Option<String>` | `None` | Plain text version of the email body |
+| `html_content` | `Option<String>` | `None` | HTML version of the email body |
+| `cleaned_text` | `String` | — | Cleaned/processed text content |
+| `attachments` | `Vec<EmailAttachment>` | — | List of email attachments |
+| `metadata` | `HashMap<String, String>` | — | Additional email headers and metadata |
 
 
 ---
@@ -9592,80 +9592,80 @@ Supports: .eml, .msg
 
 **Signature:**
 
-```typescript
-static default(): EmailExtractor
+```rust
+pub fn default() -> EmailExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
 
@@ -9679,13 +9679,13 @@ Includes sender/recipient information, message ID, and attachment list.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `fromEmail` | `string | null` | `null` | Sender's email address |
-| `fromName` | `string | null` | `null` | Sender's display name |
-| `toEmails` | `Array<string>` | — | Primary recipients |
-| `ccEmails` | `Array<string>` | — | CC recipients |
-| `bccEmails` | `Array<string>` | — | BCC recipients |
-| `messageId` | `string | null` | `null` | Message-ID header value |
-| `attachments` | `Array<string>` | — | List of attachment filenames |
+| `from_email` | `Option<String>` | `None` | Sender's email address |
+| `from_name` | `Option<String>` | `None` | Sender's display name |
+| `to_emails` | `Vec<String>` | — | Primary recipients |
+| `cc_emails` | `Vec<String>` | — | CC recipients |
+| `bcc_emails` | `Vec<String>` | — | BCC recipients |
+| `message_id` | `Option<String>` | `None` | Message-ID header value |
+| `attachments` | `Vec<String>` | — | List of attachment filenames |
 
 
 ---
@@ -9696,9 +9696,9 @@ Embedded file descriptor extracted from the PDF name tree.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string` | — | The filename as stored in the PDF name tree. |
-| `data` | `Buffer` | — | Raw file bytes from the embedded stream. |
-| `mimeType` | `string | null` | `null` | MIME type if specified in the filespec, otherwise `None`. |
+| `name` | `String` | — | The filename as stored in the PDF name tree. |
+| `data` | `Vec<u8>` | — | Raw file bytes from the embedded stream. |
+| `mime_type` | `Option<String>` | `None` | MIME type if specified in the filespec, otherwise `None`. |
 
 
 ---
@@ -9712,11 +9712,11 @@ Requires the `embeddings` feature to be enabled.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `model` | `EmbeddingModelType` | `EmbeddingModelType.Preset` | The embedding model to use (defaults to "balanced" preset if not specified) |
-| `normalize` | `boolean` | `true` | Whether to normalize embedding vectors (recommended for cosine similarity) |
-| `batchSize` | `number` | `32` | Batch size for embedding generation |
-| `showDownloadProgress` | `boolean` | `false` | Show model download progress |
-| `cacheDir` | `string | null` | `null` | Custom cache directory for model files Defaults to `~/.cache/kreuzberg/embeddings/` if not specified. Allows full customization of model download location. |
+| `model` | `EmbeddingModelType` | `EmbeddingModelType::Preset` | The embedding model to use (defaults to "balanced" preset if not specified) |
+| `normalize` | `bool` | `true` | Whether to normalize embedding vectors (recommended for cosine similarity) |
+| `batch_size` | `usize` | `32` | Batch size for embedding generation |
+| `show_download_progress` | `bool` | `false` | Show model download progress |
+| `cache_dir` | `Option<PathBuf>` | `Default::default()` | Custom cache directory for model files Defaults to `~/.cache/kreuzberg/embeddings/` if not specified. Allows full customization of model download location. |
 
 #### Methods
 
@@ -9724,8 +9724,8 @@ Requires the `embeddings` feature to be enabled.
 
 **Signature:**
 
-```typescript
-static default(): EmbeddingConfig
+```rust
+pub fn default() -> EmbeddingConfig
 ```
 
 
@@ -9750,14 +9750,14 @@ to provide an optimized configuration for specific scenarios.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string` | — | The name |
-| `chunkSize` | `number` | — | Chunk size |
-| `overlap` | `number` | — | Overlap |
-| `modelRepo` | `string` | — | HuggingFace repository name for the model. |
-| `pooling` | `string` | — | Pooling strategy: "cls" or "mean". |
-| `modelFile` | `string` | — | Path to the ONNX model file within the repo. |
-| `dimensions` | `number` | — | Dimensions |
-| `description` | `string` | — | Human-readable description |
+| `name` | `String` | — | The name |
+| `chunk_size` | `usize` | — | Chunk size |
+| `overlap` | `usize` | — | Overlap |
+| `model_repo` | `String` | — | HuggingFace repository name for the model. |
+| `pooling` | `String` | — | Pooling strategy: "cls" or "mean". |
+| `model_file` | `String` | — | Path to the ONNX model file within the repo. |
+| `dimensions` | `usize` | — | Dimensions |
+| `description` | `String` | — | Human-readable description |
 
 
 ---
@@ -9778,8 +9778,8 @@ Validate entity length.
 
 **Signature:**
 
-```typescript
-validate(content: string): void
+```rust
+pub fn validate(&self, content: String)
 ```
 
 
@@ -9798,80 +9798,80 @@ using native Rust parsing without GPL-licensed dependencies.
 
 **Signature:**
 
-```typescript
-static default(): EpubExtractor
+```rust
+pub fn default() -> EpubExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -9883,12 +9883,12 @@ EPUB metadata (Dublin Core extensions).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `coverage` | `string | null` | `null` | Coverage |
-| `dcFormat` | `string | null` | `null` | Dc format |
-| `relation` | `string | null` | `null` | Relation |
-| `source` | `string | null` | `null` | Source |
-| `dcType` | `string | null` | `null` | Dc type |
-| `coverImage` | `string | null` | `null` | Cover image |
+| `coverage` | `Option<String>` | `Default::default()` | Coverage |
+| `dc_format` | `Option<String>` | `Default::default()` | Dc format |
+| `relation` | `Option<String>` | `Default::default()` | Relation |
+| `source` | `Option<String>` | `Default::default()` | Source |
+| `dc_type` | `Option<String>` | `Default::default()` | Dc type |
+| `cover_image` | `Option<String>` | `Default::default()` | Cover image |
 
 
 ---
@@ -9899,8 +9899,8 @@ Error metadata (for batch operations).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `errorType` | `string` | — | Error type |
-| `message` | `string` | — | Message |
+| `error_type` | `String` | — | Error type |
+| `message` | `String` | — | Message |
 
 
 ---
@@ -9924,88 +9924,88 @@ Supports: .xlsx, .xlsm, .xlam, .xltm, .xls, .xla, .xlsb, .ods
 
 **Signature:**
 
-```typescript
-static default(): ExcelExtractor
+```rust
+pub fn default() -> ExcelExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
 
@@ -10020,8 +10020,8 @@ spreadsheet formats (.xlsx, .xls, .ods, etc.).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `sheetCount` | `number` | — | Total number of sheets in the workbook |
-| `sheetNames` | `Array<string>` | — | Names of all sheets in order |
+| `sheet_count` | `usize` | — | Total number of sheets in the workbook |
+| `sheet_names` | `Vec<String>` | — | Names of all sheets in order |
 
 
 ---
@@ -10035,12 +10035,12 @@ converted to Markdown format and dimensional statistics.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string` | — | Sheet name as it appears in Excel |
-| `markdown` | `string` | — | Sheet content converted to Markdown tables |
-| `rowCount` | `number` | — | Number of rows |
-| `colCount` | `number` | — | Number of columns |
-| `cellCount` | `number` | — | Total number of non-empty cells |
-| `tableCells` | `Array<Array<string>> | null` | `null` | Pre-extracted table cells (2D vector of cell values) Populated during markdown generation to avoid re-parsing markdown. None for empty sheets. |
+| `name` | `String` | — | Sheet name as it appears in Excel |
+| `markdown` | `String` | — | Sheet content converted to Markdown tables |
+| `row_count` | `usize` | — | Number of rows |
+| `col_count` | `usize` | — | Number of columns |
+| `cell_count` | `usize` | — | Total number of non-empty cells |
+| `table_cells` | `Option<Vec<Vec<String>>>` | `None` | Pre-extracted table cells (2D vector of cell values) Populated during markdown generation to avoid re-parsing markdown. None for empty sheets. |
 
 
 ---
@@ -10054,8 +10054,8 @@ extracted content and metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `sheets` | `Array<ExcelSheet>` | — | All sheets in the workbook |
-| `metadata` | `Record<string, string>` | — | Workbook-level metadata (author, creation date, etc.) |
+| `sheets` | `Vec<ExcelSheet>` | — | All sheets in the workbook |
+| `metadata` | `HashMap<String, String>` | — | Workbook-level metadata (author, creation date, etc.) |
 
 
 ---
@@ -10066,29 +10066,29 @@ Size in EMUs (English Metric Units, 1 inch = 914400 EMU).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `cx` | `number` | `null` | Cx |
-| `cy` | `number` | `null` | Cy |
+| `cx` | `i64` | `Default::default()` | Cx |
+| `cy` | `i64` | `Default::default()` | Cy |
 
 #### Methods
 
-##### widthInches()
+##### width_inches()
 
 Convert width to inches.
 
 **Signature:**
 
-```typescript
-widthInches(): number
+```rust
+pub fn width_inches(&self) -> f64
 ```
 
-##### heightInches()
+##### height_inches()
 
 Convert height to inches.
 
 **Signature:**
 
-```typescript
-heightInches(): number
+```rust
+pub fn height_inches(&self) -> f64
 ```
 
 
@@ -10104,19 +10104,19 @@ PIL.Image (Python), Sharp (Node.js), or other formats as needed.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `data` | `Buffer` | — | Raw image data (PNG, JPEG, WebP, etc. bytes). Uses `bytes.Bytes` for cheap cloning of large buffers. |
+| `data` | `Vec<u8>` | — | Raw image data (PNG, JPEG, WebP, etc. bytes). Uses `bytes.Bytes` for cheap cloning of large buffers. |
 | `format` | `Str` | — | Image format (e.g., "jpeg", "png", "webp") Uses Cow<'static, str> to avoid allocation for static literals. |
-| `imageIndex` | `number` | — | Zero-indexed position of this image in the document/page |
-| `pageNumber` | `number | null` | `null` | Page/slide number where image was found (1-indexed) |
-| `width` | `number | null` | `null` | Image width in pixels |
-| `height` | `number | null` | `null` | Image height in pixels |
-| `colorspace` | `string | null` | `null` | Colorspace information (e.g., "RGB", "CMYK", "Gray") |
-| `bitsPerComponent` | `number | null` | `null` | Bits per color component (e.g., 8, 16) |
-| `isMask` | `boolean` | — | Whether this image is a mask image |
-| `description` | `string | null` | `null` | Optional description of the image |
-| `ocrResult` | `ExtractionResult | null` | `null` | Nested OCR extraction result (if image was OCRed) When OCR is performed on this image, the result is embedded here rather than in a separate collection, making the relationship explicit. |
-| `boundingBox` | `BoundingBox | null` | `null` | Bounding box of the image on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top). Only populated for PDF-extracted images when position data is available from pdfium. |
-| `sourcePath` | `string | null` | `null` | Original source path of the image within the document archive (e.g., "media/image1.png" in DOCX). Used for rendering image references when the binary data is not extracted. |
+| `image_index` | `usize` | — | Zero-indexed position of this image in the document/page |
+| `page_number` | `Option<usize>` | `None` | Page/slide number where image was found (1-indexed) |
+| `width` | `Option<u32>` | `None` | Image width in pixels |
+| `height` | `Option<u32>` | `None` | Image height in pixels |
+| `colorspace` | `Option<String>` | `None` | Colorspace information (e.g., "RGB", "CMYK", "Gray") |
+| `bits_per_component` | `Option<u32>` | `None` | Bits per color component (e.g., 8, 16) |
+| `is_mask` | `bool` | — | Whether this image is a mask image |
+| `description` | `Option<String>` | `None` | Optional description of the image |
+| `ocr_result` | `Option<ExtractionResult>` | `None` | Nested OCR extraction result (if image was OCRed) When OCR is performed on this image, the result is embedded here rather than in a separate collection, making the relationship explicit. |
+| `bounding_box` | `Option<BoundingBox>` | `None` | Bounding box of the image on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top). Only populated for PDF-extracted images when position data is available from pdfium. |
+| `source_path` | `Option<String>` | `None` | Original source path of the image within the document archive (e.g., "media/image1.png" in DOCX). Used for rendering image references when the binary data is not extracted. |
 
 
 ---
@@ -10130,37 +10130,37 @@ It can be loaded from TOML, YAML, or JSON files, or created programmatically.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `useCache` | `boolean` | `true` | Enable caching of extraction results |
-| `enableQualityProcessing` | `boolean` | `true` | Enable quality post-processing |
-| `ocr` | `OcrConfig | null` | `null` | OCR configuration (None = OCR disabled) |
-| `forceOcr` | `boolean` | `false` | Force OCR even for searchable PDFs |
-| `forceOcrPages` | `Array<number> | null` | `[]` | Force OCR on specific pages only (1-indexed page numbers, must be >= 1). When set, only the listed pages are OCR'd regardless of text layer quality. Unlisted pages use native text extraction. Ignored when `force_ocr` is `True`. Only applies to PDF documents. Duplicates are automatically deduplicated. An `ocr` config is recommended for backend/language selection; defaults are used if absent. |
-| `disableOcr` | `boolean` | `false` | Disable OCR entirely, even for images. When `True`, OCR is skipped for all document types. Images return metadata only (dimensions, format, EXIF) without text extraction. PDFs use only native text extraction without OCR fallback. Cannot be `True` simultaneously with `force_ocr`. *Added in v4.7.0.* |
-| `chunking` | `ChunkingConfig | null` | `null` | Text chunking configuration (None = chunking disabled) |
-| `contentFilter` | `ContentFilterConfig | null` | `null` | Content filtering configuration (None = use extractor defaults). Controls whether document "furniture" (headers, footers, watermarks, repeating text) is included in or stripped from extraction results. See `ContentFilterConfig` for per-field documentation. |
-| `images` | `ImageExtractionConfig | null` | `null` | Image extraction configuration (None = no image extraction) |
-| `pdfOptions` | `PdfConfig | null` | `null` | PDF-specific options (None = use defaults) |
-| `tokenReduction` | `TokenReductionConfig | null` | `null` | Token reduction configuration (None = no token reduction) |
-| `languageDetection` | `LanguageDetectionConfig | null` | `null` | Language detection configuration (None = no language detection) |
-| `pages` | `PageConfig | null` | `null` | Page extraction configuration (None = no page tracking) |
-| `postprocessor` | `PostProcessorConfig | null` | `null` | Post-processor configuration (None = use defaults) |
-| `htmlOptions` | `ConversionOptions | null` | `null` | HTML to Markdown conversion options (None = use defaults) Configure how HTML documents are converted to Markdown, including heading styles, list formatting, code block styles, and preprocessing options. |
-| `htmlOutput` | `HtmlOutputConfig | null` | `null` | Styled HTML output configuration. When set alongside `output_format = OutputFormat.Html`, the extraction pipeline uses `StyledHtmlRenderer` which emits stable `kb-*` CSS class hooks on every structural element and optionally embeds theme CSS or user-supplied CSS in a `<style>` block. When `None`, the existing plain comrak-based HTML renderer is used. |
-| `extractionTimeoutSecs` | `number | null` | `null` | Default per-file timeout in seconds for batch extraction. When set, each file in a batch will be canceled after this duration unless overridden by `FileExtractionConfig.timeout_secs`. `None` means no timeout (unbounded extraction time). |
-| `maxConcurrentExtractions` | `number | null` | `null` | Maximum concurrent extractions in batch operations (None = (num_cpus × 1.5).ceil()). Limits parallelism to prevent resource exhaustion when processing large batches. Defaults to (num_cpus × 1.5).ceil() when not set. |
-| `resultFormat` | `OutputFormat` | `OutputFormat.Plain` | Result structure format Controls whether results are returned in unified format (default) with all content in the `content` field, or element-based format with semantic elements (for Unstructured-compatible output). |
-| `securityLimits` | `SecurityLimits | null` | `null` | Security limits for archive extraction. Controls maximum archive size, compression ratio, file count, and other security thresholds to prevent decompression bomb attacks. When `None`, default limits are used (500MB archive, 100:1 ratio, 10K files). |
-| `outputFormat` | `OutputFormat` | `OutputFormat.Plain` | Content text format (default: Plain). Controls the format of the extracted content: - `Plain`: Raw extracted text (default) - `Markdown`: Markdown formatted output - `Djot`: Djot markup format (requires djot feature) - `Html`: HTML formatted output When set to a structured format, extraction results will include formatted output. The `formatted_content` field may be populated when format conversion is applied. |
-| `layout` | `LayoutDetectionConfig | null` | `null` | Layout detection configuration (None = layout detection disabled). When set, PDF pages and images are analyzed for document structure (headings, code, formulas, tables, figures, etc.) using RT-DETR models via ONNX Runtime. For PDFs, layout hints override paragraph classification in the markdown pipeline. For images, per-region OCR is performed with markdown formatting based on detected layout classes. Requires the `layout-detection` feature. |
-| `includeDocumentStructure` | `boolean` | `false` | Enable structured document tree output. When true, populates the `document` field on `ExtractionResult` with a hierarchical `DocumentStructure` containing heading-driven section nesting, table grids, content layer classification, and inline annotations. Independent of `result_format` — can be combined with Unified or ElementBased. |
-| `acceleration` | `AccelerationConfig | null` | `null` | Hardware acceleration configuration for ONNX Runtime models. Controls execution provider selection for layout detection and embedding models. When `None`, uses platform defaults (CoreML on macOS, CUDA on Linux, CPU on Windows). |
-| `cacheNamespace` | `string | null` | `null` | Cache namespace for tenant isolation. When set, cache entries are stored under `{cache_dir}/{namespace}/`. Must be alphanumeric, hyphens, or underscores only (max 64 chars). Different namespaces have isolated cache spaces on the same filesystem. |
-| `cacheTtlSecs` | `number | null` | `null` | Per-request cache TTL in seconds. Overrides the global `max_age_days` for this specific extraction. When `0`, caching is completely skipped (no read or write). When `None`, the global TTL applies. |
-| `email` | `EmailConfig | null` | `null` | Email extraction configuration (None = use defaults). Currently supports configuring the fallback codepage for MSG files that do not specify one. See `crate.core.config.EmailConfig` for details. |
-| `concurrency` | `ConcurrencyConfig | null` | `null` | Concurrency limits for constrained environments (None = use defaults). Controls Rayon thread pool size, ONNX Runtime intra-op threads, and (when `max_concurrent_extractions` is unset) the batch concurrency semaphore. See `crate.core.config.ConcurrencyConfig` for details. |
-| `maxArchiveDepth` | `number` | `null` | Maximum recursion depth for archive extraction (default: 3). Set to 0 to disable recursive extraction (legacy behavior). |
-| `treeSitter` | `TreeSitterConfig | null` | `null` | Tree-sitter language pack configuration (None = tree-sitter disabled). When set, enables code file extraction using tree-sitter parsers. Controls grammar download behavior and code analysis options. |
-| `structuredExtraction` | `StructuredExtractionConfig | null` | `null` | Structured extraction via LLM (None = disabled). When set, the extracted document content is sent to an LLM with the provided JSON schema. The structured response is stored in `ExtractionResult.structured_output`. |
+| `use_cache` | `bool` | `true` | Enable caching of extraction results |
+| `enable_quality_processing` | `bool` | `true` | Enable quality post-processing |
+| `ocr` | `Option<OcrConfig>` | `Default::default()` | OCR configuration (None = OCR disabled) |
+| `force_ocr` | `bool` | `false` | Force OCR even for searchable PDFs |
+| `force_ocr_pages` | `Option<Vec<usize>>` | `vec![]` | Force OCR on specific pages only (1-indexed page numbers, must be >= 1). When set, only the listed pages are OCR'd regardless of text layer quality. Unlisted pages use native text extraction. Ignored when `force_ocr` is `True`. Only applies to PDF documents. Duplicates are automatically deduplicated. An `ocr` config is recommended for backend/language selection; defaults are used if absent. |
+| `disable_ocr` | `bool` | `false` | Disable OCR entirely, even for images. When `True`, OCR is skipped for all document types. Images return metadata only (dimensions, format, EXIF) without text extraction. PDFs use only native text extraction without OCR fallback. Cannot be `True` simultaneously with `force_ocr`. *Added in v4.7.0.* |
+| `chunking` | `Option<ChunkingConfig>` | `Default::default()` | Text chunking configuration (None = chunking disabled) |
+| `content_filter` | `Option<ContentFilterConfig>` | `Default::default()` | Content filtering configuration (None = use extractor defaults). Controls whether document "furniture" (headers, footers, watermarks, repeating text) is included in or stripped from extraction results. See `ContentFilterConfig` for per-field documentation. |
+| `images` | `Option<ImageExtractionConfig>` | `Default::default()` | Image extraction configuration (None = no image extraction) |
+| `pdf_options` | `Option<PdfConfig>` | `Default::default()` | PDF-specific options (None = use defaults) |
+| `token_reduction` | `Option<TokenReductionConfig>` | `Default::default()` | Token reduction configuration (None = no token reduction) |
+| `language_detection` | `Option<LanguageDetectionConfig>` | `Default::default()` | Language detection configuration (None = no language detection) |
+| `pages` | `Option<PageConfig>` | `Default::default()` | Page extraction configuration (None = no page tracking) |
+| `postprocessor` | `Option<PostProcessorConfig>` | `Default::default()` | Post-processor configuration (None = use defaults) |
+| `html_options` | `Option<ConversionOptions>` | `Default::default()` | HTML to Markdown conversion options (None = use defaults) Configure how HTML documents are converted to Markdown, including heading styles, list formatting, code block styles, and preprocessing options. |
+| `html_output` | `Option<HtmlOutputConfig>` | `Default::default()` | Styled HTML output configuration. When set alongside `output_format = OutputFormat.Html`, the extraction pipeline uses `StyledHtmlRenderer` which emits stable `kb-*` CSS class hooks on every structural element and optionally embeds theme CSS or user-supplied CSS in a `<style>` block. When `None`, the existing plain comrak-based HTML renderer is used. |
+| `extraction_timeout_secs` | `Option<u64>` | `Default::default()` | Default per-file timeout in seconds for batch extraction. When set, each file in a batch will be canceled after this duration unless overridden by `FileExtractionConfig.timeout_secs`. `None` means no timeout (unbounded extraction time). |
+| `max_concurrent_extractions` | `Option<usize>` | `Default::default()` | Maximum concurrent extractions in batch operations (None = (num_cpus × 1.5).ceil()). Limits parallelism to prevent resource exhaustion when processing large batches. Defaults to (num_cpus × 1.5).ceil() when not set. |
+| `result_format` | `OutputFormat` | `OutputFormat::Plain` | Result structure format Controls whether results are returned in unified format (default) with all content in the `content` field, or element-based format with semantic elements (for Unstructured-compatible output). |
+| `security_limits` | `Option<SecurityLimits>` | `Default::default()` | Security limits for archive extraction. Controls maximum archive size, compression ratio, file count, and other security thresholds to prevent decompression bomb attacks. When `None`, default limits are used (500MB archive, 100:1 ratio, 10K files). |
+| `output_format` | `OutputFormat` | `OutputFormat::Plain` | Content text format (default: Plain). Controls the format of the extracted content: - `Plain`: Raw extracted text (default) - `Markdown`: Markdown formatted output - `Djot`: Djot markup format (requires djot feature) - `Html`: HTML formatted output When set to a structured format, extraction results will include formatted output. The `formatted_content` field may be populated when format conversion is applied. |
+| `layout` | `Option<LayoutDetectionConfig>` | `Default::default()` | Layout detection configuration (None = layout detection disabled). When set, PDF pages and images are analyzed for document structure (headings, code, formulas, tables, figures, etc.) using RT-DETR models via ONNX Runtime. For PDFs, layout hints override paragraph classification in the markdown pipeline. For images, per-region OCR is performed with markdown formatting based on detected layout classes. Requires the `layout-detection` feature. |
+| `include_document_structure` | `bool` | `false` | Enable structured document tree output. When true, populates the `document` field on `ExtractionResult` with a hierarchical `DocumentStructure` containing heading-driven section nesting, table grids, content layer classification, and inline annotations. Independent of `result_format` — can be combined with Unified or ElementBased. |
+| `acceleration` | `Option<AccelerationConfig>` | `Default::default()` | Hardware acceleration configuration for ONNX Runtime models. Controls execution provider selection for layout detection and embedding models. When `None`, uses platform defaults (CoreML on macOS, CUDA on Linux, CPU on Windows). |
+| `cache_namespace` | `Option<String>` | `Default::default()` | Cache namespace for tenant isolation. When set, cache entries are stored under `{cache_dir}/{namespace}/`. Must be alphanumeric, hyphens, or underscores only (max 64 chars). Different namespaces have isolated cache spaces on the same filesystem. |
+| `cache_ttl_secs` | `Option<u64>` | `Default::default()` | Per-request cache TTL in seconds. Overrides the global `max_age_days` for this specific extraction. When `0`, caching is completely skipped (no read or write). When `None`, the global TTL applies. |
+| `email` | `Option<EmailConfig>` | `Default::default()` | Email extraction configuration (None = use defaults). Currently supports configuring the fallback codepage for MSG files that do not specify one. See `crate.core.config.EmailConfig` for details. |
+| `concurrency` | `Option<ConcurrencyConfig>` | `Default::default()` | Concurrency limits for constrained environments (None = use defaults). Controls Rayon thread pool size, ONNX Runtime intra-op threads, and (when `max_concurrent_extractions` is unset) the batch concurrency semaphore. See `crate.core.config.ConcurrencyConfig` for details. |
+| `max_archive_depth` | `usize` | `Default::default()` | Maximum recursion depth for archive extraction (default: 3). Set to 0 to disable recursive extraction (legacy behavior). |
+| `tree_sitter` | `Option<TreeSitterConfig>` | `Default::default()` | Tree-sitter language pack configuration (None = tree-sitter disabled). When set, enables code file extraction using tree-sitter parsers. Controls grammar download behavior and code analysis options. |
+| `structured_extraction` | `Option<StructuredExtractionConfig>` | `Default::default()` | Structured extraction via LLM (None = disabled). When set, the extracted document content is sent to an LLM with the provided JSON schema. The structured response is stored in `ExtractionResult.structured_output`. |
 
 #### Methods
 
@@ -10168,23 +10168,23 @@ It can be loaded from TOML, YAML, or JSON files, or created programmatically.
 
 **Signature:**
 
-```typescript
-static default(): ExtractionConfig
+```rust
+pub fn default() -> ExtractionConfig
 ```
 
-##### withFileOverrides()
+##### with_file_overrides()
 
 Create a new `ExtractionConfig` by applying per-file overrides from a
 `FileExtractionConfig`. Fields that are `Some` in the override replace the
-corresponding field in `self`; `null` fields keep the original value.
+corresponding field in `self`; `None` fields keep the original value.
 
 Batch-level fields (`max_concurrent_extractions`, `use_cache`, `acceleration`,
 `security_limits`) are never affected by overrides.
 
 **Signature:**
 
-```typescript
-withFileOverrides(overrides: FileExtractionConfig): ExtractionConfig
+```rust
+pub fn with_file_overrides(&self, overrides: FileExtractionConfig) -> ExtractionConfig
 ```
 
 ##### normalized()
@@ -10200,8 +10200,8 @@ Currently handles:
 
 **Signature:**
 
-```typescript
-normalized(): ExtractionConfig
+```rust
+pub fn normalized(&self) -> ExtractionConfig
 ```
 
 ##### validate()
@@ -10216,11 +10216,11 @@ Checks:
 
 **Signature:**
 
-```typescript
-validate(): void
+```rust
+pub fn validate(&self)
 ```
 
-##### needsImageProcessing()
+##### needs_image_processing()
 
 Check if image processing is needed by examining OCR and image extraction settings.
 
@@ -10236,8 +10236,8 @@ image I/O and processing when results won't be used.
 
 **Signature:**
 
-```typescript
-needsImageProcessing(): boolean
+```rust
+pub fn needs_image_processing(&self) -> bool
 ```
 
 
@@ -10249,17 +10249,17 @@ Collection of all kreuzberg metric instruments.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `extractionTotal` | `Counter` | — | Total extractions (attributes: mime_type, extractor, status). |
-| `cacheHits` | `Counter` | — | Cache hits. |
-| `cacheMisses` | `Counter` | — | Cache misses. |
-| `batchTotal` | `Counter` | — | Total batch requests (attributes: status). |
-| `extractionDurationMs` | `Histogram` | — | Extraction wall-clock duration in milliseconds (attributes: mime_type, extractor). |
-| `extractionInputBytes` | `Histogram` | — | Input document size in bytes (attributes: mime_type). |
-| `extractionOutputBytes` | `Histogram` | — | Output content size in bytes (attributes: mime_type). |
-| `pipelineDurationMs` | `Histogram` | — | Pipeline stage duration in milliseconds (attributes: stage). |
-| `ocrDurationMs` | `Histogram` | — | OCR duration in milliseconds (attributes: backend, language). |
-| `batchDurationMs` | `Histogram` | — | Batch total duration in milliseconds. |
-| `concurrentExtractions` | `UpDownCounter` | — | Currently in-flight extractions. |
+| `extraction_total` | `Counter` | — | Total extractions (attributes: mime_type, extractor, status). |
+| `cache_hits` | `Counter` | — | Cache hits. |
+| `cache_misses` | `Counter` | — | Cache misses. |
+| `batch_total` | `Counter` | — | Total batch requests (attributes: status). |
+| `extraction_duration_ms` | `Histogram` | — | Extraction wall-clock duration in milliseconds (attributes: mime_type, extractor). |
+| `extraction_input_bytes` | `Histogram` | — | Input document size in bytes (attributes: mime_type). |
+| `extraction_output_bytes` | `Histogram` | — | Output content size in bytes (attributes: mime_type). |
+| `pipeline_duration_ms` | `Histogram` | — | Pipeline stage duration in milliseconds (attributes: stage). |
+| `ocr_duration_ms` | `Histogram` | — | OCR duration in milliseconds (attributes: backend, language). |
+| `batch_duration_ms` | `Histogram` | — | Batch total duration in milliseconds. |
+| `concurrent_extractions` | `UpDownCounter` | — | Currently in-flight extractions. |
 
 
 ---
@@ -10272,7 +10272,7 @@ A request to extract content from a single document.
 |-------|------|---------|-------------|
 | `source` | `ExtractionSource` | — | Where to read the document from. |
 | `config` | `ExtractionConfig` | — | Base extraction configuration. |
-| `fileOverrides` | `FileExtractionConfig | null` | `null` | Optional per-file overrides (merged on top of `config`). |
+| `file_overrides` | `Option<FileExtractionConfig>` | `None` | Optional per-file overrides (merged on top of `config`). |
 
 #### Methods
 
@@ -10282,18 +10282,18 @@ Create a file-based extraction request.
 
 **Signature:**
 
-```typescript
-static file(path: string, config: ExtractionConfig): ExtractionRequest
+```rust
+pub fn file(path: PathBuf, config: ExtractionConfig) -> ExtractionRequest
 ```
 
-##### fileWithMime()
+##### file_with_mime()
 
 Create a file-based extraction request with a MIME type hint.
 
 **Signature:**
 
-```typescript
-static fileWithMime(path: string, mimeHint: string, config: ExtractionConfig): ExtractionRequest
+```rust
+pub fn file_with_mime(path: PathBuf, mime_hint: String, config: ExtractionConfig) -> ExtractionRequest
 ```
 
 ##### bytes()
@@ -10302,18 +10302,18 @@ Create a bytes-based extraction request.
 
 **Signature:**
 
-```typescript
-static bytes(data: Buffer, mimeType: string, config: ExtractionConfig): ExtractionRequest
+```rust
+pub fn bytes(data: Vec<u8>, mime_type: String, config: ExtractionConfig) -> ExtractionRequest
 ```
 
-##### withOverrides()
+##### with_overrides()
 
 Set per-file overrides on this request.
 
 **Signature:**
 
-```typescript
-withOverrides(overrides: FileExtractionConfig): ExtractionRequest
+```rust
+pub fn with_overrides(&self, overrides: FileExtractionConfig) -> ExtractionRequest
 ```
 
 
@@ -10327,28 +10327,28 @@ This is the main result type returned by all extraction functions.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | `null` | The extracted text content |
-| `mimeType` | `Str` | `null` | The detected MIME type |
-| `metadata` | `Metadata` | `null` | Document metadata |
-| `tables` | `Array<Table>` | `[]` | Tables extracted from the document |
-| `detectedLanguages` | `Array<string> | null` | `[]` | Detected languages |
-| `chunks` | `Array<Chunk> | null` | `[]` | Text chunks when chunking is enabled. When chunking configuration is provided, the content is split into overlapping chunks for efficient processing. Each chunk contains the text, optional embeddings (if enabled), and metadata about its position. |
-| `images` | `Array<ExtractedImage> | null` | `[]` | Extracted images from the document. When image extraction is enabled via `ImageExtractionConfig`, this field contains all images found in the document with their raw data and metadata. Each image may optionally contain a nested `ocr_result` if OCR was performed. |
-| `pages` | `Array<PageContent> | null` | `[]` | Per-page content when page extraction is enabled. When page extraction is configured, the document is split into per-page content with tables and images mapped to their respective pages. |
-| `elements` | `Array<Element> | null` | `[]` | Semantic elements when element-based result format is enabled. When result_format is set to ElementBased, this field contains semantic elements with type classification, unique identifiers, and metadata for Unstructured-compatible element-based processing. |
-| `djotContent` | `DjotContent | null` | `null` | Rich Djot content structure (when extracting Djot documents). When extracting Djot documents with structured extraction enabled, this field contains the full semantic structure including: - Block-level elements with nesting - Inline formatting with attributes - Links, images, footnotes - Math expressions - Complete attribute information The `content` field still contains plain text for backward compatibility. Always `None` for non-Djot documents. |
-| `ocrElements` | `Array<OcrElement> | null` | `[]` | OCR elements with full spatial and confidence metadata. When OCR is performed with element extraction enabled, this field contains the structured representation of detected text including: - Bounding geometry (rectangles or quadrilaterals) - Confidence scores (detection and recognition) - Rotation information - Hierarchical relationships (Tesseract only) This field preserves all metadata that would otherwise be lost when converting to plain text or markdown output formats. Only populated when `OcrElementConfig.include_elements` is true. |
-| `document` | `DocumentStructure | null` | `null` | Structured document tree (when document structure extraction is enabled). When `include_document_structure` is true in `ExtractionConfig`, this field contains the full hierarchical representation of the document including: - Heading-driven section nesting - Table grids with cell-level metadata - Content layer classification (body, header, footer, footnote) - Inline text annotations (formatting, links) - Bounding boxes and page numbers Independent of `result_format` — can be combined with Unified or ElementBased. |
-| `qualityScore` | `number | null` | `null` | Document quality score from quality analysis. A value between 0.0 and 1.0 indicating the overall text quality. Previously stored in `metadata.additional["quality_score"]`. |
-| `processingWarnings` | `Array<ProcessingWarning>` | `[]` | Non-fatal warnings collected during processing pipeline stages. Captures errors from optional pipeline features (embedding, chunking, language detection, output formatting) that don't prevent extraction but may indicate degraded results. Previously stored as individual keys in `metadata.additional`. |
-| `annotations` | `Array<PdfAnnotation> | null` | `[]` | PDF annotations extracted from the document. When annotation extraction is enabled via `PdfConfig.extract_annotations`, this field contains text notes, highlights, links, stamps, and other annotations found in PDF documents. |
-| `children` | `Array<ArchiveEntry> | null` | `[]` | Nested extraction results from archive contents. When extracting archives, each processable file inside produces its own full extraction result. Set to `None` for non-archive formats. Use `max_archive_depth` in config to control recursion depth. |
-| `uris` | `Array<Uri> | null` | `[]` | URIs/links discovered during document extraction. Contains hyperlinks, image references, citations, email addresses, and other URI-like references found in the document. Always extracted when present in the source document. |
-| `structuredOutput` | `unknown | null` | `null` | Structured extraction output from LLM-based JSON schema extraction. When `structured_extraction` is configured in `ExtractionConfig`, the extracted document content is sent to a VLM with the provided JSON schema. The response is parsed and stored here as a JSON value matching the schema. |
-| `codeIntelligence` | `ProcessResult | null` | `null` | Code intelligence results from tree-sitter analysis. Populated when extracting source code files with the `tree-sitter` feature. Contains metrics, structural analysis, imports/exports, comments, docstrings, symbols, diagnostics, and optionally chunked code segments. |
-| `llmUsage` | `Array<LlmUsage> | null` | `[]` | LLM token usage and cost data for all LLM calls made during this extraction. Contains one entry per LLM call. Multiple entries are produced when VLM OCR, structured extraction, and/or LLM embeddings all run during the same extraction. `None` when no LLM was used. |
-| `formattedContent` | `string | null` | `null` | Pre-rendered content in the requested output format. Populated during `derive_extraction_result` before tree derivation consumes element data. `apply_output_format` swaps this into `content` at the end of the pipeline, after post-processors have operated on plain text. |
-| `ocrInternalDocument` | `InternalDocument | null` | `null` | Structured hOCR document for the OCR+layout pipeline. When tesseract produces hOCR output, the parsed `InternalDocument` carries paragraph structure with bounding boxes and confidence scores. The layout classification step enriches these elements before final rendering. |
+| `content` | `String` | `Default::default()` | The extracted text content |
+| `mime_type` | `Str` | `Default::default()` | The detected MIME type |
+| `metadata` | `Metadata` | `Default::default()` | Document metadata |
+| `tables` | `Vec<Table>` | `vec![]` | Tables extracted from the document |
+| `detected_languages` | `Option<Vec<String>>` | `vec![]` | Detected languages |
+| `chunks` | `Option<Vec<Chunk>>` | `vec![]` | Text chunks when chunking is enabled. When chunking configuration is provided, the content is split into overlapping chunks for efficient processing. Each chunk contains the text, optional embeddings (if enabled), and metadata about its position. |
+| `images` | `Option<Vec<ExtractedImage>>` | `vec![]` | Extracted images from the document. When image extraction is enabled via `ImageExtractionConfig`, this field contains all images found in the document with their raw data and metadata. Each image may optionally contain a nested `ocr_result` if OCR was performed. |
+| `pages` | `Option<Vec<PageContent>>` | `vec![]` | Per-page content when page extraction is enabled. When page extraction is configured, the document is split into per-page content with tables and images mapped to their respective pages. |
+| `elements` | `Option<Vec<Element>>` | `vec![]` | Semantic elements when element-based result format is enabled. When result_format is set to ElementBased, this field contains semantic elements with type classification, unique identifiers, and metadata for Unstructured-compatible element-based processing. |
+| `djot_content` | `Option<DjotContent>` | `Default::default()` | Rich Djot content structure (when extracting Djot documents). When extracting Djot documents with structured extraction enabled, this field contains the full semantic structure including: - Block-level elements with nesting - Inline formatting with attributes - Links, images, footnotes - Math expressions - Complete attribute information The `content` field still contains plain text for backward compatibility. Always `None` for non-Djot documents. |
+| `ocr_elements` | `Option<Vec<OcrElement>>` | `vec![]` | OCR elements with full spatial and confidence metadata. When OCR is performed with element extraction enabled, this field contains the structured representation of detected text including: - Bounding geometry (rectangles or quadrilaterals) - Confidence scores (detection and recognition) - Rotation information - Hierarchical relationships (Tesseract only) This field preserves all metadata that would otherwise be lost when converting to plain text or markdown output formats. Only populated when `OcrElementConfig.include_elements` is true. |
+| `document` | `Option<DocumentStructure>` | `Default::default()` | Structured document tree (when document structure extraction is enabled). When `include_document_structure` is true in `ExtractionConfig`, this field contains the full hierarchical representation of the document including: - Heading-driven section nesting - Table grids with cell-level metadata - Content layer classification (body, header, footer, footnote) - Inline text annotations (formatting, links) - Bounding boxes and page numbers Independent of `result_format` — can be combined with Unified or ElementBased. |
+| `quality_score` | `Option<f64>` | `Default::default()` | Document quality score from quality analysis. A value between 0.0 and 1.0 indicating the overall text quality. Previously stored in `metadata.additional["quality_score"]`. |
+| `processing_warnings` | `Vec<ProcessingWarning>` | `vec![]` | Non-fatal warnings collected during processing pipeline stages. Captures errors from optional pipeline features (embedding, chunking, language detection, output formatting) that don't prevent extraction but may indicate degraded results. Previously stored as individual keys in `metadata.additional`. |
+| `annotations` | `Option<Vec<PdfAnnotation>>` | `vec![]` | PDF annotations extracted from the document. When annotation extraction is enabled via `PdfConfig.extract_annotations`, this field contains text notes, highlights, links, stamps, and other annotations found in PDF documents. |
+| `children` | `Option<Vec<ArchiveEntry>>` | `vec![]` | Nested extraction results from archive contents. When extracting archives, each processable file inside produces its own full extraction result. Set to `None` for non-archive formats. Use `max_archive_depth` in config to control recursion depth. |
+| `uris` | `Option<Vec<Uri>>` | `vec![]` | URIs/links discovered during document extraction. Contains hyperlinks, image references, citations, email addresses, and other URI-like references found in the document. Always extracted when present in the source document. |
+| `structured_output` | `Option<serde_json::Value>` | `Default::default()` | Structured extraction output from LLM-based JSON schema extraction. When `structured_extraction` is configured in `ExtractionConfig`, the extracted document content is sent to a VLM with the provided JSON schema. The response is parsed and stored here as a JSON value matching the schema. |
+| `code_intelligence` | `Option<ProcessResult>` | `Default::default()` | Code intelligence results from tree-sitter analysis. Populated when extracting source code files with the `tree-sitter` feature. Contains metrics, structural analysis, imports/exports, comments, docstrings, symbols, diagnostics, and optionally chunked code segments. |
+| `llm_usage` | `Option<Vec<LlmUsage>>` | `vec![]` | LLM token usage and cost data for all LLM calls made during this extraction. Contains one entry per LLM call. Multiple entries are produced when VLM OCR, structured extraction, and/or LLM embeddings all run during the same extraction. `None` when no LLM was used. |
+| `formatted_content` | `Option<String>` | `Default::default()` | Pre-rendered content in the requested output format. Populated during `derive_extraction_result` before tree derivation consumes element data. `apply_output_format` swaps this into `content` at the end of the pipeline, after post-processors have operated on plain text. |
+| `ocr_internal_document` | `Option<InternalDocument>` | `Default::default()` | Structured hOCR document for the OCR+layout pipeline. When tesseract produces hOCR output, the parsed `InternalDocument` carries paragraph structure with bounding boxes and confidence scores. The layout classification step enriches these elements before final rendering. |
 
 
 ---
@@ -10365,41 +10365,41 @@ Layers are applied in the order: Tracing → Metrics → Timeout → Concurrency
 
 **Signature:**
 
-```typescript
-static default(): ExtractionServiceBuilder
+```rust
+pub fn default() -> ExtractionServiceBuilder
 ```
 
-##### withTimeout()
+##### with_timeout()
 
 Add a per-request timeout.
 
 **Signature:**
 
-```typescript
-withTimeout(duration: number): ExtractionServiceBuilder
+```rust
+pub fn with_timeout(&self, duration: std::time::Duration) -> ExtractionServiceBuilder
 ```
 
-##### withConcurrencyLimit()
+##### with_concurrency_limit()
 
 Limit concurrent in-flight extractions.
 
 **Signature:**
 
-```typescript
-withConcurrencyLimit(max: number): ExtractionServiceBuilder
+```rust
+pub fn with_concurrency_limit(&self, max: usize) -> ExtractionServiceBuilder
 ```
 
-##### withTracing()
+##### with_tracing()
 
 Add a tracing span to each extraction request.
 
 **Signature:**
 
-```typescript
-withTracing(): ExtractionServiceBuilder
+```rust
+pub fn with_tracing(&self) -> ExtractionServiceBuilder
 ```
 
-##### withMetrics()
+##### with_metrics()
 
 Add metrics recording to each extraction request.
 
@@ -10407,8 +10407,8 @@ Requires the `otel` feature. This is a no-op when `otel` is not enabled.
 
 **Signature:**
 
-```typescript
-withMetrics(): ExtractionServiceBuilder
+```rust
+pub fn with_metrics(&self) -> ExtractionServiceBuilder
 ```
 
 ##### build()
@@ -10420,8 +10420,8 @@ Layer order (outermost to innermost):
 
 **Signature:**
 
-```typescript
-build(): BoxCloneService
+```rust
+pub fn build(&self) -> BoxCloneService
 ```
 
 
@@ -10439,80 +10439,80 @@ Supports FictionBook 2.0 format with proper section hierarchy and inline formatt
 
 **Signature:**
 
-```typescript
-static default(): FictionBookExtractor
+```rust
+pub fn default() -> FictionBookExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -10524,9 +10524,9 @@ FictionBook (FB2) metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `genres` | `Array<string>` | `[]` | Genres |
-| `sequences` | `Array<string>` | `[]` | Sequences |
-| `annotation` | `string | null` | `null` | Annotation |
+| `genres` | `Vec<String>` | `vec![]` | Genres |
+| `sequences` | `Vec<String>` | `vec![]` | Sequences |
+| `annotation` | `Option<String>` | `Default::default()` | Annotation |
 
 
 ---
@@ -10548,16 +10548,16 @@ without any additional copy.
 
 **Signature:**
 
-```typescript
-deref(): Buffer
+```rust
+pub fn deref(&self) -> Vec<u8>
 ```
 
-##### asRef()
+##### as_ref()
 
 **Signature:**
 
-```typescript
-asRef(): Buffer
+```rust
+pub fn as_ref(&self) -> Vec<u8>
 ```
 
 
@@ -10567,7 +10567,7 @@ asRef(): Buffer
 
 Per-file extraction configuration overrides for batch processing.
 
-All fields are `Option<T>` — `null` means "use the batch-level default."
+All fields are `Option<T>` — `None` means "use the batch-level default."
 This type is used with `crate.batch_extract_file` and
 `crate.batch_extract_bytes` to allow heterogeneous
 extraction settings within a single batch.
@@ -10583,27 +10583,27 @@ cannot be overridden per file:
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `enableQualityProcessing` | `boolean | null` | `null` | Override quality post-processing for this file. |
-| `ocr` | `OcrConfig | null` | `null` | Override OCR configuration for this file (None in the Option = use batch default). |
-| `forceOcr` | `boolean | null` | `null` | Override force OCR for this file. |
-| `forceOcrPages` | `Array<number> | null` | `[]` | Override force OCR pages for this file (1-indexed page numbers). |
-| `disableOcr` | `boolean | null` | `null` | Override disable OCR for this file. |
-| `chunking` | `ChunkingConfig | null` | `null` | Override chunking configuration for this file. |
-| `contentFilter` | `ContentFilterConfig | null` | `null` | Override content filtering configuration for this file. |
-| `images` | `ImageExtractionConfig | null` | `null` | Override image extraction configuration for this file. |
-| `pdfOptions` | `PdfConfig | null` | `null` | Override PDF options for this file. |
-| `tokenReduction` | `TokenReductionConfig | null` | `null` | Override token reduction for this file. |
-| `languageDetection` | `LanguageDetectionConfig | null` | `null` | Override language detection for this file. |
-| `pages` | `PageConfig | null` | `null` | Override page extraction for this file. |
-| `postprocessor` | `PostProcessorConfig | null` | `null` | Override post-processor for this file. |
-| `htmlOptions` | `ConversionOptions | null` | `null` | Override HTML conversion options for this file. |
-| `resultFormat` | `OutputFormat | null` | `OutputFormat.Plain` | Override result format for this file. |
-| `outputFormat` | `OutputFormat | null` | `OutputFormat.Plain` | Override output content format for this file. |
-| `includeDocumentStructure` | `boolean | null` | `null` | Override document structure output for this file. |
-| `layout` | `LayoutDetectionConfig | null` | `null` | Override layout detection for this file. |
-| `timeoutSecs` | `number | null` | `null` | Override per-file extraction timeout in seconds. When set, the extraction for this file will be canceled after the specified duration. A timed-out file produces an error result without affecting other files in the batch. |
-| `treeSitter` | `TreeSitterConfig | null` | `null` | Override tree-sitter configuration for this file. |
-| `structuredExtraction` | `StructuredExtractionConfig | null` | `null` | Override structured extraction configuration for this file. When set, enables LLM-based structured extraction with a JSON schema for this specific file. The extracted content is sent to a VLM/LLM and the response is parsed according to the provided schema. |
+| `enable_quality_processing` | `Option<bool>` | `Default::default()` | Override quality post-processing for this file. |
+| `ocr` | `Option<OcrConfig>` | `Default::default()` | Override OCR configuration for this file (None in the Option = use batch default). |
+| `force_ocr` | `Option<bool>` | `Default::default()` | Override force OCR for this file. |
+| `force_ocr_pages` | `Option<Vec<usize>>` | `vec![]` | Override force OCR pages for this file (1-indexed page numbers). |
+| `disable_ocr` | `Option<bool>` | `Default::default()` | Override disable OCR for this file. |
+| `chunking` | `Option<ChunkingConfig>` | `Default::default()` | Override chunking configuration for this file. |
+| `content_filter` | `Option<ContentFilterConfig>` | `Default::default()` | Override content filtering configuration for this file. |
+| `images` | `Option<ImageExtractionConfig>` | `Default::default()` | Override image extraction configuration for this file. |
+| `pdf_options` | `Option<PdfConfig>` | `Default::default()` | Override PDF options for this file. |
+| `token_reduction` | `Option<TokenReductionConfig>` | `Default::default()` | Override token reduction for this file. |
+| `language_detection` | `Option<LanguageDetectionConfig>` | `Default::default()` | Override language detection for this file. |
+| `pages` | `Option<PageConfig>` | `Default::default()` | Override page extraction for this file. |
+| `postprocessor` | `Option<PostProcessorConfig>` | `Default::default()` | Override post-processor for this file. |
+| `html_options` | `Option<ConversionOptions>` | `Default::default()` | Override HTML conversion options for this file. |
+| `result_format` | `Option<OutputFormat>` | `OutputFormat::Plain` | Override result format for this file. |
+| `output_format` | `Option<OutputFormat>` | `OutputFormat::Plain` | Override output content format for this file. |
+| `include_document_structure` | `Option<bool>` | `Default::default()` | Override document structure output for this file. |
+| `layout` | `Option<LayoutDetectionConfig>` | `Default::default()` | Override layout detection for this file. |
+| `timeout_secs` | `Option<u64>` | `Default::default()` | Override per-file extraction timeout in seconds. When set, the extraction for this file will be canceled after the specified duration. A timed-out file produces an error result without affecting other files in the batch. |
+| `tree_sitter` | `Option<TreeSitterConfig>` | `Default::default()` | Override tree-sitter configuration for this file. |
+| `structured_extraction` | `Option<StructuredExtractionConfig>` | `Default::default()` | Override structured extraction configuration for this file. When set, enables LLM-based structured extraction with a JSON schema for this specific file. The extracted content is sent to a VLM/LLM and the response is parsed according to the provided schema. |
 
 
 ---
@@ -10612,7 +10612,7 @@ cannot be overridden per file:
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `flags` | `number` | — | Flags |
+| `flags` | `u32` | — | Flags |
 
 #### Methods
 
@@ -10620,38 +10620,38 @@ cannot be overridden per file:
 
 **Signature:**
 
-```typescript
-static parse(data: Buffer): FileHeader
+```rust
+pub fn parse(data: Vec<u8>) -> FileHeader
 ```
 
-##### isCompressed()
+##### is_compressed()
 
 Whether section streams are zlib/deflate-compressed.
 
 **Signature:**
 
-```typescript
-isCompressed(): boolean
+```rust
+pub fn is_compressed(&self) -> bool
 ```
 
-##### isEncrypted()
+##### is_encrypted()
 
 Whether the document is password-encrypted.
 
 **Signature:**
 
-```typescript
-isEncrypted(): boolean
+```rust
+pub fn is_encrypted(&self) -> bool
 ```
 
-##### isDistribute()
+##### is_distribute()
 
 Whether the document is a distribution document (text in ViewText/).
 
 **Signature:**
 
-```typescript
-isDistribute(): boolean
+```rust
+pub fn is_distribute(&self) -> bool
 ```
 
 
@@ -10663,13 +10663,13 @@ Font scheme containing major (heading) and minor (body) fonts.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string` | `null` | Font scheme name. |
-| `majorLatin` | `string | null` | `null` | Major (heading) font - Latin script. |
-| `majorEastAsian` | `string | null` | `null` | Major (heading) font - East Asian script. |
-| `majorComplexScript` | `string | null` | `null` | Major (heading) font - Complex script. |
-| `minorLatin` | `string | null` | `null` | Minor (body) font - Latin script. |
-| `minorEastAsian` | `string | null` | `null` | Minor (body) font - East Asian script. |
-| `minorComplexScript` | `string | null` | `null` | Minor (body) font - Complex script. |
+| `name` | `String` | `Default::default()` | Font scheme name. |
+| `major_latin` | `Option<String>` | `Default::default()` | Major (heading) font - Latin script. |
+| `major_east_asian` | `Option<String>` | `Default::default()` | Major (heading) font - East Asian script. |
+| `major_complex_script` | `Option<String>` | `Default::default()` | Major (heading) font - Complex script. |
+| `minor_latin` | `Option<String>` | `Default::default()` | Minor (body) font - Latin script. |
+| `minor_east_asian` | `Option<String>` | `Default::default()` | Minor (body) font - East Asian script. |
+| `minor_complex_script` | `Option<String>` | `Default::default()` | Minor (body) font - Complex script. |
 
 
 ---
@@ -10680,8 +10680,8 @@ Footnote in Djot.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `label` | `string` | — | Footnote label |
-| `content` | `Array<FormattedBlock>` | — | Footnote content blocks |
+| `label` | `String` | — | Footnote label |
+| `content` | `Vec<FormattedBlock>` | — | Footnote content blocks |
 
 
 ---
@@ -10694,13 +10694,13 @@ Represents structural elements like headings, paragraphs, lists, code blocks, et
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `blockType` | `BlockType` | — | Type of block element |
-| `level` | `number | null` | `null` | Heading level (1-6) for headings, or nesting level for lists |
-| `inlineContent` | `Array<InlineElement>` | — | Inline content within the block |
-| `attributes` | `Attributes | null` | `null` | Element attributes (classes, IDs, key-value pairs) |
-| `language` | `string | null` | `null` | Language identifier for code blocks |
-| `code` | `string | null` | `null` | Raw code content for code blocks |
-| `children` | `Array<FormattedBlock>` | — | Nested blocks for containers (blockquotes, list items, divs) |
+| `block_type` | `BlockType` | — | Type of block element |
+| `level` | `Option<usize>` | `None` | Heading level (1-6) for headings, or nesting level for lists |
+| `inline_content` | `Vec<InlineElement>` | — | Inline content within the block |
+| `attributes` | `Option<Attributes>` | `None` | Element attributes (classes, IDs, key-value pairs) |
+| `language` | `Option<String>` | `None` | Language identifier for code blocks |
+| `code` | `Option<String>` | `None` | Raw code content for code blocks |
+| `children` | `Vec<FormattedBlock>` | — | Nested blocks for containers (blockquotes, list items, divs) |
 
 
 ---
@@ -10713,79 +10713,79 @@ Represents structural elements like headings, paragraphs, lists, code blocks, et
 
 **Signature:**
 
-```typescript
-static new(cacheType: string, cacheDir: string, maxAgeDays: number, maxCacheSizeMb: number, minFreeSpaceMb: number): GenericCache
+```rust
+pub fn new(cache_type: String, cache_dir: Option<String>, max_age_days: f64, max_cache_size_mb: f64, min_free_space_mb: f64) -> GenericCache
 ```
 
 ##### get()
 
 **Signature:**
 
-```typescript
-get(cacheKey: string, sourceFile: string, namespace: string, ttlOverrideSecs: number): Buffer | null
+```rust
+pub fn get(&self, cache_key: String, source_file: Option<String>, namespace: Option<String>, ttl_override_secs: Option<u64>) -> Option<Vec<u8>>
 ```
 
-##### getDefault()
+##### get_default()
 
 Backward-compatible get without namespace/TTL.
 
 **Signature:**
 
-```typescript
-getDefault(cacheKey: string, sourceFile: string): Buffer | null
+```rust
+pub fn get_default(&self, cache_key: String, source_file: Option<String>) -> Option<Vec<u8>>
 ```
 
 ##### set()
 
 **Signature:**
 
-```typescript
-set(cacheKey: string, data: Buffer, sourceFile: string, namespace: string, ttlSecs: number): void
+```rust
+pub fn set(&self, cache_key: String, data: Vec<u8>, source_file: Option<String>, namespace: Option<String>, ttl_secs: Option<u64>)
 ```
 
-##### setDefault()
+##### set_default()
 
 Backward-compatible set without namespace/TTL.
 
 **Signature:**
 
-```typescript
-setDefault(cacheKey: string, data: Buffer, sourceFile: string): void
+```rust
+pub fn set_default(&self, cache_key: String, data: Vec<u8>, source_file: Option<String>)
 ```
 
-##### isProcessing()
+##### is_processing()
 
 **Signature:**
 
-```typescript
-isProcessing(cacheKey: string): boolean
+```rust
+pub fn is_processing(&self, cache_key: String) -> bool
 ```
 
-##### markProcessing()
+##### mark_processing()
 
 **Signature:**
 
-```typescript
-markProcessing(cacheKey: string): void
+```rust
+pub fn mark_processing(&self, cache_key: String)
 ```
 
-##### markComplete()
+##### mark_complete()
 
 **Signature:**
 
-```typescript
-markComplete(cacheKey: string): void
+```rust
+pub fn mark_complete(&self, cache_key: String)
 ```
 
 ##### clear()
 
 **Signature:**
 
-```typescript
-clear(): UsizeF64
+```rust
+pub fn clear(&self) -> UsizeF64
 ```
 
-##### deleteNamespace()
+##### delete_namespace()
 
 Delete all cache entries under a namespace.
 
@@ -10794,42 +10794,42 @@ Returns (files_removed, mb_freed).
 
 **Signature:**
 
-```typescript
-deleteNamespace(namespace: string): UsizeF64
+```rust
+pub fn delete_namespace(&self, namespace: String) -> UsizeF64
 ```
 
-##### getStats()
+##### get_stats()
 
 **Signature:**
 
-```typescript
-getStats(): CacheStats
+```rust
+pub fn get_stats(&self) -> CacheStats
 ```
 
-##### getStatsFiltered()
+##### get_stats_filtered()
 
 Get cache stats, optionally filtered to a specific namespace.
 
 **Signature:**
 
-```typescript
-getStatsFiltered(namespace: string): CacheStats
+```rust
+pub fn get_stats_filtered(&self, namespace: Option<String>) -> CacheStats
 ```
 
-##### cacheDir()
+##### cache_dir()
 
 **Signature:**
 
-```typescript
-cacheDir(): string
+```rust
+pub fn cache_dir(&self) -> PathBuf
 ```
 
-##### cacheType()
+##### cache_type()
 
 **Signature:**
 
-```typescript
-cacheType(): string
+```rust
+pub fn cache_type(&self) -> String
 ```
 
 
@@ -10841,13 +10841,13 @@ Individual grid cell with position and span metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | Cell text content. |
-| `row` | `number` | — | Zero-indexed row position. |
-| `col` | `number` | — | Zero-indexed column position. |
-| `rowSpan` | `number` | — | Number of rows this cell spans. |
-| `colSpan` | `number` | — | Number of columns this cell spans. |
-| `isHeader` | `boolean` | — | Whether this is a header cell. |
-| `bbox` | `BoundingBox | null` | `null` | Bounding box for this cell (if available). |
+| `content` | `String` | — | Cell text content. |
+| `row` | `u32` | — | Zero-indexed row position. |
+| `col` | `u32` | — | Zero-indexed column position. |
+| `row_span` | `u32` | — | Number of rows this cell spans. |
+| `col_span` | `u32` | — | Number of columns this cell spans. |
+| `is_header` | `bool` | — | Whether this is a header cell. |
+| `bbox` | `Option<BoundingBox>` | `None` | Bounding box for this cell (if available). |
 
 
 ---
@@ -10864,96 +10864,96 @@ Decompresses gzip files and extracts text content from the compressed data.
 
 **Signature:**
 
-```typescript
-static default(): GzipExtractor
+```rust
+pub fn default() -> GzipExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
 
@@ -10963,9 +10963,9 @@ extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): Intern
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `paragraphs` | `Array<Paragraph>` | `[]` | Paragraphs |
-| `tables` | `Array<Table>` | `[]` | Tables extracted from the document |
-| `headerType` | `HeaderFooterType` | `HeaderFooterType.Default` | Header type (header footer type) |
+| `paragraphs` | `Vec<Paragraph>` | `vec![]` | Paragraphs |
+| `tables` | `Vec<Table>` | `vec![]` | Tables extracted from the document |
+| `header_type` | `HeaderFooterType` | `HeaderFooterType::Default` | Header type (header footer type) |
 
 
 ---
@@ -10976,11 +10976,11 @@ Header/heading element metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `level` | `number` | — | Header level: 1 (h1) through 6 (h6) |
-| `text` | `string` | — | Normalized text content of the header |
-| `id` | `string | null` | `null` | HTML id attribute if present |
-| `depth` | `number` | — | Document tree depth at the header element |
-| `htmlOffset` | `number` | — | Byte offset in original HTML document |
+| `level` | `u8` | — | Header level: 1 (h1) through 6 (h6) |
+| `text` | `String` | — | Normalized text content of the header |
+| `id` | `Option<String>` | `None` | HTML id attribute if present |
+| `depth` | `usize` | — | Document tree depth at the header element |
+| `html_offset` | `usize` | — | Byte offset in original HTML document |
 
 
 ---
@@ -10993,7 +10993,7 @@ Contains the heading hierarchy from document root to this chunk's section.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `headings` | `Array<HeadingLevel>` | — | The heading hierarchy from document root to this chunk's section. Index 0 is the outermost (h1), last element is the most specific. |
+| `headings` | `Vec<HeadingLevel>` | — | The heading hierarchy from document root to this chunk's section. Index 0 is the outermost (h1), last element is the most specific. |
 
 
 ---
@@ -11004,8 +11004,8 @@ A single heading in the hierarchy.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `level` | `number` | — | Heading depth (1 = h1, 2 = h2, etc.) |
-| `text` | `string` | — | The text content of the heading. |
+| `level` | `u8` | — | Heading depth (1 = h1, 2 = h2, etc.) |
+| `text` | `String` | — | The text content of the heading. |
 
 
 ---
@@ -11019,10 +11019,10 @@ font size clustering and hierarchical analysis.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `text` | `string` | — | The text content of this block |
-| `fontSize` | `number` | — | The font size of the text in this block |
-| `level` | `string` | — | The hierarchy level of this block (H1-H6 or Body) Levels correspond to HTML heading tags: - "h1": Top-level heading - "h2": Secondary heading - "h3": Tertiary heading - "h4": Quaternary heading - "h5": Quinary heading - "h6": Senary heading - "body": Body text (no heading level) |
-| `bbox` | `F32F32F32F32 | null` | `null` | Bounding box information for the block Contains coordinates as (left, top, right, bottom) in PDF units. |
+| `text` | `String` | — | The text content of this block |
+| `font_size` | `f32` | — | The font size of the text in this block |
+| `level` | `String` | — | The hierarchy level of this block (H1-H6 or Body) Levels correspond to HTML heading tags: - "h1": Top-level heading - "h2": Secondary heading - "h3": Tertiary heading - "h4": Quaternary heading - "h5": Quinary heading - "h6": Senary heading - "body": Body text (no heading level) |
+| `bbox` | `Option<F32F32F32F32>` | `None` | Bounding box information for the block Contains coordinates as (left, top, right, bottom) in PDF units. |
 
 
 ---
@@ -11037,10 +11037,10 @@ included in page content.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `enabled` | `boolean` | `true` | Enable hierarchy extraction |
-| `kClusters` | `number` | `3` | Number of font size clusters to use for hierarchy levels (1-7) Default: 6, which provides H1-H6 heading levels with body text. Larger values create more fine-grained hierarchy levels. |
-| `includeBbox` | `boolean` | `true` | Include bounding box information in hierarchy blocks |
-| `ocrCoverageThreshold` | `number | null` | `null` | OCR coverage threshold for smart OCR triggering (0.0-1.0) Determines when OCR should be triggered based on text block coverage. OCR is triggered when text blocks cover less than this fraction of the page. Default: 0.5 (trigger OCR if less than 50% of page has text) |
+| `enabled` | `bool` | `true` | Enable hierarchy extraction |
+| `k_clusters` | `usize` | `3` | Number of font size clusters to use for hierarchy levels (1-7) Default: 6, which provides H1-H6 heading levels with body text. Larger values create more fine-grained hierarchy levels. |
+| `include_bbox` | `bool` | `true` | Include bounding box information in hierarchy blocks |
+| `ocr_coverage_threshold` | `Option<f32>` | `Default::default()` | OCR coverage threshold for smart OCR triggering (0.0-1.0) Determines when OCR should be triggered based on text block coverage. OCR is triggered when text blocks cover less than this fraction of the page. Default: 0.5 (trigger OCR if less than 50% of page has text) |
 
 #### Methods
 
@@ -11048,8 +11048,8 @@ included in page content.
 
 **Signature:**
 
-```typescript
-static default(): HierarchyConfig
+```rust
+pub fn default() -> HierarchyConfig
 ```
 
 
@@ -11061,12 +11061,12 @@ Represents a word extracted from hOCR (or any source) with position and confiden
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `text` | `string` | — | Text |
-| `left` | `number` | — | Left |
-| `top` | `number` | — | Top |
-| `width` | `number` | — | Width |
-| `height` | `number` | — | Height |
-| `confidence` | `number` | — | Confidence |
+| `text` | `String` | — | Text |
+| `left` | `u32` | — | Left |
+| `top` | `u32` | — | Top |
+| `width` | `u32` | — | Width |
+| `height` | `u32` | — | Height |
+| `confidence` | `f64` | — | Confidence |
 
 #### Methods
 
@@ -11076,8 +11076,8 @@ Get the right edge position.
 
 **Signature:**
 
-```typescript
-right(): number
+```rust
+pub fn right(&self) -> u32
 ```
 
 ##### bottom()
@@ -11086,28 +11086,28 @@ Get the bottom edge position.
 
 **Signature:**
 
-```typescript
-bottom(): number
+```rust
+pub fn bottom(&self) -> u32
 ```
 
-##### yCenter()
+##### y_center()
 
 Get the vertical center position.
 
 **Signature:**
 
-```typescript
-yCenter(): number
+```rust
+pub fn y_center(&self) -> f64
 ```
 
-##### xCenter()
+##### x_center()
 
 Get the horizontal center position.
 
 **Signature:**
 
-```typescript
-xCenter(): number
+```rust
+pub fn x_center(&self) -> f64
 ```
 
 
@@ -11123,80 +11123,80 @@ HTML document extractor using html-to-markdown.
 
 **Signature:**
 
-```typescript
-static default(): HtmlExtractor
+```rust
+pub fn default() -> HtmlExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
 
@@ -11211,40 +11211,40 @@ and extracted structural elements (headers, links, images, structured data).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `title` | `string | null` | `null` | Document title from `<title>` tag |
-| `description` | `string | null` | `null` | Document description from `<meta name="description">` tag |
-| `keywords` | `Array<string>` | `[]` | Document keywords from `<meta name="keywords">` tag, split on commas |
-| `author` | `string | null` | `null` | Document author from `<meta name="author">` tag |
-| `canonicalUrl` | `string | null` | `null` | Canonical URL from `<link rel="canonical">` tag |
-| `baseHref` | `string | null` | `null` | Base URL from `<base href="">` tag for resolving relative URLs |
-| `language` | `string | null` | `null` | Document language from `lang` attribute |
-| `textDirection` | `TextDirection | null` | `TextDirection.LeftToRight` | Document text direction from `dir` attribute |
-| `openGraph` | `Record<string, string>` | `{}` | Open Graph metadata (og:* properties) for social media Keys like "title", "description", "image", "url", etc. |
-| `twitterCard` | `Record<string, string>` | `{}` | Twitter Card metadata (twitter:* properties) Keys like "card", "site", "creator", "title", "description", "image", etc. |
-| `metaTags` | `Record<string, string>` | `{}` | Additional meta tags not covered by specific fields Keys are meta name/property attributes, values are content |
-| `headers` | `Array<HeaderMetadata>` | `[]` | Extracted header elements with hierarchy |
-| `links` | `Array<LinkMetadata>` | `[]` | Extracted hyperlinks with type classification |
-| `images` | `Array<ImageMetadataType>` | `[]` | Extracted images with source and dimensions |
-| `structuredData` | `Array<StructuredData>` | `[]` | Extracted structured data blocks |
+| `title` | `Option<String>` | `Default::default()` | Document title from `<title>` tag |
+| `description` | `Option<String>` | `Default::default()` | Document description from `<meta name="description">` tag |
+| `keywords` | `Vec<String>` | `vec![]` | Document keywords from `<meta name="keywords">` tag, split on commas |
+| `author` | `Option<String>` | `Default::default()` | Document author from `<meta name="author">` tag |
+| `canonical_url` | `Option<String>` | `Default::default()` | Canonical URL from `<link rel="canonical">` tag |
+| `base_href` | `Option<String>` | `Default::default()` | Base URL from `<base href="">` tag for resolving relative URLs |
+| `language` | `Option<String>` | `Default::default()` | Document language from `lang` attribute |
+| `text_direction` | `Option<TextDirection>` | `TextDirection::LeftToRight` | Document text direction from `dir` attribute |
+| `open_graph` | `HashMap<String, String>` | `HashMap::new()` | Open Graph metadata (og:* properties) for social media Keys like "title", "description", "image", "url", etc. |
+| `twitter_card` | `HashMap<String, String>` | `HashMap::new()` | Twitter Card metadata (twitter:* properties) Keys like "card", "site", "creator", "title", "description", "image", etc. |
+| `meta_tags` | `HashMap<String, String>` | `HashMap::new()` | Additional meta tags not covered by specific fields Keys are meta name/property attributes, values are content |
+| `headers` | `Vec<HeaderMetadata>` | `vec![]` | Extracted header elements with hierarchy |
+| `links` | `Vec<LinkMetadata>` | `vec![]` | Extracted hyperlinks with type classification |
+| `images` | `Vec<ImageMetadataType>` | `vec![]` | Extracted images with source and dimensions |
+| `structured_data` | `Vec<StructuredData>` | `vec![]` | Extracted structured data blocks |
 
 #### Methods
 
-##### isEmpty()
+##### is_empty()
 
 Check if metadata is empty (no meaningful content extracted).
 
 **Signature:**
 
-```typescript
-isEmpty(): boolean
+```rust
+pub fn is_empty(&self) -> bool
 ```
 
 ##### from()
 
 **Signature:**
 
-```typescript
-static from(metadata: HtmlMetadata): HtmlMetadata
+```rust
+pub fn from(metadata: HtmlMetadata) -> HtmlMetadata
 ```
 
 
@@ -11261,11 +11261,11 @@ the plain comrak-based renderer.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `css` | `string | null` | `null` | Inline CSS string injected into the output after the theme stylesheet. Concatenated after `css_file` content when both are set. |
-| `cssFile` | `string | null` | `null` | Path to a CSS file loaded once at renderer construction time. Concatenated before `css` when both are set. |
-| `theme` | `HtmlTheme` | `HtmlTheme.Unstyled` | Built-in colour/typography theme. Default: `HtmlTheme.Unstyled`. |
-| `classPrefix` | `string` | `null` | CSS class prefix applied to every emitted class name. Default: `"kb-"`. Change this if your host application already uses classes that start with `kb-`. |
-| `embedCss` | `boolean` | `true` | When `True` (default), write the resolved CSS into a `<style>` block immediately after the opening `<div class="{prefix}doc">`. Set to `False` to emit only the structural markup and wire up your own stylesheet targeting the `kb-*` class names. |
+| `css` | `Option<String>` | `Default::default()` | Inline CSS string injected into the output after the theme stylesheet. Concatenated after `css_file` content when both are set. |
+| `css_file` | `Option<PathBuf>` | `Default::default()` | Path to a CSS file loaded once at renderer construction time. Concatenated before `css` when both are set. |
+| `theme` | `HtmlTheme` | `HtmlTheme::Unstyled` | Built-in colour/typography theme. Default: `HtmlTheme.Unstyled`. |
+| `class_prefix` | `String` | `Default::default()` | CSS class prefix applied to every emitted class name. Default: `"kb-"`. Change this if your host application already uses classes that start with `kb-`. |
+| `embed_css` | `bool` | `true` | When `True` (default), write the resolved CSS into a `<style>` block immediately after the opening `<div class="{prefix}doc">`. Set to `False` to emit only the structural markup and wire up your own stylesheet targeting the `kb-*` class names. |
 
 #### Methods
 
@@ -11273,8 +11273,8 @@ the plain comrak-based renderer.
 
 **Signature:**
 
-```typescript
-static default(): HtmlOutputConfig
+```rust
+pub fn default() -> HtmlOutputConfig
 ```
 
 
@@ -11286,19 +11286,19 @@ An extracted HWP document, consisting of one or more body-text sections.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `sections` | `Array<Section>` | `[]` | All sections from all BodyText/SectionN streams. |
+| `sections` | `Vec<Section>` | `vec![]` | All sections from all BodyText/SectionN streams. |
 
 #### Methods
 
-##### extractText()
+##### extract_text()
 
 Concatenate the text of every paragraph in every section, separated by
 newlines.
 
 **Signature:**
 
-```typescript
-extractText(): string
+```rust
+pub fn extract_text(&self) -> String
 ```
 
 
@@ -11316,80 +11316,80 @@ Supports HWP 5.0 format, the standard document format in South Korea.
 
 **Signature:**
 
-```typescript
-static default(): HwpExtractor
+```rust
+pub fn default() -> HwpExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -11404,11 +11404,11 @@ For the main extraction configuration, see `crate.core.config.ExtractionConfig`.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `targetDpi` | `number` | `300` | Target DPI for image normalization |
-| `maxImageDimension` | `number` | `4096` | Maximum image dimension (width or height) |
-| `autoAdjustDpi` | `boolean` | `true` | Whether to auto-adjust DPI based on content |
-| `minDpi` | `number` | `72` | Minimum DPI threshold |
-| `maxDpi` | `number` | `600` | Maximum DPI threshold |
+| `target_dpi` | `i32` | `300` | Target DPI for image normalization |
+| `max_image_dimension` | `i32` | `4096` | Maximum image dimension (width or height) |
+| `auto_adjust_dpi` | `bool` | `true` | Whether to auto-adjust DPI based on content |
+| `min_dpi` | `i32` | `72` | Minimum DPI threshold |
+| `max_dpi` | `i32` | `600` | Maximum DPI threshold |
 
 #### Methods
 
@@ -11416,8 +11416,8 @@ For the main extraction configuration, see `crate.core.config.ExtractionConfig`.
 
 **Signature:**
 
-```typescript
-static default(): ImageDpiConfig
+```rust
+pub fn default() -> ImageDpiConfig
 ```
 
 
@@ -11429,13 +11429,13 @@ Image extraction configuration.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `extractImages` | `boolean` | `null` | Extract images from documents |
-| `targetDpi` | `number` | `null` | Target DPI for image normalization |
-| `maxImageDimension` | `number` | `null` | Maximum dimension for images (width or height) |
-| `injectPlaceholders` | `boolean` | `null` | Whether to inject image reference placeholders into markdown output. When `True` (default), image references like `![Image 1](embedded:p1_i0)` are appended to the markdown. Set to `False` to extract images as data without polluting the markdown output. |
-| `autoAdjustDpi` | `boolean` | `null` | Automatically adjust DPI based on image content |
-| `minDpi` | `number` | `null` | Minimum DPI threshold |
-| `maxDpi` | `number` | `null` | Maximum DPI threshold |
+| `extract_images` | `bool` | `Default::default()` | Extract images from documents |
+| `target_dpi` | `i32` | `Default::default()` | Target DPI for image normalization |
+| `max_image_dimension` | `i32` | `Default::default()` | Maximum dimension for images (width or height) |
+| `inject_placeholders` | `bool` | `Default::default()` | Whether to inject image reference placeholders into markdown output. When `True` (default), image references like `![Image 1](embedded:p1_i0)` are appended to the markdown. Set to `False` to extract images as data without polluting the markdown output. |
+| `auto_adjust_dpi` | `bool` | `Default::default()` | Automatically adjust DPI based on image content |
+| `min_dpi` | `i32` | `Default::default()` | Minimum DPI threshold |
+| `max_dpi` | `i32` | `Default::default()` | Maximum DPI threshold |
 
 
 ---
@@ -11456,80 +11456,80 @@ markdown formatting based on detected layout classes.
 
 **Signature:**
 
-```typescript
-static default(): ImageExtractor
+```rust
+pub fn default() -> ImageExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -11543,10 +11543,10 @@ Includes dimensions, format, and EXIF data.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `width` | `number` | — | Image width in pixels |
-| `height` | `number` | — | Image height in pixels |
-| `format` | `string` | — | Image format (e.g., "PNG", "JPEG", "TIFF") |
-| `exif` | `Record<string, string>` | — | EXIF metadata tags |
+| `width` | `u32` | — | Image width in pixels |
+| `height` | `u32` | — | Image height in pixels |
+| `format` | `String` | — | Image format (e.g., "PNG", "JPEG", "TIFF") |
+| `exif` | `HashMap<String, String>` | — | EXIF metadata tags |
 
 
 ---
@@ -11557,12 +11557,12 @@ Image element metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `src` | `string` | — | Image source (URL, data URI, or SVG content) |
-| `alt` | `string | null` | `null` | Alternative text from alt attribute |
-| `title` | `string | null` | `null` | Title attribute |
-| `dimensions` | `U32U32 | null` | `null` | Image dimensions as (width, height) if available |
-| `imageType` | `ImageType` | — | Image type classification |
-| `attributes` | `Array<StringString>` | — | Additional attributes as key-value pairs |
+| `src` | `String` | — | Image source (URL, data URI, or SVG content) |
+| `alt` | `Option<String>` | `None` | Alternative text from alt attribute |
+| `title` | `Option<String>` | `None` | Title attribute |
+| `dimensions` | `Option<U32U32>` | `None` | Image dimensions as (width, height) if available |
+| `image_type` | `ImageType` | — | Image type classification |
+| `attributes` | `Vec<StringString>` | — | Additional attributes as key-value pairs |
 
 
 ---
@@ -11573,9 +11573,9 @@ Result of OCR extraction from an image with optional page tracking.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | Extracted text content |
-| `boundaries` | `Array<PageBoundary> | null` | `null` | Character byte boundaries per frame (for multi-frame TIFFs) |
-| `pageContents` | `Array<PageContent> | null` | `null` | Per-frame content information |
+| `content` | `String` | — | Extracted text content |
+| `boundaries` | `Option<Vec<PageBoundary>>` | `None` | Character byte boundaries per frame (for multi-frame TIFFs) |
+| `page_contents` | `Option<Vec<PageContent>>` | `None` | Per-frame content information |
 
 
 ---
@@ -11590,13 +11590,13 @@ for different document types.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `targetDpi` | `number` | `300` | Target DPI for the image (300 is standard, 600 for small text). |
-| `autoRotate` | `boolean` | `true` | Auto-detect and correct image rotation. |
-| `deskew` | `boolean` | `true` | Correct skew (tilted images). |
-| `denoise` | `boolean` | `false` | Remove noise from the image. |
-| `contrastEnhance` | `boolean` | `false` | Enhance contrast for better text visibility. |
-| `binarizationMethod` | `string` | `"otsu"` | Binarization method: "otsu", "sauvola", "adaptive". |
-| `invertColors` | `boolean` | `false` | Invert colors (white text on black → black on white). |
+| `target_dpi` | `i32` | `300` | Target DPI for the image (300 is standard, 600 for small text). |
+| `auto_rotate` | `bool` | `true` | Auto-detect and correct image rotation. |
+| `deskew` | `bool` | `true` | Correct skew (tilted images). |
+| `denoise` | `bool` | `false` | Remove noise from the image. |
+| `contrast_enhance` | `bool` | `false` | Enhance contrast for better text visibility. |
+| `binarization_method` | `String` | `"otsu"` | Binarization method: "otsu", "sauvola", "adaptive". |
+| `invert_colors` | `bool` | `false` | Invert colors (white text on black → black on white). |
 
 #### Methods
 
@@ -11604,8 +11604,8 @@ for different document types.
 
 **Signature:**
 
-```typescript
-static default(): ImagePreprocessingConfig
+```rust
+pub fn default() -> ImagePreprocessingConfig
 ```
 
 
@@ -11620,18 +11620,18 @@ including DPI normalization, resizing, and resampling.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `originalDimensions` | `UsizeUsize` | — | Original image dimensions (width, height) in pixels |
-| `originalDpi` | `F64F64` | — | Original image DPI (horizontal, vertical) |
-| `targetDpi` | `number` | — | Target DPI from configuration |
-| `scaleFactor` | `number` | — | Scaling factor applied to the image |
-| `autoAdjusted` | `boolean` | — | Whether DPI was auto-adjusted based on content |
-| `finalDpi` | `number` | — | Final DPI after processing |
-| `newDimensions` | `UsizeUsize | null` | `null` | New dimensions after resizing (if resized) |
-| `resampleMethod` | `string` | — | Resampling algorithm used ("LANCZOS3", "CATMULLROM", etc.) |
-| `dimensionClamped` | `boolean` | — | Whether dimensions were clamped to max_image_dimension |
-| `calculatedDpi` | `number | null` | `null` | Calculated optimal DPI (if auto_adjust_dpi enabled) |
-| `skippedResize` | `boolean` | — | Whether resize was skipped (dimensions already optimal) |
-| `resizeError` | `string | null` | `null` | Error message if resize failed |
+| `original_dimensions` | `UsizeUsize` | — | Original image dimensions (width, height) in pixels |
+| `original_dpi` | `F64F64` | — | Original image DPI (horizontal, vertical) |
+| `target_dpi` | `i32` | — | Target DPI from configuration |
+| `scale_factor` | `f64` | — | Scaling factor applied to the image |
+| `auto_adjusted` | `bool` | — | Whether DPI was auto-adjusted based on content |
+| `final_dpi` | `i32` | — | Final DPI after processing |
+| `new_dimensions` | `Option<UsizeUsize>` | `None` | New dimensions after resizing (if resized) |
+| `resample_method` | `String` | — | Resampling algorithm used ("LANCZOS3", "CATMULLROM", etc.) |
+| `dimension_clamped` | `bool` | — | Whether dimensions were clamped to max_image_dimension |
+| `calculated_dpi` | `Option<i32>` | `None` | Calculated optimal DPI (if auto_adjust_dpi enabled) |
+| `skipped_resize` | `bool` | — | Whether resize was skipped (dimensions already optimal) |
+| `resize_error` | `Option<String>` | `None` | Error message if resize failed |
 
 
 ---
@@ -11644,10 +11644,10 @@ Represents text with formatting, links, images, etc.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `elementType` | `InlineType` | — | Type of inline element |
-| `content` | `string` | — | Text content |
-| `attributes` | `Attributes | null` | `null` | Element attributes |
-| `metadata` | `Record<string, string> | null` | `null` | Additional metadata (e.g., href for links, src/alt for images) |
+| `element_type` | `InlineType` | — | Type of inline element |
+| `content` | `String` | — | Text content |
+| `attributes` | `Option<Attributes>` | `None` | Element attributes |
+| `metadata` | `Option<HashMap<String, String>>` | `None` | Additional metadata (e.g., href for links, src/alt for images) |
 
 
 ---
@@ -11667,38 +11667,38 @@ Capture the current instant.
 
 **Signature:**
 
-```typescript
-static now(): Instant
+```rust
+pub fn now() -> Instant
 ```
 
-##### elapsedSecsF64()
+##### elapsed_secs_f64()
 
 Seconds elapsed since this instant was captured (as `f64`).
 
 **Signature:**
 
-```typescript
-elapsedSecsF64(): number
+```rust
+pub fn elapsed_secs_f64(&self) -> f64
 ```
 
-##### elapsedMs()
+##### elapsed_ms()
 
 Milliseconds elapsed since this instant was captured (as `f64`).
 
 **Signature:**
 
-```typescript
-elapsedMs(): number
+```rust
+pub fn elapsed_ms(&self) -> f64
 ```
 
-##### elapsedMillis()
+##### elapsed_millis()
 
 Milliseconds elapsed as `u128` (mirrors `Duration.as_millis`).
 
 **Signature:**
 
-```typescript
-elapsedMillis(): U128
+```rust
+pub fn elapsed_millis(&self) -> U128
 ```
 
 
@@ -11714,71 +11714,71 @@ All extractors output this structure. It is converted to the public
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `elements` | `Array<InternalElement>` | — | All elements in reading order. Append-only during extraction. |
-| `relationships` | `Array<Relationship>` | — | Relationships between elements (source index → target). Stored separately from elements for cache-friendly iteration. |
-| `sourceFormat` | `Str` | — | Source format identifier (e.g., "pdf", "docx", "html", "markdown"). |
+| `elements` | `Vec<InternalElement>` | — | All elements in reading order. Append-only during extraction. |
+| `relationships` | `Vec<Relationship>` | — | Relationships between elements (source index → target). Stored separately from elements for cache-friendly iteration. |
+| `source_format` | `Str` | — | Source format identifier (e.g., "pdf", "docx", "html", "markdown"). |
 | `metadata` | `Metadata` | — | Document-level metadata (title, author, dates, etc.). |
-| `images` | `Array<ExtractedImage>` | — | Extracted images (binary data). Referenced by index from `ElementKind.Image`. |
-| `tables` | `Array<Table>` | — | Extracted tables (structured data). Referenced by index from `ElementKind.Table`. |
-| `uris` | `Array<Uri>` | — | URIs/links discovered during extraction (hyperlinks, image refs, citations, etc.). |
-| `children` | `Array<ArchiveEntry> | null` | `null` | Archive children: fully-extracted results for files within an archive. Only populated by archive extractors (ZIP, TAR, 7z, GZIP) when recursive extraction is enabled. Each entry contains the full `ExtractionResult` for a child file that was extracted through the public pipeline. |
-| `mimeType` | `Str` | — | MIME type of the source document (e.g., "application/pdf", "text/html"). |
-| `processingWarnings` | `Array<ProcessingWarning>` | — | Non-fatal warnings collected during extraction. |
-| `annotations` | `Array<PdfAnnotation> | null` | `null` | PDF annotations (links, highlights, notes). |
-| `prebuiltPages` | `Array<PageContent> | null` | `null` | Pre-built per-page content (set by extractors that track page boundaries natively). When populated, `derive_extraction_result` uses this directly instead of attempting to reconstruct pages from element-level page numbers. |
-| `preRenderedContent` | `string | null` | `null` | Pre-rendered formatted content produced by the extractor itself. When an extractor has direct access to high-quality formatted output (e.g., html-to-markdown produces GFM markdown), it can store that here to bypass the lossy InternalDocument → renderer round-trip. `derive_extraction_result` will use this directly when the requested output format matches `metadata.output_format`. |
+| `images` | `Vec<ExtractedImage>` | — | Extracted images (binary data). Referenced by index from `ElementKind.Image`. |
+| `tables` | `Vec<Table>` | — | Extracted tables (structured data). Referenced by index from `ElementKind.Table`. |
+| `uris` | `Vec<Uri>` | — | URIs/links discovered during extraction (hyperlinks, image refs, citations, etc.). |
+| `children` | `Option<Vec<ArchiveEntry>>` | `None` | Archive children: fully-extracted results for files within an archive. Only populated by archive extractors (ZIP, TAR, 7z, GZIP) when recursive extraction is enabled. Each entry contains the full `ExtractionResult` for a child file that was extracted through the public pipeline. |
+| `mime_type` | `Str` | — | MIME type of the source document (e.g., "application/pdf", "text/html"). |
+| `processing_warnings` | `Vec<ProcessingWarning>` | — | Non-fatal warnings collected during extraction. |
+| `annotations` | `Option<Vec<PdfAnnotation>>` | `None` | PDF annotations (links, highlights, notes). |
+| `prebuilt_pages` | `Option<Vec<PageContent>>` | `None` | Pre-built per-page content (set by extractors that track page boundaries natively). When populated, `derive_extraction_result` uses this directly instead of attempting to reconstruct pages from element-level page numbers. |
+| `pre_rendered_content` | `Option<String>` | `None` | Pre-rendered formatted content produced by the extractor itself. When an extractor has direct access to high-quality formatted output (e.g., html-to-markdown produces GFM markdown), it can store that here to bypass the lossy InternalDocument → renderer round-trip. `derive_extraction_result` will use this directly when the requested output format matches `metadata.output_format`. |
 
 #### Methods
 
-##### pushElement()
+##### push_element()
 
 Push an element and return its index.
 
 **Signature:**
 
-```typescript
-pushElement(element: InternalElement): number
+```rust
+pub fn push_element(&self, element: InternalElement) -> u32
 ```
 
-##### pushRelationship()
+##### push_relationship()
 
 Push a relationship.
 
 **Signature:**
 
-```typescript
-pushRelationship(relationship: Relationship): void
+```rust
+pub fn push_relationship(&self, relationship: Relationship)
 ```
 
-##### pushTable()
+##### push_table()
 
 Push a table and return its index (for use in `ElementKind.Table`).
 
 **Signature:**
 
-```typescript
-pushTable(table: Table): number
+```rust
+pub fn push_table(&self, table: Table) -> u32
 ```
 
-##### pushImage()
+##### push_image()
 
 Push an image and return its index (for use in `ElementKind.Image`).
 
 **Signature:**
 
-```typescript
-pushImage(image: ExtractedImage): number
+```rust
+pub fn push_image(&self, image: ExtractedImage) -> u32
 ```
 
-##### pushUri()
+##### push_uri()
 
 Push a URI discovered during extraction.
 Silently drops URIs beyond `MAX_URIS` to prevent unbounded memory growth.
 
 **Signature:**
 
-```typescript
-pushUri(uri: Uri): void
+```rust
+pub fn push_uri(&self, uri: Uri)
 ```
 
 ##### content()
@@ -11787,8 +11787,8 @@ Concatenate all element text into a single string, separated by newlines.
 
 **Signature:**
 
-```typescript
-content(): string
+```rust
+pub fn content(&self) -> String
 ```
 
 
@@ -11803,64 +11803,64 @@ and generates deterministic element IDs via blake3 hashing.
 
 #### Methods
 
-##### sourceFormat()
+##### source_format()
 
 Set the source format identifier (e.g. "docx", "html", "pptx").
 
 **Signature:**
 
-```typescript
-sourceFormat(format: Str): void
+```rust
+pub fn source_format(&self, format: Str)
 ```
 
-##### setMetadata()
+##### set_metadata()
 
 Set document-level metadata.
 
 **Signature:**
 
-```typescript
-setMetadata(metadata: Metadata): void
+```rust
+pub fn set_metadata(&self, metadata: Metadata)
 ```
 
-##### setMimeType()
+##### set_mime_type()
 
 Set the MIME type of the source document.
 
 **Signature:**
 
-```typescript
-setMimeType(mimeType: Str): void
+```rust
+pub fn set_mime_type(&self, mime_type: Str)
 ```
 
-##### addWarning()
+##### add_warning()
 
 Add a non-fatal processing warning.
 
 **Signature:**
 
-```typescript
-addWarning(warning: ProcessingWarning): void
+```rust
+pub fn add_warning(&self, warning: ProcessingWarning)
 ```
 
-##### setPdfAnnotations()
+##### set_pdf_annotations()
 
 Set document-level PDF annotations (links, highlights, notes).
 
 **Signature:**
 
-```typescript
-setPdfAnnotations(annotations: Array<PdfAnnotation>): void
+```rust
+pub fn set_pdf_annotations(&self, annotations: Vec<PdfAnnotation>)
 ```
 
-##### pushUri()
+##### push_uri()
 
 Push a URI discovered during extraction.
 
 **Signature:**
 
-```typescript
-pushUri(uri: Uri): void
+```rust
+pub fn push_uri(&self, uri: Uri)
 ```
 
 ##### build()
@@ -11869,11 +11869,11 @@ Consume the builder and return the constructed `InternalDocument`.
 
 **Signature:**
 
-```typescript
-build(): InternalDocument
+```rust
+pub fn build(&self) -> InternalDocument
 ```
 
-##### pushHeading()
+##### push_heading()
 
 Push a heading element.
 
@@ -11882,103 +11882,103 @@ from the heading text.
 
 **Signature:**
 
-```typescript
-pushHeading(level: number, text: string, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_heading(&self, level: u8, text: String, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushParagraph()
+##### push_paragraph()
 
 Push a paragraph element.
 
 **Signature:**
 
-```typescript
-pushParagraph(text: string, annotations: Array<TextAnnotation>, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_paragraph(&self, text: String, annotations: Vec<TextAnnotation>, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushList()
+##### push_list()
 
 Push a `ListStart` marker and increment depth.
 
 **Signature:**
 
-```typescript
-pushList(ordered: boolean): void
+```rust
+pub fn push_list(&self, ordered: bool)
 ```
 
-##### endList()
+##### end_list()
 
 Push a `ListEnd` marker and decrement depth.
 
 **Signature:**
 
-```typescript
-endList(): void
+```rust
+pub fn end_list(&self)
 ```
 
-##### pushListItem()
+##### push_list_item()
 
 Push a list item element at the current depth.
 
 **Signature:**
 
-```typescript
-pushListItem(text: string, ordered: boolean, annotations: Array<TextAnnotation>, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_list_item(&self, text: String, ordered: bool, annotations: Vec<TextAnnotation>, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushTable()
+##### push_table()
 
 Push a table element. The table data is stored separately in
 `InternalDocument.tables` and referenced by index.
 
 **Signature:**
 
-```typescript
-pushTable(table: Table, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_table(&self, table: Table, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushTableFromCells()
+##### push_table_from_cells()
 
 Push a table element from a 2D cell grid, building a `Table` struct automatically.
 
 **Signature:**
 
-```typescript
-pushTableFromCells(cells: Array<Array<string>>, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_table_from_cells(&self, cells: Vec<Vec<String>>, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushImage()
+##### push_image()
 
 Push an image element. The image data is stored separately in
 `InternalDocument.images` and referenced by index.
 
 **Signature:**
 
-```typescript
-pushImage(description: string, image: ExtractedImage, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_image(&self, description: Option<String>, image: ExtractedImage, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushCode()
+##### push_code()
 
 Push a code block element. Language is stored in attributes.
 
 **Signature:**
 
-```typescript
-pushCode(text: string, language: string, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_code(&self, text: String, language: Option<String>, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushFormula()
+##### push_formula()
 
 Push a math formula element.
 
 **Signature:**
 
-```typescript
-pushFormula(text: string, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_formula(&self, text: String, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushFootnoteRef()
+##### push_footnote_ref()
 
 Push a footnote reference marker.
 
@@ -11988,223 +11988,223 @@ step can resolve it to the definition.
 
 **Signature:**
 
-```typescript
-pushFootnoteRef(marker: string, key: string, page: number): number
+```rust
+pub fn push_footnote_ref(&self, marker: String, key: String, page: Option<u32>) -> u32
 ```
 
-##### pushFootnoteDefinition()
+##### push_footnote_definition()
 
 Push a footnote definition element with `anchor = key`.
 
 **Signature:**
 
-```typescript
-pushFootnoteDefinition(text: string, key: string, page: number): number
+```rust
+pub fn push_footnote_definition(&self, text: String, key: String, page: Option<u32>) -> u32
 ```
 
-##### pushCitation()
+##### push_citation()
 
 Push a citation / bibliographic reference element.
 
 **Signature:**
 
-```typescript
-pushCitation(text: string, key: string, page: number): number
+```rust
+pub fn push_citation(&self, text: String, key: String, page: Option<u32>) -> u32
 ```
 
-##### pushQuoteStart()
+##### push_quote_start()
 
 Push a `QuoteStart` marker and increment depth.
 
 **Signature:**
 
-```typescript
-pushQuoteStart(): void
+```rust
+pub fn push_quote_start(&self)
 ```
 
-##### pushQuoteEnd()
+##### push_quote_end()
 
 Push a `QuoteEnd` marker and decrement depth.
 
 **Signature:**
 
-```typescript
-pushQuoteEnd(): void
+```rust
+pub fn push_quote_end(&self)
 ```
 
-##### pushPageBreak()
+##### push_page_break()
 
 Push a page break marker at depth 0.
 
 **Signature:**
 
-```typescript
-pushPageBreak(): void
+```rust
+pub fn push_page_break(&self)
 ```
 
-##### pushSlide()
+##### push_slide()
 
 Push a slide element.
 
 **Signature:**
 
-```typescript
-pushSlide(number: number, title: string, page: number): number
+```rust
+pub fn push_slide(&self, number: u32, title: Option<String>, page: Option<u32>) -> u32
 ```
 
-##### pushAdmonition()
+##### push_admonition()
 
 Push an admonition / callout element (note, warning, tip, etc.).
 Kind and optional title are stored in attributes.
 
 **Signature:**
 
-```typescript
-pushAdmonition(kind: string, title: string, page: number): number
+```rust
+pub fn push_admonition(&self, kind: String, title: Option<String>, page: Option<u32>) -> u32
 ```
 
-##### pushRawBlock()
+##### push_raw_block()
 
 Push a raw block preserved verbatim. Format is stored in attributes.
 
 **Signature:**
 
-```typescript
-pushRawBlock(format: string, content: string, page: number): number
+```rust
+pub fn push_raw_block(&self, format: String, content: String, page: Option<u32>) -> u32
 ```
 
-##### pushMetadataBlock()
+##### push_metadata_block()
 
 Push a structured metadata block (frontmatter, email headers).
 Entries are stored in attributes.
 
 **Signature:**
 
-```typescript
-pushMetadataBlock(entries: Array<StringString>, page: number): number
+```rust
+pub fn push_metadata_block(&self, entries: Vec<StringString>, page: Option<u32>) -> u32
 ```
 
-##### pushTitle()
+##### push_title()
 
 Push a title element.
 
 **Signature:**
 
-```typescript
-pushTitle(text: string, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_title(&self, text: String, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushDefinitionTerm()
+##### push_definition_term()
 
 Push a definition term element.
 
 **Signature:**
 
-```typescript
-pushDefinitionTerm(text: string, page: number): number
+```rust
+pub fn push_definition_term(&self, text: String, page: Option<u32>) -> u32
 ```
 
-##### pushDefinitionDescription()
+##### push_definition_description()
 
 Push a definition description element.
 
 **Signature:**
 
-```typescript
-pushDefinitionDescription(text: string, page: number): number
+```rust
+pub fn push_definition_description(&self, text: String, page: Option<u32>) -> u32
 ```
 
-##### pushOcrText()
+##### push_ocr_text()
 
 Push an OCR text element with OCR-specific fields populated.
 
 **Signature:**
 
-```typescript
-pushOcrText(text: string, level: OcrElementLevel, geometry: OcrBoundingGeometry, confidence: OcrConfidence, rotation: OcrRotation, page: number, bbox: BoundingBox): number
+```rust
+pub fn push_ocr_text(&self, text: String, level: OcrElementLevel, geometry: OcrBoundingGeometry, confidence: OcrConfidence, rotation: Option<OcrRotation>, page: Option<u32>, bbox: Option<BoundingBox>) -> u32
 ```
 
-##### pushGroupStart()
+##### push_group_start()
 
 Push a `GroupStart` marker and increment depth.
 
 **Signature:**
 
-```typescript
-pushGroupStart(label: string, page: number): void
+```rust
+pub fn push_group_start(&self, label: Option<String>, page: Option<u32>)
 ```
 
-##### pushGroupEnd()
+##### push_group_end()
 
 Push a `GroupEnd` marker and decrement depth.
 
 **Signature:**
 
-```typescript
-pushGroupEnd(): void
+```rust
+pub fn push_group_end(&self)
 ```
 
-##### pushRelationship()
+##### push_relationship()
 
 Push a relationship between two elements.
 
 **Signature:**
 
-```typescript
-pushRelationship(source: number, target: RelationshipTarget, kind: RelationshipKind): void
+```rust
+pub fn push_relationship(&self, source: u32, target: RelationshipTarget, kind: RelationshipKind)
 ```
 
-##### setAnchor()
+##### set_anchor()
 
 Set the anchor on an already-pushed element.
 
 **Signature:**
 
-```typescript
-setAnchor(index: number, anchor: string): void
+```rust
+pub fn set_anchor(&self, index: u32, anchor: String)
 ```
 
-##### setLayer()
+##### set_layer()
 
 Set the content layer on an already-pushed element.
 
 **Signature:**
 
-```typescript
-setLayer(index: number, layer: ContentLayer): void
+```rust
+pub fn set_layer(&self, index: u32, layer: ContentLayer)
 ```
 
-##### setAttributes()
+##### set_attributes()
 
 Set attributes on an already-pushed element.
 
 **Signature:**
 
-```typescript
-setAttributes(index: number, attributes: AHashMap): void
+```rust
+pub fn set_attributes(&self, index: u32, attributes: AHashMap)
 ```
 
-##### setAnnotations()
+##### set_annotations()
 
 Set annotations on an already-pushed element.
 
 **Signature:**
 
-```typescript
-setAnnotations(index: number, annotations: Array<TextAnnotation>): void
+```rust
+pub fn set_annotations(&self, index: u32, annotations: Vec<TextAnnotation>)
 ```
 
-##### setText()
+##### set_text()
 
 Set the text content of an already-pushed element.
 
 **Signature:**
 
-```typescript
-setText(index: number, text: string): void
+```rust
+pub fn set_text(&self, index: u32, text: String)
 ```
 
-##### pushElement()
+##### push_element()
 
 Push a pre-constructed `InternalElement` directly.
 
@@ -12214,8 +12214,8 @@ element without `ExtractedImage` data).
 
 **Signature:**
 
-```typescript
-pushElement(element: InternalElement): number
+```rust
+pub fn push_element(&self, element: InternalElement) -> u32
 ```
 
 
@@ -12232,17 +12232,17 @@ and optional container markers enable tree reconstruction in the derivation step
 |-------|------|---------|-------------|
 | `id` | `InternalElementId` | — | Deterministic identifier. |
 | `kind` | `ElementKind` | — | What kind of content this element represents. |
-| `text` | `string` | — | Primary text content. Empty for non-text elements (images, page breaks). |
-| `depth` | `number` | — | Nesting depth (0 = root level). Extractors set this based on heading level, list indent, blockquote depth, etc. The tree derivation step uses depth changes to reconstruct parent-child relationships. |
-| `page` | `number | null` | `null` | Page number (1-indexed). `None` for non-paginated formats. |
-| `bbox` | `BoundingBox | null` | `null` | Bounding box in document coordinates. |
+| `text` | `String` | — | Primary text content. Empty for non-text elements (images, page breaks). |
+| `depth` | `u16` | — | Nesting depth (0 = root level). Extractors set this based on heading level, list indent, blockquote depth, etc. The tree derivation step uses depth changes to reconstruct parent-child relationships. |
+| `page` | `Option<u32>` | `None` | Page number (1-indexed). `None` for non-paginated formats. |
+| `bbox` | `Option<BoundingBox>` | `None` | Bounding box in document coordinates. |
 | `layer` | `ContentLayer` | — | Content layer classification (Body, Header, Footer, Footnote). |
-| `annotations` | `Array<TextAnnotation>` | — | Inline annotations (formatting, links) on this element's text content. Byte-range based, reuses the existing `TextAnnotation` type. |
-| `attributes` | `AHashMap | null` | `null` | Format-specific key-value attributes. Used for CSS classes, LaTeX env names, slide layout names, etc. |
-| `anchor` | `string | null` | `null` | Optional anchor/key for this element. Used by the relationship resolver to match references to targets. Examples: heading slug `"introduction"`, footnote label `"fn1"`, citation key `"smith2024"`, figure label `"fig:diagram"`. |
-| `ocrGeometry` | `OcrBoundingGeometry | null` | `null` | OCR bounding geometry (rectangle or quadrilateral). |
-| `ocrConfidence` | `OcrConfidence | null` | `null` | OCR confidence scores (detection + recognition). |
-| `ocrRotation` | `OcrRotation | null` | `null` | OCR rotation metadata. |
+| `annotations` | `Vec<TextAnnotation>` | — | Inline annotations (formatting, links) on this element's text content. Byte-range based, reuses the existing `TextAnnotation` type. |
+| `attributes` | `Option<AHashMap>` | `None` | Format-specific key-value attributes. Used for CSS classes, LaTeX env names, slide layout names, etc. |
+| `anchor` | `Option<String>` | `None` | Optional anchor/key for this element. Used by the relationship resolver to match references to targets. Examples: heading slug `"introduction"`, footnote label `"fn1"`, citation key `"smith2024"`, figure label `"fig:diagram"`. |
+| `ocr_geometry` | `Option<OcrBoundingGeometry>` | `None` | OCR bounding geometry (rectangle or quadrilateral). |
+| `ocr_confidence` | `Option<OcrConfidence>` | `None` | OCR confidence scores (detection + recognition). |
+| `ocr_rotation` | `Option<OcrRotation>` | `None` | OCR rotation metadata. |
 
 #### Methods
 
@@ -12252,78 +12252,78 @@ Create a simple text element with minimal fields.
 
 **Signature:**
 
-```typescript
-static text(kind: ElementKind, text: string, depth: number): InternalElement
+```rust
+pub fn text(kind: ElementKind, text: String, depth: u16) -> InternalElement
 ```
 
-##### withPage()
+##### with_page()
 
 Set the page number.
 
 **Signature:**
 
-```typescript
-withPage(page: number): InternalElement
+```rust
+pub fn with_page(&self, page: u32) -> InternalElement
 ```
 
-##### withBbox()
+##### with_bbox()
 
 Set the bounding box.
 
 **Signature:**
 
-```typescript
-withBbox(bbox: BoundingBox): InternalElement
+```rust
+pub fn with_bbox(&self, bbox: BoundingBox) -> InternalElement
 ```
 
-##### withLayer()
+##### with_layer()
 
 Set the content layer.
 
 **Signature:**
 
-```typescript
-withLayer(layer: ContentLayer): InternalElement
+```rust
+pub fn with_layer(&self, layer: ContentLayer) -> InternalElement
 ```
 
-##### withAnchor()
+##### with_anchor()
 
 Set the anchor key.
 
 **Signature:**
 
-```typescript
-withAnchor(anchor: string): InternalElement
+```rust
+pub fn with_anchor(&self, anchor: String) -> InternalElement
 ```
 
-##### withAnnotations()
+##### with_annotations()
 
 Set annotations.
 
 **Signature:**
 
-```typescript
-withAnnotations(annotations: Array<TextAnnotation>): InternalElement
+```rust
+pub fn with_annotations(&self, annotations: Vec<TextAnnotation>) -> InternalElement
 ```
 
-##### withAttributes()
+##### with_attributes()
 
 Set attributes.
 
 **Signature:**
 
-```typescript
-withAttributes(attributes: AHashMap): InternalElement
+```rust
+pub fn with_attributes(&self, attributes: AHashMap) -> InternalElement
 ```
 
-##### withIndex()
+##### with_index()
 
 Regenerate the ID with the correct index (call after pushing to the document).
 
 **Signature:**
 
-```typescript
-withIndex(index: number): InternalElement
+```rust
+pub fn with_index(&self, index: u32) -> InternalElement
 ```
 
 
@@ -12347,34 +12347,34 @@ positional index using blake3. Takes 48 bits (6 bytes) of the hash.
 
 **Signature:**
 
-```typescript
-static generate(kindDiscriminant: string, text: string, page: number, index: number): InternalElementId
+```rust
+pub fn generate(kind_discriminant: String, text: String, page: Option<u32>, index: u32) -> InternalElementId
 ```
 
-##### asStr()
+##### as_str()
 
 Get the ID as a string slice.
 
 **Signature:**
 
-```typescript
-asStr(): string
+```rust
+pub fn as_str(&self) -> String
 ```
 
 ##### fmt()
 
 **Signature:**
 
-```typescript
-fmt(f: Formatter): Unknown
+```rust
+pub fn fmt(&self, f: Formatter) -> Unknown
 ```
 
-##### asRef()
+##### as_ref()
 
 **Signature:**
 
-```typescript
-asRef(): string
+```rust
+pub fn as_ref(&self) -> String
 ```
 
 
@@ -12386,7 +12386,7 @@ Helper struct for validating iteration counts.
 
 #### Methods
 
-##### checkIteration()
+##### check_iteration()
 
 Validate and increment iteration count.
 
@@ -12396,18 +12396,18 @@ Validate and increment iteration count.
 
 **Signature:**
 
-```typescript
-checkIteration(): void
+```rust
+pub fn check_iteration(&self)
 ```
 
-##### currentCount()
+##### current_count()
 
 Get current iteration count.
 
 **Signature:**
 
-```typescript
-currentCount(): number
+```rust
+pub fn current_count(&self) -> usize
 ```
 
 
@@ -12426,64 +12426,64 @@ handling both the full article structure and minimal JATS subsets.
 
 **Signature:**
 
-```typescript
-static default(): JatsExtractor
+```rust
+pub fn default() -> JatsExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -12495,10 +12495,10 @@ JATS (Journal Article Tag Suite) metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `copyright` | `string | null` | `null` | Copyright |
-| `license` | `string | null` | `null` | License |
-| `historyDates` | `Record<string, string>` | `{}` | History dates |
-| `contributorRoles` | `Array<ContributorRole>` | `[]` | Contributor roles |
+| `copyright` | `Option<String>` | `Default::default()` | Copyright |
+| `license` | `Option<String>` | `Default::default()` | License |
+| `history_dates` | `HashMap<String, String>` | `HashMap::new()` | History dates |
+| `contributor_roles` | `Vec<ContributorRole>` | `vec![]` | Contributor roles |
 
 
 ---
@@ -12507,12 +12507,12 @@ JATS (Journal Article Tag Suite) metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `extractSchema` | `boolean` | `false` | Extract schema |
-| `maxDepth` | `number` | `20` | Maximum depth |
-| `arrayItemLimit` | `number` | `500` | Array item limit |
-| `includeTypeInfo` | `boolean` | `false` | Include type info |
-| `flattenNestedObjects` | `boolean` | `true` | Flatten nested objects |
-| `customTextFieldPatterns` | `Array<string>` | `[]` | Custom text field patterns |
+| `extract_schema` | `bool` | `false` | Extract schema |
+| `max_depth` | `usize` | `20` | Maximum depth |
+| `array_item_limit` | `usize` | `500` | Array item limit |
+| `include_type_info` | `bool` | `false` | Include type info |
+| `flatten_nested_objects` | `bool` | `true` | Flatten nested objects |
+| `custom_text_field_patterns` | `Vec<String>` | `vec![]` | Custom text field patterns |
 
 #### Methods
 
@@ -12520,8 +12520,8 @@ JATS (Journal Article Tag Suite) metadata.
 
 **Signature:**
 
-```typescript
-static default(): JsonExtractionConfig
+```rust
+pub fn default() -> JsonExtractionConfig
 ```
 
 
@@ -12543,80 +12543,80 @@ Extracts content from Jupyter notebook JSON files, including:
 
 **Signature:**
 
-```typescript
-static default(): JupyterExtractor
+```rust
+pub fn default() -> JupyterExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -12637,80 +12637,80 @@ ZIP → Snappy → protobuf text fields.
 
 **Signature:**
 
-```typescript
-static default(): KeynoteExtractor
+```rust
+pub fn default() -> KeynoteExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -12722,21 +12722,21 @@ Extracted keyword with metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `text` | `string` | — | The keyword text. |
-| `score` | `number` | — | Relevance score (higher is better, algorithm-specific range). |
+| `text` | `String` | — | The keyword text. |
+| `score` | `f32` | — | Relevance score (higher is better, algorithm-specific range). |
 | `algorithm` | `KeywordAlgorithm` | — | Algorithm that extracted this keyword. |
-| `positions` | `Array<number> | null` | `null` | Optional positions where keyword appears in text (character offsets). |
+| `positions` | `Option<Vec<usize>>` | `None` | Optional positions where keyword appears in text (character offsets). |
 
 #### Methods
 
-##### withPositions()
+##### with_positions()
 
 Create a new keyword with positions.
 
 **Signature:**
 
-```typescript
-static withPositions(text: string, score: number, algorithm: KeywordAlgorithm, positions: Array<number>): Keyword
+```rust
+pub fn with_positions(text: String, score: f32, algorithm: KeywordAlgorithm, positions: Vec<usize>) -> Keyword
 ```
 
 
@@ -12748,13 +12748,13 @@ Keyword extraction configuration.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `algorithm` | `KeywordAlgorithm` | `KeywordAlgorithm.Yake` | Algorithm to use for extraction. |
-| `maxKeywords` | `number` | `10` | Maximum number of keywords to extract (default: 10). |
-| `minScore` | `number` | `0` | Minimum score threshold (0.0-1.0, default: 0.0). Keywords with scores below this threshold are filtered out. Note: Score ranges differ between algorithms. |
-| `ngramRange` | `UsizeUsize` | `null` | N-gram range for keyword extraction (min, max). (1, 1) = unigrams only (1, 2) = unigrams and bigrams (1, 3) = unigrams, bigrams, and trigrams (default) |
-| `language` | `string | null` | `null` | Language code for stopword filtering (e.g., "en", "de", "fr"). If None, no stopword filtering is applied. |
-| `yakeParams` | `YakeParams | null` | `null` | YAKE-specific tuning parameters. |
-| `rakeParams` | `RakeParams | null` | `null` | RAKE-specific tuning parameters. |
+| `algorithm` | `KeywordAlgorithm` | `KeywordAlgorithm::Yake` | Algorithm to use for extraction. |
+| `max_keywords` | `usize` | `10` | Maximum number of keywords to extract (default: 10). |
+| `min_score` | `f32` | `0` | Minimum score threshold (0.0-1.0, default: 0.0). Keywords with scores below this threshold are filtered out. Note: Score ranges differ between algorithms. |
+| `ngram_range` | `UsizeUsize` | `Default::default()` | N-gram range for keyword extraction (min, max). (1, 1) = unigrams only (1, 2) = unigrams and bigrams (1, 3) = unigrams, bigrams, and trigrams (default) |
+| `language` | `Option<String>` | `Default::default()` | Language code for stopword filtering (e.g., "en", "de", "fr"). If None, no stopword filtering is applied. |
+| `yake_params` | `Option<YakeParams>` | `Default::default()` | YAKE-specific tuning parameters. |
+| `rake_params` | `Option<RakeParams>` | `Default::default()` | RAKE-specific tuning parameters. |
 
 #### Methods
 
@@ -12762,48 +12762,48 @@ Keyword extraction configuration.
 
 **Signature:**
 
-```typescript
-static default(): KeywordConfig
+```rust
+pub fn default() -> KeywordConfig
 ```
 
-##### withMaxKeywords()
+##### with_max_keywords()
 
 Set maximum number of keywords to extract.
 
 **Signature:**
 
-```typescript
-withMaxKeywords(max: number): KeywordConfig
+```rust
+pub fn with_max_keywords(&self, max: usize) -> KeywordConfig
 ```
 
-##### withMinScore()
+##### with_min_score()
 
 Set minimum score threshold.
 
 **Signature:**
 
-```typescript
-withMinScore(score: number): KeywordConfig
+```rust
+pub fn with_min_score(&self, score: f32) -> KeywordConfig
 ```
 
-##### withNgramRange()
+##### with_ngram_range()
 
 Set n-gram range.
 
 **Signature:**
 
-```typescript
-withNgramRange(min: number, max: number): KeywordConfig
+```rust
+pub fn with_ngram_range(&self, min: usize, max: usize) -> KeywordConfig
 ```
 
-##### withLanguage()
+##### with_language()
 
 Set language for stopword filtering.
 
 **Signature:**
 
-```typescript
-withLanguage(lang: string): KeywordConfig
+```rust
+pub fn with_language(&self, lang: String) -> KeywordConfig
 ```
 
 
@@ -12825,64 +12825,64 @@ This processor:
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### process()
 
 **Signature:**
 
-```typescript
-process(result: ExtractionResult, config: ExtractionConfig): void
+```rust
+pub fn process(&self, result: ExtractionResult, config: ExtractionConfig)
 ```
 
-##### processingStage()
+##### processing_stage()
 
 **Signature:**
 
-```typescript
-processingStage(): ProcessingStage
+```rust
+pub fn processing_stage(&self) -> ProcessingStage
 ```
 
-##### shouldProcess()
+##### should_process()
 
 **Signature:**
 
-```typescript
-shouldProcess(result: ExtractionResult, config: ExtractionConfig): boolean
+```rust
+pub fn should_process(&self, result: ExtractionResult, config: ExtractionConfig) -> bool
 ```
 
-##### estimatedDurationMs()
+##### estimated_duration_ms()
 
 **Signature:**
 
-```typescript
-estimatedDurationMs(result: ExtractionResult): number
+```rust
+pub fn estimated_duration_ms(&self, result: ExtractionResult) -> u64
 ```
 
 
@@ -12894,9 +12894,9 @@ Language detection configuration.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `enabled` | `boolean` | — | Enable language detection |
-| `minConfidence` | `number` | — | Minimum confidence threshold (0.0-1.0) |
-| `detectMultiple` | `boolean` | — | Detect multiple languages in the document |
+| `enabled` | `bool` | — | Enable language detection |
+| `min_confidence` | `f64` | — | Minimum confidence threshold (0.0-1.0) |
+| `detect_multiple` | `bool` | — | Detect multiple languages in the document |
 
 
 ---
@@ -12917,64 +12917,64 @@ This processor:
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### process()
 
 **Signature:**
 
-```typescript
-process(result: ExtractionResult, config: ExtractionConfig): void
+```rust
+pub fn process(&self, result: ExtractionResult, config: ExtractionConfig)
 ```
 
-##### processingStage()
+##### processing_stage()
 
 **Signature:**
 
-```typescript
-processingStage(): ProcessingStage
+```rust
+pub fn processing_stage(&self) -> ProcessingStage
 ```
 
-##### shouldProcess()
+##### should_process()
 
 **Signature:**
 
-```typescript
-shouldProcess(result: ExtractionResult, config: ExtractionConfig): boolean
+```rust
+pub fn should_process(&self, result: ExtractionResult, config: ExtractionConfig) -> bool
 ```
 
-##### estimatedDurationMs()
+##### estimated_duration_ms()
 
 **Signature:**
 
-```typescript
-estimatedDurationMs(result: ExtractionResult): number
+```rust
+pub fn estimated_duration_ms(&self, result: ExtractionResult) -> u64
 ```
 
 
@@ -13001,25 +13001,25 @@ A reference to the global `LanguageRegistry` instance.
 
 **Signature:**
 
-```typescript
-static global(): LanguageRegistry
+```rust
+pub fn global() -> LanguageRegistry
 ```
 
-##### getSupportedLanguages()
+##### get_supported_languages()
 
 Get supported languages for a specific OCR backend.
 
 **Returns:**
 
-`Some(&[String])` if the backend is registered, `null` otherwise.
+`Some(&[String])` if the backend is registered, `None` otherwise.
 
 **Signature:**
 
-```typescript
-getSupportedLanguages(backend: string): Array<string> | null
+```rust
+pub fn get_supported_languages(&self, backend: String) -> Option<Vec<String>>
 ```
 
-##### isLanguageSupported()
+##### is_language_supported()
 
 Check if a language is supported by a specific backend.
 
@@ -13029,11 +13029,11 @@ Check if a language is supported by a specific backend.
 
 **Signature:**
 
-```typescript
-isLanguageSupported(backend: string, language: string): boolean
+```rust
+pub fn is_language_supported(&self, backend: String, language: String) -> bool
 ```
 
-##### getBackends()
+##### get_backends()
 
 Get all registered backend names.
 
@@ -13043,11 +13043,11 @@ A vector of backend names in the registry.
 
 **Signature:**
 
-```typescript
-getBackends(): Array<string>
+```rust
+pub fn get_backends(&self) -> Vec<String>
 ```
 
-##### getLanguageCount()
+##### get_language_count()
 
 Get language count for a specific backend.
 
@@ -13057,16 +13057,16 @@ Number of supported languages for the backend, or 0 if backend not found.
 
 **Signature:**
 
-```typescript
-getLanguageCount(backend: string): number
+```rust
+pub fn get_language_count(&self, backend: String) -> usize
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): LanguageRegistry
+```rust
+pub fn default() -> LanguageRegistry
 ```
 
 
@@ -13078,7 +13078,7 @@ LaTeX document extractor
 
 #### Methods
 
-##### buildInternalDocument()
+##### build_internal_document()
 
 Build an `InternalDocument` from LaTeX source.
 
@@ -13087,96 +13087,96 @@ Captures `\label{}` as anchors, `\ref{}` as CrossReference relationships,
 
 **Signature:**
 
-```typescript
-static buildInternalDocument(source: string, injectPlaceholders: boolean): InternalDocument
+```rust
+pub fn build_internal_document(source: String, inject_placeholders: bool) -> InternalDocument
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): LatexExtractor
+```rust
+pub fn default() -> LatexExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -13189,27 +13189,27 @@ A single layout detection result.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `class` | `LayoutClass` | — | Class (layout class) |
-| `confidence` | `number` | — | Confidence |
+| `confidence` | `f32` | — | Confidence |
 | `bbox` | `BBox` | — | Bbox (b box) |
 
 #### Methods
 
-##### sortByConfidenceDesc()
+##### sort_by_confidence_desc()
 
 Sort detections by confidence in descending order.
 
 **Signature:**
 
-```typescript
-static sortByConfidenceDesc(detections: Array<LayoutDetection>): void
+```rust
+pub fn sort_by_confidence_desc(detections: Vec<LayoutDetection>)
 ```
 
 ##### fmt()
 
 **Signature:**
 
-```typescript
-fmt(f: Formatter): Unknown
+```rust
+pub fn fmt(&self, f: Formatter) -> Unknown
 ```
 
 
@@ -13225,9 +13225,9 @@ is enabled for PDF extraction.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `confidenceThreshold` | `number | null` | `null` | Confidence threshold override (None = use model default). |
-| `applyHeuristics` | `boolean` | `true` | Whether to apply postprocessing heuristics (default: true). |
-| `tableModel` | `TableModel` | `TableModel.Tatr` | Table structure recognition model. Controls which model is used for table cell detection within layout-detected table regions. Defaults to `TableModel.Tatr`. |
+| `confidence_threshold` | `Option<f32>` | `Default::default()` | Confidence threshold override (None = use model default). |
+| `apply_heuristics` | `bool` | `true` | Whether to apply postprocessing heuristics (default: true). |
+| `table_model` | `TableModel` | `TableModel::Tatr` | Table structure recognition model. Controls which model is used for table cell detection within layout-detected table regions. Defaults to `TableModel.Tatr`. |
 
 #### Methods
 
@@ -13235,8 +13235,8 @@ is enabled for PDF extraction.
 
 **Signature:**
 
-```typescript
-static default(): LayoutDetectionConfig
+```rust
+pub fn default() -> LayoutDetectionConfig
 ```
 
 
@@ -13251,14 +13251,14 @@ reusable object. Models are downloaded and cached on first use.
 
 #### Methods
 
-##### fromConfig()
+##### from_config()
 
 Create a layout engine from a full config.
 
 **Signature:**
 
-```typescript
-static fromConfig(config: LayoutEngineConfig): LayoutEngine
+```rust
+pub fn from_config(config: LayoutEngineConfig) -> LayoutEngine
 ```
 
 ##### detect()
@@ -13270,11 +13270,11 @@ If `apply_heuristics` is enabled in config, postprocessing is applied automatica
 
 **Signature:**
 
-```typescript
-detect(img: RgbImage): DetectionResult
+```rust
+pub fn detect(&self, img: RgbImage) -> DetectionResult
 ```
 
-##### detectTimed()
+##### detect_timed()
 
 Run layout detection on an image and return granular timing data.
 
@@ -13283,11 +13283,11 @@ Use this when you need per-step profiling (preprocess / onnx / postprocess).
 
 **Signature:**
 
-```typescript
-detectTimed(img: RgbImage): DetectionResultDetectTimings
+```rust
+pub fn detect_timed(&self, img: RgbImage) -> DetectionResultDetectTimings
 ```
 
-##### detectBatch()
+##### detect_batch()
 
 Run layout detection on a batch of images in a single model call.
 
@@ -13300,18 +13300,18 @@ per-image measurements.
 
 **Signature:**
 
-```typescript
-detectBatch(images: Array<RgbImage>): Array<DetectionResultDetectTimings>
+```rust
+pub fn detect_batch(&self, images: Vec<RgbImage>) -> Vec<DetectionResultDetectTimings>
 ```
 
-##### modelName()
+##### model_name()
 
 Get the model name.
 
 **Signature:**
 
-```typescript
-modelName(): string
+```rust
+pub fn model_name(&self) -> String
 ```
 
 ##### config()
@@ -13323,8 +13323,8 @@ additional engines with identical settings.
 
 **Signature:**
 
-```typescript
-config(): LayoutEngineConfig
+```rust
+pub fn config(&self) -> LayoutEngineConfig
 ```
 
 
@@ -13339,10 +13339,10 @@ postprocessing.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `backend` | `ModelBackend` | `ModelBackend.RtDetr` | Which model backend to use. |
-| `confidenceThreshold` | `number | null` | `null` | Confidence threshold override (None = use model default). |
-| `applyHeuristics` | `boolean` | `true` | Whether to apply postprocessing heuristics. |
-| `cacheDir` | `string | null` | `null` | Custom cache directory for model files (None = default). |
+| `backend` | `ModelBackend` | `ModelBackend::RtDetr` | Which model backend to use. |
+| `confidence_threshold` | `Option<f32>` | `Default::default()` | Confidence threshold override (None = use model default). |
+| `apply_heuristics` | `bool` | `true` | Whether to apply postprocessing heuristics. |
+| `cache_dir` | `Option<PathBuf>` | `Default::default()` | Custom cache directory for model files (None = default). |
 
 #### Methods
 
@@ -13350,8 +13350,8 @@ postprocessing.
 
 **Signature:**
 
-```typescript
-static default(): LayoutEngineConfig
+```rust
+pub fn default() -> LayoutEngineConfig
 ```
 
 
@@ -13369,21 +13369,21 @@ Run layout detection on an image using the default confidence threshold.
 
 **Signature:**
 
-```typescript
-detect(img: RgbImage): Array<LayoutDetection>
+```rust
+pub fn detect(&self, img: RgbImage) -> Vec<LayoutDetection>
 ```
 
-##### detectWithThreshold()
+##### detect_with_threshold()
 
 Run layout detection with a custom confidence threshold.
 
 **Signature:**
 
-```typescript
-detectWithThreshold(img: RgbImage, threshold: number): Array<LayoutDetection>
+```rust
+pub fn detect_with_threshold(&self, img: RgbImage, threshold: f32) -> Vec<LayoutDetection>
 ```
 
-##### detectBatch()
+##### detect_batch()
 
 Run layout detection on a batch of images in a single model call.
 
@@ -13395,8 +13395,8 @@ true batched inference (e.g. `rtdetr.RtDetrModel`) override this.
 
 **Signature:**
 
-```typescript
-detectBatch(images: Array<RgbImage>, threshold: number): Array<Array<LayoutDetection>>
+```rust
+pub fn detect_batch(&self, images: Vec<RgbImage>, threshold: Option<f32>) -> Vec<Vec<LayoutDetection>>
 ```
 
 ##### name()
@@ -13405,8 +13405,8 @@ Human-readable model name.
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 
@@ -13418,89 +13418,89 @@ Timing breakdown for the entire layout detection run.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `totalMs` | `number` | — | Total ms |
-| `perPage` | `Array<PageTiming>` | — | Per page |
+| `total_ms` | `f64` | — | Total ms |
+| `per_page` | `Vec<PageTiming>` | — | Per page |
 
 #### Methods
 
-##### avgRenderMs()
+##### avg_render_ms()
 
 **Signature:**
 
-```typescript
-avgRenderMs(): number
+```rust
+pub fn avg_render_ms(&self) -> f64
 ```
 
-##### avgInferenceMs()
+##### avg_inference_ms()
 
 **Signature:**
 
-```typescript
-avgInferenceMs(): number
+```rust
+pub fn avg_inference_ms(&self) -> f64
 ```
 
-##### avgPreprocessMs()
+##### avg_preprocess_ms()
 
 **Signature:**
 
-```typescript
-avgPreprocessMs(): number
+```rust
+pub fn avg_preprocess_ms(&self) -> f64
 ```
 
-##### avgOnnxMs()
+##### avg_onnx_ms()
 
 **Signature:**
 
-```typescript
-avgOnnxMs(): number
+```rust
+pub fn avg_onnx_ms(&self) -> f64
 ```
 
-##### avgPostprocessMs()
+##### avg_postprocess_ms()
 
 **Signature:**
 
-```typescript
-avgPostprocessMs(): number
+```rust
+pub fn avg_postprocess_ms(&self) -> f64
 ```
 
-##### totalInferenceMs()
+##### total_inference_ms()
 
 **Signature:**
 
-```typescript
-totalInferenceMs(): number
+```rust
+pub fn total_inference_ms(&self) -> f64
 ```
 
-##### totalRenderMs()
+##### total_render_ms()
 
 **Signature:**
 
-```typescript
-totalRenderMs(): number
+```rust
+pub fn total_render_ms(&self) -> f64
 ```
 
-##### totalPreprocessMs()
+##### total_preprocess_ms()
 
 **Signature:**
 
-```typescript
-totalPreprocessMs(): number
+```rust
+pub fn total_preprocess_ms(&self) -> f64
 ```
 
-##### totalOnnxMs()
+##### total_onnx_ms()
 
 **Signature:**
 
-```typescript
-totalOnnxMs(): number
+```rust
+pub fn total_onnx_ms(&self) -> f64
 ```
 
-##### totalPostprocessMs()
+##### total_postprocess_ms()
 
 **Signature:**
 
-```typescript
-totalPostprocessMs(): number
+```rust
+pub fn total_postprocess_ms(&self) -> f64
 ```
 
 
@@ -13512,12 +13512,12 @@ Link element metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `href` | `string` | — | The href URL value |
-| `text` | `string` | — | Link text content (normalized) |
-| `title` | `string | null` | `null` | Optional title attribute |
-| `linkType` | `LinkType` | — | Link type classification |
-| `rel` | `Array<string>` | — | Rel attribute values |
-| `attributes` | `Array<StringString>` | — | Additional attributes as key-value pairs |
+| `href` | `String` | — | The href URL value |
+| `text` | `String` | — | Link text content (normalized) |
+| `title` | `Option<String>` | `None` | Optional title attribute |
+| `link_type` | `LinkType` | — | Link type classification |
+| `rel` | `Vec<String>` | — | Rel attribute values |
+| `attributes` | `Vec<StringString>` | — | Additional attributes as key-value pairs |
 
 
 ---
@@ -13531,13 +13531,13 @@ its own `LlmConfig`, allowing different providers per feature.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `model` | `string` | — | Provider/model string using liter-llm routing format. Examples: `"openai/gpt-4o"`, `"anthropic/claude-sonnet-4-20250514"`, `"groq/llama-3.1-70b-versatile"`. |
-| `apiKey` | `string | null` | `null` | API key for the provider. When `None`, liter-llm falls back to the provider's standard environment variable (e.g., `OPENAI_API_KEY`). |
-| `baseUrl` | `string | null` | `null` | Custom base URL override for the provider endpoint. |
-| `timeoutSecs` | `number | null` | `null` | Request timeout in seconds (default: 60). |
-| `maxRetries` | `number | null` | `null` | Maximum retry attempts (default: 3). |
-| `temperature` | `number | null` | `null` | Sampling temperature for generation tasks. |
-| `maxTokens` | `number | null` | `null` | Maximum tokens to generate. |
+| `model` | `String` | — | Provider/model string using liter-llm routing format. Examples: `"openai/gpt-4o"`, `"anthropic/claude-sonnet-4-20250514"`, `"groq/llama-3.1-70b-versatile"`. |
+| `api_key` | `Option<String>` | `None` | API key for the provider. When `None`, liter-llm falls back to the provider's standard environment variable (e.g., `OPENAI_API_KEY`). |
+| `base_url` | `Option<String>` | `None` | Custom base URL override for the provider endpoint. |
+| `timeout_secs` | `Option<u64>` | `None` | Request timeout in seconds (default: 60). |
+| `max_retries` | `Option<u32>` | `None` | Maximum retry attempts (default: 3). |
+| `temperature` | `Option<f64>` | `None` | Sampling temperature for generation tasks. |
+| `max_tokens` | `Option<u64>` | `None` | Maximum tokens to generate. |
 
 
 ---
@@ -13552,13 +13552,13 @@ within one extraction (e.g. VLM OCR + structured extraction).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `model` | `string` | `null` | The LLM model identifier (e.g. "openai/gpt-4o", "anthropic/claude-sonnet-4-20250514"). |
-| `source` | `string` | `null` | The pipeline stage that triggered this LLM call (e.g. "vlm_ocr", "structured_extraction", "embeddings"). |
-| `inputTokens` | `number | null` | `null` | Number of input/prompt tokens consumed. |
-| `outputTokens` | `number | null` | `null` | Number of output/completion tokens generated. |
-| `totalTokens` | `number | null` | `null` | Total tokens (input + output). |
-| `estimatedCost` | `number | null` | `null` | Estimated cost in USD based on the provider's published pricing. |
-| `finishReason` | `string | null` | `null` | Why the model stopped generating (e.g. "stop", "length", "content_filter"). |
+| `model` | `String` | `Default::default()` | The LLM model identifier (e.g. "openai/gpt-4o", "anthropic/claude-sonnet-4-20250514"). |
+| `source` | `String` | `Default::default()` | The pipeline stage that triggered this LLM call (e.g. "vlm_ocr", "structured_extraction", "embeddings"). |
+| `input_tokens` | `Option<u64>` | `Default::default()` | Number of input/prompt tokens consumed. |
+| `output_tokens` | `Option<u64>` | `Default::default()` | Number of output/completion tokens generated. |
+| `total_tokens` | `Option<u64>` | `Default::default()` | Total tokens (input + output). |
+| `estimated_cost` | `Option<f64>` | `Default::default()` | Estimated cost in USD based on the provider's published pricing. |
+| `finish_reason` | `Option<String>` | `Default::default()` | Why the model stopped generating (e.g. "stop", "length", "content_filter"). |
 
 
 ---
@@ -13576,102 +13576,102 @@ Parses markdown documents with YAML frontmatter, extracting:
 
 #### Methods
 
-##### buildInternalDocument()
+##### build_internal_document()
 
 Build an `InternalDocument` from pulldown-cmark events and optional YAML frontmatter.
 
 **Signature:**
 
-```typescript
-static buildInternalDocument(events: Array<Event>, yaml: Value): InternalDocument
+```rust
+pub fn build_internal_document(events: Vec<Event>, yaml: Option<Value>) -> InternalDocument
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): MarkdownExtractor
+```rust
+pub fn default() -> MarkdownExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -13687,7 +13687,7 @@ extracting metadata from YAML frontmatter and tables.
 
 #### Methods
 
-##### buildInternalDocument()
+##### build_internal_document()
 
 Build an `InternalDocument` from pulldown-cmark events after JSX stripping.
 
@@ -13695,96 +13695,96 @@ JSX blocks that were stripped are recorded as raw blocks in the internal documen
 
 **Signature:**
 
-```typescript
-static buildInternalDocument(events: Array<Event>, yaml: Value, rawJsxBlocks: Array<string>): InternalDocument
+```rust
+pub fn build_internal_document(events: Vec<Event>, yaml: Option<Value>, raw_jsx_blocks: Vec<String>) -> InternalDocument
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): MdxExtractor
+```rust
+pub fn default() -> MdxExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -13799,27 +13799,27 @@ via a discriminated union, and additional custom fields from postprocessors.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `title` | `string | null` | `null` | Document title |
-| `subject` | `string | null` | `null` | Document subject or description |
-| `authors` | `Array<string> | null` | `[]` | Primary author(s) - always Vec for consistency |
-| `keywords` | `Array<string> | null` | `[]` | Keywords/tags - always Vec for consistency |
-| `language` | `string | null` | `null` | Primary language (ISO 639 code) |
-| `createdAt` | `string | null` | `null` | Creation timestamp (ISO 8601 format) |
-| `modifiedAt` | `string | null` | `null` | Last modification timestamp (ISO 8601 format) |
-| `createdBy` | `string | null` | `null` | User who created the document |
-| `modifiedBy` | `string | null` | `null` | User who last modified the document |
-| `pages` | `PageStructure | null` | `null` | Page/slide/sheet structure with boundaries |
-| `format` | `FormatMetadata | null` | `FormatMetadata.Pdf` | Format-specific metadata (discriminated union) Contains detailed metadata specific to the document format. Serializes with a `format_type` discriminator field. |
-| `imagePreprocessing` | `ImagePreprocessingMetadata | null` | `null` | Image preprocessing metadata (when OCR preprocessing was applied) |
-| `jsonSchema` | `unknown | null` | `null` | JSON schema (for structured data extraction) |
-| `error` | `ErrorMetadata | null` | `null` | Error metadata (for batch operations) |
-| `extractionDurationMs` | `number | null` | `null` | Extraction duration in milliseconds (for benchmarking). This field is populated by batch extraction to provide per-file timing information. It's `None` for single-file extraction (which uses external timing). |
-| `category` | `string | null` | `null` | Document category (from frontmatter or classification). |
-| `tags` | `Array<string> | null` | `[]` | Document tags (from frontmatter). |
-| `documentVersion` | `string | null` | `null` | Document version string (from frontmatter). |
-| `abstractText` | `string | null` | `null` | Abstract or summary text (from frontmatter). |
-| `outputFormat` | `string | null` | `null` | Output format identifier (e.g., "markdown", "html", "text"). Set by the output format pipeline stage when format conversion is applied. Previously stored in `metadata.additional["output_format"]`. |
-| `additional` | `AHashMap` | `null` | Additional custom fields from postprocessors. **Deprecated**: Prefer using typed fields on `ExtractionResult` and `Metadata` instead of inserting into this map. Typed fields provide better cross-language compatibility and type safety. This field will be removed in a future major version. This flattened map allows Python/TypeScript postprocessors to add arbitrary fields (entity extraction, keyword extraction, etc.). Fields are merged at the root level during serialization. Uses `Cow<'static, str>` keys so static string keys avoid allocation. |
+| `title` | `Option<String>` | `Default::default()` | Document title |
+| `subject` | `Option<String>` | `Default::default()` | Document subject or description |
+| `authors` | `Option<Vec<String>>` | `vec![]` | Primary author(s) - always Vec for consistency |
+| `keywords` | `Option<Vec<String>>` | `vec![]` | Keywords/tags - always Vec for consistency |
+| `language` | `Option<String>` | `Default::default()` | Primary language (ISO 639 code) |
+| `created_at` | `Option<String>` | `Default::default()` | Creation timestamp (ISO 8601 format) |
+| `modified_at` | `Option<String>` | `Default::default()` | Last modification timestamp (ISO 8601 format) |
+| `created_by` | `Option<String>` | `Default::default()` | User who created the document |
+| `modified_by` | `Option<String>` | `Default::default()` | User who last modified the document |
+| `pages` | `Option<PageStructure>` | `Default::default()` | Page/slide/sheet structure with boundaries |
+| `format` | `Option<FormatMetadata>` | `FormatMetadata::Pdf` | Format-specific metadata (discriminated union) Contains detailed metadata specific to the document format. Serializes with a `format_type` discriminator field. |
+| `image_preprocessing` | `Option<ImagePreprocessingMetadata>` | `Default::default()` | Image preprocessing metadata (when OCR preprocessing was applied) |
+| `json_schema` | `Option<serde_json::Value>` | `Default::default()` | JSON schema (for structured data extraction) |
+| `error` | `Option<ErrorMetadata>` | `Default::default()` | Error metadata (for batch operations) |
+| `extraction_duration_ms` | `Option<u64>` | `Default::default()` | Extraction duration in milliseconds (for benchmarking). This field is populated by batch extraction to provide per-file timing information. It's `None` for single-file extraction (which uses external timing). |
+| `category` | `Option<String>` | `Default::default()` | Document category (from frontmatter or classification). |
+| `tags` | `Option<Vec<String>>` | `vec![]` | Document tags (from frontmatter). |
+| `document_version` | `Option<String>` | `Default::default()` | Document version string (from frontmatter). |
+| `abstract_text` | `Option<String>` | `Default::default()` | Abstract or summary text (from frontmatter). |
+| `output_format` | `Option<String>` | `Default::default()` | Output format identifier (e.g., "markdown", "html", "text"). Set by the output format pipeline stage when format conversion is applied. Previously stored in `metadata.additional["output_format"]`. |
+| `additional` | `AHashMap` | `Default::default()` | Additional custom fields from postprocessors. **Deprecated**: Prefer using typed fields on `ExtractionResult` and `Metadata` instead of inserting into this map. Typed fields provide better cross-language compatibility and type safety. This field will be removed in a future major version. This flattened map allows Python/TypeScript postprocessors to add arbitrary fields (entity extraction, keyword extraction, etc.). Fields are merged at the root level during serialization. Uses `Cow<'static, str>` keys so static string keys avoid allocation. |
 
 
 ---
@@ -13834,8 +13834,8 @@ A `tower.Layer` that records service-level extraction metrics.
 
 **Signature:**
 
-```typescript
-layer(inner: S): Service
+```rust
+pub fn layer(&self, inner: S) -> Service
 ```
 
 
@@ -13854,8 +13854,8 @@ the returned model is silently dropped.
 
 **Signature:**
 
-```typescript
-put(model: T): void
+```rust
+pub fn put(&self, model: T)
 ```
 
 ##### take()
@@ -13864,8 +13864,8 @@ Take the cached model if one exists, without creating a new one.
 
 **Signature:**
 
-```typescript
-take(): T | null
+```rust
+pub fn take(&self) -> Option<T>
 ```
 
 
@@ -13898,24 +13898,24 @@ The index parameter ensures uniqueness for duplicate content on the same page.
 
 **Signature:**
 
-```typescript
-static generate(nodeType: string, text: string, page: number, index: number): NodeId
+```rust
+pub fn generate(node_type: String, text: String, page: Option<u32>, index: u32) -> NodeId
 ```
 
-##### asRef()
+##### as_ref()
 
 **Signature:**
 
-```typescript
-asRef(): string
+```rust
+pub fn as_ref(&self) -> String
 ```
 
 ##### fmt()
 
 **Signature:**
 
-```typescript
-fmt(f: Formatter): Unknown
+```rust
+pub fn fmt(&self, f: Formatter) -> Unknown
 ```
 
 
@@ -13927,7 +13927,7 @@ Result of image normalization
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `rgbData` | `Buffer` | — | Processed RGB image data (height * width * 3 bytes) |
+| `rgb_data` | `Vec<u8>` | — | Processed RGB image data (height * width * 3 bytes) |
 | `dimensions` | `UsizeUsize` | — | Image dimensions (width, height) |
 | `metadata` | `ImagePreprocessingMetadata` | — | Preprocessing metadata |
 
@@ -13938,9 +13938,9 @@ Result of image normalization
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `id` | `string` | — | Unique identifier |
-| `noteType` | `NoteType` | — | Note type (note type) |
-| `paragraphs` | `Array<Paragraph>` | — | Paragraphs |
+| `id` | `String` | — | Unique identifier |
+| `note_type` | `NoteType` | — | Note type (note type) |
+| `paragraphs` | `Vec<Paragraph>` | — | Paragraphs |
 
 
 ---
@@ -13961,80 +13961,80 @@ with one text token per line (representing cell values and labels).
 
 **Signature:**
 
-```typescript
-static default(): NumbersExtractor
+```rust
+pub fn default() -> NumbersExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -14048,40 +14048,40 @@ priority(): number
 
 **Signature:**
 
-```typescript
-static new(cacheDir: string): OcrCache
+```rust
+pub fn new(cache_dir: Option<PathBuf>) -> OcrCache
 ```
 
-##### getCachedResult()
+##### get_cached_result()
 
 **Signature:**
 
-```typescript
-getCachedResult(imageHash: string, backend: string, config: string): OcrExtractionResult | null
+```rust
+pub fn get_cached_result(&self, image_hash: String, backend: String, config: String) -> Option<OcrExtractionResult>
 ```
 
-##### setCachedResult()
+##### set_cached_result()
 
 **Signature:**
 
-```typescript
-setCachedResult(imageHash: string, backend: string, config: string, result: OcrExtractionResult): void
+```rust
+pub fn set_cached_result(&self, image_hash: String, backend: String, config: String, result: OcrExtractionResult)
 ```
 
 ##### clear()
 
 **Signature:**
 
-```typescript
-clear(): void
+```rust
+pub fn clear(&self)
 ```
 
-##### getStats()
+##### get_stats()
 
 **Signature:**
 
-```typescript
-getStats(): OcrCacheStats
+```rust
+pub fn get_stats(&self) -> OcrCacheStats
 ```
 
 
@@ -14091,8 +14091,8 @@ getStats(): OcrCacheStats
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `totalFiles` | `number` | `null` | Total files |
-| `totalSizeMb` | `number` | `null` | Total size mb |
+| `total_files` | `usize` | `Default::default()` | Total files |
+| `total_size_mb` | `f64` | `Default::default()` | Total size mb |
 
 
 ---
@@ -14106,12 +14106,12 @@ from recognition confidence (how confident about the actual text content).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `detection` | `number | null` | `null` | Detection confidence: how confident the OCR engine is that text exists here. PaddleOCR provides this as `box_score`, Tesseract doesn't have a direct equivalent. Range: 0.0 to 1.0 (or None if not available). |
-| `recognition` | `number` | — | Recognition confidence: how confident about the text content. Range: 0.0 to 1.0. |
+| `detection` | `Option<f64>` | `None` | Detection confidence: how confident the OCR engine is that text exists here. PaddleOCR provides this as `box_score`, Tesseract doesn't have a direct equivalent. Range: 0.0 to 1.0 (or None if not available). |
+| `recognition` | `f64` | — | Recognition confidence: how confident about the text content. Range: 0.0 to 1.0. |
 
 #### Methods
 
-##### fromTesseract()
+##### from_tesseract()
 
 Create confidence from Tesseract's single confidence value.
 
@@ -14119,11 +14119,11 @@ Tesseract provides confidence as 0-100, which we normalize to 0.0-1.0.
 
 **Signature:**
 
-```typescript
-static fromTesseract(confidence: number): OcrConfidence
+```rust
+pub fn from_tesseract(confidence: f64) -> OcrConfidence
 ```
 
-##### fromPaddle()
+##### from_paddle()
 
 Create confidence from PaddleOCR scores.
 
@@ -14133,8 +14133,8 @@ values to ensure they stay within the valid 0.0-1.0 range.
 
 **Signature:**
 
-```typescript
-static fromPaddle(boxScore: number, textScore: number): OcrConfidence
+```rust
+pub fn from_paddle(box_score: f32, text_score: f32) -> OcrConfidence
 ```
 
 
@@ -14146,17 +14146,17 @@ OCR configuration.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `backend` | `string` | `null` | OCR backend: tesseract, easyocr, paddleocr |
-| `language` | `string` | `null` | Language code (e.g., "eng", "deu") |
-| `tesseractConfig` | `TesseractConfig | null` | `null` | Tesseract-specific configuration (optional) |
-| `outputFormat` | `OutputFormat | null` | `OutputFormat.Plain` | Output format for OCR results (optional, for format conversion) |
-| `paddleOcrConfig` | `unknown | null` | `null` | PaddleOCR-specific configuration (optional, JSON passthrough) |
-| `elementConfig` | `OcrElementConfig | null` | `null` | OCR element extraction configuration |
-| `qualityThresholds` | `OcrQualityThresholds | null` | `null` | Quality thresholds for the native-text-to-OCR fallback decision. When None, uses compiled defaults (matching previous hardcoded behavior). |
-| `pipeline` | `OcrPipelineConfig | null` | `null` | Multi-backend OCR pipeline configuration. When set, enables weighted fallback across multiple OCR backends based on output quality. When None, uses the single `backend` field (same as today). |
-| `autoRotate` | `boolean` | `false` | Enable automatic page rotation based on orientation detection. When enabled, uses Tesseract's `DetectOrientationScript()` to detect page orientation (0/90/180/270 degrees) before OCR. If the page is rotated with high confidence, the image is corrected before recognition. This is critical for handling rotated scanned documents. |
-| `vlmConfig` | `LlmConfig | null` | `null` | VLM (Vision Language Model) OCR configuration. Required when `backend` is `"vlm"`. Uses liter-llm to send page images to a vision model for text extraction. |
-| `vlmPrompt` | `string | null` | `null` | Custom Jinja2 prompt template for VLM OCR. When `None`, uses the default template. Available variables: - `{{ language }}` — The document language code (e.g., "eng", "deu"). |
+| `backend` | `String` | `Default::default()` | OCR backend: tesseract, easyocr, paddleocr |
+| `language` | `String` | `Default::default()` | Language code (e.g., "eng", "deu") |
+| `tesseract_config` | `Option<TesseractConfig>` | `Default::default()` | Tesseract-specific configuration (optional) |
+| `output_format` | `Option<OutputFormat>` | `OutputFormat::Plain` | Output format for OCR results (optional, for format conversion) |
+| `paddle_ocr_config` | `Option<serde_json::Value>` | `Default::default()` | PaddleOCR-specific configuration (optional, JSON passthrough) |
+| `element_config` | `Option<OcrElementConfig>` | `Default::default()` | OCR element extraction configuration |
+| `quality_thresholds` | `Option<OcrQualityThresholds>` | `Default::default()` | Quality thresholds for the native-text-to-OCR fallback decision. When None, uses compiled defaults (matching previous hardcoded behavior). |
+| `pipeline` | `Option<OcrPipelineConfig>` | `Default::default()` | Multi-backend OCR pipeline configuration. When set, enables weighted fallback across multiple OCR backends based on output quality. When None, uses the single `backend` field (same as today). |
+| `auto_rotate` | `bool` | `false` | Enable automatic page rotation based on orientation detection. When enabled, uses Tesseract's `DetectOrientationScript()` to detect page orientation (0/90/180/270 degrees) before OCR. If the page is rotated with high confidence, the image is corrected before recognition. This is critical for handling rotated scanned documents. |
+| `vlm_config` | `Option<LlmConfig>` | `Default::default()` | VLM (Vision Language Model) OCR configuration. Required when `backend` is `"vlm"`. Uses liter-llm to send page images to a vision model for text extraction. |
+| `vlm_prompt` | `Option<String>` | `Default::default()` | Custom Jinja2 prompt template for VLM OCR. When `None`, uses the default template. Available variables: - `{{ language }}` — The document language code (e.g., "eng", "deu"). |
 
 #### Methods
 
@@ -14164,8 +14164,8 @@ OCR configuration.
 
 **Signature:**
 
-```typescript
-static default(): OcrConfig
+```rust
+pub fn default() -> OcrConfig
 ```
 
 ##### validate()
@@ -14182,33 +14182,33 @@ Also validates pipeline stage backends when a pipeline is configured.
 
 **Signature:**
 
-```typescript
-validate(): void
+```rust
+pub fn validate(&self)
 ```
 
-##### effectiveThresholds()
+##### effective_thresholds()
 
 Returns the effective quality thresholds, using configured values or defaults.
 
 **Signature:**
 
-```typescript
-effectiveThresholds(): OcrQualityThresholds
+```rust
+pub fn effective_thresholds(&self) -> OcrQualityThresholds
 ```
 
-##### effectivePipeline()
+##### effective_pipeline()
 
 Returns the effective pipeline config.
 
 - If `pipeline` is explicitly set, returns it.
 - If `paddle-ocr` feature is compiled in and no explicit pipeline is set,
   auto-constructs a default pipeline: primary backend (priority 100) + paddleocr (priority 50).
-- Otherwise returns `null` (single-backend mode, same as today).
+- Otherwise returns `None` (single-backend mode, same as today).
 
 **Signature:**
 
-```typescript
-effectivePipeline(): OcrPipelineConfig | null
+```rust
+pub fn effective_pipeline(&self) -> Option<OcrPipelineConfig>
 ```
 
 
@@ -14223,73 +14223,73 @@ from both Tesseract and PaddleOCR backends.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `text` | `string` | — | The recognized text content. |
+| `text` | `String` | — | The recognized text content. |
 | `geometry` | `OcrBoundingGeometry` | — | Bounding geometry (rectangle or quadrilateral). |
 | `confidence` | `OcrConfidence` | — | Confidence scores for detection and recognition. |
 | `level` | `OcrElementLevel` | — | Hierarchical level (word, line, block, page). |
-| `rotation` | `OcrRotation | null` | `null` | Rotation information (if detected). |
-| `pageNumber` | `number` | — | Page number (1-indexed). |
-| `parentId` | `string | null` | `null` | Parent element ID for hierarchical relationships. Only used for Tesseract output which has word -> line -> block hierarchy. |
-| `backendMetadata` | `Record<string, unknown>` | — | Backend-specific metadata that doesn't fit the unified schema. |
+| `rotation` | `Option<OcrRotation>` | `None` | Rotation information (if detected). |
+| `page_number` | `usize` | — | Page number (1-indexed). |
+| `parent_id` | `Option<String>` | `None` | Parent element ID for hierarchical relationships. Only used for Tesseract output which has word -> line -> block hierarchy. |
+| `backend_metadata` | `HashMap<String, serde_json::Value>` | — | Backend-specific metadata that doesn't fit the unified schema. |
 
 #### Methods
 
-##### withLevel()
+##### with_level()
 
 Set the hierarchical level.
 
 **Signature:**
 
-```typescript
-withLevel(level: OcrElementLevel): OcrElement
+```rust
+pub fn with_level(&self, level: OcrElementLevel) -> OcrElement
 ```
 
-##### withRotation()
+##### with_rotation()
 
 Set rotation information.
 
 **Signature:**
 
-```typescript
-withRotation(rotation: OcrRotation): OcrElement
+```rust
+pub fn with_rotation(&self, rotation: OcrRotation) -> OcrElement
 ```
 
-##### withPageNumber()
+##### with_page_number()
 
 Set page number.
 
 **Signature:**
 
-```typescript
-withPageNumber(pageNumber: number): OcrElement
+```rust
+pub fn with_page_number(&self, page_number: usize) -> OcrElement
 ```
 
-##### withParentId()
+##### with_parent_id()
 
 Set parent element ID.
 
 **Signature:**
 
-```typescript
-withParentId(parentId: string): OcrElement
+```rust
+pub fn with_parent_id(&self, parent_id: String) -> OcrElement
 ```
 
-##### withMetadata()
+##### with_metadata()
 
 Add backend-specific metadata.
 
 **Signature:**
 
-```typescript
-withMetadata(key: string, value: unknown): OcrElement
+```rust
+pub fn with_metadata(&self, key: String, value: serde_json::Value) -> OcrElement
 ```
 
-##### withRotationOpt()
+##### with_rotation_opt()
 
 **Signature:**
 
-```typescript
-withRotationOpt(rotation: OcrRotation): OcrElement
+```rust
+pub fn with_rotation_opt(&self, rotation: Option<OcrRotation>) -> OcrElement
 ```
 
 
@@ -14303,10 +14303,10 @@ Controls how OCR elements are extracted and filtered.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `includeElements` | `boolean` | `null` | Whether to include OCR elements in the extraction result. When true, the `ocr_elements` field in `ExtractionResult` will be populated. |
-| `minLevel` | `OcrElementLevel` | `OcrElementLevel.Line` | Minimum hierarchical level to include. Elements below this level (e.g., words when min_level is Line) will be excluded. |
-| `minConfidence` | `number` | `null` | Minimum recognition confidence threshold (0.0-1.0). Elements with confidence below this threshold will be filtered out. |
-| `buildHierarchy` | `boolean` | `null` | Whether to build hierarchical relationships between elements. When true, `parent_id` fields will be populated based on spatial containment. Only meaningful for Tesseract output. |
+| `include_elements` | `bool` | `Default::default()` | Whether to include OCR elements in the extraction result. When true, the `ocr_elements` field in `ExtractionResult` will be populated. |
+| `min_level` | `OcrElementLevel` | `OcrElementLevel::Line` | Minimum hierarchical level to include. Elements below this level (e.g., words when min_level is Line) will be excluded. |
+| `min_confidence` | `f64` | `Default::default()` | Minimum recognition confidence threshold (0.0-1.0). Elements with confidence below this threshold will be filtered out. |
+| `build_hierarchy` | `bool` | `Default::default()` | Whether to build hierarchical relationships between elements. When true, `parent_id` fields will be populated based on spatial containment. Only meaningful for Tesseract output. |
 
 
 ---
@@ -14320,12 +14320,12 @@ including recognized text and detected tables.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | Recognized text content |
-| `mimeType` | `string` | — | Original MIME type of the processed image |
-| `metadata` | `Record<string, unknown>` | — | OCR processing metadata (confidence scores, language, etc.) |
-| `tables` | `Array<OcrTable>` | — | Tables detected and extracted via OCR |
-| `ocrElements` | `Array<OcrElement> | null` | `null` | Structured OCR elements with bounding boxes and confidence scores. Available when TSV output is requested or table detection is enabled. |
-| `internalDocument` | `InternalDocument | null` | `null` | Structured document produced from hOCR parsing. Carries paragraph structure, bounding boxes, and confidence scores that the flattened `content` string discards. |
+| `content` | `String` | — | Recognized text content |
+| `mime_type` | `String` | — | Original MIME type of the processed image |
+| `metadata` | `HashMap<String, serde_json::Value>` | — | OCR processing metadata (confidence scores, language, etc.) |
+| `tables` | `Vec<OcrTable>` | — | Tables detected and extracted via OCR |
+| `ocr_elements` | `Option<Vec<OcrElement>>` | `None` | Structured OCR elements with bounding boxes and confidence scores. Available when TSV output is requested or table detection is enabled. |
+| `internal_document` | `Option<InternalDocument>` | `None` | Structured document produced from hOCR parsing. Carries paragraph structure, bounding boxes, and confidence scores that the flattened `content` string discards. |
 
 
 ---
@@ -14338,12 +14338,12 @@ Captures information about OCR processing configuration and results.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `language` | `string` | — | OCR language code(s) used |
-| `psm` | `number` | — | Tesseract Page Segmentation Mode (PSM) |
-| `outputFormat` | `string` | — | Output format (e.g., "text", "hocr") |
-| `tableCount` | `number` | — | Number of tables detected |
-| `tableRows` | `number | null` | `null` | Table rows |
-| `tableCols` | `number | null` | `null` | Table cols |
+| `language` | `String` | — | OCR language code(s) used |
+| `psm` | `i32` | — | Tesseract Page Segmentation Mode (PSM) |
+| `output_format` | `String` | — | Output format (e.g., "text", "hocr") |
+| `table_count` | `usize` | — | Number of tables detected |
+| `table_rows` | `Option<usize>` | `None` | Table rows |
+| `table_cols` | `Option<usize>` | `None` | Table cols |
 
 
 ---
@@ -14358,8 +14358,8 @@ the result is accepted. Otherwise the next backend is tried.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `stages` | `Array<OcrPipelineStage>` | — | Ordered list of backends to try. Sorted by priority (descending) at runtime. |
-| `qualityThresholds` | `OcrQualityThresholds` | — | Quality thresholds for deciding whether to accept a result or try the next backend. |
+| `stages` | `Vec<OcrPipelineStage>` | — | Ordered list of backends to try. Sorted by priority (descending) at runtime. |
+| `quality_thresholds` | `OcrQualityThresholds` | — | Quality thresholds for deciding whether to accept a result or try the next backend. |
 
 
 ---
@@ -14370,12 +14370,12 @@ A single backend stage in the OCR pipeline.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `backend` | `string` | — | Backend name: "tesseract", "paddleocr", "easyocr", or a custom registered name. |
-| `priority` | `number` | — | Priority weight (higher = tried first). Stages are sorted by priority descending. |
-| `language` | `string | null` | `null` | Language override for this stage (None = use parent OcrConfig.language). |
-| `tesseractConfig` | `TesseractConfig | null` | `null` | Tesseract-specific config override for this stage. |
-| `paddleOcrConfig` | `unknown | null` | `null` | PaddleOCR-specific config for this stage. |
-| `vlmConfig` | `LlmConfig | null` | `null` | VLM config override for this pipeline stage. |
+| `backend` | `String` | — | Backend name: "tesseract", "paddleocr", "easyocr", or a custom registered name. |
+| `priority` | `u32` | — | Priority weight (higher = tried first). Stages are sorted by priority descending. |
+| `language` | `Option<String>` | `None` | Language override for this stage (None = use parent OcrConfig.language). |
+| `tesseract_config` | `Option<TesseractConfig>` | `None` | Tesseract-specific config override for this stage. |
+| `paddle_ocr_config` | `Option<serde_json::Value>` | `None` | PaddleOCR-specific config for this stage. |
+| `vlm_config` | `Option<LlmConfig>` | `None` | VLM config override for this pipeline stage. |
 
 
 ---
@@ -14388,19 +14388,19 @@ A single backend stage in the OCR pipeline.
 
 **Signature:**
 
-```typescript
-static new(cacheDir: string): OcrProcessor
+```rust
+pub fn new(cache_dir: Option<PathBuf>) -> OcrProcessor
 ```
 
-##### processImage()
+##### process_image()
 
 **Signature:**
 
-```typescript
-processImage(imageBytes: Buffer, config: TesseractConfig): OcrExtractionResult
+```rust
+pub fn process_image(&self, image_bytes: Vec<u8>, config: TesseractConfig) -> OcrExtractionResult
 ```
 
-##### processImageWithFormat()
+##### process_image_with_format()
 
 Process an image with OCR and respect the output format from ExtractionConfig.
 
@@ -14409,35 +14409,35 @@ affects how the OCR result's mime_type is set when markdown output is requested.
 
 **Signature:**
 
-```typescript
-processImageWithFormat(imageBytes: Buffer, config: TesseractConfig, outputFormat: OutputFormat): OcrExtractionResult
+```rust
+pub fn process_image_with_format(&self, image_bytes: Vec<u8>, config: TesseractConfig, output_format: OutputFormat) -> OcrExtractionResult
 ```
 
-##### clearCache()
+##### clear_cache()
 
 **Signature:**
 
-```typescript
-clearCache(): void
+```rust
+pub fn clear_cache(&self)
 ```
 
-##### getCacheStats()
+##### get_cache_stats()
 
 **Signature:**
 
-```typescript
-getCacheStats(): OcrCacheStats
+```rust
+pub fn get_cache_stats(&self) -> OcrCacheStats
 ```
 
-##### processImageFile()
+##### process_image_file()
 
 **Signature:**
 
-```typescript
-processImageFile(filePath: string, config: TesseractConfig): OcrExtractionResult
+```rust
+pub fn process_image_file(&self, file_path: String, config: TesseractConfig) -> OcrExtractionResult
 ```
 
-##### processImageFileWithFormat()
+##### process_image_file_with_format()
 
 Process a file with OCR and respect the output format from ExtractionConfig.
 
@@ -14446,11 +14446,11 @@ affects how the OCR result's mime_type is set when markdown output is requested.
 
 **Signature:**
 
-```typescript
-processImageFileWithFormat(filePath: string, config: TesseractConfig, outputFormat: OutputFormat): OcrExtractionResult
+```rust
+pub fn process_image_file_with_format(&self, file_path: String, config: TesseractConfig, output_format: OutputFormat) -> OcrExtractionResult
 ```
 
-##### processImageFilesBatch()
+##### process_image_files_batch()
 
 Process multiple image files in parallel using Rayon.
 
@@ -14459,8 +14459,8 @@ Results are returned in the same order as the input file paths.
 
 **Signature:**
 
-```typescript
-processImageFilesBatch(filePaths: Array<string>, config: TesseractConfig): Array<BatchItemResult>
+```rust
+pub fn process_image_files_batch(&self, file_paths: Vec<String>, config: TesseractConfig) -> Vec<BatchItemResult>
 ```
 
 
@@ -14475,22 +14475,22 @@ so `OcrQualityThresholds.default()` preserves existing semantics exactly.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `minTotalNonWhitespace` | `number` | `64` | Minimum total non-whitespace characters to consider text substantive. |
-| `minNonWhitespacePerPage` | `number` | `32` | Minimum non-whitespace characters per page on average. |
-| `minMeaningfulWordLen` | `number` | `4` | Minimum character count for a word to be "meaningful". |
-| `minMeaningfulWords` | `number` | `3` | Minimum count of meaningful words before text is accepted. |
-| `minAlnumRatio` | `number` | `0.3` | Minimum alphanumeric ratio (non-whitespace chars that are alphanumeric). |
-| `minGarbageChars` | `number` | `5` | Minimum Unicode replacement characters (U+FFFD) to trigger OCR fallback. |
-| `maxFragmentedWordRatio` | `number` | `0.6` | Maximum fraction of short (1-2 char) words before text is considered fragmented. |
-| `criticalFragmentedWordRatio` | `number` | `0.8` | Critical fragmentation threshold — triggers OCR regardless of meaningful words. Normal English text has ~20-30% short words. 80%+ is definitive garbage. |
-| `minAvgWordLength` | `number` | `2` | Minimum average word length. Below this with enough words indicates garbled extraction. |
-| `minWordsForAvgLengthCheck` | `number` | `50` | Minimum word count before average word length check applies. |
-| `minConsecutiveRepeatRatio` | `number` | `0.08` | Minimum consecutive word repetition ratio to detect column scrambling. |
-| `minWordsForRepeatCheck` | `number` | `50` | Minimum word count before consecutive repetition check is applied. |
-| `substantiveMinChars` | `number` | `100` | Minimum character count for "substantive markdown" OCR skip gate. |
-| `nonTextMinChars` | `number` | `20` | Minimum character count for "non-text content" OCR skip gate. |
-| `alnumWsRatioThreshold` | `number` | `0.4` | Alphanumeric+whitespace ratio threshold for skip decisions. |
-| `pipelineMinQuality` | `number` | `0.5` | Minimum quality score (0.0-1.0) for a pipeline stage result to be accepted. If the result from a backend scores below this, try the next backend. |
+| `min_total_non_whitespace` | `usize` | `64` | Minimum total non-whitespace characters to consider text substantive. |
+| `min_non_whitespace_per_page` | `f64` | `32` | Minimum non-whitespace characters per page on average. |
+| `min_meaningful_word_len` | `usize` | `4` | Minimum character count for a word to be "meaningful". |
+| `min_meaningful_words` | `usize` | `3` | Minimum count of meaningful words before text is accepted. |
+| `min_alnum_ratio` | `f64` | `0.3` | Minimum alphanumeric ratio (non-whitespace chars that are alphanumeric). |
+| `min_garbage_chars` | `usize` | `5` | Minimum Unicode replacement characters (U+FFFD) to trigger OCR fallback. |
+| `max_fragmented_word_ratio` | `f64` | `0.6` | Maximum fraction of short (1-2 char) words before text is considered fragmented. |
+| `critical_fragmented_word_ratio` | `f64` | `0.8` | Critical fragmentation threshold — triggers OCR regardless of meaningful words. Normal English text has ~20-30% short words. 80%+ is definitive garbage. |
+| `min_avg_word_length` | `f64` | `2` | Minimum average word length. Below this with enough words indicates garbled extraction. |
+| `min_words_for_avg_length_check` | `usize` | `50` | Minimum word count before average word length check applies. |
+| `min_consecutive_repeat_ratio` | `f64` | `0.08` | Minimum consecutive word repetition ratio to detect column scrambling. |
+| `min_words_for_repeat_check` | `usize` | `50` | Minimum word count before consecutive repetition check is applied. |
+| `substantive_min_chars` | `usize` | `100` | Minimum character count for "substantive markdown" OCR skip gate. |
+| `non_text_min_chars` | `usize` | `20` | Minimum character count for "non-text content" OCR skip gate. |
+| `alnum_ws_ratio_threshold` | `f64` | `0.4` | Alphanumeric+whitespace ratio threshold for skip decisions. |
+| `pipeline_min_quality` | `f64` | `0.5` | Minimum quality score (0.0-1.0) for a pipeline stage result to be accepted. If the result from a backend scores below this, try the next backend. |
 
 #### Methods
 
@@ -14498,8 +14498,8 @@ so `OcrQualityThresholds.default()` preserves existing semantics exactly.
 
 **Signature:**
 
-```typescript
-static default(): OcrQualityThresholds
+```rust
+pub fn default() -> OcrQualityThresholds
 ```
 
 
@@ -14511,12 +14511,12 @@ Rotation information for an OCR element.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `angleDegrees` | `number` | — | Rotation angle in degrees (0, 90, 180, 270 for PaddleOCR). |
-| `confidence` | `number | null` | `null` | Confidence score for the rotation detection. |
+| `angle_degrees` | `f64` | — | Rotation angle in degrees (0, 90, 180, 270 for PaddleOCR). |
+| `confidence` | `Option<f64>` | `None` | Confidence score for the rotation detection. |
 
 #### Methods
 
-##### fromPaddle()
+##### from_paddle()
 
 Create rotation from PaddleOCR angle classification.
 
@@ -14528,8 +14528,8 @@ Returns an error if `angle_index` is not in the valid range (0-3).
 
 **Signature:**
 
-```typescript
-static fromPaddle(angleIndex: number, angleScore: number): OcrRotation
+```rust
+pub fn from_paddle(angle_index: i32, angle_score: f32) -> OcrRotation
 ```
 
 
@@ -14543,10 +14543,10 @@ Represents a table structure recognized during OCR processing.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `cells` | `Array<Array<string>>` | — | Table cells as a 2D vector (rows × columns) |
-| `markdown` | `string` | — | Markdown representation of the table |
-| `pageNumber` | `number` | — | Page number where the table was found (1-indexed) |
-| `boundingBox` | `OcrTableBoundingBox | null` | `null` | Bounding box of the table in pixel coordinates (from OCR word positions). |
+| `cells` | `Vec<Vec<String>>` | — | Table cells as a 2D vector (rows × columns) |
+| `markdown` | `String` | — | Markdown representation of the table |
+| `page_number` | `usize` | — | Page number where the table was found (1-indexed) |
+| `bounding_box` | `Option<OcrTableBoundingBox>` | `None` | Bounding box of the table in pixel coordinates (from OCR word positions). |
 
 
 ---
@@ -14557,10 +14557,10 @@ Bounding box for an OCR-detected table in pixel coordinates.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `left` | `number` | — | Left x-coordinate (pixels) |
-| `top` | `number` | — | Top y-coordinate (pixels) |
-| `right` | `number` | — | Right x-coordinate (pixels) |
-| `bottom` | `number` | — | Bottom y-coordinate (pixels) |
+| `left` | `u32` | — | Left x-coordinate (pixels) |
+| `top` | `u32` | — | Top y-coordinate (pixels) |
+| `right` | `u32` | — | Right x-coordinate (pixels) |
+| `bottom` | `u32` | — | Bottom y-coordinate (pixels) |
 
 
 ---
@@ -14582,80 +14582,80 @@ This extractor provides:
 
 **Signature:**
 
-```typescript
-static default(): OdtExtractor
+```rust
+pub fn default() -> OdtExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -14670,24 +14670,24 @@ Uses Dublin Core elements (dc:) and OpenDocument meta elements (meta:).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `title` | `string | null` | `null` | Document title (dc:title) |
-| `subject` | `string | null` | `null` | Document subject/topic (dc:subject) |
-| `creator` | `string | null` | `null` | Current document creator/author (dc:creator) |
-| `initialCreator` | `string | null` | `null` | Initial creator of the document (meta:initial-creator) |
-| `keywords` | `string | null` | `null` | Keywords or tags (meta:keyword) |
-| `description` | `string | null` | `null` | Document description (dc:description) |
-| `date` | `string | null` | `null` | Current modification date (dc:date) |
-| `creationDate` | `string | null` | `null` | Initial creation date (meta:creation-date) |
-| `language` | `string | null` | `null` | Document language (dc:language) |
-| `generator` | `string | null` | `null` | Generator/application that created the document (meta:generator) |
-| `editingDuration` | `string | null` | `null` | Editing duration in ISO 8601 format (meta:editing-duration) |
-| `editingCycles` | `string | null` | `null` | Number of edits/revisions (meta:editing-cycles) |
-| `pageCount` | `number | null` | `null` | Document statistics - page count (meta:page-count) |
-| `wordCount` | `number | null` | `null` | Document statistics - word count (meta:word-count) |
-| `characterCount` | `number | null` | `null` | Document statistics - character count (meta:character-count) |
-| `paragraphCount` | `number | null` | `null` | Document statistics - paragraph count (meta:paragraph-count) |
-| `tableCount` | `number | null` | `null` | Document statistics - table count (meta:table-count) |
-| `imageCount` | `number | null` | `null` | Document statistics - image count (meta:image-count) |
+| `title` | `Option<String>` | `Default::default()` | Document title (dc:title) |
+| `subject` | `Option<String>` | `Default::default()` | Document subject/topic (dc:subject) |
+| `creator` | `Option<String>` | `Default::default()` | Current document creator/author (dc:creator) |
+| `initial_creator` | `Option<String>` | `Default::default()` | Initial creator of the document (meta:initial-creator) |
+| `keywords` | `Option<String>` | `Default::default()` | Keywords or tags (meta:keyword) |
+| `description` | `Option<String>` | `Default::default()` | Document description (dc:description) |
+| `date` | `Option<String>` | `Default::default()` | Current modification date (dc:date) |
+| `creation_date` | `Option<String>` | `Default::default()` | Initial creation date (meta:creation-date) |
+| `language` | `Option<String>` | `Default::default()` | Document language (dc:language) |
+| `generator` | `Option<String>` | `Default::default()` | Generator/application that created the document (meta:generator) |
+| `editing_duration` | `Option<String>` | `Default::default()` | Editing duration in ISO 8601 format (meta:editing-duration) |
+| `editing_cycles` | `Option<String>` | `Default::default()` | Number of edits/revisions (meta:editing-cycles) |
+| `page_count` | `Option<i32>` | `Default::default()` | Document statistics - page count (meta:page-count) |
+| `word_count` | `Option<i32>` | `Default::default()` | Document statistics - word count (meta:word-count) |
+| `character_count` | `Option<i32>` | `Default::default()` | Document statistics - character count (meta:character-count) |
+| `paragraph_count` | `Option<i32>` | `Default::default()` | Document statistics - paragraph count (meta:paragraph-count) |
+| `table_count` | `Option<i32>` | `Default::default()` | Document statistics - table count (meta:table-count) |
+| `image_count` | `Option<i32>` | `Default::default()` | Document statistics - image count (meta:image-count) |
 
 
 ---
@@ -14701,7 +14701,7 @@ extracting structured content and metadata.
 
 #### Methods
 
-##### buildInternalDocument()
+##### build_internal_document()
 
 Build an `InternalDocument` from Org Mode source text.
 
@@ -14710,96 +14710,96 @@ and footnote references.
 
 **Signature:**
 
-```typescript
-static buildInternalDocument(orgText: string): InternalDocument
+```rust
+pub fn build_internal_document(org_text: String) -> InternalDocument
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): OrgModeExtractor
+```rust
+pub fn default() -> OrgModeExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -14811,8 +14811,8 @@ Document orientation detection result.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `degrees` | `number` | — | Detected orientation in degrees (0, 90, 180, or 270). |
-| `confidence` | `number` | — | Confidence score (0.0-1.0). |
+| `degrees` | `u32` | — | Detected orientation in degrees (0, 90, 180, or 270). |
+| `confidence` | `f32` | — | Confidence score (0.0-1.0). |
 
 
 ---
@@ -14827,9 +14827,9 @@ at valid UTF-8 character boundaries when using standard String methods (push_str
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `byteStart` | `number` | — | Byte offset where this page starts in the content string (UTF-8 valid boundary, inclusive) |
-| `byteEnd` | `number` | — | Byte offset where this page ends in the content string (UTF-8 valid boundary, exclusive) |
-| `pageNumber` | `number` | — | Page number (1-indexed) |
+| `byte_start` | `usize` | — | Byte offset where this page starts in the content string (UTF-8 valid boundary, inclusive) |
+| `byte_end` | `usize` | — | Byte offset where this page ends in the content string (UTF-8 valid boundary, exclusive) |
+| `page_number` | `usize` | — | Page number (1-indexed) |
 
 
 ---
@@ -14839,16 +14839,16 @@ at valid UTF-8 character boundaries when using standard String methods (push_str
 Page extraction and tracking configuration.
 
 Controls how pages are extracted, tracked, and represented in the extraction results.
-When `null`, page tracking is disabled.
+When `None`, page tracking is disabled.
 
 Page range tracking in chunk metadata (first_page/last_page) is automatically enabled
 when page boundaries are available and chunking is configured.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `extractPages` | `boolean` | `false` | Extract pages as separate array (ExtractionResult.pages) |
-| `insertPageMarkers` | `boolean` | `false` | Insert page markers in main content string |
-| `markerFormat` | `string` | `"
+| `extract_pages` | `bool` | `false` | Extract pages as separate array (ExtractionResult.pages) |
+| `insert_page_markers` | `bool` | `false` | Insert page markers in main content string |
+| `marker_format` | `String` | `"
 
 <!-- PAGE {page_num} -->
 
@@ -14860,8 +14860,8 @@ when page boundaries are available and chunking is configured.
 
 **Signature:**
 
-```typescript
-static default(): PageConfig
+```rust
+pub fn default() -> PageConfig
 ```
 
 
@@ -14886,12 +14886,12 @@ by avoiding redundant copies during serialization.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `pageNumber` | `number` | — | Page number (1-indexed) |
-| `content` | `string` | — | Text content for this page |
-| `tables` | `Array<Table>` | — | Tables found on this page (uses Arc for memory efficiency) Serializes as Vec<Table> for JSON compatibility while maintaining Arc semantics in-memory for zero-copy sharing. |
-| `images` | `Array<ExtractedImage>` | — | Images found on this page (uses Arc for memory efficiency) Serializes as Vec<ExtractedImage> for JSON compatibility while maintaining Arc semantics in-memory for zero-copy sharing. |
-| `hierarchy` | `PageHierarchy | null` | `null` | Hierarchy information for the page (when hierarchy extraction is enabled) Contains text hierarchy levels (H1-H6) extracted from the page content. |
-| `isBlank` | `boolean | null` | `null` | Whether this page is blank (no meaningful text content) Determined during extraction based on text content analysis. A page is blank if it has fewer than 3 non-whitespace characters and contains no tables or images. |
+| `page_number` | `usize` | — | Page number (1-indexed) |
+| `content` | `String` | — | Text content for this page |
+| `tables` | `Vec<Table>` | — | Tables found on this page (uses Arc for memory efficiency) Serializes as Vec<Table> for JSON compatibility while maintaining Arc semantics in-memory for zero-copy sharing. |
+| `images` | `Vec<ExtractedImage>` | — | Images found on this page (uses Arc for memory efficiency) Serializes as Vec<ExtractedImage> for JSON compatibility while maintaining Arc semantics in-memory for zero-copy sharing. |
+| `hierarchy` | `Option<PageHierarchy>` | `None` | Hierarchy information for the page (when hierarchy extraction is enabled) Contains text hierarchy levels (H1-H6) extracted from the page content. |
+| `is_blank` | `Option<bool>` | `None` | Whether this page is blank (no meaningful text content) Determined during extraction based on text content analysis. A page is blank if it has fewer than 3 non-whitespace characters and contains no tables or images. |
 
 
 ---
@@ -14905,8 +14905,8 @@ blocks with heading levels (H1-H6) for semantic document structure.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `blockCount` | `number` | — | Number of hierarchy blocks on this page |
-| `blocks` | `Array<HierarchicalBlock>` | — | Hierarchical blocks with heading levels |
+| `block_count` | `usize` | — | Number of hierarchy blocks on this page |
+| `blocks` | `Vec<HierarchicalBlock>` | — | Hierarchical blocks with heading levels |
 
 
 ---
@@ -14920,13 +14920,13 @@ and visibility state (for presentations).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `number` | `number` | — | Page number (1-indexed) |
-| `title` | `string | null` | `null` | Page title (usually for presentations) |
-| `dimensions` | `F64F64 | null` | `null` | Dimensions in points (PDF) or pixels (images): (width, height) |
-| `imageCount` | `number | null` | `null` | Number of images on this page |
-| `tableCount` | `number | null` | `null` | Number of tables on this page |
-| `hidden` | `boolean | null` | `null` | Whether this page is hidden (e.g., in presentations) |
-| `isBlank` | `boolean | null` | `null` | Whether this page is blank (no meaningful text, no images, no tables) A page is considered blank if it has fewer than 3 non-whitespace characters and contains no tables or images. This is useful for filtering out empty pages in scanned documents or PDFs with blank separator pages. |
+| `number` | `usize` | — | Page number (1-indexed) |
+| `title` | `Option<String>` | `None` | Page title (usually for presentations) |
+| `dimensions` | `Option<F64F64>` | `None` | Dimensions in points (PDF) or pixels (images): (width, height) |
+| `image_count` | `Option<usize>` | `None` | Number of images on this page |
+| `table_count` | `Option<usize>` | `None` | Number of tables on this page |
+| `hidden` | `Option<bool>` | `None` | Whether this page is hidden (e.g., in presentations) |
+| `is_blank` | `Option<bool>` | `None` | Whether this page is blank (no meaningful text, no images, no tables) A page is considered blank if it has fewer than 3 non-whitespace characters and contains no tables or images. This is useful for filtering out empty pages in scanned documents or PDFs with blank separator pages. |
 
 
 ---
@@ -14938,7 +14938,7 @@ A detected layout region mapped to PDF coordinate space.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `class` | `LayoutClass` | — | Class (layout class) |
-| `confidence` | `number` | — | Confidence |
+| `confidence` | `f32` | — | Confidence |
 | `bbox` | `PdfLayoutBBox` | — | Bbox (pdf layout b box) |
 
 
@@ -14950,12 +14950,12 @@ Layout detection results for a single page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `pageIndex` | `number` | — | Page index |
-| `regions` | `Array<PageLayoutRegion>` | — | Regions |
-| `pageWidthPts` | `number` | — | Page width pts |
-| `pageHeightPts` | `number` | — | Page height pts |
-| `renderWidthPx` | `number` | — | Width of the rendered image used for layout detection (pixels). |
-| `renderHeightPx` | `number` | — | Height of the rendered image used for layout detection (pixels). |
+| `page_index` | `usize` | — | Page index |
+| `regions` | `Vec<PageLayoutRegion>` | — | Regions |
+| `page_width_pts` | `f32` | — | Page width pts |
+| `page_height_pts` | `f32` | — | Page height pts |
+| `render_width_px` | `u32` | — | Width of the rendered image used for layout detection (pixels). |
+| `render_height_px` | `u32` | — | Height of the rendered image used for layout detection (pixels). |
 
 
 ---
@@ -14966,17 +14966,17 @@ Page margins in twips (twentieths of a point).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `top` | `number | null` | `null` | Top margin in twips. |
-| `right` | `number | null` | `null` | Right margin in twips. |
-| `bottom` | `number | null` | `null` | Bottom margin in twips. |
-| `left` | `number | null` | `null` | Left margin in twips. |
-| `header` | `number | null` | `null` | Header offset in twips. |
-| `footer` | `number | null` | `null` | Footer offset in twips. |
-| `gutter` | `number | null` | `null` | Gutter margin in twips. |
+| `top` | `Option<i32>` | `Default::default()` | Top margin in twips. |
+| `right` | `Option<i32>` | `Default::default()` | Right margin in twips. |
+| `bottom` | `Option<i32>` | `Default::default()` | Bottom margin in twips. |
+| `left` | `Option<i32>` | `Default::default()` | Left margin in twips. |
+| `header` | `Option<i32>` | `Default::default()` | Header offset in twips. |
+| `footer` | `Option<i32>` | `Default::default()` | Footer offset in twips. |
+| `gutter` | `Option<i32>` | `Default::default()` | Gutter margin in twips. |
 
 #### Methods
 
-##### toPoints()
+##### to_points()
 
 Convert all margins from twips to points.
 
@@ -14984,8 +14984,8 @@ Conversion factor: 1 twip = 1/20 point, or equivalently divide by 20.
 
 **Signature:**
 
-```typescript
-toPoints(): PageMarginsPoints
+```rust
+pub fn to_points(&self) -> PageMarginsPoints
 ```
 
 
@@ -14997,13 +14997,13 @@ Page margins converted to points (1/72 inch).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `top` | `number | null` | `null` | Top |
-| `right` | `number | null` | `null` | Right |
-| `bottom` | `number | null` | `null` | Bottom |
-| `left` | `number | null` | `null` | Left |
-| `header` | `number | null` | `null` | Header |
-| `footer` | `number | null` | `null` | Footer |
-| `gutter` | `number | null` | `null` | Gutter |
+| `top` | `Option<f64>` | `Default::default()` | Top |
+| `right` | `Option<f64>` | `Default::default()` | Right |
+| `bottom` | `Option<f64>` | `Default::default()` | Bottom |
+| `left` | `Option<f64>` | `Default::default()` | Left |
+| `header` | `Option<f64>` | `Default::default()` | Header |
+| `footer` | `Option<f64>` | `Default::default()` | Footer |
+| `gutter` | `Option<f64>` | `Default::default()` | Gutter |
 
 
 ---
@@ -15012,11 +15012,11 @@ Page margins converted to points (1/72 inch).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `targetDpi` | `number` | `300` | Target dpi |
-| `maxImageDimension` | `number` | `65536` | Maximum image dimension |
-| `autoAdjustDpi` | `boolean` | `true` | Auto adjust dpi |
-| `minDpi` | `number` | `72` | Minimum dpi |
-| `maxDpi` | `number` | `600` | Maximum dpi |
+| `target_dpi` | `i32` | `300` | Target dpi |
+| `max_image_dimension` | `i32` | `65536` | Maximum image dimension |
+| `auto_adjust_dpi` | `bool` | `true` | Auto adjust dpi |
+| `min_dpi` | `i32` | `72` | Minimum dpi |
+| `max_dpi` | `i32` | `600` | Maximum dpi |
 
 #### Methods
 
@@ -15024,8 +15024,8 @@ Page margins converted to points (1/72 inch).
 
 **Signature:**
 
-```typescript
-static default(): PageRenderOptions
+```rust
+pub fn default() -> PageRenderOptions
 ```
 
 
@@ -15040,10 +15040,10 @@ with character offset boundaries for chunk-to-page mapping.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `totalCount` | `number` | — | Total number of pages/slides/sheets |
-| `unitType` | `PageUnitType` | — | Type of paginated unit |
-| `boundaries` | `Array<PageBoundary> | null` | `null` | Character offset boundaries for each page Maps character ranges in the extracted content to page numbers. Used for chunk page range calculation. |
-| `pages` | `Array<PageInfo> | null` | `null` | Detailed per-page metadata (optional, only when needed) |
+| `total_count` | `usize` | — | Total number of pages/slides/sheets |
+| `unit_type` | `PageUnitType` | — | Type of paginated unit |
+| `boundaries` | `Option<Vec<PageBoundary>>` | `None` | Character offset boundaries for each page Maps character ranges in the extracted content to page numbers. Used for chunk page range calculation. |
+| `pages` | `Option<Vec<PageInfo>>` | `None` | Detailed per-page metadata (optional, only when needed) |
 
 
 ---
@@ -15054,12 +15054,12 @@ Timing breakdown for a single page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `renderMs` | `number` | — | Time to render the PDF page to a raster image (amortized from batch render). |
-| `preprocessMs` | `number` | — | Time spent in image preprocessing (resize, normalize, tensor construction). |
-| `onnxMs` | `number` | — | Time for the ONNX model session.run() call (actual neural network inference). |
-| `inferenceMs` | `number` | — | Total model inference time (preprocess + onnx), as measured by the engine. |
-| `postprocessMs` | `number` | — | Time spent in postprocessing (confidence filtering, overlap resolution). |
-| `mappingMs` | `number` | — | Time to map pixel-space bounding boxes to PDF coordinate space. |
+| `render_ms` | `f64` | — | Time to render the PDF page to a raster image (amortized from batch render). |
+| `preprocess_ms` | `f64` | — | Time spent in image preprocessing (resize, normalize, tensor construction). |
+| `onnx_ms` | `f64` | — | Time for the ONNX model session.run() call (actual neural network inference). |
+| `inference_ms` | `f64` | — | Total model inference time (preprocess + onnx), as measured by the engine. |
+| `postprocess_ms` | `f64` | — | Time spent in postprocessing (confidence filtering, overlap resolution). |
+| `mapping_ms` | `f64` | — | Time to map pixel-space bounding boxes to PDF coordinate space. |
 
 
 ---
@@ -15079,80 +15079,80 @@ Extracts all text content from the document by parsing the IWA
 
 **Signature:**
 
-```typescript
-static default(): PagesExtractor
+```rust
+pub fn default() -> PagesExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -15167,10 +15167,10 @@ enabling better error reporting across FFI boundaries.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `file` | `string` | — | Source file where the panic occurred |
-| `line` | `number` | — | Line number where the panic occurred |
-| `function` | `string` | — | Function name where the panic occurred |
-| `message` | `string` | — | Panic message extracted from the panic payload |
+| `file` | `String` | — | Source file where the panic occurred |
+| `line` | `u32` | — | Line number where the panic occurred |
+| `function` | `String` | — | Function name where the panic occurred |
+| `message` | `String` | — | Panic message extracted from the panic payload |
 | `timestamp` | `SystemTime` | — | Timestamp when the panic was captured |
 
 #### Methods
@@ -15181,8 +15181,8 @@ Formats the panic context as a human-readable string.
 
 **Signature:**
 
-```typescript
-format(): string
+```rust
+pub fn format(&self) -> String
 ```
 
 
@@ -15194,11 +15194,11 @@ Plain text content decoded from a ParaText record (tag 0x43).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | The extracted text content |
+| `content` | `String` | — | The extracted text content |
 
 #### Methods
 
-##### fromRecord()
+##### from_record()
 
 Decode a ParaText record from raw bytes.
 
@@ -15209,8 +15209,8 @@ are discarded.
 
 **Signature:**
 
-```typescript
-static fromRecord(record: Record): ParaText
+```rust
+pub fn from_record(record: Record) -> ParaText
 ```
 
 
@@ -15222,7 +15222,7 @@ A single paragraph; may or may not carry a text payload.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `text` | `ParaText | null` | `null` | Text (para text) |
+| `text` | `Option<ParaText>` | `Default::default()` | Text (para text) |
 
 
 ---
@@ -15233,28 +15233,28 @@ Paragraph-level formatting properties (alignment, spacing, indentation, etc.).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `alignment` | `string | null` | `null` | `"left"`, `"center"`, `"right"`, `"both"` (justified). |
-| `spacingBefore` | `number | null` | `null` | Spacing before paragraph in twips. |
-| `spacingAfter` | `number | null` | `null` | Spacing after paragraph in twips. |
-| `spacingLine` | `number | null` | `null` | Line spacing in twips or 240ths of a line. |
-| `spacingLineRule` | `string | null` | `null` | Line spacing rule: "auto", "exact", or "atLeast". |
-| `indentLeft` | `number | null` | `null` | Left indentation in twips. |
-| `indentRight` | `number | null` | `null` | Right indentation in twips. |
-| `indentFirstLine` | `number | null` | `null` | First-line indentation in twips. |
-| `indentHanging` | `number | null` | `null` | Hanging indentation in twips. |
-| `outlineLevel` | `number | null` | `null` | Outline level 0-8 for heading levels. |
-| `keepNext` | `boolean | null` | `null` | Keep with next paragraph on same page. |
-| `keepLines` | `boolean | null` | `null` | Keep all lines of paragraph on same page. |
-| `pageBreakBefore` | `boolean | null` | `null` | Force page break before paragraph. |
-| `widowControl` | `boolean | null` | `null` | Prevent widow/orphan lines. |
-| `suppressAutoHyphens` | `boolean | null` | `null` | Suppress automatic hyphenation. |
-| `bidi` | `boolean | null` | `null` | Right-to-left paragraph direction. |
-| `shadingFill` | `string | null` | `null` | Background color hex value (from w:shd w:fill). |
-| `shadingVal` | `string | null` | `null` | Shading pattern value (from w:shd w:val). |
-| `borderTop` | `string | null` | `null` | Top border style (from w:pBdr/w:top w:val). |
-| `borderBottom` | `string | null` | `null` | Bottom border style (from w:pBdr/w:bottom w:val). |
-| `borderLeft` | `string | null` | `null` | Left border style (from w:pBdr/w:left w:val). |
-| `borderRight` | `string | null` | `null` | Right border style (from w:pBdr/w:right w:val). |
+| `alignment` | `Option<String>` | `Default::default()` | `"left"`, `"center"`, `"right"`, `"both"` (justified). |
+| `spacing_before` | `Option<i32>` | `Default::default()` | Spacing before paragraph in twips. |
+| `spacing_after` | `Option<i32>` | `Default::default()` | Spacing after paragraph in twips. |
+| `spacing_line` | `Option<i32>` | `Default::default()` | Line spacing in twips or 240ths of a line. |
+| `spacing_line_rule` | `Option<String>` | `Default::default()` | Line spacing rule: "auto", "exact", or "atLeast". |
+| `indent_left` | `Option<i32>` | `Default::default()` | Left indentation in twips. |
+| `indent_right` | `Option<i32>` | `Default::default()` | Right indentation in twips. |
+| `indent_first_line` | `Option<i32>` | `Default::default()` | First-line indentation in twips. |
+| `indent_hanging` | `Option<i32>` | `Default::default()` | Hanging indentation in twips. |
+| `outline_level` | `Option<u8>` | `Default::default()` | Outline level 0-8 for heading levels. |
+| `keep_next` | `Option<bool>` | `Default::default()` | Keep with next paragraph on same page. |
+| `keep_lines` | `Option<bool>` | `Default::default()` | Keep all lines of paragraph on same page. |
+| `page_break_before` | `Option<bool>` | `Default::default()` | Force page break before paragraph. |
+| `widow_control` | `Option<bool>` | `Default::default()` | Prevent widow/orphan lines. |
+| `suppress_auto_hyphens` | `Option<bool>` | `Default::default()` | Suppress automatic hyphenation. |
+| `bidi` | `Option<bool>` | `Default::default()` | Right-to-left paragraph direction. |
+| `shading_fill` | `Option<String>` | `Default::default()` | Background color hex value (from w:shd w:fill). |
+| `shading_val` | `Option<String>` | `Default::default()` | Shading pattern value (from w:shd w:val). |
+| `border_top` | `Option<String>` | `Default::default()` | Top border style (from w:pBdr/w:top w:val). |
+| `border_bottom` | `Option<String>` | `Default::default()` | Bottom border style (from w:pBdr/w:bottom w:val). |
+| `border_left` | `Option<String>` | `Default::default()` | Left border style (from w:pBdr/w:left w:val). |
+| `border_right` | `Option<String>` | `Default::default()` | Right border style (from w:pBdr/w:right w:val). |
 
 
 ---
@@ -15265,10 +15265,10 @@ A PDF annotation extracted from a document page.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `annotationType` | `PdfAnnotationType` | — | The type of annotation. |
-| `content` | `string | null` | `null` | Text content of the annotation (e.g., comment text, link URL). |
-| `pageNumber` | `number` | — | Page number where the annotation appears (1-indexed). |
-| `boundingBox` | `BoundingBox | null` | `null` | Bounding box of the annotation on the page. |
+| `annotation_type` | `PdfAnnotationType` | — | The type of annotation. |
+| `content` | `Option<String>` | `None` | Text content of the annotation (e.g., comment text, link URL). |
+| `page_number` | `usize` | — | Page number where the annotation appears (1-indexed). |
+| `bounding_box` | `Option<BoundingBox>` | `None` | Bounding box of the annotation on the page. |
 
 
 ---
@@ -15279,15 +15279,15 @@ PDF-specific configuration.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `backend` | `PdfBackend` | `PdfBackend.Pdfium` | PDF extraction backend. Default: `Pdfium`. |
-| `extractImages` | `boolean` | `false` | Extract images from PDF |
-| `passwords` | `Array<string> | null` | `[]` | List of passwords to try when opening encrypted PDFs |
-| `extractMetadata` | `boolean` | `true` | Extract PDF metadata |
-| `hierarchy` | `HierarchyConfig | null` | `null` | Hierarchy extraction configuration (None = hierarchy extraction disabled) |
-| `extractAnnotations` | `boolean` | `false` | Extract PDF annotations (text notes, highlights, links, stamps). Default: false |
-| `topMarginFraction` | `number | null` | `null` | Top margin fraction (0.0–1.0) of page height to exclude headers/running heads. Default: 0.06 (6%) |
-| `bottomMarginFraction` | `number | null` | `null` | Bottom margin fraction (0.0–1.0) of page height to exclude footers/page numbers. Default: 0.05 (5%) |
-| `allowSingleColumnTables` | `boolean` | `false` | Allow single-column pseudo tables in extraction results. By default, tables with fewer than 2 columns (layout-guided) or 3 columns (heuristic) are rejected. When `True`, the minimum column count is relaxed to 1, allowing single-column structured data (glossaries, itemized lists) to be emitted as tables. Other quality filters (density, sparsity, prose detection) still apply. |
+| `backend` | `PdfBackend` | `PdfBackend::Pdfium` | PDF extraction backend. Default: `Pdfium`. |
+| `extract_images` | `bool` | `false` | Extract images from PDF |
+| `passwords` | `Option<Vec<String>>` | `vec![]` | List of passwords to try when opening encrypted PDFs |
+| `extract_metadata` | `bool` | `true` | Extract PDF metadata |
+| `hierarchy` | `Option<HierarchyConfig>` | `Default::default()` | Hierarchy extraction configuration (None = hierarchy extraction disabled) |
+| `extract_annotations` | `bool` | `false` | Extract PDF annotations (text notes, highlights, links, stamps). Default: false |
+| `top_margin_fraction` | `Option<f32>` | `Default::default()` | Top margin fraction (0.0–1.0) of page height to exclude headers/running heads. Default: 0.06 (6%) |
+| `bottom_margin_fraction` | `Option<f32>` | `Default::default()` | Bottom margin fraction (0.0–1.0) of page height to exclude footers/page numbers. Default: 0.05 (5%) |
+| `allow_single_column_tables` | `bool` | `false` | Allow single-column pseudo tables in extraction results. By default, tables with fewer than 2 columns (layout-guided) or 3 columns (heuristic) are rejected. When `True`, the minimum column count is relaxed to 1, allowing single-column structured data (glossaries, itemized lists) to be emitted as tables. Other quality filters (density, sparsity, prose detection) still apply. |
 
 #### Methods
 
@@ -15295,8 +15295,8 @@ PDF-specific configuration.
 
 **Signature:**
 
-```typescript
-static default(): PdfConfig
+```rust
+pub fn default() -> PdfConfig
 ```
 
 
@@ -15312,15 +15312,15 @@ by `extract_metadata_from_document()` when page boundaries are provided.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `title` | `string | null` | `null` | Document title |
-| `subject` | `string | null` | `null` | Document subject or description |
-| `authors` | `Array<string> | null` | `null` | Document authors (parsed from PDF Author field) |
-| `keywords` | `Array<string> | null` | `null` | Document keywords (parsed from PDF Keywords field) |
-| `createdAt` | `string | null` | `null` | Creation timestamp (ISO 8601 format) |
-| `modifiedAt` | `string | null` | `null` | Last modification timestamp (ISO 8601 format) |
-| `createdBy` | `string | null` | `null` | Application or user that created the document |
-| `pdfSpecific` | `PdfMetadata` | — | PDF-specific metadata |
-| `pageStructure` | `PageStructure | null` | `null` | Page structure with boundaries and optional per-page metadata |
+| `title` | `Option<String>` | `None` | Document title |
+| `subject` | `Option<String>` | `None` | Document subject or description |
+| `authors` | `Option<Vec<String>>` | `None` | Document authors (parsed from PDF Author field) |
+| `keywords` | `Option<Vec<String>>` | `None` | Document keywords (parsed from PDF Keywords field) |
+| `created_at` | `Option<String>` | `None` | Creation timestamp (ISO 8601 format) |
+| `modified_at` | `Option<String>` | `None` | Last modification timestamp (ISO 8601 format) |
+| `created_by` | `Option<String>` | `None` | Application or user that created the document |
+| `pdf_specific` | `PdfMetadata` | — | PDF-specific metadata |
+| `page_structure` | `Option<PageStructure>` | `None` | Page structure with boundaries and optional per-page metadata |
 
 
 ---
@@ -15335,56 +15335,56 @@ PDF document extractor using pypdfium2 and playa-pdf.
 
 **Signature:**
 
-```typescript
-static default(): PdfExtractor
+```rust
+pub fn default() -> PdfExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 
@@ -15394,15 +15394,15 @@ supportedMimeTypes(): Array<string>
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `pageNumber` | `number` | — | Page number |
-| `imageIndex` | `number` | — | Image index |
-| `width` | `number` | — | Width |
-| `height` | `number` | — | Height |
-| `colorSpace` | `string | null` | `null` | Color space |
-| `bitsPerComponent` | `number | null` | `null` | Bits per component |
-| `filters` | `Array<string>` | — | Original PDF stream filters (e.g. `["FlateDecode"]`, `["DCTDecode"]`). |
-| `data` | `Buffer` | — | The decoded image bytes in a standard format (JPEG, PNG, etc.). |
-| `decodedFormat` | `string` | — | The format of `data` after decoding: `"jpeg"`, `"png"`, `"jpeg2000"`, `"ccitt"`, or `"raw"`. |
+| `page_number` | `usize` | — | Page number |
+| `image_index` | `usize` | — | Image index |
+| `width` | `i64` | — | Width |
+| `height` | `i64` | — | Height |
+| `color_space` | `Option<String>` | `None` | Color space |
+| `bits_per_component` | `Option<i64>` | `None` | Bits per component |
+| `filters` | `Vec<String>` | — | Original PDF stream filters (e.g. `["FlateDecode"]`, `["DCTDecode"]`). |
+| `data` | `Vec<u8>` | — | The decoded image bytes in a standard format (JPEG, PNG, etc.). |
+| `decoded_format` | `String` | — | The format of `data` after decoding: `"jpeg"`, `"png"`, `"jpeg2000"`, `"ccitt"`, or `"raw"`. |
 
 
 ---
@@ -15415,40 +15415,40 @@ supportedMimeTypes(): Array<string>
 
 **Signature:**
 
-```typescript
-static new(pdfBytes: Buffer): PdfImageExtractor
+```rust
+pub fn new(pdf_bytes: Vec<u8>) -> PdfImageExtractor
 ```
 
-##### newWithPassword()
+##### new_with_password()
 
 **Signature:**
 
-```typescript
-static newWithPassword(pdfBytes: Buffer, password: string): PdfImageExtractor
+```rust
+pub fn new_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> PdfImageExtractor
 ```
 
-##### extractImages()
+##### extract_images()
 
 **Signature:**
 
-```typescript
-extractImages(): Array<PdfImage>
+```rust
+pub fn extract_images(&self) -> Vec<PdfImage>
 ```
 
-##### extractImagesFromPage()
+##### extract_images_from_page()
 
 **Signature:**
 
-```typescript
-extractImagesFromPage(pageNumber: number): Array<PdfImage>
+```rust
+pub fn extract_images_from_page(&self, page_number: u32) -> Vec<PdfImage>
 ```
 
-##### getImageCount()
+##### get_image_count()
 
 **Signature:**
 
-```typescript
-getImageCount(): number
+```rust
+pub fn get_image_count(&self) -> usize
 ```
 
 
@@ -15460,10 +15460,10 @@ Bounding box in PDF coordinate space (points, y=0 at bottom of page).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `left` | `number` | — | Left |
-| `bottom` | `number` | — | Bottom |
-| `right` | `number` | — | Right |
-| `top` | `number` | — | Top |
+| `left` | `f32` | — | Left |
+| `bottom` | `f32` | — | Bottom |
+| `right` | `f32` | — | Right |
+| `top` | `f32` | — | Top |
 
 #### Methods
 
@@ -15471,16 +15471,16 @@ Bounding box in PDF coordinate space (points, y=0 at bottom of page).
 
 **Signature:**
 
-```typescript
-width(): number
+```rust
+pub fn width(&self) -> f32
 ```
 
 ##### height()
 
 **Signature:**
 
-```typescript
-height(): number
+```rust
+pub fn height(&self) -> f32
 ```
 
 
@@ -15496,12 +15496,12 @@ are now at the `Metadata` level.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `pdfVersion` | `string | null` | `null` | PDF version (e.g., "1.7", "2.0") |
-| `producer` | `string | null` | `null` | PDF producer (application that created the PDF) |
-| `isEncrypted` | `boolean | null` | `null` | Whether the PDF is encrypted/password-protected |
-| `width` | `number | null` | `null` | First page width in points (1/72 inch) |
-| `height` | `number | null` | `null` | First page height in points (1/72 inch) |
-| `pageCount` | `number | null` | `null` | Total number of pages in the PDF document |
+| `pdf_version` | `Option<String>` | `Default::default()` | PDF version (e.g., "1.7", "2.0") |
+| `producer` | `Option<String>` | `Default::default()` | PDF producer (application that created the PDF) |
+| `is_encrypted` | `Option<bool>` | `Default::default()` | Whether the PDF is encrypted/password-protected |
+| `width` | `Option<i64>` | `Default::default()` | First page width in points (1/72 inch) |
+| `height` | `Option<i64>` | `Default::default()` | First page height in points (1/72 inch) |
+| `page_count` | `Option<usize>` | `Default::default()` | Total number of pages in the PDF document |
 
 
 ---
@@ -15537,11 +15537,11 @@ the correct password.
 
 **Signature:**
 
-```typescript
-static new(pdfBytes: Buffer, dpi: number, password: string): PdfPageIterator
+```rust
+pub fn new(pdf_bytes: Vec<u8>, dpi: Option<i32>, password: Option<String>) -> PdfPageIterator
 ```
 
-##### fromFile()
+##### from_file()
 
 Create an iterator from a file path.
 
@@ -15554,34 +15554,34 @@ Returns an error if the file cannot be read or the PDF is invalid.
 
 **Signature:**
 
-```typescript
-static fromFile(path: Path, dpi: number, password: string): PdfPageIterator
+```rust
+pub fn from_file(path: Path, dpi: Option<i32>, password: Option<String>) -> PdfPageIterator
 ```
 
-##### pageCount()
+##### page_count()
 
 Number of pages in the PDF.
 
 **Signature:**
 
-```typescript
-pageCount(): number
+```rust
+pub fn page_count(&self) -> usize
 ```
 
 ##### next()
 
 **Signature:**
 
-```typescript
-next(): Item | null
+```rust
+pub fn next(&self) -> Option<Item>
 ```
 
-##### sizeHint()
+##### size_hint()
 
 **Signature:**
 
-```typescript
-sizeHint(): UsizeOptionUsize
+```rust
+pub fn size_hint(&self) -> UsizeOptionUsize
 ```
 
 
@@ -15595,8 +15595,8 @@ sizeHint(): UsizeOptionUsize
 
 **Signature:**
 
-```typescript
-static new(): PdfRenderer
+```rust
+pub fn new() -> PdfRenderer
 ```
 
 
@@ -15610,8 +15610,8 @@ static new(): PdfRenderer
 
 **Signature:**
 
-```typescript
-static new(): PdfTextExtractor
+```rust
+pub fn new() -> PdfTextExtractor
 ```
 
 
@@ -15638,80 +15638,80 @@ Extracts content from plain text files (.txt).
 
 **Signature:**
 
-```typescript
-static default(): PlainTextExtractor
+```rust
+pub fn default() -> PlainTextExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -15741,8 +15741,8 @@ The name should be:
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
@@ -15753,8 +15753,8 @@ Should follow semver format: `MAJOR.MINOR.PATCH`
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
@@ -15779,8 +15779,8 @@ registered if this method returns an error.
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
@@ -15805,8 +15805,8 @@ Errors during shutdown are logged but don't prevent the shutdown process.
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
@@ -15817,8 +15817,8 @@ Defaults to empty string if not overridden.
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
@@ -15829,8 +15829,8 @@ Defaults to empty string if not overridden.
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
 
@@ -15844,14 +15844,14 @@ Contains diagnostic information about registered plugins for each type.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `ocrBackendsCount` | `number` | — | Number of registered OCR backends |
-| `ocrBackends` | `Array<string>` | — | Names of registered OCR backends |
-| `extractorsCount` | `number` | — | Number of registered document extractors |
-| `extractors` | `Array<string>` | — | Names of registered document extractors |
-| `postProcessorsCount` | `number` | — | Number of registered post-processors |
-| `postProcessors` | `Array<string>` | — | Names of registered post-processors |
-| `validatorsCount` | `number` | — | Number of registered validators |
-| `validators` | `Array<string>` | — | Names of registered validators |
+| `ocr_backends_count` | `usize` | — | Number of registered OCR backends |
+| `ocr_backends` | `Vec<String>` | — | Names of registered OCR backends |
+| `extractors_count` | `usize` | — | Number of registered document extractors |
+| `extractors` | `Vec<String>` | — | Names of registered document extractors |
+| `post_processors_count` | `usize` | — | Number of registered post-processors |
+| `post_processors` | `Vec<String>` | — | Names of registered post-processors |
+| `validators_count` | `usize` | — | Number of registered validators |
+| `validators` | `Vec<String>` | — | Names of registered validators |
 
 #### Methods
 
@@ -15868,8 +15868,8 @@ about registered plugins. It logs warnings if critical plugins are missing.
 
 **Signature:**
 
-```typescript
-static check(): PluginHealthStatus
+```rust
+pub fn check() -> PluginHealthStatus
 ```
 
 
@@ -15894,8 +15894,8 @@ This is a safety mechanism provided by parking_lot to prevent subtle bugs.
 
 **Signature:**
 
-```typescript
-acquire(): PoolGuard
+```rust
+pub fn acquire(&self) -> PoolGuard
 ```
 
 ##### size()
@@ -15904,8 +15904,8 @@ Get the current number of objects in the pool.
 
 **Signature:**
 
-```typescript
-size(): number
+```rust
+pub fn size(&self) -> usize
 ```
 
 ##### clear()
@@ -15914,8 +15914,8 @@ Clear the pool, discarding all pooled objects.
 
 **Signature:**
 
-```typescript
-clear(): void
+```rust
+pub fn clear(&self)
 ```
 
 
@@ -15930,21 +15930,21 @@ Only available when the `pool-metrics` feature is enabled.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `totalAcquires` | `AtomicUsize` | `null` | Total number of acquire calls on this pool |
-| `totalCacheHits` | `AtomicUsize` | `null` | Total number of cache hits (reused objects from pool) |
-| `peakItemsStored` | `AtomicUsize` | `null` | Peak number of objects stored simultaneously in this pool |
-| `totalCreations` | `AtomicUsize` | `null` | Total number of objects created by the factory function |
+| `total_acquires` | `AtomicUsize` | `Default::default()` | Total number of acquire calls on this pool |
+| `total_cache_hits` | `AtomicUsize` | `Default::default()` | Total number of cache hits (reused objects from pool) |
+| `peak_items_stored` | `AtomicUsize` | `Default::default()` | Peak number of objects stored simultaneously in this pool |
+| `total_creations` | `AtomicUsize` | `Default::default()` | Total number of objects created by the factory function |
 
 #### Methods
 
-##### hitRate()
+##### hit_rate()
 
 Calculate the cache hit rate as a percentage (0.0-100.0).
 
 **Signature:**
 
-```typescript
-hitRate(): number
+```rust
+pub fn hit_rate(&self) -> f64
 ```
 
 ##### snapshot()
@@ -15953,8 +15953,8 @@ Get all metrics as a struct for reporting.
 
 **Signature:**
 
-```typescript
-snapshot(): PoolMetricsSnapshot
+```rust
+pub fn snapshot(&self) -> PoolMetricsSnapshot
 ```
 
 ##### reset()
@@ -15963,16 +15963,16 @@ Reset all metrics to zero.
 
 **Signature:**
 
-```typescript
-reset(): void
+```rust
+pub fn reset(&self)
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): PoolMetrics
+```rust
+pub fn default() -> PoolMetrics
 ```
 
 
@@ -15982,10 +15982,10 @@ static default(): PoolMetrics
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `totalAcquires` | `number` | — | Total acquires |
-| `totalCacheHits` | `number` | — | Total cache hits |
-| `peakItemsStored` | `number` | — | Peak items stored |
-| `totalCreations` | `number` | — | Total creations |
+| `total_acquires` | `usize` | — | Total acquires |
+| `total_cache_hits` | `usize` | — | Total cache hits |
+| `peak_items_stored` | `usize` | — | Peak items stored |
+| `total_creations` | `usize` | — | Total creations |
 
 
 ---
@@ -16000,15 +16000,15 @@ excessive reallocation.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `estimatedTotalSize` | `number` | — | Estimated total string buffer pool size in bytes |
-| `stringBufferCount` | `number` | — | Recommended number of string buffers |
-| `stringBufferCapacity` | `number` | — | Recommended capacity per string buffer in bytes |
-| `byteBufferCount` | `number` | — | Recommended number of byte buffers |
-| `byteBufferCapacity` | `number` | — | Recommended capacity per byte buffer in bytes |
+| `estimated_total_size` | `usize` | — | Estimated total string buffer pool size in bytes |
+| `string_buffer_count` | `usize` | — | Recommended number of string buffers |
+| `string_buffer_capacity` | `usize` | — | Recommended capacity per string buffer in bytes |
+| `byte_buffer_count` | `usize` | — | Recommended number of byte buffers |
+| `byte_buffer_capacity` | `usize` | — | Recommended capacity per byte buffer in bytes |
 
 #### Methods
 
-##### estimatedStringPoolMemory()
+##### estimated_string_pool_memory()
 
 Calculate the estimated string pool memory in bytes.
 
@@ -16016,11 +16016,11 @@ This is the total estimated memory for all string buffers.
 
 **Signature:**
 
-```typescript
-estimatedStringPoolMemory(): number
+```rust
+pub fn estimated_string_pool_memory(&self) -> usize
 ```
 
-##### estimatedBytePoolMemory()
+##### estimated_byte_pool_memory()
 
 Calculate the estimated byte pool memory in bytes.
 
@@ -16028,11 +16028,11 @@ This is the total estimated memory for all byte buffers.
 
 **Signature:**
 
-```typescript
-estimatedBytePoolMemory(): number
+```rust
+pub fn estimated_byte_pool_memory(&self) -> usize
 ```
 
-##### totalPoolMemory()
+##### total_pool_memory()
 
 Calculate the total estimated pool memory in bytes.
 
@@ -16040,8 +16040,8 @@ This includes both string and byte buffer pools.
 
 **Signature:**
 
-```typescript
-totalPoolMemory(): number
+```rust
+pub fn total_pool_memory(&self) -> usize
 ```
 
 
@@ -16053,8 +16053,8 @@ Horizontal or vertical position.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `relativeFrom` | `string` | — | Relative from |
-| `offset` | `number | null` | `null` | Offset |
+| `relative_from` | `String` | — | Relative from |
+| `offset` | `Option<i64>` | `None` | Offset |
 
 
 ---
@@ -16065,15 +16065,15 @@ Post-processor configuration.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `enabled` | `boolean` | `true` | Enable post-processors |
-| `enabledProcessors` | `Array<string> | null` | `[]` | Whitelist of processor names to run (None = all enabled) |
-| `disabledProcessors` | `Array<string> | null` | `[]` | Blacklist of processor names to skip (None = none disabled) |
-| `enabledSet` | `AHashSet | null` | `null` | Pre-computed AHashSet for O(1) enabled processor lookup |
-| `disabledSet` | `AHashSet | null` | `null` | Pre-computed AHashSet for O(1) disabled processor lookup |
+| `enabled` | `bool` | `true` | Enable post-processors |
+| `enabled_processors` | `Option<Vec<String>>` | `vec![]` | Whitelist of processor names to run (None = all enabled) |
+| `disabled_processors` | `Option<Vec<String>>` | `vec![]` | Blacklist of processor names to skip (None = none disabled) |
+| `enabled_set` | `Option<AHashSet>` | `Default::default()` | Pre-computed AHashSet for O(1) enabled processor lookup |
+| `disabled_set` | `Option<AHashSet>` | `Default::default()` | Pre-computed AHashSet for O(1) disabled processor lookup |
 
 #### Methods
 
-##### buildLookupSets()
+##### build_lookup_sets()
 
 Pre-compute HashSets for O(1) processor name lookups.
 
@@ -16082,16 +16082,16 @@ for constant-time lookups in the pipeline.
 
 **Signature:**
 
-```typescript
-buildLookupSets(): void
+```rust
+pub fn build_lookup_sets(&self)
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): PostProcessorConfig
+```rust
+pub fn default() -> PostProcessorConfig
 ```
 
 
@@ -16103,10 +16103,10 @@ Result of PPT text extraction.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `text` | `string` | — | Extracted text content, with slides separated by double newlines. |
-| `slideCount` | `number` | — | Number of slides found. |
+| `text` | `String` | — | Extracted text content, with slides separated by double newlines. |
+| `slide_count` | `usize` | — | Number of slides found. |
 | `metadata` | `PptMetadata` | — | Document metadata. |
-| `speakerNotes` | `Array<string>` | — | Speaker notes text per slide (if available). |
+| `speaker_notes` | `Vec<String>` | — | Speaker notes text per slide (if available). |
 
 
 ---
@@ -16124,80 +16124,80 @@ requiring LibreOffice, providing ~50x faster extraction.
 
 **Signature:**
 
-```typescript
-static default(): PptExtractor
+```rust
+pub fn default() -> PptExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -16209,10 +16209,10 @@ Metadata extracted from PPT files.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `title` | `string | null` | `null` | Title |
-| `subject` | `string | null` | `null` | Subject |
-| `author` | `string | null` | `null` | Author |
-| `lastAuthor` | `string | null` | `null` | Last author |
+| `title` | `Option<String>` | `Default::default()` | Title |
+| `subject` | `Option<String>` | `Default::default()` | Subject |
+| `author` | `Option<String>` | `Default::default()` | Author |
+| `last_author` | `Option<String>` | `Default::default()` | Last author |
 
 
 ---
@@ -16225,21 +16225,21 @@ Contains PowerPoint-specific document metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `application` | `string | null` | `null` | Application name (e.g., "Microsoft Office PowerPoint") |
-| `appVersion` | `string | null` | `null` | Application version |
-| `totalTime` | `number | null` | `null` | Total editing time in minutes |
-| `company` | `string | null` | `null` | Company name |
-| `docSecurity` | `number | null` | `null` | Document security level |
-| `scaleCrop` | `boolean | null` | `null` | Scale crop flag |
-| `linksUpToDate` | `boolean | null` | `null` | Links up to date flag |
-| `sharedDoc` | `boolean | null` | `null` | Shared document flag |
-| `hyperlinksChanged` | `boolean | null` | `null` | Hyperlinks changed flag |
-| `slides` | `number | null` | `null` | Number of slides |
-| `notes` | `number | null` | `null` | Number of notes |
-| `hiddenSlides` | `number | null` | `null` | Number of hidden slides |
-| `multimediaClips` | `number | null` | `null` | Number of multimedia clips |
-| `presentationFormat` | `string | null` | `null` | Presentation format (e.g., "Widescreen", "Standard") |
-| `slideTitles` | `Array<string>` | `[]` | Slide titles |
+| `application` | `Option<String>` | `Default::default()` | Application name (e.g., "Microsoft Office PowerPoint") |
+| `app_version` | `Option<String>` | `Default::default()` | Application version |
+| `total_time` | `Option<i32>` | `Default::default()` | Total editing time in minutes |
+| `company` | `Option<String>` | `Default::default()` | Company name |
+| `doc_security` | `Option<i32>` | `Default::default()` | Document security level |
+| `scale_crop` | `Option<bool>` | `Default::default()` | Scale crop flag |
+| `links_up_to_date` | `Option<bool>` | `Default::default()` | Links up to date flag |
+| `shared_doc` | `Option<bool>` | `Default::default()` | Shared document flag |
+| `hyperlinks_changed` | `Option<bool>` | `Default::default()` | Hyperlinks changed flag |
+| `slides` | `Option<i32>` | `Default::default()` | Number of slides |
+| `notes` | `Option<i32>` | `Default::default()` | Number of notes |
+| `hidden_slides` | `Option<i32>` | `Default::default()` | Number of hidden slides |
+| `multimedia_clips` | `Option<i32>` | `Default::default()` | Number of multimedia clips |
+| `presentation_format` | `Option<String>` | `Default::default()` | Presentation format (e.g., "Widescreen", "Standard") |
+| `slide_titles` | `Vec<String>` | `vec![]` | Slide titles |
 
 
 ---
@@ -16250,11 +16250,11 @@ Options for PPTX content extraction.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `extractImages` | `boolean` | `true` | Whether to extract embedded images. |
-| `pageConfig` | `PageConfig | null` | `null` | Optional page configuration for boundary tracking. |
-| `plain` | `boolean` | `false` | Whether to output plain text (no markdown). |
-| `includeStructure` | `boolean` | `false` | Whether to build the `DocumentStructure` tree. |
-| `injectPlaceholders` | `boolean` | `true` | Whether to emit `![alt](target)` references in markdown output. |
+| `extract_images` | `bool` | `true` | Whether to extract embedded images. |
+| `page_config` | `Option<PageConfig>` | `Default::default()` | Optional page configuration for boundary tracking. |
+| `plain` | `bool` | `false` | Whether to output plain text (no markdown). |
+| `include_structure` | `bool` | `false` | Whether to build the `DocumentStructure` tree. |
+| `inject_placeholders` | `bool` | `true` | Whether to emit `![alt](target)` references in markdown output. |
 
 #### Methods
 
@@ -16262,8 +16262,8 @@ Options for PPTX content extraction.
 
 **Signature:**
 
-```typescript
-static default(): PptxExtractionOptions
+```rust
+pub fn default() -> PptxExtractionOptions
 ```
 
 
@@ -16277,17 +16277,17 @@ Contains extracted slide content, metadata, and embedded images/tables.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | Extracted text content from all slides |
+| `content` | `String` | — | Extracted text content from all slides |
 | `metadata` | `PptxMetadata` | — | Presentation metadata |
-| `slideCount` | `number` | — | Total number of slides |
-| `imageCount` | `number` | — | Total number of embedded images |
-| `tableCount` | `number` | — | Total number of tables |
-| `images` | `Array<ExtractedImage>` | — | Extracted images from the presentation |
-| `pageStructure` | `PageStructure | null` | `null` | Slide structure with boundaries (when page tracking is enabled) |
-| `pageContents` | `Array<PageContent> | null` | `null` | Per-slide content (when page tracking is enabled) |
-| `document` | `DocumentStructure | null` | `null` | Structured document representation |
-| `hyperlinks` | `Array<StringOptionString>` | — | Hyperlinks discovered in slides as (url, optional_label) pairs. |
-| `officeMetadata` | `Record<string, string>` | — | Office metadata extracted from docProps/core.xml and docProps/app.xml. Contains keys like "title", "author", "created_by", "subject", "keywords", "modified_by", "created_at", "modified_at", etc. |
+| `slide_count` | `usize` | — | Total number of slides |
+| `image_count` | `usize` | — | Total number of embedded images |
+| `table_count` | `usize` | — | Total number of tables |
+| `images` | `Vec<ExtractedImage>` | — | Extracted images from the presentation |
+| `page_structure` | `Option<PageStructure>` | `None` | Slide structure with boundaries (when page tracking is enabled) |
+| `page_contents` | `Option<Vec<PageContent>>` | `None` | Per-slide content (when page tracking is enabled) |
+| `document` | `Option<DocumentStructure>` | `None` | Structured document representation |
+| `hyperlinks` | `Vec<StringOptionString>` | — | Hyperlinks discovered in slides as (url, optional_label) pairs. |
+| `office_metadata` | `HashMap<String, String>` | — | Office metadata extracted from docProps/core.xml and docProps/app.xml. Contains keys like "title", "author", "created_by", "subject", "keywords", "modified_by", "created_at", "modified_at", etc. |
 
 
 ---
@@ -16304,72 +16304,72 @@ Supports: .pptx, .pptm, .ppsx
 
 **Signature:**
 
-```typescript
-static default(): PptxExtractor
+```rust
+pub fn default() -> PptxExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -16383,10 +16383,10 @@ Extracted from PPTX files containing slide counts and presentation details.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `slideCount` | `number` | — | Total number of slides in the presentation |
-| `slideNames` | `Array<string>` | — | Names of slides (if available) |
-| `imageCount` | `number | null` | `null` | Number of embedded images |
-| `tableCount` | `number | null` | `null` | Number of tables |
+| `slide_count` | `usize` | — | Total number of slides in the presentation |
+| `slide_names` | `Vec<String>` | — | Names of slides (if available) |
+| `image_count` | `Option<usize>` | `None` | Number of embedded images |
+| `table_count` | `Option<usize>` | `None` | Number of tables |
 
 
 ---
@@ -16418,80 +16418,80 @@ Supports: .pst (Microsoft Outlook Personal Folders)
 
 **Signature:**
 
-```typescript
-static default(): PstExtractor
+```rust
+pub fn default() -> PstExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
 
@@ -16503,7 +16503,7 @@ Outlook PST archive metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `messageCount` | `number` | `null` | Number of message |
+| `message_count` | `usize` | `Default::default()` | Number of message |
 
 
 ---
@@ -16524,64 +16524,64 @@ This processor:
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### process()
 
 **Signature:**
 
-```typescript
-process(result: ExtractionResult, config: ExtractionConfig): void
+```rust
+pub fn process(&self, result: ExtractionResult, config: ExtractionConfig)
 ```
 
-##### processingStage()
+##### processing_stage()
 
 **Signature:**
 
-```typescript
-processingStage(): ProcessingStage
+```rust
+pub fn processing_stage(&self) -> ProcessingStage
 ```
 
-##### shouldProcess()
+##### should_process()
 
 **Signature:**
 
-```typescript
-shouldProcess(result: ExtractionResult, config: ExtractionConfig): boolean
+```rust
+pub fn should_process(&self, result: ExtractionResult, config: ExtractionConfig) -> bool
 ```
 
-##### estimatedDurationMs()
+##### estimated_duration_ms()
 
 **Signature:**
 
-```typescript
-estimatedDurationMs(result: ExtractionResult): number
+```rust
+pub fn estimated_duration_ms(&self, result: ExtractionResult) -> u64
 ```
 
 
@@ -16593,8 +16593,8 @@ RAKE-specific parameters.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `minWordLength` | `number` | `1` | Minimum word length to consider (default: 1). |
-| `maxWordsPerPhrase` | `number` | `3` | Maximum words in a keyword phrase (default: 3). |
+| `min_word_length` | `usize` | `1` | Minimum word length to consider (default: 1). |
+| `max_words_per_phrase` | `usize` | `3` | Maximum words in a keyword phrase (default: 3). |
 
 #### Methods
 
@@ -16602,8 +16602,8 @@ RAKE-specific parameters.
 
 **Signature:**
 
-```typescript
-static default(): RakeParams
+```rust
+pub fn default() -> RakeParams
 ```
 
 
@@ -16615,9 +16615,9 @@ Pre-computed table markdown for a table detection region.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `detectionBbox` | `BBox` | — | Detection bbox that this table corresponds to (for matching). |
-| `cells` | `Array<Array<string>>` | — | Table cells as a 2D vector (rows x columns). |
-| `markdown` | `string` | — | Rendered markdown table. |
+| `detection_bbox` | `BBox` | — | Detection bbox that this table corresponds to (for matching). |
+| `cells` | `Vec<Vec<String>>` | — | Table cells as a 2D vector (rows x columns). |
+| `markdown` | `String` | — | Rendered markdown table. |
 
 
 ---
@@ -16626,8 +16626,8 @@ Pre-computed table markdown for a table detection region.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `tagId` | `number` | — | Tag id |
-| `data` | `Buffer` | — | Data |
+| `tag_id` | `u16` | — | Tag id |
+| `data` | `Vec<u8>` | — | Data |
 
 #### Methods
 
@@ -16635,18 +16635,18 @@ Pre-computed table markdown for a table detection region.
 
 **Signature:**
 
-```typescript
-static parse(reader: StreamReader): Record
+```rust
+pub fn parse(reader: StreamReader) -> Record
 ```
 
-##### dataReader()
+##### data_reader()
 
 Return a fresh `StreamReader` over this record's data bytes.
 
 **Signature:**
 
-```typescript
-dataReader(): StreamReader
+```rust
+pub fn data_reader(&self) -> StreamReader
 ```
 
 
@@ -16670,8 +16670,8 @@ Should clear any internal data while preserving capacity.
 
 **Signature:**
 
-```typescript
-reset(): void
+```rust
+pub fn reset(&self)
 ```
 
 
@@ -16686,7 +16686,7 @@ The derivation step resolves these to indices using the element anchor index.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `source` | `number` | — | Index of the source element in `InternalDocument.elements`. |
+| `source` | `u32` | — | Index of the source element in `InternalDocument.elements`. |
 | `target` | `RelationshipTarget` | — | Target of the relationship (resolved index or unresolved key). |
 | `kind` | `RelationshipKind` | — | Semantic kind of the relationship. |
 
@@ -16699,8 +16699,8 @@ Fully resolved (flattened) style after walking the inheritance chain.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `paragraphProperties` | `ParagraphProperties` | `null` | Paragraph properties (paragraph properties) |
-| `runProperties` | `RunProperties` | `null` | Run properties (run properties) |
+| `paragraph_properties` | `ParagraphProperties` | `Default::default()` | Paragraph properties (paragraph properties) |
+| `run_properties` | `RunProperties` | `Default::default()` | Run properties (run properties) |
 
 
 ---
@@ -16711,10 +16711,10 @@ Row-level properties from `<w:trPr>`.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `height` | `number | null` | `null` | Height |
-| `heightRule` | `string | null` | `null` | Height rule |
-| `isHeader` | `boolean` | `null` | Whether header |
-| `cantSplit` | `boolean` | `null` | Cant split |
+| `height` | `Option<i32>` | `Default::default()` | Height |
+| `height_rule` | `Option<String>` | `Default::default()` | Height rule |
+| `is_header` | `bool` | `Default::default()` | Whether header |
+| `cant_split` | `bool` | `Default::default()` | Cant split |
 
 
 ---
@@ -16732,7 +16732,7 @@ Parses RST documents using document tree parsing and extracts:
 
 #### Methods
 
-##### buildInternalDocument()
+##### build_internal_document()
 
 Build an `InternalDocument` from RST content.
 
@@ -16741,96 +16741,96 @@ and cross-references.
 
 **Signature:**
 
-```typescript
-static buildInternalDocument(content: string, injectPlaceholders: boolean): InternalDocument
+```rust
+pub fn build_internal_document(content: String, inject_placeholders: bool) -> InternalDocument
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): RstExtractor
+```rust
+pub fn default() -> RstExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -16853,46 +16853,46 @@ Output tensors:
 
 #### Methods
 
-##### fromFile()
+##### from_file()
 
 Load a Docling RT-DETR ONNX model from a file.
 
 **Signature:**
 
-```typescript
-static fromFile(path: string): RtDetrModel
+```rust
+pub fn from_file(path: String) -> RtDetrModel
 ```
 
 ##### detect()
 
 **Signature:**
 
-```typescript
-detect(img: RgbImage): Array<LayoutDetection>
+```rust
+pub fn detect(&self, img: RgbImage) -> Vec<LayoutDetection>
 ```
 
-##### detectWithThreshold()
+##### detect_with_threshold()
 
 **Signature:**
 
-```typescript
-detectWithThreshold(img: RgbImage, threshold: number): Array<LayoutDetection>
+```rust
+pub fn detect_with_threshold(&self, img: RgbImage, threshold: f32) -> Vec<LayoutDetection>
 ```
 
-##### detectBatch()
+##### detect_batch()
 
 **Signature:**
 
-```typescript
-detectBatch(images: Array<RgbImage>, threshold: number): Array<Array<LayoutDetection>>
+```rust
+pub fn detect_batch(&self, images: Vec<RgbImage>, threshold: Option<f32>) -> Vec<Vec<LayoutDetection>>
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 
@@ -16910,80 +16910,80 @@ Extracts text content, metadata, and structure from RTF documents
 
 **Signature:**
 
-```typescript
-static default(): RtfExtractor
+```rust
+pub fn default() -> RtfExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -16993,29 +16993,29 @@ priority(): number
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `text` | `string` | `null` | Text |
-| `bold` | `boolean` | `null` | Bold |
-| `italic` | `boolean` | `null` | Italic |
-| `underline` | `boolean` | `null` | Underline |
-| `strikethrough` | `boolean` | `null` | Strikethrough |
-| `subscript` | `boolean` | `null` | Subscript |
-| `superscript` | `boolean` | `null` | Superscript |
-| `fontSize` | `number | null` | `null` | Font size in half-points (from `w:sz`). |
-| `fontColor` | `string | null` | `null` | Font color as "RRGGBB" hex (from `w:color`). |
-| `highlight` | `string | null` | `null` | Highlight color name (from `w:highlight`). |
-| `hyperlinkUrl` | `string | null` | `null` | Hyperlink url |
-| `mathLatex` | `StringBool | null` | `null` | LaTeX math content: (latex_source, is_display_math). When set, this run represents an equation and `text` is ignored. |
+| `text` | `String` | `Default::default()` | Text |
+| `bold` | `bool` | `Default::default()` | Bold |
+| `italic` | `bool` | `Default::default()` | Italic |
+| `underline` | `bool` | `Default::default()` | Underline |
+| `strikethrough` | `bool` | `Default::default()` | Strikethrough |
+| `subscript` | `bool` | `Default::default()` | Subscript |
+| `superscript` | `bool` | `Default::default()` | Superscript |
+| `font_size` | `Option<u32>` | `Default::default()` | Font size in half-points (from `w:sz`). |
+| `font_color` | `Option<String>` | `Default::default()` | Font color as "RRGGBB" hex (from `w:color`). |
+| `highlight` | `Option<String>` | `Default::default()` | Highlight color name (from `w:highlight`). |
+| `hyperlink_url` | `Option<String>` | `Default::default()` | Hyperlink url |
+| `math_latex` | `Option<StringBool>` | `Default::default()` | LaTeX math content: (latex_source, is_display_math). When set, this run represents an equation and `text` is ignored. |
 
 #### Methods
 
-##### toMarkdown()
+##### to_markdown()
 
 Render this run as markdown with formatting markers.
 
 **Signature:**
 
-```typescript
-toMarkdown(): string
+```rust
+pub fn to_markdown(&self) -> String
 ```
 
 
@@ -17026,35 +17026,35 @@ toMarkdown(): string
 Run-level formatting properties (bold, italic, font, size, color, etc.).
 
 All fields are `Option` so that inheritance resolution can distinguish
-"not set" (`null`) from "explicitly set" (`Some`).
+"not set" (`None`) from "explicitly set" (`Some`).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `bold` | `boolean | null` | `null` | Bold |
-| `italic` | `boolean | null` | `null` | Italic |
-| `underline` | `boolean | null` | `null` | Underline |
-| `strikethrough` | `boolean | null` | `null` | Strikethrough |
-| `color` | `string | null` | `null` | Hex RGB color, e.g. `"2F5496"`. |
-| `fontSizeHalfPoints` | `number | null` | `null` | Font size in half-points (`w:sz` val). Divide by 2 to get points. |
-| `fontAscii` | `string | null` | `null` | ASCII font family (`w:rFonts w:ascii`). |
-| `fontAsciiTheme` | `string | null` | `null` | ASCII theme font (`w:rFonts w:asciiTheme`). |
-| `vertAlign` | `string | null` | `null` | Vertical alignment: "superscript", "subscript", or "baseline". |
-| `fontHAnsi` | `string | null` | `null` | High ANSI font family (w:rFonts w:hAnsi). |
-| `fontCs` | `string | null` | `null` | Complex script font family (w:rFonts w:cs). |
-| `fontEastAsia` | `string | null` | `null` | East Asian font family (w:rFonts w:eastAsia). |
-| `highlight` | `string | null` | `null` | Highlight color name (e.g., "yellow", "green", "cyan"). |
-| `caps` | `boolean | null` | `null` | All caps text transformation. |
-| `smallCaps` | `boolean | null` | `null` | Small caps text transformation. |
-| `shadow` | `boolean | null` | `null` | Text shadow effect. |
-| `outline` | `boolean | null` | `null` | Text outline effect. |
-| `emboss` | `boolean | null` | `null` | Text emboss effect. |
-| `imprint` | `boolean | null` | `null` | Text imprint (engrave) effect. |
-| `charSpacing` | `number | null` | `null` | Character spacing in twips (from w:spacing w:val). |
-| `position` | `number | null` | `null` | Vertical position offset in half-points (from w:position w:val). |
-| `kern` | `number | null` | `null` | Kerning threshold in half-points (from w:kern w:val). |
-| `themeColor` | `string | null` | `null` | Theme color reference (e.g., "accent1", "dk1"). |
-| `themeTint` | `string | null` | `null` | Theme color tint modification (hex value). |
-| `themeShade` | `string | null` | `null` | Theme color shade modification (hex value). |
+| `bold` | `Option<bool>` | `Default::default()` | Bold |
+| `italic` | `Option<bool>` | `Default::default()` | Italic |
+| `underline` | `Option<bool>` | `Default::default()` | Underline |
+| `strikethrough` | `Option<bool>` | `Default::default()` | Strikethrough |
+| `color` | `Option<String>` | `Default::default()` | Hex RGB color, e.g. `"2F5496"`. |
+| `font_size_half_points` | `Option<i32>` | `Default::default()` | Font size in half-points (`w:sz` val). Divide by 2 to get points. |
+| `font_ascii` | `Option<String>` | `Default::default()` | ASCII font family (`w:rFonts w:ascii`). |
+| `font_ascii_theme` | `Option<String>` | `Default::default()` | ASCII theme font (`w:rFonts w:asciiTheme`). |
+| `vert_align` | `Option<String>` | `Default::default()` | Vertical alignment: "superscript", "subscript", or "baseline". |
+| `font_h_ansi` | `Option<String>` | `Default::default()` | High ANSI font family (w:rFonts w:hAnsi). |
+| `font_cs` | `Option<String>` | `Default::default()` | Complex script font family (w:rFonts w:cs). |
+| `font_east_asia` | `Option<String>` | `Default::default()` | East Asian font family (w:rFonts w:eastAsia). |
+| `highlight` | `Option<String>` | `Default::default()` | Highlight color name (e.g., "yellow", "green", "cyan"). |
+| `caps` | `Option<bool>` | `Default::default()` | All caps text transformation. |
+| `small_caps` | `Option<bool>` | `Default::default()` | Small caps text transformation. |
+| `shadow` | `Option<bool>` | `Default::default()` | Text shadow effect. |
+| `outline` | `Option<bool>` | `Default::default()` | Text outline effect. |
+| `emboss` | `Option<bool>` | `Default::default()` | Text emboss effect. |
+| `imprint` | `Option<bool>` | `Default::default()` | Text imprint (engrave) effect. |
+| `char_spacing` | `Option<i32>` | `Default::default()` | Character spacing in twips (from w:spacing w:val). |
+| `position` | `Option<i32>` | `Default::default()` | Vertical position offset in half-points (from w:position w:val). |
+| `kern` | `Option<i32>` | `Default::default()` | Kerning threshold in half-points (from w:kern w:val). |
+| `theme_color` | `Option<String>` | `Default::default()` | Theme color reference (e.g., "accent1", "dk1"). |
+| `theme_tint` | `Option<String>` | `Default::default()` | Theme color tint modification (hex value). |
+| `theme_shade` | `Option<String>` | `Default::default()` | Theme color shade modification (hex value). |
 
 
 ---
@@ -17065,7 +17065,7 @@ A body-text section containing a flat list of paragraphs.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `paragraphs` | `Array<Paragraph>` | `[]` | Paragraphs |
+| `paragraphs` | `Vec<Paragraph>` | `vec![]` | Paragraphs |
 
 
 ---
@@ -17076,33 +17076,33 @@ DOCX section properties parsed from `w:sectPr` element.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `pageWidthTwips` | `number | null` | `null` | Page width in twips (from `w:pgSz w:w`). |
-| `pageHeightTwips` | `number | null` | `null` | Page height in twips (from `w:pgSz w:h`). |
-| `orientation` | `Orientation | null` | `Orientation.Portrait` | Page orientation (from `w:pgSz w:orient`). |
-| `margins` | `PageMargins` | `null` | Page margins (from `w:pgMar`). |
-| `columns` | `ColumnLayout` | `null` | Column layout (from `w:cols`). |
-| `docGridLinePitch` | `number | null` | `null` | Document grid line pitch in twips (from `w:docGrid w:linePitch`). |
+| `page_width_twips` | `Option<i32>` | `Default::default()` | Page width in twips (from `w:pgSz w:w`). |
+| `page_height_twips` | `Option<i32>` | `Default::default()` | Page height in twips (from `w:pgSz w:h`). |
+| `orientation` | `Option<Orientation>` | `Orientation::Portrait` | Page orientation (from `w:pgSz w:orient`). |
+| `margins` | `PageMargins` | `Default::default()` | Page margins (from `w:pgMar`). |
+| `columns` | `ColumnLayout` | `Default::default()` | Column layout (from `w:cols`). |
+| `doc_grid_line_pitch` | `Option<i32>` | `Default::default()` | Document grid line pitch in twips (from `w:docGrid w:linePitch`). |
 
 #### Methods
 
-##### pageWidthPoints()
+##### page_width_points()
 
 Convert page width from twips to points.
 
 **Signature:**
 
-```typescript
-pageWidthPoints(): number | null
+```rust
+pub fn page_width_points(&self) -> Option<f64>
 ```
 
-##### pageHeightPoints()
+##### page_height_points()
 
 Convert page height from twips to points.
 
 **Signature:**
 
-```typescript
-pageHeightPoints(): number | null
+```rust
+pub fn page_height_points(&self) -> Option<f64>
 ```
 
 
@@ -17117,15 +17117,15 @@ while still supporting legitimate documents.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `maxArchiveSize` | `number` | `null` | Maximum uncompressed size for archives (500 MB) |
-| `maxCompressionRatio` | `number` | `100` | Maximum compression ratio before flagging as potential bomb (100:1) |
-| `maxFilesInArchive` | `number` | `10000` | Maximum number of files in archive (10,000) |
-| `maxNestingDepth` | `number` | `100` | Maximum nesting depth for structures (100) |
-| `maxEntityLength` | `number` | `32` | Maximum entity/string length (32) |
-| `maxContentSize` | `number` | `null` | Maximum string growth per document (100 MB) |
-| `maxIterations` | `number` | `10000000` | Maximum iterations per operation |
-| `maxXmlDepth` | `number` | `100` | Maximum XML depth (100 levels) |
-| `maxTableCells` | `number` | `100000` | Maximum cells per table (100,000) |
+| `max_archive_size` | `usize` | `Default::default()` | Maximum uncompressed size for archives (500 MB) |
+| `max_compression_ratio` | `usize` | `100` | Maximum compression ratio before flagging as potential bomb (100:1) |
+| `max_files_in_archive` | `usize` | `10000` | Maximum number of files in archive (10,000) |
+| `max_nesting_depth` | `usize` | `100` | Maximum nesting depth for structures (100) |
+| `max_entity_length` | `usize` | `32` | Maximum entity/string length (32) |
+| `max_content_size` | `usize` | `Default::default()` | Maximum string growth per document (100 MB) |
+| `max_iterations` | `usize` | `10000000` | Maximum iterations per operation |
+| `max_xml_depth` | `usize` | `100` | Maximum XML depth (100 levels) |
+| `max_table_cells` | `usize` | `100000` | Maximum cells per table (100,000) |
 
 #### Methods
 
@@ -17133,8 +17133,8 @@ while still supporting legitimate documents.
 
 **Signature:**
 
-```typescript
-static default(): SecurityLimits
+```rust
+pub fn default() -> SecurityLimits
 ```
 
 
@@ -17157,11 +17157,11 @@ including host/port settings, CORS configuration, and upload limits.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `host` | `string` | `null` | Server host address (e.g., "127.0.0.1", "0.0.0.0") |
-| `port` | `number` | `null` | Server port number |
-| `corsOrigins` | `Array<string>` | `[]` | CORS allowed origins. Empty vector means allow all origins. If this is an empty vector, the server will accept requests from any origin. If populated with specific origins (e.g., ["https://example.com"]), only those origins will be allowed. |
-| `maxRequestBodyBytes` | `number` | `null` | Maximum size of request body in bytes (default: 100 MB) |
-| `maxMultipartFieldBytes` | `number` | `null` | Maximum size of multipart fields in bytes (default: 100 MB) |
+| `host` | `String` | `Default::default()` | Server host address (e.g., "127.0.0.1", "0.0.0.0") |
+| `port` | `u16` | `Default::default()` | Server port number |
+| `cors_origins` | `Vec<String>` | `vec![]` | CORS allowed origins. Empty vector means allow all origins. If this is an empty vector, the server will accept requests from any origin. If populated with specific origins (e.g., ["https://example.com"]), only those origins will be allowed. |
+| `max_request_body_bytes` | `usize` | `Default::default()` | Maximum size of request body in bytes (default: 100 MB) |
+| `max_multipart_field_bytes` | `usize` | `Default::default()` | Maximum size of multipart fields in bytes (default: 100 MB) |
 
 #### Methods
 
@@ -17169,21 +17169,21 @@ including host/port settings, CORS configuration, and upload limits.
 
 **Signature:**
 
-```typescript
-static default(): ServerConfig
+```rust
+pub fn default() -> ServerConfig
 ```
 
-##### listenAddr()
+##### listen_addr()
 
 Get the server listen address (host:port).
 
 **Signature:**
 
-```typescript
-listenAddr(): string
+```rust
+pub fn listen_addr(&self) -> String
 ```
 
-##### corsAllowsAll()
+##### cors_allows_all()
 
 Check if CORS allows all origins.
 
@@ -17192,11 +17192,11 @@ are allowed. Returns `false` if specific origins are configured.
 
 **Signature:**
 
-```typescript
-corsAllowsAll(): boolean
+```rust
+pub fn cors_allows_all(&self) -> bool
 ```
 
-##### isOriginAllowed()
+##### is_origin_allowed()
 
 Check if a given origin is allowed by CORS configuration.
 
@@ -17206,31 +17206,31 @@ Returns `true` if:
 
 **Signature:**
 
-```typescript
-isOriginAllowed(origin: string): boolean
+```rust
+pub fn is_origin_allowed(&self, origin: String) -> bool
 ```
 
-##### maxRequestBodyMb()
+##### max_request_body_mb()
 
 Get maximum request body size in megabytes (rounded up).
 
 **Signature:**
 
-```typescript
-maxRequestBodyMb(): number
+```rust
+pub fn max_request_body_mb(&self) -> usize
 ```
 
-##### maxMultipartFieldMb()
+##### max_multipart_field_mb()
 
 Get maximum multipart field size in megabytes (rounded up).
 
 **Signature:**
 
-```typescript
-maxMultipartFieldMb(): number
+```rust
+pub fn max_multipart_field_mb(&self) -> usize
 ```
 
-##### applyEnvOverrides()
+##### apply_env_overrides()
 
 Apply environment variable overrides to the configuration.
 
@@ -17251,11 +17251,11 @@ Returns `KreuzbergError.Validation` if:
 
 **Signature:**
 
-```typescript
-applyEnvOverrides(): void
+```rust
+pub fn apply_env_overrides(&self)
 ```
 
-##### fromFile()
+##### from_file()
 
 Load server configuration from a file.
 
@@ -17277,11 +17277,11 @@ Returns `KreuzbergError.Validation` if:
 
 **Signature:**
 
-```typescript
-static fromFile(path: Path): ServerConfig
+```rust
+pub fn from_file(path: Path) -> ServerConfig
 ```
 
-##### fromTomlFile()
+##### from_toml_file()
 
 Load server configuration from a TOML file.
 
@@ -17291,11 +17291,11 @@ Returns `KreuzbergError.Validation` if the file doesn't exist or is invalid TOML
 
 **Signature:**
 
-```typescript
-static fromTomlFile(path: Path): ServerConfig
+```rust
+pub fn from_toml_file(path: Path) -> ServerConfig
 ```
 
-##### fromYamlFile()
+##### from_yaml_file()
 
 Load server configuration from a YAML file.
 
@@ -17305,11 +17305,11 @@ Returns `KreuzbergError.Validation` if the file doesn't exist or is invalid YAML
 
 **Signature:**
 
-```typescript
-static fromYamlFile(path: Path): ServerConfig
+```rust
+pub fn from_yaml_file(path: Path) -> ServerConfig
 ```
 
-##### fromJsonFile()
+##### from_json_file()
 
 Load server configuration from a JSON file.
 
@@ -17319,8 +17319,8 @@ Returns `KreuzbergError.Validation` if the file doesn't exist or is invalid JSON
 
 **Signature:**
 
-```typescript
-static fromJsonFile(path: Path): ServerConfig
+```rust
+pub fn from_json_file(path: Path) -> ServerConfig
 ```
 
 
@@ -17338,96 +17338,96 @@ Extracts file lists and text content from 7z archives.
 
 **Signature:**
 
-```typescript
-static default(): SevenZExtractor
+```rust
+pub fn default() -> SevenZExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
 
@@ -17441,8 +17441,8 @@ A single cell detected by SLANeXT.
 |-------|------|---------|-------------|
 | `polygon` | `F328` | — | Bounding box polygon in image pixel coordinates. Format: [x1, y1, x2, y2, x3, y3, x4, y4] (4 corners, clockwise from top-left). |
 | `bbox` | `F324` | — | Axis-aligned bounding box derived from polygon: [left, top, right, bottom]. |
-| `row` | `number` | — | Row index in the table (0-based). |
-| `col` | `number` | — | Column index within the row (0-based). |
+| `row` | `usize` | — | Row index in the table (0-based). |
+| `col` | `usize` | — | Column index within the row (0-based). |
 
 
 ---
@@ -17456,14 +17456,14 @@ inference, and post-processing in a single `recognize` call.
 
 #### Methods
 
-##### fromFile()
+##### from_file()
 
 Load a SLANeXT ONNX model from a file path.
 
 **Signature:**
 
-```typescript
-static fromFile(path: string): SlanetModel
+```rust
+pub fn from_file(path: String) -> SlanetModel
 ```
 
 ##### recognize()
@@ -17475,8 +17475,8 @@ and structure tokens.
 
 **Signature:**
 
-```typescript
-recognize(tableImg: RgbImage): SlanetResult
+```rust
+pub fn recognize(&self, table_img: RgbImage) -> SlanetResult
 ```
 
 
@@ -17488,11 +17488,11 @@ SLANeXT recognition result for a single table image.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `cells` | `Array<SlanetCell>` | — | Detected cells with bounding boxes and grid positions. |
-| `numRows` | `number` | — | Number of rows in the table. |
-| `numCols` | `number` | — | Maximum number of columns across all rows. |
-| `confidence` | `number` | — | Average structure prediction confidence. |
-| `structureTokens` | `Array<string>` | — | Raw HTML structure tokens (for debugging). |
+| `cells` | `Vec<SlanetCell>` | — | Detected cells with bounding boxes and grid positions. |
+| `num_rows` | `usize` | — | Number of rows in the table. |
+| `num_cols` | `usize` | — | Maximum number of columns across all rows. |
+| `confidence` | `f32` | — | Average structure prediction confidence. |
+| `structure_tokens` | `Vec<String>` | — | Raw HTML structure tokens (for debugging). |
 
 
 ---
@@ -17501,36 +17501,36 @@ SLANeXT recognition result for a single table image.
 
 #### Methods
 
-##### readU8()
+##### read_u8()
 
 **Signature:**
 
-```typescript
-readU8(): number
+```rust
+pub fn read_u8(&self) -> u8
 ```
 
-##### readU16()
+##### read_u16()
 
 **Signature:**
 
-```typescript
-readU16(): number
+```rust
+pub fn read_u16(&self) -> u16
 ```
 
-##### readU32()
+##### read_u32()
 
 **Signature:**
 
-```typescript
-readU32(): number
+```rust
+pub fn read_u32(&self) -> u32
 ```
 
-##### readBytes()
+##### read_bytes()
 
 **Signature:**
 
-```typescript
-readBytes(len: number): Buffer
+```rust
+pub fn read_bytes(&self, len: usize) -> Vec<u8>
 ```
 
 ##### position()
@@ -17539,8 +17539,8 @@ Current byte position within the stream.
 
 **Signature:**
 
-```typescript
-position(): number
+```rust
+pub fn position(&self) -> u64
 ```
 
 ##### remaining()
@@ -17549,8 +17549,8 @@ Number of bytes remaining from the current position to the end.
 
 **Signature:**
 
-```typescript
-remaining(): number
+```rust
+pub fn remaining(&self) -> usize
 ```
 
 
@@ -17569,7 +17569,7 @@ Helper struct for tracking and validating string growth.
 
 #### Methods
 
-##### checkAppend()
+##### check_append()
 
 Validate and update size after appending.
 
@@ -17579,18 +17579,18 @@ Validate and update size after appending.
 
 **Signature:**
 
-```typescript
-checkAppend(len: number): void
+```rust
+pub fn check_append(&self, len: usize)
 ```
 
-##### currentSize()
+##### current_size()
 
 Get current size.
 
 **Signature:**
 
-```typescript
-currentSize(): number
+```rust
+pub fn current_size(&self) -> usize
 ```
 
 
@@ -17602,9 +17602,9 @@ Structured data (Schema.org, microdata, RDFa) block.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `dataType` | `StructuredDataType` | — | Type of structured data |
-| `rawJson` | `string` | — | Raw JSON string representation |
-| `schemaType` | `string | null` | `null` | Schema type if detectable (e.g., "Article", "Event", "Product") |
+| `data_type` | `StructuredDataType` | — | Type of structured data |
+| `raw_json` | `String` | — | Raw JSON string representation |
+| `schema_type` | `Option<String>` | `None` | Schema type if detectable (e.g., "Article", "Event", "Product") |
 
 
 ---
@@ -17613,10 +17613,10 @@ Structured data (Schema.org, microdata, RDFa) block.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | The extracted text content |
+| `content` | `String` | — | The extracted text content |
 | `format` | `Str` | — | Format (str) |
-| `metadata` | `Record<string, string>` | — | Document metadata |
-| `textFields` | `Array<string>` | — | Text fields |
+| `metadata` | `HashMap<String, String>` | — | Document metadata |
+| `text_fields` | `Vec<String>` | — | Text fields |
 
 
 ---
@@ -17630,11 +17630,11 @@ returning structured data that conforms to the schema.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `schema` | `unknown` | — | JSON Schema defining the desired output structure. |
-| `schemaName` | `string` | — | Schema name passed to the LLM's structured output mode. |
-| `schemaDescription` | `string | null` | `null` | Optional schema description for the LLM. |
-| `strict` | `boolean` | — | Enable strict mode — output must exactly match the schema. |
-| `prompt` | `string | null` | `null` | Custom Jinja2 extraction prompt template. When `None`, a default template is used. Available template variables: - `{{ content }}` — The extracted document text. - `{{ schema }}` — The JSON schema as a formatted string. - `{{ schema_name }}` — The schema name. - `{{ schema_description }}` — The schema description (may be empty). |
+| `schema` | `serde_json::Value` | — | JSON Schema defining the desired output structure. |
+| `schema_name` | `String` | — | Schema name passed to the LLM's structured output mode. |
+| `schema_description` | `Option<String>` | `None` | Optional schema description for the LLM. |
+| `strict` | `bool` | — | Enable strict mode — output must exactly match the schema. |
+| `prompt` | `Option<String>` | `None` | Custom Jinja2 extraction prompt template. When `None`, a default template is used. Available template variables: - `{{ content }}` — The extracted document text. - `{{ schema }}` — The JSON schema as a formatted string. - `{{ schema_name }}` — The schema name. - `{{ schema_description }}` — The schema description (may be empty). |
 | `llm` | `LlmConfig` | — | LLM configuration for the extraction. |
 
 
@@ -17650,64 +17650,64 @@ Structured data extractor supporting JSON, JSONL/NDJSON, YAML, and TOML.
 
 **Signature:**
 
-```typescript
-static default(): StructuredExtractor
+```rust
+pub fn default() -> StructuredExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -17719,13 +17719,13 @@ Catalog of all styles parsed from `word/styles.xml`, plus document defaults.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `styles` | `AHashMap` | `null` | Styles (a hash map) |
-| `defaultParagraphProperties` | `ParagraphProperties` | `null` | Default paragraph properties (paragraph properties) |
-| `defaultRunProperties` | `RunProperties` | `null` | Default run properties (run properties) |
+| `styles` | `AHashMap` | `Default::default()` | Styles (a hash map) |
+| `default_paragraph_properties` | `ParagraphProperties` | `Default::default()` | Default paragraph properties (paragraph properties) |
+| `default_run_properties` | `RunProperties` | `Default::default()` | Default run properties (run properties) |
 
 #### Methods
 
-##### resolveStyle()
+##### resolve_style()
 
 Resolve a style by walking its `basedOn` inheritance chain.
 
@@ -17735,15 +17735,15 @@ The resolution order is:
 3. The style itself
 
 For `Option` fields, a child value of `Some(x)` overrides the parent.
-A value of `null` inherits from the parent. For boolean toggle properties,
+A value of `None` inherits from the parent. For boolean toggle properties,
 `Some(false)` explicitly disables the property.
 
 The chain depth is limited to 20 to prevent infinite loops from circular references.
 
 **Signature:**
 
-```typescript
-resolveStyle(styleId: string): ResolvedStyle
+```rust
+pub fn resolve_style(&self, style_id: String) -> ResolvedStyle
 ```
 
 
@@ -17755,14 +17755,14 @@ A single style definition parsed from `<w:style>` in `word/styles.xml`.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `id` | `string` | — | The style ID (`w:styleId` attribute). |
-| `name` | `string | null` | `null` | Human-readable name (`<w:name w:val="..."/>`). |
-| `styleType` | `StyleType` | — | Style type: paragraph, character, table, or numbering. |
-| `basedOn` | `string | null` | `null` | ID of the parent style (`<w:basedOn w:val="..."/>`). |
-| `nextStyle` | `string | null` | `null` | ID of the style to apply to the next paragraph (`<w:next w:val="..."/>`). |
-| `isDefault` | `boolean` | — | Whether this is the default style for its type. |
-| `paragraphProperties` | `ParagraphProperties` | — | Paragraph properties defined directly on this style. |
-| `runProperties` | `RunProperties` | — | Run properties defined directly on this style. |
+| `id` | `String` | — | The style ID (`w:styleId` attribute). |
+| `name` | `Option<String>` | `None` | Human-readable name (`<w:name w:val="..."/>`). |
+| `style_type` | `StyleType` | — | Style type: paragraph, character, table, or numbering. |
+| `based_on` | `Option<String>` | `None` | ID of the parent style (`<w:basedOn w:val="..."/>`). |
+| `next_style` | `Option<String>` | `None` | ID of the style to apply to the next paragraph (`<w:next w:val="..."/>`). |
+| `is_default` | `bool` | — | Whether this is the default style for its type. |
+| `paragraph_properties` | `ParagraphProperties` | — | Paragraph properties defined directly on this style. |
+| `run_properties` | `RunProperties` | — | Run properties defined directly on this style. |
 
 
 ---
@@ -17781,24 +17781,24 @@ construction time — no per-render allocation for CSS resolution.
 
 **Signature:**
 
-```typescript
-static new(config: HtmlOutputConfig): StyledHtmlRenderer
+```rust
+pub fn new(config: HtmlOutputConfig) -> StyledHtmlRenderer
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### render()
 
 **Signature:**
 
-```typescript
-render(doc: InternalDocument): string
+```rust
+pub fn render(&self, doc: InternalDocument) -> String
 ```
 
 
@@ -17812,8 +17812,8 @@ Represents a file extension and its corresponding MIME type that Kreuzberg can p
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `extension` | `string` | — | File extension (without leading dot), e.g., "pdf", "docx" |
-| `mimeType` | `string` | — | MIME type string, e.g., "application/pdf" |
+| `extension` | `String` | — | File extension (without leading dot), e.g., "pdf", "docx" |
+| `mime_type` | `String` | — | MIME type string, e.g., "application/pdf" |
 
 
 ---
@@ -17837,7 +17837,7 @@ The `mime_type` parameter is guaranteed to be already validated.
 
 #### Methods
 
-##### extractSync()
+##### extract_sync()
 
 Extract content from a byte array synchronously.
 
@@ -17850,8 +17850,8 @@ An `InternalDocument` containing the extracted elements, metadata, and tables.
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
 
@@ -17866,10 +17866,10 @@ Tables are converted to both structured cell data and Markdown format.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `cells` | `Array<Array<string>>` | — | Table cells as a 2D vector (rows × columns) |
-| `markdown` | `string` | — | Markdown representation of the table |
-| `pageNumber` | `number` | — | Page number where the table was found (1-indexed) |
-| `boundingBox` | `BoundingBox | null` | `null` | Bounding box of the table on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top). Only populated for PDF-extracted tables when position data is available. |
+| `cells` | `Vec<Vec<String>>` | — | Table cells as a 2D vector (rows × columns) |
+| `markdown` | `String` | — | Markdown representation of the table |
+| `page_number` | `usize` | — | Page number where the table was found (1-indexed) |
+| `bounding_box` | `Option<BoundingBox>` | `None` | Bounding box of the table on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top). Only populated for PDF-extracted tables when position data is available. |
 
 
 ---
@@ -17880,12 +17880,12 @@ Borders for a table (6 borders: top, bottom, left, right, insideH, insideV).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `top` | `BorderStyle | null` | `null` | Top (border style) |
-| `bottom` | `BorderStyle | null` | `null` | Bottom (border style) |
-| `left` | `BorderStyle | null` | `null` | Left (border style) |
-| `right` | `BorderStyle | null` | `null` | Right (border style) |
-| `insideH` | `BorderStyle | null` | `null` | Inside h (border style) |
-| `insideV` | `BorderStyle | null` | `null` | Inside v (border style) |
+| `top` | `Option<BorderStyle>` | `Default::default()` | Top (border style) |
+| `bottom` | `Option<BorderStyle>` | `Default::default()` | Bottom (border style) |
+| `left` | `Option<BorderStyle>` | `Default::default()` | Left (border style) |
+| `right` | `Option<BorderStyle>` | `Default::default()` | Right (border style) |
+| `inside_h` | `Option<BorderStyle>` | `Default::default()` | Inside h (border style) |
+| `inside_v` | `Option<BorderStyle>` | `Default::default()` | Inside v (border style) |
 
 
 ---
@@ -17898,10 +17898,10 @@ Future extension point for rich table support with cell-level metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | Cell content as text |
-| `rowSpan` | `number` | — | Row span (number of rows this cell spans) |
-| `colSpan` | `number` | — | Column span (number of columns this cell spans) |
-| `isHeader` | `boolean` | — | Whether this is a header cell |
+| `content` | `String` | — | Cell content as text |
+| `row_span` | `usize` | — | Row span (number of rows this cell spans) |
+| `col_span` | `usize` | — | Column span (number of columns this cell spans) |
+| `is_header` | `bool` | — | Whether this is a header cell |
 
 
 ---
@@ -17912,14 +17912,14 @@ PP-LCNet table classifier model.
 
 #### Methods
 
-##### fromFile()
+##### from_file()
 
 Load the table classifier ONNX model from a file path.
 
 **Signature:**
 
-```typescript
-static fromFile(path: string): TableClassifier
+```rust
+pub fn from_file(path: String) -> TableClassifier
 ```
 
 ##### classify()
@@ -17928,8 +17928,8 @@ Classify a cropped table image as wired or wireless.
 
 **Signature:**
 
-```typescript
-classify(tableImg: RgbImage): TableType
+```rust
+pub fn classify(&self, table_img: RgbImage) -> TableType
 ```
 
 
@@ -17943,9 +17943,9 @@ Stores row/column dimensions and a flat list of cells with position info.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `rows` | `number` | — | Number of rows in the table. |
-| `cols` | `number` | — | Number of columns in the table. |
-| `cells` | `Array<GridCell>` | — | All cells in row-major order. |
+| `rows` | `u32` | — | Number of rows in the table. |
+| `cols` | `u32` | — | Number of columns in the table. |
+| `cells` | `Vec<GridCell>` | — | All cells in row-major order. |
 
 
 ---
@@ -17956,12 +17956,12 @@ Table look bitmask/flags controlling conditional formatting bands.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `firstRow` | `boolean` | `null` | First row |
-| `lastRow` | `boolean` | `null` | Last row |
-| `firstColumn` | `boolean` | `null` | First column |
-| `lastColumn` | `boolean` | `null` | Last column |
-| `noHBand` | `boolean` | `null` | No h band |
-| `noVBand` | `boolean` | `null` | No v band |
+| `first_row` | `bool` | `Default::default()` | First row |
+| `last_row` | `bool` | `Default::default()` | Last row |
+| `first_column` | `bool` | `Default::default()` | First column |
+| `last_column` | `bool` | `Default::default()` | Last column |
+| `no_h_band` | `bool` | `Default::default()` | No h band |
+| `no_v_band` | `bool` | `Default::default()` | No v band |
 
 
 ---
@@ -17972,15 +17972,15 @@ Table-level properties from `<w:tblPr>`.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `styleId` | `string | null` | `null` | Style id |
-| `width` | `TableWidth | null` | `null` | Width (table width) |
-| `alignment` | `string | null` | `null` | Alignment |
-| `layout` | `string | null` | `null` | Layout |
-| `look` | `TableLook | null` | `null` | Look (table look) |
-| `borders` | `TableBorders | null` | `null` | Borders (table borders) |
-| `cellMargins` | `CellMargins | null` | `null` | Cell margins (cell margins) |
-| `indent` | `TableWidth | null` | `null` | Indent (table width) |
-| `caption` | `string | null` | `null` | Caption |
+| `style_id` | `Option<String>` | `Default::default()` | Style id |
+| `width` | `Option<TableWidth>` | `Default::default()` | Width (table width) |
+| `alignment` | `Option<String>` | `Default::default()` | Alignment |
+| `layout` | `Option<String>` | `Default::default()` | Layout |
+| `look` | `Option<TableLook>` | `Default::default()` | Look (table look) |
+| `borders` | `Option<TableBorders>` | `Default::default()` | Borders (table borders) |
+| `cell_margins` | `Option<CellMargins>` | `Default::default()` | Cell margins (cell margins) |
+| `indent` | `Option<TableWidth>` | `Default::default()` | Indent (table width) |
+| `caption` | `Option<String>` | `Default::default()` | Caption |
 
 
 ---
@@ -17989,8 +17989,8 @@ Table-level properties from `<w:tblPr>`.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `cells` | `Array<TableCell>` | `[]` | Cells |
-| `properties` | `RowProperties | null` | `null` | Properties (row properties) |
+| `cells` | `Vec<TableCell>` | `vec![]` | Cells |
+| `properties` | `Option<RowProperties>` | `Default::default()` | Properties (row properties) |
 
 
 ---
@@ -18001,7 +18001,7 @@ Helper struct for validating table cell counts.
 
 #### Methods
 
-##### addCells()
+##### add_cells()
 
 Add cells to table and validate.
 
@@ -18011,18 +18011,18 @@ Add cells to table and validate.
 
 **Signature:**
 
-```typescript
-addCells(count: number): void
+```rust
+pub fn add_cells(&self, count: usize)
 ```
 
-##### currentCells()
+##### current_cells()
 
 Get current cell count.
 
 **Signature:**
 
-```typescript
-currentCells(): number
+```rust
+pub fn current_cells(&self) -> usize
 ```
 
 
@@ -18034,8 +18034,8 @@ Width specification used for tables and cells.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `value` | `number` | — | Value |
-| `widthType` | `string` | — | Width type |
+| `value` | `i32` | — | Value |
+| `width_type` | `String` | — | Width type |
 
 
 ---
@@ -18052,96 +18052,96 @@ Extracts file lists and text content from TAR archives.
 
 **Signature:**
 
-```typescript
-static default(): TarExtractor
+```rust
+pub fn default() -> TarExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
 
@@ -18154,7 +18154,7 @@ A single TATR detection result.
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `bbox` | `F324` | — | Bounding box in crop-pixel coordinates: `[x1, y1, x2, y2]`. |
-| `confidence` | `number` | — | Detection confidence score (0.0..1.0). |
+| `confidence` | `f32` | — | Detection confidence score (0.0..1.0). |
 | `class` | `TatrClass` | — | Detected class. |
 
 
@@ -18169,7 +18169,7 @@ inference, and post-processing in a single `recognize` call.
 
 #### Methods
 
-##### fromFile()
+##### from_file()
 
 Load a TATR ONNX model from a file path.
 
@@ -18178,8 +18178,8 @@ with a CPU-only fallback if the platform EP fails.
 
 **Signature:**
 
-```typescript
-static fromFile(path: string): TatrModel
+```rust
+pub fn from_file(path: String) -> TatrModel
 ```
 
 ##### recognize()
@@ -18191,8 +18191,8 @@ spanning cells in the input image's pixel coordinate space.
 
 **Signature:**
 
-```typescript
-recognize(tableImg: RgbImage): TatrResult
+```rust
+pub fn recognize(&self, table_img: RgbImage) -> TatrResult
 ```
 
 
@@ -18204,10 +18204,10 @@ Aggregated TATR recognition result with detections separated by class.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `rows` | `Array<TatrDetection>` | — | Detected rows, sorted top-to-bottom by `y2`. |
-| `columns` | `Array<TatrDetection>` | — | Detected columns, sorted left-to-right by `x2`. |
-| `headers` | `Array<TatrDetection>` | — | Detected headers (ColumnHeader and ProjectedRowHeader). |
-| `spanning` | `Array<TatrDetection>` | — | Detected spanning cells. |
+| `rows` | `Vec<TatrDetection>` | — | Detected rows, sorted top-to-bottom by `y2`. |
+| `columns` | `Vec<TatrDetection>` | — | Detected columns, sorted left-to-right by `x2`. |
+| `headers` | `Vec<TatrDetection>` | — | Detected headers (ColumnHeader and ProjectedRowHeader). |
+| `spanning` | `Vec<TatrDetection>` | — | Detected spanning cells. |
 
 
 ---
@@ -18218,24 +18218,24 @@ Manages tessdata file downloading, caching, and manifest generation.
 
 #### Methods
 
-##### cacheDir()
+##### cache_dir()
 
 Get the cache directory path.
 
 **Signature:**
 
-```typescript
-cacheDir(): string
+```rust
+pub fn cache_dir(&self) -> PathBuf
 ```
 
-##### isLanguageCached()
+##### is_language_cached()
 
 Check if a specific language traineddata file is cached.
 
 **Signature:**
 
-```typescript
-isLanguageCached(lang: string): boolean
+```rust
+pub fn is_language_cached(&self, lang: String) -> bool
 ```
 
 
@@ -18260,106 +18260,106 @@ Create a new Tesseract backend with default cache directory.
 
 **Signature:**
 
-```typescript
-static new(): TesseractBackend
+```rust
+pub fn new() -> TesseractBackend
 ```
 
-##### withCacheDir()
+##### with_cache_dir()
 
 Create a new Tesseract backend with custom cache directory.
 
 **Signature:**
 
-```typescript
-static withCacheDir(cacheDir: string): TesseractBackend
+```rust
+pub fn with_cache_dir(cache_dir: PathBuf) -> TesseractBackend
 ```
 
 ##### default()
 
 **Signature:**
 
-```typescript
-static default(): TesseractBackend
+```rust
+pub fn default() -> TesseractBackend
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### processImage()
+##### process_image()
 
 **Signature:**
 
-```typescript
-processImage(imageBytes: Buffer, config: OcrConfig): ExtractionResult
+```rust
+pub fn process_image(&self, image_bytes: Vec<u8>, config: OcrConfig) -> ExtractionResult
 ```
 
-##### processImageFile()
+##### process_image_file()
 
 **Signature:**
 
-```typescript
-processImageFile(path: string, config: OcrConfig): ExtractionResult
+```rust
+pub fn process_image_file(&self, path: PathBuf, config: OcrConfig) -> ExtractionResult
 ```
 
-##### supportsLanguage()
+##### supports_language()
 
 **Signature:**
 
-```typescript
-supportsLanguage(lang: string): boolean
+```rust
+pub fn supports_language(&self, lang: String) -> bool
 ```
 
-##### backendType()
+##### backend_type()
 
 **Signature:**
 
-```typescript
-backendType(): OcrBackendType
+```rust
+pub fn backend_type(&self) -> OcrBackendType
 ```
 
-##### supportedLanguages()
+##### supported_languages()
 
 **Signature:**
 
-```typescript
-supportedLanguages(): Array<string>
+```rust
+pub fn supported_languages(&self) -> Vec<String>
 ```
 
-##### supportsTableDetection()
+##### supports_table_detection()
 
 **Signature:**
 
-```typescript
-supportsTableDetection(): boolean
+```rust
+pub fn supports_table_detection(&self) -> bool
 ```
 
 
@@ -18375,27 +18375,27 @@ for specific document types (invoices, handwriting, etc.).
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `language` | `string` | `"eng"` | Language code (e.g., "eng", "deu", "fra") |
-| `psm` | `number` | `3` | Page Segmentation Mode (0-13). Common values: - 3: Fully automatic page segmentation (default) - 6: Assume a single uniform block of text - 11: Sparse text with no particular order |
-| `outputFormat` | `string` | `"markdown"` | Output format ("text" or "markdown") |
-| `oem` | `number` | `3` | OCR Engine Mode (0-3). - 0: Legacy engine only - 1: Neural nets (LSTM) only (usually best) - 2: Legacy + LSTM - 3: Default (based on what's available) |
-| `minConfidence` | `number` | `0` | Minimum confidence threshold (0.0-100.0). Words with confidence below this threshold may be rejected or flagged. |
-| `preprocessing` | `ImagePreprocessingConfig | null` | `null` | Image preprocessing configuration. Controls how images are preprocessed before OCR. Can significantly improve quality for scanned documents or low-quality images. |
-| `enableTableDetection` | `boolean` | `true` | Enable automatic table detection and reconstruction |
-| `tableMinConfidence` | `number` | `0` | Minimum confidence threshold for table detection (0.0-1.0) |
-| `tableColumnThreshold` | `number` | `50` | Column threshold for table detection (pixels) |
-| `tableRowThresholdRatio` | `number` | `0.5` | Row threshold ratio for table detection (0.0-1.0) |
-| `useCache` | `boolean` | `true` | Enable OCR result caching |
-| `classifyUsePreAdaptedTemplates` | `boolean` | `true` | Use pre-adapted templates for character classification |
-| `languageModelNgramOn` | `boolean` | `false` | Enable N-gram language model |
-| `tesseditDontBlkrejGoodWds` | `boolean` | `true` | Don't reject good words during block-level processing |
-| `tesseditDontRowrejGoodWds` | `boolean` | `true` | Don't reject good words during row-level processing |
-| `tesseditEnableDictCorrection` | `boolean` | `true` | Enable dictionary correction |
-| `tesseditCharWhitelist` | `string` | `""` | Whitelist of allowed characters (empty = all allowed) |
-| `tesseditCharBlacklist` | `string` | `""` | Blacklist of forbidden characters (empty = none forbidden) |
-| `tesseditUsePrimaryParamsModel` | `boolean` | `true` | Use primary language params model |
-| `textordSpaceSizeIsVariable` | `boolean` | `true` | Variable-width space detection |
-| `thresholdingMethod` | `boolean` | `false` | Use adaptive thresholding method |
+| `language` | `String` | `"eng"` | Language code (e.g., "eng", "deu", "fra") |
+| `psm` | `i32` | `3` | Page Segmentation Mode (0-13). Common values: - 3: Fully automatic page segmentation (default) - 6: Assume a single uniform block of text - 11: Sparse text with no particular order |
+| `output_format` | `String` | `"markdown"` | Output format ("text" or "markdown") |
+| `oem` | `i32` | `3` | OCR Engine Mode (0-3). - 0: Legacy engine only - 1: Neural nets (LSTM) only (usually best) - 2: Legacy + LSTM - 3: Default (based on what's available) |
+| `min_confidence` | `f64` | `0` | Minimum confidence threshold (0.0-100.0). Words with confidence below this threshold may be rejected or flagged. |
+| `preprocessing` | `Option<ImagePreprocessingConfig>` | `Default::default()` | Image preprocessing configuration. Controls how images are preprocessed before OCR. Can significantly improve quality for scanned documents or low-quality images. |
+| `enable_table_detection` | `bool` | `true` | Enable automatic table detection and reconstruction |
+| `table_min_confidence` | `f64` | `0` | Minimum confidence threshold for table detection (0.0-1.0) |
+| `table_column_threshold` | `i32` | `50` | Column threshold for table detection (pixels) |
+| `table_row_threshold_ratio` | `f64` | `0.5` | Row threshold ratio for table detection (0.0-1.0) |
+| `use_cache` | `bool` | `true` | Enable OCR result caching |
+| `classify_use_pre_adapted_templates` | `bool` | `true` | Use pre-adapted templates for character classification |
+| `language_model_ngram_on` | `bool` | `false` | Enable N-gram language model |
+| `tessedit_dont_blkrej_good_wds` | `bool` | `true` | Don't reject good words during block-level processing |
+| `tessedit_dont_rowrej_good_wds` | `bool` | `true` | Don't reject good words during row-level processing |
+| `tessedit_enable_dict_correction` | `bool` | `true` | Enable dictionary correction |
+| `tessedit_char_whitelist` | `String` | `""` | Whitelist of allowed characters (empty = all allowed) |
+| `tessedit_char_blacklist` | `String` | `""` | Blacklist of forbidden characters (empty = none forbidden) |
+| `tessedit_use_primary_params_model` | `bool` | `true` | Use primary language params model |
+| `textord_space_size_is_variable` | `bool` | `true` | Variable-width space detection |
+| `thresholding_method` | `bool` | `false` | Use adaptive thresholding method |
 
 #### Methods
 
@@ -18403,8 +18403,8 @@ for specific document types (invoices, handwriting, etc.).
 
 **Signature:**
 
-```typescript
-static default(): TesseractConfig
+```rust
+pub fn default() -> TesseractConfig
 ```
 
 
@@ -18419,8 +18419,8 @@ enabling precise identification of formatted regions.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `start` | `number` | — | Start byte offset in the node's text content (inclusive). |
-| `end` | `number` | — | End byte offset in the node's text content (exclusive). |
+| `start` | `u32` | — | Start byte offset in the node's text content (inclusive). |
+| `end` | `u32` | — | End byte offset in the node's text content (exclusive). |
 | `kind` | `AnnotationKind` | — | Annotation type. |
 
 
@@ -18435,13 +18435,13 @@ for Markdown files, structural elements like headers and links.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | Extracted text content |
-| `lineCount` | `number` | — | Number of lines |
-| `wordCount` | `number` | — | Number of words |
-| `characterCount` | `number` | — | Number of characters |
-| `headers` | `Array<string> | null` | `null` | Markdown headers (text only, Markdown files only) |
-| `links` | `Array<StringString> | null` | `null` | Markdown links as (text, URL) tuples (Markdown files only) |
-| `codeBlocks` | `Array<StringString> | null` | `null` | Code blocks as (language, code) tuples (Markdown files only) |
+| `content` | `String` | — | Extracted text content |
+| `line_count` | `usize` | — | Number of lines |
+| `word_count` | `usize` | — | Number of words |
+| `character_count` | `usize` | — | Number of characters |
+| `headers` | `Option<Vec<String>>` | `None` | Markdown headers (text only, Markdown files only) |
+| `links` | `Option<Vec<StringString>>` | `None` | Markdown links as (text, URL) tuples (Markdown files only) |
+| `code_blocks` | `Option<Vec<StringString>>` | `None` | Code blocks as (language, code) tuples (Markdown files only) |
 
 
 ---
@@ -18455,12 +18455,12 @@ for Markdown, structural elements like headers and links.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `lineCount` | `number` | — | Number of lines in the document |
-| `wordCount` | `number` | — | Number of words |
-| `characterCount` | `number` | — | Number of characters |
-| `headers` | `Array<string> | null` | `null` | Markdown headers (headings text only, for Markdown files) |
-| `links` | `Array<StringString> | null` | `null` | Markdown links as (text, url) tuples (for Markdown files) |
-| `codeBlocks` | `Array<StringString> | null` | `null` | Code blocks as (language, code) tuples (for Markdown files) |
+| `line_count` | `usize` | — | Number of lines in the document |
+| `word_count` | `usize` | — | Number of words |
+| `character_count` | `usize` | — | Number of characters |
+| `headers` | `Option<Vec<String>>` | `None` | Markdown headers (headings text only, for Markdown files) |
+| `links` | `Option<Vec<StringString>>` | `None` | Markdown links as (text, url) tuples (for Markdown files) |
+| `code_blocks` | `Option<Vec<StringString>>` | `None` | Code blocks as (language, code) tuples (for Markdown files) |
 
 
 ---
@@ -18471,9 +18471,9 @@ Complete theme with color scheme and font scheme.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `name` | `string` | `null` | Theme name (e.g., "Office Theme"). |
-| `colorScheme` | `ColorScheme | null` | `null` | Color scheme (12 standard colors). |
-| `fontScheme` | `FontScheme | null` | `null` | Font scheme (major and minor fonts). |
+| `name` | `String` | `Default::default()` | Theme name (e.g., "Office Theme"). |
+| `color_scheme` | `Option<ColorScheme>` | `Default::default()` | Color scheme (12 standard colors). |
+| `font_scheme` | `Option<FontScheme>` | `Default::default()` | Font scheme (major and minor fonts). |
 
 
 ---
@@ -18484,8 +18484,8 @@ Token reduction configuration.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `mode` | `string` | — | Reduction mode: "off", "light", "moderate", "aggressive", "maximum" |
-| `preserveImportantWords` | `boolean` | — | Preserve important words (capitalized, technical terms) |
+| `mode` | `String` | — | Reduction mode: "off", "light", "moderate", "aggressive", "maximum" |
+| `preserve_important_words` | `bool` | — | Preserve important words (capitalized, technical terms) |
 
 
 ---
@@ -18500,8 +18500,8 @@ A `tower.Layer` that wraps each extraction in a semantic tracing span.
 
 **Signature:**
 
-```typescript
-layer(inner: S): Service
+```rust
+pub fn layer(&self, inner: S) -> Service
 ```
 
 
@@ -18528,11 +18528,11 @@ docstrings = true
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `enabled` | `boolean` | `true` | Enable code intelligence processing (default: true). When `False`, tree-sitter analysis is completely skipped even if the config section is present. |
-| `cacheDir` | `string | null` | `null` | Custom cache directory for downloaded grammars. When `None`, uses the default: `~/.cache/tree-sitter-language-pack/v{version}/libs/`. |
-| `languages` | `Array<string> | null` | `[]` | Languages to pre-download on init (e.g., `["python", "rust"]`). |
-| `groups` | `Array<string> | null` | `[]` | Language groups to pre-download (e.g., `["web", "systems", "scripting"]`). |
-| `process` | `TreeSitterProcessConfig` | `null` | Processing options for code analysis. |
+| `enabled` | `bool` | `true` | Enable code intelligence processing (default: true). When `False`, tree-sitter analysis is completely skipped even if the config section is present. |
+| `cache_dir` | `Option<PathBuf>` | `Default::default()` | Custom cache directory for downloaded grammars. When `None`, uses the default: `~/.cache/tree-sitter-language-pack/v{version}/libs/`. |
+| `languages` | `Option<Vec<String>>` | `vec![]` | Languages to pre-download on init (e.g., `["python", "rust"]`). |
+| `groups` | `Option<Vec<String>>` | `vec![]` | Language groups to pre-download (e.g., `["web", "systems", "scripting"]`). |
+| `process` | `TreeSitterProcessConfig` | `Default::default()` | Processing options for code analysis. |
 
 #### Methods
 
@@ -18540,8 +18540,8 @@ docstrings = true
 
 **Signature:**
 
-```typescript
-static default(): TreeSitterConfig
+```rust
+pub fn default() -> TreeSitterConfig
 ```
 
 
@@ -18555,15 +18555,15 @@ Controls which analysis features are enabled when extracting code files.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `structure` | `boolean` | `true` | Extract structural items (functions, classes, structs, etc.). Default: true. |
-| `imports` | `boolean` | `true` | Extract import statements. Default: true. |
-| `exports` | `boolean` | `true` | Extract export statements. Default: true. |
-| `comments` | `boolean` | `false` | Extract comments. Default: false. |
-| `docstrings` | `boolean` | `false` | Extract docstrings. Default: false. |
-| `symbols` | `boolean` | `false` | Extract symbol definitions. Default: false. |
-| `diagnostics` | `boolean` | `false` | Include parse diagnostics. Default: false. |
-| `chunkMaxSize` | `number | null` | `null` | Maximum chunk size in bytes. `None` disables chunking. |
-| `contentMode` | `CodeContentMode` | `CodeContentMode.Chunks` | Content rendering mode for code extraction. |
+| `structure` | `bool` | `true` | Extract structural items (functions, classes, structs, etc.). Default: true. |
+| `imports` | `bool` | `true` | Extract import statements. Default: true. |
+| `exports` | `bool` | `true` | Extract export statements. Default: true. |
+| `comments` | `bool` | `false` | Extract comments. Default: false. |
+| `docstrings` | `bool` | `false` | Extract docstrings. Default: false. |
+| `symbols` | `bool` | `false` | Extract symbol definitions. Default: false. |
+| `diagnostics` | `bool` | `false` | Include parse diagnostics. Default: false. |
+| `chunk_max_size` | `Option<usize>` | `Default::default()` | Maximum chunk size in bytes. `None` disables chunking. |
+| `content_mode` | `CodeContentMode` | `CodeContentMode::Chunks` | Content rendering mode for code extraction. |
 
 #### Methods
 
@@ -18571,8 +18571,8 @@ Controls which analysis features are enabled when extracting code files.
 
 **Signature:**
 
-```typescript
-static default(): TreeSitterProcessConfig
+```rust
+pub fn default() -> TreeSitterProcessConfig
 ```
 
 
@@ -18588,18 +18588,18 @@ along with bounding boxes and confidence scores.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `level` | `number` | — | Hierarchical level (1=block, 2=para, 3=line, 4=word, 5=symbol) |
-| `pageNum` | `number` | — | Page number (1-indexed) |
-| `blockNum` | `number` | — | Block number within page |
-| `parNum` | `number` | — | Paragraph number within block |
-| `lineNum` | `number` | — | Line number within paragraph |
-| `wordNum` | `number` | — | Word number within line |
-| `left` | `number` | — | Left x-coordinate in pixels |
-| `top` | `number` | — | Top y-coordinate in pixels |
-| `width` | `number` | — | Width in pixels |
-| `height` | `number` | — | Height in pixels |
-| `conf` | `number` | — | Confidence score (0-100) |
-| `text` | `string` | — | Recognized text |
+| `level` | `i32` | — | Hierarchical level (1=block, 2=para, 3=line, 4=word, 5=symbol) |
+| `page_num` | `i32` | — | Page number (1-indexed) |
+| `block_num` | `i32` | — | Block number within page |
+| `par_num` | `i32` | — | Paragraph number within block |
+| `line_num` | `i32` | — | Line number within paragraph |
+| `word_num` | `i32` | — | Word number within line |
+| `left` | `u32` | — | Left x-coordinate in pixels |
+| `top` | `u32` | — | Top y-coordinate in pixels |
+| `width` | `u32` | — | Width in pixels |
+| `height` | `u32` | — | Height in pixels |
+| `conf` | `f64` | — | Confidence score (0-100) |
+| `text` | `String` | — | Recognized text |
 
 
 ---
@@ -18614,88 +18614,88 @@ Typst document extractor
 
 **Signature:**
 
-```typescript
-static default(): TypstExtractor
+```rust
+pub fn default() -> TypstExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractFile()
+##### extract_file()
 
 **Signature:**
 
-```typescript
-extractFile(path: string, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_file(&self, path: PathBuf, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
 
@@ -18711,9 +18711,9 @@ optional human-readable display text.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `url` | `string` | — | The URL or path string. |
-| `label` | `string | null` | `null` | Optional display text / label for the link. |
-| `page` | `number | null` | `null` | Optional page number where the URI was found (1-indexed). |
+| `url` | `String` | — | The URL or path string. |
+| `label` | `Option<String>` | `None` | Optional display text / label for the link. |
+| `page` | `Option<u32>` | `None` | Optional page number where the URI was found (1-indexed). |
 | `kind` | `UriKind` | — | Semantic classification of the URI. |
 
 #### Methods
@@ -18724,8 +18724,8 @@ Create a new hyperlink URI, auto-classifying `mailto:` as Email and `#` as Ancho
 
 **Signature:**
 
-```typescript
-static hyperlink(url: string, label: string): Uri
+```rust
+pub fn hyperlink(url: String, label: Option<String>) -> Uri
 ```
 
 ##### image()
@@ -18734,8 +18734,8 @@ Create a new image URI.
 
 **Signature:**
 
-```typescript
-static image(url: string, label: string): Uri
+```rust
+pub fn image(url: String, label: Option<String>) -> Uri
 ```
 
 ##### citation()
@@ -18744,8 +18744,8 @@ Create a new citation URI (for DOIs, academic references).
 
 **Signature:**
 
-```typescript
-static citation(url: string, label: string): Uri
+```rust
+pub fn citation(url: String, label: Option<String>) -> Uri
 ```
 
 ##### anchor()
@@ -18754,8 +18754,8 @@ Create a new anchor/cross-reference URI.
 
 **Signature:**
 
-```typescript
-static anchor(url: string, label: string): Uri
+```rust
+pub fn anchor(url: String, label: Option<String>) -> Uri
 ```
 
 ##### email()
@@ -18764,8 +18764,8 @@ Create a new email URI.
 
 **Signature:**
 
-```typescript
-static email(url: string, label: string): Uri
+```rust
+pub fn email(url: String, label: Option<String>) -> Uri
 ```
 
 ##### reference()
@@ -18774,18 +18774,18 @@ Create a new reference URI.
 
 **Signature:**
 
-```typescript
-static reference(url: string, label: string): Uri
+```rust
+pub fn reference(url: String, label: Option<String>) -> Uri
 ```
 
-##### withPage()
+##### with_page()
 
 Set the page number.
 
 **Signature:**
 
-```typescript
-withPage(page: number): Uri
+```rust
+pub fn with_page(&self, page: u32) -> Uri
 ```
 
 
@@ -18804,56 +18804,56 @@ for text extraction, as an alternative to traditional OCR backends.
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
-##### processImage()
+##### process_image()
 
 **Signature:**
 
-```typescript
-processImage(imageBytes: Buffer, config: OcrConfig): ExtractionResult
+```rust
+pub fn process_image(&self, image_bytes: Vec<u8>, config: OcrConfig) -> ExtractionResult
 ```
 
-##### supportsLanguage()
+##### supports_language()
 
 **Signature:**
 
-```typescript
-supportsLanguage(lang: string): boolean
+```rust
+pub fn supports_language(&self, lang: String) -> bool
 ```
 
-##### backendType()
+##### backend_type()
 
 **Signature:**
 
-```typescript
-backendType(): OcrBackendType
+```rust
+pub fn backend_type(&self) -> OcrBackendType
 ```
 
 
@@ -18867,15 +18867,15 @@ Contains Excel-specific document metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `application` | `string | null` | `null` | Application name (e.g., "Microsoft Excel") |
-| `appVersion` | `string | null` | `null` | Application version |
-| `docSecurity` | `number | null` | `null` | Document security level |
-| `scaleCrop` | `boolean | null` | `null` | Scale crop flag |
-| `linksUpToDate` | `boolean | null` | `null` | Links up to date flag |
-| `sharedDoc` | `boolean | null` | `null` | Shared document flag |
-| `hyperlinksChanged` | `boolean | null` | `null` | Hyperlinks changed flag |
-| `company` | `string | null` | `null` | Company name |
-| `worksheetNames` | `Array<string>` | `[]` | Worksheet names |
+| `application` | `Option<String>` | `Default::default()` | Application name (e.g., "Microsoft Excel") |
+| `app_version` | `Option<String>` | `Default::default()` | Application version |
+| `doc_security` | `Option<i32>` | `Default::default()` | Document security level |
+| `scale_crop` | `Option<bool>` | `Default::default()` | Scale crop flag |
+| `links_up_to_date` | `Option<bool>` | `Default::default()` | Links up to date flag |
+| `shared_doc` | `Option<bool>` | `Default::default()` | Shared document flag |
+| `hyperlinks_changed` | `Option<bool>` | `Default::default()` | Hyperlinks changed flag |
+| `company` | `Option<String>` | `Default::default()` | Company name |
+| `worksheet_names` | `Vec<String>` | `vec![]` | Worksheet names |
 
 
 ---
@@ -18889,9 +18889,9 @@ structural statistics about the XML document.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `content` | `string` | — | Extracted text content (XML structure filtered out) |
-| `elementCount` | `number` | — | Total number of XML elements processed |
-| `uniqueElements` | `Array<string>` | — | List of unique element names found (sorted) |
+| `content` | `String` | — | Extracted text content (XML structure filtered out) |
+| `element_count` | `usize` | — | Total number of XML elements processed |
+| `unique_elements` | `Vec<String>` | — | List of unique element names found (sorted) |
 
 
 ---
@@ -18908,96 +18908,96 @@ Extracts text content from XML files, preserving element structure information.
 
 **Signature:**
 
-```typescript
-static default(): XmlExtractor
+```rust
+pub fn default() -> XmlExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
 
@@ -19011,8 +19011,8 @@ Provides statistics about XML document structure.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `elementCount` | `number` | — | Total number of XML elements processed |
-| `uniqueElements` | `Array<string>` | — | List of unique element tag names (sorted) |
+| `element_count` | `usize` | — | Total number of XML elements processed |
+| `unique_elements` | `Vec<String>` | — | List of unique element tag names (sorted) |
 
 
 ---
@@ -19023,7 +19023,7 @@ YAKE-specific parameters.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `windowSize` | `number` | `2` | Window size for co-occurrence analysis (default: 2). Controls the context window for computing co-occurrence statistics. |
+| `window_size` | `usize` | `2` | Window size for co-occurrence analysis (default: 2). Controls the context window for computing co-occurrence statistics. |
 
 #### Methods
 
@@ -19031,8 +19031,8 @@ YAKE-specific parameters.
 
 **Signature:**
 
-```typescript
-static default(): YakeParams
+```rust
+pub fn default() -> YakeParams
 ```
 
 
@@ -19044,9 +19044,9 @@ Year range for bibliographic metadata.
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `min` | `number | null` | `null` | Min |
-| `max` | `number | null` | `null` | Max |
-| `years` | `Array<number>` | — | Years |
+| `min` | `Option<u32>` | `None` | Min |
+| `max` | `Option<u32>` | `None` | Max |
+| `years` | `Vec<u32>` | — | Years |
 
 
 ---
@@ -19057,7 +19057,7 @@ YOLO-family layout detection model (YOLOv10, DocLayout-YOLO, YOLOX).
 
 #### Methods
 
-##### fromFile()
+##### from_file()
 
 Load a YOLO ONNX model from a file.
 
@@ -19066,32 +19066,32 @@ For YOLOX (unstructuredio), use width=768, height=1024.
 
 **Signature:**
 
-```typescript
-static fromFile(path: string, variant: YoloVariant, inputWidth: number, inputHeight: number, modelName: string): YoloModel
+```rust
+pub fn from_file(path: String, variant: YoloVariant, input_width: u32, input_height: u32, model_name: String) -> YoloModel
 ```
 
 ##### detect()
 
 **Signature:**
 
-```typescript
-detect(img: RgbImage): Array<LayoutDetection>
+```rust
+pub fn detect(&self, img: RgbImage) -> Vec<LayoutDetection>
 ```
 
-##### detectWithThreshold()
+##### detect_with_threshold()
 
 **Signature:**
 
-```typescript
-detectWithThreshold(img: RgbImage, threshold: number): Array<LayoutDetection>
+```rust
+pub fn detect_with_threshold(&self, img: RgbImage, threshold: f32) -> Vec<LayoutDetection>
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 
@@ -19116,96 +19116,96 @@ Extracts file lists and text content from ZIP archives.
 
 **Signature:**
 
-```typescript
-static default(): ZipExtractor
+```rust
+pub fn default() -> ZipExtractor
 ```
 
 ##### name()
 
 **Signature:**
 
-```typescript
-name(): string
+```rust
+pub fn name(&self) -> String
 ```
 
 ##### version()
 
 **Signature:**
 
-```typescript
-version(): string
+```rust
+pub fn version(&self) -> String
 ```
 
 ##### initialize()
 
 **Signature:**
 
-```typescript
-initialize(): void
+```rust
+pub fn initialize(&self)
 ```
 
 ##### shutdown()
 
 **Signature:**
 
-```typescript
-shutdown(): void
+```rust
+pub fn shutdown(&self)
 ```
 
 ##### description()
 
 **Signature:**
 
-```typescript
-description(): string
+```rust
+pub fn description(&self) -> String
 ```
 
 ##### author()
 
 **Signature:**
 
-```typescript
-author(): string
+```rust
+pub fn author(&self) -> String
 ```
 
-##### extractBytes()
+##### extract_bytes()
 
 **Signature:**
 
-```typescript
-extractBytes(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
-##### supportedMimeTypes()
+##### supported_mime_types()
 
 **Signature:**
 
-```typescript
-supportedMimeTypes(): Array<string>
+```rust
+pub fn supported_mime_types(&self) -> Vec<String>
 ```
 
 ##### priority()
 
 **Signature:**
 
-```typescript
-priority(): number
+```rust
+pub fn priority(&self) -> i32
 ```
 
-##### asSyncExtractor()
+##### as_sync_extractor()
 
 **Signature:**
 
-```typescript
-asSyncExtractor(): SyncExtractor | null
+```rust
+pub fn as_sync_extractor(&self) -> Option<SyncExtractor>
 ```
 
-##### extractSync()
+##### extract_sync()
 
 **Signature:**
 
-```typescript
-extractSync(content: Buffer, mimeType: string, config: ExtractionConfig): InternalDocument
+```rust
+pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> InternalDocument
 ```
 
 
