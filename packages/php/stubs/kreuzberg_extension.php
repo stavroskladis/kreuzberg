@@ -66,45 +66,6 @@ class CustomProperties
 }
 
 /**
- * Trait for extractors that can work synchronously (WASM-compatible).
- *
- * This trait defines the synchronous extraction interface for WASM targets and other
- * environments where async/tokio runtimes are not available or desirable.
- *
- * # Implementation
- *
- * Extractors that need to support WASM should implement this trait in addition to
- * the async `DocumentExtractor` trait. This allows the same extractor to work in both
- * environments by delegating to the sync implementation.
- *
- * # MIME Type Validation
- *
- * The `mime_type` parameter is guaranteed to be already validated.
- *
- * # Example
- *
- * ```rust,ignore
- * impl SyncExtractor for PlainTextExtractor {
- *     fn extract_sync(&self, content: &[u8], config: &ExtractionConfig) -> Result<ExtractionResult> {
- *         let text = String::from_utf8_lossy(content).to_string();
- *         Ok(ExtractionResult {
- *             content: text,
- *             mime_type: "text/plain".to_string(),
- *             metadata: Metadata::default(),
- *             tables: vec![],
- *             detected_languages: None,
- *             chunks: None,
- *             images: None,
- *         })
- *     }
- * }
- * ```
- */
-class SyncExtractor
-{
-}
-
-/**
  * Source code extractor using tree-sitter language pack.
  *
  * Detects the programming language from the file extension or shebang line,
@@ -568,67 +529,6 @@ class ModelCache
 }
 
 /**
- * Trait for OCR backend plugins.
- *
- * Implement this trait to add custom OCR capabilities. OCR backends can be:
- * - Native Rust implementations (like Tesseract)
- * - FFI bridges to Python libraries (like EasyOCR, PaddleOCR)
- * - Cloud-based OCR services (Google Vision, AWS Textract, etc.)
- *
- * # Thread Safety
- *
- * OCR backends must be thread-safe (`Send + Sync`) to support concurrent processing.
- *
- * # Example
- *
- * ```rust
- * use kreuzberg::plugins::{Plugin, OcrBackend, OcrBackendType};
- * use kreuzberg::{Result, OcrConfig};
- * use async_trait::async_trait;
- * use std::borrow::Cow;
- * use std::path::Path;
- * use kreuzberg::types::{ExtractionResult, Metadata};
- *
- * struct CustomOcrBackend;
- *
- * impl Plugin for CustomOcrBackend {
- *     fn name(&self) -> &str { "custom-ocr" }
- *     fn version(&self) -> String { "1.0.0".to_string() }
- *     fn initialize(&self) -> Result<()> { Ok(()) }
- *     fn shutdown(&self) -> Result<()> { Ok(()) }
- * }
- *
- * #[async_trait]
- * impl OcrBackend for CustomOcrBackend {
- *     async fn process_image(&self, image_bytes: &[u8], config: &OcrConfig) -> Result<ExtractionResult> {
- *         // Implement OCR logic here
- *         Ok(ExtractionResult {
- *             content: "Extracted text".to_string(),
- *             mime_type: Cow::Borrowed("text/plain"),
- *             ..Default::default()
- *         })
- *     }
- *
- *     async fn process_image_file(&self, path: &Path, config: &OcrConfig) -> Result<ExtractionResult> {
- *         let bytes = std::fs::read(path)?;
- *         self.process_image(&bytes, config).await
- *     }
- *
- *     fn supports_language(&self, lang: &str) -> bool {
- *         matches!(lang, "eng" | "deu" | "fra")
- *     }
- *
- *     fn backend_type(&self) -> OcrBackendType {
- *         OcrBackendType::Custom
- *     }
- * }
- * ```
- */
-class OcrBackend
-{
-}
-
-/**
  * Registry for document extractor plugins.
  *
  * Manages extractors with MIME type and priority-based selection.
@@ -707,87 +607,6 @@ class ValidatorRegistry
 {
 }
 
-/**
- * Trait for document renderers that convert [`InternalDocument`] to output strings.
- *
- * Renderers are stateless converters that transform the internal document
- * representation into a specific output format (Markdown, HTML, Djot, plain text, etc.).
- *
- * # Thread Safety
- *
- * Renderers must be `Send + Sync` to support concurrent rendering across threads.
- *
- * # Example
- *
- * ```rust
- * use kreuzberg::plugins::Renderer;
- * use kreuzberg::types::internal::InternalDocument;
- * use kreuzberg::Result;
- *
- * struct CustomRenderer;
- *
- * impl Renderer for CustomRenderer {
- *     fn name(&self) -> &str { "custom" }
- *
- *     fn render(&self, doc: &InternalDocument) -> Result<String> {
- *         // Custom rendering logic
- *         Ok(format!("Custom output with {} elements", doc.elements.len()))
- *     }
- * }
- * ```
- */
-class Renderer
-{
-}
-
-/**
- * Base trait that all plugins must implement.
- *
- * This trait provides common functionality for plugin lifecycle management,
- * identification, and metadata.
- *
- * # Thread Safety
- *
- * All plugins must be `Send + Sync` to support concurrent usage across threads.
- *
- * # Example
- *
- * ```rust
- * use kreuzberg::plugins::Plugin;
- * use kreuzberg::Result;
- * use std::sync::atomic::{AtomicBool, Ordering};
- *
- * struct MyPlugin {
- *     initialized: AtomicBool,
- * }
- *
- * impl Plugin for MyPlugin {
- *     fn name(&self) -> &str {
- *         "my-plugin"
- *     }
- *
- *     fn version(&self) -> String {
- *         "1.0.0".to_string()
- *     }
- *
- *     fn initialize(&self) -> Result<()> {
- *         self.initialized.store(true, Ordering::Release);
- *         println!("Plugin initialized!");
- *         Ok(())
- *     }
- *
- *     fn shutdown(&self) -> Result<()> {
- *         self.initialized.store(false, Ordering::Release);
- *         println!("Plugin shutdown!");
- *         Ok(())
- *     }
- * }
- * ```
- */
-class Plugin
-{
-}
-
 class TokenReducer
 {
 }
@@ -833,16 +652,6 @@ class NodeId
  * from element type, content, and page number.
  */
 class ElementId
-{
-}
-
-/**
- * Trait for types that can be pooled and reused.
- *
- * Implementing this trait allows a type to be used with `Pool<T>`.
- * The `reset()` method should clear the object's state for reuse.
- */
-class Recyclable
 {
 }
 
@@ -1048,13 +857,6 @@ class TessdataManager
  * Uses Arc for shared ownership and is thread-safe (Send + Sync).
  */
 class TesseractBackend
-{
-}
-
-/**
- * Common interface for all layout detection model backends.
- */
-class LayoutModel
 {
 }
 

@@ -6258,31 +6258,6 @@ impl PptxExtractionOptions {
 }
 
 #[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::SyncExtractor")]
-pub struct SyncExtractor {
-    inner: Arc<kreuzberg::extractors::SyncExtractor>,
-}
-
-unsafe impl IntoValueFromNative for SyncExtractor {}
-
-impl magnus::TryConvert for SyncExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &SyncExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for SyncExtractor {}
-
-impl SyncExtractor {
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-}
-
-#[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::CodeExtractor")]
 pub struct CodeExtractor {
     inner: Arc<kreuzberg::extractors::CodeExtractor>,
@@ -9755,82 +9730,6 @@ impl PanicContext {
 }
 
 #[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::OcrBackend")]
-pub struct OcrBackend {
-    inner: Arc<kreuzberg::plugins::OcrBackend>,
-}
-
-unsafe impl IntoValueFromNative for OcrBackend {}
-
-impl magnus::TryConvert for OcrBackend {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &OcrBackend = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for OcrBackend {}
-
-impl OcrBackend {
-    fn process_image_async(&self, image_bytes: Vec<u8>, config: OcrConfig) -> Result<ExtractionResult, Error> {
-        let inner = self.inner.clone();
-        let rt = tokio::runtime::Runtime::new()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        let result = rt
-            .block_on(async { inner.process_image(&image_bytes, config.into()).await })
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn process_image_file_async(&self, path: String, config: OcrConfig) -> Result<ExtractionResult, Error> {
-        let inner = self.inner.clone();
-        let rt = tokio::runtime::Runtime::new()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        let result = rt
-            .block_on(async {
-                inner
-                    .process_image_file(std::path::Path::new(&path), config.into())
-                    .await
-            })
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn supports_language(&self, lang: String) -> bool {
-        self.inner.supports_language(&lang)
-    }
-
-    fn backend_type(&self) -> OcrBackendType {
-        self.inner.backend_type().into()
-    }
-
-    fn supported_languages(&self) -> Vec<String> {
-        self.inner.supported_languages()
-    }
-
-    fn supports_table_detection(&self) -> bool {
-        self.inner.supports_table_detection()
-    }
-
-    fn supports_document_processing(&self) -> bool {
-        self.inner.supports_document_processing()
-    }
-
-    fn process_document_async(&self, _path: String, _config: OcrConfig) -> Result<ExtractionResult, Error> {
-        let inner = self.inner.clone();
-        let rt = tokio::runtime::Runtime::new()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        let result = rt
-            .block_on(async {
-                inner
-                    .process_document(std::path::Path::new(&_path), _config.into())
-                    .await
-            })
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-}
-
-#[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::DocumentExtractorRegistry")]
 pub struct DocumentExtractorRegistry {
     inner: Arc<kreuzberg::plugins::DocumentExtractorRegistry>,
@@ -10098,83 +9997,6 @@ impl ValidatorRegistry {
             .shutdown_all()
             .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
         Ok(())
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::Renderer")]
-pub struct Renderer {
-    inner: Arc<kreuzberg::plugins::Renderer>,
-}
-
-unsafe impl IntoValueFromNative for Renderer {}
-
-impl magnus::TryConvert for Renderer {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Renderer = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Renderer {}
-
-impl Renderer {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn render(&self, doc: String) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: render",
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::Plugin")]
-pub struct Plugin {
-    inner: Arc<kreuzberg::plugins::Plugin>,
-}
-
-unsafe impl IntoValueFromNative for Plugin {}
-
-impl magnus::TryConvert for Plugin {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Plugin = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Plugin {}
-
-impl Plugin {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
     }
 }
 
@@ -15710,28 +15532,6 @@ impl PoolMetricsSnapshot {
 }
 
 #[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::Recyclable")]
-pub struct Recyclable {
-    inner: Arc<kreuzberg::utils::Recyclable>,
-}
-
-unsafe impl IntoValueFromNative for Recyclable {}
-
-impl magnus::TryConvert for Recyclable {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Recyclable = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Recyclable {}
-
-impl Recyclable {
-    fn reset(&self) -> () {
-        self.inner.reset()
-    }
-}
-
-#[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::StringBufferPool")]
 pub struct StringBufferPool {
     inner: Arc<kreuzberg::utils::StringBufferPool>,
@@ -19390,49 +19190,6 @@ impl OrientationResult {
 
     fn confidence(&self) -> f32 {
         self.confidence
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::LayoutModel")]
-pub struct LayoutModel {
-    inner: Arc<kreuzberg::layout::LayoutModel>,
-}
-
-unsafe impl IntoValueFromNative for LayoutModel {}
-
-impl magnus::TryConvert for LayoutModel {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &LayoutModel = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for LayoutModel {}
-
-impl LayoutModel {
-    fn detect(&self, img: String) -> Result<Vec<LayoutDetection>, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: detect",
-        ))
-    }
-
-    fn detect_with_threshold(&self, img: String, threshold: f32) -> Result<Vec<LayoutDetection>, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: detect_with_threshold",
-        ))
-    }
-
-    fn detect_batch(&self, images: Vec<String>, threshold: Option<f32>) -> Result<Vec<Vec<LayoutDetection>>, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: detect_batch",
-        ))
-    }
-
-    fn name(&self) -> String {
-        self.inner.name().into()
     }
 }
 
@@ -31968,7 +31725,9 @@ impl From<NodeContent> for kreuzberg::NodeContent {
             NodeContent::Citation { key, text } => Self::Citation { key, text },
             NodeContent::Admonition { kind, title } => Self::Admonition { kind, title },
             NodeContent::RawBlock { format, content } => Self::RawBlock { format, content },
-            NodeContent::MetadataBlock { entries } => Self::MetadataBlock { entries },
+            NodeContent::MetadataBlock { entries } => Self::MetadataBlock {
+                entries: serde_json::from_str(&entries).unwrap_or_default(),
+            },
         }
     }
 }
@@ -32154,7 +31913,7 @@ impl From<FormatMetadata> for kreuzberg::FormatMetadata {
             FormatMetadata::Jats { _0 } => Self::Jats(_0.into()),
             FormatMetadata::Epub { _0 } => Self::Epub(_0.into()),
             FormatMetadata::Pst { _0 } => Self::Pst(_0.into()),
-            FormatMetadata::Code { _0 } => Self::Code(_0),
+            FormatMetadata::Code { _0 } => Self::Code(serde_json::from_str(&_0).unwrap_or_default()),
         }
     }
 }
@@ -32290,7 +32049,9 @@ impl From<OcrBoundingGeometry> for kreuzberg::OcrBoundingGeometry {
                 width,
                 height,
             },
-            OcrBoundingGeometry::Quadrilateral { points } => Self::Quadrilateral { points },
+            OcrBoundingGeometry::Quadrilateral { points } => Self::Quadrilateral {
+                points: serde_json::from_str(&points).unwrap_or_default(),
+            },
         }
     }
 }
@@ -33464,9 +33225,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         method!(PptxExtractionOptions::inject_placeholders, 0),
     )?;
 
-    let class = module.define_class("SyncExtractor", ruby.class_object())?;
-    class.define_method("extract_sync", method!(SyncExtractor::extract_sync, 3))?;
-
     let class = module.define_class("CodeExtractor", ruby.class_object())?;
     class.define_method("name", method!(CodeExtractor::name, 0))?;
     class.define_method("version", method!(CodeExtractor::version, 0))?;
@@ -34068,25 +33826,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("timestamp", method!(PanicContext::timestamp, 0))?;
     class.define_method("format", method!(PanicContext::format, 0))?;
 
-    let class = module.define_class("OcrBackend", ruby.class_object())?;
-    class.define_method("process_image_async", method!(OcrBackend::process_image_async, 2))?;
-    class.define_method(
-        "process_image_file_async",
-        method!(OcrBackend::process_image_file_async, 2),
-    )?;
-    class.define_method("supports_language", method!(OcrBackend::supports_language, 1))?;
-    class.define_method("backend_type", method!(OcrBackend::backend_type, 0))?;
-    class.define_method("supported_languages", method!(OcrBackend::supported_languages, 0))?;
-    class.define_method(
-        "supports_table_detection",
-        method!(OcrBackend::supports_table_detection, 0),
-    )?;
-    class.define_method(
-        "supports_document_processing",
-        method!(OcrBackend::supports_document_processing, 0),
-    )?;
-    class.define_method("process_document_async", method!(OcrBackend::process_document_async, 2))?;
-
     let class = module.define_class("DocumentExtractorRegistry", ruby.class_object())?;
     class.define_method("register", method!(DocumentExtractorRegistry::register, 1))?;
     class.define_method("get", method!(DocumentExtractorRegistry::get, 1))?;
@@ -34124,18 +33863,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("list", method!(ValidatorRegistry::list, 0))?;
     class.define_method("remove", method!(ValidatorRegistry::remove, 1))?;
     class.define_method("shutdown_all", method!(ValidatorRegistry::shutdown_all, 0))?;
-
-    let class = module.define_class("Renderer", ruby.class_object())?;
-    class.define_method("name", method!(Renderer::name, 0))?;
-    class.define_method("render", method!(Renderer::render, 1))?;
-
-    let class = module.define_class("Plugin", ruby.class_object())?;
-    class.define_method("name", method!(Plugin::name, 0))?;
-    class.define_method("version", method!(Plugin::version, 0))?;
-    class.define_method("initialize", method!(Plugin::initialize, 0))?;
-    class.define_method("shutdown", method!(Plugin::shutdown, 0))?;
-    class.define_method("description", method!(Plugin::description, 0))?;
-    class.define_method("author", method!(Plugin::author, 0))?;
 
     let class = module.define_class("ExtractionMetrics", ruby.class_object())?;
     class.define_singleton_method("new", function!(ExtractionMetrics::new, 11))?;
@@ -34951,9 +34678,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("peak_items_stored", method!(PoolMetricsSnapshot::peak_items_stored, 0))?;
     class.define_method("total_creations", method!(PoolMetricsSnapshot::total_creations, 0))?;
 
-    let class = module.define_class("Recyclable", ruby.class_object())?;
-    class.define_method("reset", method!(Recyclable::reset, 0))?;
-
     let class = module.define_class("StringBufferPool", ruby.class_object())?;
 
     let class = module.define_class("ByteBufferPool", ruby.class_object())?;
@@ -35517,12 +35241,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_singleton_method("new", function!(OrientationResult::new, 2))?;
     class.define_method("degrees", method!(OrientationResult::degrees, 0))?;
     class.define_method("confidence", method!(OrientationResult::confidence, 0))?;
-
-    let class = module.define_class("LayoutModel", ruby.class_object())?;
-    class.define_method("detect", method!(LayoutModel::detect, 1))?;
-    class.define_method("detect_with_threshold", method!(LayoutModel::detect_with_threshold, 2))?;
-    class.define_method("detect_batch", method!(LayoutModel::detect_batch, 2))?;
-    class.define_method("name", method!(LayoutModel::name, 0))?;
 
     let class = module.define_class("BBox", ruby.class_object())?;
     class.define_singleton_method("new", function!(BBox::new, 4))?;

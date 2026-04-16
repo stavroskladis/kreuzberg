@@ -642,10 +642,6 @@ defmodule Kreuzberg.Native do
   def sectionproperties_page_height_points(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def stylecatalog_resolve_style(_obj, _style_id), do: :erlang.nif_error(:nif_not_loaded)
   def pptxextractionoptions_default, do: :erlang.nif_error(:nif_not_loaded)
-
-  def syncextractor_extract_sync(_obj, _content, _mime_type, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def codeextractor_default, do: :erlang.nif_error(:nif_not_loaded)
   def codeextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def codeextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
@@ -1268,22 +1264,6 @@ defmodule Kreuzberg.Native do
   def modelcache_put(_obj, _model), do: :erlang.nif_error(:nif_not_loaded)
   def modelcache_take(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def paniccontext_format(_obj), do: :erlang.nif_error(:nif_not_loaded)
-
-  def ocrbackend_process_image_async(_obj, _image_bytes, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def ocrbackend_process_image_file_async(_obj, _path, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def ocrbackend_supports_language(_obj, _lang), do: :erlang.nif_error(:nif_not_loaded)
-  def ocrbackend_backend_type(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def ocrbackend_supported_languages(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def ocrbackend_supports_table_detection(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def ocrbackend_supports_document_processing(_obj), do: :erlang.nif_error(:nif_not_loaded)
-
-  def ocrbackend_process_document_async(_obj, _path, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def documentextractorregistry_register(_obj, _extractor), do: :erlang.nif_error(:nif_not_loaded)
   def documentextractorregistry_get(_obj, _mime_type), do: :erlang.nif_error(:nif_not_loaded)
   def documentextractorregistry_list(_obj), do: :erlang.nif_error(:nif_not_loaded)
@@ -1322,14 +1302,6 @@ defmodule Kreuzberg.Native do
   def validatorregistry_remove(_obj, _name), do: :erlang.nif_error(:nif_not_loaded)
   def validatorregistry_shutdown_all(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def validatorregistry_default, do: :erlang.nif_error(:nif_not_loaded)
-  def renderer_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def renderer_render(_obj, _doc), do: :erlang.nif_error(:nif_not_loaded)
-  def plugin_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def plugin_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def plugin_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def plugin_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def plugin_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def plugin_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def tokenreducer_new(_config, _language_hint), do: :erlang.nif_error(:nif_not_loaded)
   def tokenreducer_language(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def tokenreducer_reduce(_obj, _text), do: :erlang.nif_error(:nif_not_loaded)
@@ -1390,7 +1362,6 @@ defmodule Kreuzberg.Native do
   def poolmetrics_snapshot(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def poolmetrics_reset(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def poolmetrics_default, do: :erlang.nif_error(:nif_not_loaded)
-  def recyclable_reset(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def pool_acquire(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def pool_size(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def pool_clear(_obj), do: :erlang.nif_error(:nif_not_loaded)
@@ -1577,13 +1548,6 @@ defmodule Kreuzberg.Native do
   def paddleocrconfig_with_model_tier(_obj, _tier), do: :erlang.nif_error(:nif_not_loaded)
   def paddleocrconfig_resolve_cache_dir(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def paddleocrconfig_default, do: :erlang.nif_error(:nif_not_loaded)
-  def layoutmodel_detect(_obj, _img), do: :erlang.nif_error(:nif_not_loaded)
-
-  def layoutmodel_detect_with_threshold(_obj, _img, _threshold),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def layoutmodel_detect_batch(_obj, _images, _threshold), do: :erlang.nif_error(:nif_not_loaded)
-  def layoutmodel_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def bbox_width(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def bbox_height(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def bbox_area(_obj), do: :erlang.nif_error(:nif_not_loaded)

@@ -7258,26 +7258,6 @@ impl JsPptxExtractionOptions {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct JsSyncExtractor {
-    inner: Arc<kreuzberg::extractors::SyncExtractor>,
-}
-
-#[wasm_bindgen]
-impl JsSyncExtractor {
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen(js_name = "extractSync")]
-    pub fn extract_sync(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: JsExtractionConfig,
-    ) -> Result<String, JsValue> {
-        Err(JsValue::from_str("Not implemented: extract_sync"))
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
 pub struct JsCodeExtractor {
     inner: Arc<kreuzberg::extractors::CodeExtractor>,
 }
@@ -11134,77 +11114,6 @@ impl JsPanicContext {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct JsOcrBackend {
-    inner: Arc<kreuzberg::plugins::OcrBackend>,
-}
-
-#[wasm_bindgen]
-impl JsOcrBackend {
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen(js_name = "processImage")]
-    pub async fn process_image(
-        &self,
-        image_bytes: Vec<u8>,
-        config: JsOcrConfig,
-    ) -> Result<JsExtractionResult, JsValue> {
-        let result = self
-            .inner
-            .process_image(&image_bytes, config.into())
-            .await
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(result.into())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen(js_name = "processImageFile")]
-    pub async fn process_image_file(&self, path: String, config: JsOcrConfig) -> Result<JsExtractionResult, JsValue> {
-        let result = self
-            .inner
-            .process_image_file(std::path::Path::new(&path), config.into())
-            .await
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(result.into())
-    }
-
-    #[wasm_bindgen(js_name = "supportsLanguage")]
-    pub fn supports_language(&self, lang: String) -> bool {
-        self.inner.supports_language(&lang)
-    }
-
-    #[wasm_bindgen(js_name = "backendType")]
-    pub fn backend_type(&self) -> JsOcrBackendType {
-        self.inner.backend_type().into()
-    }
-
-    #[wasm_bindgen(js_name = "supportedLanguages")]
-    pub fn supported_languages(&self) -> Vec<String> {
-        self.inner.supported_languages()
-    }
-
-    #[wasm_bindgen(js_name = "supportsTableDetection")]
-    pub fn supports_table_detection(&self) -> bool {
-        self.inner.supports_table_detection()
-    }
-
-    #[wasm_bindgen(js_name = "supportsDocumentProcessing")]
-    pub fn supports_document_processing(&self) -> bool {
-        self.inner.supports_document_processing()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen(js_name = "processDocument")]
-    pub async fn process_document(&self, _path: String, _config: JsOcrConfig) -> Result<JsExtractionResult, JsValue> {
-        let result = self
-            .inner
-            .process_document(std::path::Path::new(&_path), _config.into())
-            .await
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(result.into())
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
 pub struct JsDocumentExtractorRegistry {
     inner: Arc<kreuzberg::plugins::DocumentExtractorRegistry>,
 }
@@ -11507,69 +11416,6 @@ impl JsValidatorRegistry {
         Self {
             inner: Arc::new(kreuzberg::ValidatorRegistry::default()),
         }
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct JsRenderer {
-    inner: Arc<kreuzberg::plugins::Renderer>,
-}
-
-#[wasm_bindgen]
-impl JsRenderer {
-    #[wasm_bindgen]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen]
-    pub fn render(&self, doc: String) -> Result<String, JsValue> {
-        Err(JsValue::from_str("Not implemented: render"))
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct JsPlugin {
-    inner: Arc<kreuzberg::plugins::Plugin>,
-}
-
-#[wasm_bindgen]
-impl JsPlugin {
-    #[wasm_bindgen]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[wasm_bindgen]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen]
-    pub fn initialize(&self) -> Result<(), JsValue> {
-        self.inner.initialize().map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen]
-    pub fn shutdown(&self) -> Result<(), JsValue> {
-        self.inner.shutdown().map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
-    }
-
-    #[wasm_bindgen]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[wasm_bindgen]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
     }
 }
 
@@ -18846,20 +18692,6 @@ impl JsPoolMetricsSnapshot {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct JsRecyclable {
-    inner: Arc<kreuzberg::utils::Recyclable>,
-}
-
-#[wasm_bindgen]
-impl JsRecyclable {
-    #[wasm_bindgen]
-    pub fn reset(&self) -> () {
-        self.inner.reset()
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
 pub struct JsStringBufferPool {
     inner: Arc<kreuzberg::utils::StringBufferPool>,
 }
@@ -23049,38 +22881,6 @@ impl JsOrientationResult {
     #[wasm_bindgen(setter)]
     pub fn set_confidence(&mut self, value: f32) {
         self.confidence = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct JsLayoutModel {
-    inner: Arc<kreuzberg::layout::LayoutModel>,
-}
-
-#[wasm_bindgen]
-impl JsLayoutModel {
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen]
-    pub fn detect(&self, img: String) -> Result<Vec<JsLayoutDetection>, JsValue> {
-        Err(JsValue::from_str("Not implemented: detect"))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen(js_name = "detectWithThreshold")]
-    pub fn detect_with_threshold(&self, img: String, threshold: f32) -> Result<Vec<JsLayoutDetection>, JsValue> {
-        Err(JsValue::from_str("Not implemented: detect_with_threshold"))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen(js_name = "detectBatch")]
-    pub fn detect_batch(&self, images: Vec<String>, threshold: Option<f32>) -> Result<JsValue, JsValue> {
-        Err(JsValue::from_str("Not implemented: detect_batch"))
-    }
-
-    #[wasm_bindgen]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
     }
 }
 

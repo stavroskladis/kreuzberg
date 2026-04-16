@@ -1717,16 +1717,6 @@ impl PptxExtractionOptions {
 }
 
 #[derive(Clone)]
-pub struct SyncExtractor {
-    inner: Arc<kreuzberg::extractors::SyncExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for SyncExtractor {}
-
-impl rustler::Resource for SyncExtractor {}
-
-#[derive(Clone)]
 pub struct CodeExtractor {
     inner: Arc<kreuzberg::extractors::CodeExtractor>,
 }
@@ -2271,16 +2261,6 @@ pub struct PanicContext {
 }
 
 #[derive(Clone)]
-pub struct OcrBackend {
-    inner: Arc<kreuzberg::plugins::OcrBackend>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for OcrBackend {}
-
-impl rustler::Resource for OcrBackend {}
-
-#[derive(Clone)]
 pub struct DocumentExtractorRegistry {
     inner: Arc<kreuzberg::plugins::DocumentExtractorRegistry>,
 }
@@ -2329,26 +2309,6 @@ pub struct ValidatorRegistry {
 impl std::panic::RefUnwindSafe for ValidatorRegistry {}
 
 impl rustler::Resource for ValidatorRegistry {}
-
-#[derive(Clone)]
-pub struct Renderer {
-    inner: Arc<kreuzberg::plugins::Renderer>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for Renderer {}
-
-impl rustler::Resource for Renderer {}
-
-#[derive(Clone)]
-pub struct Plugin {
-    inner: Arc<kreuzberg::plugins::Plugin>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for Plugin {}
-
-impl rustler::Resource for Plugin {}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ExtractionMetrics"]
@@ -3614,16 +3574,6 @@ pub struct PoolMetricsSnapshot {
 }
 
 #[derive(Clone)]
-pub struct Recyclable {
-    inner: Arc<kreuzberg::utils::Recyclable>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for Recyclable {}
-
-impl rustler::Resource for Recyclable {}
-
-#[derive(Clone)]
 pub struct StringBufferPool {
     inner: Arc<kreuzberg::utils::StringBufferPool>,
 }
@@ -4434,16 +4384,6 @@ pub struct OrientationResult {
     pub degrees: u32,
     pub confidence: f32,
 }
-
-#[derive(Clone)]
-pub struct LayoutModel {
-    inner: Arc<kreuzberg::layout::LayoutModel>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for LayoutModel {}
-
-impl rustler::Resource for LayoutModel {}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.BBox"]
@@ -8905,16 +8845,6 @@ pub fn pptxextractionoptions_default() -> PptxExtractionOptions {
 }
 
 #[rustler::nif]
-pub fn syncextractor_extract_sync(
-    resource: ResourceArc<SyncExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: syncextractor_extract_sync"))
-}
-
-#[rustler::nif]
 pub fn codeextractor_default() -> ResourceArc<CodeExtractor> {
     ResourceArc::new(CodeExtractor {
         inner: Arc::new(kreuzberg::CodeExtractor::default()),
@@ -11828,91 +11758,6 @@ pub fn paniccontext_format(obj: PanicContext) -> String {
     kreuzberg::PanicContext::from(obj).format().into()
 }
 
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn ocrbackend_process_image_async(
-    resource: ResourceArc<OcrBackend>,
-    image_bytes: Vec<u8>,
-    config: OcrConfig,
-) -> Result<ExtractionResult, String> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            resource
-                .inner
-                .as_ref()
-                .clone()
-                .process_image(&image_bytes, config.into())
-                .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn ocrbackend_process_image_file_async(
-    resource: ResourceArc<OcrBackend>,
-    path: String,
-    config: OcrConfig,
-) -> Result<ExtractionResult, String> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            resource
-                .inner
-                .as_ref()
-                .clone()
-                .process_image_file(std::path::PathBuf::from(path), config.into())
-                .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn ocrbackend_supports_language(resource: ResourceArc<OcrBackend>, lang: String) -> bool {
-    resource.inner.as_ref().clone().supports_language(&lang)
-}
-
-#[rustler::nif]
-pub fn ocrbackend_backend_type(resource: ResourceArc<OcrBackend>) -> OcrBackendType {
-    resource.inner.as_ref().clone().backend_type().into()
-}
-
-#[rustler::nif]
-pub fn ocrbackend_supported_languages(resource: ResourceArc<OcrBackend>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_languages()
-}
-
-#[rustler::nif]
-pub fn ocrbackend_supports_table_detection(resource: ResourceArc<OcrBackend>) -> bool {
-    resource.inner.as_ref().clone().supports_table_detection()
-}
-
-#[rustler::nif]
-pub fn ocrbackend_supports_document_processing(resource: ResourceArc<OcrBackend>) -> bool {
-    resource.inner.as_ref().clone().supports_document_processing()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn ocrbackend_process_document_async(
-    resource: ResourceArc<OcrBackend>,
-    _path: String,
-    _config: OcrConfig,
-) -> Result<ExtractionResult, String> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            resource
-                .inner
-                .as_ref()
-                .clone()
-                .process_document(std::path::PathBuf::from(_path), _config.into())
-                .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
 #[rustler::nif]
 pub fn documentextractorregistry_register(
     resource: ResourceArc<DocumentExtractorRegistry>,
@@ -12218,53 +12063,6 @@ pub fn validatorregistry_default() -> ResourceArc<ValidatorRegistry> {
     ResourceArc::new(ValidatorRegistry {
         inner: Arc::new(kreuzberg::ValidatorRegistry::default()),
     })
-}
-
-#[rustler::nif]
-pub fn renderer_name(resource: ResourceArc<Renderer>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn renderer_render(resource: ResourceArc<Renderer>, doc: String) -> Result<String, String> {
-    Err(String::from("Not implemented: renderer_render"))
-}
-
-#[rustler::nif]
-pub fn plugin_name(resource: ResourceArc<Plugin>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn plugin_version(resource: ResourceArc<Plugin>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn plugin_initialize(resource: ResourceArc<Plugin>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn plugin_shutdown(resource: ResourceArc<Plugin>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn plugin_description(resource: ResourceArc<Plugin>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn plugin_author(resource: ResourceArc<Plugin>) -> String {
-    resource.inner.as_ref().clone().author().into()
 }
 
 #[rustler::nif]
@@ -12575,11 +12373,6 @@ pub fn poolmetrics_reset(obj: PoolMetrics) -> () {
 #[rustler::nif]
 pub fn poolmetrics_default() -> PoolMetrics {
     kreuzberg::PoolMetrics::default().into()
-}
-
-#[rustler::nif]
-pub fn recyclable_reset(resource: ResourceArc<Recyclable>) -> () {
-    resource.inner.as_ref().clone().reset()
 }
 
 #[rustler::nif]
@@ -13479,34 +13272,6 @@ pub fn paddleocrconfig_resolve_cache_dir(obj: PaddleOcrConfig) -> String {
 #[rustler::nif]
 pub fn paddleocrconfig_default() -> PaddleOcrConfig {
     kreuzberg::PaddleOcrConfig::default().into()
-}
-
-#[rustler::nif]
-pub fn layoutmodel_detect(resource: ResourceArc<LayoutModel>, img: String) -> Result<Vec<LayoutDetection>, String> {
-    Err(String::from("Not implemented: layoutmodel_detect"))
-}
-
-#[rustler::nif]
-pub fn layoutmodel_detect_with_threshold(
-    resource: ResourceArc<LayoutModel>,
-    img: String,
-    threshold: f32,
-) -> Result<Vec<LayoutDetection>, String> {
-    Err(String::from("Not implemented: layoutmodel_detect_with_threshold"))
-}
-
-#[rustler::nif]
-pub fn layoutmodel_detect_batch(
-    resource: ResourceArc<LayoutModel>,
-    images: Vec<String>,
-    threshold: f32,
-) -> Result<Vec<Vec<LayoutDetection>>, String> {
-    Err(String::from("Not implemented: layoutmodel_detect_batch"))
-}
-
-#[rustler::nif]
-pub fn layoutmodel_name(resource: ResourceArc<LayoutModel>) -> String {
-    resource.inner.as_ref().clone().name().into()
 }
 
 #[rustler::nif]

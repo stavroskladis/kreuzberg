@@ -2503,11 +2503,6 @@ final class NativeLib {
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KREUZBERG_SYNC_EXTRACTOR_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_sync_extractor_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
     static final MethodHandle KREUZBERG_CODE_EXTRACTOR_FREE = LINKER.downcallHandle(
         LIB.find("kreuzberg_code_extractor_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
@@ -2748,11 +2743,6 @@ final class NativeLib {
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KREUZBERG_OCR_BACKEND_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_ocr_backend_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
     static final MethodHandle KREUZBERG_DOCUMENT_EXTRACTOR_REGISTRY_FREE = LINKER.downcallHandle(
         LIB.find("kreuzberg_document_extractor_registry_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
@@ -2778,16 +2768,6 @@ final class NativeLib {
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KREUZBERG_RENDERER_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_renderer_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_PLUGIN_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_plugin_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
     static final MethodHandle KREUZBERG_TOKEN_REDUCER_FREE = LINKER.downcallHandle(
         LIB.find("kreuzberg_token_reducer_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
@@ -2800,11 +2780,6 @@ final class NativeLib {
 
     static final MethodHandle KREUZBERG_NODE_ID_FREE = LINKER.downcallHandle(
         LIB.find("kreuzberg_node_id_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_RECYCLABLE_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_recyclable_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 
@@ -2890,11 +2865,6 @@ final class NativeLib {
 
     static final MethodHandle KREUZBERG_TESSERACT_BACKEND_FREE = LINKER.downcallHandle(
         LIB.find("kreuzberg_tesseract_backend_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_LAYOUT_MODEL_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_layout_model_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 

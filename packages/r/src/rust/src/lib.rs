@@ -5007,19 +5007,6 @@ pub fn new_pptxextractionoptions(
 }
 
 
-#[derive(Clone, serde::Serialize)]
-pub struct SyncExtractor {
-}
-
-impl SyncExtractor {
-    #[allow(clippy::missing_errors_doc)]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
-        let config_core = config.into();
-    let _ = (content, mime_type, config);
-        Err("Not implemented: SyncExtractor.extract_sync".to_string())
-    }
-}
-
 #[derive(Clone, Default, serde::Serialize)]
 pub struct CodeExtractor {
 }
@@ -8593,63 +8580,6 @@ impl PanicContext {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
-pub struct OcrBackend {
-}
-
-impl OcrBackend {
-    #[allow(clippy::missing_errors_doc)]
-    pub fn process_image(&self, image_bytes: Vec<u8>, config: OcrConfig) -> Result<ExtractionResult> {
-        let config_core = config.into();
-    let _ = (image_bytes, config);
-        Err("Not implemented: OcrBackend.process_image".to_string())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    pub fn process_image_file(&self, path: String, config: OcrConfig) -> Result<ExtractionResult> {
-        let config_core = config.into();
-    let _ = (path, config);
-        Err("Not implemented: OcrBackend.process_image_file".to_string())
-    }
-
-    pub fn supports_language(&self, lang: String) -> bool {
-        let core_self = kreuzberg::plugins::OcrBackend {
-        };
-        core_self.supports_language(&lang)
-    }
-
-    pub fn backend_type(&self) -> OcrBackendType {
-        let core_self = kreuzberg::plugins::OcrBackend {
-        };
-        core_self.backend_type().into()
-    }
-
-    pub fn supported_languages(&self) -> Vec<String> {
-        let core_self = kreuzberg::plugins::OcrBackend {
-        };
-        core_self.supported_languages()
-    }
-
-    pub fn supports_table_detection(&self) -> bool {
-        let core_self = kreuzberg::plugins::OcrBackend {
-        };
-        core_self.supports_table_detection()
-    }
-
-    pub fn supports_document_processing(&self) -> bool {
-        let core_self = kreuzberg::plugins::OcrBackend {
-        };
-        core_self.supports_document_processing()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    pub fn process_document(&self, _path: String, _config: OcrConfig) -> Result<ExtractionResult> {
-        let _config_core = _config.into();
-    let _ = (_path, _config);
-        Err("Not implemented: OcrBackend.process_document".to_string())
-    }
-}
-
 #[derive(Clone, Default, serde::Serialize)]
 pub struct DocumentExtractorRegistry {
 }
@@ -8936,70 +8866,6 @@ impl ValidatorRegistry {
     #[allow(clippy::should_implement_trait)]
     pub fn default() -> ValidatorRegistry {
         Self { inner: Arc::new(kreuzberg::plugins::ValidatorRegistry::default()) }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-pub struct Renderer {
-}
-
-impl Renderer {
-    pub fn name(&self) -> String {
-        let core_self = kreuzberg::plugins::Renderer {
-        };
-        core_self.name().to_owned()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    pub fn render(&self, doc: String) -> Result<String> {
-        let _ = doc;
-        Err("Not implemented: Renderer.render".to_string())
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-pub struct Plugin {
-}
-
-impl Plugin {
-    pub fn name(&self) -> String {
-        let core_self = kreuzberg::plugins::Plugin {
-        };
-        core_self.name().to_owned()
-    }
-
-    pub fn version(&self) -> String {
-        let core_self = kreuzberg::plugins::Plugin {
-        };
-        core_self.version().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    pub fn initialize(&self) -> Result<()> {
-        let core_self = kreuzberg::plugins::Plugin {
-        };
-        let result = core_self.initialize().map_err(|e| e.to_string())?;
-        Ok(result)
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    pub fn shutdown(&self) -> Result<()> {
-        let core_self = kreuzberg::plugins::Plugin {
-        };
-        let result = core_self.shutdown().map_err(|e| e.to_string())?;
-        Ok(result)
-    }
-
-    pub fn description(&self) -> String {
-        let core_self = kreuzberg::plugins::Plugin {
-        };
-        core_self.description().to_owned()
-    }
-
-    pub fn author(&self) -> String {
-        let core_self = kreuzberg::plugins::Plugin {
-        };
-        core_self.author().to_owned()
     }
 }
 
@@ -12523,18 +12389,6 @@ impl PoolMetricsSnapshot {
 }
 
 #[derive(Clone, serde::Serialize)]
-pub struct Recyclable {
-}
-
-impl Recyclable {
-    pub fn reset(&self) -> () {
-        let mut core_self = kreuzberg::utils::Recyclable {
-        };
-        core_self.reset()
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
 pub struct StringBufferPool {
 }
 
@@ -15047,36 +14901,6 @@ impl OrientationResult {
     
     pub fn new(degrees: i32, confidence: f64) -> Self {
         Self { degrees, confidence }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-pub struct LayoutModel {
-}
-
-impl LayoutModel {
-    #[allow(clippy::missing_errors_doc)]
-    pub fn detect(&self, img: String) -> Result<Vec<LayoutDetection>> {
-        let _ = img;
-        Err("Not implemented: LayoutModel.detect".to_string())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    pub fn detect_with_threshold(&self, img: String, threshold: f64) -> Result<Vec<LayoutDetection>> {
-        let _ = (img, threshold);
-        Err("Not implemented: LayoutModel.detect_with_threshold".to_string())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    pub fn detect_batch(&self, images: Vec<String>, threshold: Option<f64>) -> Result<Vec<Vec<LayoutDetection>>> {
-        let _ = (images, threshold);
-        Err("Not implemented: LayoutModel.detect_batch".to_string())
-    }
-
-    pub fn name(&self) -> String {
-        let core_self = kreuzberg::layout::LayoutModel {
-        };
-        core_self.name().to_owned()
     }
 }
 

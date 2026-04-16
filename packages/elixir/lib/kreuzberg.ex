@@ -3044,12 +3044,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.pptxextractionoptions_default()
   end
 
-  @doc "Extract content from a byte array synchronously."
-  @spec syncextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
-  def syncextractor_extract_sync(obj, content, mime_type, config) do
-    Kreuzberg.Native.syncextractor_extract_sync(obj, content, mime_type, config)
-  end
-
   @doc "Method"
   @spec codeextractor_default() :: reference()
   def codeextractor_default do
@@ -5702,54 +5696,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.paniccontext_format(obj)
   end
 
-  @doc "Process an image and extract text via OCR."
-  @spec ocrbackend_process_image_async(map(), binary(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
-  def ocrbackend_process_image_async(obj, image_bytes, config) do
-    Kreuzberg.Native.ocrbackend_process_image_async(obj, image_bytes, config)
-  end
-
-  @doc "Process a file and extract text via OCR."
-  @spec ocrbackend_process_image_file_async(map(), String.t(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
-  def ocrbackend_process_image_file_async(obj, path, config) do
-    Kreuzberg.Native.ocrbackend_process_image_file_async(obj, path, config)
-  end
-
-  @doc "Check if this backend supports a given language code."
-  @spec ocrbackend_supports_language(map(), String.t()) :: boolean()
-  def ocrbackend_supports_language(obj, lang) do
-    Kreuzberg.Native.ocrbackend_supports_language(obj, lang)
-  end
-
-  @doc "Get the backend type identifier."
-  @spec ocrbackend_backend_type(map()) :: map()
-  def ocrbackend_backend_type(obj) do
-    Kreuzberg.Native.ocrbackend_backend_type(obj)
-  end
-
-  @doc "Optional: Get a list of all supported languages."
-  @spec ocrbackend_supported_languages(map()) :: [String.t()]
-  def ocrbackend_supported_languages(obj) do
-    Kreuzberg.Native.ocrbackend_supported_languages(obj)
-  end
-
-  @doc "Optional: Check if the backend supports table detection."
-  @spec ocrbackend_supports_table_detection(map()) :: boolean()
-  def ocrbackend_supports_table_detection(obj) do
-    Kreuzberg.Native.ocrbackend_supports_table_detection(obj)
-  end
-
-  @doc "Check if the backend supports direct document-level processing (e.g. for PDFs)."
-  @spec ocrbackend_supports_document_processing(map()) :: boolean()
-  def ocrbackend_supports_document_processing(obj) do
-    Kreuzberg.Native.ocrbackend_supports_document_processing(obj)
-  end
-
-  @doc "Process a document file directly via OCR."
-  @spec ocrbackend_process_document_async(map(), String.t(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
-  def ocrbackend_process_document_async(obj, path, config) do
-    Kreuzberg.Native.ocrbackend_process_document_async(obj, path, config)
-  end
-
   @doc "Register a document extractor."
   @spec documentextractorregistry_register(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
   def documentextractorregistry_register(obj, extractor) do
@@ -5958,54 +5904,6 @@ defmodule Kreuzberg do
   @spec validatorregistry_default() :: reference()
   def validatorregistry_default do
     Kreuzberg.Native.validatorregistry_default()
-  end
-
-  @doc "The format name (e.g., "markdown", "html", "djot", "plain")."
-  @spec renderer_name(map()) :: String.t()
-  def renderer_name(obj) do
-    Kreuzberg.Native.renderer_name(obj)
-  end
-
-  @doc "Render an [`InternalDocument`] to the output format."
-  @spec renderer_render(map(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
-  def renderer_render(obj, doc) do
-    Kreuzberg.Native.renderer_render(obj, doc)
-  end
-
-  @doc "Returns the unique name/identifier for this plugin."
-  @spec plugin_name(map()) :: String.t()
-  def plugin_name(obj) do
-    Kreuzberg.Native.plugin_name(obj)
-  end
-
-  @doc "Returns the semantic version of this plugin."
-  @spec plugin_version(map()) :: String.t()
-  def plugin_version(obj) do
-    Kreuzberg.Native.plugin_version(obj)
-  end
-
-  @doc "Initialize the plugin."
-  @spec plugin_initialize(map()) :: {:ok, nil} | {:error, String.t()}
-  def plugin_initialize(obj) do
-    Kreuzberg.Native.plugin_initialize(obj)
-  end
-
-  @doc "Shutdown the plugin."
-  @spec plugin_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
-  def plugin_shutdown(obj) do
-    Kreuzberg.Native.plugin_shutdown(obj)
-  end
-
-  @doc "Optional plugin description for debugging and logging."
-  @spec plugin_description(map()) :: String.t()
-  def plugin_description(obj) do
-    Kreuzberg.Native.plugin_description(obj)
-  end
-
-  @doc "Optional plugin author information."
-  @spec plugin_author(map()) :: String.t()
-  def plugin_author(obj) do
-    Kreuzberg.Native.plugin_author(obj)
   end
 
   @doc "Method"
@@ -6318,12 +6216,6 @@ defmodule Kreuzberg do
   @spec poolmetrics_default() :: String.t() | nil
   def poolmetrics_default do
     Kreuzberg.Native.poolmetrics_default()
-  end
-
-  @doc "Reset the object to a reusable state."
-  @spec recyclable_reset(map()) :: nil
-  def recyclable_reset(obj) do
-    Kreuzberg.Native.recyclable_reset(obj)
   end
 
   @doc "Acquire an object from the pool or create a new one if empty."
@@ -7074,30 +6966,6 @@ defmodule Kreuzberg do
   @spec paddleocrconfig_default() :: String.t() | nil
   def paddleocrconfig_default do
     Kreuzberg.Native.paddleocrconfig_default()
-  end
-
-  @doc "Run layout detection on an image using the default confidence threshold."
-  @spec layoutmodel_detect(map(), String.t()) :: {:ok, [map()]} | {:error, String.t()}
-  def layoutmodel_detect(obj, img) do
-    Kreuzberg.Native.layoutmodel_detect(obj, img)
-  end
-
-  @doc "Run layout detection with a custom confidence threshold."
-  @spec layoutmodel_detect_with_threshold(map(), String.t(), float()) :: {:ok, [map()]} | {:error, String.t()}
-  def layoutmodel_detect_with_threshold(obj, img, threshold) do
-    Kreuzberg.Native.layoutmodel_detect_with_threshold(obj, img, threshold)
-  end
-
-  @doc "Run layout detection on a batch of images in a single model call."
-  @spec layoutmodel_detect_batch(map(), [String.t()], float() | nil) :: {:ok, [[map()]]} | {:error, String.t()}
-  def layoutmodel_detect_batch(obj, images, threshold) do
-    Kreuzberg.Native.layoutmodel_detect_batch(obj, images, threshold)
-  end
-
-  @doc "Human-readable model name."
-  @spec layoutmodel_name(map()) :: String.t()
-  def layoutmodel_name(obj) do
-    Kreuzberg.Native.layoutmodel_name(obj)
   end
 
   @doc "Method"

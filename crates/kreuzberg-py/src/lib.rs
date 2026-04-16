@@ -4502,25 +4502,6 @@ impl PptxExtractionOptions {
 
 #[derive(Clone)]
 #[pyclass(frozen, from_py_object)]
-pub struct SyncExtractor {
-    inner: Arc<dyn kreuzberg::extractors::SyncExtractor + Send + Sync>,
-}
-
-#[pymethods]
-impl SyncExtractor {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> PyResult<String> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: SyncExtractor.extract_sync",
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
 pub struct CodeExtractor {
     inner: Arc<kreuzberg::extractors::CodeExtractor>,
 }
@@ -8583,97 +8564,6 @@ impl PanicContext {
 
 #[derive(Clone)]
 #[pyclass(frozen, from_py_object)]
-pub struct OcrBackend {
-    inner: Arc<dyn kreuzberg::plugins::OcrBackend + Send + Sync>,
-}
-
-#[pymethods]
-impl OcrBackend {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (image_bytes, config))]
-    pub fn process_image<'py>(
-        &self,
-        py: Python<'py>,
-        image_bytes: Vec<u8>,
-        config: OcrConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let inner = self.inner.clone();
-        pyo3_async_runtimes::tokio::future_into_py(py, async move {
-            let result = inner
-                .process_image(&image_bytes, &config_core)
-                .await
-                .map_err(|e| PyErr::new::<PyRuntimeError, _>(e.to_string()))?;
-            Ok(result.into())
-        })
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, config))]
-    pub fn process_image_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        config: OcrConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let inner = self.inner.clone();
-        pyo3_async_runtimes::tokio::future_into_py(py, async move {
-            let result = inner
-                .process_image_file(std::path::Path::new(&path), &config_core)
-                .await
-                .map_err(|e| PyErr::new::<PyRuntimeError, _>(e.to_string()))?;
-            Ok(result.into())
-        })
-    }
-
-    #[pyo3(signature = (lang))]
-    pub fn supports_language(&self, lang: String) -> bool {
-        self.inner.supports_language(&lang)
-    }
-
-    #[pyo3(signature = ())]
-    pub fn backend_type(&self) -> OcrBackendType {
-        self.inner.backend_type().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_languages(&self) -> Vec<String> {
-        self.inner.supported_languages()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supports_table_detection(&self) -> bool {
-        self.inner.supports_table_detection()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supports_document_processing(&self) -> bool {
-        self.inner.supports_document_processing()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (_path, _config))]
-    pub fn process_document<'py>(
-        &self,
-        py: Python<'py>,
-        _path: String,
-        _config: OcrConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let inner = self.inner.clone();
-        pyo3_async_runtimes::tokio::future_into_py(py, async move {
-            let result = inner
-                .process_document(std::path::Path::new(&_path), &_config_core)
-                .await
-                .map_err(|e| PyErr::new::<PyRuntimeError, _>(e.to_string()))?;
-            Ok(result.into())
-        })
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
 pub struct DocumentExtractorRegistry {
     inner: Arc<kreuzberg::plugins::DocumentExtractorRegistry>,
 }
@@ -9005,76 +8895,6 @@ impl ValidatorRegistry {
         Self {
             inner: Arc::new(kreuzberg::plugins::ValidatorRegistry::default()),
         }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct Renderer {
-    inner: Arc<dyn kreuzberg::plugins::Renderer + Send + Sync>,
-}
-
-#[pymethods]
-impl Renderer {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (doc))]
-    pub fn render(&self, doc: String) -> PyResult<String> {
-        let _ = doc;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: Renderer.render",
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct Plugin {
-    inner: Arc<dyn kreuzberg::plugins::Plugin + Send + Sync>,
-}
-
-#[pymethods]
-impl Plugin {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
     }
 }
 
@@ -13210,20 +13030,6 @@ impl PoolMetricsSnapshot {
 
 #[derive(Clone)]
 #[pyclass(frozen, from_py_object)]
-pub struct Recyclable {
-    inner: Arc<dyn kreuzberg::utils::Recyclable + Send + Sync>,
-}
-
-#[pymethods]
-impl Recyclable {
-    #[pyo3(signature = ())]
-    pub fn reset(&self) -> () {
-        self.inner.reset()
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
 pub struct StringBufferPool {
     inner: Arc<kreuzberg::utils::StringBufferPool>,
 }
@@ -16304,47 +16110,6 @@ impl OrientationResult {
     #[new]
     pub fn new(degrees: u32, confidence: f32) -> Self {
         Self { degrees, confidence }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct LayoutModel {
-    inner: Arc<dyn kreuzberg::layout::LayoutModel + Send + Sync>,
-}
-
-#[pymethods]
-impl LayoutModel {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (img))]
-    pub fn detect(&self, img: String) -> PyResult<Vec<LayoutDetection>> {
-        let _ = img;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: LayoutModel.detect",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (img, threshold))]
-    pub fn detect_with_threshold(&self, img: String, threshold: f32) -> PyResult<Vec<LayoutDetection>> {
-        let _ = (img, threshold);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: LayoutModel.detect_with_threshold",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (images, threshold=None))]
-    pub fn detect_batch(&self, images: Vec<String>, threshold: Option<f32>) -> PyResult<Vec<Vec<LayoutDetection>>> {
-        let _ = (images, threshold);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: LayoutModel.detect_batch",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
     }
 }
 
@@ -28032,7 +27797,6 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PptExtractionResult>()?;
     m.add_class::<PptMetadata>()?;
     m.add_class::<PptxExtractionOptions>()?;
-    m.add_class::<SyncExtractor>()?;
     m.add_class::<CodeExtractor>()?;
     m.add_class::<CsvExtractor>()?;
     m.add_class::<StructuredExtractor>()?;
@@ -28087,14 +27851,11 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<DocbookExtractor>()?;
     m.add_class::<ModelCache>()?;
     m.add_class::<PanicContext>()?;
-    m.add_class::<OcrBackend>()?;
     m.add_class::<DocumentExtractorRegistry>()?;
     m.add_class::<OcrBackendRegistry>()?;
     m.add_class::<PostProcessorRegistry>()?;
     m.add_class::<RendererRegistry>()?;
     m.add_class::<ValidatorRegistry>()?;
-    m.add_class::<Renderer>()?;
-    m.add_class::<Plugin>()?;
     m.add_class::<ExtractionMetrics>()?;
     m.add_class::<TokenReducer>()?;
     m.add_class::<QualityProcessor>()?;
@@ -28181,7 +27942,6 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Uri>()?;
     m.add_class::<PoolMetrics>()?;
     m.add_class::<PoolMetricsSnapshot>()?;
-    m.add_class::<Recyclable>()?;
     m.add_class::<StringBufferPool>()?;
     m.add_class::<ByteBufferPool>()?;
     m.add_class::<Pool>()?;
@@ -28257,7 +28017,6 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PaddleOcrConfig>()?;
     m.add_class::<ModelPaths>()?;
     m.add_class::<OrientationResult>()?;
-    m.add_class::<LayoutModel>()?;
     m.add_class::<BBox>()?;
     m.add_class::<LayoutDetection>()?;
     m.add_class::<DetectionResult>()?;

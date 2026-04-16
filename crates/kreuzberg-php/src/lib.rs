@@ -4205,22 +4205,6 @@ impl PptxExtractionOptions {
 
 #[derive(Clone)]
 #[php_class]
-#[php(name = "Kreuzberg\\SyncExtractor")]
-pub struct SyncExtractor {
-    inner: Arc<dyn kreuzberg::extractors::SyncExtractor + Send + Sync>,
-}
-
-#[php_impl]
-impl SyncExtractor {
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: &ExtractionConfig) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: extract_sync".to_string(),
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
 #[php(name = "Kreuzberg\\CodeExtractor")]
 pub struct CodeExtractor {
     inner: Arc<kreuzberg::extractors::CodeExtractor>,
@@ -7442,69 +7426,6 @@ impl PanicContext {
 
 #[derive(Clone)]
 #[php_class]
-#[php(name = "Kreuzberg\\OcrBackend")]
-pub struct OcrBackend {
-    inner: Arc<dyn kreuzberg::plugins::OcrBackend + Send + Sync>,
-}
-
-#[php_impl]
-impl OcrBackend {
-    pub fn process_image_async(&self, image_bytes: Vec<u8>, config: &OcrConfig) -> PhpResult<ExtractionResult> {
-        let inner = self.inner.clone();
-        WORKER_RUNTIME.block_on(async {
-            let result = inner
-                .process_image(&image_bytes, config.clone().into())
-                .await
-                .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-            Ok(result.into())
-        })
-    }
-
-    pub fn process_image_file_async(&self, path: String, config: &OcrConfig) -> PhpResult<ExtractionResult> {
-        let inner = self.inner.clone();
-        WORKER_RUNTIME.block_on(async {
-            let result = inner
-                .process_image_file(std::path::PathBuf::from(path), config.clone().into())
-                .await
-                .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-            Ok(result.into())
-        })
-    }
-
-    pub fn supports_language(&self, lang: String) -> bool {
-        self.inner.supports_language(&lang)
-    }
-
-    pub fn backend_type(&self) -> String {
-        self.inner.backend_type().into()
-    }
-
-    pub fn supported_languages(&self) -> Vec<String> {
-        self.inner.supported_languages()
-    }
-
-    pub fn supports_table_detection(&self) -> bool {
-        self.inner.supports_table_detection()
-    }
-
-    pub fn supports_document_processing(&self) -> bool {
-        self.inner.supports_document_processing()
-    }
-
-    pub fn process_document_async(&self, _path: String, _config: &OcrConfig) -> PhpResult<ExtractionResult> {
-        let inner = self.inner.clone();
-        WORKER_RUNTIME.block_on(async {
-            let result = inner
-                .process_document(std::path::PathBuf::from(_path), _config.clone().into())
-                .await
-                .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-            Ok(result.into())
-        })
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
 #[php(name = "Kreuzberg\\DocumentExtractorRegistry")]
 pub struct DocumentExtractorRegistry {
     inner: Arc<kreuzberg::plugins::DocumentExtractorRegistry>,
@@ -7773,66 +7694,6 @@ impl ValidatorRegistry {
         Self {
             inner: Arc::new(kreuzberg::plugins::ValidatorRegistry::default()),
         }
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\Renderer")]
-pub struct Renderer {
-    inner: Arc<dyn kreuzberg::plugins::Renderer + Send + Sync>,
-}
-
-#[php_impl]
-impl Renderer {
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    pub fn render(&self, doc: String) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: render".to_string(),
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\Plugin")]
-pub struct Plugin {
-    inner: Arc<dyn kreuzberg::plugins::Plugin + Send + Sync>,
-}
-
-#[php_impl]
-impl Plugin {
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    pub fn initialize(&self) -> PhpResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
-    }
-
-    pub fn shutdown(&self) -> PhpResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
-    }
-
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    pub fn author(&self) -> String {
-        self.inner.author().into()
     }
 }
 
@@ -11570,20 +11431,6 @@ impl PoolMetricsSnapshot {
 
 #[derive(Clone)]
 #[php_class]
-#[php(name = "Kreuzberg\\Recyclable")]
-pub struct Recyclable {
-    inner: Arc<dyn kreuzberg::utils::Recyclable + Send + Sync>,
-}
-
-#[php_impl]
-impl Recyclable {
-    pub fn reset(&self) -> () {
-        self.inner.reset()
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
 #[php(name = "Kreuzberg\\StringBufferPool")]
 pub struct StringBufferPool {
     inner: Arc<kreuzberg::utils::StringBufferPool>,
@@ -14396,38 +14243,6 @@ pub struct OrientationResult {
 impl OrientationResult {
     pub fn __construct(degrees: u32, confidence: f32) -> Self {
         Self { degrees, confidence }
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\LayoutModel")]
-pub struct LayoutModel {
-    inner: Arc<dyn kreuzberg::layout::LayoutModel + Send + Sync>,
-}
-
-#[php_impl]
-impl LayoutModel {
-    pub fn detect(&self, img: String) -> PhpResult<Vec<LayoutDetection>> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: detect".to_string(),
-        ))
-    }
-
-    pub fn detect_with_threshold(&self, img: String, threshold: f32) -> PhpResult<Vec<LayoutDetection>> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: detect_with_threshold".to_string(),
-        ))
-    }
-
-    pub fn detect_batch(&self, images: Vec<String>, threshold: Option<f32>) -> PhpResult<Vec<Vec<LayoutDetection>>> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: detect_batch".to_string(),
-        ))
-    }
-
-    pub fn name(&self) -> String {
-        self.inner.name().into()
     }
 }
 
@@ -22942,7 +22757,6 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<PptExtractionResult>()
         .class::<PptMetadata>()
         .class::<PptxExtractionOptions>()
-        .class::<SyncExtractor>()
         .class::<CodeExtractor>()
         .class::<CsvExtractor>()
         .class::<StructuredExtractor>()
@@ -22997,14 +22811,11 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<DocbookExtractor>()
         .class::<ModelCache>()
         .class::<PanicContext>()
-        .class::<OcrBackend>()
         .class::<DocumentExtractorRegistry>()
         .class::<OcrBackendRegistry>()
         .class::<PostProcessorRegistry>()
         .class::<RendererRegistry>()
         .class::<ValidatorRegistry>()
-        .class::<Renderer>()
-        .class::<Plugin>()
         .class::<ExtractionMetrics>()
         .class::<TokenReducer>()
         .class::<QualityProcessor>()
@@ -23091,7 +22902,6 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<Uri>()
         .class::<PoolMetrics>()
         .class::<PoolMetricsSnapshot>()
-        .class::<Recyclable>()
         .class::<StringBufferPool>()
         .class::<ByteBufferPool>()
         .class::<Pool>()
@@ -23167,7 +22977,6 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<PaddleOcrConfig>()
         .class::<ModelPaths>()
         .class::<OrientationResult>()
-        .class::<LayoutModel>()
         .class::<BBox>()
         .class::<LayoutDetection>()
         .class::<DetectionResult>()
