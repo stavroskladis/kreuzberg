@@ -11,4 +11,7 @@ public record Table(
     @JsonProperty("page_number") long pageNumber,
     @JsonProperty("bounding_box") Optional<BoundingBox> boundingBox
 ) {
+    public static TableBuilder builder() {
+        return new TableBuilder();
+    }
 }

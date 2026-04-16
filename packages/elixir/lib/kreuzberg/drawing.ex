@@ -3,7 +3,7 @@ defmodule Kreuzberg.Drawing do
   @moduledoc "A drawing object extracted from `<w:drawing>`."
 
   defstruct drawing_type: "",
-            extent: nil,
-            doc_properties: nil,
-            image_ref: nil
+            extent: "",
+            doc_properties: "",
+            image_ref: ""
 end

@@ -2263,7 +2263,7 @@ impl DocExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\Drawing")]
 pub struct Drawing {
@@ -2280,13 +2280,13 @@ pub struct Drawing {
 #[php_impl]
 impl Drawing {
     pub fn __construct(
-        drawing_type: String,
+        drawing_type: Option<String>,
         extent: Option<String>,
         doc_properties: Option<String>,
         image_ref: Option<String>,
     ) -> Self {
         Self {
-            drawing_type,
+            drawing_type: drawing_type.unwrap_or_default(),
             extent,
             doc_properties,
             image_ref,
@@ -4270,7 +4270,7 @@ impl ElementId {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\BoundingBox")]
 #[allow(clippy::similar_names)]
@@ -4291,8 +4291,13 @@ pub struct BoundingBox {
 
 #[php_impl]
 impl BoundingBox {
-    pub fn __construct(x0: f64, y0: f64, x1: f64, y1: f64) -> Self {
-        Self { x0, y0, x1, y1 }
+    pub fn __construct(x0: Option<f64>, y0: Option<f64>, x1: Option<f64>, y1: Option<f64>) -> Self {
+        Self {
+            x0: x0.unwrap_or_default(),
+            y0: y0.unwrap_or_default(),
+            x1: x1.unwrap_or_default(),
+            y1: y1.unwrap_or_default(),
+        }
     }
 }
 
@@ -6495,7 +6500,7 @@ impl HierarchicalBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\Table")]
 pub struct Table {
@@ -6529,7 +6534,7 @@ impl Table {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\TableCell")]
 #[allow(clippy::similar_names)]
@@ -6550,12 +6555,17 @@ pub struct TableCell {
 
 #[php_impl]
 impl TableCell {
-    pub fn __construct(content: String, row_span: i64, col_span: i64, is_header: bool) -> Self {
+    pub fn __construct(
+        content: Option<String>,
+        row_span: Option<i64>,
+        col_span: Option<i64>,
+        is_header: Option<bool>,
+    ) -> Self {
         Self {
-            content,
-            row_span,
-            col_span,
-            is_header,
+            content: content.unwrap_or_default(),
+            row_span: row_span.unwrap_or_default(),
+            col_span: col_span.unwrap_or_default(),
+            is_header: is_header.unwrap_or_default(),
         }
     }
 }

@@ -597,11 +597,11 @@ pub struct JsDocExtractionResult {
     pub metadata: String,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsDrawing {
     #[napi(js_name = "drawingType")]
-    pub drawing_type: String,
+    pub drawing_type: Option<String>,
     pub extent: Option<String>,
     #[napi(js_name = "docProperties")]
     pub doc_properties: Option<String>,
@@ -1401,13 +1401,13 @@ impl JsElementId {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsBoundingBox {
-    pub x0: f64,
-    pub y0: f64,
-    pub x1: f64,
-    pub y1: f64,
+    pub x0: Option<f64>,
+    pub y0: Option<f64>,
+    pub x1: Option<f64>,
+    pub y1: Option<f64>,
 }
 
 #[derive(Clone)]
@@ -2120,27 +2120,27 @@ pub struct JsHierarchicalBlock {
     pub bbox: Option<String>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsTable {
-    pub cells: Vec<Vec<String>>,
-    pub markdown: String,
+    pub cells: Option<Vec<Vec<String>>>,
+    pub markdown: Option<String>,
     #[napi(js_name = "pageNumber")]
-    pub page_number: i64,
+    pub page_number: Option<i64>,
     #[napi(js_name = "boundingBox")]
     pub bounding_box: Option<JsBoundingBox>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsTableCell {
-    pub content: String,
+    pub content: Option<String>,
     #[napi(js_name = "rowSpan")]
-    pub row_span: i64,
+    pub row_span: Option<i64>,
     #[napi(js_name = "colSpan")]
-    pub col_span: i64,
+    pub col_span: Option<i64>,
     #[napi(js_name = "isHeader")]
-    pub is_header: bool,
+    pub is_header: Option<bool>,
 }
 
 #[derive(Clone)]
@@ -7612,7 +7612,7 @@ impl From<JsDrawing> for kreuzberg::extraction::docx::drawing::Drawing {
 impl From<kreuzberg::extraction::docx::drawing::Drawing> for JsDrawing {
     fn from(val: kreuzberg::extraction::docx::drawing::Drawing) -> Self {
         Self {
-            drawing_type: format!("{:?}", val.drawing_type),
+            drawing_type: Some(format!("{:?}", val.drawing_type)),
             extent: val.extent.as_ref().map(|v| format!("{:?}", v)),
             doc_properties: val.doc_properties.as_ref().map(|v| format!("{:?}", v)),
             image_ref: val.image_ref,
@@ -8473,10 +8473,10 @@ impl From<kreuzberg::ExtractedImage> for JsExtractedImage {
 impl From<JsBoundingBox> for kreuzberg::BoundingBox {
     fn from(val: JsBoundingBox) -> Self {
         Self {
-            x0: val.x0,
-            y0: val.y0,
-            x1: val.x1,
-            y1: val.y1,
+            x0: val.x0.unwrap_or(0.0),
+            y0: val.y0.unwrap_or(0.0),
+            x1: val.x1.unwrap_or(0.0),
+            y1: val.y1.unwrap_or(0.0),
         }
     }
 }
@@ -8484,10 +8484,10 @@ impl From<JsBoundingBox> for kreuzberg::BoundingBox {
 impl From<kreuzberg::BoundingBox> for JsBoundingBox {
     fn from(val: kreuzberg::BoundingBox) -> Self {
         Self {
-            x0: val.x0,
-            y0: val.y0,
-            x1: val.x1,
-            y1: val.y1,
+            x0: Some(val.x0),
+            y0: Some(val.y0),
+            x1: Some(val.x1),
+            y1: Some(val.y1),
         }
     }
 }
@@ -9617,9 +9617,9 @@ impl From<kreuzberg::HierarchicalBlock> for JsHierarchicalBlock {
 impl From<JsTable> for kreuzberg::Table {
     fn from(val: JsTable) -> Self {
         Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number as usize,
+            cells: val.cells.unwrap_or_default(),
+            markdown: val.markdown.unwrap_or_default(),
+            page_number: val.page_number.map(|v| v as usize).unwrap_or_default(),
             bounding_box: val.bounding_box.map(Into::into),
         }
     }
@@ -9628,9 +9628,9 @@ impl From<JsTable> for kreuzberg::Table {
 impl From<kreuzberg::Table> for JsTable {
     fn from(val: kreuzberg::Table) -> Self {
         Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number as i64,
+            cells: Some(val.cells),
+            markdown: Some(val.markdown),
+            page_number: Some(val.page_number as i64),
             bounding_box: val.bounding_box.map(Into::into),
         }
     }
@@ -9639,10 +9639,10 @@ impl From<kreuzberg::Table> for JsTable {
 impl From<kreuzberg::TableCell> for JsTableCell {
     fn from(val: kreuzberg::TableCell) -> Self {
         Self {
-            content: val.content,
-            row_span: val.row_span as i64,
-            col_span: val.col_span as i64,
-            is_header: val.is_header,
+            content: Some(val.content),
+            row_span: Some(val.row_span as i64),
+            col_span: Some(val.col_span as i64),
+            is_header: Some(val.is_header),
         }
     }
 }

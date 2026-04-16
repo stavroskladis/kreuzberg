@@ -9,4 +9,7 @@ public record TableCell(
     @JsonProperty("col_span") long colSpan,
     @JsonProperty("is_header") boolean isHeader
 ) {
+    public static TableCellBuilder builder() {
+        return new TableCellBuilder();
+    }
 }

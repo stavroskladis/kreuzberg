@@ -3,4 +3,7 @@ package dev.kreuzberg;
 
 
 public record BoundingBox(double x0, double y0, double x1, double y1) {
+    public static BoundingBoxBuilder builder() {
+        return new BoundingBoxBuilder();
+    }
 }

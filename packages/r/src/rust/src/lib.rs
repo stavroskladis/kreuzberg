@@ -2544,7 +2544,7 @@ impl DocExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize)]
 pub struct Drawing {
     pub drawing_type: String,
     pub extent: Option<String>,
@@ -2552,18 +2552,45 @@ pub struct Drawing {
     pub image_ref: Option<String>,
 }
 
+impl Default for Drawing {
+    fn default() -> Self {
+        Self {
+            drawing_type: Default::default(),
+            extent: Default::default(),
+            doc_properties: Default::default(),
+            image_ref: Default::default(),
+        }
+    }
+}
+
 impl Drawing {
     #[must_use]
     
     pub fn new(
-        drawing_type: String,
+        drawing_type: Option<String>,
         extent: Option<String>,
         doc_properties: Option<String>,
         image_ref: Option<String>,
     ) -> Self {
-        Self { drawing_type, extent, doc_properties, image_ref }
+        Self { drawing_type: drawing_type.unwrap_or_default(), extent: extent, doc_properties: doc_properties, image_ref: image_ref }
     }
 }
+
+#[extendr]
+pub fn new_drawing(
+    drawing_type: String = "",
+    extent: String = "",
+    doc_properties: String = "",
+    image_ref: String = ""
+) -> Drawing {
+    Drawing {
+        drawing_type,
+        extent,
+        doc_properties,
+        image_ref,
+    }
+}
+
 
 #[derive(Clone, Default, serde::Serialize)]
 #[allow(clippy::similar_names)]
@@ -4567,7 +4594,7 @@ impl ElementId {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize)]
 #[allow(clippy::similar_names)]
 pub struct BoundingBox {
     /// Left x-coordinate
@@ -4580,13 +4607,40 @@ pub struct BoundingBox {
     pub y1: f64,
 }
 
+impl Default for BoundingBox {
+    fn default() -> Self {
+        Self {
+            x0: Default::default(),
+            y0: Default::default(),
+            x1: Default::default(),
+            y1: Default::default(),
+        }
+    }
+}
+
 impl BoundingBox {
     #[must_use]
     
-    pub fn new(x0: f64, y0: f64, x1: f64, y1: f64) -> Self {
-        Self { x0, y0, x1, y1 }
+    pub fn new(x0: Option<f64>, y0: Option<f64>, x1: Option<f64>, y1: Option<f64>) -> Self {
+        Self { x0: x0.unwrap_or_default(), y0: y0.unwrap_or_default(), x1: x1.unwrap_or_default(), y1: y1.unwrap_or_default() }
     }
 }
+
+#[extendr]
+pub fn new_boundingbox(
+    x0: f64 = 0.0,
+    y0: f64 = 0.0,
+    x1: f64 = 0.0,
+    y1: f64 = 0.0
+) -> BoundingBox {
+    BoundingBox {
+        x0,
+        y0,
+        x1,
+        y1,
+    }
+}
+
 
 #[derive(Clone, serde::Serialize)]
 pub struct ElementMetadata {
@@ -6712,7 +6766,7 @@ impl HierarchicalBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize)]
 pub struct Table {
     /// Table cells as a 2D vector (rows × columns)
     pub cells: Vec<Vec<String>>,
@@ -6725,15 +6779,47 @@ pub struct Table {
     pub bounding_box: Option<BoundingBox>,
 }
 
-impl Table {
-    #[must_use]
-    
-    pub fn new(cells: Vec<Vec<String>>, markdown: String, page_number: f64, bounding_box: Option<BoundingBox>) -> Self {
-        Self { cells, markdown, page_number, bounding_box }
+impl Default for Table {
+    fn default() -> Self {
+        Self {
+            cells: Default::default(),
+            markdown: Default::default(),
+            page_number: Default::default(),
+            bounding_box: Default::default(),
+        }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+impl Table {
+    #[must_use]
+    
+    pub fn new(
+        cells: Option<Vec<Vec<String>>>,
+        markdown: Option<String>,
+        page_number: Option<f64>,
+        bounding_box: Option<BoundingBox>,
+    ) -> Self {
+        Self { cells: cells.unwrap_or_default(), markdown: markdown.unwrap_or_default(), page_number: page_number.unwrap_or_default(), bounding_box: bounding_box }
+    }
+}
+
+#[extendr]
+pub fn new_table(
+    cells: Vec<Vec<String>> = c(),
+    markdown: String = "",
+    page_number: f64 = 0,
+    bounding_box: BoundingBox = null
+) -> Table {
+    Table {
+        cells,
+        markdown,
+        page_number,
+        bounding_box,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
 #[allow(clippy::similar_names)]
 pub struct TableCell {
     /// Cell content as text
@@ -6746,13 +6832,40 @@ pub struct TableCell {
     pub is_header: bool,
 }
 
+impl Default for TableCell {
+    fn default() -> Self {
+        Self {
+            content: Default::default(),
+            row_span: Default::default(),
+            col_span: Default::default(),
+            is_header: Default::default(),
+        }
+    }
+}
+
 impl TableCell {
     #[must_use]
     
-    pub fn new(content: String, row_span: f64, col_span: f64, is_header: bool) -> Self {
-        Self { content, row_span, col_span, is_header }
+    pub fn new(content: Option<String>, row_span: Option<f64>, col_span: Option<f64>, is_header: Option<bool>) -> Self {
+        Self { content: content.unwrap_or_default(), row_span: row_span.unwrap_or_default(), col_span: col_span.unwrap_or_default(), is_header: is_header.unwrap_or_default() }
     }
 }
+
+#[extendr]
+pub fn new_tablecell(
+    content: String = "",
+    row_span: f64 = 0,
+    col_span: f64 = 0,
+    is_header: bool = false
+) -> TableCell {
+    TableCell {
+        content,
+        row_span,
+        col_span,
+        is_header,
+    }
+}
+
 
 #[derive(Clone, serde::Serialize)]
 pub struct Uri {

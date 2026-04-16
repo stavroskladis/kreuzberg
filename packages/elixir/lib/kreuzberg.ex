@@ -801,7 +801,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Parse a drawing object starting after the `<w:drawing>` Start event."
-  @spec parse_drawing(String.t()) :: map()
+  @spec parse_drawing(String.t()) :: String.t() | nil
   def parse_drawing(reader) do
     Kreuzberg.Native.parse_drawing(reader)
   end
@@ -999,13 +999,13 @@ defmodule Kreuzberg do
   end
 
   @doc "Extract complete djot content with 100% feature extraction."
-  @spec extract_complete_djot_content([String.t()], String.t() | nil, [map()]) :: map()
+  @spec extract_complete_djot_content([String.t()], String.t() | nil, [String.t() | nil]) :: map()
   def extract_complete_djot_content(events, metadata, tables) do
     Kreuzberg.Native.extract_complete_djot_content(events, metadata, tables)
   end
 
   @doc "Extract tables from Djot events."
-  @spec extract_tables_from_events([String.t()]) :: [map()]
+  @spec extract_tables_from_events([String.t()]) :: [String.t() | nil]
   def extract_tables_from_events(events) do
     Kreuzberg.Native.extract_tables_from_events(events)
   end

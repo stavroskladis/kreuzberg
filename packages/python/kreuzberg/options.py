@@ -87,40 +87,40 @@ class KeywordAlgorithm(str, Enum):
     RAKE = "rake"
 
 
-class PageStructure:
-    """Placeholder for PageStructure type."""
-
-
-class TokenReductionConfig:
-    """Placeholder for TokenReductionConfig type."""
-
-
-class DjotContent:
-    """Placeholder for DjotContent type."""
-
-
-class LanguageDetectionConfig:
-    """Placeholder for LanguageDetectionConfig type."""
+class ErrorMetadata:
+    """Placeholder for ErrorMetadata type."""
 
 
 class StructuredExtractionConfig:
     """Placeholder for StructuredExtractionConfig type."""
 
 
-class OcrPipelineConfig:
-    """Placeholder for OcrPipelineConfig type."""
-
-
-class ImagePreprocessingMetadata:
-    """Placeholder for ImagePreprocessingMetadata type."""
-
-
-class ErrorMetadata:
-    """Placeholder for ErrorMetadata type."""
+class DjotContent:
+    """Placeholder for DjotContent type."""
 
 
 class YearRange:
     """Placeholder for YearRange type."""
+
+
+class TokenReductionConfig:
+    """Placeholder for TokenReductionConfig type."""
+
+
+class LanguageDetectionConfig:
+    """Placeholder for LanguageDetectionConfig type."""
+
+
+class OcrPipelineConfig:
+    """Placeholder for OcrPipelineConfig type."""
+
+
+class PageStructure:
+    """Placeholder for PageStructure type."""
+
+
+class ImagePreprocessingMetadata:
+    """Placeholder for ImagePreprocessingMetadata type."""
 
 
 @dataclass
@@ -717,6 +717,14 @@ class Section:
 
     paragraphs: list[str] = field(default_factory=list)
 
+class Drawing(TypedDict, total=False):
+    """A drawing object extracted from `<w:drawing>`."""
+
+    drawing_type: str
+    extent: str | None
+    doc_properties: str | None
+    image_ref: str | None
+
 @dataclass
 class AnchorProperties:
     """Properties for anchored drawings."""
@@ -1025,6 +1033,23 @@ class LlmUsage:
 
 
 @dataclass
+class BoundingBox:
+    """Bounding box coordinates for element positioning."""
+
+    x0: float = 0.0
+    """Left x-coordinate"""
+
+    y0: float = 0.0
+    """Bottom y-coordinate"""
+
+    x1: float = 0.0
+    """Right x-coordinate"""
+
+    y1: float = 0.0
+    """Top y-coordinate"""
+
+
+@dataclass
 class ImagePreprocessingConfig:
     """Image preprocessing configuration for OCR."""
 
@@ -1323,6 +1348,40 @@ class OcrElementConfig:
 
     build_hierarchy: bool = False
     """Whether to build hierarchical relationships between elements."""
+
+
+@dataclass
+class Table:
+    """Extracted table structure."""
+
+    cells: list[list[str]] = field(default_factory=list)
+    """Table cells as a 2D vector (rows × columns)"""
+
+    markdown: str = ""
+    """Markdown representation of the table"""
+
+    page_number: int = 0
+    """Page number where the table was found (1-indexed)"""
+
+    bounding_box: Any | None = None
+    """Bounding box of the table on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top)."""
+
+
+@dataclass
+class TableCell:
+    """Individual table cell with content and optional styling."""
+
+    content: str = ""
+    """Cell content as text"""
+
+    row_span: int = 0
+    """Row span (number of rows this cell spans)"""
+
+    col_span: int = 0
+    """Column span (number of columns this cell spans)"""
+
+    is_header: bool = False
+    """Whether this is a header cell"""
 
 
 @dataclass

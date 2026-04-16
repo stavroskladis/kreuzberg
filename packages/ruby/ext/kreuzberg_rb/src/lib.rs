@@ -3032,6 +3032,7 @@ impl DocExtractionResult {
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Drawing")]
+#[serde(default)]
 pub struct Drawing {
     pub drawing_type: String,
     pub extent: Option<String>,
@@ -3049,15 +3050,26 @@ impl magnus::TryConvert for Drawing {
 }
 unsafe impl TryConvertOwned for Drawing {}
 
+impl Default for Drawing {
+    fn default() -> Self {
+        Self {
+            drawing_type: Default::default(),
+            extent: Default::default(),
+            doc_properties: Default::default(),
+            image_ref: Default::default(),
+        }
+    }
+}
+
 impl Drawing {
     fn new(
-        drawing_type: String,
+        drawing_type: Option<String>,
         extent: Option<String>,
         doc_properties: Option<String>,
         image_ref: Option<String>,
     ) -> Self {
         Self {
-            drawing_type,
+            drawing_type: drawing_type.unwrap_or_default(),
             extent,
             doc_properties,
             image_ref,
@@ -6073,6 +6085,7 @@ impl ElementId {
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::BoundingBox")]
+#[serde(default)]
 pub struct BoundingBox {
     pub x0: f64,
     pub y0: f64,
@@ -6090,9 +6103,25 @@ impl magnus::TryConvert for BoundingBox {
 }
 unsafe impl TryConvertOwned for BoundingBox {}
 
+impl Default for BoundingBox {
+    fn default() -> Self {
+        Self {
+            x0: Default::default(),
+            y0: Default::default(),
+            x1: Default::default(),
+            y1: Default::default(),
+        }
+    }
+}
+
 impl BoundingBox {
-    fn new(x0: f64, y0: f64, x1: f64, y1: f64) -> Self {
-        Self { x0, y0, x1, y1 }
+    fn new(x0: Option<f64>, y0: Option<f64>, x1: Option<f64>, y1: Option<f64>) -> Self {
+        Self {
+            x0: x0.unwrap_or_default(),
+            y0: y0.unwrap_or_default(),
+            x1: x1.unwrap_or_default(),
+            y1: y1.unwrap_or_default(),
+        }
     }
 
     fn x0(&self) -> f64 {
@@ -9575,6 +9604,7 @@ impl HierarchicalBlock {
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Table")]
+#[serde(default)]
 pub struct Table {
     pub cells: Vec<Vec<String>>,
     pub markdown: String,
@@ -9592,12 +9622,28 @@ impl magnus::TryConvert for Table {
 }
 unsafe impl TryConvertOwned for Table {}
 
-impl Table {
-    fn new(cells: Vec<Vec<String>>, markdown: String, page_number: usize, bounding_box: Option<BoundingBox>) -> Self {
+impl Default for Table {
+    fn default() -> Self {
         Self {
-            cells,
-            markdown,
-            page_number,
+            cells: Default::default(),
+            markdown: Default::default(),
+            page_number: Default::default(),
+            bounding_box: Default::default(),
+        }
+    }
+}
+
+impl Table {
+    fn new(
+        cells: Option<Vec<Vec<String>>>,
+        markdown: Option<String>,
+        page_number: Option<usize>,
+        bounding_box: Option<BoundingBox>,
+    ) -> Self {
+        Self {
+            cells: cells.unwrap_or_default(),
+            markdown: markdown.unwrap_or_default(),
+            page_number: page_number.unwrap_or_default(),
             bounding_box,
         }
     }
@@ -9621,6 +9667,7 @@ impl Table {
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TableCell")]
+#[serde(default)]
 pub struct TableCell {
     pub content: String,
     pub row_span: usize,
@@ -9638,13 +9685,24 @@ impl magnus::TryConvert for TableCell {
 }
 unsafe impl TryConvertOwned for TableCell {}
 
-impl TableCell {
-    fn new(content: String, row_span: usize, col_span: usize, is_header: bool) -> Self {
+impl Default for TableCell {
+    fn default() -> Self {
         Self {
-            content,
-            row_span,
-            col_span,
-            is_header,
+            content: Default::default(),
+            row_span: Default::default(),
+            col_span: Default::default(),
+            is_header: Default::default(),
+        }
+    }
+}
+
+impl TableCell {
+    fn new(content: Option<String>, row_span: Option<usize>, col_span: Option<usize>, is_header: Option<bool>) -> Self {
+        Self {
+            content: content.unwrap_or_default(),
+            row_span: row_span.unwrap_or_default(),
+            col_span: col_span.unwrap_or_default(),
+            is_header: is_header.unwrap_or_default(),
         }
     }
 

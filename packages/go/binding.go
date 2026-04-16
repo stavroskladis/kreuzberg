@@ -3091,6 +3091,44 @@ type Drawing struct {
 }
 
 
+// Drawing option function
+type DrawingOption func(*Drawing)
+
+// WithDrawingDrawingType sets the drawing_type field.
+func WithDrawingDrawingType(v string) DrawingOption {
+    return func(c *Drawing) { c.DrawingType = v }
+}
+
+// WithDrawingExtent sets the extent field.
+func WithDrawingExtent(v string) DrawingOption {
+    return func(c *Drawing) { c.Extent = &v }
+}
+
+// WithDrawingDocProperties sets the doc_properties field.
+func WithDrawingDocProperties(v string) DrawingOption {
+    return func(c *Drawing) { c.DocProperties = &v }
+}
+
+// WithDrawingImageRef sets the image_ref field.
+func WithDrawingImageRef(v string) DrawingOption {
+    return func(c *Drawing) { c.ImageRef = &v }
+}
+
+// NewDrawing creates a Drawing with optional parameters.
+func NewDrawing(opts ...DrawingOption) *Drawing {
+    c := &Drawing {
+        DrawingType: "",
+        Extent: nil,
+        DocProperties: nil,
+        ImageRef: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Properties for anchored drawings.
 type AnchorProperties struct {
     BehindDoc bool `json:"behind_doc"`
@@ -4888,6 +4926,44 @@ type BoundingBox struct {
     X1 float64 `json:"x1"`
     // Top y-coordinate
     Y1 float64 `json:"y1"`
+}
+
+
+// BoundingBox option function
+type BoundingBoxOption func(*BoundingBox)
+
+// WithBoundingBoxX0 sets the x0 field.
+func WithBoundingBoxX0(v float64) BoundingBoxOption {
+    return func(c *BoundingBox) { c.X0 = v }
+}
+
+// WithBoundingBoxY0 sets the y0 field.
+func WithBoundingBoxY0(v float64) BoundingBoxOption {
+    return func(c *BoundingBox) { c.Y0 = v }
+}
+
+// WithBoundingBoxX1 sets the x1 field.
+func WithBoundingBoxX1(v float64) BoundingBoxOption {
+    return func(c *BoundingBox) { c.X1 = v }
+}
+
+// WithBoundingBoxY1 sets the y1 field.
+func WithBoundingBoxY1(v float64) BoundingBoxOption {
+    return func(c *BoundingBox) { c.Y1 = v }
+}
+
+// NewBoundingBox creates a BoundingBox with optional parameters.
+func NewBoundingBox(opts ...BoundingBoxOption) *BoundingBox {
+    c := &BoundingBox {
+        X0: 0.0,
+        Y0: 0.0,
+        X1: 0.0,
+        Y1: 0.0,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
 }
 
 
@@ -6692,6 +6768,44 @@ type Table struct {
 }
 
 
+// Table option function
+type TableOption func(*Table)
+
+// WithTableCells sets the cells field.
+func WithTableCells(v [][]string) TableOption {
+    return func(c *Table) { c.Cells = v }
+}
+
+// WithTableMarkdown sets the markdown field.
+func WithTableMarkdown(v string) TableOption {
+    return func(c *Table) { c.Markdown = v }
+}
+
+// WithTablePageNumber sets the page_number field.
+func WithTablePageNumber(v uint) TableOption {
+    return func(c *Table) { c.PageNumber = v }
+}
+
+// WithTableBoundingBox sets the bounding_box field.
+func WithTableBoundingBox(v BoundingBox) TableOption {
+    return func(c *Table) { c.BoundingBox = &v }
+}
+
+// NewTable creates a Table with optional parameters.
+func NewTable(opts ...TableOption) *Table {
+    c := &Table {
+        Cells: nil,
+        Markdown: "",
+        PageNumber: 0,
+        BoundingBox: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Individual table cell with content and optional styling.
 //
 // Future extension point for rich table support with cell-level metadata.
@@ -6704,6 +6818,44 @@ type TableCell struct {
     ColSpan uint `json:"col_span"`
     // Whether this is a header cell
     IsHeader bool `json:"is_header"`
+}
+
+
+// TableCell option function
+type TableCellOption func(*TableCell)
+
+// WithTableCellContent sets the content field.
+func WithTableCellContent(v string) TableCellOption {
+    return func(c *TableCell) { c.Content = v }
+}
+
+// WithTableCellRowSpan sets the row_span field.
+func WithTableCellRowSpan(v uint) TableCellOption {
+    return func(c *TableCell) { c.RowSpan = v }
+}
+
+// WithTableCellColSpan sets the col_span field.
+func WithTableCellColSpan(v uint) TableCellOption {
+    return func(c *TableCell) { c.ColSpan = v }
+}
+
+// WithTableCellIsHeader sets the is_header field.
+func WithTableCellIsHeader(v bool) TableCellOption {
+    return func(c *TableCell) { c.IsHeader = v }
+}
+
+// NewTableCell creates a TableCell with optional parameters.
+func NewTableCell(opts ...TableCellOption) *TableCell {
+    c := &TableCell {
+        Content: "",
+        RowSpan: 0,
+        ColSpan: 0,
+        IsHeader: false,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
 }
 
 

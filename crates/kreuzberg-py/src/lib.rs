@@ -2379,7 +2379,7 @@ impl DocExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct Drawing {
     #[pyo3(get)]
@@ -2395,16 +2395,16 @@ pub struct Drawing {
 #[pymethods]
 impl Drawing {
     #[must_use]
-    #[pyo3(signature = (drawing_type, extent=None, doc_properties=None, image_ref=None))]
+    #[pyo3(signature = (drawing_type=None, extent=None, doc_properties=None, image_ref=None))]
     #[new]
     pub fn new(
-        drawing_type: String,
+        drawing_type: Option<String>,
         extent: Option<String>,
         doc_properties: Option<String>,
         image_ref: Option<String>,
     ) -> Self {
         Self {
-            drawing_type,
+            drawing_type: drawing_type.unwrap_or_default(),
             extent,
             doc_properties,
             image_ref,
@@ -4553,7 +4553,7 @@ impl ElementId {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct BoundingBox {
@@ -4574,10 +4574,15 @@ pub struct BoundingBox {
 #[pymethods]
 impl BoundingBox {
     #[must_use]
-    #[pyo3(signature = (x0, y0, x1, y1))]
+    #[pyo3(signature = (x0=None, y0=None, x1=None, y1=None))]
     #[new]
-    pub fn new(x0: f64, y0: f64, x1: f64, y1: f64) -> Self {
-        Self { x0, y0, x1, y1 }
+    pub fn new(x0: Option<f64>, y0: Option<f64>, x1: Option<f64>, y1: Option<f64>) -> Self {
+        Self {
+            x0: x0.unwrap_or_default(),
+            y0: y0.unwrap_or_default(),
+            x1: x1.unwrap_or_default(),
+            y1: y1.unwrap_or_default(),
+        }
     }
 }
 
@@ -7015,7 +7020,7 @@ impl HierarchicalBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct Table {
     /// Table cells as a 2D vector (rows × columns)
@@ -7036,24 +7041,24 @@ pub struct Table {
 #[pymethods]
 impl Table {
     #[must_use]
-    #[pyo3(signature = (cells, markdown, page_number, bounding_box=None))]
+    #[pyo3(signature = (cells=None, markdown=None, page_number=None, bounding_box=None))]
     #[new]
     pub fn new(
-        cells: Vec<Vec<String>>,
-        markdown: String,
-        page_number: usize,
+        cells: Option<Vec<Vec<String>>>,
+        markdown: Option<String>,
+        page_number: Option<usize>,
         bounding_box: Option<BoundingBox>,
     ) -> Self {
         Self {
-            cells,
-            markdown,
-            page_number,
+            cells: cells.unwrap_or_default(),
+            markdown: markdown.unwrap_or_default(),
+            page_number: page_number.unwrap_or_default(),
             bounding_box,
         }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct TableCell {
@@ -7074,14 +7079,19 @@ pub struct TableCell {
 #[pymethods]
 impl TableCell {
     #[must_use]
-    #[pyo3(signature = (content, row_span, col_span, is_header))]
+    #[pyo3(signature = (content=None, row_span=None, col_span=None, is_header=None))]
     #[new]
-    pub fn new(content: String, row_span: usize, col_span: usize, is_header: bool) -> Self {
+    pub fn new(
+        content: Option<String>,
+        row_span: Option<usize>,
+        col_span: Option<usize>,
+        is_header: Option<bool>,
+    ) -> Self {
         Self {
-            content,
-            row_span,
-            col_span,
-            is_header,
+            content: content.unwrap_or_default(),
+            row_span: row_span.unwrap_or_default(),
+            col_span: col_span.unwrap_or_default(),
+            is_header: is_header.unwrap_or_default(),
         }
     }
 }

@@ -10,4 +10,7 @@ public record Drawing(
     @JsonProperty("doc_properties") Optional<String> docProperties,
     @JsonProperty("image_ref") Optional<String> imageRef
 ) {
+    public static DrawingBuilder builder() {
+        return new DrawingBuilder();
+    }
 }

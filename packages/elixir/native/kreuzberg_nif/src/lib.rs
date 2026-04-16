@@ -826,13 +826,26 @@ pub struct DocExtractionResult {
     pub metadata: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.Drawing"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct Drawing {
     pub drawing_type: String,
     pub extent: Option<String>,
     pub doc_properties: Option<String>,
     pub image_ref: Option<String>,
+}
+
+impl Drawing {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            drawing_type: opts
+                .get("drawing_type")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            extent: opts.get("extent").and_then(|t| t.decode().ok()),
+            doc_properties: opts.get("doc_properties").and_then(|t| t.decode().ok()),
+            image_ref: opts.get("image_ref").and_then(|t| t.decode().ok()),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
@@ -1566,13 +1579,23 @@ impl std::panic::RefUnwindSafe for ElementId {}
 
 impl rustler::Resource for ElementId {}
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.BoundingBox"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct BoundingBox {
     pub x0: f64,
     pub y0: f64,
     pub x1: f64,
     pub y1: f64,
+}
+
+impl BoundingBox {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            x0: opts.get("x0").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            y0: opts.get("y0").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            x1: opts.get("x1").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            y1: opts.get("y1").and_then(|t| t.decode().ok()).unwrap_or_default(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -2399,8 +2422,7 @@ pub struct HierarchicalBlock {
     pub bbox: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.Table"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct Table {
     pub cells: Vec<Vec<String>>,
     pub markdown: String,
@@ -2408,13 +2430,37 @@ pub struct Table {
     pub bounding_box: Option<BoundingBox>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.TableCell"]
+impl Table {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            cells: opts.get("cells").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            markdown: opts.get("markdown").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            page_number: opts
+                .get("page_number")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            bounding_box: opts.get("bounding_box").and_then(|t| t.decode().ok()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct TableCell {
     pub content: String,
     pub row_span: usize,
     pub col_span: usize,
     pub is_header: bool,
+}
+
+impl TableCell {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            content: opts.get("content").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            row_span: opts.get("row_span").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            col_span: opts.get("col_span").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            is_header: opts.get("is_header").and_then(|t| t.decode().ok()).unwrap_or_default(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
