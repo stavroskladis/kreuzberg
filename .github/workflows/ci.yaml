@@ -176,19 +176,15 @@ jobs:
         with:
           extra-args: ruff ruff-format mypy biome-format biome-lint oxlint ruby-format ruby-lint cpd checkstyle java-verify csharp-format csharp-lint php-format php-lint mix-credo mix-format r-format r-lint helm-lint kubeconform --all-files
 
-      - name: Validate vendored C headers match canonical
+      - name: Validate C header exists
         shell: bash
         run: |
-          CANONICAL="crates/kreuzberg-ffi/kreuzberg.h"
-          FAIL=0
-          for VENDORED in packages/go/v4/internal/ffi/kreuzberg.h packages/ruby/vendor/kreuzberg-ffi/kreuzberg.h packages/r/vendor/kreuzberg-ffi/kreuzberg.h; do
-            if [ -f "$VENDORED" ] && ! diff -q "$CANONICAL" "$VENDORED" > /dev/null 2>&1; then
-              echo "::error::$VENDORED is out of sync with $CANONICAL — run 'python scripts/sync_versions.py'"
-              diff "$CANONICAL" "$VENDORED" | head -20
-              FAIL=1
-            fi
-          done
-          [ "$FAIL" -eq 0 ] || exit 1
+          HEADER="crates/kreuzberg-ffi/include/kreuzberg.h"
+          if [ ! -f "$HEADER" ]; then
+            echo "::error::C header not found at $HEADER — run 'task alef:generate'"
+            exit 1
+          fi
+          echo "C header verified at $HEADER"
 
   validate-rust:
     name: "Validate: Rust"
@@ -423,7 +419,7 @@ jobs:
           path: |
             target/release/libkreuzberg_ffi.*
             target/release/kreuzberg_ffi.*
-            crates/kreuzberg-ffi/kreuzberg.h
+            crates/kreuzberg-ffi/include/kreuzberg.h
             crates/kreuzberg-ffi/kreuzberg-ffi.pc
             crates/kreuzberg-ffi/cmake/
             target/release/kreuzberg
@@ -3186,7 +3182,7 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          HEADER="crates/kreuzberg-ffi/kreuzberg.h"
+          HEADER="crates/kreuzberg-ffi/include/kreuzberg.h"
           echo "Checking version constants in $HEADER..."
           grep 'KREUZBERG_VERSION_MAJOR' "$HEADER"
           grep 'KREUZBERG_VERSION_MINOR' "$HEADER"
@@ -3206,8 +3202,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          test -f crates/kreuzberg-ffi/kreuzberg.h
-          grep 'KREUZBERG_VERSION_MAJOR' crates/kreuzberg-ffi/kreuzberg.h
+          test -f crates/kreuzberg-ffi/include/kreuzberg.h
+          grep 'KREUZBERG_VERSION_MAJOR' crates/kreuzberg-ffi/include/kreuzberg.h
           echo "Header verified on Windows."
 
   test-wasm:
