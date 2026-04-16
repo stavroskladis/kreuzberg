@@ -456,10 +456,6 @@ final class NativeLib {
         LIB.find("kreuzberg_excel_to_markdown").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
-    static final MethodHandle KREUZBERG_RESOLVE_CONVERSION_OPTIONS = LINKER.downcallHandle(
-        LIB.find("kreuzberg_resolve_conversion_options").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
     static final MethodHandle KREUZBERG_CONVERT_HTML_TO_MARKDOWN = LINKER.downcallHandle(
         LIB.find("kreuzberg_convert_html_to_markdown").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
@@ -680,10 +676,6 @@ final class NativeLib {
         LIB.find("kreuzberg_evaluate_native_text_for_ocr").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS)
     );
-    static final MethodHandle KREUZBERG_COMPUTE_QUALITY_SCORE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_compute_quality_score").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.JAVA_DOUBLE, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
     static final MethodHandle KREUZBERG_EVALUATE_PER_PAGE_OCR = LINKER.downcallHandle(
         LIB.find("kreuzberg_evaluate_per_page_ocr").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS)
@@ -696,21 +688,9 @@ final class NativeLib {
         LIB.find("kreuzberg_parse_hex_byte").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.JAVA_BYTE, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
-    static final MethodHandle KREUZBERG_DECODE_WINDOWS_1252 = LINKER.downcallHandle(
-        LIB.find("kreuzberg_decode_windows_1252").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.JAVA_BYTE)
-    );
     static final MethodHandle KREUZBERG_PARSE_RTF_CONTROL_WORD = LINKER.downcallHandle(
         LIB.find("kreuzberg_parse_rtf_control_word").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-    static final MethodHandle KREUZBERG_NORMALIZE_WHITESPACE_WITH_MAPPING = LINKER.downcallHandle(
-        LIB.find("kreuzberg_normalize_whitespace_with_mapping").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-    static final MethodHandle KREUZBERG_MAP_OFFSET = LINKER.downcallHandle(
-        LIB.find("kreuzberg_map_offset").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG)
     );
     static final MethodHandle KREUZBERG_NORMALIZE_WHITESPACE = LINKER.downcallHandle(
         LIB.find("kreuzberg_normalize_whitespace").orElseThrow(),
@@ -1933,16 +1913,6 @@ final class NativeLib {
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KREUZBERG_RTF_FORMATTING_DATA_TO_JSON = LINKER.downcallHandle(
-        LIB.find("kreuzberg_rtf_formatting_data_to_json").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_RTF_FORMATTING_DATA_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_rtf_formatting_data_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
     static final MethodHandle KREUZBERG_EXTRACTION_METRICS_TO_JSON = LINKER.downcallHandle(
         LIB.find("kreuzberg_extraction_metrics_to_json").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
@@ -2276,11 +2246,6 @@ final class NativeLib {
     static final MethodHandle KREUZBERG_OCR_QUALITY_THRESHOLDS_FREE = LINKER.downcallHandle(
         LIB.find("kreuzberg_ocr_quality_thresholds_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_RTF_FORMATTING_DATA_FROM_JSON = LINKER.downcallHandle(
-        LIB.find("kreuzberg_rtf_formatting_data_from_json").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
 
     static final MethodHandle KREUZBERG_TOKEN_REDUCTION_CONFIG_FROM_JSON = LINKER.downcallHandle(
@@ -2820,11 +2785,6 @@ final class NativeLib {
 
     static final MethodHandle KREUZBERG_EXTRACT_RESPONSE_FREE = LINKER.downcallHandle(
         LIB.find("kreuzberg_extract_response_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_EMPTY_PARAMS_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_empty_params_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 

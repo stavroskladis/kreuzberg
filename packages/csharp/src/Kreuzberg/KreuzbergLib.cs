@@ -3331,31 +3331,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Resolve conversion options with sensible defaults.
-    ///
-    /// If no options are provided, creates defaults with:
-    /// - `extract_metadata = true` (parse YAML frontmatter)
-    /// - `include_document_structure = true` (populate document tree)
-    /// - `preprocessing.enabled = false` (disable HTML preprocessing)
-    ///
-    /// Sets output format based on the provided format parameter.
-    /// </summary>
-    /// <param name="options">Optional.</param>
-    /// <param name="outputFormat"></param>
-    public static string ResolveConversionOptions(string? options, string outputFormat)
-    {
-        ArgumentNullException.ThrowIfNull(outputFormat);
-        var result = NativeMethods.ResolveConversionOptions(
-            options!,
-            outputFormat
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Convert HTML with optional configuration and output format.
     ///
     /// Uses sensible defaults if no configuration is provided:
@@ -4846,30 +4821,6 @@ public static class KreuzbergLib
         return returnValue;
     }
 
-    /// <summary>
-    /// Compute a quality score (0.0-1.0) for OCR output text.
-    ///
-    /// Used by the pipeline to decide whether to accept a result or try the next backend.
-    /// Higher is better. Combines multiple signal dimensions into a single score.
-    /// </summary>
-    /// <param name="text"></param>
-    /// <param name="thresholds"></param>
-    public static double ComputeQualityScore(string text, OcrQualityThresholds thresholds)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        ArgumentNullException.ThrowIfNull(thresholds);
-        var thresholdsJson = JsonSerializer.Serialize(thresholds, JsonOptions);
-        var thresholdsHandle = NativeMethods.OcrQualityThresholdsFromJson(thresholdsJson);
-        var result = NativeMethods.ComputeQualityScore(
-            text,
-            thresholdsHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = result;
-        NativeMethods.OcrQualityThresholdsFree(thresholdsHandle);
-        return returnValue;
-    }
-
     public static OcrFallbackDecision EvaluatePerPageOcr(string nativeText, List<PageBoundary>? boundaries, ulong? pageCount, OcrQualityThresholds thresholds)
     {
         ArgumentNullException.ThrowIfNull(nativeText);
@@ -4934,25 +4885,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Decode a byte using Windows-1252 encoding for the 0x80-0x9F range.
-    ///
-    /// This function maps Windows-1252 bytes in the 0x80-0x9F range to their
-    /// corresponding Unicode characters. For other values, it returns the byte
-    /// as a character directly.
-    /// </summary>
-    /// <param name="byte"></param>
-    public static string DecodeWindows1252(byte byte)
-    {
-        var result = NativeMethods.DecodeWindows1252(
-            byte
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Parse an RTF control word and extract its value.
     ///
     /// Returns a tuple of (control_word, optional_numeric_value).
@@ -4967,45 +4899,6 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Normalize whitespace in a string, also producing a byte-offset mapping from
-    /// input positions to output positions. The mapping is a sorted list of
-    /// `(old_offset, new_offset)` pairs that covers every byte boundary in the
-    /// input. Callers can use [`map_offset`] to translate an arbitrary input byte
-    /// offset to the corresponding output byte offset.
-    /// </summary>
-    /// <param name="s"></param>
-    public static string NormalizeWhitespaceWithMapping(string s)
-    {
-        ArgumentNullException.ThrowIfNull(s);
-        var result = NativeMethods.NormalizeWhitespaceWithMapping(
-            s
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Map a byte offset from the pre-normalized string to the post-normalized string.
-    /// </summary>
-    /// <param name="mapping"></param>
-    /// <param name="offset"></param>
-    public static ulong MapOffset(List<string> mapping, ulong offset)
-    {
-        var mappingJson = JsonSerializer.Serialize(mapping, JsonOptions);
-        var mappingHandle = Marshal.StringToHGlobalAnsi(mappingJson);
-        var result = NativeMethods.MapOffset(
-            mappingHandle,
-            offset
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = result;
-        Marshal.FreeHGlobal(mappingHandle);
         return returnValue;
     }
 
@@ -5097,18 +4990,15 @@ public static class KreuzbergLib
     /// - Hyperlink field instructions
     /// </summary>
     /// <param name="content"></param>
-    public static RtfFormattingData ExtractRtfFormatting(string content)
+    public static string ExtractRtfFormatting(string content)
     {
         ArgumentNullException.ThrowIfNull(content);
         var result = NativeMethods.ExtractRtfFormatting(
             content
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.RtfFormattingDataToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.RtfFormattingDataFree(result);
-        var returnValue = JsonSerializer.Deserialize<RtfFormattingData>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -5121,21 +5011,18 @@ public static class KreuzbergLib
     /// <param name="paraStart"></param>
     /// <param name="paraEnd"></param>
     /// <param name="formatting"></param>
-    public static List<TextAnnotation> SpansToAnnotations(ulong paraStart, ulong paraEnd, RtfFormattingData formatting)
+    public static List<TextAnnotation> SpansToAnnotations(ulong paraStart, ulong paraEnd, string formatting)
     {
         ArgumentNullException.ThrowIfNull(formatting);
-        var formattingJson = JsonSerializer.Serialize(formatting, JsonOptions);
-        var formattingHandle = NativeMethods.RtfFormattingDataFromJson(formattingJson);
         var result = NativeMethods.SpansToAnnotations(
             paraStart,
             paraEnd,
-            formattingHandle
+            formatting
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<TextAnnotation>>(json ?? "null", JsonOptions)!;
-        NativeMethods.RtfFormattingDataFree(formattingHandle);
         return returnValue;
     }
 
@@ -12708,25 +12595,6 @@ public static class KreuzbergLib
         var returnValue = JsonSerializer.Deserialize<ExtractionRequest>(json ?? "null", JsonOptions)!;
         NativeMethods.FileExtractionConfigFree(overridesHandle);
         return returnValue;
-    }
-
-    public static async Task<MultipartApi> MultipartApiFromRequest(string req, string state)
-    {
-        ArgumentNullException.ThrowIfNull(req);
-        ArgumentNullException.ThrowIfNull(state);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.MultipartApiFromRequest(
-                req,
-                state
-            );
-            var jsonPtr = NativeMethods.MultipartApiToJson(result);
-            var json = Marshal.PtrToStringUTF8(jsonPtr);
-            NativeMethods.FreeString(jsonPtr);
-            NativeMethods.MultipartApiFree(result);
-            var returnValue = JsonSerializer.Deserialize<MultipartApi>(json ?? "null", JsonOptions)!;
-            return returnValue;
-        });
     }
 
     /// <summary>

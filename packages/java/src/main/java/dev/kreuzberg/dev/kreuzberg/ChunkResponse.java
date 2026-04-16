@@ -5,9 +5,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ChunkResponse(
-    List<ChunkItem> chunks,
+    List<String> chunks,
     @JsonProperty("chunk_count") long chunkCount,
-    ChunkingConfigResponse config,
+    String config,
     @JsonProperty("input_size_bytes") long inputSizeBytes,
     @JsonProperty("chunker_type") String chunkerType
 ) {

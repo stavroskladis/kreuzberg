@@ -1896,23 +1896,6 @@ public final class KreuzbergRs {
         }
     }
 
-    public static String resolveConversionOptions(String options, String outputFormat) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var coptions = arena.allocateFrom(options);
-            var coutputFormat = arena.allocateFrom(outputFormat);
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_RESOLVE_CONVERSION_OPTIONS.invoke(coptions, coutputFormat);
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
     public static String convertHtmlToMarkdown(String html, String options, String outputFormat) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var chtml = arena.allocateFrom(html);
@@ -2990,24 +2973,6 @@ public final class KreuzbergRs {
         }
     }
 
-    public static double computeQualityScore(String text, OcrQualityThresholds thresholds) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var ctext = arena.allocateFrom(text);
-            var cthresholdsJson = thresholds != null ? createObjectMapper().writeValueAsString(thresholds) : null;
-            var cthresholdsJsonSeg = cthresholdsJson != null ? arena.allocateFrom(cthresholdsJson) : MemorySegment.NULL;
-            var cthresholds = cthresholdsJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_OCR_QUALITY_THRESHOLDS_FROM_JSON.invoke(cthresholdsJsonSeg)
-                : MemorySegment.NULL;
-            var primitiveResult = (double) NativeLib.KREUZBERG_COMPUTE_QUALITY_SCORE.invoke(ctext, cthresholds);
-            if (!cthresholds.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_OCR_QUALITY_THRESHOLDS_FREE.invoke(cthresholds);
-            }
-            return primitiveResult;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
     public static OcrFallbackDecision evaluatePerPageOcr(String nativeText, List<PageBoundary> boundaries, long pageCount, OcrQualityThresholds thresholds) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cnativeText = arena.allocateFrom(nativeText);
@@ -3061,21 +3026,6 @@ public final class KreuzbergRs {
         }
     }
 
-    public static String decodeWindows1252(byte byte) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_DECODE_WINDOWS_1252.invoke(byte);
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
     public static String parseRtfControlWord(String chars) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cchars = arena.allocateFrom(chars);
@@ -3087,33 +3037,6 @@ public final class KreuzbergRs {
             String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
             return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static String normalizeWhitespaceWithMapping(String s) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cs = arena.allocateFrom(s);
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_NORMALIZE_WHITESPACE_WITH_MAPPING.invoke(cs);
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static long mapOffset(List<String> mapping, long offset) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cmappingJson = createObjectMapper().writeValueAsString(mapping);
-            var cmapping = arena.allocateFrom(cmappingJson);
-            var primitiveResult = (long) NativeLib.KREUZBERG_MAP_OFFSET.invoke(cmapping, offset);
-            return primitiveResult;
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
@@ -3184,7 +3107,7 @@ public final class KreuzbergRs {
         }
     }
 
-    public static RtfFormattingData extractRtfFormatting(String content) throws KreuzbergRsException {
+    public static String extractRtfFormatting(String content) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var ccontent = arena.allocateFrom(content);
             var resultPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACT_RTF_FORMATTING.invoke(ccontent);
@@ -3192,31 +3115,18 @@ public final class KreuzbergRs {
                 checkLastError();
                 return null;
             }
-            var jsonPtr = (MemorySegment) NativeLib.KREUZBERG_RTF_FORMATTING_DATA_TO_JSON.invoke(resultPtr);
-            NativeLib.KREUZBERG_RTF_FORMATTING_DATA_FREE.invoke(resultPtr);
-            if (jsonPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(jsonPtr);
-            return createObjectMapper().readValue(json, RtfFormattingData.class);
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
     }
 
-    public static List<TextAnnotation> spansToAnnotations(long paraStart, long paraEnd, RtfFormattingData formatting) throws KreuzbergRsException {
+    public static List<TextAnnotation> spansToAnnotations(long paraStart, long paraEnd, String formatting) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
-            var cformattingJson = formatting != null ? createObjectMapper().writeValueAsString(formatting) : null;
-            var cformattingJsonSeg = cformattingJson != null ? arena.allocateFrom(cformattingJson) : MemorySegment.NULL;
-            var cformatting = cformattingJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_RTF_FORMATTING_DATA_FROM_JSON.invoke(cformattingJsonSeg)
-                : MemorySegment.NULL;
+            var cformatting = arena.allocateFrom(formatting);
             var resultPtr = (MemorySegment) NativeLib.KREUZBERG_SPANS_TO_ANNOTATIONS.invoke(paraStart, paraEnd, cformatting);
-            if (!cformatting.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_RTF_FORMATTING_DATA_FREE.invoke(cformatting);
-            }
             if (resultPtr.equals(MemorySegment.NULL)) {
                 return java.util.List.of();
             }

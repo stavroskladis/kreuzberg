@@ -3,5 +3,5 @@ package dev.kreuzberg;
 
 import java.util.Optional;
 
-public record HealthResponse(String status, String version, Optional<PluginStatus> plugins) {
+public record HealthResponse(String status, String version, Optional<String> plugins) {
 }

@@ -4785,43 +4785,6 @@ impl JsPptxExtractor {
 }
 
 #[derive(Clone)]
-#[napi(object)]
-pub struct JsRtfImage {
-    pub format: String,
-    #[napi(js_name = "widthGoal")]
-    pub width_goal: Option<i32>,
-    #[napi(js_name = "heightGoal")]
-    pub height_goal: Option<i32>,
-    pub data: Vec<u8>,
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsRtfFormattingSpan {
-    pub start: i64,
-    pub end: i64,
-    pub bold: bool,
-    pub italic: bool,
-    pub underline: bool,
-    pub strikethrough: bool,
-    #[napi(js_name = "colorIndex")]
-    pub color_index: u16,
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsRtfFormattingData {
-    pub spans: Vec<JsRtfFormattingSpan>,
-    #[napi(js_name = "colorTable")]
-    pub color_table: Vec<String>,
-    #[napi(js_name = "headerText")]
-    pub header_text: Option<String>,
-    #[napi(js_name = "footerText")]
-    pub footer_text: Option<String>,
-    pub hyperlinks: Vec<String>,
-}
-
-#[derive(Clone)]
 #[napi]
 pub struct JsRtfExtractor {
     inner: Arc<kreuzberg::extractors::RtfExtractor>,
@@ -7004,13 +6967,6 @@ impl JsExtractionServiceBuilder {
 
 #[derive(Clone)]
 #[napi(object)]
-pub struct JsMultipartApi {
-    #[napi(js_name = "0")]
-    pub _0: String,
-}
-
-#[derive(Clone)]
-#[napi(object)]
 pub struct JsApiError {
     pub status: String,
     pub body: JsErrorResponse,
@@ -7036,23 +6992,10 @@ pub struct JsApiSizeLimits {
 
 #[derive(Clone)]
 #[napi(object)]
-pub struct JsPluginStatus {
-    #[napi(js_name = "ocrBackendsCount")]
-    pub ocr_backends_count: i64,
-    #[napi(js_name = "ocrBackends")]
-    pub ocr_backends: Vec<String>,
-    #[napi(js_name = "extractorsCount")]
-    pub extractors_count: i64,
-    #[napi(js_name = "postProcessorsCount")]
-    pub post_processors_count: i64,
-}
-
-#[derive(Clone)]
-#[napi(object)]
 pub struct JsHealthResponse {
     pub status: String,
     pub version: String,
-    pub plugins: Option<JsPluginStatus>,
+    pub plugins: Option<String>,
 }
 
 #[derive(Clone)]
@@ -7138,49 +7081,22 @@ pub struct JsEmbedResponse {
 #[napi(object)]
 pub struct JsChunkRequest {
     pub text: String,
-    pub config: Option<JsChunkingConfigRequest>,
+    pub config: Option<String>,
     #[napi(js_name = "chunkerType")]
     pub chunker_type: String,
-}
-
-#[derive(Clone, Default)]
-#[napi(object)]
-pub struct JsChunkingConfigRequest {
-    #[napi(js_name = "maxCharacters")]
-    pub max_characters: Option<i64>,
-    pub overlap: Option<i64>,
-    pub trim: Option<bool>,
 }
 
 #[derive(Clone)]
 #[napi(object)]
 pub struct JsChunkResponse {
-    pub chunks: Vec<JsChunkItem>,
+    pub chunks: Vec<String>,
     #[napi(js_name = "chunkCount")]
     pub chunk_count: i64,
-    pub config: JsChunkingConfigResponse,
+    pub config: String,
     #[napi(js_name = "inputSizeBytes")]
     pub input_size_bytes: i64,
     #[napi(js_name = "chunkerType")]
     pub chunker_type: String,
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsChunkItem {
-    pub content: String,
-    #[napi(js_name = "byteStart")]
-    pub byte_start: i64,
-    #[napi(js_name = "byteEnd")]
-    pub byte_end: i64,
-    #[napi(js_name = "chunkIndex")]
-    pub chunk_index: i64,
-    #[napi(js_name = "totalChunks")]
-    pub total_chunks: i64,
-    #[napi(js_name = "firstPage")]
-    pub first_page: Option<i64>,
-    #[napi(js_name = "lastPage")]
-    pub last_page: Option<i64>,
 }
 
 #[derive(Clone)]
@@ -7280,17 +7196,6 @@ pub struct JsDoclingCompatDocument {
 
 #[derive(Clone)]
 #[napi(object)]
-pub struct JsChunkingConfigResponse {
-    #[napi(js_name = "maxCharacters")]
-    pub max_characters: i64,
-    pub overlap: i64,
-    pub trim: bool,
-    #[napi(js_name = "chunkerType")]
-    pub chunker_type: String,
-}
-
-#[derive(Clone)]
-#[napi(object)]
 pub struct JsExtractFileParams {
     pub path: String,
     #[napi(js_name = "mimeType")]
@@ -7337,15 +7242,6 @@ pub struct JsDetectMimeTypeParams {
 }
 
 #[derive(Clone)]
-#[napi]
-pub struct JsEmptyParams {
-    inner: Arc<kreuzberg::mcp::params::EmptyParams>,
-}
-
-#[napi]
-impl JsEmptyParams {}
-
-#[derive(Clone)]
 #[napi(object)]
 pub struct JsCacheWarmParams {
     #[napi(js_name = "allEmbeddings")]
@@ -7389,22 +7285,6 @@ pub struct JsChunkTextParams {
     pub overlap: Option<i64>,
     #[napi(js_name = "chunkerType")]
     pub chunker_type: Option<String>,
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsDownloadGrammarsParams {
-    pub languages: Option<Vec<String>>,
-    pub groups: Option<Vec<String>>,
-    pub all: Option<bool>,
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsListGrammarsParams {
-    #[napi(js_name = "downloadedOnly")]
-    pub downloaded_only: bool,
-    pub filter: Option<String>,
 }
 
 #[derive(Clone)]
@@ -10333,12 +10213,6 @@ pub fn excel_to_markdown(workbook: JsExcelWorkbook) -> String {
     kreuzberg::extraction::excel_to_markdown(&workbook_core)
 }
 
-#[napi(js_name = "resolveConversionOptions")]
-pub fn resolve_conversion_options(options: Option<String>, output_format: Option<String>) -> String {
-    let _ = (options, output_format);
-    String::from("[unimplemented: resolve_conversion_options]")
-}
-
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "convertHtmlToMarkdown")]
 pub fn convert_html_to_markdown(
@@ -10754,12 +10628,6 @@ pub fn evaluate_native_text_for_ocr(
     kreuzberg::extractors::pdf::evaluate_native_text_for_ocr(&native_text, page_count, &thresholds_core).into()
 }
 
-#[napi(js_name = "computeQualityScore")]
-pub fn compute_quality_score(text: String, thresholds: JsOcrQualityThresholds) -> f64 {
-    let thresholds_core = thresholds.into();
-    kreuzberg::extractors::pdf::ocr::compute_quality_score(&text, &thresholds_core)
-}
-
 #[napi(js_name = "evaluatePerPageOcr")]
 pub fn evaluate_per_page_ocr(
     native_text: String,
@@ -10782,27 +10650,10 @@ pub fn parse_hex_byte(h1: String, h2: String) -> Option<u8> {
     kreuzberg::extractors::rtf::parse_hex_byte(&h1, &h2)
 }
 
-#[napi(js_name = "decodeWindows1252")]
-pub fn decode_windows_1252(byte: u8) -> String {
-    kreuzberg::extractors::rtf::encoding::decode_windows_1252(byte)
-}
-
 #[napi(js_name = "parseRtfControlWord")]
 pub fn parse_rtf_control_word(chars: String) -> String {
     let _ = chars;
     String::from("[unimplemented: parse_rtf_control_word]")
-}
-
-#[napi(js_name = "normalizeWhitespaceWithMapping")]
-pub fn normalize_whitespace_with_mapping(s: String) -> String {
-    let _ = s;
-    String::from("[unimplemented: normalize_whitespace_with_mapping]")
-}
-
-#[napi(js_name = "mapOffset")]
-pub fn map_offset(mapping: Vec<String>, offset: i64) -> i64 {
-    let _ = (mapping, offset);
-    0
 }
 
 #[napi(js_name = "normalizeWhitespace")]
@@ -10828,17 +10679,15 @@ pub fn extract_rtf_metadata(rtf_content: String, extracted_text: String) -> Stri
 }
 
 #[napi(js_name = "extractRtfFormatting")]
-pub fn extract_rtf_formatting(content: String) -> JsRtfFormattingData {
-    kreuzberg::extractors::rtf::extract_rtf_formatting(&content).into()
+pub fn extract_rtf_formatting(content: String) -> String {
+    let _ = content;
+    String::from("[unimplemented: extract_rtf_formatting]")
 }
 
 #[napi(js_name = "spansToAnnotations")]
-pub fn spans_to_annotations(para_start: i64, para_end: i64, formatting: JsRtfFormattingData) -> Vec<JsTextAnnotation> {
-    let formatting_core = formatting.into();
-    kreuzberg::extractors::rtf::spans_to_annotations(para_start, para_end, &formatting_core)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn spans_to_annotations(para_start: i64, para_end: i64, formatting: String) -> Vec<JsTextAnnotation> {
+    let _ = (para_start, para_end, formatting);
+    Vec::new()
 }
 
 #[napi(js_name = "extractTextFromRtf")]
@@ -14102,69 +13951,6 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for JsOcrFallbackDeci
     }
 }
 
-impl From<kreuzberg::extractors::rtf::images::RtfImage> for JsRtfImage {
-    fn from(val: kreuzberg::extractors::rtf::images::RtfImage) -> Self {
-        Self {
-            format: val.format,
-            width_goal: val.width_goal,
-            height_goal: val.height_goal,
-            data: val.data.to_vec(),
-        }
-    }
-}
-
-impl From<JsRtfFormattingSpan> for kreuzberg::extractors::rtf::parser::RtfFormattingSpan {
-    fn from(val: JsRtfFormattingSpan) -> Self {
-        Self {
-            start: val.start as usize,
-            end: val.end as usize,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingSpan> for JsRtfFormattingSpan {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start as i64,
-            end: val.end as i64,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<JsRtfFormattingData> for kreuzberg::extractors::rtf::parser::RtfFormattingData {
-    fn from(val: JsRtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingData> for JsRtfFormattingData {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: val.hyperlinks.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::panic_context::PanicContext> for JsPanicContext {
     fn from(val: kreuzberg::panic_context::PanicContext) -> Self {
         Self {
@@ -16190,18 +15976,6 @@ impl From<kreuzberg::service::ExtractionRequest> for JsExtractionRequest {
     }
 }
 
-impl From<JsMultipartApi> for kreuzberg::api::error::MultipartApi {
-    fn from(val: JsMultipartApi) -> Self {
-        Self(val._0)
-    }
-}
-
-impl From<kreuzberg::api::error::MultipartApi> for JsMultipartApi {
-    fn from(val: kreuzberg::api::error::MultipartApi) -> Self {
-        Self { _0: val.0 }
-    }
-}
-
 impl From<JsApiError> for kreuzberg::api::ApiError {
     fn from(val: JsApiError) -> Self {
         Self {
@@ -16238,23 +16012,12 @@ impl From<kreuzberg::api::ApiSizeLimits> for JsApiSizeLimits {
     }
 }
 
-impl From<kreuzberg::api::types::PluginStatus> for JsPluginStatus {
-    fn from(val: kreuzberg::api::types::PluginStatus) -> Self {
-        Self {
-            ocr_backends_count: val.ocr_backends_count as i64,
-            ocr_backends: val.ocr_backends,
-            extractors_count: val.extractors_count as i64,
-            post_processors_count: val.post_processors_count as i64,
-        }
-    }
-}
-
 impl From<kreuzberg::api::HealthResponse> for JsHealthResponse {
     fn from(val: kreuzberg::api::HealthResponse) -> Self {
         Self {
             status: val.status,
             version: val.version,
-            plugins: val.plugins.map(Into::into),
+            plugins: val.plugins.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -16346,18 +16109,8 @@ impl From<kreuzberg::api::ChunkRequest> for JsChunkRequest {
     fn from(val: kreuzberg::api::ChunkRequest) -> Self {
         Self {
             text: val.text,
-            config: val.config.map(Into::into),
+            config: val.config.as_ref().map(|v| format!("{:?}", v)),
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkingConfigRequest> for JsChunkingConfigRequest {
-    fn from(val: kreuzberg::api::types::ChunkingConfigRequest) -> Self {
-        Self {
-            max_characters: val.max_characters.map(|v| v as i64),
-            overlap: val.overlap.map(|v| v as i64),
-            trim: val.trim,
         }
     }
 }
@@ -16365,25 +16118,11 @@ impl From<kreuzberg::api::types::ChunkingConfigRequest> for JsChunkingConfigRequ
 impl From<kreuzberg::api::ChunkResponse> for JsChunkResponse {
     fn from(val: kreuzberg::api::ChunkResponse) -> Self {
         Self {
-            chunks: val.chunks.into_iter().map(Into::into).collect(),
+            chunks: val.chunks.iter().map(|i| format!("{:?}", i)).collect(),
             chunk_count: val.chunk_count as i64,
-            config: val.config.into(),
+            config: format!("{:?}", val.config),
             input_size_bytes: val.input_size_bytes as i64,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkItem> for JsChunkItem {
-    fn from(val: kreuzberg::api::types::ChunkItem) -> Self {
-        Self {
-            content: val.content,
-            byte_start: val.byte_start as i64,
-            byte_end: val.byte_end as i64,
-            chunk_index: val.chunk_index as i64,
-            total_chunks: val.total_chunks as i64,
-            first_page: val.first_page.map(|v| v as i64),
-            last_page: val.last_page.map(|v| v as i64),
         }
     }
 }
@@ -16486,17 +16225,6 @@ impl From<kreuzberg::api::DoclingCompatDocument> for JsDoclingCompatDocument {
     }
 }
 
-impl From<kreuzberg::api::types::ChunkingConfigResponse> for JsChunkingConfigResponse {
-    fn from(val: kreuzberg::api::types::ChunkingConfigResponse) -> Self {
-        Self {
-            max_characters: val.max_characters as i64,
-            overlap: val.overlap as i64,
-            trim: val.trim,
-            chunker_type: val.chunker_type,
-        }
-    }
-}
-
 impl From<kreuzberg::mcp::ExtractFileParams> for JsExtractFileParams {
     fn from(val: kreuzberg::mcp::ExtractFileParams) -> Self {
         Self {
@@ -16584,25 +16312,6 @@ impl From<kreuzberg::mcp::ChunkTextParams> for JsChunkTextParams {
             max_characters: val.max_characters.map(|v| v as i64),
             overlap: val.overlap.map(|v| v as i64),
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::DownloadGrammarsParams> for JsDownloadGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::DownloadGrammarsParams) -> Self {
-        Self {
-            languages: val.languages,
-            groups: val.groups,
-            all: val.all,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::ListGrammarsParams> for JsListGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::ListGrammarsParams) -> Self {
-        Self {
-            downloaded_only: val.downloaded_only,
-            filter: val.filter,
         }
     }
 }

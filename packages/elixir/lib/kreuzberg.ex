@@ -728,12 +728,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.excel_to_markdown(workbook)
   end
 
-  @doc "Resolve conversion options with sensible defaults."
-  @spec resolve_conversion_options(String.t() | nil, String.t()) :: String.t()
-  def resolve_conversion_options(options, output_format) do
-    Kreuzberg.Native.resolve_conversion_options(options, output_format)
-  end
-
   @doc "Convert HTML with optional configuration and output format."
   @spec convert_html_to_markdown(String.t()) :: {:ok, String.t()} | {:error, String.t()}
   def convert_html_to_markdown(html) do
@@ -1106,12 +1100,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.evaluate_native_text_for_ocr(native_text, page_count, thresholds)
   end
 
-  @doc "Compute a quality score (0.0-1.0) for OCR output text."
-  @spec compute_quality_score(String.t(), String.t() | nil) :: float()
-  def compute_quality_score(text, thresholds) do
-    Kreuzberg.Native.compute_quality_score(text, thresholds)
-  end
-
   @doc "Function"
   @spec evaluate_per_page_ocr(String.t(), [map()] | nil, non_neg_integer() | nil, String.t() | nil) :: map()
   def evaluate_per_page_ocr(native_text, boundaries, page_count, thresholds) do
@@ -1130,28 +1118,10 @@ defmodule Kreuzberg do
     Kreuzberg.Native.parse_hex_byte(h1, h2)
   end
 
-  @doc "Decode a byte using Windows-1252 encoding for the 0x80-0x9F range."
-  @spec decode_windows_1252(non_neg_integer()) :: String.t()
-  def decode_windows_1252(byte) do
-    Kreuzberg.Native.decode_windows_1252(byte)
-  end
-
   @doc "Parse an RTF control word and extract its value."
   @spec parse_rtf_control_word(String.t()) :: String.t()
   def parse_rtf_control_word(chars) do
     Kreuzberg.Native.parse_rtf_control_word(chars)
-  end
-
-  @doc "Normalize whitespace in a string, also producing a byte-offset mapping from"
-  @spec normalize_whitespace_with_mapping(String.t()) :: String.t()
-  def normalize_whitespace_with_mapping(s) do
-    Kreuzberg.Native.normalize_whitespace_with_mapping(s)
-  end
-
-  @doc "Map a byte offset from the pre-normalized string to the post-normalized string."
-  @spec map_offset([String.t()], non_neg_integer()) :: non_neg_integer()
-  def map_offset(mapping, offset) do
-    Kreuzberg.Native.map_offset(mapping, offset)
   end
 
   @doc "Normalize whitespace in a string."
@@ -1179,13 +1149,13 @@ defmodule Kreuzberg do
   end
 
   @doc "Extract formatting metadata from RTF content."
-  @spec extract_rtf_formatting(String.t()) :: map()
+  @spec extract_rtf_formatting(String.t()) :: String.t()
   def extract_rtf_formatting(content) do
     Kreuzberg.Native.extract_rtf_formatting(content)
   end
 
   @doc "Convert RTF formatting spans into `TextAnnotation` vectors for a paragraph."
-  @spec spans_to_annotations(non_neg_integer(), non_neg_integer(), map()) :: [map()]
+  @spec spans_to_annotations(non_neg_integer(), non_neg_integer(), String.t()) :: [map()]
   def spans_to_annotations(para_start, para_end, formatting) do
     Kreuzberg.Native.spans_to_annotations(para_start, para_end, formatting)
   end
@@ -6462,12 +6432,6 @@ defmodule Kreuzberg do
   @spec extractionservicebuilder_build(map()) :: String.t()
   def extractionservicebuilder_build(obj) do
     Kreuzberg.Native.extractionservicebuilder_build(obj)
-  end
-
-  @doc "Method"
-  @spec multipartapi_from_request_async(String.t(), String.t()) :: {:ok, map()} | {:error, String.t()}
-  def multipartapi_from_request_async(req, state) do
-    Kreuzberg.Native.multipartapi_from_request_async(req, state)
   end
 
   @doc "Create a validation error (400)."

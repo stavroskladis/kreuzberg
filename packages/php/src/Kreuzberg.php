@@ -2757,25 +2757,6 @@ final class Kreuzberg
     }
 
     /**
-     * Resolve conversion options with sensible defaults.
-     *
-     * If no options are provided, creates defaults with:
-     * - `extract_metadata = true` (parse YAML frontmatter)
-     * - `include_document_structure = true` (populate document tree)
-     * - `preprocessing.enabled = false` (disable HTML preprocessing)
-     *
-     * Sets output format based on the provided format parameter.
-     *
-     * @param ?string $options
-     * @param string $output_format
-     * @return string
-     */
-    public static function resolveConversionOptions(?string $options = null, string $output_format): string
-    {
-        return \Kreuzberg\KreuzbergApi::resolveConversionOptions($options, $output_format); // delegate to native extension class
-    }
-
-    /**
      * Convert HTML with optional configuration and output format.
      *
      * Uses sensible defaults if no configuration is provided:
@@ -3859,21 +3840,6 @@ final class Kreuzberg
     }
 
     /**
-     * Compute a quality score (0.0-1.0) for OCR output text.
-     *
-     * Used by the pipeline to decide whether to accept a result or try the next backend.
-     * Higher is better. Combines multiple signal dimensions into a single score.
-     *
-     * @param string $text
-     * @param OcrQualityThresholds $thresholds
-     * @return float
-     */
-    public static function computeQualityScore(string $text, OcrQualityThresholds $thresholds): float
-    {
-        return \Kreuzberg\KreuzbergApi::computeQualityScore($text, $thresholds); // delegate to native extension class
-    }
-
-    /**
      * evaluatePerPageOcr.
      *
      * @param string $native_text
@@ -3915,21 +3881,6 @@ final class Kreuzberg
     }
 
     /**
-     * Decode a byte using Windows-1252 encoding for the 0x80-0x9F range.
-     *
-     * This function maps Windows-1252 bytes in the 0x80-0x9F range to their
-     * corresponding Unicode characters. For other values, it returns the byte
-     * as a character directly.
-     *
-     * @param int $byte
-     * @return string
-     */
-    public static function decodeWindows1252(int $byte): string
-    {
-        return \Kreuzberg\KreuzbergApi::decodeWindows1252($byte); // delegate to native extension class
-    }
-
-    /**
      * Parse an RTF control word and extract its value.
      *
      * Returns a tuple of (control_word, optional_numeric_value).
@@ -3940,33 +3891,6 @@ final class Kreuzberg
     public static function parseRtfControlWord(string $chars): string
     {
         return \Kreuzberg\KreuzbergApi::parseRtfControlWord($chars); // delegate to native extension class
-    }
-
-    /**
-     * Normalize whitespace in a string, also producing a byte-offset mapping from
-     * input positions to output positions. The mapping is a sorted list of
-     * `(old_offset, new_offset)` pairs that covers every byte boundary in the
-     * input. Callers can use [`map_offset`] to translate an arbitrary input byte
-     * offset to the corresponding output byte offset.
-     *
-     * @param string $s
-     * @return string
-     */
-    public static function normalizeWhitespaceWithMapping(string $s): string
-    {
-        return \Kreuzberg\KreuzbergApi::normalizeWhitespaceWithMapping($s); // delegate to native extension class
-    }
-
-    /**
-     * Map a byte offset from the pre-normalized string to the post-normalized string.
-     *
-     * @param array<string> $mapping
-     * @param int $offset
-     * @return int
-     */
-    public static function mapOffset(array $mapping, int $offset): int
-    {
-        return \Kreuzberg\KreuzbergApi::mapOffset($mapping, $offset); // delegate to native extension class
     }
 
     /**
@@ -4034,9 +3958,9 @@ final class Kreuzberg
      * - Hyperlink field instructions
      *
      * @param string $content
-     * @return RtfFormattingData
+     * @return string
      */
-    public static function extractRtfFormatting(string $content): RtfFormattingData
+    public static function extractRtfFormatting(string $content): string
     {
         return \Kreuzberg\KreuzbergApi::extractRtfFormatting($content); // delegate to native extension class
     }
@@ -4049,10 +3973,10 @@ final class Kreuzberg
      *
      * @param int $para_start
      * @param int $para_end
-     * @param RtfFormattingData $formatting
+     * @param string $formatting
      * @return array<TextAnnotation>
      */
-    public static function spansToAnnotations(int $para_start, int $para_end, RtfFormattingData $formatting): array
+    public static function spansToAnnotations(int $para_start, int $para_end, string $formatting): array
     {
         return \Kreuzberg\KreuzbergApi::spansToAnnotations($para_start, $para_end, $formatting); // delegate to native extension class
     }

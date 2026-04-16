@@ -148,7 +148,6 @@ defmodule Kreuzberg.Native do
   def read_excel_bytes(_data, _file_extension), do: :erlang.nif_error(:nif_not_loaded)
   def excel_to_text(_workbook), do: :erlang.nif_error(:nif_not_loaded)
   def excel_to_markdown(_workbook), do: :erlang.nif_error(:nif_not_loaded)
-  def resolve_conversion_options(_options, _output_format), do: :erlang.nif_error(:nif_not_loaded)
 
   def convert_html_to_markdown(_html, _options, _output_format),
     do: :erlang.nif_error(:nif_not_loaded)
@@ -223,17 +222,12 @@ defmodule Kreuzberg.Native do
   def evaluate_native_text_for_ocr(_native_text, _page_count, _thresholds),
     do: :erlang.nif_error(:nif_not_loaded)
 
-  def compute_quality_score(_text, _thresholds), do: :erlang.nif_error(:nif_not_loaded)
-
   def evaluate_per_page_ocr(_native_text, _boundaries, _page_count, _thresholds),
     do: :erlang.nif_error(:nif_not_loaded)
 
   def hex_digit_to_u8(_c), do: :erlang.nif_error(:nif_not_loaded)
   def parse_hex_byte(_h1, _h2), do: :erlang.nif_error(:nif_not_loaded)
-  def decode_windows_1252(_byte), do: :erlang.nif_error(:nif_not_loaded)
   def parse_rtf_control_word(_chars), do: :erlang.nif_error(:nif_not_loaded)
-  def normalize_whitespace_with_mapping(_s), do: :erlang.nif_error(:nif_not_loaded)
-  def map_offset(_mapping, _offset), do: :erlang.nif_error(:nif_not_loaded)
   def normalize_whitespace(_s), do: :erlang.nif_error(:nif_not_loaded)
   def extract_pict_image(_chars), do: :erlang.nif_error(:nif_not_loaded)
   def parse_rtf_datetime(_segment), do: :erlang.nif_error(:nif_not_loaded)
@@ -1411,7 +1405,6 @@ defmodule Kreuzberg.Native do
   def extractionservicebuilder_with_tracing(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def extractionservicebuilder_with_metrics(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def extractionservicebuilder_build(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def multipartapi_from_request_async(_req, _state), do: :erlang.nif_error(:nif_not_loaded)
   def apierror_validation(_error), do: :erlang.nif_error(:nif_not_loaded)
   def apierror_unprocessable(_error), do: :erlang.nif_error(:nif_not_loaded)
   def apierror_internal(_error), do: :erlang.nif_error(:nif_not_loaded)

@@ -663,12 +663,6 @@ excel_to_markdown <- function(workbook) {
   .Call("kreuzberg_excel_to_markdown", workbook)
 }
 
-#' Resolve conversion options with sensible defaults.
-#' @export
-resolve_conversion_options <- function(options = NULL, output_format) {
-  .Call("kreuzberg_resolve_conversion_options", options, output_format)
-}
-
 #' Convert HTML with optional configuration and output format.
 #' @export
 convert_html_to_markdown <- function(html, options = NULL, output_format = NULL) {
@@ -999,12 +993,6 @@ evaluate_native_text_for_ocr <- function(native_text, page_count = NULL, thresho
   .Call("kreuzberg_evaluate_native_text_for_ocr", native_text, page_count, thresholds)
 }
 
-#' Compute a quality score (0.0-1.0) for OCR output text.
-#' @export
-compute_quality_score <- function(text, thresholds) {
-  .Call("kreuzberg_compute_quality_score", text, thresholds)
-}
-
 #' Function
 #' @export
 evaluate_per_page_ocr <- function(native_text, boundaries = NULL, page_count = NULL, thresholds) {
@@ -1023,28 +1011,10 @@ parse_hex_byte <- function(h1, h2) {
   .Call("kreuzberg_parse_hex_byte", h1, h2)
 }
 
-#' Decode a byte using Windows-1252 encoding for the 0x80-0x9F range.
-#' @export
-decode_windows_1252 <- function(byte) {
-  .Call("kreuzberg_decode_windows_1252", byte)
-}
-
 #' Parse an RTF control word and extract its value.
 #' @export
 parse_rtf_control_word <- function(chars) {
   .Call("kreuzberg_parse_rtf_control_word", chars)
-}
-
-#' Normalize whitespace in a string, also producing a byte-offset mapping from
-#' @export
-normalize_whitespace_with_mapping <- function(s) {
-  .Call("kreuzberg_normalize_whitespace_with_mapping", s)
-}
-
-#' Map a byte offset from the pre-normalized string to the post-normalized string.
-#' @export
-map_offset <- function(mapping, offset) {
-  .Call("kreuzberg_map_offset", mapping, offset)
 }
 
 #' Normalize whitespace in a string.

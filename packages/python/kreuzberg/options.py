@@ -115,24 +115,20 @@ class YearRange:
     """Placeholder for YearRange type."""
 
 
-class StructuredExtractionConfig:
-    """Placeholder for StructuredExtractionConfig type."""
-
-
-class ImagePreprocessingMetadata:
-    """Placeholder for ImagePreprocessingMetadata type."""
-
-
-class DjotContent:
-    """Placeholder for DjotContent type."""
-
-
-class LanguageDetectionConfig:
-    """Placeholder for LanguageDetectionConfig type."""
+class PageStructure:
+    """Placeholder for PageStructure type."""
 
 
 class OcrPipelineConfig:
     """Placeholder for OcrPipelineConfig type."""
+
+
+class Position:
+    """Placeholder for Position type."""
+
+
+class DjotContent:
+    """Placeholder for DjotContent type."""
 
 
 class ErrorMetadata:
@@ -143,12 +139,16 @@ class TokenReductionConfig:
     """Placeholder for TokenReductionConfig type."""
 
 
-class PageStructure:
-    """Placeholder for PageStructure type."""
+class StructuredExtractionConfig:
+    """Placeholder for StructuredExtractionConfig type."""
 
 
-class Position:
-    """Placeholder for Position type."""
+class ImagePreprocessingMetadata:
+    """Placeholder for ImagePreprocessingMetadata type."""
+
+
+class LanguageDetectionConfig:
+    """Placeholder for LanguageDetectionConfig type."""
 
 
 @dataclass
@@ -1767,20 +1767,6 @@ class ApiSizeLimits:
 
     max_multipart_field_bytes: int = 0
     """Maximum size of a single multipart field in bytes."""
-
-
-@dataclass
-class ChunkingConfigRequest:
-    """Chunking configuration request."""
-
-    max_characters: int | None = None
-    """Maximum characters per chunk (must be greater than overlap, default: 2000)"""
-
-    overlap: int | None = None
-    """Overlap between chunks in characters (must be less than max_characters, default: 100)"""
-
-    trim: bool | None = None
-    """Whether to trim whitespace"""
 
 
 @dataclass

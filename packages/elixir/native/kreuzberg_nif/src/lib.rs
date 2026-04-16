@@ -2179,37 +2179,6 @@ impl std::panic::RefUnwindSafe for PptxExtractor {}
 
 impl rustler::Resource for PptxExtractor {}
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.RtfImage"]
-pub struct RtfImage {
-    pub format: String,
-    pub width_goal: Option<i32>,
-    pub height_goal: Option<i32>,
-    pub data: Vec<u8>,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.RtfFormattingSpan"]
-pub struct RtfFormattingSpan {
-    pub start: usize,
-    pub end: usize,
-    pub bold: bool,
-    pub italic: bool,
-    pub underline: bool,
-    pub strikethrough: bool,
-    pub color_index: u16,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.RtfFormattingData"]
-pub struct RtfFormattingData {
-    pub spans: Vec<RtfFormattingSpan>,
-    pub color_table: Vec<String>,
-    pub header_text: Option<String>,
-    pub footer_text: Option<String>,
-    pub hyperlinks: Vec<String>,
-}
-
 #[derive(Clone)]
 pub struct RtfExtractor {
     inner: Arc<kreuzberg::extractors::RtfExtractor>,
@@ -3737,12 +3706,6 @@ impl std::panic::RefUnwindSafe for ExtractionServiceBuilder {}
 impl rustler::Resource for ExtractionServiceBuilder {}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.MultipartApi"]
-pub struct MultipartApi {
-    pub _0: String,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ApiError"]
 pub struct ApiError {
     pub status: String,
@@ -3781,20 +3744,11 @@ impl ApiSizeLimits {
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.PluginStatus"]
-pub struct PluginStatus {
-    pub ocr_backends_count: usize,
-    pub ocr_backends: Vec<String>,
-    pub extractors_count: usize,
-    pub post_processors_count: usize,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.HealthResponse"]
 pub struct HealthResponse {
     pub status: String,
     pub version: String,
-    pub plugins: Option<PluginStatus>,
+    pub plugins: Option<String>,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -3869,47 +3823,18 @@ pub struct EmbedResponse {
 #[module = "Kreuzberg.ChunkRequest"]
 pub struct ChunkRequest {
     pub text: String,
-    pub config: Option<ChunkingConfigRequest>,
+    pub config: Option<String>,
     pub chunker_type: String,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct ChunkingConfigRequest {
-    pub max_characters: Option<usize>,
-    pub overlap: Option<usize>,
-    pub trim: Option<bool>,
-}
-
-impl ChunkingConfigRequest {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            max_characters: opts.get("max_characters").and_then(|t| t.decode().ok()),
-            overlap: opts.get("overlap").and_then(|t| t.decode().ok()),
-            trim: opts.get("trim").and_then(|t| t.decode().ok()),
-        }
-    }
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ChunkResponse"]
 pub struct ChunkResponse {
-    pub chunks: Vec<ChunkItem>,
+    pub chunks: Vec<String>,
     pub chunk_count: usize,
-    pub config: ChunkingConfigResponse,
+    pub config: String,
     pub input_size_bytes: usize,
     pub chunker_type: String,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ChunkItem"]
-pub struct ChunkItem {
-    pub content: String,
-    pub byte_start: usize,
-    pub byte_end: usize,
-    pub chunk_index: usize,
-    pub total_chunks: usize,
-    pub first_page: Option<usize>,
-    pub last_page: Option<usize>,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -4004,15 +3929,6 @@ pub struct DoclingCompatDocument {
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ChunkingConfigResponse"]
-pub struct ChunkingConfigResponse {
-    pub max_characters: usize,
-    pub overlap: usize,
-    pub trim: bool,
-    pub chunker_type: String,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ExtractFileParams"]
 pub struct ExtractFileParams {
     pub path: String,
@@ -4048,16 +3964,6 @@ pub struct DetectMimeTypeParams {
     pub path: String,
     pub use_content: bool,
 }
-
-#[derive(Clone)]
-pub struct EmptyParams {
-    inner: Arc<kreuzberg::mcp::params::EmptyParams>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for EmptyParams {}
-
-impl rustler::Resource for EmptyParams {}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.CacheWarmParams"]
@@ -4095,21 +4001,6 @@ pub struct ChunkTextParams {
     pub max_characters: Option<usize>,
     pub overlap: Option<usize>,
     pub chunker_type: Option<String>,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.DownloadGrammarsParams"]
-pub struct DownloadGrammarsParams {
-    pub languages: Option<Vec<String>>,
-    pub groups: Option<Vec<String>>,
-    pub all: Option<bool>,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ListGrammarsParams"]
-pub struct ListGrammarsParams {
-    pub downloaded_only: bool,
-    pub filter: Option<String>,
 }
 
 #[derive(Clone)]
@@ -6339,11 +6230,6 @@ pub fn excel_to_markdown(workbook: ExcelWorkbook) -> String {
 }
 
 #[rustler::nif]
-pub fn resolve_conversion_options(options: String, output_format: String) -> String {
-    String::from("[unimplemented: resolve_conversion_options]")
-}
-
-#[rustler::nif]
 pub fn convert_html_to_markdown(html: String, options: String, output_format: String) -> Result<String, String> {
     Err(String::from("Not implemented: convert_html_to_markdown"))
 }
@@ -6732,15 +6618,6 @@ pub fn evaluate_native_text_for_ocr(
 }
 
 #[rustler::nif]
-pub fn compute_quality_score(text: String, thresholds: Option<String>) -> f64 {
-    let thresholds_core: Option<kreuzberg::OcrQualityThresholds> = thresholds
-        .map(|s| serde_json::from_str::<kreuzberg::OcrQualityThresholds>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::extractors::pdf::ocr::compute_quality_score(&text, Some(thresholds_core.unwrap_or_default()))
-}
-
-#[rustler::nif]
 pub fn evaluate_per_page_ocr(
     native_text: String,
     boundaries: Vec<PageBoundary>,
@@ -6771,23 +6648,8 @@ pub fn parse_hex_byte(h1: String, h2: String) -> Option<u8> {
 }
 
 #[rustler::nif]
-pub fn decode_windows_1252(byte: u8) -> String {
-    kreuzberg::extractors::rtf::encoding::decode_windows_1252(byte).into()
-}
-
-#[rustler::nif]
 pub fn parse_rtf_control_word(chars: String) -> String {
     String::from("[unimplemented: parse_rtf_control_word]")
-}
-
-#[rustler::nif]
-pub fn normalize_whitespace_with_mapping(s: String) -> String {
-    String::from("[unimplemented: normalize_whitespace_with_mapping]")
-}
-
-#[rustler::nif]
-pub fn map_offset(mapping: Vec<String>, offset: usize) -> usize {
-    0
 }
 
 #[rustler::nif]
@@ -6811,16 +6673,13 @@ pub fn extract_rtf_metadata(rtf_content: String, extracted_text: String) -> Stri
 }
 
 #[rustler::nif]
-pub fn extract_rtf_formatting(content: String) -> RtfFormattingData {
-    kreuzberg::extractors::rtf::extract_rtf_formatting(&content).into()
+pub fn extract_rtf_formatting(content: String) -> String {
+    String::from("[unimplemented: extract_rtf_formatting]")
 }
 
 #[rustler::nif]
-pub fn spans_to_annotations(para_start: usize, para_end: usize, formatting: RtfFormattingData) -> Vec<TextAnnotation> {
-    kreuzberg::extractors::rtf::spans_to_annotations(para_start, para_end, formatting.into())
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn spans_to_annotations(para_start: usize, para_end: usize, formatting: String) -> Vec<TextAnnotation> {
+    Vec::new()
 }
 
 #[rustler::nif]
@@ -12617,11 +12476,6 @@ pub fn extractionservicebuilder_build(resource: ResourceArc<ExtractionServiceBui
     String::from("[unimplemented: extractionservicebuilder_build]")
 }
 
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn multipartapi_from_request_async(req: String, state: String) -> Result<MultipartApi, String> {
-    Err(String::from("Not implemented: multipartapi_from_request_async"))
-}
-
 #[rustler::nif]
 pub fn apierror_validation(error: String) -> ApiError {
     panic!("alef: apierror_validation not auto-delegatable")
@@ -15253,69 +15107,6 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecisi
     }
 }
 
-impl From<kreuzberg::extractors::rtf::images::RtfImage> for RtfImage {
-    fn from(val: kreuzberg::extractors::rtf::images::RtfImage) -> Self {
-        Self {
-            format: val.format,
-            width_goal: val.width_goal,
-            height_goal: val.height_goal,
-            data: val.data.to_vec(),
-        }
-    }
-}
-
-impl From<RtfFormattingSpan> for kreuzberg::extractors::rtf::parser::RtfFormattingSpan {
-    fn from(val: RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start,
-            end: val.end,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingSpan> for RtfFormattingSpan {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start,
-            end: val.end,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<RtfFormattingData> for kreuzberg::extractors::rtf::parser::RtfFormattingData {
-    fn from(val: RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingData> for RtfFormattingData {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: val.hyperlinks.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::panic_context::PanicContext> for PanicContext {
     fn from(val: kreuzberg::panic_context::PanicContext) -> Self {
         Self {
@@ -17317,18 +17108,6 @@ impl From<kreuzberg::service::ExtractionRequest> for ExtractionRequest {
     }
 }
 
-impl From<MultipartApi> for kreuzberg::api::error::MultipartApi {
-    fn from(val: MultipartApi) -> Self {
-        Self(val._0)
-    }
-}
-
-impl From<kreuzberg::api::error::MultipartApi> for MultipartApi {
-    fn from(val: kreuzberg::api::error::MultipartApi) -> Self {
-        Self { _0: val.0 }
-    }
-}
-
 impl From<ApiError> for kreuzberg::api::ApiError {
     fn from(val: ApiError) -> Self {
         Self {
@@ -17365,23 +17144,12 @@ impl From<kreuzberg::api::ApiSizeLimits> for ApiSizeLimits {
     }
 }
 
-impl From<kreuzberg::api::types::PluginStatus> for PluginStatus {
-    fn from(val: kreuzberg::api::types::PluginStatus) -> Self {
-        Self {
-            ocr_backends_count: val.ocr_backends_count,
-            ocr_backends: val.ocr_backends,
-            extractors_count: val.extractors_count,
-            post_processors_count: val.post_processors_count,
-        }
-    }
-}
-
 impl From<kreuzberg::api::HealthResponse> for HealthResponse {
     fn from(val: kreuzberg::api::HealthResponse) -> Self {
         Self {
             status: val.status,
             version: val.version,
-            plugins: val.plugins.map(Into::into),
+            plugins: val.plugins.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -17473,18 +17241,8 @@ impl From<kreuzberg::api::ChunkRequest> for ChunkRequest {
     fn from(val: kreuzberg::api::ChunkRequest) -> Self {
         Self {
             text: val.text,
-            config: val.config.map(Into::into),
+            config: val.config.as_ref().map(|v| format!("{:?}", v)),
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkingConfigRequest> for ChunkingConfigRequest {
-    fn from(val: kreuzberg::api::types::ChunkingConfigRequest) -> Self {
-        Self {
-            max_characters: val.max_characters,
-            overlap: val.overlap,
-            trim: val.trim,
         }
     }
 }
@@ -17492,25 +17250,11 @@ impl From<kreuzberg::api::types::ChunkingConfigRequest> for ChunkingConfigReques
 impl From<kreuzberg::api::ChunkResponse> for ChunkResponse {
     fn from(val: kreuzberg::api::ChunkResponse) -> Self {
         Self {
-            chunks: val.chunks.into_iter().map(Into::into).collect(),
+            chunks: val.chunks.iter().map(|i| format!("{:?}", i)).collect(),
             chunk_count: val.chunk_count,
-            config: val.config.into(),
+            config: format!("{:?}", val.config),
             input_size_bytes: val.input_size_bytes,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkItem> for ChunkItem {
-    fn from(val: kreuzberg::api::types::ChunkItem) -> Self {
-        Self {
-            content: val.content,
-            byte_start: val.byte_start,
-            byte_end: val.byte_end,
-            chunk_index: val.chunk_index,
-            total_chunks: val.total_chunks,
-            first_page: val.first_page,
-            last_page: val.last_page,
         }
     }
 }
@@ -17613,17 +17357,6 @@ impl From<kreuzberg::api::DoclingCompatDocument> for DoclingCompatDocument {
     }
 }
 
-impl From<kreuzberg::api::types::ChunkingConfigResponse> for ChunkingConfigResponse {
-    fn from(val: kreuzberg::api::types::ChunkingConfigResponse) -> Self {
-        Self {
-            max_characters: val.max_characters,
-            overlap: val.overlap,
-            trim: val.trim,
-            chunker_type: val.chunker_type,
-        }
-    }
-}
-
 impl From<kreuzberg::mcp::ExtractFileParams> for ExtractFileParams {
     fn from(val: kreuzberg::mcp::ExtractFileParams) -> Self {
         Self {
@@ -17711,25 +17444,6 @@ impl From<kreuzberg::mcp::ChunkTextParams> for ChunkTextParams {
             max_characters: val.max_characters,
             overlap: val.overlap,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::DownloadGrammarsParams> for DownloadGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::DownloadGrammarsParams) -> Self {
-        Self {
-            languages: val.languages,
-            groups: val.groups,
-            all: val.all,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::ListGrammarsParams> for ListGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::ListGrammarsParams) -> Self {
-        Self {
-            downloaded_only: val.downloaded_only,
-            filter: val.filter,
         }
     }
 }
@@ -19872,8 +19586,6 @@ fn on_load(env: rustler::Env, _info: rustler::Term) -> bool {
         .expect("Failed to register resource type ApiDoc");
     env.register::<ExtractResponse>()
         .expect("Failed to register resource type ExtractResponse");
-    env.register::<EmptyParams>()
-        .expect("Failed to register resource type EmptyParams");
     env.register::<KreuzbergMcp>()
         .expect("Failed to register resource type KreuzbergMcp");
     env.register::<ChunkingProcessor>()

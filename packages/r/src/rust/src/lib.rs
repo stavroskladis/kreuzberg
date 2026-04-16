@@ -8217,88 +8217,6 @@ impl PptxExtractor {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
-pub struct RtfImage {
-    /// Image format string (e.g., "jpeg", "png", "wmf", "bmp").
-    pub format: String,
-    /// Width in twips (goal width).
-    pub width_goal: Option<i32>,
-    /// Height in twips (goal height).
-    pub height_goal: Option<i32>,
-    /// Decoded binary image data.
-    pub data: Vec<u8>,
-}
-
-impl RtfImage {
-    #[must_use]
-    
-    pub fn new(format: String, data: Vec<u8>, width_goal: Option<i32>, height_goal: Option<i32>) -> Self {
-        Self { format, width_goal, height_goal, data }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-pub struct RtfFormattingSpan {
-    /// Byte offset in the output text where this format starts.
-    pub start: f64,
-    /// Byte offset in the output text where this format ends.
-    pub end: f64,
-    /// Whether bold was active.
-    pub bold: bool,
-    /// Whether italic was active.
-    pub italic: bool,
-    /// Whether underline was active.
-    pub underline: bool,
-    /// Whether strikethrough was active.
-    pub strikethrough: bool,
-    /// Color index into the color table (0 = default/auto).
-    pub color_index: i32,
-}
-
-impl RtfFormattingSpan {
-    #[must_use]
-    
-    pub fn new(
-        start: f64,
-        end: f64,
-        bold: bool,
-        italic: bool,
-        underline: bool,
-        strikethrough: bool,
-        color_index: i32,
-    ) -> Self {
-        Self { start, end, bold, italic, underline, strikethrough, color_index }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-pub struct RtfFormattingData {
-    /// Formatting spans corresponding to text regions.
-    pub spans: Vec<RtfFormattingSpan>,
-    /// Color table entries (index 0 is auto/default).
-    pub color_table: Vec<String>,
-    /// Header text content (from \header groups).
-    pub header_text: Option<String>,
-    /// Footer text content (from \footer groups).
-    pub footer_text: Option<String>,
-    /// Hyperlink spans: (start_byte, end_byte, url).
-    pub hyperlinks: Vec<String>,
-}
-
-impl RtfFormattingData {
-    #[must_use]
-    
-    pub fn new(
-        spans: Vec<RtfFormattingSpan>,
-        color_table: Vec<String>,
-        hyperlinks: Vec<String>,
-        header_text: Option<String>,
-        footer_text: Option<String>,
-    ) -> Self {
-        Self { spans, color_table, header_text, footer_text, hyperlinks }
-    }
-}
-
 #[derive(Clone, Default, serde::Serialize)]
 pub struct RtfExtractor {
 }
@@ -12862,25 +12780,6 @@ impl ExtractionServiceBuilder {
 }
 
 #[derive(Clone, serde::Serialize)]
-pub struct MultipartApi {
-    pub _0: String,
-}
-
-impl MultipartApi {
-    #[must_use]
-    
-    pub fn new(_0: String) -> Self {
-        Self { _0 }
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    pub fn from_request(req: String, state: String) -> Result<MultipartApi> {
-        let _ = (req, state);
-        Err("Not implemented: MultipartApi::from_request".to_string())
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
 pub struct ApiError {
     /// HTTP status code
     pub status: String,
@@ -12983,44 +12882,19 @@ pub fn new_apisizelimits(
 
 
 #[derive(Clone, serde::Serialize)]
-pub struct PluginStatus {
-    /// Number of registered OCR backends
-    pub ocr_backends_count: f64,
-    /// Names of registered OCR backends
-    pub ocr_backends: Vec<String>,
-    /// Number of registered document extractors
-    pub extractors_count: f64,
-    /// Number of registered post-processors
-    pub post_processors_count: f64,
-}
-
-impl PluginStatus {
-    #[must_use]
-    
-    pub fn new(
-        ocr_backends_count: f64,
-        ocr_backends: Vec<String>,
-        extractors_count: f64,
-        post_processors_count: f64,
-    ) -> Self {
-        Self { ocr_backends_count, ocr_backends, extractors_count, post_processors_count }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
 pub struct HealthResponse {
     /// Health status
     pub status: String,
     /// API version
     pub version: String,
     /// Plugin status (optional)
-    pub plugins: Option<PluginStatus>,
+    pub plugins: Option<String>,
 }
 
 impl HealthResponse {
     #[must_use]
     
-    pub fn new(status: String, version: String, plugins: Option<PluginStatus>) -> Self {
+    pub fn new(status: String, version: String, plugins: Option<String>) -> Self {
         Self { status, version, plugins }
     }
 }
@@ -13175,7 +13049,7 @@ pub struct ChunkRequest {
     /// Text to chunk (must not be empty)
     pub text: String,
     /// Optional chunking configuration
-    pub config: Option<ChunkingConfigRequest>,
+    pub config: Option<String>,
     /// Chunker type (text or markdown)
     pub chunker_type: String,
 }
@@ -13183,61 +13057,19 @@ pub struct ChunkRequest {
 impl ChunkRequest {
     #[must_use]
     
-    pub fn new(text: String, chunker_type: String, config: Option<ChunkingConfigRequest>) -> Self {
+    pub fn new(text: String, chunker_type: String, config: Option<String>) -> Self {
         Self { text, config, chunker_type }
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
-pub struct ChunkingConfigRequest {
-    /// Maximum characters per chunk (must be greater than overlap, default: 2000)
-    pub max_characters: Option<f64>,
-    /// Overlap between chunks in characters (must be less than max_characters, default: 100)
-    pub overlap: Option<f64>,
-    /// Whether to trim whitespace
-    pub trim: Option<bool>,
-}
-
-impl Default for ChunkingConfigRequest {
-    fn default() -> Self {
-        Self {
-            max_characters: Default::default(),
-            overlap: Default::default(),
-            trim: Default::default(),
-        }
-    }
-}
-
-impl ChunkingConfigRequest {
-    #[must_use]
-    
-    pub fn new(max_characters: Option<f64>, overlap: Option<f64>, trim: Option<bool>) -> Self {
-        Self { max_characters: max_characters, overlap: overlap, trim: trim }
-    }
-}
-
-#[extendr]
-pub fn new_chunkingconfigrequest(
-    max_characters: f64 = 0,
-    overlap: f64 = 0,
-    trim: bool = false
-) -> ChunkingConfigRequest {
-    ChunkingConfigRequest {
-        max_characters,
-        overlap,
-        trim,
-    }
-}
-
-
 #[derive(Clone, serde::Serialize)]
 pub struct ChunkResponse {
     /// List of chunks
-    pub chunks: Vec<ChunkItem>,
+    pub chunks: Vec<String>,
     /// Total number of chunks
     pub chunk_count: f64,
     /// Configuration used for chunking
-    pub config: ChunkingConfigResponse,
+    pub config: String,
     /// Input text size in bytes
     pub input_size_bytes: f64,
     /// Chunker type used for chunking
@@ -13247,48 +13079,8 @@ pub struct ChunkResponse {
 impl ChunkResponse {
     #[must_use]
     
-    pub fn new(
-        chunks: Vec<ChunkItem>,
-        chunk_count: f64,
-        config: ChunkingConfigResponse,
-        input_size_bytes: f64,
-        chunker_type: String,
-    ) -> Self {
+    pub fn new(chunks: Vec<String>, chunk_count: f64, config: String, input_size_bytes: f64, chunker_type: String) -> Self {
         Self { chunks, chunk_count, config, input_size_bytes, chunker_type }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-pub struct ChunkItem {
-    /// Chunk content
-    pub content: String,
-    /// Byte offset start position
-    pub byte_start: f64,
-    /// Byte offset end position
-    pub byte_end: f64,
-    /// Index of this chunk (0-based)
-    pub chunk_index: f64,
-    /// Total number of chunks
-    pub total_chunks: f64,
-    /// First page number (optional, for PDF chunking)
-    pub first_page: Option<f64>,
-    /// Last page number (optional, for PDF chunking)
-    pub last_page: Option<f64>,
-}
-
-impl ChunkItem {
-    #[must_use]
-    
-    pub fn new(
-        content: String,
-        byte_start: f64,
-        byte_end: f64,
-        chunk_index: f64,
-        total_chunks: f64,
-        first_page: Option<f64>,
-        last_page: Option<f64>,
-    ) -> Self {
-        Self { content, byte_start, byte_end, chunk_index, total_chunks, first_page, last_page }
     }
 }
 
@@ -13501,26 +13293,6 @@ impl DoclingCompatDocument {
 }
 
 #[derive(Clone, serde::Serialize)]
-pub struct ChunkingConfigResponse {
-    /// Maximum characters per chunk
-    pub max_characters: f64,
-    /// Overlap between chunks in characters
-    pub overlap: f64,
-    /// Whether whitespace was trimmed
-    pub trim: bool,
-    /// Type of chunker used
-    pub chunker_type: String,
-}
-
-impl ChunkingConfigResponse {
-    #[must_use]
-    
-    pub fn new(max_characters: f64, overlap: f64, trim: bool, chunker_type: String) -> Self {
-        Self { max_characters, overlap, trim, chunker_type }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
 pub struct ExtractFileParams {
     /// Path to the file to extract
     pub path: String,
@@ -13622,10 +13394,6 @@ impl DetectMimeTypeParams {
 }
 
 #[derive(Clone, serde::Serialize)]
-pub struct EmptyParams {
-}
-
-#[derive(Clone, serde::Serialize)]
 pub struct CacheWarmParams {
     /// Download all embedding model presets
     pub all_embeddings: bool,
@@ -13717,41 +13485,6 @@ impl ChunkTextParams {
     
     pub fn new(text: String, max_characters: Option<f64>, overlap: Option<f64>, chunker_type: Option<String>) -> Self {
         Self { text, max_characters, overlap, chunker_type }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-pub struct DownloadGrammarsParams {
-    /// Specific languages to download (e.g., ["python", "rust", "javascript"]).
-    /// If not provided, must specify groups or all.
-    pub languages: Option<Vec<String>>,
-    /// Language groups to download (e.g., ["web", "systems", "scripting"]).
-    pub groups: Option<Vec<String>>,
-    /// Download all available languages.
-    pub all: Option<bool>,
-}
-
-impl DownloadGrammarsParams {
-    #[must_use]
-    
-    pub fn new(languages: Option<Vec<String>>, groups: Option<Vec<String>>, all: Option<bool>) -> Self {
-        Self { languages, groups, all }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-pub struct ListGrammarsParams {
-    /// Only show downloaded/cached languages (default: false, shows all available).
-    pub downloaded_only: bool,
-    /// Filter languages by name substring.
-    pub filter: Option<String>,
-}
-
-impl ListGrammarsParams {
-    #[must_use]
-    
-    pub fn new(downloaded_only: bool, filter: Option<String>) -> Self {
-        Self { downloaded_only, filter }
     }
 }
 
@@ -17283,12 +17016,6 @@ pub fn excel_to_markdown(workbook: ExcelWorkbook) -> String {
     kreuzberg::extraction::excel_to_markdown(&workbook_core).into()
 }
 
-#[extendr]
-pub fn resolve_conversion_options(options: Option<String>, output_format: Option<String>) -> String {
-    let _ = (options, output_format);
-        String::from("[unimplemented: resolve_conversion_options]")
-}
-
 #[allow(clippy::missing_errors_doc)]
 #[extendr]
 pub fn convert_html_to_markdown(html: String, options: Option<String>, output_format: Option<String>) -> Result<String> {
@@ -17622,12 +17349,6 @@ pub fn evaluate_native_text_for_ocr(native_text: String, page_count: Option<f64>
 }
 
 #[extendr]
-pub fn compute_quality_score(text: String, thresholds: OcrQualityThresholds) -> f64 {
-    let thresholds_core = thresholds.into();
-    kreuzberg::extractors::pdf::ocr::compute_quality_score(&text, &thresholds_core)
-}
-
-#[extendr]
 pub fn evaluate_per_page_ocr(
     native_text: String,
     boundaries: Option<Vec<PageBoundary>>,
@@ -17649,26 +17370,9 @@ pub fn parse_hex_byte(h1: String, h2: String) -> Option<i32> {
 }
 
 #[extendr]
-pub fn decode_windows_1252(byte: i32) -> String {
-    kreuzberg::extractors::rtf::encoding::decode_windows_1252(byte)
-}
-
-#[extendr]
 pub fn parse_rtf_control_word(chars: String) -> String {
     let _ = chars;
         String::from("[unimplemented: parse_rtf_control_word]")
-}
-
-#[extendr]
-pub fn normalize_whitespace_with_mapping(s: String) -> String {
-    let _ = s;
-        String::from("[unimplemented: normalize_whitespace_with_mapping]")
-}
-
-#[extendr]
-pub fn map_offset(mapping: Vec<String>, offset: f64) -> f64 {
-    let _ = (mapping, offset);
-        0
 }
 
 #[extendr]
@@ -17694,14 +17398,15 @@ pub fn extract_rtf_metadata(rtf_content: String, extracted_text: String) -> Stri
 }
 
 #[extendr]
-pub fn extract_rtf_formatting(content: String) -> RtfFormattingData {
-    kreuzberg::extractors::rtf::extract_rtf_formatting(&content).into()
+pub fn extract_rtf_formatting(content: String) -> String {
+    let _ = content;
+        String::from("[unimplemented: extract_rtf_formatting]")
 }
 
 #[extendr]
-pub fn spans_to_annotations(para_start: f64, para_end: f64, formatting: RtfFormattingData) -> Vec<TextAnnotation> {
-    let formatting_core = formatting.into();
-    kreuzberg::extractors::rtf::spans_to_annotations(para_start, para_end, &formatting_core).into_iter().map(Into::into).collect()
+pub fn spans_to_annotations(para_start: f64, para_end: f64, formatting: String) -> Vec<TextAnnotation> {
+    let _ = (para_start, para_end, formatting);
+        Vec::new()
 }
 
 #[extendr]
@@ -19036,9 +18741,6 @@ extendr_module! {
     impl PdfExtractor;
     impl PptExtractor;
     impl PptxExtractor;
-    impl RtfImage;
-    impl RtfFormattingSpan;
-    impl RtfFormattingData;
     impl RtfExtractor;
     impl XmlExtractor;
     impl DocbookExtractor;
@@ -19154,11 +18856,9 @@ extendr_module! {
     impl MetricsLayer;
     impl ExtractionRequest;
     impl ExtractionServiceBuilder;
-    impl MultipartApi;
     impl ApiError;
     impl ApiDoc;
     impl ApiSizeLimits;
-    impl PluginStatus;
     impl HealthResponse;
     impl InfoResponse;
     impl ExtractResponse;
@@ -19169,9 +18869,7 @@ extendr_module! {
     impl EmbedRequest;
     impl EmbedResponse;
     impl ChunkRequest;
-    impl ChunkingConfigRequest;
     impl ChunkResponse;
-    impl ChunkItem;
     impl VersionResponse;
     impl DetectResponse;
     impl ManifestEntryResponse;
@@ -19183,18 +18881,14 @@ extendr_module! {
     impl OpenWebDocumentMetadata;
     impl DoclingCompatResponse;
     impl DoclingCompatDocument;
-    impl ChunkingConfigResponse;
     impl ExtractFileParams;
     impl ExtractBytesParams;
     impl BatchExtractFilesParams;
     impl DetectMimeTypeParams;
-    impl EmptyParams;
     impl CacheWarmParams;
     impl EmbedTextParams;
     impl ExtractStructuredParams;
     impl ChunkTextParams;
-    impl DownloadGrammarsParams;
-    impl ListGrammarsParams;
     impl KreuzbergMcp;
     impl ChunkingResult;
     impl ChunkingProcessor;
@@ -19350,7 +19044,6 @@ extendr_module! {
     fn read_excel_bytes;
     fn excel_to_text;
     fn excel_to_markdown;
-    fn resolve_conversion_options;
     fn convert_html_to_markdown;
     fn convert_html_to_markdown_with_metadata;
     fn convert_html_to_markdown_with_tables;
@@ -19406,14 +19099,10 @@ extendr_module! {
     fn extract_metadata_from_zip;
     fn dedup_text;
     fn evaluate_native_text_for_ocr;
-    fn compute_quality_score;
     fn evaluate_per_page_ocr;
     fn hex_digit_to_u8;
     fn parse_hex_byte;
-    fn decode_windows_1252;
     fn parse_rtf_control_word;
-    fn normalize_whitespace_with_mapping;
-    fn map_offset;
     fn normalize_whitespace;
     fn extract_pict_image;
     fn parse_rtf_datetime;

@@ -21,7 +21,7 @@ public sealed class ChunkRequest
     /// Optional chunking configuration
     /// </summary>
     [JsonPropertyName("config")]
-    public ChunkingConfigRequest? Config { get; set; } = null;
+    public string? Config { get; set; } = null;
 
     /// <summary>
     /// Chunker type (text or markdown)

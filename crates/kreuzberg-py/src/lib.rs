@@ -2691,41 +2691,34 @@ impl StreamReader {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn read_u8(&self) -> PyResult<u8> {
-        let result = self
-            .inner
-            .read_u8()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: StreamReader.read_u8",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn read_u16(&self) -> PyResult<u16> {
-        let result = self
-            .inner
-            .read_u16()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: StreamReader.read_u16",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn read_u32(&self) -> PyResult<u32> {
-        let result = self
-            .inner
-            .read_u32()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: StreamReader.read_u32",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = (len))]
     pub fn read_bytes(&self, len: usize) -> PyResult<Vec<u8>> {
-        let result = self
-            .inner
-            .read_bytes(len)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
+        let _ = len;
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: StreamReader.read_bytes",
+        ))
     }
 
     #[pyo3(signature = ())]
@@ -4973,10 +4966,10 @@ impl StringGrowthValidator {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = (len))]
     pub fn check_append(&self, len: usize) -> PyResult<()> {
-        self.inner
-            .check_append(len)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        let _ = len;
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: StringGrowthValidator.check_append",
+        ))
     }
 
     #[pyo3(signature = ())]
@@ -4996,10 +4989,9 @@ impl IterationValidator {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn check_iteration(&self) -> PyResult<()> {
-        self.inner
-            .check_iteration()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: IterationValidator.check_iteration",
+        ))
     }
 
     #[pyo3(signature = ())]
@@ -5019,15 +5011,14 @@ impl DepthValidator {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn push(&self) -> PyResult<()> {
-        self.inner
-            .push()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: DepthValidator.push",
+        ))
     }
 
     #[pyo3(signature = ())]
     pub fn pop(&self) -> () {
-        self.inner.pop()
+        ()
     }
 
     #[pyo3(signature = ())]
@@ -5065,10 +5056,10 @@ impl TableValidator {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = (count))]
     pub fn add_cells(&self, count: usize) -> PyResult<()> {
-        self.inner
-            .add_cells(count)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        let _ = count;
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: TableValidator.add_cells",
+        ))
     }
 
     #[pyo3(signature = ())]
@@ -8114,132 +8105,6 @@ impl PptxExtractor {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct RtfImage {
-    /// Image format string (e.g., "jpeg", "png", "wmf", "bmp").
-    #[pyo3(get)]
-    pub format: String,
-    /// Width in twips (goal width).
-    #[pyo3(get)]
-    pub width_goal: Option<i32>,
-    /// Height in twips (goal height).
-    #[pyo3(get)]
-    pub height_goal: Option<i32>,
-    /// Decoded binary image data.
-    #[pyo3(get)]
-    pub data: Vec<u8>,
-}
-
-#[pymethods]
-impl RtfImage {
-    #[must_use]
-    #[pyo3(signature = (format, data, width_goal=None, height_goal=None))]
-    #[new]
-    pub fn new(format: String, data: Vec<u8>, width_goal: Option<i32>, height_goal: Option<i32>) -> Self {
-        Self {
-            format,
-            width_goal,
-            height_goal,
-            data,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct RtfFormattingSpan {
-    /// Byte offset in the output text where this format starts.
-    #[pyo3(get)]
-    pub start: usize,
-    /// Byte offset in the output text where this format ends.
-    #[pyo3(get)]
-    pub end: usize,
-    /// Whether bold was active.
-    #[pyo3(get)]
-    pub bold: bool,
-    /// Whether italic was active.
-    #[pyo3(get)]
-    pub italic: bool,
-    /// Whether underline was active.
-    #[pyo3(get)]
-    pub underline: bool,
-    /// Whether strikethrough was active.
-    #[pyo3(get)]
-    pub strikethrough: bool,
-    /// Color index into the color table (0 = default/auto).
-    #[pyo3(get)]
-    pub color_index: u16,
-}
-
-#[pymethods]
-impl RtfFormattingSpan {
-    #[must_use]
-    #[pyo3(signature = (start, end, bold, italic, underline, strikethrough, color_index))]
-    #[new]
-    pub fn new(
-        start: usize,
-        end: usize,
-        bold: bool,
-        italic: bool,
-        underline: bool,
-        strikethrough: bool,
-        color_index: u16,
-    ) -> Self {
-        Self {
-            start,
-            end,
-            bold,
-            italic,
-            underline,
-            strikethrough,
-            color_index,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct RtfFormattingData {
-    /// Formatting spans corresponding to text regions.
-    #[pyo3(get)]
-    pub spans: Vec<RtfFormattingSpan>,
-    /// Color table entries (index 0 is auto/default).
-    #[pyo3(get)]
-    pub color_table: Vec<String>,
-    /// Header text content (from \header groups).
-    #[pyo3(get)]
-    pub header_text: Option<String>,
-    /// Footer text content (from \footer groups).
-    #[pyo3(get)]
-    pub footer_text: Option<String>,
-    /// Hyperlink spans: (start_byte, end_byte, url).
-    #[pyo3(get)]
-    pub hyperlinks: Vec<String>,
-}
-
-#[pymethods]
-impl RtfFormattingData {
-    #[must_use]
-    #[pyo3(signature = (spans, color_table, hyperlinks, header_text=None, footer_text=None))]
-    #[new]
-    pub fn new(
-        spans: Vec<RtfFormattingSpan>,
-        color_table: Vec<String>,
-        hyperlinks: Vec<String>,
-        header_text: Option<String>,
-        footer_text: Option<String>,
-    ) -> Self {
-        Self {
-            spans,
-            color_table,
-            header_text,
-            footer_text,
-            hyperlinks,
-        }
-    }
-}
-
 #[derive(Clone)]
 #[pyclass(frozen, from_py_object)]
 pub struct RtfExtractor {
@@ -8596,19 +8461,18 @@ impl DocumentExtractorRegistry {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = (name))]
     pub fn remove(&self, name: String) -> PyResult<()> {
-        self.inner
-            .remove(&name)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        let _ = name;
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: DocumentExtractorRegistry.remove",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn shutdown_all(&self) -> PyResult<()> {
-        self.inner
-            .shutdown_all()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: DocumentExtractorRegistry.shutdown_all",
+        ))
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -8632,10 +8496,10 @@ impl OcrBackendRegistry {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = (backend))]
     pub fn register(&self, backend: OcrBackend) -> PyResult<()> {
-        self.inner
-            .register(&backend.inner)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        let _ = backend;
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: OcrBackendRegistry.register",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
@@ -8670,28 +8534,26 @@ impl OcrBackendRegistry {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = (name))]
     pub fn remove(&self, name: String) -> PyResult<()> {
-        self.inner
-            .remove(&name)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        let _ = name;
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: OcrBackendRegistry.remove",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn shutdown_all(&self) -> PyResult<()> {
-        self.inner
-            .shutdown_all()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: OcrBackendRegistry.shutdown_all",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn reset_to_defaults(&self) -> PyResult<()> {
-        self.inner
-            .reset_to_defaults()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: OcrBackendRegistry.reset_to_defaults",
+        ))
     }
 
     #[staticmethod]
@@ -8743,19 +8605,18 @@ impl PostProcessorRegistry {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = (name))]
     pub fn remove(&self, name: String) -> PyResult<()> {
-        self.inner
-            .remove(&name)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        let _ = name;
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: PostProcessorRegistry.remove",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn shutdown_all(&self) -> PyResult<()> {
-        self.inner
-            .shutdown_all()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: PostProcessorRegistry.shutdown_all",
+        ))
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -8779,10 +8640,10 @@ impl RendererRegistry {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = (renderer))]
     pub fn register(&self, renderer: Renderer) -> PyResult<()> {
-        self.inner
-            .register(&renderer.inner)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        let _ = renderer;
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: RendererRegistry.register",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
@@ -8813,16 +8674,16 @@ impl RendererRegistry {
 
     #[pyo3(signature = (name))]
     pub fn remove(&self, name: String) -> () {
-        self.inner.remove(&name)
+        let _ = name;
+        ()
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn reset_to_defaults(&self) -> PyResult<()> {
-        self.inner
-            .reset_to_defaults()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: RendererRegistry.reset_to_defaults",
+        ))
     }
 
     #[staticmethod]
@@ -8873,19 +8734,18 @@ impl ValidatorRegistry {
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = (name))]
     pub fn remove(&self, name: String) -> PyResult<()> {
-        self.inner
-            .remove(&name)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        let _ = name;
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: ValidatorRegistry.remove",
+        ))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[pyo3(signature = ())]
     pub fn shutdown_all(&self) -> PyResult<()> {
-        self.inner
-            .shutdown_all()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
+        Err(pyo3::exceptions::PyNotImplementedError::new_err(
+            "Not implemented: ValidatorRegistry.shutdown_all",
+        ))
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -13226,7 +13086,7 @@ pub struct PooledString {
 impl PooledString {
     #[pyo3(signature = ())]
     pub fn buffer_mut(&self) -> String {
-        self.inner.buffer_mut().into()
+        String::from("[unimplemented: PooledString.buffer_mut]")
     }
 
     #[pyo3(signature = ())]
@@ -13247,7 +13107,7 @@ impl PooledString {
 
     #[pyo3(signature = ())]
     pub fn drop(&self) -> () {
-        self.inner.drop()
+        ()
     }
 
     #[pyo3(signature = (f))]
@@ -13587,33 +13447,6 @@ impl ExtractionServiceBuilder {
 
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
-pub struct MultipartApi {
-    #[pyo3(get)]
-    pub _0: String,
-}
-
-#[pymethods]
-impl MultipartApi {
-    #[must_use]
-    #[pyo3(signature = (_0))]
-    #[new]
-    pub fn new(_0: String) -> Self {
-        Self { _0 }
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (req, state))]
-    pub fn from_request<'py>(py: Python<'py>, req: String, state: String) -> PyResult<Bound<'py, PyAny>> {
-        let _ = (req, state);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: MultipartApi::from_request",
-        ))
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
 pub struct ApiError {
     /// HTTP status code
     #[pyo3(get)]
@@ -13733,43 +13566,6 @@ impl ApiSizeLimits {
 
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
-pub struct PluginStatus {
-    /// Number of registered OCR backends
-    #[pyo3(get)]
-    pub ocr_backends_count: usize,
-    /// Names of registered OCR backends
-    #[pyo3(get)]
-    pub ocr_backends: Vec<String>,
-    /// Number of registered document extractors
-    #[pyo3(get)]
-    pub extractors_count: usize,
-    /// Number of registered post-processors
-    #[pyo3(get)]
-    pub post_processors_count: usize,
-}
-
-#[pymethods]
-impl PluginStatus {
-    #[must_use]
-    #[pyo3(signature = (ocr_backends_count, ocr_backends, extractors_count, post_processors_count))]
-    #[new]
-    pub fn new(
-        ocr_backends_count: usize,
-        ocr_backends: Vec<String>,
-        extractors_count: usize,
-        post_processors_count: usize,
-    ) -> Self {
-        Self {
-            ocr_backends_count,
-            ocr_backends,
-            extractors_count,
-            post_processors_count,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
 pub struct HealthResponse {
     /// Health status
     #[pyo3(get)]
@@ -13779,7 +13575,7 @@ pub struct HealthResponse {
     pub version: String,
     /// Plugin status (optional)
     #[pyo3(get)]
-    pub plugins: Option<PluginStatus>,
+    pub plugins: Option<String>,
 }
 
 #[pymethods]
@@ -13787,7 +13583,7 @@ impl HealthResponse {
     #[must_use]
     #[pyo3(signature = (status, version, plugins=None))]
     #[new]
-    pub fn new(status: String, version: String, plugins: Option<PluginStatus>) -> Self {
+    pub fn new(status: String, version: String, plugins: Option<String>) -> Self {
         Self {
             status,
             version,
@@ -14019,7 +13815,7 @@ pub struct ChunkRequest {
     pub text: String,
     /// Optional chunking configuration
     #[pyo3(get)]
-    pub config: Option<ChunkingConfigRequest>,
+    pub config: Option<String>,
     /// Chunker type (text or markdown)
     #[pyo3(get)]
     pub chunker_type: String,
@@ -14030,39 +13826,11 @@ impl ChunkRequest {
     #[must_use]
     #[pyo3(signature = (text, chunker_type, config=None))]
     #[new]
-    pub fn new(text: String, chunker_type: String, config: Option<ChunkingConfigRequest>) -> Self {
+    pub fn new(text: String, chunker_type: String, config: Option<String>) -> Self {
         Self {
             text,
             config,
             chunker_type,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct ChunkingConfigRequest {
-    /// Maximum characters per chunk (must be greater than overlap, default: 2000)
-    #[pyo3(get)]
-    pub max_characters: Option<usize>,
-    /// Overlap between chunks in characters (must be less than max_characters, default: 100)
-    #[pyo3(get)]
-    pub overlap: Option<usize>,
-    /// Whether to trim whitespace
-    #[pyo3(get)]
-    pub trim: Option<bool>,
-}
-
-#[pymethods]
-impl ChunkingConfigRequest {
-    #[must_use]
-    #[pyo3(signature = (max_characters=None, overlap=None, trim=None))]
-    #[new]
-    pub fn new(max_characters: Option<usize>, overlap: Option<usize>, trim: Option<bool>) -> Self {
-        Self {
-            max_characters,
-            overlap,
-            trim,
         }
     }
 }
@@ -14072,13 +13840,13 @@ impl ChunkingConfigRequest {
 pub struct ChunkResponse {
     /// List of chunks
     #[pyo3(get)]
-    pub chunks: Vec<ChunkItem>,
+    pub chunks: Vec<String>,
     /// Total number of chunks
     #[pyo3(get)]
     pub chunk_count: usize,
     /// Configuration used for chunking
     #[pyo3(get)]
-    pub config: ChunkingConfigResponse,
+    pub config: String,
     /// Input text size in bytes
     #[pyo3(get)]
     pub input_size_bytes: usize,
@@ -14093,9 +13861,9 @@ impl ChunkResponse {
     #[pyo3(signature = (chunks, chunk_count, config, input_size_bytes, chunker_type))]
     #[new]
     pub fn new(
-        chunks: Vec<ChunkItem>,
+        chunks: Vec<String>,
         chunk_count: usize,
-        config: ChunkingConfigResponse,
+        config: String,
         input_size_bytes: usize,
         chunker_type: String,
     ) -> Self {
@@ -14105,58 +13873,6 @@ impl ChunkResponse {
             config,
             input_size_bytes,
             chunker_type,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct ChunkItem {
-    /// Chunk content
-    #[pyo3(get)]
-    pub content: String,
-    /// Byte offset start position
-    #[pyo3(get)]
-    pub byte_start: usize,
-    /// Byte offset end position
-    #[pyo3(get)]
-    pub byte_end: usize,
-    /// Index of this chunk (0-based)
-    #[pyo3(get)]
-    pub chunk_index: usize,
-    /// Total number of chunks
-    #[pyo3(get)]
-    pub total_chunks: usize,
-    /// First page number (optional, for PDF chunking)
-    #[pyo3(get)]
-    pub first_page: Option<usize>,
-    /// Last page number (optional, for PDF chunking)
-    #[pyo3(get)]
-    pub last_page: Option<usize>,
-}
-
-#[pymethods]
-impl ChunkItem {
-    #[must_use]
-    #[pyo3(signature = (content, byte_start, byte_end, chunk_index, total_chunks, first_page=None, last_page=None))]
-    #[new]
-    pub fn new(
-        content: String,
-        byte_start: usize,
-        byte_end: usize,
-        chunk_index: usize,
-        total_chunks: usize,
-        first_page: Option<usize>,
-        last_page: Option<usize>,
-    ) -> Self {
-        Self {
-            content,
-            byte_start,
-            byte_end,
-            chunk_index,
-            total_chunks,
-            first_page,
-            last_page,
         }
     }
 }
@@ -14429,38 +14145,6 @@ impl DoclingCompatDocument {
 
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
-pub struct ChunkingConfigResponse {
-    /// Maximum characters per chunk
-    #[pyo3(get)]
-    pub max_characters: usize,
-    /// Overlap between chunks in characters
-    #[pyo3(get)]
-    pub overlap: usize,
-    /// Whether whitespace was trimmed
-    #[pyo3(get)]
-    pub trim: bool,
-    /// Type of chunker used
-    #[pyo3(get)]
-    pub chunker_type: String,
-}
-
-#[pymethods]
-impl ChunkingConfigResponse {
-    #[must_use]
-    #[pyo3(signature = (max_characters, overlap, trim, chunker_type))]
-    #[new]
-    pub fn new(max_characters: usize, overlap: usize, trim: bool, chunker_type: String) -> Self {
-        Self {
-            max_characters,
-            overlap,
-            trim,
-            chunker_type,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
 pub struct ExtractFileParams {
     /// Path to the file to extract
     #[pyo3(get)]
@@ -14605,12 +14289,6 @@ impl DetectMimeTypeParams {
     pub fn new(path: String, use_content: bool) -> Self {
         Self { path, use_content }
     }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct EmptyParams {
-    inner: Arc<kreuzberg::mcp::params::EmptyParams>,
 }
 
 #[derive(Clone, serde::Serialize)]
@@ -14761,55 +14439,6 @@ impl ChunkTextParams {
             max_characters,
             overlap,
             chunker_type,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct DownloadGrammarsParams {
-    /// Specific languages to download (e.g., ["python", "rust", "javascript"]).
-    /// If not provided, must specify groups or all.
-    #[pyo3(get)]
-    pub languages: Option<Vec<String>>,
-    /// Language groups to download (e.g., ["web", "systems", "scripting"]).
-    #[pyo3(get)]
-    pub groups: Option<Vec<String>>,
-    /// Download all available languages.
-    #[pyo3(get)]
-    pub all: Option<bool>,
-}
-
-#[pymethods]
-impl DownloadGrammarsParams {
-    #[must_use]
-    #[pyo3(signature = (languages=None, groups=None, all=None))]
-    #[new]
-    pub fn new(languages: Option<Vec<String>>, groups: Option<Vec<String>>, all: Option<bool>) -> Self {
-        Self { languages, groups, all }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct ListGrammarsParams {
-    /// Only show downloaded/cached languages (default: false, shows all available).
-    #[pyo3(get)]
-    pub downloaded_only: bool,
-    /// Filter languages by name substring.
-    #[pyo3(get)]
-    pub filter: Option<String>,
-}
-
-#[pymethods]
-impl ListGrammarsParams {
-    #[must_use]
-    #[pyo3(signature = (downloaded_only, filter=None))]
-    #[new]
-    pub fn new(downloaded_only: bool, filter: Option<String>) -> Self {
-        Self {
-            downloaded_only,
-            filter,
         }
     }
 }
@@ -19591,13 +19220,6 @@ pub fn excel_to_markdown(workbook: ExcelWorkbook) -> String {
     kreuzberg::extraction::excel_to_markdown(&workbook_core).into()
 }
 
-#[pyfunction]
-#[pyo3(signature = (options=None, output_format=None))]
-pub fn resolve_conversion_options(options: Option<String>, output_format: Option<String>) -> String {
-    let _ = (options, output_format);
-    String::from("[unimplemented: resolve_conversion_options]")
-}
-
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (html, options=None, output_format=None))]
@@ -20083,13 +19705,6 @@ pub fn evaluate_native_text_for_ocr(
 }
 
 #[pyfunction]
-#[pyo3(signature = (text, thresholds))]
-pub fn compute_quality_score(text: String, thresholds: OcrQualityThresholds) -> f64 {
-    let thresholds_core = thresholds.into();
-    kreuzberg::extractors::pdf::ocr::compute_quality_score(&text, &thresholds_core)
-}
-
-#[pyfunction]
 #[pyo3(signature = (native_text, boundaries=None, page_count=None, thresholds=None))]
 pub fn evaluate_per_page_ocr(
     native_text: String,
@@ -20115,30 +19730,10 @@ pub fn parse_hex_byte(h1: String, h2: String) -> Option<u8> {
 }
 
 #[pyfunction]
-#[pyo3(signature = (byte))]
-pub fn decode_windows_1252(byte: u8) -> String {
-    kreuzberg::extractors::rtf::encoding::decode_windows_1252(byte)
-}
-
-#[pyfunction]
 #[pyo3(signature = (chars))]
 pub fn parse_rtf_control_word(chars: String) -> String {
     let _ = chars;
     String::from("[unimplemented: parse_rtf_control_word]")
-}
-
-#[pyfunction]
-#[pyo3(signature = (s))]
-pub fn normalize_whitespace_with_mapping(s: String) -> String {
-    let _ = s;
-    String::from("[unimplemented: normalize_whitespace_with_mapping]")
-}
-
-#[pyfunction]
-#[pyo3(signature = (mapping, offset))]
-pub fn map_offset(mapping: Vec<String>, offset: usize) -> usize {
-    let _ = (mapping, offset);
-    0
 }
 
 #[pyfunction]
@@ -20169,18 +19764,16 @@ pub fn extract_rtf_metadata(rtf_content: String, extracted_text: String) -> Stri
 
 #[pyfunction]
 #[pyo3(signature = (content))]
-pub fn extract_rtf_formatting(content: String) -> RtfFormattingData {
-    kreuzberg::extractors::rtf::extract_rtf_formatting(&content).into()
+pub fn extract_rtf_formatting(content: String) -> String {
+    let _ = content;
+    String::from("[unimplemented: extract_rtf_formatting]")
 }
 
 #[pyfunction]
 #[pyo3(signature = (para_start, para_end, formatting))]
-pub fn spans_to_annotations(para_start: usize, para_end: usize, formatting: RtfFormattingData) -> Vec<TextAnnotation> {
-    let formatting_core = formatting.into();
-    kreuzberg::extractors::rtf::spans_to_annotations(para_start, para_end, &formatting_core)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn spans_to_annotations(para_start: usize, para_end: usize, formatting: String) -> Vec<TextAnnotation> {
+    let _ = (para_start, para_end, formatting);
+    Vec::new()
 }
 
 #[pyfunction]
@@ -23733,69 +23326,6 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecisi
     }
 }
 
-impl From<kreuzberg::extractors::rtf::images::RtfImage> for RtfImage {
-    fn from(val: kreuzberg::extractors::rtf::images::RtfImage) -> Self {
-        Self {
-            format: val.format,
-            width_goal: val.width_goal,
-            height_goal: val.height_goal,
-            data: val.data.to_vec(),
-        }
-    }
-}
-
-impl From<RtfFormattingSpan> for kreuzberg::extractors::rtf::parser::RtfFormattingSpan {
-    fn from(val: RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start,
-            end: val.end,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingSpan> for RtfFormattingSpan {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start,
-            end: val.end,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<RtfFormattingData> for kreuzberg::extractors::rtf::parser::RtfFormattingData {
-    fn from(val: RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingData> for RtfFormattingData {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: val.hyperlinks.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::panic_context::PanicContext> for PanicContext {
     fn from(val: kreuzberg::panic_context::PanicContext) -> Self {
         Self {
@@ -25797,18 +25327,6 @@ impl From<kreuzberg::service::ExtractionRequest> for ExtractionRequest {
     }
 }
 
-impl From<MultipartApi> for kreuzberg::api::error::MultipartApi {
-    fn from(val: MultipartApi) -> Self {
-        Self(val._0)
-    }
-}
-
-impl From<kreuzberg::api::error::MultipartApi> for MultipartApi {
-    fn from(val: kreuzberg::api::error::MultipartApi) -> Self {
-        Self { _0: val.0 }
-    }
-}
-
 impl From<ApiError> for kreuzberg::api::ApiError {
     fn from(val: ApiError) -> Self {
         Self {
@@ -25845,23 +25363,12 @@ impl From<kreuzberg::api::ApiSizeLimits> for ApiSizeLimits {
     }
 }
 
-impl From<kreuzberg::api::types::PluginStatus> for PluginStatus {
-    fn from(val: kreuzberg::api::types::PluginStatus) -> Self {
-        Self {
-            ocr_backends_count: val.ocr_backends_count,
-            ocr_backends: val.ocr_backends,
-            extractors_count: val.extractors_count,
-            post_processors_count: val.post_processors_count,
-        }
-    }
-}
-
 impl From<kreuzberg::api::HealthResponse> for HealthResponse {
     fn from(val: kreuzberg::api::HealthResponse) -> Self {
         Self {
             status: val.status,
             version: val.version,
-            plugins: val.plugins.map(Into::into),
+            plugins: val.plugins.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -25953,18 +25460,8 @@ impl From<kreuzberg::api::ChunkRequest> for ChunkRequest {
     fn from(val: kreuzberg::api::ChunkRequest) -> Self {
         Self {
             text: val.text,
-            config: val.config.map(Into::into),
+            config: val.config.as_ref().map(|v| format!("{:?}", v)),
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkingConfigRequest> for ChunkingConfigRequest {
-    fn from(val: kreuzberg::api::types::ChunkingConfigRequest) -> Self {
-        Self {
-            max_characters: val.max_characters,
-            overlap: val.overlap,
-            trim: val.trim,
         }
     }
 }
@@ -25972,25 +25469,11 @@ impl From<kreuzberg::api::types::ChunkingConfigRequest> for ChunkingConfigReques
 impl From<kreuzberg::api::ChunkResponse> for ChunkResponse {
     fn from(val: kreuzberg::api::ChunkResponse) -> Self {
         Self {
-            chunks: val.chunks.into_iter().map(Into::into).collect(),
+            chunks: val.chunks.iter().map(|i| format!("{:?}", i)).collect(),
             chunk_count: val.chunk_count,
-            config: val.config.into(),
+            config: format!("{:?}", val.config),
             input_size_bytes: val.input_size_bytes,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkItem> for ChunkItem {
-    fn from(val: kreuzberg::api::types::ChunkItem) -> Self {
-        Self {
-            content: val.content,
-            byte_start: val.byte_start,
-            byte_end: val.byte_end,
-            chunk_index: val.chunk_index,
-            total_chunks: val.total_chunks,
-            first_page: val.first_page,
-            last_page: val.last_page,
         }
     }
 }
@@ -26093,17 +25576,6 @@ impl From<kreuzberg::api::DoclingCompatDocument> for DoclingCompatDocument {
     }
 }
 
-impl From<kreuzberg::api::types::ChunkingConfigResponse> for ChunkingConfigResponse {
-    fn from(val: kreuzberg::api::types::ChunkingConfigResponse) -> Self {
-        Self {
-            max_characters: val.max_characters,
-            overlap: val.overlap,
-            trim: val.trim,
-            chunker_type: val.chunker_type,
-        }
-    }
-}
-
 impl From<kreuzberg::mcp::ExtractFileParams> for ExtractFileParams {
     fn from(val: kreuzberg::mcp::ExtractFileParams) -> Self {
         Self {
@@ -26191,25 +25663,6 @@ impl From<kreuzberg::mcp::ChunkTextParams> for ChunkTextParams {
             max_characters: val.max_characters,
             overlap: val.overlap,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::DownloadGrammarsParams> for DownloadGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::DownloadGrammarsParams) -> Self {
-        Self {
-            languages: val.languages,
-            groups: val.groups,
-            all: val.all,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::ListGrammarsParams> for ListGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::ListGrammarsParams) -> Self {
-        Self {
-            downloaded_only: val.downloaded_only,
-            filter: val.filter,
         }
     }
 }
@@ -27843,9 +27296,6 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PdfExtractor>()?;
     m.add_class::<PptExtractor>()?;
     m.add_class::<PptxExtractor>()?;
-    m.add_class::<RtfImage>()?;
-    m.add_class::<RtfFormattingSpan>()?;
-    m.add_class::<RtfFormattingData>()?;
     m.add_class::<RtfExtractor>()?;
     m.add_class::<XmlExtractor>()?;
     m.add_class::<DocbookExtractor>()?;
@@ -27957,11 +27407,9 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<MetricsLayer>()?;
     m.add_class::<ExtractionRequest>()?;
     m.add_class::<ExtractionServiceBuilder>()?;
-    m.add_class::<MultipartApi>()?;
     m.add_class::<ApiError>()?;
     m.add_class::<ApiDoc>()?;
     m.add_class::<ApiSizeLimits>()?;
-    m.add_class::<PluginStatus>()?;
     m.add_class::<HealthResponse>()?;
     m.add_class::<InfoResponse>()?;
     m.add_class::<ExtractResponse>()?;
@@ -27972,9 +27420,7 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<EmbedRequest>()?;
     m.add_class::<EmbedResponse>()?;
     m.add_class::<ChunkRequest>()?;
-    m.add_class::<ChunkingConfigRequest>()?;
     m.add_class::<ChunkResponse>()?;
-    m.add_class::<ChunkItem>()?;
     m.add_class::<VersionResponse>()?;
     m.add_class::<DetectResponse>()?;
     m.add_class::<ManifestEntryResponse>()?;
@@ -27986,18 +27432,14 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<OpenWebDocumentMetadata>()?;
     m.add_class::<DoclingCompatResponse>()?;
     m.add_class::<DoclingCompatDocument>()?;
-    m.add_class::<ChunkingConfigResponse>()?;
     m.add_class::<ExtractFileParams>()?;
     m.add_class::<ExtractBytesParams>()?;
     m.add_class::<BatchExtractFilesParams>()?;
     m.add_class::<DetectMimeTypeParams>()?;
-    m.add_class::<EmptyParams>()?;
     m.add_class::<CacheWarmParams>()?;
     m.add_class::<EmbedTextParams>()?;
     m.add_class::<ExtractStructuredParams>()?;
     m.add_class::<ChunkTextParams>()?;
-    m.add_class::<DownloadGrammarsParams>()?;
-    m.add_class::<ListGrammarsParams>()?;
     m.add_class::<KreuzbergMcp>()?;
     m.add_class::<ChunkingResult>()?;
     m.add_class::<ChunkingProcessor>()?;
@@ -28203,7 +27645,6 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(read_excel_bytes, m)?)?;
     m.add_function(wrap_pyfunction!(excel_to_text, m)?)?;
     m.add_function(wrap_pyfunction!(excel_to_markdown, m)?)?;
-    m.add_function(wrap_pyfunction!(resolve_conversion_options, m)?)?;
     m.add_function(wrap_pyfunction!(convert_html_to_markdown, m)?)?;
     m.add_function(wrap_pyfunction!(convert_html_to_markdown_with_metadata, m)?)?;
     m.add_function(wrap_pyfunction!(convert_html_to_markdown_with_tables, m)?)?;
@@ -28259,14 +27700,10 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(extract_metadata_from_zip, m)?)?;
     m.add_function(wrap_pyfunction!(dedup_text, m)?)?;
     m.add_function(wrap_pyfunction!(evaluate_native_text_for_ocr, m)?)?;
-    m.add_function(wrap_pyfunction!(compute_quality_score, m)?)?;
     m.add_function(wrap_pyfunction!(evaluate_per_page_ocr, m)?)?;
     m.add_function(wrap_pyfunction!(hex_digit_to_u8, m)?)?;
     m.add_function(wrap_pyfunction!(parse_hex_byte, m)?)?;
-    m.add_function(wrap_pyfunction!(decode_windows_1252, m)?)?;
     m.add_function(wrap_pyfunction!(parse_rtf_control_word, m)?)?;
-    m.add_function(wrap_pyfunction!(normalize_whitespace_with_mapping, m)?)?;
-    m.add_function(wrap_pyfunction!(map_offset, m)?)?;
     m.add_function(wrap_pyfunction!(normalize_whitespace, m)?)?;
     m.add_function(wrap_pyfunction!(extract_pict_image, m)?)?;
     m.add_function(wrap_pyfunction!(parse_rtf_datetime, m)?)?;

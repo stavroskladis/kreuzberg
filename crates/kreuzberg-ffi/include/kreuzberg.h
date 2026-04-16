@@ -35,7 +35,6 @@ typedef struct KREUZBERGCacheWarmParams KREUZBERGCacheWarmParams;
 typedef struct KREUZBERGCfbReader KREUZBERGCfbReader;
 typedef struct KREUZBERGCharData KREUZBERGCharData;
 typedef struct KREUZBERGChunk KREUZBERGChunk;
-typedef struct KREUZBERGChunkItem KREUZBERGChunkItem;
 typedef struct KREUZBERGChunkMetadata KREUZBERGChunkMetadata;
 typedef struct KREUZBERGChunkRequest KREUZBERGChunkRequest;
 typedef struct KREUZBERGChunkResponse KREUZBERGChunkResponse;
@@ -44,8 +43,6 @@ typedef struct KREUZBERGChunkTextParams KREUZBERGChunkTextParams;
 typedef struct KREUZBERGChunkType KREUZBERGChunkType;
 typedef struct KREUZBERGChunkerType KREUZBERGChunkerType;
 typedef struct KREUZBERGChunkingConfig KREUZBERGChunkingConfig;
-typedef struct KREUZBERGChunkingConfigRequest KREUZBERGChunkingConfigRequest;
-typedef struct KREUZBERGChunkingConfigResponse KREUZBERGChunkingConfigResponse;
 typedef struct KREUZBERGChunkingProcessor KREUZBERGChunkingProcessor;
 typedef struct KREUZBERGChunkingResult KREUZBERGChunkingResult;
 typedef struct KREUZBERGCitationExtractor KREUZBERGCitationExtractor;
@@ -87,7 +84,6 @@ typedef struct KREUZBERGDocumentRelationship KREUZBERGDocumentRelationship;
 typedef struct KREUZBERGDocumentStructure KREUZBERGDocumentStructure;
 typedef struct KREUZBERGDocxExtractor KREUZBERGDocxExtractor;
 typedef struct KREUZBERGDocxMetadata KREUZBERGDocxMetadata;
-typedef struct KREUZBERGDownloadGrammarsParams KREUZBERGDownloadGrammarsParams;
 typedef struct KREUZBERGDrawing KREUZBERGDrawing;
 typedef struct KREUZBERGDrawingType KREUZBERGDrawingType;
 typedef struct KREUZBERGElement KREUZBERGElement;
@@ -105,7 +101,6 @@ typedef struct KREUZBERGEmbedTextParams KREUZBERGEmbedTextParams;
 typedef struct KREUZBERGEmbeddedFile KREUZBERGEmbeddedFile;
 typedef struct KREUZBERGEmbeddingConfig KREUZBERGEmbeddingConfig;
 typedef struct KREUZBERGEmbeddingModelType KREUZBERGEmbeddingModelType;
-typedef struct KREUZBERGEmptyParams KREUZBERGEmptyParams;
 typedef struct KREUZBERGEntityValidator KREUZBERGEntityValidator;
 typedef struct KREUZBERGEpubExtractor KREUZBERGEpubExtractor;
 typedef struct KREUZBERGEpubMetadata KREUZBERGEpubMetadata;
@@ -197,7 +192,6 @@ typedef struct KREUZBERGLayoutModel KREUZBERGLayoutModel;
 typedef struct KREUZBERGLayoutTimingReport KREUZBERGLayoutTimingReport;
 typedef struct KREUZBERGLinkMetadata KREUZBERGLinkMetadata;
 typedef struct KREUZBERGLinkType KREUZBERGLinkType;
-typedef struct KREUZBERGListGrammarsParams KREUZBERGListGrammarsParams;
 typedef struct KREUZBERGListItemMetadata KREUZBERGListItemMetadata;
 typedef struct KREUZBERGListType KREUZBERGListType;
 typedef struct KREUZBERGLlmConfig KREUZBERGLlmConfig;
@@ -211,7 +205,6 @@ typedef struct KREUZBERGMetadata KREUZBERGMetadata;
 typedef struct KREUZBERGMetricsLayer KREUZBERGMetricsLayer;
 typedef struct KREUZBERGModelCache KREUZBERGModelCache;
 typedef struct KREUZBERGModelPaths KREUZBERGModelPaths;
-typedef struct KREUZBERGMultipartApi KREUZBERGMultipartApi;
 typedef struct KREUZBERGNativeTextStats KREUZBERGNativeTextStats;
 typedef struct KREUZBERGNodeContent KREUZBERGNodeContent;
 typedef struct KREUZBERGNodeId KREUZBERGNodeId;
@@ -284,7 +277,6 @@ typedef struct KREUZBERGPdfTextExtractor KREUZBERGPdfTextExtractor;
 typedef struct KREUZBERGPdfUnifiedExtractionResult KREUZBERGPdfUnifiedExtractionResult;
 typedef struct KREUZBERGPlainTextExtractor KREUZBERGPlainTextExtractor;
 typedef struct KREUZBERGPlugin KREUZBERGPlugin;
-typedef struct KREUZBERGPluginStatus KREUZBERGPluginStatus;
 typedef struct KREUZBERGPool KREUZBERGPool;
 typedef struct KREUZBERGPoolConfig KREUZBERGPoolConfig;
 typedef struct KREUZBERGPoolError KREUZBERGPoolError;
@@ -320,9 +312,6 @@ typedef struct KREUZBERGResolvedStyle KREUZBERGResolvedStyle;
 typedef struct KREUZBERGRowProperties KREUZBERGRowProperties;
 typedef struct KREUZBERGRstExtractor KREUZBERGRstExtractor;
 typedef struct KREUZBERGRtfExtractor KREUZBERGRtfExtractor;
-typedef struct KREUZBERGRtfFormattingData KREUZBERGRtfFormattingData;
-typedef struct KREUZBERGRtfFormattingSpan KREUZBERGRtfFormattingSpan;
-typedef struct KREUZBERGRtfImage KREUZBERGRtfImage;
 typedef struct KREUZBERGRunProperties KREUZBERGRunProperties;
 typedef struct KREUZBERGSection KREUZBERGSection;
 typedef struct KREUZBERGSectionProperties KREUZBERGSectionProperties;
@@ -8979,133 +8968,6 @@ char *kreuzberg_pptx_extractor_supported_mime_types(const KREUZBERGPptxExtractor
 int32_t kreuzberg_pptx_extractor_priority(const KREUZBERGPptxExtractor *this_);
 
 /**
- * Free a `RtfImage` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_rtf_image_free(KREUZBERGRtfImage *ptr);
-
-/**
- * Get the `format` field from a `RtfImage`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_rtf_image_format(const KREUZBERGRtfImage *ptr);
-
-/**
- * Get the `width_goal` field from a `RtfImage`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_rtf_image_width_goal(const KREUZBERGRtfImage *ptr);
-
-/**
- * Get the `height_goal` field from a `RtfImage`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_rtf_image_height_goal(const KREUZBERGRtfImage *ptr);
-
-/**
- * Get the `data` field from a `RtfImage`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uint8_t *kreuzberg_rtf_image_data(const KREUZBERGRtfImage *ptr,
-                                  uintptr_t *out_len);
-
-/**
- * Free a `RtfFormattingSpan` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_rtf_formatting_span_free(KREUZBERGRtfFormattingSpan *ptr);
-
-/**
- * Get the `start` field from a `RtfFormattingSpan`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_rtf_formatting_span_start(const KREUZBERGRtfFormattingSpan *ptr);
-
-/**
- * Get the `end` field from a `RtfFormattingSpan`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_rtf_formatting_span_end(const KREUZBERGRtfFormattingSpan *ptr);
-
-/**
- * Get the `bold` field from a `RtfFormattingSpan`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_rtf_formatting_span_bold(const KREUZBERGRtfFormattingSpan *ptr);
-
-/**
- * Get the `italic` field from a `RtfFormattingSpan`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_rtf_formatting_span_italic(const KREUZBERGRtfFormattingSpan *ptr);
-
-/**
- * Get the `underline` field from a `RtfFormattingSpan`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_rtf_formatting_span_underline(const KREUZBERGRtfFormattingSpan *ptr);
-
-/**
- * Get the `strikethrough` field from a `RtfFormattingSpan`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_rtf_formatting_span_strikethrough(const KREUZBERGRtfFormattingSpan *ptr);
-
-/**
- * Get the `color_index` field from a `RtfFormattingSpan`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uint16_t kreuzberg_rtf_formatting_span_color_index(const KREUZBERGRtfFormattingSpan *ptr);
-
-/**
- * Free a `RtfFormattingData` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_rtf_formatting_data_free(KREUZBERGRtfFormattingData *ptr);
-
-/**
- * Get the `spans` field from a `RtfFormattingData`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_rtf_formatting_data_spans(const KREUZBERGRtfFormattingData *ptr);
-
-/**
- * Get the `color_table` field from a `RtfFormattingData`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_rtf_formatting_data_color_table(const KREUZBERGRtfFormattingData *ptr);
-
-/**
- * Get the `header_text` field from a `RtfFormattingData`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_rtf_formatting_data_header_text(const KREUZBERGRtfFormattingData *ptr);
-
-/**
- * Get the `footer_text` field from a `RtfFormattingData`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_rtf_formatting_data_footer_text(const KREUZBERGRtfFormattingData *ptr);
-
-/**
  * Free a `RtfExtractor` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -15676,21 +15538,6 @@ KREUZBERGExtractionServiceBuilder *kreuzberg_extraction_service_builder_with_met
 char *kreuzberg_extraction_service_builder_build(KREUZBERGExtractionServiceBuilder *_this);
 
 /**
- * Free a `MultipartApi` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_multipart_api_free(KREUZBERGMultipartApi *ptr);
-
-/**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGMultipartApi *kreuzberg_multipart_api_from_request(const char *_req,
-                                                            const char *_state);
-
-/**
  * Free a `ApiError` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -15811,57 +15658,6 @@ KREUZBERGApiSizeLimits *kreuzberg_api_size_limits_from_mb(uintptr_t max_request_
                                                           uintptr_t max_multipart_field_mb);
 
 /**
- * Create a `PluginStatus` from a JSON string. Returns null on failure.
- * # Safety
- * JSON string must be valid UTF-8 and null-terminated.
- * Returned handle must be freed with `kreuzberg_plugin_status_free`.
- */
-KREUZBERGPluginStatus *kreuzberg_plugin_status_from_json(const char *json);
-
-/**
- * Serialize a `PluginStatus` to a JSON string. Returns null on failure.
- * # Safety
- * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
- * The returned string must be freed with `kreuzberg_free_string`.
- */
-char *kreuzberg_plugin_status_to_json(const KREUZBERGPluginStatus *ptr);
-
-/**
- * Free a `PluginStatus` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_plugin_status_free(KREUZBERGPluginStatus *ptr);
-
-/**
- * Get the `ocr_backends_count` field from a `PluginStatus`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_plugin_status_ocr_backends_count(const KREUZBERGPluginStatus *ptr);
-
-/**
- * Get the `ocr_backends` field from a `PluginStatus`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_plugin_status_ocr_backends(const KREUZBERGPluginStatus *ptr);
-
-/**
- * Get the `extractors_count` field from a `PluginStatus`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_plugin_status_extractors_count(const KREUZBERGPluginStatus *ptr);
-
-/**
- * Get the `post_processors_count` field from a `PluginStatus`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_plugin_status_post_processors_count(const KREUZBERGPluginStatus *ptr);
-
-/**
  * Create a `HealthResponse` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -15897,13 +15693,6 @@ char *kreuzberg_health_response_status(const KREUZBERGHealthResponse *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 char *kreuzberg_health_response_version(const KREUZBERGHealthResponse *ptr);
-
-/**
- * Get the `plugins` field from a `HealthResponse`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-KREUZBERGPluginStatus *kreuzberg_health_response_plugins(const KREUZBERGHealthResponse *ptr);
 
 /**
  * Create a `InfoResponse` from a JSON string. Returns null on failure.
@@ -16242,62 +16031,11 @@ void kreuzberg_chunk_request_free(KREUZBERGChunkRequest *ptr);
 char *kreuzberg_chunk_request_text(const KREUZBERGChunkRequest *ptr);
 
 /**
- * Get the `config` field from a `ChunkRequest`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-KREUZBERGChunkingConfigRequest *kreuzberg_chunk_request_config(const KREUZBERGChunkRequest *ptr);
-
-/**
  * Get the `chunker_type` field from a `ChunkRequest`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
 char *kreuzberg_chunk_request_chunker_type(const KREUZBERGChunkRequest *ptr);
-
-/**
- * Create a `ChunkingConfigRequest` from a JSON string. Returns null on failure.
- * # Safety
- * JSON string must be valid UTF-8 and null-terminated.
- * Returned handle must be freed with `kreuzberg_chunking_config_request_free`.
- */
-KREUZBERGChunkingConfigRequest *kreuzberg_chunking_config_request_from_json(const char *json);
-
-/**
- * Serialize a `ChunkingConfigRequest` to a JSON string. Returns null on failure.
- * # Safety
- * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
- * The returned string must be freed with `kreuzberg_free_string`.
- */
-char *kreuzberg_chunking_config_request_to_json(const KREUZBERGChunkingConfigRequest *ptr);
-
-/**
- * Free a `ChunkingConfigRequest` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_chunking_config_request_free(KREUZBERGChunkingConfigRequest *ptr);
-
-/**
- * Get the `max_characters` field from a `ChunkingConfigRequest`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunking_config_request_max_characters(const KREUZBERGChunkingConfigRequest *ptr);
-
-/**
- * Get the `overlap` field from a `ChunkingConfigRequest`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunking_config_request_overlap(const KREUZBERGChunkingConfigRequest *ptr);
-
-/**
- * Get the `trim` field from a `ChunkingConfigRequest`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_chunking_config_request_trim(const KREUZBERGChunkingConfigRequest *ptr);
 
 /**
  * Create a `ChunkResponse` from a JSON string. Returns null on failure.
@@ -16323,25 +16061,11 @@ char *kreuzberg_chunk_response_to_json(const KREUZBERGChunkResponse *ptr);
 void kreuzberg_chunk_response_free(KREUZBERGChunkResponse *ptr);
 
 /**
- * Get the `chunks` field from a `ChunkResponse`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_chunk_response_chunks(const KREUZBERGChunkResponse *ptr);
-
-/**
  * Get the `chunk_count` field from a `ChunkResponse`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
  */
 uintptr_t kreuzberg_chunk_response_chunk_count(const KREUZBERGChunkResponse *ptr);
-
-/**
- * Get the `config` field from a `ChunkResponse`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-KREUZBERGChunkingConfigResponse *kreuzberg_chunk_response_config(const KREUZBERGChunkResponse *ptr);
 
 /**
  * Get the `input_size_bytes` field from a `ChunkResponse`.
@@ -16356,78 +16080,6 @@ uintptr_t kreuzberg_chunk_response_input_size_bytes(const KREUZBERGChunkResponse
  * Pointer must be a valid handle returned by this library.
  */
 char *kreuzberg_chunk_response_chunker_type(const KREUZBERGChunkResponse *ptr);
-
-/**
- * Create a `ChunkItem` from a JSON string. Returns null on failure.
- * # Safety
- * JSON string must be valid UTF-8 and null-terminated.
- * Returned handle must be freed with `kreuzberg_chunk_item_free`.
- */
-KREUZBERGChunkItem *kreuzberg_chunk_item_from_json(const char *json);
-
-/**
- * Serialize a `ChunkItem` to a JSON string. Returns null on failure.
- * # Safety
- * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
- * The returned string must be freed with `kreuzberg_free_string`.
- */
-char *kreuzberg_chunk_item_to_json(const KREUZBERGChunkItem *ptr);
-
-/**
- * Free a `ChunkItem` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_chunk_item_free(KREUZBERGChunkItem *ptr);
-
-/**
- * Get the `content` field from a `ChunkItem`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_chunk_item_content(const KREUZBERGChunkItem *ptr);
-
-/**
- * Get the `byte_start` field from a `ChunkItem`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunk_item_byte_start(const KREUZBERGChunkItem *ptr);
-
-/**
- * Get the `byte_end` field from a `ChunkItem`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunk_item_byte_end(const KREUZBERGChunkItem *ptr);
-
-/**
- * Get the `chunk_index` field from a `ChunkItem`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunk_item_chunk_index(const KREUZBERGChunkItem *ptr);
-
-/**
- * Get the `total_chunks` field from a `ChunkItem`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunk_item_total_chunks(const KREUZBERGChunkItem *ptr);
-
-/**
- * Get the `first_page` field from a `ChunkItem`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunk_item_first_page(const KREUZBERGChunkItem *ptr);
-
-/**
- * Get the `last_page` field from a `ChunkItem`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunk_item_last_page(const KREUZBERGChunkItem *ptr);
 
 /**
  * Create a `VersionResponse` from a JSON string. Returns null on failure.
@@ -16858,57 +16510,6 @@ void kreuzberg_docling_compat_document_free(KREUZBERGDoclingCompatDocument *ptr)
 char *kreuzberg_docling_compat_document_md_content(const KREUZBERGDoclingCompatDocument *ptr);
 
 /**
- * Create a `ChunkingConfigResponse` from a JSON string. Returns null on failure.
- * # Safety
- * JSON string must be valid UTF-8 and null-terminated.
- * Returned handle must be freed with `kreuzberg_chunking_config_response_free`.
- */
-KREUZBERGChunkingConfigResponse *kreuzberg_chunking_config_response_from_json(const char *json);
-
-/**
- * Serialize a `ChunkingConfigResponse` to a JSON string. Returns null on failure.
- * # Safety
- * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
- * The returned string must be freed with `kreuzberg_free_string`.
- */
-char *kreuzberg_chunking_config_response_to_json(const KREUZBERGChunkingConfigResponse *ptr);
-
-/**
- * Free a `ChunkingConfigResponse` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_chunking_config_response_free(KREUZBERGChunkingConfigResponse *ptr);
-
-/**
- * Get the `max_characters` field from a `ChunkingConfigResponse`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunking_config_response_max_characters(const KREUZBERGChunkingConfigResponse *ptr);
-
-/**
- * Get the `overlap` field from a `ChunkingConfigResponse`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-uintptr_t kreuzberg_chunking_config_response_overlap(const KREUZBERGChunkingConfigResponse *ptr);
-
-/**
- * Get the `trim` field from a `ChunkingConfigResponse`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_chunking_config_response_trim(const KREUZBERGChunkingConfigResponse *ptr);
-
-/**
- * Get the `chunker_type` field from a `ChunkingConfigResponse`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_chunking_config_response_chunker_type(const KREUZBERGChunkingConfigResponse *ptr);
-
-/**
  * Free a `ExtractFileParams` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -17054,13 +16655,6 @@ char *kreuzberg_detect_mime_type_params_path(const KREUZBERGDetectMimeTypeParams
  * Pointer must be a valid handle returned by this library.
  */
 int32_t kreuzberg_detect_mime_type_params_use_content(const KREUZBERGDetectMimeTypeParams *ptr);
-
-/**
- * Free a `EmptyParams` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_empty_params_free(KREUZBERGEmptyParams *ptr);
 
 /**
  * Free a `CacheWarmParams` handle.
@@ -17215,55 +16809,6 @@ uintptr_t kreuzberg_chunk_text_params_overlap(const KREUZBERGChunkTextParams *pt
  * Pointer must be a valid handle returned by this library.
  */
 char *kreuzberg_chunk_text_params_chunker_type(const KREUZBERGChunkTextParams *ptr);
-
-/**
- * Free a `DownloadGrammarsParams` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_download_grammars_params_free(KREUZBERGDownloadGrammarsParams *ptr);
-
-/**
- * Get the `languages` field from a `DownloadGrammarsParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_download_grammars_params_languages(const KREUZBERGDownloadGrammarsParams *ptr);
-
-/**
- * Get the `groups` field from a `DownloadGrammarsParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_download_grammars_params_groups(const KREUZBERGDownloadGrammarsParams *ptr);
-
-/**
- * Get the `all` field from a `DownloadGrammarsParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_download_grammars_params_all(const KREUZBERGDownloadGrammarsParams *ptr);
-
-/**
- * Free a `ListGrammarsParams` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_list_grammars_params_free(KREUZBERGListGrammarsParams *ptr);
-
-/**
- * Get the `downloaded_only` field from a `ListGrammarsParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-int32_t kreuzberg_list_grammars_params_downloaded_only(const KREUZBERGListGrammarsParams *ptr);
-
-/**
- * Get the `filter` field from a `ListGrammarsParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_list_grammars_params_filter(const KREUZBERGListGrammarsParams *ptr);
 
 /**
  * Free a `KreuzbergMcp` handle.
@@ -23012,22 +22557,6 @@ char *kreuzberg_excel_to_text(const KREUZBERGExcelWorkbook *workbook);
 char *kreuzberg_excel_to_markdown(const KREUZBERGExcelWorkbook *workbook);
 
 /**
- * Resolve conversion options with sensible defaults.
- *
- * If no options are provided, creates defaults with:
- * - `extract_metadata = true` (parse YAML frontmatter)
- * - `include_document_structure = true` (populate document tree)
- * - `preprocessing.enabled = false` (disable HTML preprocessing)
- *
- * Sets output format based on the provided format parameter.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_resolve_conversion_options(const char *_options,
-                                           const char *_output_format);
-
-/**
  * Convert HTML with optional configuration and output format.
  *
  * Uses sensible defaults if no configuration is provided:
@@ -23938,18 +23467,6 @@ KREUZBERGOcrFallbackDecision *kreuzberg_evaluate_native_text_for_ocr(const char 
                                                                      const KREUZBERGOcrQualityThresholds *thresholds);
 
 /**
- * Compute a quality score (0.0-1.0) for OCR output text.
- *
- * Used by the pipeline to decide whether to accept a result or try the next backend.
- * Higher is better. Combines multiple signal dimensions into a single score.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-double kreuzberg_compute_quality_score(const char *text,
-                                       const KREUZBERGOcrQualityThresholds *thresholds);
-
-/**
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
  * Returned pointers must be freed with the appropriate free function.
@@ -23981,18 +23498,6 @@ uint8_t kreuzberg_parse_hex_byte(const char *h1,
                                  const char *h2);
 
 /**
- * Decode a byte using Windows-1252 encoding for the 0x80-0x9F range.
- *
- * This function maps Windows-1252 bytes in the 0x80-0x9F range to their
- * corresponding Unicode characters. For other values, it returns the byte
- * as a character directly.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_decode_windows_1252(uint8_t byte);
-
-/**
  * Parse an RTF control word and extract its value.
  *
  * Returns a tuple of (control_word, optional_numeric_value).
@@ -24001,27 +23506,6 @@ char *kreuzberg_decode_windows_1252(uint8_t byte);
  * Returned pointers must be freed with the appropriate free function.
  */
 char *kreuzberg_parse_rtf_control_word(const char *_chars);
-
-/**
- * Normalize whitespace in a string, also producing a byte-offset mapping from
- * input positions to output positions. The mapping is a sorted list of
- * `(old_offset, new_offset)` pairs that covers every byte boundary in the
- * input. Callers can use [`map_offset`] to translate an arbitrary input byte
- * offset to the corresponding output byte offset.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_normalize_whitespace_with_mapping(const char *_s);
-
-/**
- * Map a byte offset from the pre-normalized string to the post-normalized string.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-uintptr_t kreuzberg_map_offset(const char *_mapping,
-                               uintptr_t _offset);
 
 /**
  * Normalize whitespace in a string.
@@ -24078,7 +23562,7 @@ char *kreuzberg_extract_rtf_metadata(const char *_rtf_content,
  * Caller must ensure all pointer arguments are valid or null.
  * Returned pointers must be freed with the appropriate free function.
  */
-KREUZBERGRtfFormattingData *kreuzberg_extract_rtf_formatting(const char *content);
+char *kreuzberg_extract_rtf_formatting(const char *_content);
 
 /**
  * Convert RTF formatting spans into `TextAnnotation` vectors for a paragraph.
@@ -24089,9 +23573,9 @@ KREUZBERGRtfFormattingData *kreuzberg_extract_rtf_formatting(const char *content
  * Caller must ensure all pointer arguments are valid or null.
  * Returned pointers must be freed with the appropriate free function.
  */
-char *kreuzberg_spans_to_annotations(uintptr_t para_start,
-                                     uintptr_t para_end,
-                                     const KREUZBERGRtfFormattingData *formatting);
+char *kreuzberg_spans_to_annotations(uintptr_t _para_start,
+                                     uintptr_t _para_end,
+                                     const char *_formatting);
 
 /**
  * Extract text and image metadata from RTF document.

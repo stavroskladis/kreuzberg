@@ -27,6 +27,6 @@ public sealed class HealthResponse
     /// Plugin status (optional)
     /// </summary>
     [JsonPropertyName("plugins")]
-    public PluginStatus? Plugins { get; set; } = null;
+    public string? Plugins { get; set; } = null;
 
 }

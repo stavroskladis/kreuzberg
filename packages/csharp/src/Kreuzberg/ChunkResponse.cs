@@ -15,7 +15,7 @@ public sealed class ChunkResponse
     /// List of chunks
     /// </summary>
     [JsonPropertyName("chunks")]
-    public List<ChunkItem> Chunks { get; set; } = [];
+    public List<string> Chunks { get; set; } = [];
 
     /// <summary>
     /// Total number of chunks
@@ -27,7 +27,7 @@ public sealed class ChunkResponse
     /// Configuration used for chunking
     /// </summary>
     [JsonPropertyName("config")]
-    public ChunkingConfigResponse Config { get; set; } = default!;
+    public string Config { get; set; } = "";
 
     /// <summary>
     /// Input text size in bytes

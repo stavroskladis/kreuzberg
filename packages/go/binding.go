@@ -6189,53 +6189,6 @@ func (h *PptxExtractor) Free() {
 }
 
 
-// Parsed image data from a `\pict` group.
-type RtfImage struct {
-    // Image format string (e.g., "jpeg", "png", "wmf", "bmp").
-    Format string `json:"format"`
-    // Width in twips (goal width).
-    WidthGoal *int32 `json:"width_goal,omitempty"`
-    // Height in twips (goal height).
-    HeightGoal *int32 `json:"height_goal,omitempty"`
-    // Decoded binary image data.
-    Data []byte `json:"data"`
-}
-
-
-// A formatting span tracked during RTF parsing.
-type RtfFormattingSpan struct {
-    // Byte offset in the output text where this format starts.
-    Start uint `json:"start"`
-    // Byte offset in the output text where this format ends.
-    End uint `json:"end"`
-    // Whether bold was active.
-    Bold bool `json:"bold"`
-    // Whether italic was active.
-    Italic bool `json:"italic"`
-    // Whether underline was active.
-    Underline bool `json:"underline"`
-    // Whether strikethrough was active.
-    Strikethrough bool `json:"strikethrough"`
-    // Color index into the color table (0 = default/auto).
-    ColorIndex uint16 `json:"color_index"`
-}
-
-
-// RTF formatting metadata extracted alongside text.
-type RtfFormattingData struct {
-    // Formatting spans corresponding to text regions.
-    Spans []RtfFormattingSpan `json:"spans,omitempty"`
-    // Color table entries (index 0 is auto/default).
-    ColorTable []string `json:"color_table,omitempty"`
-    // Header text content (from \header groups).
-    HeaderText *string `json:"header_text,omitempty"`
-    // Footer text content (from \footer groups).
-    FooterText *string `json:"footer_text,omitempty"`
-    // Hyperlink spans: (start_byte, end_byte, url).
-    Hyperlinks []string `json:"hyperlinks,omitempty"`
-}
-
-
 // Native Rust RTF extractor.
 //
 // Extracts text content, metadata, and structure from RTF documents
@@ -9519,14 +9472,6 @@ func (h *ExtractionServiceBuilder) Free() {
 }
 
 
-// Custom Multipart extractor that returns JSON error responses instead of plain text.
-//
-// This wraps axum's `Multipart` extractor but uses `ApiError` as the rejection type,
-// ensuring that multipart parsing errors are returned as JSON with proper content type.
-type MultipartApi struct {
-}
-
-
 // API-specific error wrapper.
 type ApiError struct {
     // HTTP status code
@@ -9633,19 +9578,6 @@ func NewApiSizeLimits(opts ...ApiSizeLimitsOption) *ApiSizeLimits {
 }
 
 
-// Plugin status information in health response.
-type PluginStatus struct {
-    // Number of registered OCR backends
-    OcrBackendsCount uint `json:"ocr_backends_count"`
-    // Names of registered OCR backends
-    OcrBackends []string `json:"ocr_backends,omitempty"`
-    // Number of registered document extractors
-    ExtractorsCount uint `json:"extractors_count"`
-    // Number of registered post-processors
-    PostProcessorsCount uint `json:"post_processors_count"`
-}
-
-
 // Health check response.
 type HealthResponse struct {
     // Health status
@@ -9653,7 +9585,7 @@ type HealthResponse struct {
     // API version
     Version string `json:"version"`
     // Plugin status (optional)
-    Plugins *PluginStatus `json:"plugins,omitempty"`
+    Plugins *string `json:"plugins,omitempty"`
 }
 
 
@@ -9764,86 +9696,24 @@ type ChunkRequest struct {
     // Text to chunk (must not be empty)
     Text string `json:"text"`
     // Optional chunking configuration
-    Config *ChunkingConfigRequest `json:"config,omitempty"`
+    Config *string `json:"config,omitempty"`
     // Chunker type (text or markdown)
     ChunkerType string `json:"chunker_type"`
-}
-
-
-// Chunking configuration request.
-type ChunkingConfigRequest struct {
-    // Maximum characters per chunk (must be greater than overlap, default: 2000)
-    MaxCharacters *uint `json:"max_characters,omitempty"`
-    // Overlap between chunks in characters (must be less than max_characters, default: 100)
-    Overlap *uint `json:"overlap,omitempty"`
-    // Whether to trim whitespace
-    Trim *bool `json:"trim,omitempty"`
-}
-
-
-// ChunkingConfigRequest option function
-type ChunkingConfigRequestOption func(*ChunkingConfigRequest)
-
-// WithChunkingConfigRequestMaxCharacters sets the max_characters field.
-func WithChunkingConfigRequestMaxCharacters(v uint) ChunkingConfigRequestOption {
-    return func(c *ChunkingConfigRequest) { c.MaxCharacters = &v }
-}
-
-// WithChunkingConfigRequestOverlap sets the overlap field.
-func WithChunkingConfigRequestOverlap(v uint) ChunkingConfigRequestOption {
-    return func(c *ChunkingConfigRequest) { c.Overlap = &v }
-}
-
-// WithChunkingConfigRequestTrim sets the trim field.
-func WithChunkingConfigRequestTrim(v bool) ChunkingConfigRequestOption {
-    return func(c *ChunkingConfigRequest) { c.Trim = &v }
-}
-
-// NewChunkingConfigRequest creates a ChunkingConfigRequest with optional parameters.
-func NewChunkingConfigRequest(opts ...ChunkingConfigRequestOption) *ChunkingConfigRequest {
-    c := &ChunkingConfigRequest {
-        MaxCharacters: nil,
-        Overlap: nil,
-        Trim: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
 }
 
 
 // Chunk response with chunks and metadata.
 type ChunkResponse struct {
     // List of chunks
-    Chunks []ChunkItem `json:"chunks,omitempty"`
+    Chunks []string `json:"chunks,omitempty"`
     // Total number of chunks
     ChunkCount uint `json:"chunk_count"`
     // Configuration used for chunking
-    Config ChunkingConfigResponse `json:"config"`
+    Config string `json:"config"`
     // Input text size in bytes
     InputSizeBytes uint `json:"input_size_bytes"`
     // Chunker type used for chunking
     ChunkerType string `json:"chunker_type"`
-}
-
-
-// Individual chunk item with metadata.
-type ChunkItem struct {
-    // Chunk content
-    Content string `json:"content"`
-    // Byte offset start position
-    ByteStart uint `json:"byte_start"`
-    // Byte offset end position
-    ByteEnd uint `json:"byte_end"`
-    // Index of this chunk (0-based)
-    ChunkIndex uint `json:"chunk_index"`
-    // Total number of chunks
-    TotalChunks uint `json:"total_chunks"`
-    // First page number (optional, for PDF chunking)
-    FirstPage *uint `json:"first_page,omitempty"`
-    // Last page number (optional, for PDF chunking)
-    LastPage *uint `json:"last_page,omitempty"`
 }
 
 
@@ -9982,19 +9852,6 @@ type DoclingCompatDocument struct {
 }
 
 
-// Chunking configuration response.
-type ChunkingConfigResponse struct {
-    // Maximum characters per chunk
-    MaxCharacters uint `json:"max_characters"`
-    // Overlap between chunks in characters
-    Overlap uint `json:"overlap"`
-    // Whether whitespace was trimmed
-    Trim bool `json:"trim"`
-    // Type of chunker used
-    ChunkerType string `json:"chunker_type"`
-}
-
-
 // Request parameters for file extraction.
 type ExtractFileParams struct {
     // Path to the file to extract
@@ -10047,23 +9904,6 @@ type DetectMimeTypeParams struct {
     Path string `json:"path"`
     // Use content-based detection (default: true)
     UseContent bool `json:"use_content"`
-}
-
-
-// Empty parameters for tools that take no arguments.
-//
-// This generates `{"type": "object", "properties": {}}` which is required by
-// the MCP specification, unlike `()` which generates `{"const": null}`.
-type EmptyParams struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *EmptyParams) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_empty_params_free((*C.KREUZBERGEmptyParams)(h.ptr))
-        h.ptr = nil
-    }
 }
 
 
@@ -10121,27 +9961,6 @@ type ChunkTextParams struct {
     Overlap *uint `json:"overlap,omitempty"`
     // Chunker type: "text" or "markdown" (default: "text")
     ChunkerType *string `json:"chunker_type,omitempty"`
-}
-
-
-// DownloadGrammarsParams is a type.
-type DownloadGrammarsParams struct {
-    // Specific languages to download (e.g., ["python", "rust", "javascript"]).
-    // If not provided, must specify groups or all.
-    Languages *[]string `json:"languages,omitempty"`
-    // Language groups to download (e.g., ["web", "systems", "scripting"]).
-    Groups *[]string `json:"groups,omitempty"`
-    // Download all available languages.
-    All *bool `json:"all,omitempty"`
-}
-
-
-// ListGrammarsParams is a type.
-type ListGrammarsParams struct {
-    // Only show downloaded/cached languages (default: false, shows all available).
-    DownloadedOnly bool `json:"downloaded_only"`
-    // Filter languages by name substring.
-    Filter *string `json:"filter,omitempty"`
 }
 
 
@@ -14595,27 +14414,6 @@ func ExcelToMarkdown(workbook ExcelWorkbook) *string {
 }
 
 
-// Resolve conversion options with sensible defaults.
-//
-// If no options are provided, creates defaults with:
-// - `extract_metadata = true` (parse YAML frontmatter)
-// - `include_document_structure = true` (populate document tree)
-// - `preprocessing.enabled = false` (disable HTML preprocessing)
-//
-// Sets output format based on the provided format parameter.
-func ResolveConversionOptions(options *string, output_format string) *string {
-    cOptions := C.CString(options)
-    defer C.free(unsafe.Pointer(cOptions))
-
-    cOutputFormat := C.CString(output_format)
-    defer C.free(unsafe.Pointer(cOutputFormat))
-
-    ptr := C.kreuzberg_resolve_conversion_options(cOptions, cOutputFormat)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
 // Convert HTML with optional configuration and output format.
 //
 // Uses sensible defaults if no configuration is provided:
@@ -16143,28 +15941,6 @@ func EvaluateNativeTextForOcr(native_text string, page_count *uint, thresholds O
 }
 
 
-// Compute a quality score (0.0-1.0) for OCR output text.
-//
-// Used by the pipeline to decide whether to accept a result or try the next backend.
-// Higher is better. Combines multiple signal dimensions into a single score.
-func ComputeQualityScore(text string, thresholds OcrQualityThresholds) *float64 {
-    cText := C.CString(text)
-    defer C.free(unsafe.Pointer(cText))
-
-    jsonBytescThresholds, err := json.Marshal(thresholds)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcThresholds := C.CString(string(jsonBytescThresholds))
-    cThresholds := C.kreuzberg_ocr_quality_thresholds_from_json(tmpStrcThresholds)
-    C.free(unsafe.Pointer(tmpStrcThresholds))
-    defer C.kreuzberg_ocr_quality_thresholds_free(cThresholds)
-
-    ptr := C.kreuzberg_compute_quality_score(cText, cThresholds)
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
 // EvaluatePerPageOcr calls the FFI function.
 func EvaluatePerPageOcr(native_text string, boundaries *[]PageBoundary, page_count *uint, thresholds OcrQualityThresholds) *OcrFallbackDecision {
     cNativeText := C.CString(native_text)
@@ -16226,18 +16002,6 @@ func ParseHexByte(h1 string, h2 string) **uint8 {
 }
 
 
-// Decode a byte using Windows-1252 encoding for the 0x80-0x9F range.
-//
-// This function maps Windows-1252 bytes in the 0x80-0x9F range to their
-// corresponding Unicode characters. For other values, it returns the byte
-// as a character directly.
-func DecodeWindows1252(byte uint8) *string {
-    ptr := C.kreuzberg_decode_windows_1252(cByte)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
 // Parse an RTF control word and extract its value.
 //
 // Returns a tuple of (control_word, optional_numeric_value).
@@ -16248,35 +16012,6 @@ func ParseRtfControlWord(chars string) *string {
     ptr := C.kreuzberg_parse_rtf_control_word(cChars)
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Normalize whitespace in a string, also producing a byte-offset mapping from
-// input positions to output positions. The mapping is a sorted list of
-// `(old_offset, new_offset)` pairs that covers every byte boundary in the
-// input. Callers can use [`map_offset`] to translate an arbitrary input byte
-// offset to the corresponding output byte offset.
-func NormalizeWhitespaceWithMapping(s string) *string {
-    cS := C.CString(s)
-    defer C.free(unsafe.Pointer(cS))
-
-    ptr := C.kreuzberg_normalize_whitespace_with_mapping(cS)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Map a byte offset from the pre-normalized string to the post-normalized string.
-func MapOffset(mapping []string, offset uint) *uint {
-    jsonBytescMapping, err := json.Marshal(mapping)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    cMapping := C.CString(string(jsonBytescMapping))
-    defer C.free(unsafe.Pointer(cMapping))
-
-    ptr := C.kreuzberg_map_offset(cMapping, cOffset)
-    return func() *uint { v := uint(ptr); return &v }()
 }
 
 
@@ -16343,20 +16078,13 @@ func ExtractRtfMetadata(rtf_content string, extracted_text string) *string {
 // - Color table and color references
 // - Header/footer text
 // - Hyperlink field instructions
-func ExtractRtfFormatting(content string) *RtfFormattingData {
+func ExtractRtfFormatting(content string) *string {
     cContent := C.CString(content)
     defer C.free(unsafe.Pointer(cContent))
 
     ptr := C.kreuzberg_extract_rtf_formatting(cContent)
-    defer C.kreuzberg_rtf_formatting_data_free(ptr)
-    return func() *RtfFormattingData {
-	jsonPtr := C.kreuzberg_rtf_formatting_data_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result RtfFormattingData
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}()
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -16364,15 +16092,9 @@ func ExtractRtfFormatting(content string) *RtfFormattingData {
 //
 // Given the byte range of a paragraph within the full extracted text,
 // produces annotations from the formatting spans that overlap.
-func SpansToAnnotations(para_start uint, para_end uint, formatting RtfFormattingData) *[]TextAnnotation {
-    jsonBytescFormatting, err := json.Marshal(formatting)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcFormatting := C.CString(string(jsonBytescFormatting))
-    cFormatting := C.kreuzberg_rtf_formatting_data_from_json(tmpStrcFormatting)
-    C.free(unsafe.Pointer(tmpStrcFormatting))
-    defer C.kreuzberg_rtf_formatting_data_free(cFormatting)
+func SpansToAnnotations(para_start uint, para_end uint, formatting string) *[]TextAnnotation {
+    cFormatting := C.CString(formatting)
+    defer C.free(unsafe.Pointer(cFormatting))
 
     ptr := C.kreuzberg_spans_to_annotations(cParaStart, cParaEnd, cFormatting)
     return func() *[]TextAnnotation {

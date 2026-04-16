@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ChunkRequest(
     String text,
-    Optional<ChunkingConfigRequest> config,
+    Optional<String> config,
     @JsonProperty("chunker_type") String chunkerType
 ) {
 }

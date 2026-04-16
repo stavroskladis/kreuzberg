@@ -767,16 +767,6 @@ class ExtractResponse
 }
 
 /**
- * Empty parameters for tools that take no arguments.
- *
- * This generates `{"type": "object", "properties": {}}` which is required by
- * the MCP specification, unlike `()` which generates `{"const": null}`.
- */
-class EmptyParams
-{
-}
-
-/**
  * Kreuzberg MCP server.
  *
  * Provides document extraction capabilities via MCP tools.
@@ -3345,98 +3335,6 @@ class OcrFallbackDecision
     public function getAvgNonWhitespace(): float { }
     public function getAvgAlnum(): float { }
     public function getFallback(): bool { }
-}
-
-/**
- * Parsed image data from a `\pict` group.
- */
-class RtfImage
-{
-    public string $format;
-    public ?int $width_goal;
-    public ?int $height_goal;
-    public string $data;
-
-    public function __construct(
-        string $format,
-        string $data,
-        ?int $width_goal = null,
-        ?int $height_goal = null
-    ) { }
-
-    public function getFormat(): string { }
-    public function getWidthGoal(): ?int { }
-    public function getHeightGoal(): ?int { }
-    public function getData(): string { }
-}
-
-/**
- * A formatting span tracked during RTF parsing.
- */
-class RtfFormattingSpan
-{
-    public int $start;
-    public int $end;
-    public bool $bold;
-    public bool $italic;
-    public bool $underline;
-    public bool $strikethrough;
-    public int $color_index;
-
-    public function __construct(
-        int $start,
-        int $end,
-        bool $bold,
-        bool $italic,
-        bool $underline,
-        bool $strikethrough,
-        int $color_index
-    ) { }
-
-    public function getStart(): int { }
-    public function getEnd(): int { }
-    public function getBold(): bool { }
-    public function getItalic(): bool { }
-    public function getUnderline(): bool { }
-    public function getStrikethrough(): bool { }
-    public function getColorIndex(): int { }
-}
-
-/**
- * RTF formatting metadata extracted alongside text.
- */
-class RtfFormattingData
-{
-    /** @var array<RtfFormattingSpan> */
-    public array $spans;
-    /** @var array<string> */
-    public array $color_table;
-    public ?string $header_text;
-    public ?string $footer_text;
-    /** @var array<string> */
-    public array $hyperlinks;
-
-    /**
-     * @param array<RtfFormattingSpan> $spans
-     * @param array<string> $color_table
-     * @param array<string> $hyperlinks
-     */
-    public function __construct(
-        array $spans,
-        array $color_table,
-        array $hyperlinks,
-        ?string $header_text = null,
-        ?string $footer_text = null
-    ) { }
-
-    /** @return array<RtfFormattingSpan> */
-    public function getSpans(): array { }
-    /** @return array<string> */
-    public function getColorTable(): array { }
-    public function getHeaderText(): ?string { }
-    public function getFooterText(): ?string { }
-    /** @return array<string> */
-    public function getHyperlinks(): array { }
 }
 
 /**
@@ -6397,23 +6295,6 @@ class ExtractionRequest
 }
 
 /**
- * Custom Multipart extractor that returns JSON error responses instead of plain text.
- *
- * This wraps axum's `Multipart` extractor but uses `ApiError` as the rejection type,
- * ensuring that multipart parsing errors are returned as JSON with proper content type.
- */
-class MultipartApi
-{
-    public string $_0;
-
-    public function __construct(
-        string $_0
-    ) { }
-
-    public function get0(): string { }
-}
-
-/**
  * API-specific error wrapper.
  */
 class ApiError
@@ -6487,51 +6368,23 @@ class ApiSizeLimits
 }
 
 /**
- * Plugin status information in health response.
- */
-class PluginStatus
-{
-    public int $ocr_backends_count;
-    /** @var array<string> */
-    public array $ocr_backends;
-    public int $extractors_count;
-    public int $post_processors_count;
-
-    /**
-     * @param array<string> $ocr_backends
-     */
-    public function __construct(
-        int $ocr_backends_count,
-        array $ocr_backends,
-        int $extractors_count,
-        int $post_processors_count
-    ) { }
-
-    public function getOcrBackendsCount(): int { }
-    /** @return array<string> */
-    public function getOcrBackends(): array { }
-    public function getExtractorsCount(): int { }
-    public function getPostProcessorsCount(): int { }
-}
-
-/**
  * Health check response.
  */
 class HealthResponse
 {
     public string $status;
     public string $version;
-    public ?PluginStatus $plugins;
+    public ?string $plugins;
 
     public function __construct(
         string $status,
         string $version,
-        ?PluginStatus $plugins = null
+        ?string $plugins = null
     ) { }
 
     public function getStatus(): string { }
     public function getVersion(): string { }
-    public function getPlugins(): ?PluginStatus { }
+    public function getPlugins(): ?string { }
 }
 
 /**
@@ -6699,38 +6552,18 @@ class EmbedResponse
 class ChunkRequest
 {
     public string $text;
-    public ?ChunkingConfigRequest $config;
+    public ?string $config;
     public string $chunker_type;
 
     public function __construct(
         string $text,
         string $chunker_type,
-        ?ChunkingConfigRequest $config = null
+        ?string $config = null
     ) { }
 
     public function getText(): string { }
-    public function getConfig(): ?ChunkingConfigRequest { }
+    public function getConfig(): ?string { }
     public function getChunkerType(): string { }
-}
-
-/**
- * Chunking configuration request.
- */
-class ChunkingConfigRequest
-{
-    public ?int $max_characters;
-    public ?int $overlap;
-    public ?bool $trim;
-
-    public function __construct(
-        ?int $max_characters = null,
-        ?int $overlap = null,
-        ?bool $trim = null
-    ) { }
-
-    public function getMaxCharacters(): ?int { }
-    public function getOverlap(): ?int { }
-    public function getTrim(): ?bool { }
 }
 
 /**
@@ -6738,62 +6571,30 @@ class ChunkingConfigRequest
  */
 class ChunkResponse
 {
-    /** @var array<ChunkItem> */
+    /** @var array<string> */
     public array $chunks;
     public int $chunk_count;
-    public ChunkingConfigResponse $config;
+    public string $config;
     public int $input_size_bytes;
     public string $chunker_type;
 
     /**
-     * @param array<ChunkItem> $chunks
+     * @param array<string> $chunks
      */
     public function __construct(
         array $chunks,
         int $chunk_count,
-        ChunkingConfigResponse $config,
+        string $config,
         int $input_size_bytes,
         string $chunker_type
     ) { }
 
-    /** @return array<ChunkItem> */
+    /** @return array<string> */
     public function getChunks(): array { }
     public function getChunkCount(): int { }
-    public function getConfig(): ChunkingConfigResponse { }
+    public function getConfig(): string { }
     public function getInputSizeBytes(): int { }
     public function getChunkerType(): string { }
-}
-
-/**
- * Individual chunk item with metadata.
- */
-class ChunkItem
-{
-    public string $content;
-    public int $byte_start;
-    public int $byte_end;
-    public int $chunk_index;
-    public int $total_chunks;
-    public ?int $first_page;
-    public ?int $last_page;
-
-    public function __construct(
-        string $content,
-        int $byte_start,
-        int $byte_end,
-        int $chunk_index,
-        int $total_chunks,
-        ?int $first_page = null,
-        ?int $last_page = null
-    ) { }
-
-    public function getContent(): string { }
-    public function getByteStart(): int { }
-    public function getByteEnd(): int { }
-    public function getChunkIndex(): int { }
-    public function getTotalChunks(): int { }
-    public function getFirstPage(): ?int { }
-    public function getLastPage(): ?int { }
 }
 
 /**
@@ -7010,29 +6811,6 @@ class DoclingCompatDocument
 }
 
 /**
- * Chunking configuration response.
- */
-class ChunkingConfigResponse
-{
-    public int $max_characters;
-    public int $overlap;
-    public bool $trim;
-    public string $chunker_type;
-
-    public function __construct(
-        int $max_characters,
-        int $overlap,
-        bool $trim,
-        string $chunker_type
-    ) { }
-
-    public function getMaxCharacters(): int { }
-    public function getOverlap(): int { }
-    public function getTrim(): bool { }
-    public function getChunkerType(): string { }
-}
-
-/**
  * Request parameters for file extraction.
  */
 class ExtractFileParams
@@ -7236,45 +7014,6 @@ class ChunkTextParams
     public function getMaxCharacters(): ?int { }
     public function getOverlap(): ?int { }
     public function getChunkerType(): ?string { }
-}
-
-class DownloadGrammarsParams
-{
-    /** @var ?array<string> */
-    public ?array $languages;
-    /** @var ?array<string> */
-    public ?array $groups;
-    public ?bool $all;
-
-    /**
-     * @param ?array<string> $languages
-     * @param ?array<string> $groups
-     */
-    public function __construct(
-        ?array $languages = null,
-        ?array $groups = null,
-        ?bool $all = null
-    ) { }
-
-    /** @return ?array<string> */
-    public function getLanguages(): ?array { }
-    /** @return ?array<string> */
-    public function getGroups(): ?array { }
-    public function getAll(): ?bool { }
-}
-
-class ListGrammarsParams
-{
-    public bool $downloaded_only;
-    public ?string $filter;
-
-    public function __construct(
-        bool $downloaded_only,
-        ?string $filter = null
-    ) { }
-
-    public function getDownloadedOnly(): bool { }
-    public function getFilter(): ?string { }
 }
 
 /**
@@ -8866,7 +8605,6 @@ class KreuzbergApi
     public static function readExcelBytes(string $data, string $file_extension): \Kreuzberg\ExcelWorkbook { }
     public static function excelToText(\Kreuzberg\ExcelWorkbook $workbook): string { }
     public static function excelToMarkdown(\Kreuzberg\ExcelWorkbook $workbook): string { }
-    public static function resolveConversionOptions(?string $options = null, string $output_format): string { }
     public static function convertHtmlToMarkdown(string $html, ?string $options = null, ?string $output_format = null): string { }
     public static function convertHtmlToMarkdownWithMetadata(string $html, ?string $options = null, ?string $output_format = null): string { }
     public static function convertHtmlToMarkdownWithTables(string $html, ?string $options = null, ?string $output_format = null): string { }
@@ -8963,7 +8701,6 @@ class KreuzbergApi
      */
     public static function dedupText(array $texts): array { }
     public static function evaluateNativeTextForOcr(string $native_text, ?int $page_count = null, \Kreuzberg\OcrQualityThresholds $thresholds): \Kreuzberg\OcrFallbackDecision { }
-    public static function computeQualityScore(string $text, \Kreuzberg\OcrQualityThresholds $thresholds): float { }
     /**
      * @param string $native_text
      * @param ?array<\Kreuzberg\PageBoundary> $boundaries
@@ -8974,21 +8711,13 @@ class KreuzbergApi
     public static function evaluatePerPageOcr(string $native_text, ?array $boundaries = null, ?int $page_count = null, \Kreuzberg\OcrQualityThresholds $thresholds): \Kreuzberg\OcrFallbackDecision { }
     public static function hexDigitToU8(string $c): ?int { }
     public static function parseHexByte(string $h1, string $h2): ?int { }
-    public static function decodeWindows1252(int $byte): string { }
     public static function parseRtfControlWord(string $chars): string { }
-    public static function normalizeWhitespaceWithMapping(string $s): string { }
-    /**
-     * @param array<string> $mapping
-     * @param int $offset
-     * @return int
-     */
-    public static function mapOffset(array $mapping, int $offset): int { }
     public static function normalizeWhitespace(string $s): string { }
     public static function extractPictImage(string $chars): string { }
     public static function parseRtfDatetime(string $segment): ?string { }
     public static function extractRtfMetadata(string $rtf_content, string $extracted_text): string { }
-    public static function extractRtfFormatting(string $content): \Kreuzberg\RtfFormattingData { }
-    public static function spansToAnnotations(int $para_start, int $para_end, \Kreuzberg\RtfFormattingData $formatting): array { }
+    public static function extractRtfFormatting(string $content): string { }
+    public static function spansToAnnotations(int $para_start, int $para_end, string $formatting): array { }
     public static function extractTextFromRtf(string $content, bool $plain): string { }
     public static function registerDefaultExtractors(): void { }
     public static function extractPanicMessage(string $panic_info): string { }

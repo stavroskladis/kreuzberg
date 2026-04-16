@@ -10544,254 +10544,6 @@ impl JsPptxExtractor {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct JsRtfImage {
-    format: String,
-    width_goal: Option<i32>,
-    height_goal: Option<i32>,
-    data: Vec<u8>,
-}
-
-#[wasm_bindgen]
-impl JsRtfImage {
-    #[wasm_bindgen(constructor)]
-    pub fn new(format: String, data: Vec<u8>, width_goal: Option<i32>, height_goal: Option<i32>) -> JsRtfImage {
-        JsRtfImage {
-            format,
-            width_goal,
-            height_goal,
-            data,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn format(&self) -> String {
-        self.format.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_format(&mut self, value: String) {
-        self.format = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "widthGoal")]
-    pub fn width_goal(&self) -> Option<i32> {
-        self.width_goal
-    }
-
-    #[wasm_bindgen(setter, js_name = "widthGoal")]
-    pub fn set_width_goal(&mut self, value: Option<i32>) {
-        self.width_goal = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "heightGoal")]
-    pub fn height_goal(&self) -> Option<i32> {
-        self.height_goal
-    }
-
-    #[wasm_bindgen(setter, js_name = "heightGoal")]
-    pub fn set_height_goal(&mut self, value: Option<i32>) {
-        self.height_goal = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn data(&self) -> Vec<u8> {
-        self.data.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_data(&mut self, value: Vec<u8>) {
-        self.data = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct JsRtfFormattingSpan {
-    start: usize,
-    end: usize,
-    bold: bool,
-    italic: bool,
-    underline: bool,
-    strikethrough: bool,
-    color_index: u16,
-}
-
-#[wasm_bindgen]
-impl JsRtfFormattingSpan {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        start: usize,
-        end: usize,
-        bold: bool,
-        italic: bool,
-        underline: bool,
-        strikethrough: bool,
-        color_index: u16,
-    ) -> JsRtfFormattingSpan {
-        JsRtfFormattingSpan {
-            start,
-            end,
-            bold,
-            italic,
-            underline,
-            strikethrough,
-            color_index,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn start(&self) -> usize {
-        self.start
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_start(&mut self, value: usize) {
-        self.start = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn end(&self) -> usize {
-        self.end
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_end(&mut self, value: usize) {
-        self.end = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn bold(&self) -> bool {
-        self.bold
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_bold(&mut self, value: bool) {
-        self.bold = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn italic(&self) -> bool {
-        self.italic
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_italic(&mut self, value: bool) {
-        self.italic = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn underline(&self) -> bool {
-        self.underline
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_underline(&mut self, value: bool) {
-        self.underline = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn strikethrough(&self) -> bool {
-        self.strikethrough
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_strikethrough(&mut self, value: bool) {
-        self.strikethrough = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "colorIndex")]
-    pub fn color_index(&self) -> u16 {
-        self.color_index
-    }
-
-    #[wasm_bindgen(setter, js_name = "colorIndex")]
-    pub fn set_color_index(&mut self, value: u16) {
-        self.color_index = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct JsRtfFormattingData {
-    spans: Vec<JsRtfFormattingSpan>,
-    color_table: Vec<String>,
-    header_text: Option<String>,
-    footer_text: Option<String>,
-    hyperlinks: Vec<String>,
-}
-
-#[wasm_bindgen]
-impl JsRtfFormattingData {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        spans: Vec<JsRtfFormattingSpan>,
-        color_table: Vec<String>,
-        hyperlinks: Vec<String>,
-        header_text: Option<String>,
-        footer_text: Option<String>,
-    ) -> JsRtfFormattingData {
-        JsRtfFormattingData {
-            spans,
-            color_table,
-            header_text,
-            footer_text,
-            hyperlinks,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn spans(&self) -> Vec<JsRtfFormattingSpan> {
-        self.spans.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_spans(&mut self, value: Vec<JsRtfFormattingSpan>) {
-        self.spans = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "colorTable")]
-    pub fn color_table(&self) -> Vec<String> {
-        self.color_table.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "colorTable")]
-    pub fn set_color_table(&mut self, value: Vec<String>) {
-        self.color_table = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "headerText")]
-    pub fn header_text(&self) -> Option<String> {
-        self.header_text.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "headerText")]
-    pub fn set_header_text(&mut self, value: Option<String>) {
-        self.header_text = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "footerText")]
-    pub fn footer_text(&self) -> Option<String> {
-        self.footer_text.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "footerText")]
-    pub fn set_footer_text(&mut self, value: Option<String>) {
-        self.footer_text = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn hyperlinks(&self) -> Vec<String> {
-        self.hyperlinks.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_hyperlinks(&mut self, value: Vec<String>) {
-        self.hyperlinks = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
 pub struct JsRtfExtractor {
     inner: Arc<kreuzberg::extractors::RtfExtractor>,
 }
@@ -19340,40 +19092,6 @@ impl JsExtractionServiceBuilder {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct JsMultipartApi {
-    _0: String,
-}
-
-#[wasm_bindgen]
-impl JsMultipartApi {
-    #[wasm_bindgen(constructor)]
-    pub fn new(_0: String) -> JsMultipartApi {
-        JsMultipartApi { _0 }
-    }
-
-    #[wasm_bindgen(getter, js_name = "0")]
-    pub fn _0(&self) -> String {
-        self._0.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "0")]
-    pub fn set__0(&mut self, value: String) {
-        self._0 = value;
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[wasm_bindgen(js_name = "fromRequest")]
-    pub async fn from_request(&self, req: String, state: String) -> Result<JsMultipartApi, JsValue> {
-        let result = kreuzberg::MultipartApi::from(self.clone())
-            .from_request(req, &state)
-            .await
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(JsMultipartApi::from(result))
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
 pub struct JsApiError {
     status: String,
     body: JsErrorResponse,
@@ -19498,83 +19216,16 @@ impl JsApiSizeLimits {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct JsPluginStatus {
-    ocr_backends_count: usize,
-    ocr_backends: Vec<String>,
-    extractors_count: usize,
-    post_processors_count: usize,
-}
-
-#[wasm_bindgen]
-impl JsPluginStatus {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        ocr_backends_count: usize,
-        ocr_backends: Vec<String>,
-        extractors_count: usize,
-        post_processors_count: usize,
-    ) -> JsPluginStatus {
-        JsPluginStatus {
-            ocr_backends_count,
-            ocr_backends,
-            extractors_count,
-            post_processors_count,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "ocrBackendsCount")]
-    pub fn ocr_backends_count(&self) -> usize {
-        self.ocr_backends_count
-    }
-
-    #[wasm_bindgen(setter, js_name = "ocrBackendsCount")]
-    pub fn set_ocr_backends_count(&mut self, value: usize) {
-        self.ocr_backends_count = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "ocrBackends")]
-    pub fn ocr_backends(&self) -> Vec<String> {
-        self.ocr_backends.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "ocrBackends")]
-    pub fn set_ocr_backends(&mut self, value: Vec<String>) {
-        self.ocr_backends = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "extractorsCount")]
-    pub fn extractors_count(&self) -> usize {
-        self.extractors_count
-    }
-
-    #[wasm_bindgen(setter, js_name = "extractorsCount")]
-    pub fn set_extractors_count(&mut self, value: usize) {
-        self.extractors_count = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "postProcessorsCount")]
-    pub fn post_processors_count(&self) -> usize {
-        self.post_processors_count
-    }
-
-    #[wasm_bindgen(setter, js_name = "postProcessorsCount")]
-    pub fn set_post_processors_count(&mut self, value: usize) {
-        self.post_processors_count = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
 pub struct JsHealthResponse {
     status: String,
     version: String,
-    plugins: Option<JsPluginStatus>,
+    plugins: Option<String>,
 }
 
 #[wasm_bindgen]
 impl JsHealthResponse {
     #[wasm_bindgen(constructor)]
-    pub fn new(status: String, version: String, plugins: Option<JsPluginStatus>) -> JsHealthResponse {
+    pub fn new(status: String, version: String, plugins: Option<String>) -> JsHealthResponse {
         JsHealthResponse {
             status,
             version,
@@ -19603,12 +19254,12 @@ impl JsHealthResponse {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn plugins(&self) -> Option<JsPluginStatus> {
+    pub fn plugins(&self) -> Option<String> {
         self.plugins.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_plugins(&mut self, value: Option<JsPluginStatus>) {
+    pub fn set_plugins(&mut self, value: Option<String>) {
         self.plugins = value;
     }
 }
@@ -20001,14 +19652,14 @@ impl JsEmbedResponse {
 #[wasm_bindgen]
 pub struct JsChunkRequest {
     text: String,
-    config: Option<JsChunkingConfigRequest>,
+    config: Option<String>,
     chunker_type: String,
 }
 
 #[wasm_bindgen]
 impl JsChunkRequest {
     #[wasm_bindgen(constructor)]
-    pub fn new(text: String, chunker_type: String, config: Option<JsChunkingConfigRequest>) -> JsChunkRequest {
+    pub fn new(text: String, chunker_type: String, config: Option<String>) -> JsChunkRequest {
         JsChunkRequest {
             text,
             config,
@@ -20027,12 +19678,12 @@ impl JsChunkRequest {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn config(&self) -> Option<JsChunkingConfigRequest> {
+    pub fn config(&self) -> Option<String> {
         self.config.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_config(&mut self, value: Option<JsChunkingConfigRequest>) {
+    pub fn set_config(&mut self, value: Option<String>) {
         self.config = value;
     }
 
@@ -20047,62 +19698,12 @@ impl JsChunkRequest {
     }
 }
 
-#[derive(Clone, Default)]
-#[wasm_bindgen]
-pub struct JsChunkingConfigRequest {
-    max_characters: Option<usize>,
-    overlap: Option<usize>,
-    trim: Option<bool>,
-}
-
-#[wasm_bindgen]
-impl JsChunkingConfigRequest {
-    #[wasm_bindgen(constructor)]
-    pub fn new(max_characters: Option<usize>, overlap: Option<usize>, trim: Option<bool>) -> JsChunkingConfigRequest {
-        JsChunkingConfigRequest {
-            max_characters,
-            overlap,
-            trim,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "maxCharacters")]
-    pub fn max_characters(&self) -> Option<usize> {
-        self.max_characters
-    }
-
-    #[wasm_bindgen(setter, js_name = "maxCharacters")]
-    pub fn set_max_characters(&mut self, value: Option<usize>) {
-        self.max_characters = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn overlap(&self) -> Option<usize> {
-        self.overlap
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_overlap(&mut self, value: Option<usize>) {
-        self.overlap = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn trim(&self) -> Option<bool> {
-        self.trim
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_trim(&mut self, value: Option<bool>) {
-        self.trim = value;
-    }
-}
-
 #[derive(Clone)]
 #[wasm_bindgen]
 pub struct JsChunkResponse {
-    chunks: Vec<JsChunkItem>,
+    chunks: Vec<String>,
     chunk_count: usize,
-    config: JsChunkingConfigResponse,
+    config: String,
     input_size_bytes: usize,
     chunker_type: String,
 }
@@ -20111,9 +19712,9 @@ pub struct JsChunkResponse {
 impl JsChunkResponse {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        chunks: Vec<JsChunkItem>,
+        chunks: Vec<String>,
         chunk_count: usize,
-        config: JsChunkingConfigResponse,
+        config: String,
         input_size_bytes: usize,
         chunker_type: String,
     ) -> JsChunkResponse {
@@ -20127,12 +19728,12 @@ impl JsChunkResponse {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn chunks(&self) -> Vec<JsChunkItem> {
+    pub fn chunks(&self) -> Vec<String> {
         self.chunks.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_chunks(&mut self, value: Vec<JsChunkItem>) {
+    pub fn set_chunks(&mut self, value: Vec<String>) {
         self.chunks = value;
     }
 
@@ -20147,12 +19748,12 @@ impl JsChunkResponse {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn config(&self) -> JsChunkingConfigResponse {
+    pub fn config(&self) -> String {
         self.config.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_config(&mut self, value: JsChunkingConfigResponse) {
+    pub fn set_config(&mut self, value: String) {
         self.config = value;
     }
 
@@ -20174,112 +19775,6 @@ impl JsChunkResponse {
     #[wasm_bindgen(setter, js_name = "chunkerType")]
     pub fn set_chunker_type(&mut self, value: String) {
         self.chunker_type = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct JsChunkItem {
-    content: String,
-    byte_start: usize,
-    byte_end: usize,
-    chunk_index: usize,
-    total_chunks: usize,
-    first_page: Option<usize>,
-    last_page: Option<usize>,
-}
-
-#[wasm_bindgen]
-impl JsChunkItem {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        content: String,
-        byte_start: usize,
-        byte_end: usize,
-        chunk_index: usize,
-        total_chunks: usize,
-        first_page: Option<usize>,
-        last_page: Option<usize>,
-    ) -> JsChunkItem {
-        JsChunkItem {
-            content,
-            byte_start,
-            byte_end,
-            chunk_index,
-            total_chunks,
-            first_page,
-            last_page,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn content(&self) -> String {
-        self.content.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_content(&mut self, value: String) {
-        self.content = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "byteStart")]
-    pub fn byte_start(&self) -> usize {
-        self.byte_start
-    }
-
-    #[wasm_bindgen(setter, js_name = "byteStart")]
-    pub fn set_byte_start(&mut self, value: usize) {
-        self.byte_start = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "byteEnd")]
-    pub fn byte_end(&self) -> usize {
-        self.byte_end
-    }
-
-    #[wasm_bindgen(setter, js_name = "byteEnd")]
-    pub fn set_byte_end(&mut self, value: usize) {
-        self.byte_end = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "chunkIndex")]
-    pub fn chunk_index(&self) -> usize {
-        self.chunk_index
-    }
-
-    #[wasm_bindgen(setter, js_name = "chunkIndex")]
-    pub fn set_chunk_index(&mut self, value: usize) {
-        self.chunk_index = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "totalChunks")]
-    pub fn total_chunks(&self) -> usize {
-        self.total_chunks
-    }
-
-    #[wasm_bindgen(setter, js_name = "totalChunks")]
-    pub fn set_total_chunks(&mut self, value: usize) {
-        self.total_chunks = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "firstPage")]
-    pub fn first_page(&self) -> Option<usize> {
-        self.first_page
-    }
-
-    #[wasm_bindgen(setter, js_name = "firstPage")]
-    pub fn set_first_page(&mut self, value: Option<usize>) {
-        self.first_page = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "lastPage")]
-    pub fn last_page(&self) -> Option<usize> {
-        self.last_page
-    }
-
-    #[wasm_bindgen(setter, js_name = "lastPage")]
-    pub fn set_last_page(&mut self, value: Option<usize>) {
-        self.last_page = value;
     }
 }
 
@@ -20729,68 +20224,6 @@ impl JsDoclingCompatDocument {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct JsChunkingConfigResponse {
-    max_characters: usize,
-    overlap: usize,
-    trim: bool,
-    chunker_type: String,
-}
-
-#[wasm_bindgen]
-impl JsChunkingConfigResponse {
-    #[wasm_bindgen(constructor)]
-    pub fn new(max_characters: usize, overlap: usize, trim: bool, chunker_type: String) -> JsChunkingConfigResponse {
-        JsChunkingConfigResponse {
-            max_characters,
-            overlap,
-            trim,
-            chunker_type,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "maxCharacters")]
-    pub fn max_characters(&self) -> usize {
-        self.max_characters
-    }
-
-    #[wasm_bindgen(setter, js_name = "maxCharacters")]
-    pub fn set_max_characters(&mut self, value: usize) {
-        self.max_characters = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn overlap(&self) -> usize {
-        self.overlap
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_overlap(&mut self, value: usize) {
-        self.overlap = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn trim(&self) -> bool {
-        self.trim
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_trim(&mut self, value: bool) {
-        self.trim = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "chunkerType")]
-    pub fn chunker_type(&self) -> String {
-        self.chunker_type.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "chunkerType")]
-    pub fn set_chunker_type(&mut self, value: String) {
-        self.chunker_type = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
 pub struct JsExtractFileParams {
     path: String,
     mime_type: Option<String>,
@@ -21063,15 +20496,6 @@ impl JsDetectMimeTypeParams {
         self.use_content = value;
     }
 }
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct JsEmptyParams {
-    inner: Arc<kreuzberg::mcp::params::EmptyParams>,
-}
-
-#[wasm_bindgen]
-impl JsEmptyParams {}
 
 #[derive(Clone)]
 #[wasm_bindgen]
@@ -21362,94 +20786,6 @@ impl JsChunkTextParams {
     #[wasm_bindgen(setter, js_name = "chunkerType")]
     pub fn set_chunker_type(&mut self, value: Option<String>) {
         self.chunker_type = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct JsDownloadGrammarsParams {
-    languages: Option<Vec<String>>,
-    groups: Option<Vec<String>>,
-    all: Option<bool>,
-}
-
-#[wasm_bindgen]
-impl JsDownloadGrammarsParams {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        languages: Option<Vec<String>>,
-        groups: Option<Vec<String>>,
-        all: Option<bool>,
-    ) -> JsDownloadGrammarsParams {
-        JsDownloadGrammarsParams { languages, groups, all }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn languages(&self) -> Option<Vec<String>> {
-        self.languages.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_languages(&mut self, value: Option<Vec<String>>) {
-        self.languages = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn groups(&self) -> Option<Vec<String>> {
-        self.groups.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_groups(&mut self, value: Option<Vec<String>>) {
-        self.groups = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn all(&self) -> Option<bool> {
-        self.all
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_all(&mut self, value: Option<bool>) {
-        self.all = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct JsListGrammarsParams {
-    downloaded_only: bool,
-    filter: Option<String>,
-}
-
-#[wasm_bindgen]
-impl JsListGrammarsParams {
-    #[wasm_bindgen(constructor)]
-    pub fn new(downloaded_only: bool, filter: Option<String>) -> JsListGrammarsParams {
-        JsListGrammarsParams {
-            downloaded_only,
-            filter,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "downloadedOnly")]
-    pub fn downloaded_only(&self) -> bool {
-        self.downloaded_only
-    }
-
-    #[wasm_bindgen(setter, js_name = "downloadedOnly")]
-    pub fn set_downloaded_only(&mut self, value: bool) {
-        self.downloaded_only = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn filter(&self) -> Option<String> {
-        self.filter.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_filter(&mut self, value: Option<String>) {
-        self.filter = value;
     }
 }
 
@@ -26442,11 +25778,6 @@ pub fn excel_to_markdown(workbook: JsExcelWorkbook) -> String {
     kreuzberg::extraction::excel_to_markdown(workbook.into())
 }
 
-#[wasm_bindgen(js_name = "resolveConversionOptions")]
-pub fn resolve_conversion_options(options: Option<String>, output_format: String) -> String {
-    String::from("[unimplemented: resolve_conversion_options]")
-}
-
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "convertHtmlToMarkdown")]
 pub fn convert_html_to_markdown(
@@ -26837,11 +26168,6 @@ pub fn evaluate_native_text_for_ocr(
     .into()
 }
 
-#[wasm_bindgen(js_name = "computeQualityScore")]
-pub fn compute_quality_score(text: String, thresholds: JsOcrQualityThresholds) -> f64 {
-    kreuzberg::extractors::pdf::ocr::compute_quality_score(&text, thresholds.into())
-}
-
 #[wasm_bindgen(js_name = "evaluatePerPageOcr")]
 pub fn evaluate_per_page_ocr(
     native_text: String,
@@ -26868,24 +26194,9 @@ pub fn parse_hex_byte(h1: String, h2: String) -> Option<u8> {
     kreuzberg::extractors::rtf::parse_hex_byte(h1, h2)
 }
 
-#[wasm_bindgen(js_name = "decodeWindows1252")]
-pub fn decode_windows_1252(byte: u8) -> String {
-    kreuzberg::extractors::rtf::encoding::decode_windows_1252(byte)
-}
-
 #[wasm_bindgen(js_name = "parseRtfControlWord")]
 pub fn parse_rtf_control_word(chars: String) -> String {
     String::from("[unimplemented: parse_rtf_control_word]")
-}
-
-#[wasm_bindgen(js_name = "normalizeWhitespaceWithMapping")]
-pub fn normalize_whitespace_with_mapping(s: String) -> String {
-    String::from("[unimplemented: normalize_whitespace_with_mapping]")
-}
-
-#[wasm_bindgen(js_name = "mapOffset")]
-pub fn map_offset(mapping: Vec<String>, offset: usize) -> usize {
-    0
 }
 
 #[wasm_bindgen(js_name = "normalizeWhitespace")]
@@ -26909,20 +26220,13 @@ pub fn extract_rtf_metadata(rtf_content: String, extracted_text: String) -> Stri
 }
 
 #[wasm_bindgen(js_name = "extractRtfFormatting")]
-pub fn extract_rtf_formatting(content: String) -> JsRtfFormattingData {
-    kreuzberg::extractors::rtf::extract_rtf_formatting(&content).into()
+pub fn extract_rtf_formatting(content: String) -> String {
+    String::from("[unimplemented: extract_rtf_formatting]")
 }
 
 #[wasm_bindgen(js_name = "spansToAnnotations")]
-pub fn spans_to_annotations(
-    para_start: usize,
-    para_end: usize,
-    formatting: JsRtfFormattingData,
-) -> Vec<JsTextAnnotation> {
-    kreuzberg::extractors::rtf::spans_to_annotations(para_start, para_end, formatting.into())
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn spans_to_annotations(para_start: usize, para_end: usize, formatting: String) -> Vec<JsTextAnnotation> {
+    Vec::new()
 }
 
 #[wasm_bindgen(js_name = "extractTextFromRtf")]
@@ -30021,69 +29325,6 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for JsOcrFallbackDeci
     }
 }
 
-impl From<kreuzberg::extractors::rtf::images::RtfImage> for JsRtfImage {
-    fn from(val: kreuzberg::extractors::rtf::images::RtfImage) -> Self {
-        Self {
-            format: val.format,
-            width_goal: val.width_goal,
-            height_goal: val.height_goal,
-            data: val.data.to_vec(),
-        }
-    }
-}
-
-impl From<JsRtfFormattingSpan> for kreuzberg::extractors::rtf::parser::RtfFormattingSpan {
-    fn from(val: JsRtfFormattingSpan) -> Self {
-        Self {
-            start: val.start,
-            end: val.end,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingSpan> for JsRtfFormattingSpan {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start,
-            end: val.end,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<JsRtfFormattingData> for kreuzberg::extractors::rtf::parser::RtfFormattingData {
-    fn from(val: JsRtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingData> for JsRtfFormattingData {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: val.hyperlinks.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::panic_context::PanicContext> for JsPanicContext {
     fn from(val: kreuzberg::panic_context::PanicContext) -> Self {
         Self {
@@ -32101,18 +31342,6 @@ impl From<kreuzberg::service::ExtractionRequest> for JsExtractionRequest {
     }
 }
 
-impl From<JsMultipartApi> for kreuzberg::api::error::MultipartApi {
-    fn from(val: JsMultipartApi) -> Self {
-        Self(val._0)
-    }
-}
-
-impl From<kreuzberg::api::error::MultipartApi> for JsMultipartApi {
-    fn from(val: kreuzberg::api::error::MultipartApi) -> Self {
-        Self { _0: val.0 }
-    }
-}
-
 impl From<JsApiError> for kreuzberg::api::ApiError {
     fn from(val: JsApiError) -> Self {
         Self {
@@ -32149,23 +31378,12 @@ impl From<kreuzberg::api::ApiSizeLimits> for JsApiSizeLimits {
     }
 }
 
-impl From<kreuzberg::api::types::PluginStatus> for JsPluginStatus {
-    fn from(val: kreuzberg::api::types::PluginStatus) -> Self {
-        Self {
-            ocr_backends_count: val.ocr_backends_count,
-            ocr_backends: val.ocr_backends,
-            extractors_count: val.extractors_count,
-            post_processors_count: val.post_processors_count,
-        }
-    }
-}
-
 impl From<kreuzberg::api::HealthResponse> for JsHealthResponse {
     fn from(val: kreuzberg::api::HealthResponse) -> Self {
         Self {
             status: val.status,
             version: val.version,
-            plugins: val.plugins.map(Into::into),
+            plugins: val.plugins.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -32257,18 +31475,8 @@ impl From<kreuzberg::api::ChunkRequest> for JsChunkRequest {
     fn from(val: kreuzberg::api::ChunkRequest) -> Self {
         Self {
             text: val.text,
-            config: val.config.map(Into::into),
+            config: val.config.as_ref().map(|v| format!("{:?}", v)),
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkingConfigRequest> for JsChunkingConfigRequest {
-    fn from(val: kreuzberg::api::types::ChunkingConfigRequest) -> Self {
-        Self {
-            max_characters: val.max_characters,
-            overlap: val.overlap,
-            trim: val.trim,
         }
     }
 }
@@ -32276,25 +31484,11 @@ impl From<kreuzberg::api::types::ChunkingConfigRequest> for JsChunkingConfigRequ
 impl From<kreuzberg::api::ChunkResponse> for JsChunkResponse {
     fn from(val: kreuzberg::api::ChunkResponse) -> Self {
         Self {
-            chunks: val.chunks.into_iter().map(Into::into).collect(),
+            chunks: val.chunks.iter().map(|i| format!("{:?}", i)).collect(),
             chunk_count: val.chunk_count,
-            config: val.config.into(),
+            config: format!("{:?}", val.config),
             input_size_bytes: val.input_size_bytes,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkItem> for JsChunkItem {
-    fn from(val: kreuzberg::api::types::ChunkItem) -> Self {
-        Self {
-            content: val.content,
-            byte_start: val.byte_start,
-            byte_end: val.byte_end,
-            chunk_index: val.chunk_index,
-            total_chunks: val.total_chunks,
-            first_page: val.first_page,
-            last_page: val.last_page,
         }
     }
 }
@@ -32397,17 +31591,6 @@ impl From<kreuzberg::api::DoclingCompatDocument> for JsDoclingCompatDocument {
     }
 }
 
-impl From<kreuzberg::api::types::ChunkingConfigResponse> for JsChunkingConfigResponse {
-    fn from(val: kreuzberg::api::types::ChunkingConfigResponse) -> Self {
-        Self {
-            max_characters: val.max_characters,
-            overlap: val.overlap,
-            trim: val.trim,
-            chunker_type: val.chunker_type,
-        }
-    }
-}
-
 impl From<kreuzberg::mcp::ExtractFileParams> for JsExtractFileParams {
     fn from(val: kreuzberg::mcp::ExtractFileParams) -> Self {
         Self {
@@ -32495,25 +31678,6 @@ impl From<kreuzberg::mcp::ChunkTextParams> for JsChunkTextParams {
             max_characters: val.max_characters,
             overlap: val.overlap,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::DownloadGrammarsParams> for JsDownloadGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::DownloadGrammarsParams) -> Self {
-        Self {
-            languages: val.languages,
-            groups: val.groups,
-            all: val.all,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::ListGrammarsParams> for JsListGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::ListGrammarsParams) -> Self {
-        Self {
-            downloaded_only: val.downloaded_only,
-            filter: val.filter,
         }
     }
 }

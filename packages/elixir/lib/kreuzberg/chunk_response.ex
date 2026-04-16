@@ -4,7 +4,7 @@ defmodule Kreuzberg.ChunkResponse do
 
   defstruct chunks: [],
             chunk_count: 0,
-            config: nil,
+            config: "",
             input_size_bytes: 0,
             chunker_type: ""
 end

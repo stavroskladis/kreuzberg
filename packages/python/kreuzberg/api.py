@@ -9,7 +9,7 @@ import kreuzberg._kreuzberg as _rust
 
 if TYPE_CHECKING:
     from ._kreuzberg import OcrBackend, Renderer
-    from .options import AccelerationConfig, ApiSizeLimits, Attributes, CharData, Chunk, ChunkerType, ChunkingConfig, ColorScheme, ContentFilterConfig, DetectionResult, DjotContent, Document, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractedImage, ExtractionConfig, ExtractionResult, FontScheme, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HocrWord, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, JsonExtractionConfig, KMeansResult, KeywordConfig, LanguageDetectionConfig, LayoutDetection, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PageRenderOptions, PdfConfig, PdfImage, PostProcessorConfig, PptxExtractionOptions, RakeParams, RecognizedTable, RtfFormattingData, RunProperties, SegmentData, ServerConfig, StructuredExtractionConfig, StyleCatalog, Table, TesseractConfig, TextBlock, Theme, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, TsvRow, YakeParams
+    from .options import AccelerationConfig, ApiSizeLimits, Attributes, CharData, Chunk, ChunkerType, ChunkingConfig, ColorScheme, ContentFilterConfig, DetectionResult, DjotContent, Document, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractedImage, ExtractionConfig, ExtractionResult, FontScheme, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HocrWord, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, JsonExtractionConfig, KMeansResult, KeywordConfig, LanguageDetectionConfig, LayoutDetection, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PageRenderOptions, PdfConfig, PdfImage, PostProcessorConfig, PptxExtractionOptions, RakeParams, RecognizedTable, RunProperties, SegmentData, ServerConfig, StructuredExtractionConfig, StyleCatalog, Table, TesseractConfig, TextBlock, Theme, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, TsvRow, YakeParams
 
 
 _TO_RUST_CHUNKERTYPE_MAP = {
@@ -1271,11 +1271,6 @@ def excel_to_markdown(workbook: ExcelWorkbook) -> str:
     return _rust.excel_to_markdown(workbook)
 
 
-def resolve_conversion_options(options: str | None = None, output_format: str) -> str:
-    """Resolve conversion options with sensible defaults."""
-    return _rust.resolve_conversion_options(options, output_format)
-
-
 def convert_html_to_markdown(html: str, options: str | None = None, output_format: str | None = None) -> str:
     """Convert HTML with optional configuration and output format."""
     return _rust.convert_html_to_markdown(html, options, output_format)
@@ -1558,12 +1553,6 @@ def evaluate_native_text_for_ocr(native_text: str, page_count: int | None = None
     return _rust.evaluate_native_text_for_ocr(native_text, page_count, _rust_thresholds)
 
 
-def compute_quality_score(text: str, thresholds: OcrQualityThresholds) -> float:
-    """Compute a quality score (0.0-1.0) for OCR output text."""
-    _rust_thresholds = _to_rust_ocr_quality_thresholds(thresholds)
-    return _rust.compute_quality_score(text, _rust_thresholds)
-
-
 def evaluate_per_page_ocr(native_text: str, boundaries: list[PageBoundary] | None = None, page_count: int | None = None, thresholds: OcrQualityThresholds) -> _rust.OcrFallbackDecision:
     _rust_thresholds = _to_rust_ocr_quality_thresholds(thresholds)
     return _rust.evaluate_per_page_ocr(native_text, boundaries, page_count, _rust_thresholds)
@@ -1579,24 +1568,9 @@ def parse_hex_byte(h1: str, h2: str) -> int | None:
     return _rust.parse_hex_byte(h1, h2)
 
 
-def decode_windows_1252(byte: int) -> str:
-    """Decode a byte using Windows-1252 encoding for the 0x80-0x9F range."""
-    return _rust.decode_windows_1252(byte)
-
-
 def parse_rtf_control_word(chars: str) -> str:
     """Parse an RTF control word and extract its value."""
     return _rust.parse_rtf_control_word(chars)
-
-
-def normalize_whitespace_with_mapping(s: str) -> str:
-    """Normalize whitespace in a string, also producing a byte-offset mapping from."""
-    return _rust.normalize_whitespace_with_mapping(s)
-
-
-def map_offset(mapping: list[str], offset: int) -> int:
-    """Map a byte offset from the pre-normalized string to the post-normalized string."""
-    return _rust.map_offset(mapping, offset)
 
 
 def normalize_whitespace(s: str) -> str:
@@ -1619,12 +1593,12 @@ def extract_rtf_metadata(rtf_content: str, extracted_text: str) -> str:
     return _rust.extract_rtf_metadata(rtf_content, extracted_text)
 
 
-def extract_rtf_formatting(content: str) -> _rust.RtfFormattingData:
+def extract_rtf_formatting(content: str) -> str:
     """Extract formatting metadata from RTF content."""
     return _rust.extract_rtf_formatting(content)
 
 
-def spans_to_annotations(para_start: int, para_end: int, formatting: RtfFormattingData) -> list[_rust.TextAnnotation]:
+def spans_to_annotations(para_start: int, para_end: int, formatting: str) -> list[_rust.TextAnnotation]:
     """Convert RTF formatting spans into `TextAnnotation` vectors for a paragraph."""
     return _rust.spans_to_annotations(para_start, para_end, formatting)
 

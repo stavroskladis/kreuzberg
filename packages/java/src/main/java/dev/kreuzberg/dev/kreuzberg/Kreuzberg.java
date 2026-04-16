@@ -2327,25 +2327,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Resolve conversion options with sensible defaults.
-     * 
-     * If no options are provided, creates defaults with:
-     * - `extract_metadata = true` (parse YAML frontmatter)
-     * - `include_document_structure = true` (populate document tree)
-     * - `preprocessing.enabled = false` (disable HTML preprocessing)
-     * 
-     * Sets output format based on the provided format parameter.
-     */
-    public static String resolveConversionOptions(String options, String outputFormat) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(outputFormat, "outputFormat must not be null");
-        return KreuzbergRs.resolveConversionOptions(options, outputFormat);
-    }
-
-    public static String resolveConversionOptions(String outputFormat) throws KreuzbergRsException {
-        return resolveConversionOptions(null, outputFormat);
-    }
-
-    /**
      * Convert HTML with optional configuration and output format.
      * 
      * Uses sensible defaults if no configuration is provided:
@@ -3243,18 +3224,6 @@ public final class Kreuzberg {
         return evaluateNativeTextForOcr(nativeText, null, thresholds);
     }
 
-    /**
-     * Compute a quality score (0.0-1.0) for OCR output text.
-     * 
-     * Used by the pipeline to decide whether to accept a result or try the next backend.
-     * Higher is better. Combines multiple signal dimensions into a single score.
-     */
-    public static double computeQualityScore(String text, OcrQualityThresholds thresholds) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(text, "text must not be null");
-        java.util.Objects.requireNonNull(thresholds, "thresholds must not be null");
-        return KreuzbergRs.computeQualityScore(text, thresholds);
-    }
-
     public static OcrFallbackDecision evaluatePerPageOcr(String nativeText, List<PageBoundary> boundaries, long pageCount, OcrQualityThresholds thresholds) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(nativeText, "nativeText must not be null");
         java.util.Objects.requireNonNull(thresholds, "thresholds must not be null");
@@ -3287,18 +3256,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Decode a byte using Windows-1252 encoding for the 0x80-0x9F range.
-     * 
-     * This function maps Windows-1252 bytes in the 0x80-0x9F range to their
-     * corresponding Unicode characters. For other values, it returns the byte
-     * as a character directly.
-     */
-    public static String decodeWindows1252(byte byte) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(byte, "byte must not be null");
-        return KreuzbergRs.decodeWindows1252(byte);
-    }
-
-    /**
      * Parse an RTF control word and extract its value.
      * 
      * Returns a tuple of (control_word, optional_numeric_value).
@@ -3306,27 +3263,6 @@ public final class Kreuzberg {
     public static String parseRtfControlWord(String chars) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(chars, "chars must not be null");
         return KreuzbergRs.parseRtfControlWord(chars);
-    }
-
-    /**
-     * Normalize whitespace in a string, also producing a byte-offset mapping from
-     * input positions to output positions. The mapping is a sorted list of
-     * `(old_offset, new_offset)` pairs that covers every byte boundary in the
-     * input. Callers can use [`map_offset`] to translate an arbitrary input byte
-     * offset to the corresponding output byte offset.
-     */
-    public static String normalizeWhitespaceWithMapping(String s) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(s, "s must not be null");
-        return KreuzbergRs.normalizeWhitespaceWithMapping(s);
-    }
-
-    /**
-     * Map a byte offset from the pre-normalized string to the post-normalized string.
-     */
-    public static long mapOffset(List<String> mapping, long offset) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(mapping, "mapping must not be null");
-        java.util.Objects.requireNonNull(offset, "offset must not be null");
-        return KreuzbergRs.mapOffset(mapping, offset);
     }
 
     /**
@@ -3381,7 +3317,7 @@ public final class Kreuzberg {
      * - Header/footer text
      * - Hyperlink field instructions
      */
-    public static RtfFormattingData extractRtfFormatting(String content) throws KreuzbergRsException {
+    public static String extractRtfFormatting(String content) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(content, "content must not be null");
         return KreuzbergRs.extractRtfFormatting(content);
     }
@@ -3392,7 +3328,7 @@ public final class Kreuzberg {
      * Given the byte range of a paragraph within the full extracted text,
      * produces annotations from the formatting spans that overlap.
      */
-    public static List<TextAnnotation> spansToAnnotations(long paraStart, long paraEnd, RtfFormattingData formatting) throws KreuzbergRsException {
+    public static List<TextAnnotation> spansToAnnotations(long paraStart, long paraEnd, String formatting) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(paraStart, "paraStart must not be null");
         java.util.Objects.requireNonNull(paraEnd, "paraEnd must not be null");
         java.util.Objects.requireNonNull(formatting, "formatting must not be null");

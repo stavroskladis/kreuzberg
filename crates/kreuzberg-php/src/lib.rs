@@ -7042,122 +7042,6 @@ impl PptxExtractor {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\RtfImage")]
-pub struct RtfImage {
-    /// Image format string (e.g., "jpeg", "png", "wmf", "bmp").
-    #[php(prop, name = "format")]
-    pub format: String,
-    /// Width in twips (goal width).
-    #[php(prop, name = "width_goal")]
-    pub width_goal: Option<i32>,
-    /// Height in twips (goal height).
-    #[php(prop, name = "height_goal")]
-    pub height_goal: Option<i32>,
-    /// Decoded binary image data.
-    pub data: Vec<u8>,
-}
-
-#[php_impl]
-impl RtfImage {
-    pub fn __construct(format: String, data: Vec<u8>, width_goal: Option<i32>, height_goal: Option<i32>) -> Self {
-        Self {
-            format,
-            width_goal,
-            height_goal,
-            data,
-        }
-    }
-
-    #[php(getter)]
-    pub fn get_data(&self) -> Vec<u8> {
-        self.data.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\RtfFormattingSpan")]
-pub struct RtfFormattingSpan {
-    /// Byte offset in the output text where this format starts.
-    #[php(prop, name = "start")]
-    pub start: i64,
-    /// Byte offset in the output text where this format ends.
-    #[php(prop, name = "end")]
-    pub end: i64,
-    /// Whether bold was active.
-    #[php(prop, name = "bold")]
-    pub bold: bool,
-    /// Whether italic was active.
-    #[php(prop, name = "italic")]
-    pub italic: bool,
-    /// Whether underline was active.
-    #[php(prop, name = "underline")]
-    pub underline: bool,
-    /// Whether strikethrough was active.
-    #[php(prop, name = "strikethrough")]
-    pub strikethrough: bool,
-    /// Color index into the color table (0 = default/auto).
-    #[php(prop, name = "color_index")]
-    pub color_index: u16,
-}
-
-#[php_impl]
-impl RtfFormattingSpan {
-    pub fn __construct(
-        start: i64,
-        end: i64,
-        bold: bool,
-        italic: bool,
-        underline: bool,
-        strikethrough: bool,
-        color_index: u16,
-    ) -> Self {
-        Self {
-            start,
-            end,
-            bold,
-            italic,
-            underline,
-            strikethrough,
-            color_index,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\RtfFormattingData")]
-pub struct RtfFormattingData {
-    /// Formatting spans corresponding to text regions.
-    pub spans: Vec<RtfFormattingSpan>,
-    /// Color table entries (index 0 is auto/default).
-    #[php(prop, name = "color_table")]
-    pub color_table: Vec<String>,
-    /// Header text content (from \header groups).
-    #[php(prop, name = "header_text")]
-    pub header_text: Option<String>,
-    /// Footer text content (from \footer groups).
-    #[php(prop, name = "footer_text")]
-    pub footer_text: Option<String>,
-    /// Hyperlink spans: (start_byte, end_byte, url).
-    #[php(prop, name = "hyperlinks")]
-    pub hyperlinks: Vec<String>,
-}
-
-#[php_impl]
-impl RtfFormattingData {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_spans(&self) -> Vec<RtfFormattingSpan> {
-        self.spans.clone()
-    }
-}
-
 #[derive(Clone)]
 #[php_class]
 #[php(name = "Kreuzberg\\RtfExtractor")]
@@ -11936,27 +11820,6 @@ impl ExtractionServiceBuilder {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[php_class]
-#[php(name = "Kreuzberg\\MultipartApi")]
-pub struct MultipartApi {
-    #[php(prop, name = "_0")]
-    pub _0: String,
-}
-
-#[php_impl]
-impl MultipartApi {
-    pub fn __construct(_0: String) -> Self {
-        Self { _0 }
-    }
-
-    pub fn from_request_async(req: String, state: String) -> PhpResult<MultipartApi> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: from_request_async".to_string(),
-        ))
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
 #[php(name = "Kreuzberg\\ApiError")]
 pub struct ApiError {
     /// HTTP status code
@@ -12052,41 +11915,6 @@ impl ApiSizeLimits {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[php_class]
-#[php(name = "Kreuzberg\\PluginStatus")]
-pub struct PluginStatus {
-    /// Number of registered OCR backends
-    #[php(prop, name = "ocr_backends_count")]
-    pub ocr_backends_count: i64,
-    /// Names of registered OCR backends
-    #[php(prop, name = "ocr_backends")]
-    pub ocr_backends: Vec<String>,
-    /// Number of registered document extractors
-    #[php(prop, name = "extractors_count")]
-    pub extractors_count: i64,
-    /// Number of registered post-processors
-    #[php(prop, name = "post_processors_count")]
-    pub post_processors_count: i64,
-}
-
-#[php_impl]
-impl PluginStatus {
-    pub fn __construct(
-        ocr_backends_count: i64,
-        ocr_backends: Vec<String>,
-        extractors_count: i64,
-        post_processors_count: i64,
-    ) -> Self {
-        Self {
-            ocr_backends_count,
-            ocr_backends,
-            extractors_count,
-            post_processors_count,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
 #[php(name = "Kreuzberg\\HealthResponse")]
 pub struct HealthResponse {
     /// Health status
@@ -12096,18 +11924,18 @@ pub struct HealthResponse {
     #[php(prop, name = "version")]
     pub version: String,
     /// Plugin status (optional)
-    pub plugins: Option<PluginStatus>,
+    #[php(prop, name = "plugins")]
+    pub plugins: Option<String>,
 }
 
 #[php_impl]
 impl HealthResponse {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_plugins(&self) -> Option<PluginStatus> {
-        self.plugins.clone()
+    pub fn __construct(status: String, version: String, plugins: Option<String>) -> Self {
+        Self {
+            status,
+            version,
+            plugins,
+        }
     }
 }
 
@@ -12333,7 +12161,8 @@ pub struct ChunkRequest {
     #[php(prop, name = "text")]
     pub text: String,
     /// Optional chunking configuration
-    pub config: Option<ChunkingConfigRequest>,
+    #[php(prop, name = "config")]
+    pub config: Option<String>,
     /// Chunker type (text or markdown)
     #[php(prop, name = "chunker_type")]
     pub chunker_type: String,
@@ -12341,38 +12170,11 @@ pub struct ChunkRequest {
 
 #[php_impl]
 impl ChunkRequest {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_config(&self) -> Option<ChunkingConfigRequest> {
-        self.config.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzberg\\ChunkingConfigRequest")]
-pub struct ChunkingConfigRequest {
-    /// Maximum characters per chunk (must be greater than overlap, default: 2000)
-    #[php(prop, name = "max_characters")]
-    pub max_characters: Option<i64>,
-    /// Overlap between chunks in characters (must be less than max_characters, default: 100)
-    #[php(prop, name = "overlap")]
-    pub overlap: Option<i64>,
-    /// Whether to trim whitespace
-    #[php(prop, name = "trim")]
-    pub trim: Option<bool>,
-}
-
-#[php_impl]
-impl ChunkingConfigRequest {
-    pub fn __construct(max_characters: Option<i64>, overlap: Option<i64>, trim: Option<bool>) -> Self {
+    pub fn __construct(text: String, chunker_type: String, config: Option<String>) -> Self {
         Self {
-            max_characters,
-            overlap,
-            trim,
+            text,
+            config,
+            chunker_type,
         }
     }
 }
@@ -12382,12 +12184,14 @@ impl ChunkingConfigRequest {
 #[php(name = "Kreuzberg\\ChunkResponse")]
 pub struct ChunkResponse {
     /// List of chunks
-    pub chunks: Vec<ChunkItem>,
+    #[php(prop, name = "chunks")]
+    pub chunks: Vec<String>,
     /// Total number of chunks
     #[php(prop, name = "chunk_count")]
     pub chunk_count: i64,
     /// Configuration used for chunking
-    pub config: ChunkingConfigResponse,
+    #[php(prop, name = "config")]
+    pub config: String,
     /// Input text size in bytes
     #[php(prop, name = "input_size_bytes")]
     pub input_size_bytes: i64,
@@ -12398,67 +12202,19 @@ pub struct ChunkResponse {
 
 #[php_impl]
 impl ChunkResponse {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_chunks(&self) -> Vec<ChunkItem> {
-        self.chunks.clone()
-    }
-
-    #[php(getter)]
-    pub fn get_config(&self) -> ChunkingConfigResponse {
-        self.config.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\ChunkItem")]
-pub struct ChunkItem {
-    /// Chunk content
-    #[php(prop, name = "content")]
-    pub content: String,
-    /// Byte offset start position
-    #[php(prop, name = "byte_start")]
-    pub byte_start: i64,
-    /// Byte offset end position
-    #[php(prop, name = "byte_end")]
-    pub byte_end: i64,
-    /// Index of this chunk (0-based)
-    #[php(prop, name = "chunk_index")]
-    pub chunk_index: i64,
-    /// Total number of chunks
-    #[php(prop, name = "total_chunks")]
-    pub total_chunks: i64,
-    /// First page number (optional, for PDF chunking)
-    #[php(prop, name = "first_page")]
-    pub first_page: Option<i64>,
-    /// Last page number (optional, for PDF chunking)
-    #[php(prop, name = "last_page")]
-    pub last_page: Option<i64>,
-}
-
-#[php_impl]
-impl ChunkItem {
     pub fn __construct(
-        content: String,
-        byte_start: i64,
-        byte_end: i64,
-        chunk_index: i64,
-        total_chunks: i64,
-        first_page: Option<i64>,
-        last_page: Option<i64>,
+        chunks: Vec<String>,
+        chunk_count: i64,
+        config: String,
+        input_size_bytes: i64,
+        chunker_type: String,
     ) -> Self {
         Self {
-            content,
-            byte_start,
-            byte_end,
-            chunk_index,
-            total_chunks,
-            first_page,
-            last_page,
+            chunks,
+            chunk_count,
+            config,
+            input_size_bytes,
+            chunker_type,
         }
     }
 }
@@ -12715,36 +12471,6 @@ impl DoclingCompatDocument {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[php_class]
-#[php(name = "Kreuzberg\\ChunkingConfigResponse")]
-pub struct ChunkingConfigResponse {
-    /// Maximum characters per chunk
-    #[php(prop, name = "max_characters")]
-    pub max_characters: i64,
-    /// Overlap between chunks in characters
-    #[php(prop, name = "overlap")]
-    pub overlap: i64,
-    /// Whether whitespace was trimmed
-    #[php(prop, name = "trim")]
-    pub trim: bool,
-    /// Type of chunker used
-    #[php(prop, name = "chunker_type")]
-    pub chunker_type: String,
-}
-
-#[php_impl]
-impl ChunkingConfigResponse {
-    pub fn __construct(max_characters: i64, overlap: i64, trim: bool, chunker_type: String) -> Self {
-        Self {
-            max_characters,
-            overlap,
-            trim,
-            chunker_type,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
 #[php(name = "Kreuzberg\\ExtractFileParams")]
 pub struct ExtractFileParams {
     /// Path to the file to extract
@@ -12899,16 +12625,6 @@ impl DetectMimeTypeParams {
     }
 }
 
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\EmptyParams")]
-pub struct EmptyParams {
-    inner: Arc<kreuzberg::mcp::params::EmptyParams>,
-}
-
-#[php_impl]
-impl EmptyParams {}
-
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[php_class]
 #[php(name = "Kreuzberg\\CacheWarmParams")]
@@ -13057,51 +12773,6 @@ impl ChunkTextParams {
             max_characters,
             overlap,
             chunker_type,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\DownloadGrammarsParams")]
-pub struct DownloadGrammarsParams {
-    /// Specific languages to download (e.g., ["python", "rust", "javascript"]).
-    /// If not provided, must specify groups or all.
-    #[php(prop, name = "languages")]
-    pub languages: Option<Vec<String>>,
-    /// Language groups to download (e.g., ["web", "systems", "scripting"]).
-    #[php(prop, name = "groups")]
-    pub groups: Option<Vec<String>>,
-    /// Download all available languages.
-    #[php(prop, name = "all")]
-    pub all: Option<bool>,
-}
-
-#[php_impl]
-impl DownloadGrammarsParams {
-    pub fn __construct(languages: Option<Vec<String>>, groups: Option<Vec<String>>, all: Option<bool>) -> Self {
-        Self { languages, groups, all }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\ListGrammarsParams")]
-pub struct ListGrammarsParams {
-    /// Only show downloaded/cached languages (default: false, shows all available).
-    #[php(prop, name = "downloaded_only")]
-    pub downloaded_only: bool,
-    /// Filter languages by name substring.
-    #[php(prop, name = "filter")]
-    pub filter: Option<String>,
-}
-
-#[php_impl]
-impl ListGrammarsParams {
-    pub fn __construct(downloaded_only: bool, filter: Option<String>) -> Self {
-        Self {
-            downloaded_only,
-            filter,
         }
     }
 }
@@ -16378,10 +16049,6 @@ impl KreuzbergApi {
         kreuzberg::extraction::excel_to_markdown(workbook_core)
     }
 
-    pub fn resolve_conversion_options(options: Option<String>, output_format: String) -> String {
-        String::from("[unimplemented: resolve_conversion_options]")
-    }
-
     pub fn convert_html_to_markdown(
         html: String,
         options: Option<String>,
@@ -16694,11 +16361,6 @@ impl KreuzbergApi {
         kreuzberg::extractors::pdf::evaluate_native_text_for_ocr(&native_text, page_count, thresholds_core).into()
     }
 
-    pub fn compute_quality_score(text: String, thresholds: &OcrQualityThresholds) -> f64 {
-        let thresholds_core: kreuzberg::OcrQualityThresholds = thresholds.clone().into();
-        kreuzberg::extractors::pdf::ocr::compute_quality_score(&text, thresholds_core)
-    }
-
     pub fn evaluate_per_page_ocr(
         native_text: String,
         boundaries: Option<Vec<PageBoundary>>,
@@ -16717,20 +16379,8 @@ impl KreuzbergApi {
         kreuzberg::extractors::rtf::parse_hex_byte(&h1, &h2)
     }
 
-    pub fn decode_windows_1252(byte: u8) -> String {
-        kreuzberg::extractors::rtf::encoding::decode_windows_1252(byte)
-    }
-
     pub fn parse_rtf_control_word(chars: String) -> String {
         String::from("[unimplemented: parse_rtf_control_word]")
-    }
-
-    pub fn normalize_whitespace_with_mapping(s: String) -> String {
-        String::from("[unimplemented: normalize_whitespace_with_mapping]")
-    }
-
-    pub fn map_offset(mapping: Vec<String>, offset: i64) -> i64 {
-        0
     }
 
     pub fn normalize_whitespace(s: String) -> String {
@@ -16749,16 +16399,12 @@ impl KreuzbergApi {
         String::from("[unimplemented: extract_rtf_metadata]")
     }
 
-    pub fn extract_rtf_formatting(content: String) -> RtfFormattingData {
-        kreuzberg::extractors::rtf::extract_rtf_formatting(&content).into()
+    pub fn extract_rtf_formatting(content: String) -> String {
+        String::from("[unimplemented: extract_rtf_formatting]")
     }
 
-    pub fn spans_to_annotations(para_start: i64, para_end: i64, formatting: &RtfFormattingData) -> Vec<TextAnnotation> {
-        let formatting_core: kreuzberg::RtfFormattingData = formatting.clone().into();
-        kreuzberg::extractors::rtf::spans_to_annotations(para_start, para_end, formatting_core)
-            .into_iter()
-            .map(Into::into)
-            .collect()
+    pub fn spans_to_annotations(para_start: i64, para_end: i64, formatting: String) -> Vec<TextAnnotation> {
+        Vec::new()
     }
 
     pub fn extract_text_from_rtf(content: String, plain: bool) -> String {
@@ -19629,69 +19275,6 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecisi
     }
 }
 
-impl From<kreuzberg::extractors::rtf::images::RtfImage> for RtfImage {
-    fn from(val: kreuzberg::extractors::rtf::images::RtfImage) -> Self {
-        Self {
-            format: val.format,
-            width_goal: val.width_goal,
-            height_goal: val.height_goal,
-            data: val.data.to_vec(),
-        }
-    }
-}
-
-impl From<RtfFormattingSpan> for kreuzberg::extractors::rtf::parser::RtfFormattingSpan {
-    fn from(val: RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start as usize,
-            end: val.end as usize,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingSpan> for RtfFormattingSpan {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start as i64,
-            end: val.end as i64,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<RtfFormattingData> for kreuzberg::extractors::rtf::parser::RtfFormattingData {
-    fn from(val: RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingData> for RtfFormattingData {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: val.hyperlinks.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::panic_context::PanicContext> for PanicContext {
     fn from(val: kreuzberg::panic_context::PanicContext) -> Self {
         Self {
@@ -21557,18 +21140,6 @@ impl From<kreuzberg::service::ExtractionRequest> for ExtractionRequest {
     }
 }
 
-impl From<MultipartApi> for kreuzberg::api::error::MultipartApi {
-    fn from(val: MultipartApi) -> Self {
-        Self(val._0)
-    }
-}
-
-impl From<kreuzberg::api::error::MultipartApi> for MultipartApi {
-    fn from(val: kreuzberg::api::error::MultipartApi) -> Self {
-        Self { _0: val.0 }
-    }
-}
-
 impl From<ApiError> for kreuzberg::api::ApiError {
     fn from(val: ApiError) -> Self {
         Self {
@@ -21605,23 +21176,12 @@ impl From<kreuzberg::api::ApiSizeLimits> for ApiSizeLimits {
     }
 }
 
-impl From<kreuzberg::api::types::PluginStatus> for PluginStatus {
-    fn from(val: kreuzberg::api::types::PluginStatus) -> Self {
-        Self {
-            ocr_backends_count: val.ocr_backends_count as i64,
-            ocr_backends: val.ocr_backends,
-            extractors_count: val.extractors_count as i64,
-            post_processors_count: val.post_processors_count as i64,
-        }
-    }
-}
-
 impl From<kreuzberg::api::HealthResponse> for HealthResponse {
     fn from(val: kreuzberg::api::HealthResponse) -> Self {
         Self {
             status: val.status,
             version: val.version,
-            plugins: val.plugins.map(Into::into),
+            plugins: val.plugins.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -21713,18 +21273,8 @@ impl From<kreuzberg::api::ChunkRequest> for ChunkRequest {
     fn from(val: kreuzberg::api::ChunkRequest) -> Self {
         Self {
             text: val.text,
-            config: val.config.map(Into::into),
+            config: val.config.as_ref().map(|v| format!("{:?}", v)),
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkingConfigRequest> for ChunkingConfigRequest {
-    fn from(val: kreuzberg::api::types::ChunkingConfigRequest) -> Self {
-        Self {
-            max_characters: val.max_characters.map(|v| v as i64),
-            overlap: val.overlap.map(|v| v as i64),
-            trim: val.trim,
         }
     }
 }
@@ -21732,25 +21282,11 @@ impl From<kreuzberg::api::types::ChunkingConfigRequest> for ChunkingConfigReques
 impl From<kreuzberg::api::ChunkResponse> for ChunkResponse {
     fn from(val: kreuzberg::api::ChunkResponse) -> Self {
         Self {
-            chunks: val.chunks.into_iter().map(Into::into).collect(),
+            chunks: val.chunks.iter().map(|i| format!("{:?}", i)).collect(),
             chunk_count: val.chunk_count as i64,
-            config: val.config.into(),
+            config: format!("{:?}", val.config),
             input_size_bytes: val.input_size_bytes as i64,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkItem> for ChunkItem {
-    fn from(val: kreuzberg::api::types::ChunkItem) -> Self {
-        Self {
-            content: val.content,
-            byte_start: val.byte_start as i64,
-            byte_end: val.byte_end as i64,
-            chunk_index: val.chunk_index as i64,
-            total_chunks: val.total_chunks as i64,
-            first_page: val.first_page.map(|v| v as i64),
-            last_page: val.last_page.map(|v| v as i64),
         }
     }
 }
@@ -21853,17 +21389,6 @@ impl From<kreuzberg::api::DoclingCompatDocument> for DoclingCompatDocument {
     }
 }
 
-impl From<kreuzberg::api::types::ChunkingConfigResponse> for ChunkingConfigResponse {
-    fn from(val: kreuzberg::api::types::ChunkingConfigResponse) -> Self {
-        Self {
-            max_characters: val.max_characters as i64,
-            overlap: val.overlap as i64,
-            trim: val.trim,
-            chunker_type: val.chunker_type,
-        }
-    }
-}
-
 impl From<kreuzberg::mcp::ExtractFileParams> for ExtractFileParams {
     fn from(val: kreuzberg::mcp::ExtractFileParams) -> Self {
         Self {
@@ -21951,25 +21476,6 @@ impl From<kreuzberg::mcp::ChunkTextParams> for ChunkTextParams {
             max_characters: val.max_characters.map(|v| v as i64),
             overlap: val.overlap.map(|v| v as i64),
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::DownloadGrammarsParams> for DownloadGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::DownloadGrammarsParams) -> Self {
-        Self {
-            languages: val.languages,
-            groups: val.groups,
-            all: val.all,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::ListGrammarsParams> for ListGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::ListGrammarsParams) -> Self {
-        Self {
-            downloaded_only: val.downloaded_only,
-            filter: val.filter,
         }
     }
 }
@@ -22803,9 +22309,6 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<PdfExtractor>()
         .class::<PptExtractor>()
         .class::<PptxExtractor>()
-        .class::<RtfImage>()
-        .class::<RtfFormattingSpan>()
-        .class::<RtfFormattingData>()
         .class::<RtfExtractor>()
         .class::<XmlExtractor>()
         .class::<DocbookExtractor>()
@@ -22917,11 +22420,9 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<MetricsLayer>()
         .class::<ExtractionRequest>()
         .class::<ExtractionServiceBuilder>()
-        .class::<MultipartApi>()
         .class::<ApiError>()
         .class::<ApiDoc>()
         .class::<ApiSizeLimits>()
-        .class::<PluginStatus>()
         .class::<HealthResponse>()
         .class::<InfoResponse>()
         .class::<ExtractResponse>()
@@ -22932,9 +22433,7 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<EmbedRequest>()
         .class::<EmbedResponse>()
         .class::<ChunkRequest>()
-        .class::<ChunkingConfigRequest>()
         .class::<ChunkResponse>()
-        .class::<ChunkItem>()
         .class::<VersionResponse>()
         .class::<DetectResponse>()
         .class::<ManifestEntryResponse>()
@@ -22946,18 +22445,14 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<OpenWebDocumentMetadata>()
         .class::<DoclingCompatResponse>()
         .class::<DoclingCompatDocument>()
-        .class::<ChunkingConfigResponse>()
         .class::<ExtractFileParams>()
         .class::<ExtractBytesParams>()
         .class::<BatchExtractFilesParams>()
         .class::<DetectMimeTypeParams>()
-        .class::<EmptyParams>()
         .class::<CacheWarmParams>()
         .class::<EmbedTextParams>()
         .class::<ExtractStructuredParams>()
         .class::<ChunkTextParams>()
-        .class::<DownloadGrammarsParams>()
-        .class::<ListGrammarsParams>()
         .class::<KreuzbergMcp>()
         .class::<ChunkingResult>()
         .class::<ChunkingProcessor>()

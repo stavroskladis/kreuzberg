@@ -1890,53 +1890,6 @@ class PptxExtractor:
     @staticmethod
     def default() -> PptxExtractor: ...
 
-class RtfImage:
-    format: str
-    width_goal: int | None
-    height_goal: int | None
-    data: bytes
-    def __init__(
-        self,
-        format: str,  # noqa: A002
-        data: bytes,
-        width_goal: int | None = None,
-        height_goal: int | None = None,
-    ) -> None: ...
-
-class RtfFormattingSpan:
-    start: int
-    end: int
-    bold: bool
-    italic: bool
-    underline: bool
-    strikethrough: bool
-    color_index: int
-    def __init__(
-        self,
-        start: int,
-        end: int,
-        bold: bool,
-        italic: bool,
-        underline: bool,
-        strikethrough: bool,
-        color_index: int,
-    ) -> None: ...
-
-class RtfFormattingData:
-    spans: list[RtfFormattingSpan]
-    color_table: list[str]
-    header_text: str | None
-    footer_text: str | None
-    hyperlinks: list[str]
-    def __init__(
-        self,
-        spans: list[RtfFormattingSpan],
-        color_table: list[str],
-        hyperlinks: list[str],
-        header_text: str | None = None,
-        footer_text: str | None = None,
-    ) -> None: ...
-
 class RtfExtractor:
     def name(self) -> str: ...
     def version(self) -> str: ...
@@ -3459,12 +3412,6 @@ class ExtractionServiceBuilder:
     @staticmethod
     def default() -> ExtractionServiceBuilder: ...
 
-class MultipartApi:
-    _0: str
-    def __init__(self, _0: str) -> None: ...
-    @staticmethod
-    def from_request(req: str, state: str) -> MultipartApi: ...
-
 class ApiError:
     status: str
     body: ErrorResponse
@@ -3493,24 +3440,11 @@ class ApiSizeLimits:
     @staticmethod
     def from_mb(max_request_body_mb: int, max_multipart_field_mb: int) -> ApiSizeLimits: ...
 
-class PluginStatus:
-    ocr_backends_count: int
-    ocr_backends: list[str]
-    extractors_count: int
-    post_processors_count: int
-    def __init__(
-        self,
-        ocr_backends_count: int,
-        ocr_backends: list[str],
-        extractors_count: int,
-        post_processors_count: int,
-    ) -> None: ...
-
 class HealthResponse:
     status: str
     version: str
-    plugins: PluginStatus | None
-    def __init__(self, status: str, version: str, plugins: PluginStatus | None = None) -> None: ...
+    plugins: str | None
+    def __init__(self, status: str, version: str, plugins: str | None = None) -> None: ...
 
 class InfoResponse:
     version: str
@@ -3581,58 +3515,23 @@ class EmbedResponse:
 
 class ChunkRequest:
     text: str
-    config: ChunkingConfigRequest | None
+    config: str | None
     chunker_type: str
-    def __init__(
-        self,
-        text: str,
-        chunker_type: str,
-        config: ChunkingConfigRequest | None = None,
-    ) -> None: ...
-
-class ChunkingConfigRequest:
-    max_characters: int | None
-    overlap: int | None
-    trim: bool | None
-    def __init__(
-        self,
-        max_characters: int | None = None,
-        overlap: int | None = None,
-        trim: bool | None = None,
-    ) -> None: ...
+    def __init__(self, text: str, chunker_type: str, config: str | None = None) -> None: ...
 
 class ChunkResponse:
-    chunks: list[ChunkItem]
+    chunks: list[str]
     chunk_count: int
-    config: ChunkingConfigResponse
+    config: str
     input_size_bytes: int
     chunker_type: str
     def __init__(
         self,
-        chunks: list[ChunkItem],
+        chunks: list[str],
         chunk_count: int,
-        config: ChunkingConfigResponse,
+        config: str,
         input_size_bytes: int,
         chunker_type: str,
-    ) -> None: ...
-
-class ChunkItem:
-    content: str
-    byte_start: int
-    byte_end: int
-    chunk_index: int
-    total_chunks: int
-    first_page: int | None
-    last_page: int | None
-    def __init__(
-        self,
-        content: str,
-        byte_start: int,
-        byte_end: int,
-        chunk_index: int,
-        total_chunks: int,
-        first_page: int | None = None,
-        last_page: int | None = None,
     ) -> None: ...
 
 class VersionResponse:
@@ -3710,19 +3609,6 @@ class DoclingCompatDocument:
     md_content: str
     def __init__(self, md_content: str) -> None: ...
 
-class ChunkingConfigResponse:
-    max_characters: int
-    overlap: int
-    trim: bool
-    chunker_type: str
-    def __init__(
-        self,
-        max_characters: int,
-        overlap: int,
-        trim: bool,
-        chunker_type: str,
-    ) -> None: ...
-
 class ExtractFileParams:
     path: str
     mime_type: str | None
@@ -3772,9 +3658,6 @@ class DetectMimeTypeParams:
     path: str
     use_content: bool
     def __init__(self, path: str, use_content: bool) -> None: ...
-
-class EmptyParams:
-    ...
 
 class CacheWarmParams:
     all_embeddings: bool
@@ -3827,22 +3710,6 @@ class ChunkTextParams:
         overlap: int | None = None,
         chunker_type: str | None = None,
     ) -> None: ...
-
-class DownloadGrammarsParams:
-    languages: list[str] | None
-    groups: list[str] | None
-    all: bool | None
-    def __init__(
-        self,
-        languages: list[str] | None = None,
-        groups: list[str] | None = None,
-        all: bool | None = None,  # noqa: A002
-    ) -> None: ...
-
-class ListGrammarsParams:
-    downloaded_only: bool
-    filter: str | None
-    def __init__(self, downloaded_only: bool, filter: str | None = None) -> None: ...
 
 class KreuzbergMcp:
     def clone(self) -> KreuzbergMcp: ...
@@ -5091,8 +4958,6 @@ def excel_to_text(workbook: ExcelWorkbook) -> str: ...
 
 def excel_to_markdown(workbook: ExcelWorkbook) -> str: ...
 
-def resolve_conversion_options(output_format: str, options: str | None = None) -> str: ...
-
 def convert_html_to_markdown(
     html: str,
     options: str | None = None,
@@ -5237,8 +5102,6 @@ def evaluate_native_text_for_ocr(
     page_count: int | None = None,
 ) -> OcrFallbackDecision: ...
 
-def compute_quality_score(text: str, thresholds: OcrQualityThresholds) -> float: ...
-
 def evaluate_per_page_ocr(
     native_text: str,
     thresholds: OcrQualityThresholds,
@@ -5250,13 +5113,7 @@ def hex_digit_to_u8(c: str) -> int | None: ...
 
 def parse_hex_byte(h1: str, h2: str) -> int | None: ...
 
-def decode_windows_1252(byte: int) -> str: ...
-
 def parse_rtf_control_word(chars: str) -> str: ...
-
-def normalize_whitespace_with_mapping(s: str) -> str: ...
-
-def map_offset(mapping: list[str], offset: int) -> int: ...
 
 def normalize_whitespace(s: str) -> str: ...
 
@@ -5266,12 +5123,12 @@ def parse_rtf_datetime(segment: str) -> str | None: ...
 
 def extract_rtf_metadata(rtf_content: str, extracted_text: str) -> str: ...
 
-def extract_rtf_formatting(content: str) -> RtfFormattingData: ...
+def extract_rtf_formatting(content: str) -> str: ...
 
 def spans_to_annotations(
     para_start: int,
     para_end: int,
-    formatting: RtfFormattingData,
+    formatting: str,
 ) -> list[TextAnnotation]: ...
 
 def extract_text_from_rtf(content: str, plain: bool) -> str: ...

@@ -9255,182 +9255,6 @@ impl PptxExtractor {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::RtfImage")]
-pub struct RtfImage {
-    pub format: String,
-    pub width_goal: Option<i32>,
-    pub height_goal: Option<i32>,
-    pub data: Vec<u8>,
-}
-
-unsafe impl IntoValueFromNative for RtfImage {}
-
-impl magnus::TryConvert for RtfImage {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &RtfImage = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for RtfImage {}
-
-impl RtfImage {
-    fn new(format: String, data: Vec<u8>, width_goal: Option<i32>, height_goal: Option<i32>) -> Self {
-        Self {
-            format,
-            width_goal,
-            height_goal,
-            data,
-        }
-    }
-
-    fn format(&self) -> String {
-        self.format.clone()
-    }
-
-    fn width_goal(&self) -> Option<i32> {
-        self.width_goal
-    }
-
-    fn height_goal(&self) -> Option<i32> {
-        self.height_goal
-    }
-
-    fn data(&self) -> Vec<u8> {
-        self.data.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::RtfFormattingSpan")]
-pub struct RtfFormattingSpan {
-    pub start: usize,
-    pub end: usize,
-    pub bold: bool,
-    pub italic: bool,
-    pub underline: bool,
-    pub strikethrough: bool,
-    pub color_index: u16,
-}
-
-unsafe impl IntoValueFromNative for RtfFormattingSpan {}
-
-impl magnus::TryConvert for RtfFormattingSpan {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &RtfFormattingSpan = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for RtfFormattingSpan {}
-
-impl RtfFormattingSpan {
-    fn new(
-        start: usize,
-        end: usize,
-        bold: bool,
-        italic: bool,
-        underline: bool,
-        strikethrough: bool,
-        color_index: u16,
-    ) -> Self {
-        Self {
-            start,
-            end,
-            bold,
-            italic,
-            underline,
-            strikethrough,
-            color_index,
-        }
-    }
-
-    fn start(&self) -> usize {
-        self.start
-    }
-
-    fn end(&self) -> usize {
-        self.end
-    }
-
-    fn bold(&self) -> bool {
-        self.bold
-    }
-
-    fn italic(&self) -> bool {
-        self.italic
-    }
-
-    fn underline(&self) -> bool {
-        self.underline
-    }
-
-    fn strikethrough(&self) -> bool {
-        self.strikethrough
-    }
-
-    fn color_index(&self) -> u16 {
-        self.color_index
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::RtfFormattingData")]
-pub struct RtfFormattingData {
-    pub spans: Vec<RtfFormattingSpan>,
-    pub color_table: Vec<String>,
-    pub header_text: Option<String>,
-    pub footer_text: Option<String>,
-    pub hyperlinks: Vec<String>,
-}
-
-unsafe impl IntoValueFromNative for RtfFormattingData {}
-
-impl magnus::TryConvert for RtfFormattingData {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &RtfFormattingData = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for RtfFormattingData {}
-
-impl RtfFormattingData {
-    fn new(
-        spans: Vec<RtfFormattingSpan>,
-        color_table: Vec<String>,
-        hyperlinks: Vec<String>,
-        header_text: Option<String>,
-        footer_text: Option<String>,
-    ) -> Self {
-        Self {
-            spans,
-            color_table,
-            header_text,
-            footer_text,
-            hyperlinks,
-        }
-    }
-
-    fn spans(&self) -> Vec<RtfFormattingSpan> {
-        self.spans.clone()
-    }
-
-    fn color_table(&self) -> Vec<String> {
-        self.color_table.clone()
-    }
-
-    fn header_text(&self) -> Option<String> {
-        self.header_text.clone()
-    }
-
-    fn footer_text(&self) -> Option<String> {
-        self.footer_text.clone()
-    }
-
-    fn hyperlinks(&self) -> Vec<String> {
-        self.hyperlinks.clone()
-    }
-}
-
 #[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::RtfExtractor")]
 pub struct RtfExtractor {
@@ -16174,32 +15998,6 @@ impl ExtractionServiceBuilder {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::MultipartApi")]
-pub struct MultipartApi {
-    pub _0: String,
-}
-
-unsafe impl IntoValueFromNative for MultipartApi {}
-
-impl magnus::TryConvert for MultipartApi {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &MultipartApi = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for MultipartApi {}
-
-impl MultipartApi {
-    fn new(_0: String) -> Self {
-        Self { _0 }
-    }
-
-    fn _0(&self) -> String {
-        self._0.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ApiError")]
 pub struct ApiError {
     pub status: String,
@@ -16297,62 +16095,11 @@ impl ApiSizeLimits {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PluginStatus")]
-pub struct PluginStatus {
-    pub ocr_backends_count: usize,
-    pub ocr_backends: Vec<String>,
-    pub extractors_count: usize,
-    pub post_processors_count: usize,
-}
-
-unsafe impl IntoValueFromNative for PluginStatus {}
-
-impl magnus::TryConvert for PluginStatus {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PluginStatus = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PluginStatus {}
-
-impl PluginStatus {
-    fn new(
-        ocr_backends_count: usize,
-        ocr_backends: Vec<String>,
-        extractors_count: usize,
-        post_processors_count: usize,
-    ) -> Self {
-        Self {
-            ocr_backends_count,
-            ocr_backends,
-            extractors_count,
-            post_processors_count,
-        }
-    }
-
-    fn ocr_backends_count(&self) -> usize {
-        self.ocr_backends_count
-    }
-
-    fn ocr_backends(&self) -> Vec<String> {
-        self.ocr_backends.clone()
-    }
-
-    fn extractors_count(&self) -> usize {
-        self.extractors_count
-    }
-
-    fn post_processors_count(&self) -> usize {
-        self.post_processors_count
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HealthResponse")]
 pub struct HealthResponse {
     pub status: String,
     pub version: String,
-    pub plugins: Option<PluginStatus>,
+    pub plugins: Option<String>,
 }
 
 unsafe impl IntoValueFromNative for HealthResponse {}
@@ -16366,7 +16113,7 @@ impl magnus::TryConvert for HealthResponse {
 unsafe impl TryConvertOwned for HealthResponse {}
 
 impl HealthResponse {
-    fn new(status: String, version: String, plugins: Option<PluginStatus>) -> Self {
+    fn new(status: String, version: String, plugins: Option<String>) -> Self {
         Self {
             status,
             version,
@@ -16382,7 +16129,7 @@ impl HealthResponse {
         self.version.clone()
     }
 
-    fn plugins(&self) -> Option<PluginStatus> {
+    fn plugins(&self) -> Option<String> {
         self.plugins.clone()
     }
 }
@@ -16702,7 +16449,7 @@ impl EmbedResponse {
 #[magnus::wrap(class = "Kreuzberg::ChunkRequest")]
 pub struct ChunkRequest {
     pub text: String,
-    pub config: Option<ChunkingConfigRequest>,
+    pub config: Option<String>,
     pub chunker_type: String,
 }
 
@@ -16717,7 +16464,7 @@ impl magnus::TryConvert for ChunkRequest {
 unsafe impl TryConvertOwned for ChunkRequest {}
 
 impl ChunkRequest {
-    fn new(text: String, chunker_type: String, config: Option<ChunkingConfigRequest>) -> Self {
+    fn new(text: String, chunker_type: String, config: Option<String>) -> Self {
         Self {
             text,
             config,
@@ -16729,7 +16476,7 @@ impl ChunkRequest {
         self.text.clone()
     }
 
-    fn config(&self) -> Option<ChunkingConfigRequest> {
+    fn config(&self) -> Option<String> {
         self.config.clone()
     }
 
@@ -16739,62 +16486,11 @@ impl ChunkRequest {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ChunkingConfigRequest")]
-#[serde(default)]
-pub struct ChunkingConfigRequest {
-    pub max_characters: Option<usize>,
-    pub overlap: Option<usize>,
-    pub trim: Option<bool>,
-}
-
-unsafe impl IntoValueFromNative for ChunkingConfigRequest {}
-
-impl magnus::TryConvert for ChunkingConfigRequest {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ChunkingConfigRequest = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ChunkingConfigRequest {}
-
-impl Default for ChunkingConfigRequest {
-    fn default() -> Self {
-        Self {
-            max_characters: Default::default(),
-            overlap: Default::default(),
-            trim: Default::default(),
-        }
-    }
-}
-
-impl ChunkingConfigRequest {
-    fn new(max_characters: Option<usize>, overlap: Option<usize>, trim: Option<bool>) -> Self {
-        Self {
-            max_characters,
-            overlap,
-            trim,
-        }
-    }
-
-    fn max_characters(&self) -> Option<usize> {
-        self.max_characters
-    }
-
-    fn overlap(&self) -> Option<usize> {
-        self.overlap
-    }
-
-    fn trim(&self) -> Option<bool> {
-        self.trim
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ChunkResponse")]
 pub struct ChunkResponse {
-    pub chunks: Vec<ChunkItem>,
+    pub chunks: Vec<String>,
     pub chunk_count: usize,
-    pub config: ChunkingConfigResponse,
+    pub config: String,
     pub input_size_bytes: usize,
     pub chunker_type: String,
 }
@@ -16811,9 +16507,9 @@ unsafe impl TryConvertOwned for ChunkResponse {}
 
 impl ChunkResponse {
     fn new(
-        chunks: Vec<ChunkItem>,
+        chunks: Vec<String>,
         chunk_count: usize,
-        config: ChunkingConfigResponse,
+        config: String,
         input_size_bytes: usize,
         chunker_type: String,
     ) -> Self {
@@ -16826,7 +16522,7 @@ impl ChunkResponse {
         }
     }
 
-    fn chunks(&self) -> Vec<ChunkItem> {
+    fn chunks(&self) -> Vec<String> {
         self.chunks.clone()
     }
 
@@ -16834,7 +16530,7 @@ impl ChunkResponse {
         self.chunk_count
     }
 
-    fn config(&self) -> ChunkingConfigResponse {
+    fn config(&self) -> String {
         self.config.clone()
     }
 
@@ -16844,78 +16540,6 @@ impl ChunkResponse {
 
     fn chunker_type(&self) -> String {
         self.chunker_type.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ChunkItem")]
-pub struct ChunkItem {
-    pub content: String,
-    pub byte_start: usize,
-    pub byte_end: usize,
-    pub chunk_index: usize,
-    pub total_chunks: usize,
-    pub first_page: Option<usize>,
-    pub last_page: Option<usize>,
-}
-
-unsafe impl IntoValueFromNative for ChunkItem {}
-
-impl magnus::TryConvert for ChunkItem {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ChunkItem = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ChunkItem {}
-
-impl ChunkItem {
-    fn new(
-        content: String,
-        byte_start: usize,
-        byte_end: usize,
-        chunk_index: usize,
-        total_chunks: usize,
-        first_page: Option<usize>,
-        last_page: Option<usize>,
-    ) -> Self {
-        Self {
-            content,
-            byte_start,
-            byte_end,
-            chunk_index,
-            total_chunks,
-            first_page,
-            last_page,
-        }
-    }
-
-    fn content(&self) -> String {
-        self.content.clone()
-    }
-
-    fn byte_start(&self) -> usize {
-        self.byte_start
-    }
-
-    fn byte_end(&self) -> usize {
-        self.byte_end
-    }
-
-    fn chunk_index(&self) -> usize {
-        self.chunk_index
-    }
-
-    fn total_chunks(&self) -> usize {
-        self.total_chunks
-    }
-
-    fn first_page(&self) -> Option<usize> {
-        self.first_page
-    }
-
-    fn last_page(&self) -> Option<usize> {
-        self.last_page
     }
 }
 
@@ -17312,52 +16936,6 @@ impl DoclingCompatDocument {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ChunkingConfigResponse")]
-pub struct ChunkingConfigResponse {
-    pub max_characters: usize,
-    pub overlap: usize,
-    pub trim: bool,
-    pub chunker_type: String,
-}
-
-unsafe impl IntoValueFromNative for ChunkingConfigResponse {}
-
-impl magnus::TryConvert for ChunkingConfigResponse {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ChunkingConfigResponse = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ChunkingConfigResponse {}
-
-impl ChunkingConfigResponse {
-    fn new(max_characters: usize, overlap: usize, trim: bool, chunker_type: String) -> Self {
-        Self {
-            max_characters,
-            overlap,
-            trim,
-            chunker_type,
-        }
-    }
-
-    fn max_characters(&self) -> usize {
-        self.max_characters
-    }
-
-    fn overlap(&self) -> usize {
-        self.overlap
-    }
-
-    fn trim(&self) -> bool {
-        self.trim
-    }
-
-    fn chunker_type(&self) -> String {
-        self.chunker_type.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExtractFileParams")]
 pub struct ExtractFileParams {
     pub path: String,
@@ -17562,24 +17140,6 @@ impl DetectMimeTypeParams {
     }
 }
 
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::EmptyParams")]
-pub struct EmptyParams {
-    inner: Arc<kreuzberg::mcp::params::EmptyParams>,
-}
-
-unsafe impl IntoValueFromNative for EmptyParams {}
-
-impl magnus::TryConvert for EmptyParams {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &EmptyParams = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for EmptyParams {}
-
-impl EmptyParams {}
-
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::CacheWarmParams")]
 pub struct CacheWarmParams {
@@ -17782,76 +17342,6 @@ impl ChunkTextParams {
 
     fn chunker_type(&self) -> Option<String> {
         self.chunker_type.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::DownloadGrammarsParams")]
-pub struct DownloadGrammarsParams {
-    pub languages: Option<Vec<String>>,
-    pub groups: Option<Vec<String>>,
-    pub all: Option<bool>,
-}
-
-unsafe impl IntoValueFromNative for DownloadGrammarsParams {}
-
-impl magnus::TryConvert for DownloadGrammarsParams {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DownloadGrammarsParams = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DownloadGrammarsParams {}
-
-impl DownloadGrammarsParams {
-    fn new(languages: Option<Vec<String>>, groups: Option<Vec<String>>, all: Option<bool>) -> Self {
-        Self { languages, groups, all }
-    }
-
-    fn languages(&self) -> Option<Vec<String>> {
-        self.languages.clone()
-    }
-
-    fn groups(&self) -> Option<Vec<String>> {
-        self.groups.clone()
-    }
-
-    fn all(&self) -> Option<bool> {
-        self.all
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ListGrammarsParams")]
-pub struct ListGrammarsParams {
-    pub downloaded_only: bool,
-    pub filter: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for ListGrammarsParams {}
-
-impl magnus::TryConvert for ListGrammarsParams {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ListGrammarsParams = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ListGrammarsParams {}
-
-impl ListGrammarsParams {
-    fn new(downloaded_only: bool, filter: Option<String>) -> Self {
-        Self {
-            downloaded_only,
-            filter,
-        }
-    }
-
-    fn downloaded_only(&self) -> bool {
-        self.downloaded_only
-    }
-
-    fn filter(&self) -> Option<String> {
-        self.filter.clone()
     }
 }
 
@@ -24070,10 +23560,6 @@ fn excel_to_markdown(workbook: String) -> String {
     kreuzberg::extraction::excel_to_markdown(workbook.into())
 }
 
-fn resolve_conversion_options(options: Option<String>, output_format: Option<String>) -> String {
-    String::from("[unimplemented: resolve_conversion_options]")
-}
-
 fn convert_html_to_markdown(
     html: String,
     options: Option<String>,
@@ -24468,15 +23954,6 @@ fn evaluate_native_text_for_ocr(
     .into()
 }
 
-fn compute_quality_score(text: String, thresholds: String) -> f64 {
-    let thresholds: OcrQualityThresholds = {
-        let core: kreuzberg::OcrQualityThresholds = serde_json::from_str(&thresholds)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::extractors::pdf::ocr::compute_quality_score(&text, thresholds.into())
-}
-
 fn evaluate_per_page_ocr(
     native_text: String,
     boundaries: Option<Vec<PageBoundary>>,
@@ -24505,20 +23982,8 @@ fn parse_hex_byte(h1: String, h2: String) -> Option<u8> {
     kreuzberg::extractors::rtf::parse_hex_byte(h1, h2)
 }
 
-fn decode_windows_1252(byte: u8) -> String {
-    kreuzberg::extractors::rtf::encoding::decode_windows_1252(byte)
-}
-
 fn parse_rtf_control_word(chars: String) -> String {
     String::from("[unimplemented: parse_rtf_control_word]")
-}
-
-fn normalize_whitespace_with_mapping(s: String) -> String {
-    String::from("[unimplemented: normalize_whitespace_with_mapping]")
-}
-
-fn map_offset(mapping: Vec<String>, offset: usize) -> usize {
-    0
 }
 
 fn normalize_whitespace(s: String) -> String {
@@ -24537,20 +24002,12 @@ fn extract_rtf_metadata(rtf_content: String, extracted_text: String) -> String {
     String::from("[unimplemented: extract_rtf_metadata]")
 }
 
-fn extract_rtf_formatting(content: String) -> RtfFormattingData {
-    kreuzberg::extractors::rtf::extract_rtf_formatting(&content).into()
+fn extract_rtf_formatting(content: String) -> String {
+    String::from("[unimplemented: extract_rtf_formatting]")
 }
 
 fn spans_to_annotations(para_start: usize, para_end: usize, formatting: String) -> Vec<TextAnnotation> {
-    let formatting: RtfFormattingData = {
-        let core: kreuzberg::RtfFormattingData = serde_json::from_str(&formatting)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::extractors::rtf::spans_to_annotations(para_start, para_end, formatting.into())
-        .into_iter()
-        .map(Into::into)
-        .collect()
+    Vec::new()
 }
 
 fn extract_text_from_rtf(content: String, plain: bool) -> String {
@@ -27847,69 +27304,6 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecisi
     }
 }
 
-impl From<kreuzberg::extractors::rtf::images::RtfImage> for RtfImage {
-    fn from(val: kreuzberg::extractors::rtf::images::RtfImage) -> Self {
-        Self {
-            format: val.format,
-            width_goal: val.width_goal,
-            height_goal: val.height_goal,
-            data: val.data.to_vec(),
-        }
-    }
-}
-
-impl From<RtfFormattingSpan> for kreuzberg::extractors::rtf::parser::RtfFormattingSpan {
-    fn from(val: RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start,
-            end: val.end,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingSpan> for RtfFormattingSpan {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingSpan) -> Self {
-        Self {
-            start: val.start,
-            end: val.end,
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color_index: val.color_index,
-        }
-    }
-}
-
-impl From<RtfFormattingData> for kreuzberg::extractors::rtf::parser::RtfFormattingData {
-    fn from(val: RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::rtf::parser::RtfFormattingData> for RtfFormattingData {
-    fn from(val: kreuzberg::extractors::rtf::parser::RtfFormattingData) -> Self {
-        Self {
-            spans: val.spans.into_iter().map(Into::into).collect(),
-            color_table: val.color_table,
-            header_text: val.header_text,
-            footer_text: val.footer_text,
-            hyperlinks: val.hyperlinks.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::panic_context::PanicContext> for PanicContext {
     fn from(val: kreuzberg::panic_context::PanicContext) -> Self {
         Self {
@@ -29911,18 +29305,6 @@ impl From<kreuzberg::service::ExtractionRequest> for ExtractionRequest {
     }
 }
 
-impl From<MultipartApi> for kreuzberg::api::error::MultipartApi {
-    fn from(val: MultipartApi) -> Self {
-        Self(val._0)
-    }
-}
-
-impl From<kreuzberg::api::error::MultipartApi> for MultipartApi {
-    fn from(val: kreuzberg::api::error::MultipartApi) -> Self {
-        Self { _0: val.0 }
-    }
-}
-
 impl From<ApiError> for kreuzberg::api::ApiError {
     fn from(val: ApiError) -> Self {
         Self {
@@ -29959,23 +29341,12 @@ impl From<kreuzberg::api::ApiSizeLimits> for ApiSizeLimits {
     }
 }
 
-impl From<kreuzberg::api::types::PluginStatus> for PluginStatus {
-    fn from(val: kreuzberg::api::types::PluginStatus) -> Self {
-        Self {
-            ocr_backends_count: val.ocr_backends_count,
-            ocr_backends: val.ocr_backends,
-            extractors_count: val.extractors_count,
-            post_processors_count: val.post_processors_count,
-        }
-    }
-}
-
 impl From<kreuzberg::api::HealthResponse> for HealthResponse {
     fn from(val: kreuzberg::api::HealthResponse) -> Self {
         Self {
             status: val.status,
             version: val.version,
-            plugins: val.plugins.map(Into::into),
+            plugins: val.plugins.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -30067,18 +29438,8 @@ impl From<kreuzberg::api::ChunkRequest> for ChunkRequest {
     fn from(val: kreuzberg::api::ChunkRequest) -> Self {
         Self {
             text: val.text,
-            config: val.config.map(Into::into),
+            config: val.config.as_ref().map(|v| format!("{:?}", v)),
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkingConfigRequest> for ChunkingConfigRequest {
-    fn from(val: kreuzberg::api::types::ChunkingConfigRequest) -> Self {
-        Self {
-            max_characters: val.max_characters,
-            overlap: val.overlap,
-            trim: val.trim,
         }
     }
 }
@@ -30086,25 +29447,11 @@ impl From<kreuzberg::api::types::ChunkingConfigRequest> for ChunkingConfigReques
 impl From<kreuzberg::api::ChunkResponse> for ChunkResponse {
     fn from(val: kreuzberg::api::ChunkResponse) -> Self {
         Self {
-            chunks: val.chunks.into_iter().map(Into::into).collect(),
+            chunks: val.chunks.iter().map(|i| format!("{:?}", i)).collect(),
             chunk_count: val.chunk_count,
-            config: val.config.into(),
+            config: format!("{:?}", val.config),
             input_size_bytes: val.input_size_bytes,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::api::types::ChunkItem> for ChunkItem {
-    fn from(val: kreuzberg::api::types::ChunkItem) -> Self {
-        Self {
-            content: val.content,
-            byte_start: val.byte_start,
-            byte_end: val.byte_end,
-            chunk_index: val.chunk_index,
-            total_chunks: val.total_chunks,
-            first_page: val.first_page,
-            last_page: val.last_page,
         }
     }
 }
@@ -30207,17 +29554,6 @@ impl From<kreuzberg::api::DoclingCompatDocument> for DoclingCompatDocument {
     }
 }
 
-impl From<kreuzberg::api::types::ChunkingConfigResponse> for ChunkingConfigResponse {
-    fn from(val: kreuzberg::api::types::ChunkingConfigResponse) -> Self {
-        Self {
-            max_characters: val.max_characters,
-            overlap: val.overlap,
-            trim: val.trim,
-            chunker_type: val.chunker_type,
-        }
-    }
-}
-
 impl From<kreuzberg::mcp::ExtractFileParams> for ExtractFileParams {
     fn from(val: kreuzberg::mcp::ExtractFileParams) -> Self {
         Self {
@@ -30305,25 +29641,6 @@ impl From<kreuzberg::mcp::ChunkTextParams> for ChunkTextParams {
             max_characters: val.max_characters,
             overlap: val.overlap,
             chunker_type: val.chunker_type,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::DownloadGrammarsParams> for DownloadGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::DownloadGrammarsParams) -> Self {
-        Self {
-            languages: val.languages,
-            groups: val.groups,
-            all: val.all,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::params::ListGrammarsParams> for ListGrammarsParams {
-    fn from(val: kreuzberg::mcp::params::ListGrammarsParams) -> Self {
-        Self {
-            downloaded_only: val.downloaded_only,
-            filter: val.filter,
         }
     }
 }
@@ -33752,31 +33069,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("supported_mime_types", method!(PptxExtractor::supported_mime_types, 0))?;
     class.define_method("priority", method!(PptxExtractor::priority, 0))?;
 
-    let class = module.define_class("RtfImage", ruby.class_object())?;
-    class.define_singleton_method("new", function!(RtfImage::new, 4))?;
-    class.define_method("format", method!(RtfImage::format, 0))?;
-    class.define_method("width_goal", method!(RtfImage::width_goal, 0))?;
-    class.define_method("height_goal", method!(RtfImage::height_goal, 0))?;
-    class.define_method("data", method!(RtfImage::data, 0))?;
-
-    let class = module.define_class("RtfFormattingSpan", ruby.class_object())?;
-    class.define_singleton_method("new", function!(RtfFormattingSpan::new, 7))?;
-    class.define_method("start", method!(RtfFormattingSpan::start, 0))?;
-    class.define_method("end", method!(RtfFormattingSpan::end, 0))?;
-    class.define_method("bold", method!(RtfFormattingSpan::bold, 0))?;
-    class.define_method("italic", method!(RtfFormattingSpan::italic, 0))?;
-    class.define_method("underline", method!(RtfFormattingSpan::underline, 0))?;
-    class.define_method("strikethrough", method!(RtfFormattingSpan::strikethrough, 0))?;
-    class.define_method("color_index", method!(RtfFormattingSpan::color_index, 0))?;
-
-    let class = module.define_class("RtfFormattingData", ruby.class_object())?;
-    class.define_singleton_method("new", function!(RtfFormattingData::new, 5))?;
-    class.define_method("spans", method!(RtfFormattingData::spans, 0))?;
-    class.define_method("color_table", method!(RtfFormattingData::color_table, 0))?;
-    class.define_method("header_text", method!(RtfFormattingData::header_text, 0))?;
-    class.define_method("footer_text", method!(RtfFormattingData::footer_text, 0))?;
-    class.define_method("hyperlinks", method!(RtfFormattingData::hyperlinks, 0))?;
-
     let class = module.define_class("RtfExtractor", ruby.class_object())?;
     class.define_method("name", method!(RtfExtractor::name, 0))?;
     class.define_method("version", method!(RtfExtractor::version, 0))?;
@@ -34782,10 +34074,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("with_metrics", method!(ExtractionServiceBuilder::with_metrics, 0))?;
     class.define_method("build", method!(ExtractionServiceBuilder::build, 0))?;
 
-    let class = module.define_class("MultipartApi", ruby.class_object())?;
-    class.define_singleton_method("new", function!(MultipartApi::new, 1))?;
-    class.define_method("_0", method!(MultipartApi::_0, 0))?;
-
     let class = module.define_class("ApiError", ruby.class_object())?;
     class.define_singleton_method("new", function!(ApiError::new, 2))?;
     class.define_method("status", method!(ApiError::status, 0))?;
@@ -34804,13 +34092,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         "max_multipart_field_bytes",
         method!(ApiSizeLimits::max_multipart_field_bytes, 0),
     )?;
-
-    let class = module.define_class("PluginStatus", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PluginStatus::new, 4))?;
-    class.define_method("ocr_backends_count", method!(PluginStatus::ocr_backends_count, 0))?;
-    class.define_method("ocr_backends", method!(PluginStatus::ocr_backends, 0))?;
-    class.define_method("extractors_count", method!(PluginStatus::extractors_count, 0))?;
-    class.define_method("post_processors_count", method!(PluginStatus::post_processors_count, 0))?;
 
     let class = module.define_class("HealthResponse", ruby.class_object())?;
     class.define_singleton_method("new", function!(HealthResponse::new, 3))?;
@@ -34876,12 +34157,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("config", method!(ChunkRequest::config, 0))?;
     class.define_method("chunker_type", method!(ChunkRequest::chunker_type, 0))?;
 
-    let class = module.define_class("ChunkingConfigRequest", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ChunkingConfigRequest::new, 3))?;
-    class.define_method("max_characters", method!(ChunkingConfigRequest::max_characters, 0))?;
-    class.define_method("overlap", method!(ChunkingConfigRequest::overlap, 0))?;
-    class.define_method("trim", method!(ChunkingConfigRequest::trim, 0))?;
-
     let class = module.define_class("ChunkResponse", ruby.class_object())?;
     class.define_singleton_method("new", function!(ChunkResponse::new, 5))?;
     class.define_method("chunks", method!(ChunkResponse::chunks, 0))?;
@@ -34889,16 +34164,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("config", method!(ChunkResponse::config, 0))?;
     class.define_method("input_size_bytes", method!(ChunkResponse::input_size_bytes, 0))?;
     class.define_method("chunker_type", method!(ChunkResponse::chunker_type, 0))?;
-
-    let class = module.define_class("ChunkItem", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ChunkItem::new, 7))?;
-    class.define_method("content", method!(ChunkItem::content, 0))?;
-    class.define_method("byte_start", method!(ChunkItem::byte_start, 0))?;
-    class.define_method("byte_end", method!(ChunkItem::byte_end, 0))?;
-    class.define_method("chunk_index", method!(ChunkItem::chunk_index, 0))?;
-    class.define_method("total_chunks", method!(ChunkItem::total_chunks, 0))?;
-    class.define_method("first_page", method!(ChunkItem::first_page, 0))?;
-    class.define_method("last_page", method!(ChunkItem::last_page, 0))?;
 
     let class = module.define_class("VersionResponse", ruby.class_object())?;
     class.define_singleton_method("new", function!(VersionResponse::new, 1))?;
@@ -34961,13 +34226,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_singleton_method("new", function!(DoclingCompatDocument::new, 1))?;
     class.define_method("md_content", method!(DoclingCompatDocument::md_content, 0))?;
 
-    let class = module.define_class("ChunkingConfigResponse", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ChunkingConfigResponse::new, 4))?;
-    class.define_method("max_characters", method!(ChunkingConfigResponse::max_characters, 0))?;
-    class.define_method("overlap", method!(ChunkingConfigResponse::overlap, 0))?;
-    class.define_method("trim", method!(ChunkingConfigResponse::trim, 0))?;
-    class.define_method("chunker_type", method!(ChunkingConfigResponse::chunker_type, 0))?;
-
     let class = module.define_class("ExtractFileParams", ruby.class_object())?;
     class.define_singleton_method("new", function!(ExtractFileParams::new, 5))?;
     class.define_method("path", method!(ExtractFileParams::path, 0))?;
@@ -34996,8 +34254,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_singleton_method("new", function!(DetectMimeTypeParams::new, 2))?;
     class.define_method("path", method!(DetectMimeTypeParams::path, 0))?;
     class.define_method("use_content", method!(DetectMimeTypeParams::use_content, 0))?;
-
-    let class = module.define_class("EmptyParams", ruby.class_object())?;
 
     let class = module.define_class("CacheWarmParams", ruby.class_object())?;
     class.define_singleton_method("new", function!(CacheWarmParams::new, 2))?;
@@ -35031,17 +34287,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("max_characters", method!(ChunkTextParams::max_characters, 0))?;
     class.define_method("overlap", method!(ChunkTextParams::overlap, 0))?;
     class.define_method("chunker_type", method!(ChunkTextParams::chunker_type, 0))?;
-
-    let class = module.define_class("DownloadGrammarsParams", ruby.class_object())?;
-    class.define_singleton_method("new", function!(DownloadGrammarsParams::new, 3))?;
-    class.define_method("languages", method!(DownloadGrammarsParams::languages, 0))?;
-    class.define_method("groups", method!(DownloadGrammarsParams::groups, 0))?;
-    class.define_method("all", method!(DownloadGrammarsParams::all, 0))?;
-
-    let class = module.define_class("ListGrammarsParams", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ListGrammarsParams::new, 2))?;
-    class.define_method("downloaded_only", method!(ListGrammarsParams::downloaded_only, 0))?;
-    class.define_method("filter", method!(ListGrammarsParams::filter, 0))?;
 
     let class = module.define_class("KreuzbergMcp", ruby.class_object())?;
     class.define_method("clone", method!(KreuzbergMcp::clone, 0))?;
@@ -35598,7 +34843,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("read_excel_bytes", function!(read_excel_bytes, 2))?;
     module.define_module_function("excel_to_text", function!(excel_to_text, 1))?;
     module.define_module_function("excel_to_markdown", function!(excel_to_markdown, 1))?;
-    module.define_module_function("resolve_conversion_options", function!(resolve_conversion_options, 2))?;
     module.define_module_function("convert_html_to_markdown", function!(convert_html_to_markdown, 3))?;
     module.define_module_function(
         "convert_html_to_markdown_with_metadata",
@@ -35692,17 +34936,10 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         "evaluate_native_text_for_ocr",
         function!(evaluate_native_text_for_ocr, 3),
     )?;
-    module.define_module_function("compute_quality_score", function!(compute_quality_score, 2))?;
     module.define_module_function("evaluate_per_page_ocr", function!(evaluate_per_page_ocr, 4))?;
     module.define_module_function("hex_digit_to_u8", function!(hex_digit_to_u8, 1))?;
     module.define_module_function("parse_hex_byte", function!(parse_hex_byte, 2))?;
-    module.define_module_function("decode_windows_1252", function!(decode_windows_1252, 1))?;
     module.define_module_function("parse_rtf_control_word", function!(parse_rtf_control_word, 1))?;
-    module.define_module_function(
-        "normalize_whitespace_with_mapping",
-        function!(normalize_whitespace_with_mapping, 1),
-    )?;
-    module.define_module_function("map_offset", function!(map_offset, 2))?;
     module.define_module_function("normalize_whitespace", function!(normalize_whitespace, 1))?;
     module.define_module_function("extract_pict_image", function!(extract_pict_image, 1))?;
     module.define_module_function("parse_rtf_datetime", function!(parse_rtf_datetime, 1))?;

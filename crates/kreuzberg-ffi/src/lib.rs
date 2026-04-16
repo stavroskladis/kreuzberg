@@ -20888,296 +20888,6 @@ pub unsafe extern "C" fn kreuzberg_pptx_extractor_priority(this: *const kreuzber
     result
 }
 
-/// Free a `RtfImage` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_image_free(ptr: *mut kreuzberg::extractors::rtf::images::RtfImage) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `format` field from a `RtfImage`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_image_format(
-    ptr: *const kreuzberg::extractors::rtf::images::RtfImage,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match CString::new(obj.format.to_string()) {
-        Ok(cs) => cs.into_raw(),
-        Err(_) => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `width_goal` field from a `RtfImage`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_image_width_goal(
-    ptr: *const kreuzberg::extractors::rtf::images::RtfImage,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.width_goal {
-        Some(val) => *val,
-        None => 0,
-    }
-}
-
-/// Get the `height_goal` field from a `RtfImage`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_image_height_goal(
-    ptr: *const kreuzberg::extractors::rtf::images::RtfImage,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.height_goal {
-        Some(val) => *val,
-        None => 0,
-    }
-}
-
-/// Get the `data` field from a `RtfImage`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_image_data(
-    ptr: *const kreuzberg::extractors::rtf::images::RtfImage,
-    out_len: *mut usize,
-) -> *mut u8 {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    let data = &obj.data;
-    if !out_len.is_null() {
-        unsafe {
-            *out_len = data.len();
-        }
-    }
-    data.as_ptr() as *mut u8
-}
-
-/// Free a `RtfFormattingSpan` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_free(
-    ptr: *mut kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
-) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `start` field from a `RtfFormattingSpan`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_start(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
-) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.start
-}
-
-/// Get the `end` field from a `RtfFormattingSpan`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_end(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
-) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.end
-}
-
-/// Get the `bold` field from a `RtfFormattingSpan`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_bold(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.bold as i32
-}
-
-/// Get the `italic` field from a `RtfFormattingSpan`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_italic(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.italic as i32
-}
-
-/// Get the `underline` field from a `RtfFormattingSpan`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_underline(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.underline as i32
-}
-
-/// Get the `strikethrough` field from a `RtfFormattingSpan`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_strikethrough(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.strikethrough as i32
-}
-
-/// Get the `color_index` field from a `RtfFormattingSpan`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_color_index(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
-) -> u16 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.color_index
-}
-
-/// Free a `RtfFormattingData` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_data_free(
-    ptr: *mut kreuzberg::extractors::rtf::parser::RtfFormattingData,
-) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `spans` field from a `RtfFormattingData`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_data_spans(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingData,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match serde_json::to_string(&obj.spans) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        Err(_) => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `color_table` field from a `RtfFormattingData`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_data_color_table(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingData,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match serde_json::to_string(&obj.color_table) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        Err(_) => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `header_text` field from a `RtfFormattingData`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_data_header_text(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingData,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.header_text {
-        Some(val) => match CString::new(val.to_string()) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `footer_text` field from a `RtfFormattingData`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_rtf_formatting_data_footer_text(
-    ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingData,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.footer_text {
-        Some(val) => match CString::new(val.to_string()) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
 /// Free a `RtfExtractor` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -37456,31 +37166,6 @@ pub unsafe extern "C" fn kreuzberg_extraction_service_builder_build(
     std::ptr::null_mut()
 }
 
-/// Free a `MultipartApi` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_multipart_api_free(ptr: *mut kreuzberg::api::error::MultipartApi) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_multipart_api_from_request(
-    _req: *const std::ffi::c_char,
-    _state: *const std::ffi::c_char,
-) -> *mut kreuzberg::api::error::MultipartApi {
-    clear_last_error();
-    set_last_error(99, "Not implemented: MultipartApi::from_request");
-    std::ptr::null_mut()
-}
-
 /// Free a `ApiError` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -37675,138 +37360,6 @@ pub unsafe extern "C" fn kreuzberg_api_size_limits_from_mb(
     Box::into_raw(Box::new(result))
 }
 
-/// Create a `PluginStatus` from a JSON string. Returns null on failure.
-/// # Safety
-/// JSON string must be valid UTF-8 and null-terminated.
-/// Returned handle must be freed with `kreuzberg_plugin_status_free`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_plugin_status_from_json(
-    json: *const c_char,
-) -> *mut kreuzberg::api::types::PluginStatus {
-    clear_last_error();
-    if json.is_null() {
-        set_last_error(1, "Null pointer passed for JSON string");
-        return std::ptr::null_mut();
-    }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
-    };
-    match serde_json::from_str::<kreuzberg::api::types::PluginStatus>(c_str) {
-        Ok(val) => Box::into_raw(Box::new(val)),
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            std::ptr::null_mut()
-        }
-    }
-}
-
-/// Serialize a `PluginStatus` to a JSON string. Returns null on failure.
-/// # Safety
-/// `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
-/// The returned string must be freed with `kreuzberg_free_string`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_plugin_status_to_json(
-    ptr: *const kreuzberg::api::types::PluginStatus,
-) -> *mut c_char {
-    clear_last_error();
-    if ptr.is_null() {
-        set_last_error(1, "Null pointer passed to to_json");
-        return std::ptr::null_mut();
-    }
-    let val = unsafe { &*ptr };
-    match serde_json::to_string(val) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(e) => {
-                set_last_error(2, &e.to_string());
-                std::ptr::null_mut()
-            }
-        },
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            std::ptr::null_mut()
-        }
-    }
-}
-
-/// Free a `PluginStatus` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_plugin_status_free(ptr: *mut kreuzberg::api::types::PluginStatus) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `ocr_backends_count` field from a `PluginStatus`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_plugin_status_ocr_backends_count(
-    ptr: *const kreuzberg::api::types::PluginStatus,
-) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.ocr_backends_count
-}
-
-/// Get the `ocr_backends` field from a `PluginStatus`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_plugin_status_ocr_backends(
-    ptr: *const kreuzberg::api::types::PluginStatus,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match serde_json::to_string(&obj.ocr_backends) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        Err(_) => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `extractors_count` field from a `PluginStatus`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_plugin_status_extractors_count(
-    ptr: *const kreuzberg::api::types::PluginStatus,
-) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.extractors_count
-}
-
-/// Get the `post_processors_count` field from a `PluginStatus`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_plugin_status_post_processors_count(
-    ptr: *const kreuzberg::api::types::PluginStatus,
-) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.post_processors_count
-}
-
 /// Create a `HealthResponse` from a JSON string. Returns null on failure.
 /// # Safety
 /// JSON string must be valid UTF-8 and null-terminated.
@@ -37906,23 +37459,6 @@ pub unsafe extern "C" fn kreuzberg_health_response_version(
     match CString::new(obj.version.to_string()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `plugins` field from a `HealthResponse`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_health_response_plugins(
-    ptr: *const kreuzberg::api::HealthResponse,
-) -> *mut kreuzberg::PluginStatus {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.plugins {
-        Some(val) => Box::into_raw(Box::new(val.clone())),
-        None => std::ptr::null_mut(),
     }
 }
 
@@ -38776,23 +38312,6 @@ pub unsafe extern "C" fn kreuzberg_chunk_request_text(
     }
 }
 
-/// Get the `config` field from a `ChunkRequest`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_request_config(
-    ptr: *const kreuzberg::api::ChunkRequest,
-) -> *mut kreuzberg::ChunkingConfigRequest {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.config {
-        Some(val) => Box::into_raw(Box::new(val.clone())),
-        None => std::ptr::null_mut(),
-    }
-}
-
 /// Get the `chunker_type` field from a `ChunkRequest`.
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
@@ -38807,129 +38326,6 @@ pub unsafe extern "C" fn kreuzberg_chunk_request_chunker_type(
     match CString::new(obj.chunker_type.to_string()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
-    }
-}
-
-/// Create a `ChunkingConfigRequest` from a JSON string. Returns null on failure.
-/// # Safety
-/// JSON string must be valid UTF-8 and null-terminated.
-/// Returned handle must be freed with `kreuzberg_chunking_config_request_free`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_request_from_json(
-    json: *const c_char,
-) -> *mut kreuzberg::api::types::ChunkingConfigRequest {
-    clear_last_error();
-    if json.is_null() {
-        set_last_error(1, "Null pointer passed for JSON string");
-        return std::ptr::null_mut();
-    }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
-    };
-    match serde_json::from_str::<kreuzberg::api::types::ChunkingConfigRequest>(c_str) {
-        Ok(val) => Box::into_raw(Box::new(val)),
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            std::ptr::null_mut()
-        }
-    }
-}
-
-/// Serialize a `ChunkingConfigRequest` to a JSON string. Returns null on failure.
-/// # Safety
-/// `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
-/// The returned string must be freed with `kreuzberg_free_string`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_request_to_json(
-    ptr: *const kreuzberg::api::types::ChunkingConfigRequest,
-) -> *mut c_char {
-    clear_last_error();
-    if ptr.is_null() {
-        set_last_error(1, "Null pointer passed to to_json");
-        return std::ptr::null_mut();
-    }
-    let val = unsafe { &*ptr };
-    match serde_json::to_string(val) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(e) => {
-                set_last_error(2, &e.to_string());
-                std::ptr::null_mut()
-            }
-        },
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            std::ptr::null_mut()
-        }
-    }
-}
-
-/// Free a `ChunkingConfigRequest` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_request_free(
-    ptr: *mut kreuzberg::api::types::ChunkingConfigRequest,
-) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `max_characters` field from a `ChunkingConfigRequest`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_request_max_characters(
-    ptr: *const kreuzberg::api::types::ChunkingConfigRequest,
-) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.max_characters {
-        Some(val) => *val,
-        None => 0,
-    }
-}
-
-/// Get the `overlap` field from a `ChunkingConfigRequest`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_request_overlap(
-    ptr: *const kreuzberg::api::types::ChunkingConfigRequest,
-) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.overlap {
-        Some(val) => *val,
-        None => 0,
-    }
-}
-
-/// Get the `trim` field from a `ChunkingConfigRequest`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_request_trim(
-    ptr: *const kreuzberg::api::types::ChunkingConfigRequest,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.trim {
-        Some(val) => *val as i32,
-        None => 0,
     }
 }
 
@@ -38999,26 +38395,6 @@ pub unsafe extern "C" fn kreuzberg_chunk_response_free(ptr: *mut kreuzberg::api:
     }
 }
 
-/// Get the `chunks` field from a `ChunkResponse`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_response_chunks(
-    ptr: *const kreuzberg::api::ChunkResponse,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match serde_json::to_string(&obj.chunks) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        Err(_) => std::ptr::null_mut(),
-    }
-}
-
 /// Get the `chunk_count` field from a `ChunkResponse`.
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
@@ -39029,20 +38405,6 @@ pub unsafe extern "C" fn kreuzberg_chunk_response_chunk_count(ptr: *const kreuzb
     }
     let obj = unsafe { &*ptr };
     obj.chunk_count
-}
-
-/// Get the `config` field from a `ChunkResponse`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_response_config(
-    ptr: *const kreuzberg::api::ChunkResponse,
-) -> *mut kreuzberg::ChunkingConfigResponse {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.config.clone()))
 }
 
 /// Get the `input_size_bytes` field from a `ChunkResponse`.
@@ -39071,167 +38433,6 @@ pub unsafe extern "C" fn kreuzberg_chunk_response_chunker_type(
     match CString::new(obj.chunker_type.to_string()) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
-    }
-}
-
-/// Create a `ChunkItem` from a JSON string. Returns null on failure.
-/// # Safety
-/// JSON string must be valid UTF-8 and null-terminated.
-/// Returned handle must be freed with `kreuzberg_chunk_item_free`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_from_json(json: *const c_char) -> *mut kreuzberg::api::types::ChunkItem {
-    clear_last_error();
-    if json.is_null() {
-        set_last_error(1, "Null pointer passed for JSON string");
-        return std::ptr::null_mut();
-    }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
-    };
-    match serde_json::from_str::<kreuzberg::api::types::ChunkItem>(c_str) {
-        Ok(val) => Box::into_raw(Box::new(val)),
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            std::ptr::null_mut()
-        }
-    }
-}
-
-/// Serialize a `ChunkItem` to a JSON string. Returns null on failure.
-/// # Safety
-/// `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
-/// The returned string must be freed with `kreuzberg_free_string`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_to_json(ptr: *const kreuzberg::api::types::ChunkItem) -> *mut c_char {
-    clear_last_error();
-    if ptr.is_null() {
-        set_last_error(1, "Null pointer passed to to_json");
-        return std::ptr::null_mut();
-    }
-    let val = unsafe { &*ptr };
-    match serde_json::to_string(val) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(e) => {
-                set_last_error(2, &e.to_string());
-                std::ptr::null_mut()
-            }
-        },
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            std::ptr::null_mut()
-        }
-    }
-}
-
-/// Free a `ChunkItem` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_free(ptr: *mut kreuzberg::api::types::ChunkItem) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `content` field from a `ChunkItem`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_content(
-    ptr: *const kreuzberg::api::types::ChunkItem,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match CString::new(obj.content.to_string()) {
-        Ok(cs) => cs.into_raw(),
-        Err(_) => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `byte_start` field from a `ChunkItem`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_byte_start(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.byte_start
-}
-
-/// Get the `byte_end` field from a `ChunkItem`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_byte_end(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.byte_end
-}
-
-/// Get the `chunk_index` field from a `ChunkItem`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_chunk_index(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.chunk_index
-}
-
-/// Get the `total_chunks` field from a `ChunkItem`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_total_chunks(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.total_chunks
-}
-
-/// Get the `first_page` field from a `ChunkItem`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_first_page(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.first_page {
-        Some(val) => *val,
-        None => 0,
-    }
-}
-
-/// Get the `last_page` field from a `ChunkItem`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunk_item_last_page(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.last_page {
-        Some(val) => *val,
-        None => 0,
     }
 }
 
@@ -40420,137 +39621,6 @@ pub unsafe extern "C" fn kreuzberg_docling_compat_document_md_content(
     }
 }
 
-/// Create a `ChunkingConfigResponse` from a JSON string. Returns null on failure.
-/// # Safety
-/// JSON string must be valid UTF-8 and null-terminated.
-/// Returned handle must be freed with `kreuzberg_chunking_config_response_free`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_response_from_json(
-    json: *const c_char,
-) -> *mut kreuzberg::api::types::ChunkingConfigResponse {
-    clear_last_error();
-    if json.is_null() {
-        set_last_error(1, "Null pointer passed for JSON string");
-        return std::ptr::null_mut();
-    }
-    let c_str = match unsafe { CStr::from_ptr(json) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in JSON string");
-            return std::ptr::null_mut();
-        }
-    };
-    match serde_json::from_str::<kreuzberg::api::types::ChunkingConfigResponse>(c_str) {
-        Ok(val) => Box::into_raw(Box::new(val)),
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            std::ptr::null_mut()
-        }
-    }
-}
-
-/// Serialize a `ChunkingConfigResponse` to a JSON string. Returns null on failure.
-/// # Safety
-/// `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
-/// The returned string must be freed with `kreuzberg_free_string`.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_response_to_json(
-    ptr: *const kreuzberg::api::types::ChunkingConfigResponse,
-) -> *mut c_char {
-    clear_last_error();
-    if ptr.is_null() {
-        set_last_error(1, "Null pointer passed to to_json");
-        return std::ptr::null_mut();
-    }
-    let val = unsafe { &*ptr };
-    match serde_json::to_string(val) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(e) => {
-                set_last_error(2, &e.to_string());
-                std::ptr::null_mut()
-            }
-        },
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            std::ptr::null_mut()
-        }
-    }
-}
-
-/// Free a `ChunkingConfigResponse` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_response_free(
-    ptr: *mut kreuzberg::api::types::ChunkingConfigResponse,
-) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `max_characters` field from a `ChunkingConfigResponse`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_response_max_characters(
-    ptr: *const kreuzberg::api::types::ChunkingConfigResponse,
-) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.max_characters
-}
-
-/// Get the `overlap` field from a `ChunkingConfigResponse`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_response_overlap(
-    ptr: *const kreuzberg::api::types::ChunkingConfigResponse,
-) -> usize {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.overlap
-}
-
-/// Get the `trim` field from a `ChunkingConfigResponse`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_response_trim(
-    ptr: *const kreuzberg::api::types::ChunkingConfigResponse,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.trim as i32
-}
-
-/// Get the `chunker_type` field from a `ChunkingConfigResponse`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_chunking_config_response_chunker_type(
-    ptr: *const kreuzberg::api::types::ChunkingConfigResponse,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match CString::new(obj.chunker_type.to_string()) {
-        Ok(cs) => cs.into_raw(),
-        Err(_) => std::ptr::null_mut(),
-    }
-}
-
 /// Free a `ExtractFileParams` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -40936,18 +40006,6 @@ pub unsafe extern "C" fn kreuzberg_detect_mime_type_params_use_content(
     obj.use_content as i32
 }
 
-/// Free a `EmptyParams` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_empty_params_free(ptr: *mut kreuzberg::mcp::params::EmptyParams) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
 /// Free a `CacheWarmParams` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -41316,129 +40374,6 @@ pub unsafe extern "C" fn kreuzberg_chunk_text_params_chunker_type(
     }
     let obj = unsafe { &*ptr };
     match &obj.chunker_type {
-        Some(val) => match CString::new(val.to_string()) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
-/// Free a `DownloadGrammarsParams` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_download_grammars_params_free(
-    ptr: *mut kreuzberg::mcp::params::DownloadGrammarsParams,
-) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `languages` field from a `DownloadGrammarsParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_download_grammars_params_languages(
-    ptr: *const kreuzberg::mcp::params::DownloadGrammarsParams,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.languages {
-        Some(val) => match serde_json::to_string(&val) {
-            Ok(s) => match CString::new(s) {
-                Ok(cs) => cs.into_raw(),
-                Err(_) => std::ptr::null_mut(),
-            },
-            Err(_) => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `groups` field from a `DownloadGrammarsParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_download_grammars_params_groups(
-    ptr: *const kreuzberg::mcp::params::DownloadGrammarsParams,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.groups {
-        Some(val) => match serde_json::to_string(&val) {
-            Ok(s) => match CString::new(s) {
-                Ok(cs) => cs.into_raw(),
-                Err(_) => std::ptr::null_mut(),
-            },
-            Err(_) => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `all` field from a `DownloadGrammarsParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_download_grammars_params_all(
-    ptr: *const kreuzberg::mcp::params::DownloadGrammarsParams,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.all {
-        Some(val) => *val as i32,
-        None => 0,
-    }
-}
-
-/// Free a `ListGrammarsParams` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_list_grammars_params_free(ptr: *mut kreuzberg::mcp::params::ListGrammarsParams) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `downloaded_only` field from a `ListGrammarsParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_list_grammars_params_downloaded_only(
-    ptr: *const kreuzberg::mcp::params::ListGrammarsParams,
-) -> i32 {
-    if ptr.is_null() {
-        return 0;
-    }
-    let obj = unsafe { &*ptr };
-    obj.downloaded_only as i32
-}
-
-/// Get the `filter` field from a `ListGrammarsParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_list_grammars_params_filter(
-    ptr: *const kreuzberg::mcp::params::ListGrammarsParams,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.filter {
         Some(val) => match CString::new(val.to_string()) {
             Ok(cs) => cs.into_raw(),
             Err(_) => std::ptr::null_mut(),
@@ -54141,27 +53076,6 @@ pub unsafe extern "C" fn kreuzberg_excel_to_markdown(
     }
 }
 
-/// Resolve conversion options with sensible defaults.
-///
-/// If no options are provided, creates defaults with:
-/// - `extract_metadata = true` (parse YAML frontmatter)
-/// - `include_document_structure = true` (populate document tree)
-/// - `preprocessing.enabled = false` (disable HTML preprocessing)
-///
-/// Sets output format based on the provided format parameter.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_resolve_conversion_options(
-    _options: *const std::ffi::c_char,
-    _output_format: *const std::ffi::c_char,
-) -> *mut std::ffi::c_char {
-    clear_last_error();
-    set_last_error(99, "Not implemented: resolve_conversion_options");
-    std::ptr::null_mut()
-}
-
 /// Convert HTML with optional configuration and output format.
 ///
 /// Uses sensible defaults if no configuration is provided:
@@ -55897,39 +54811,6 @@ pub unsafe extern "C" fn kreuzberg_evaluate_native_text_for_ocr(
     Box::into_raw(Box::new(result))
 }
 
-/// Compute a quality score (0.0-1.0) for OCR output text.
-///
-/// Used by the pipeline to decide whether to accept a result or try the next backend.
-/// Higher is better. Combines multiple signal dimensions into a single score.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_compute_quality_score(
-    text: *const std::ffi::c_char,
-    thresholds: *const kreuzberg::OcrQualityThresholds,
-) -> f64 {
-    clear_last_error();
-    if text.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'text'");
-        return 0.0;
-    }
-    let text_rs = match unsafe { CStr::from_ptr(text) }.to_str() {
-        Ok(s) => s.to_string(),
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in parameter 'text'");
-            return 0.0;
-        }
-    };
-    if thresholds.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'thresholds'");
-        return 0.0;
-    }
-    let thresholds_rs = unsafe { &*thresholds }.clone();
-    let result = kreuzberg::extractors::pdf::ocr::compute_quality_score(&text_rs, &thresholds_rs);
-    result
-}
-
 /// # Safety
 /// Caller must ensure all pointer arguments are valid or null.
 /// Returned pointers must be freed with the appropriate free function.
@@ -56047,25 +54928,6 @@ pub unsafe extern "C" fn kreuzberg_parse_hex_byte(h1: *const std::ffi::c_char, h
     }
 }
 
-/// Decode a byte using Windows-1252 encoding for the 0x80-0x9F range.
-///
-/// This function maps Windows-1252 bytes in the 0x80-0x9F range to their
-/// corresponding Unicode characters. For other values, it returns the byte
-/// as a character directly.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_decode_windows_1252(byte: u8) -> *mut std::ffi::c_char {
-    clear_last_error();
-    let byte_rs = byte;
-    let result = kreuzberg::extractors::rtf::encoding::decode_windows_1252(byte_rs);
-    match CString::new(result) {
-        Ok(cs) => cs.into_raw(),
-        Err(_) => std::ptr::null_mut(),
-    }
-}
-
 /// Parse an RTF control word and extract its value.
 ///
 /// Returns a tuple of (control_word, optional_numeric_value).
@@ -56077,34 +54939,6 @@ pub unsafe extern "C" fn kreuzberg_parse_rtf_control_word(_chars: *const std::ff
     clear_last_error();
     set_last_error(99, "Not implemented: parse_rtf_control_word");
     std::ptr::null_mut()
-}
-
-/// Normalize whitespace in a string, also producing a byte-offset mapping from
-/// input positions to output positions. The mapping is a sorted list of
-/// `(old_offset, new_offset)` pairs that covers every byte boundary in the
-/// input. Callers can use [`map_offset`] to translate an arbitrary input byte
-/// offset to the corresponding output byte offset.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_normalize_whitespace_with_mapping(
-    _s: *const std::ffi::c_char,
-) -> *mut std::ffi::c_char {
-    clear_last_error();
-    set_last_error(99, "Not implemented: normalize_whitespace_with_mapping");
-    std::ptr::null_mut()
-}
-
-/// Map a byte offset from the pre-normalized string to the post-normalized string.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_map_offset(_mapping: *const std::ffi::c_char, _offset: usize) -> usize {
-    clear_last_error();
-    set_last_error(99, "Not implemented: map_offset");
-    0
 }
 
 /// Normalize whitespace in a string.
@@ -56206,23 +55040,10 @@ pub unsafe extern "C" fn kreuzberg_extract_rtf_metadata(
 /// Caller must ensure all pointer arguments are valid or null.
 /// Returned pointers must be freed with the appropriate free function.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_extract_rtf_formatting(
-    content: *const std::ffi::c_char,
-) -> *mut kreuzberg::extractors::rtf::parser::RtfFormattingData {
+pub unsafe extern "C" fn kreuzberg_extract_rtf_formatting(_content: *const std::ffi::c_char) -> *mut std::ffi::c_char {
     clear_last_error();
-    if content.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'content'");
-        return std::ptr::null_mut();
-    }
-    let content_rs = match unsafe { CStr::from_ptr(content) }.to_str() {
-        Ok(s) => s.to_string(),
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in parameter 'content'");
-            return std::ptr::null_mut();
-        }
-    };
-    let result = kreuzberg::extractors::rtf::extract_rtf_formatting(&content_rs);
-    Box::into_raw(Box::new(result))
+    set_last_error(99, "Not implemented: extract_rtf_formatting");
+    std::ptr::null_mut()
 }
 
 /// Convert RTF formatting spans into `TextAnnotation` vectors for a paragraph.
@@ -56234,26 +55055,13 @@ pub unsafe extern "C" fn kreuzberg_extract_rtf_formatting(
 /// Returned pointers must be freed with the appropriate free function.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kreuzberg_spans_to_annotations(
-    para_start: usize,
-    para_end: usize,
-    formatting: *const kreuzberg::extractors::rtf::parser::RtfFormattingData,
+    _para_start: usize,
+    _para_end: usize,
+    _formatting: *const std::ffi::c_char,
 ) -> *mut std::ffi::c_char {
     clear_last_error();
-    let para_start_rs = para_start;
-    let para_end_rs = para_end;
-    if formatting.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'formatting'");
-        return std::ptr::null_mut();
-    }
-    let formatting_rs = unsafe { &*formatting }.clone();
-    let result = kreuzberg::extractors::rtf::spans_to_annotations(para_start_rs, para_end_rs, &formatting_rs);
-    match serde_json::to_string(&result) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        Err(_) => std::ptr::null_mut(),
-    }
+    set_last_error(99, "Not implemented: spans_to_annotations");
+    std::ptr::null_mut()
 }
 
 /// Extract text and image metadata from RTF document.
