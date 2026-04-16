@@ -4,11 +4,11 @@ defmodule Kreuzberg.PdfConfig do
 
   defstruct backend: :pdfium,
             extract_images: false,
-            passwords: [],
+            passwords: nil,
             extract_metadata: true,
             hierarchy: nil,
             extract_annotations: false,
-            top_margin_fraction: 0.0,
-            bottom_margin_fraction: 0.0,
+            top_margin_fraction: nil,
+            bottom_margin_fraction: nil,
             allow_single_column_tables: false
 end

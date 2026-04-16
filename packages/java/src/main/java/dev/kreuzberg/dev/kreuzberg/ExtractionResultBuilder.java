@@ -14,7 +14,7 @@ public class ExtractionResultBuilder {
     private Optional<List<Chunk>> chunks = Optional.empty();
     private Optional<List<ExtractedImage>> images = Optional.empty();
     private Optional<List<PageContent>> pages = Optional.empty();
-    private Optional<List<String>> elements = Optional.empty();
+    private Optional<List<Element>> elements = Optional.empty();
     private Optional<DjotContent> djotContent = Optional.empty();
     private Optional<List<OcrElement>> ocrElements = Optional.empty();
     private Optional<DocumentStructure> document = Optional.empty();
@@ -69,7 +69,7 @@ public class ExtractionResultBuilder {
         return this;
     }
 
-    public ExtractionResultBuilder withElements(Optional<List<String>> value) {
+    public ExtractionResultBuilder withElements(Optional<List<Element>> value) {
         this.elements = value;
         return this;
     }

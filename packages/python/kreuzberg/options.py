@@ -5,7 +5,1374 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, TypedDict
+
+
+class ExecutionProviderType(str, Enum):
+    """ONNX Runtime execution provider type."""
+
+    AUTO = "auto"
+    CPU = "cpu"
+    CORE_ML = "core_ml"
+    CUDA = "cuda"
+    TENSOR_RT = "tensor_rt"
+
+
+class HtmlTheme(str, Enum):
+    """Built-in HTML theme selection."""
+
+    DEFAULT = "default"
+    GIT_HUB = "git_hub"
+    DARK = "dark"
+    LIGHT = "light"
+    UNSTYLED = "unstyled"
+
+
+class TableModel(str, Enum):
+    """Which table structure recognition model to use."""
+
+    TATR = "tatr"
+    SLANET_WIRED = "slanet_wired"
+    SLANET_WIRELESS = "slanet_wireless"
+    SLANET_PLUS = "slanet_plus"
+    SLANET_AUTO = "slanet_auto"
+    DISABLED = "disabled"
+
+
+class PdfBackend(str, Enum):
+    """PDF extraction backend selection."""
+
+    PDFIUM = "pdfium"
+    PDF_OXIDE = "pdf_oxide"
+    AUTO = "auto"
+
+
+class ChunkerType(str, Enum):
+    """Type of text chunker to use."""
+
+    TEXT = "text"
+    MARKDOWN = "markdown"
+    YAML = "yaml"
+
+
+class CodeContentMode(str, Enum):
+    """Content rendering mode for code extraction."""
+
+    CHUNKS = "chunks"
+    RAW = "raw"
+    STRUCTURE = "structure"
+
+
+class WrapType(str, Enum):
+    """Text wrapping type."""
+
+    NONE = "none"
+    SQUARE = "square"
+    TIGHT = "tight"
+    TOP_AND_BOTTOM = "top_and_bottom"
+    THROUGH = "through"
+
+
+class HeaderFooterType(str, Enum):
+    DEFAULT = "default"
+    FIRST = "first"
+    EVEN = "even"
+    ODD = "odd"
+
+
+class Orientation(str, Enum):
+    """Page orientation."""
+
+    PORTRAIT = "portrait"
+    LANDSCAPE = "landscape"
+
+
+class TextDirection(str, Enum):
+    """Text direction enumeration for HTML documents."""
+
+    LEFT_TO_RIGHT = "left_to_right"
+    RIGHT_TO_LEFT = "right_to_left"
+    AUTO = "auto"
+
+
+class OcrElementLevel(str, Enum):
+    """Hierarchical level of an OCR element."""
+
+    WORD = "word"
+    LINE = "line"
+    BLOCK = "block"
+    PAGE = "page"
+
+
+class KeywordAlgorithm(str, Enum):
+    """Keyword algorithm selection."""
+
+    YAKE = "yake"
+    RAKE = "rake"
+
+
+class LanguageDetectionConfig:
+    """Placeholder for LanguageDetectionConfig type."""
+
+
+class ImagePreprocessingMetadata:
+    """Placeholder for ImagePreprocessingMetadata type."""
+
+
+class PageStructure:
+    """Placeholder for PageStructure type."""
+
+
+class LlmConfig:
+    """Placeholder for LlmConfig type."""
+
+
+class OcrPipelineConfig:
+    """Placeholder for OcrPipelineConfig type."""
+
+
+class ErrorMetadata:
+    """Placeholder for ErrorMetadata type."""
+
+
+class TokenReductionConfig:
+    """Placeholder for TokenReductionConfig type."""
+
+
+class StructuredExtractionConfig:
+    """Placeholder for StructuredExtractionConfig type."""
+
+
+class Position:
+    """Placeholder for Position type."""
+
+
+class YearRange:
+    """Placeholder for YearRange type."""
+
+
+class DjotContent:
+    """Placeholder for DjotContent type."""
+
+
+@dataclass
+class BatchProcessorConfig:
+    """Configuration for batch processing with pooling optimizations."""
+
+    string_pool_size: int = 10
+    """Maximum number of string buffers to maintain in the pool"""
+
+    string_buffer_capacity: int = 8192
+    """Initial capacity for pooled string buffers in bytes"""
+
+    byte_pool_size: int = 10
+    """Maximum number of byte buffers to maintain in the pool"""
+
+    byte_buffer_capacity: int = 65536
+    """Initial capacity for pooled byte buffers in bytes"""
+
+    max_concurrent: int | None = None
+    """Maximum concurrent extractions (for concurrency control)"""
+
+
+@dataclass
+class AccelerationConfig:
+    """Hardware acceleration configuration for ONNX Runtime models."""
+
+    provider: str = "auto"
+    """Execution provider to use for ONNX inference."""
+
+    device_id: int = 0
+    """GPU device ID (for CUDA/TensorRT). Ignored for CPU/CoreML/Auto."""
+
+
+@dataclass
+class ContentFilterConfig:
+    """Cross-extractor content filtering configuration."""
+
+    include_headers: bool = False
+    """Include running headers in extraction output."""
+
+    include_footers: bool = False
+    """Include running footers in extraction output."""
+
+    strip_repeating_text: bool = True
+    """Enable the heuristic cross-page repeating text detector."""
+
+    include_watermarks: bool = False
+    """Include watermark text in extraction output."""
+
+
+@dataclass
+class EmailConfig:
+    """Configuration for email extraction."""
+
+    msg_fallback_codepage: int | None = None
+    """Windows codepage number to use when an MSG file contains no codepage property."""
+
+
+class ExtractionConfig(TypedDict, total=False):
+    """Main extraction configuration."""
+
+    use_cache: bool
+    """Enable caching of extraction results"""
+
+    enable_quality_processing: bool
+    """Enable quality post-processing"""
+
+    ocr: Any | None
+    """OCR configuration (None = OCR disabled)"""
+
+    force_ocr: bool
+    """Force OCR even for searchable PDFs"""
+
+    force_ocr_pages: list[int] | None
+    """Force OCR on specific pages only (1-indexed page numbers, must be >= 1)."""
+
+    disable_ocr: bool
+    """Disable OCR entirely, even for images."""
+
+    chunking: Any | None
+    """Text chunking configuration (None = chunking disabled)"""
+
+    content_filter: Any | None
+    """Content filtering configuration (None = use extractor defaults)."""
+
+    images: Any | None
+    """Image extraction configuration (None = no image extraction)"""
+
+    pdf_options: Any | None
+    """PDF-specific options (None = use defaults)"""
+
+    token_reduction: Any | None
+    """Token reduction configuration (None = no token reduction)"""
+
+    language_detection: Any | None
+    """Language detection configuration (None = no language detection)"""
+
+    pages: Any | None
+    """Page extraction configuration (None = no page tracking)"""
+
+    postprocessor: Any | None
+    """Post-processor configuration (None = use defaults)"""
+
+    html_options: str | None
+    """HTML to Markdown conversion options (None = use defaults)"""
+
+    html_output: Any | None
+    """Styled HTML output configuration."""
+
+    extraction_timeout_secs: int | None
+    """Default per-file timeout in seconds for batch extraction."""
+
+    max_concurrent_extractions: int | None
+    """Maximum concurrent extractions in batch operations (None = (num_cpus × 1.5).ceil())."""
+
+    result_format: dict
+    """Result structure format"""
+
+    security_limits: str | None
+    """Security limits for archive extraction."""
+
+    output_format: dict
+    """Content text format (default: Plain)."""
+
+    layout: Any | None
+    """Layout detection configuration (None = layout detection disabled)."""
+
+    include_document_structure: bool
+    """Enable structured document tree output."""
+
+    acceleration: Any | None
+    """Hardware acceleration configuration for ONNX Runtime models."""
+
+    cache_namespace: str | None
+    """Cache namespace for tenant isolation."""
+
+    cache_ttl_secs: int | None
+    """Per-request cache TTL in seconds."""
+
+    email: Any | None
+    """Email extraction configuration (None = use defaults)."""
+
+    concurrency: str | None
+    """Concurrency limits for constrained environments (None = use defaults)."""
+
+    max_archive_depth: int
+    """Maximum recursion depth for archive extraction (default: 3)."""
+
+    tree_sitter: Any | None
+    """Tree-sitter language pack configuration (None = tree-sitter disabled)."""
+
+    structured_extraction: Any | None
+    """Structured extraction via LLM (None = disabled)."""
+
+
+@dataclass
+class FileExtractionConfig:
+    """Per-file extraction configuration overrides for batch processing."""
+
+    enable_quality_processing: bool | None = None
+    """Override quality post-processing for this file."""
+
+    ocr: Any | None = None
+    """Override OCR configuration for this file (None in the Option = use batch default)."""
+
+    force_ocr: bool | None = None
+    """Override force OCR for this file."""
+
+    force_ocr_pages: list[int] | None = None
+    """Override force OCR pages for this file (1-indexed page numbers)."""
+
+    disable_ocr: bool | None = None
+    """Override disable OCR for this file."""
+
+    chunking: Any | None = None
+    """Override chunking configuration for this file."""
+
+    content_filter: Any | None = None
+    """Override content filtering configuration for this file."""
+
+    images: Any | None = None
+    """Override image extraction configuration for this file."""
+
+    pdf_options: Any | None = None
+    """Override PDF options for this file."""
+
+    token_reduction: Any | None = None
+    """Override token reduction for this file."""
+
+    language_detection: Any | None = None
+    """Override language detection for this file."""
+
+    pages: Any | None = None
+    """Override page extraction for this file."""
+
+    postprocessor: Any | None = None
+    """Override post-processor for this file."""
+
+    html_options: str | None = None
+    """Override HTML conversion options for this file."""
+
+    result_format: dict | None = None
+    """Override result format for this file."""
+
+    output_format: dict | None = None
+    """Override output content format for this file."""
+
+    include_document_structure: bool | None = None
+    """Override document structure output for this file."""
+
+    layout: Any | None = None
+    """Override layout detection for this file."""
+
+    timeout_secs: int | None = None
+    """Override per-file extraction timeout in seconds."""
+
+    tree_sitter: Any | None = None
+    """Override tree-sitter configuration for this file."""
+
+    structured_extraction: Any | None = None
+    """Override structured extraction configuration for this file."""
+
+
+@dataclass
+class ImageExtractionConfig:
+    """Image extraction configuration."""
+
+    extract_images: bool = False
+    """Extract images from documents"""
+
+    target_dpi: int = 0
+    """Target DPI for image normalization"""
+
+    max_image_dimension: int = 0
+    """Maximum dimension for images (width or height)"""
+
+    inject_placeholders: bool = False
+    """Whether to inject image reference placeholders into markdown output."""
+
+    auto_adjust_dpi: bool = False
+    """Automatically adjust DPI based on image content"""
+
+    min_dpi: int = 0
+    """Minimum DPI threshold"""
+
+    max_dpi: int = 0
+    """Maximum DPI threshold"""
+
+
+@dataclass
+class HtmlOutputConfig:
+    """Configuration for styled HTML output."""
+
+    css: str | None = None
+    """Inline CSS string injected into the output after the theme stylesheet."""
+
+    css_file: str | None = None
+    """Path to a CSS file loaded once at renderer construction time."""
+
+    theme: str = "unstyled"
+    """Built-in colour/typography theme. Default: [`HtmlTheme::Unstyled`]."""
+
+    class_prefix: str = ""
+    """CSS class prefix applied to every emitted class name."""
+
+    embed_css: bool = True
+    """When `true` (default), write the resolved CSS into a `<style>` block"""
+
+
+@dataclass
+class LayoutDetectionConfig:
+    """Layout detection configuration."""
+
+    confidence_threshold: float | None = None
+    """Confidence threshold override (None = use model default)."""
+
+    apply_heuristics: bool = True
+    """Whether to apply postprocessing heuristics (default: true)."""
+
+    table_model: str = "tatr"
+    """Table structure recognition model."""
+
+
+@dataclass
+class OcrQualityThresholds:
+    """Quality thresholds for OCR fallback decisions and pipeline quality gating."""
+
+    min_total_non_whitespace: int = 64
+    """Minimum total non-whitespace characters to consider text substantive."""
+
+    min_non_whitespace_per_page: float = 32
+    """Minimum non-whitespace characters per page on average."""
+
+    min_meaningful_word_len: int = 4
+    """Minimum character count for a word to be "meaningful"."""
+
+    min_meaningful_words: int = 3
+    """Minimum count of meaningful words before text is accepted."""
+
+    min_alnum_ratio: float = 0.3
+    """Minimum alphanumeric ratio (non-whitespace chars that are alphanumeric)."""
+
+    min_garbage_chars: int = 5
+    """Minimum Unicode replacement characters (U+FFFD) to trigger OCR fallback."""
+
+    max_fragmented_word_ratio: float = 0.6
+    """Maximum fraction of short (1-2 char) words before text is considered fragmented."""
+
+    critical_fragmented_word_ratio: float = 0.8
+    """Critical fragmentation threshold — triggers OCR regardless of meaningful words."""
+
+    min_avg_word_length: float = 2
+    """Minimum average word length. Below this with enough words indicates garbled extraction."""
+
+    min_words_for_avg_length_check: int = 50
+    """Minimum word count before average word length check applies."""
+
+    min_consecutive_repeat_ratio: float = 0.08
+    """Minimum consecutive word repetition ratio to detect column scrambling."""
+
+    min_words_for_repeat_check: int = 50
+    """Minimum word count before consecutive repetition check is applied."""
+
+    substantive_min_chars: int = 100
+    """Minimum character count for "substantive markdown" OCR skip gate."""
+
+    non_text_min_chars: int = 20
+    """Minimum character count for "non-text content" OCR skip gate."""
+
+    alnum_ws_ratio_threshold: float = 0.4
+    """Alphanumeric+whitespace ratio threshold for skip decisions."""
+
+    pipeline_min_quality: float = 0.5
+    """Minimum quality score (0.0-1.0) for a pipeline stage result to be accepted."""
+
+
+@dataclass
+class OcrConfig:
+    """OCR configuration."""
+
+    backend: str = ""
+    """OCR backend: tesseract, easyocr, paddleocr"""
+
+    language: str = ""
+    """Language code (e.g., "eng", "deu")"""
+
+    tesseract_config: Any | None = None
+    """Tesseract-specific configuration (optional)"""
+
+    output_format: dict | None = None
+    """Output format for OCR results (optional, for format conversion)"""
+
+    paddle_ocr_config: str | None = None
+    """PaddleOCR-specific configuration (optional, JSON passthrough)"""
+
+    element_config: Any | None = None
+    """OCR element extraction configuration"""
+
+    quality_thresholds: Any | None = None
+    """Quality thresholds for the native-text-to-OCR fallback decision."""
+
+    pipeline: Any | None = None
+    """Multi-backend OCR pipeline configuration. When set, enables weighted"""
+
+    auto_rotate: bool = False
+    """Enable automatic page rotation based on orientation detection."""
+
+    vlm_config: Any | None = None
+    """VLM (Vision Language Model) OCR configuration."""
+
+    vlm_prompt: str | None = None
+    """Custom Jinja2 prompt template for VLM OCR."""
+
+
+@dataclass
+class PageConfig:
+    """Page extraction and tracking configuration."""
+
+    extract_pages: bool = False
+    """Extract pages as separate array (ExtractionResult.pages)"""
+
+    insert_page_markers: bool = False
+    """Insert page markers in main content string"""
+
+    marker_format: str = "
+
+<!-- PAGE {page_num} -->
+
+"
+    """Page marker format (use {page_num} placeholder)"""
+
+
+@dataclass
+class PdfConfig:
+    """PDF-specific configuration."""
+
+    backend: str = "pdfium"
+    """PDF extraction backend. Default: `Pdfium`."""
+
+    extract_images: bool = False
+    """Extract images from PDF"""
+
+    passwords: list[str] | None = None
+    """List of passwords to try when opening encrypted PDFs"""
+
+    extract_metadata: bool = True
+    """Extract PDF metadata"""
+
+    hierarchy: Any | None = None
+    """Hierarchy extraction configuration (None = hierarchy extraction disabled)"""
+
+    extract_annotations: bool = False
+    """Extract PDF annotations (text notes, highlights, links, stamps)."""
+
+    top_margin_fraction: float | None = None
+    """Top margin fraction (0.0–1.0) of page height to exclude headers/running heads."""
+
+    bottom_margin_fraction: float | None = None
+    """Bottom margin fraction (0.0–1.0) of page height to exclude footers/page numbers."""
+
+    allow_single_column_tables: bool = False
+    """Allow single-column pseudo tables in extraction results."""
+
+
+@dataclass
+class HierarchyConfig:
+    """Hierarchy extraction configuration for PDF text structure analysis."""
+
+    enabled: bool = True
+    """Enable hierarchy extraction"""
+
+    k_clusters: int = 3
+    """Number of font size clusters to use for hierarchy levels (1-7)"""
+
+    include_bbox: bool = True
+    """Include bounding box information in hierarchy blocks"""
+
+    ocr_coverage_threshold: float | None = None
+    """OCR coverage threshold for smart OCR triggering (0.0-1.0)"""
+
+
+@dataclass
+class PostProcessorConfig:
+    """Post-processor configuration."""
+
+    enabled: bool = True
+    """Enable post-processors"""
+
+    enabled_processors: list[str] | None = None
+    """Whitelist of processor names to run (None = all enabled)"""
+
+    disabled_processors: list[str] | None = None
+    """Blacklist of processor names to skip (None = none disabled)"""
+
+    enabled_set: str | None = None
+    """Pre-computed AHashSet for O(1) enabled processor lookup"""
+
+    disabled_set: str | None = None
+    """Pre-computed AHashSet for O(1) disabled processor lookup"""
+
+
+@dataclass
+class ChunkingConfig:
+    """Chunking configuration."""
+
+    max_characters: int = 1000
+    """Maximum size per chunk (in units determined by `sizing`)."""
+
+    overlap: int = 200
+    """Overlap between chunks (in units determined by `sizing`)."""
+
+    trim: bool = True
+    """Whether to trim whitespace from chunk boundaries."""
+
+    chunker_type: str = "text"
+    """Type of chunker to use (Text or Markdown)."""
+
+    embedding: Any | None = None
+    """Optional embedding configuration for chunk embeddings."""
+
+    preset: str | None = None
+    """Use a preset configuration (overrides individual settings if provided)."""
+
+    sizing: dict | None = None
+    """How to measure chunk size."""
+
+    prepend_heading_context: bool = False
+    """When `true` and `chunker_type` is `Markdown`, prepend the heading hierarchy"""
+
+
+@dataclass
+class EmbeddingConfig:
+    """Embedding configuration for text chunks."""
+
+    model: dict | None = None
+    """The embedding model to use (defaults to "balanced" preset if not specified)"""
+
+    normalize: bool = True
+    """Whether to normalize embedding vectors (recommended for cosine similarity)"""
+
+    batch_size: int = 32
+    """Batch size for embedding generation"""
+
+    show_download_progress: bool = False
+    """Show model download progress"""
+
+    cache_dir: str | None = None
+    """Custom cache directory for model files"""
+
+
+@dataclass
+class TreeSitterConfig:
+    """Configuration for tree-sitter language pack integration."""
+
+    enabled: bool = True
+    """Enable code intelligence processing (default: true)."""
+
+    cache_dir: str | None = None
+    """Custom cache directory for downloaded grammars."""
+
+    languages: list[str] | None = None
+    """Languages to pre-download on init (e.g., `["python", "rust"]`)."""
+
+    groups: list[str] | None = None
+    """Language groups to pre-download (e.g., `["web", "systems", "scripting"]`)."""
+
+    process: Any | None = None
+    """Processing options for code analysis."""
+
+
+@dataclass
+class TreeSitterProcessConfig:
+    """Processing options for tree-sitter code analysis."""
+
+    structure: bool = True
+    """Extract structural items (functions, classes, structs, etc.). Default: true."""
+
+    imports: bool = True
+    """Extract import statements. Default: true."""
+
+    exports: bool = True
+    """Extract export statements. Default: true."""
+
+    comments: bool = False
+    """Extract comments. Default: false."""
+
+    docstrings: bool = False
+    """Extract docstrings. Default: false."""
+
+    symbols: bool = False
+    """Extract symbol definitions. Default: false."""
+
+    diagnostics: bool = False
+    """Include parse diagnostics. Default: false."""
+
+    chunk_max_size: int | None = None
+    """Maximum chunk size in bytes. `None` disables chunking."""
+
+    content_mode: str = "chunks"
+    """Content rendering mode for code extraction."""
+
+
+class ServerConfig(TypedDict, total=False):
+    """API server configuration."""
+
+    host: str
+    """Server host address (e.g., "127.0.0.1", "0.0.0.0")"""
+
+    port: int
+    """Server port number"""
+
+    cors_origins: list[str]
+    """CORS allowed origins. Empty vector means allow all origins."""
+
+    max_request_body_bytes: int
+    """Maximum size of request body in bytes (default: 100 MB)"""
+
+    max_multipart_field_bytes: int
+    """Maximum size of multipart fields in bytes (default: 100 MB)"""
+
+
+@dataclass
+class JsonExtractionConfig:
+    extract_schema: bool = False
+    max_depth: int = 20
+    array_item_limit: int = 500
+    include_type_info: bool = False
+    flatten_nested_objects: bool = True
+    custom_text_field_patterns: list[str] = field(default_factory=list)
+
+@dataclass
+class HwpDocument:
+    """An extracted HWP document, consisting of one or more body-text sections."""
+
+    sections: list[Any] = field(default_factory=list)
+    """All sections from all BodyText/SectionN streams."""
+
+
+@dataclass
+class Section:
+    """A body-text section containing a flat list of paragraphs."""
+
+    paragraphs: list[str] = field(default_factory=list)
+
+@dataclass
+class DocMetadata:
+    """Metadata extracted from DOC files."""
+
+    title: str | None = None
+    subject: str | None = None
+    author: str | None = None
+    last_author: str | None = None
+    created: str | None = None
+    modified: str | None = None
+    revision_number: str | None = None
+
+@dataclass
+class Extent:
+    """Size in EMUs (English Metric Units, 1 inch = 914400 EMU)."""
+
+    cx: int = 0
+    cy: int = 0
+
+@dataclass
+class DocProperties:
+    """Document properties from `<wp:docPr>`."""
+
+    id: str | None = None
+    name: str | None = None
+    description: str | None = None
+
+@dataclass
+class AnchorProperties:
+    """Properties for anchored drawings."""
+
+    behind_doc: bool = False
+    layout_in_cell: bool = False
+    relative_height: int | None = None
+    position_h: Any | None = None
+    position_v: Any | None = None
+    wrap_type: str = "none"
+
+class Document(TypedDict, total=False):
+    paragraphs: list[str]
+    tables: list[Any]
+    headers: list[Any]
+    footers: list[Any]
+    footnotes: list[Any]
+    endnotes: list[Any]
+    numbering_defs: str
+    elements: list[dict]
+    """Document elements in their original order."""
+
+    style_catalog: Any | None
+    """Parsed style catalog from `word/styles.xml`, if available."""
+
+    theme: Any | None
+    """Parsed theme from `word/theme/theme1.xml`, if available."""
+
+    sections: list[Any]
+    """Section properties parsed from `w:sectPr` elements."""
+
+    drawings: list[Any]
+    """Drawing objects parsed from `w:drawing` elements."""
+
+    image_relationships: str
+    """Image relationships (rId → target path) for image extraction."""
+
+
+@dataclass
+class TableRow:
+    cells: list[Any] = field(default_factory=list)
+    properties: Any | None = None
+
+@dataclass
+class HeaderFooter:
+    paragraphs: list[str] = field(default_factory=list)
+    tables: list[Any] = field(default_factory=list)
+    header_type: str = "default"
+
+@dataclass
+class PageMargins:
+    """Page margins in twips (twentieths of a point)."""
+
+    top: int | None = None
+    """Top margin in twips."""
+
+    right: int | None = None
+    """Right margin in twips."""
+
+    bottom: int | None = None
+    """Bottom margin in twips."""
+
+    left: int | None = None
+    """Left margin in twips."""
+
+    header: int | None = None
+    """Header offset in twips."""
+
+    footer: int | None = None
+    """Footer offset in twips."""
+
+    gutter: int | None = None
+    """Gutter margin in twips."""
+
+
+@dataclass
+class PageMarginsPoints:
+    """Page margins converted to points (1/72 inch)."""
+
+    top: float | None = None
+    right: float | None = None
+    bottom: float | None = None
+    left: float | None = None
+    header: float | None = None
+    footer: float | None = None
+    gutter: float | None = None
+
+@dataclass
+class ColumnLayout:
+    """Column layout configuration."""
+
+    count: int | None = None
+    """Number of columns."""
+
+    space_twips: int | None = None
+    """Space between columns in twips."""
+
+    equal_width: bool | None = None
+    """Whether columns have equal width."""
+
+
+class SectionProperties(TypedDict, total=False):
+    """DOCX section properties parsed from `w:sectPr` element."""
+
+    page_width_twips: int | None
+    """Page width in twips (from `w:pgSz w:w`)."""
+
+    page_height_twips: int | None
+    """Page height in twips (from `w:pgSz w:h`)."""
+
+    orientation: str | None
+    """Page orientation (from `w:pgSz w:orient`)."""
+
+    margins: Any
+    """Page margins (from `w:pgMar`)."""
+
+    columns: Any
+    """Column layout (from `w:cols`)."""
+
+    doc_grid_line_pitch: int | None
+    """Document grid line pitch in twips (from `w:docGrid w:linePitch`)."""
+
+
+@dataclass
+class RunProperties:
+    """Run-level formatting properties (bold, italic, font, size, color, etc.)."""
+
+    bold: bool | None = None
+    italic: bool | None = None
+    underline: bool | None = None
+    strikethrough: bool | None = None
+    color: str | None = None
+    """Hex RGB color, e.g. `"2F5496"`."""
+
+    font_size_half_points: int | None = None
+    """Font size in half-points (`w:sz` val). Divide by 2 to get points."""
+
+    font_ascii: str | None = None
+    """ASCII font family (`w:rFonts w:ascii`)."""
+
+    font_ascii_theme: str | None = None
+    """ASCII theme font (`w:rFonts w:asciiTheme`)."""
+
+    vert_align: str | None = None
+    """Vertical alignment: "superscript", "subscript", or "baseline"."""
+
+    font_h_ansi: str | None = None
+    """High ANSI font family (w:rFonts w:hAnsi)."""
+
+    font_cs: str | None = None
+    """Complex script font family (w:rFonts w:cs)."""
+
+    font_east_asia: str | None = None
+    """East Asian font family (w:rFonts w:eastAsia)."""
+
+    highlight: str | None = None
+    """Highlight color name (e.g., "yellow", "green", "cyan")."""
+
+    caps: bool | None = None
+    """All caps text transformation."""
+
+    small_caps: bool | None = None
+    """Small caps text transformation."""
+
+    shadow: bool | None = None
+    """Text shadow effect."""
+
+    outline: bool | None = None
+    """Text outline effect."""
+
+    emboss: bool | None = None
+    """Text emboss effect."""
+
+    imprint: bool | None = None
+    """Text imprint (engrave) effect."""
+
+    char_spacing: int | None = None
+    """Character spacing in twips (from w:spacing w:val)."""
+
+    position: int | None = None
+    """Vertical position offset in half-points (from w:position w:val)."""
+
+    kern: int | None = None
+    """Kerning threshold in half-points (from w:kern w:val)."""
+
+    theme_color: str | None = None
+    """Theme color reference (e.g., "accent1", "dk1")."""
+
+    theme_tint: str | None = None
+    """Theme color tint modification (hex value)."""
+
+    theme_shade: str | None = None
+    """Theme color shade modification (hex value)."""
+
+
+@dataclass
+class ResolvedStyle:
+    """Fully resolved (flattened) style after walking the inheritance chain."""
+
+    paragraph_properties: str = ""
+    run_properties: Any | None = None
+
+class StyleCatalog(TypedDict, total=False):
+    """Catalog of all styles parsed from `word/styles.xml`, plus document defaults."""
+
+    styles: str
+    default_paragraph_properties: str
+    default_run_properties: Any
+
+class TableProperties(TypedDict, total=False):
+    """Table-level properties from `<w:tblPr>`."""
+
+    style_id: str | None
+    width: str | None
+    alignment: str | None
+    layout: str | None
+    look: Any | None
+    borders: Any | None
+    cell_margins: str | None
+    indent: str | None
+    caption: str | None
+
+@dataclass
+class TableLook:
+    """Table look bitmask/flags controlling conditional formatting bands."""
+
+    first_row: bool = False
+    last_row: bool = False
+    first_column: bool = False
+    last_column: bool = False
+    no_h_band: bool = False
+    no_v_band: bool = False
+
+@dataclass
+class TableBorders:
+    """Borders for a table (6 borders: top, bottom, left, right, insideH, insideV)."""
+
+    top: str | None = None
+    bottom: str | None = None
+    left: str | None = None
+    right: str | None = None
+    inside_h: str | None = None
+    inside_v: str | None = None
+
+class RowProperties(TypedDict, total=False):
+    """Row-level properties from `<w:trPr>`."""
+
+    height: int | None
+    height_rule: str | None
+    is_header: bool
+    cant_split: bool
+
+@dataclass
+class ColorScheme:
+    """Color scheme containing all 12 standard Office theme colors."""
+
+    name: str = ""
+    """Color scheme name."""
+
+    dk1: dict | None = None
+    """Dark 1 (dark background) color."""
+
+    lt1: dict | None = None
+    """Light 1 (light background) color."""
+
+    dk2: dict | None = None
+    """Dark 2 color."""
+
+    lt2: dict | None = None
+    """Light 2 color."""
+
+    accent1: dict | None = None
+    """Accent color 1."""
+
+    accent2: dict | None = None
+    """Accent color 2."""
+
+    accent3: dict | None = None
+    """Accent color 3."""
+
+    accent4: dict | None = None
+    """Accent color 4."""
+
+    accent5: dict | None = None
+    """Accent color 5."""
+
+    accent6: dict | None = None
+    """Accent color 6."""
+
+    hlink: dict | None = None
+    """Hyperlink color."""
+
+    fol_hlink: dict | None = None
+    """Followed hyperlink color."""
+
+
+@dataclass
+class FontScheme:
+    """Font scheme containing major (heading) and minor (body) fonts."""
+
+    name: str = ""
+    """Font scheme name."""
+
+    major_latin: str | None = None
+    """Major (heading) font - Latin script."""
+
+    major_east_asian: str | None = None
+    """Major (heading) font - East Asian script."""
+
+    major_complex_script: str | None = None
+    """Major (heading) font - Complex script."""
+
+    minor_latin: str | None = None
+    """Minor (body) font - Latin script."""
+
+    minor_east_asian: str | None = None
+    """Minor (body) font - East Asian script."""
+
+    minor_complex_script: str | None = None
+    """Minor (body) font - Complex script."""
+
+
+class Theme(TypedDict, total=False):
+    """Complete theme with color scheme and font scheme."""
+
+    name: str
+    """Theme name (e.g., "Office Theme")."""
+
+    color_scheme: Any | None
+    """Color scheme (12 standard colors)."""
+
+    font_scheme: Any | None
+    """Font scheme (major and minor fonts)."""
+
+
+@dataclass
+class XlsxAppProperties:
+    """Application properties from docProps/app.xml for XLSX"""
+
+    application: str | None = None
+    """Application name (e.g., "Microsoft Excel")"""
+
+    app_version: str | None = None
+    """Application version"""
+
+    doc_security: int | None = None
+    """Document security level"""
+
+    scale_crop: bool | None = None
+    """Scale crop flag"""
+
+    links_up_to_date: bool | None = None
+    """Links up to date flag"""
+
+    shared_doc: bool | None = None
+    """Shared document flag"""
+
+    hyperlinks_changed: bool | None = None
+    """Hyperlinks changed flag"""
+
+    company: str | None = None
+    """Company name"""
+
+    worksheet_names: list[str] = field(default_factory=list)
+    """Worksheet names"""
+
+
+@dataclass
+class PptxAppProperties:
+    """Application properties from docProps/app.xml for PPTX"""
+
+    application: str | None = None
+    """Application name (e.g., "Microsoft Office PowerPoint")"""
+
+    app_version: str | None = None
+    """Application version"""
+
+    total_time: int | None = None
+    """Total editing time in minutes"""
+
+    company: str | None = None
+    """Company name"""
+
+    doc_security: int | None = None
+    """Document security level"""
+
+    scale_crop: bool | None = None
+    """Scale crop flag"""
+
+    links_up_to_date: bool | None = None
+    """Links up to date flag"""
+
+    shared_doc: bool | None = None
+    """Shared document flag"""
+
+    hyperlinks_changed: bool | None = None
+    """Hyperlinks changed flag"""
+
+    slides: int | None = None
+    """Number of slides"""
+
+    notes: int | None = None
+    """Number of notes"""
+
+    hidden_slides: int | None = None
+    """Number of hidden slides"""
+
+    multimedia_clips: int | None = None
+    """Number of multimedia clips"""
+
+    presentation_format: str | None = None
+    """Presentation format (e.g., "Widescreen", "Standard")"""
+
+    slide_titles: list[str] = field(default_factory=list)
+    """Slide titles"""
+
+
+@dataclass
+class OdtProperties:
+    """OpenDocument metadata from meta.xml"""
+
+    title: str | None = None
+    """Document title (dc:title)"""
+
+    subject: str | None = None
+    """Document subject/topic (dc:subject)"""
+
+    creator: str | None = None
+    """Current document creator/author (dc:creator)"""
+
+    initial_creator: str | None = None
+    """Initial creator of the document (meta:initial-creator)"""
+
+    keywords: str | None = None
+    """Keywords or tags (meta:keyword)"""
+
+    description: str | None = None
+    """Document description (dc:description)"""
+
+    date: str | None = None
+    """Current modification date (dc:date)"""
+
+    creation_date: str | None = None
+    """Initial creation date (meta:creation-date)"""
+
+    language: str | None = None
+    """Document language (dc:language)"""
+
+    generator: str | None = None
+    """Generator/application that created the document (meta:generator)"""
+
+    editing_duration: str | None = None
+    """Editing duration in ISO 8601 format (meta:editing-duration)"""
+
+    editing_cycles: str | None = None
+    """Number of edits/revisions (meta:editing-cycles)"""
+
+    page_count: int | None = None
+    """Document statistics - page count (meta:page-count)"""
+
+    word_count: int | None = None
+    """Document statistics - word count (meta:word-count)"""
+
+    character_count: int | None = None
+    """Document statistics - character count (meta:character-count)"""
+
+    paragraph_count: int | None = None
+    """Document statistics - paragraph count (meta:paragraph-count)"""
+
+    table_count: int | None = None
+    """Document statistics - table count (meta:table-count)"""
+
+    image_count: int | None = None
+    """Document statistics - image count (meta:image-count)"""
+
+
+@dataclass
+class PptMetadata:
+    """Metadata extracted from PPT files."""
+
+    title: str | None = None
+    subject: str | None = None
+    author: str | None = None
+    last_author: str | None = None
+
+@dataclass
+class PptxExtractionOptions:
+    """Options for PPTX content extraction."""
+
+    extract_images: bool = True
+    """Whether to extract embedded images."""
+
+    page_config: Any | None = None
+    """Optional page configuration for boundary tracking."""
+
+    plain: bool = False
+    """Whether to output plain text (no markdown)."""
+
+    include_structure: bool = False
+    """Whether to build the `DocumentStructure` tree."""
+
+    inject_placeholders: bool = True
+    """Whether to emit `![alt](target)` references in markdown output."""
+
+
+class Attributes(TypedDict, total=False):
+    """Element attributes in Djot."""
+
+    id: str | None
+    """Element ID (#identifier)"""
+
+    classes: list[str]
+    """CSS classes (.class1 .class2)"""
+
+    key_values: list[str]
+    """Key-value pairs (key="value")"""
+
+
+class DocumentStructure(TypedDict, total=False):
+    """Top-level structured document representation."""
+
+    nodes: list[Any]
+    """All nodes in document/reading order."""
+
+    source_format: str | None
+    """Origin format identifier (e.g. "docx", "pptx", "html", "pdf")."""
+
+    relationships: list[Any]
+    """Resolved relationships between nodes (footnote refs, citations, anchor links, etc.)."""
+
+
+class ExtractionResult(TypedDict, total=False):
+    """General extraction result used by the core extraction API."""
+
+    content: str
+    mime_type: str
+    metadata: Any
+    tables: list[Any]
+    detected_languages: list[str] | None
+    chunks: list[Any] | None
+    """Text chunks when chunking is enabled."""
+
+    images: list[Any] | None
+    """Extracted images from the document."""
+
+    pages: list[Any] | None
+    """Per-page content when page extraction is enabled."""
+
+    elements: list[Any] | None
+    """Semantic elements when element-based result format is enabled."""
+
+    djot_content: Any | None
+    """Rich Djot content structure (when extracting Djot documents)."""
+
+    ocr_elements: list[Any] | None
+    """OCR elements with full spatial and confidence metadata."""
+
+    document: Any | None
+    """Structured document tree (when document structure extraction is enabled)."""
+
+    quality_score: float | None
+    """Document quality score from quality analysis."""
+
+    processing_warnings: list[Any]
+    """Non-fatal warnings collected during processing pipeline stages."""
+
+    annotations: list[Any] | None
+    """PDF annotations extracted from the document."""
+
+    children: list[Any] | None
+    """Nested extraction results from archive contents."""
+
+    uris: list[Any] | None
+    """URIs/links discovered during document extraction."""
+
+    structured_output: str | None
+    """Structured extraction output from LLM-based JSON schema extraction."""
+
+    code_intelligence: str | None
+    """Code intelligence results from tree-sitter analysis."""
+
+    llm_usage: list[Any] | None
+    """LLM token usage and cost data for all LLM calls made during this extraction."""
+
+    formatted_content: str | None
+    """Pre-rendered content in the requested output format."""
+
+    ocr_internal_document: str | None
+    """Structured hOCR document for the OCR+layout pipeline."""
 
 
 @dataclass
@@ -33,4 +1400,493 @@ class LlmUsage:
     finish_reason: str | None = None
     """Why the model stopped generating (e.g. "stop", "length", "content_filter")."""
 
+
+@dataclass
+class ImagePreprocessingConfig:
+    """Image preprocessing configuration for OCR."""
+
+    target_dpi: int = 300
+    """Target DPI for the image (300 is standard, 600 for small text)."""
+
+    auto_rotate: bool = True
+    """Auto-detect and correct image rotation."""
+
+    deskew: bool = True
+    """Correct skew (tilted images)."""
+
+    denoise: bool = False
+    """Remove noise from the image."""
+
+    contrast_enhance: bool = False
+    """Enhance contrast for better text visibility."""
+
+    binarization_method: str = "otsu"
+    """Binarization method: "otsu", "sauvola", "adaptive"."""
+
+    invert_colors: bool = False
+    """Invert colors (white text on black → black on white)."""
+
+
+@dataclass
+class TesseractConfig:
+    """Tesseract OCR configuration."""
+
+    language: str = "eng"
+    """Language code (e.g., "eng", "deu", "fra")"""
+
+    psm: int = 3
+    """Page Segmentation Mode (0-13)."""
+
+    output_format: str = "markdown"
+    """Output format ("text" or "markdown")"""
+
+    oem: int = 3
+    """OCR Engine Mode (0-3)."""
+
+    min_confidence: float = 0
+    """Minimum confidence threshold (0.0-100.0)."""
+
+    preprocessing: Any | None = None
+    """Image preprocessing configuration."""
+
+    enable_table_detection: bool = True
+    """Enable automatic table detection and reconstruction"""
+
+    table_min_confidence: float = 0
+    """Minimum confidence threshold for table detection (0.0-1.0)"""
+
+    table_column_threshold: int = 50
+    """Column threshold for table detection (pixels)"""
+
+    table_row_threshold_ratio: float = 0.5
+    """Row threshold ratio for table detection (0.0-1.0)"""
+
+    use_cache: bool = True
+    """Enable OCR result caching"""
+
+    classify_use_pre_adapted_templates: bool = True
+    """Use pre-adapted templates for character classification"""
+
+    language_model_ngram_on: bool = False
+    """Enable N-gram language model"""
+
+    tessedit_dont_blkrej_good_wds: bool = True
+    """Don't reject good words during block-level processing"""
+
+    tessedit_dont_rowrej_good_wds: bool = True
+    """Don't reject good words during row-level processing"""
+
+    tessedit_enable_dict_correction: bool = True
+    """Enable dictionary correction"""
+
+    tessedit_char_whitelist: str = ""
+    """Whitelist of allowed characters (empty = all allowed)"""
+
+    tessedit_char_blacklist: str = ""
+    """Blacklist of forbidden characters (empty = none forbidden)"""
+
+    tessedit_use_primary_params_model: bool = True
+    """Use primary language params model"""
+
+    textord_space_size_is_variable: bool = True
+    """Variable-width space detection"""
+
+    thresholding_method: bool = False
+    """Use adaptive thresholding method"""
+
+
+class Metadata(TypedDict, total=False):
+    """Extraction result metadata."""
+
+    title: str | None
+    """Document title"""
+
+    subject: str | None
+    """Document subject or description"""
+
+    authors: list[str] | None
+    """Primary author(s) - always Vec for consistency"""
+
+    keywords: list[str] | None
+    """Keywords/tags - always Vec for consistency"""
+
+    language: str | None
+    """Primary language (ISO 639 code)"""
+
+    created_at: str | None
+    """Creation timestamp (ISO 8601 format)"""
+
+    modified_at: str | None
+    """Last modification timestamp (ISO 8601 format)"""
+
+    created_by: str | None
+    """User who created the document"""
+
+    modified_by: str | None
+    """User who last modified the document"""
+
+    pages: Any | None
+    """Page/slide/sheet structure with boundaries"""
+
+    format: dict | None
+    """Format-specific metadata (discriminated union)"""
+
+    image_preprocessing: Any | None
+    """Image preprocessing metadata (when OCR preprocessing was applied)"""
+
+    json_schema: str | None
+    """JSON schema (for structured data extraction)"""
+
+    error: Any | None
+    """Error metadata (for batch operations)"""
+
+    extraction_duration_ms: int | None
+    """Extraction duration in milliseconds (for benchmarking)."""
+
+    category: str | None
+    """Document category (from frontmatter or classification)."""
+
+    tags: list[str] | None
+    """Document tags (from frontmatter)."""
+
+    document_version: str | None
+    """Document version string (from frontmatter)."""
+
+    abstract_text: str | None
+    """Abstract or summary text (from frontmatter)."""
+
+    output_format: str | None
+    """Output format identifier (e.g., "markdown", "html", "text")."""
+
+    additional: str
+    """Additional custom fields from postprocessors."""
+
+
+@dataclass
+class HtmlMetadata:
+    """HTML metadata extracted from HTML documents."""
+
+    title: str | None = None
+    """Document title from `<title>` tag"""
+
+    description: str | None = None
+    """Document description from `<meta name="description">` tag"""
+
+    keywords: list[str] = field(default_factory=list)
+    """Document keywords from `<meta name="keywords">` tag, split on commas"""
+
+    author: str | None = None
+    """Document author from `<meta name="author">` tag"""
+
+    canonical_url: str | None = None
+    """Canonical URL from `<link rel="canonical">` tag"""
+
+    base_href: str | None = None
+    """Base URL from `<base href="">` tag for resolving relative URLs"""
+
+    language: str | None = None
+    """Document language from `lang` attribute"""
+
+    text_direction: str | None = None
+    """Document text direction from `dir` attribute"""
+
+    open_graph: dict[str, str] = field(default_factory=dict)
+    """Open Graph metadata (og:* properties) for social media"""
+
+    twitter_card: dict[str, str] = field(default_factory=dict)
+    """Twitter Card metadata (twitter:* properties)"""
+
+    meta_tags: dict[str, str] = field(default_factory=dict)
+    """Additional meta tags not covered by specific fields"""
+
+    headers: list[Any] = field(default_factory=list)
+    """Extracted header elements with hierarchy"""
+
+    links: list[Any] = field(default_factory=list)
+    """Extracted hyperlinks with type classification"""
+
+    images: list[Any] = field(default_factory=list)
+    """Extracted images with source and dimensions"""
+
+    structured_data: list[Any] = field(default_factory=list)
+    """Extracted structured data blocks"""
+
+
+@dataclass
+class CsvMetadata:
+    """CSV/TSV file metadata."""
+
+    row_count: int = 0
+    column_count: int = 0
+    delimiter: str | None = None
+    has_header: bool = False
+    column_types: list[str] | None = None
+
+@dataclass
+class BibtexMetadata:
+    """BibTeX bibliography metadata."""
+
+    entry_count: int = 0
+    citation_keys: list[str] = field(default_factory=list)
+    authors: list[str] = field(default_factory=list)
+    year_range: Any | None = None
+    entry_types: dict[str, int] | None = None
+
+@dataclass
+class CitationMetadata:
+    """Citation file metadata (RIS, PubMed, EndNote)."""
+
+    citation_count: int = 0
+    format: str | None = None
+    authors: list[str] = field(default_factory=list)
+    year_range: Any | None = None
+    dois: list[str] = field(default_factory=list)
+    keywords: list[str] = field(default_factory=list)
+
+@dataclass
+class FictionBookMetadata:
+    """FictionBook (FB2) metadata."""
+
+    genres: list[str] = field(default_factory=list)
+    sequences: list[str] = field(default_factory=list)
+    annotation: str | None = None
+
+@dataclass
+class DbfMetadata:
+    """dBASE (DBF) file metadata."""
+
+    record_count: int = 0
+    field_count: int = 0
+    fields: list[Any] = field(default_factory=list)
+
+@dataclass
+class JatsMetadata:
+    """JATS (Journal Article Tag Suite) metadata."""
+
+    copyright: str | None = None
+    license: str | None = None
+    history_dates: dict[str, str] = field(default_factory=dict)
+    contributor_roles: list[Any] = field(default_factory=list)
+
+@dataclass
+class EpubMetadata:
+    """EPUB metadata (Dublin Core extensions)."""
+
+    coverage: str | None = None
+    dc_format: str | None = None
+    relation: str | None = None
+    source: str | None = None
+    dc_type: str | None = None
+    cover_image: str | None = None
+
+@dataclass
+class PstMetadata:
+    """Outlook PST archive metadata."""
+
+    message_count: int = 0
+
+@dataclass
+class OcrElementConfig:
+    """Configuration for OCR element extraction."""
+
+    include_elements: bool = False
+    """Whether to include OCR elements in the extraction result."""
+
+    min_level: str = "line"
+    """Minimum hierarchical level to include."""
+
+    min_confidence: float = 0.0
+    """Minimum recognition confidence threshold (0.0-1.0)."""
+
+    build_hierarchy: bool = False
+    """Whether to build hierarchical relationships between elements."""
+
+
+@dataclass
+class PoolMetrics:
+    """Metrics tracking for pool allocations and reuse patterns."""
+
+    total_acquires: str = ""
+    """Total number of acquire calls on this pool"""
+
+    total_cache_hits: str = ""
+    """Total number of cache hits (reused objects from pool)"""
+
+    peak_items_stored: str = ""
+    """Peak number of objects stored simultaneously in this pool"""
+
+    total_creations: str = ""
+    """Total number of objects created by the factory function"""
+
+
+@dataclass
+class PoolConfig:
+    """Configuration for the string buffer pool."""
+
+    max_buffers_per_size: int = 4
+    """Maximum buffers per size bucket"""
+
+    initial_capacity: int = 4096
+    """Initial capacity for new buffers"""
+
+    max_capacity_before_discard: int = 65536
+    """Maximum capacity before discarding"""
+
+
+@dataclass
+class ApiSizeLimits:
+    """API server size limit configuration."""
+
+    max_request_body_bytes: int = 0
+    """Maximum size of the entire request body in bytes."""
+
+    max_multipart_field_bytes: int = 0
+    """Maximum size of a single multipart field in bytes."""
+
+
+@dataclass
+class ChunkingConfigRequest:
+    """Chunking configuration request."""
+
+    max_characters: int | None = None
+    """Maximum characters per chunk (must be greater than overlap, default: 2000)"""
+
+    overlap: int | None = None
+    """Overlap between chunks in characters (must be less than max_characters, default: 100)"""
+
+    trim: bool | None = None
+    """Whether to trim whitespace"""
+
+
+@dataclass
+class WarmRequest:
+    """Cache warm request."""
+
+    all_embeddings: bool = False
+    """Download all embedding model presets"""
+
+    embedding_model: str | None = None
+    """Specific embedding model preset to download"""
+
+
+@dataclass
+class YakeParams:
+    """YAKE-specific parameters."""
+
+    window_size: int = 2
+    """Window size for co-occurrence analysis (default: 2)."""
+
+
+@dataclass
+class RakeParams:
+    """RAKE-specific parameters."""
+
+    min_word_length: int = 1
+    """Minimum word length to consider (default: 1)."""
+
+    max_words_per_phrase: int = 3
+    """Maximum words in a keyword phrase (default: 3)."""
+
+
+@dataclass
+class KeywordConfig:
+    """Keyword extraction configuration."""
+
+    algorithm: str = "yake"
+    """Algorithm to use for extraction."""
+
+    max_keywords: int = 10
+    """Maximum number of keywords to extract (default: 10)."""
+
+    min_score: float = 0
+    """Minimum score threshold (0.0-1.0, default: 0.0)."""
+
+    ngram_range: str = ""
+    """N-gram range for keyword extraction (min, max)."""
+
+    language: str | None = None
+    """Language code for stopword filtering (e.g., "en", "de", "fr")."""
+
+    yake_params: Any | None = None
+    """YAKE-specific tuning parameters."""
+
+    rake_params: Any | None = None
+    """RAKE-specific tuning parameters."""
+
+
+@dataclass
+class OcrCacheStats:
+    total_files: int = 0
+    total_size_mb: float = 0.0
+
+@dataclass
+class PaddleOcrConfig:
+    """Configuration for PaddleOCR backend."""
+
+    language: str = ""
+    """Language code (e.g., "en", "ch", "jpn", "kor", "deu", "fra")"""
+
+    cache_dir: str | None = None
+    """Optional custom cache directory for model files"""
+
+    use_angle_cls: bool = False
+    """Enable angle classification for rotated text (default: false)."""
+
+    enable_table_detection: bool = False
+    """Enable table structure detection (default: false)"""
+
+    det_db_thresh: float = 0.0
+    """Database threshold for text detection (default: 0.3)"""
+
+    det_db_box_thresh: float = 0.0
+    """Box threshold for text bounding box refinement (default: 0.5)"""
+
+    det_db_unclip_ratio: float = 0.0
+    """Unclip ratio for expanding text bounding boxes (default: 1.6)"""
+
+    det_limit_side_len: int = 0
+    """Maximum side length for detection image (default: 960)"""
+
+    rec_batch_num: int = 0
+    """Batch size for recognition inference (default: 6)"""
+
+    padding: int = 0
+    """Padding in pixels added around the image before detection (default: 10)."""
+
+    drop_score: float = 0.0
+    """Minimum recognition confidence score for text lines (default: 0.5)."""
+
+    model_tier: str = ""
+    """Model tier controlling detection/recognition model size and accuracy trade-off."""
+
+
+class PdfMetadata(TypedDict, total=False):
+    """PDF-specific metadata."""
+
+    pdf_version: str | None
+    """PDF version (e.g., "1.7", "2.0")"""
+
+    producer: str | None
+    """PDF producer (application that created the PDF)"""
+
+    is_encrypted: bool | None
+    """Whether the PDF is encrypted/password-protected"""
+
+    width: int | None
+    """First page width in points (1/72 inch)"""
+
+    height: int | None
+    """First page height in points (1/72 inch)"""
+
+    page_count: int | None
+    """Total number of pages in the PDF document"""
+
+
+@dataclass
+class PageRenderOptions:
+    target_dpi: int = 300
+    max_image_dimension: int = 65536
+    auto_adjust_dpi: bool = True
+    min_dpi: int = 72
+    max_dpi: int = 600
 

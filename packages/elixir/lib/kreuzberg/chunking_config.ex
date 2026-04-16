@@ -7,7 +7,7 @@ defmodule Kreuzberg.ChunkingConfig do
             trim: true,
             chunker_type: :text,
             embedding: nil,
-            preset: "",
+            preset: nil,
             sizing: :characters,
             prepend_heading_context: false
 end

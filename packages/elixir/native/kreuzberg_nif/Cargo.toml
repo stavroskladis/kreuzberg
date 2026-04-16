@@ -4,16 +4,6 @@ version = "4.8.5"
 edition = "2024"
 license = "Elastic-2.0"
 
-[package.metadata.cargo-machete]
-ignored = [
-    "serde_json",
-    "tokio",
-    "serde-wasm-bindgen",
-    "pyo3-async-runtimes",
-    "serde_magnus",
-    "wiremock",
-]
-
 [lib]
 crate-type = ["cdylib"]
 

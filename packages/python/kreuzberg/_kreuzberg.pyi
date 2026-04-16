@@ -3,10 +3,2375 @@
 
 from typing import Any
 
+class GenericCache:
+    def get(
+        self,
+        cache_key: str,
+        source_file: str | None = None,
+        namespace: str | None = None,
+        ttl_override_secs: int | None = None,
+    ) -> bytes | None: ...
+    def get_default(self, cache_key: str, source_file: str | None = None) -> bytes | None: ...
+    def set(
+        self,
+        cache_key: str,
+        data: bytes,
+        source_file: str | None = None,
+        namespace: str | None = None,
+        ttl_secs: int | None = None,
+    ) -> None: ...
+    def set_default(self, cache_key: str, data: bytes, source_file: str | None = None) -> None: ...
+    def is_processing(self, cache_key: str) -> bool: ...
+    def mark_processing(self, cache_key: str) -> None: ...
+    def mark_complete(self, cache_key: str) -> None: ...
+    def clear(self) -> str: ...
+    def delete_namespace(self, namespace: str) -> str: ...
+    def get_stats(self) -> str: ...
+    def get_stats_filtered(self, namespace: str | None = None) -> str: ...
+    def cache_dir(self) -> str: ...
+    def cache_type(self) -> str: ...
+    @staticmethod
+    def new(
+        cache_type: str,
+        max_age_days: float,
+        max_cache_size_mb: float,
+        min_free_space_mb: float,
+        cache_dir: str | None = None,
+    ) -> GenericCache: ...
+
+class BatchProcessorConfig:
+    string_pool_size: int
+    string_buffer_capacity: int
+    byte_pool_size: int
+    byte_buffer_capacity: int
+    max_concurrent: int | None
+    def __init__(
+        self,
+        string_pool_size: int,
+        string_buffer_capacity: int,
+        byte_pool_size: int,
+        byte_buffer_capacity: int,
+        max_concurrent: int | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> BatchProcessorConfig: ...
+
+class BatchProcessor:
+    def string_pool(self) -> StringBufferPool: ...
+    def byte_pool(self) -> ByteBufferPool: ...
+    def config(self) -> BatchProcessorConfig: ...
+    def string_pool_size(self) -> int: ...
+    def byte_pool_size(self) -> int: ...
+    def clear_pools(self) -> None: ...
+    @staticmethod
+    def with_config(config: BatchProcessorConfig) -> BatchProcessor: ...
+    @staticmethod
+    def with_pool_hint(hint: PoolSizeHint) -> BatchProcessor: ...
+    @staticmethod
+    def default() -> BatchProcessor: ...
+
+class AccelerationConfig:
+    provider: ExecutionProviderType
+    device_id: int
+    def __init__(self, provider: ExecutionProviderType | str, device_id: int) -> None: ...
+
+class ContentFilterConfig:
+    include_headers: bool
+    include_footers: bool
+    strip_repeating_text: bool
+    include_watermarks: bool
+    def __init__(
+        self,
+        include_headers: bool,
+        include_footers: bool,
+        strip_repeating_text: bool,
+        include_watermarks: bool,
+    ) -> None: ...
+    @staticmethod
+    def default() -> ContentFilterConfig: ...
+
+class EmailConfig:
+    msg_fallback_codepage: int | None
+    def __init__(self, msg_fallback_codepage: int | None = None) -> None: ...
+
+class ExtractionConfig:
+    use_cache: bool
+    enable_quality_processing: bool
+    ocr: OcrConfig | None
+    force_ocr: bool
+    force_ocr_pages: list[int] | None
+    disable_ocr: bool
+    chunking: ChunkingConfig | None
+    content_filter: ContentFilterConfig | None
+    images: ImageExtractionConfig | None
+    pdf_options: PdfConfig | None
+    token_reduction: TokenReductionConfig | None
+    language_detection: LanguageDetectionConfig | None
+    pages: PageConfig | None
+    postprocessor: PostProcessorConfig | None
+    html_options: str | None
+    html_output: HtmlOutputConfig | None
+    extraction_timeout_secs: int | None
+    max_concurrent_extractions: int | None
+    result_format: OutputFormat
+    security_limits: str | None
+    output_format: OutputFormat
+    layout: LayoutDetectionConfig | None
+    include_document_structure: bool
+    acceleration: AccelerationConfig | None
+    cache_namespace: str | None
+    cache_ttl_secs: int | None
+    email: EmailConfig | None
+    concurrency: str | None
+    max_archive_depth: int
+    tree_sitter: TreeSitterConfig | None
+    structured_extraction: StructuredExtractionConfig | None
+    def __init__(
+        self,
+        use_cache: bool,
+        enable_quality_processing: bool,
+        force_ocr: bool,
+        disable_ocr: bool,
+        result_format: OutputFormat | dict[str, Any],
+        output_format: OutputFormat | dict[str, Any],
+        include_document_structure: bool,
+        max_archive_depth: int,
+        ocr: OcrConfig | None = None,
+        force_ocr_pages: list[int] | None = None,
+        chunking: ChunkingConfig | None = None,
+        content_filter: ContentFilterConfig | None = None,
+        images: ImageExtractionConfig | None = None,
+        pdf_options: PdfConfig | None = None,
+        token_reduction: TokenReductionConfig | None = None,
+        language_detection: LanguageDetectionConfig | None = None,
+        pages: PageConfig | None = None,
+        postprocessor: PostProcessorConfig | None = None,
+        html_options: str | None = None,
+        html_output: HtmlOutputConfig | None = None,
+        extraction_timeout_secs: int | None = None,
+        max_concurrent_extractions: int | None = None,
+        security_limits: str | None = None,
+        layout: LayoutDetectionConfig | None = None,
+        acceleration: AccelerationConfig | None = None,
+        cache_namespace: str | None = None,
+        cache_ttl_secs: int | None = None,
+        email: EmailConfig | None = None,
+        concurrency: str | None = None,
+        tree_sitter: TreeSitterConfig | None = None,
+        structured_extraction: StructuredExtractionConfig | None = None,
+    ) -> None: ...
+    def with_file_overrides(self, overrides: FileExtractionConfig) -> ExtractionConfig: ...
+    def normalized(self) -> ExtractionConfig: ...
+    def validate(self) -> None: ...
+    def needs_image_processing(self) -> bool: ...
+    @staticmethod
+    def default() -> ExtractionConfig: ...
+
+class FileExtractionConfig:
+    enable_quality_processing: bool | None
+    ocr: OcrConfig | None
+    force_ocr: bool | None
+    force_ocr_pages: list[int] | None
+    disable_ocr: bool | None
+    chunking: ChunkingConfig | None
+    content_filter: ContentFilterConfig | None
+    images: ImageExtractionConfig | None
+    pdf_options: PdfConfig | None
+    token_reduction: TokenReductionConfig | None
+    language_detection: LanguageDetectionConfig | None
+    pages: PageConfig | None
+    postprocessor: PostProcessorConfig | None
+    html_options: str | None
+    result_format: OutputFormat | None
+    output_format: OutputFormat | None
+    include_document_structure: bool | None
+    layout: LayoutDetectionConfig | None
+    timeout_secs: int | None
+    tree_sitter: TreeSitterConfig | None
+    structured_extraction: StructuredExtractionConfig | None
+    def __init__(
+        self,
+        enable_quality_processing: bool | None = None,
+        ocr: OcrConfig | None = None,
+        force_ocr: bool | None = None,
+        force_ocr_pages: list[int] | None = None,
+        disable_ocr: bool | None = None,
+        chunking: ChunkingConfig | None = None,
+        content_filter: ContentFilterConfig | None = None,
+        images: ImageExtractionConfig | None = None,
+        pdf_options: PdfConfig | None = None,
+        token_reduction: TokenReductionConfig | None = None,
+        language_detection: LanguageDetectionConfig | None = None,
+        pages: PageConfig | None = None,
+        postprocessor: PostProcessorConfig | None = None,
+        html_options: str | None = None,
+        result_format: OutputFormat | dict[str, Any] | None = None,
+        output_format: OutputFormat | dict[str, Any] | None = None,
+        include_document_structure: bool | None = None,
+        layout: LayoutDetectionConfig | None = None,
+        timeout_secs: int | None = None,
+        tree_sitter: TreeSitterConfig | None = None,
+        structured_extraction: StructuredExtractionConfig | None = None,
+    ) -> None: ...
+
+class ImageExtractionConfig:
+    extract_images: bool
+    target_dpi: int
+    max_image_dimension: int
+    inject_placeholders: bool
+    auto_adjust_dpi: bool
+    min_dpi: int
+    max_dpi: int
+    def __init__(
+        self,
+        extract_images: bool,
+        target_dpi: int,
+        max_image_dimension: int,
+        inject_placeholders: bool,
+        auto_adjust_dpi: bool,
+        min_dpi: int,
+        max_dpi: int,
+    ) -> None: ...
+
+class TokenReductionConfig:
+    mode: str
+    preserve_important_words: bool
+    def __init__(self, mode: str, preserve_important_words: bool) -> None: ...
+
+class LanguageDetectionConfig:
+    enabled: bool
+    min_confidence: float
+    detect_multiple: bool
+    def __init__(self, enabled: bool, min_confidence: float, detect_multiple: bool) -> None: ...
+
+class HtmlOutputConfig:
+    css: str | None
+    css_file: str | None
+    theme: HtmlTheme
+    class_prefix: str
+    embed_css: bool
+    def __init__(
+        self,
+        theme: HtmlTheme | str,
+        class_prefix: str,
+        embed_css: bool,
+        css: str | None = None,
+        css_file: str | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> HtmlOutputConfig: ...
+
+class LayoutDetectionConfig:
+    confidence_threshold: float | None
+    apply_heuristics: bool
+    table_model: TableModel
+    def __init__(
+        self,
+        apply_heuristics: bool,
+        table_model: TableModel | str,
+        confidence_threshold: float | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> LayoutDetectionConfig: ...
+
+class LlmConfig:
+    model: str
+    api_key: str | None
+    base_url: str | None
+    timeout_secs: int | None
+    max_retries: int | None
+    temperature: float | None
+    max_tokens: int | None
+    def __init__(
+        self,
+        model: str,
+        api_key: str | None = None,
+        base_url: str | None = None,
+        timeout_secs: int | None = None,
+        max_retries: int | None = None,
+        temperature: float | None = None,
+        max_tokens: int | None = None,
+    ) -> None: ...
+
+class StructuredExtractionConfig:
+    schema: dict[str, Any]
+    schema_name: str
+    schema_description: str | None
+    strict: bool
+    prompt: str | None
+    llm: LlmConfig
+    def __init__(
+        self,
+        schema: dict[str, Any],
+        schema_name: str,
+        strict: bool,
+        llm: LlmConfig,
+        schema_description: str | None = None,
+        prompt: str | None = None,
+    ) -> None: ...
+
+class OcrQualityThresholds:
+    min_total_non_whitespace: int
+    min_non_whitespace_per_page: float
+    min_meaningful_word_len: int
+    min_meaningful_words: int
+    min_alnum_ratio: float
+    min_garbage_chars: int
+    max_fragmented_word_ratio: float
+    critical_fragmented_word_ratio: float
+    min_avg_word_length: float
+    min_words_for_avg_length_check: int
+    min_consecutive_repeat_ratio: float
+    min_words_for_repeat_check: int
+    substantive_min_chars: int
+    non_text_min_chars: int
+    alnum_ws_ratio_threshold: float
+    pipeline_min_quality: float
+    def __init__(
+        self,
+        min_total_non_whitespace: int,
+        min_non_whitespace_per_page: float,
+        min_meaningful_word_len: int,
+        min_meaningful_words: int,
+        min_alnum_ratio: float,
+        min_garbage_chars: int,
+        max_fragmented_word_ratio: float,
+        critical_fragmented_word_ratio: float,
+        min_avg_word_length: float,
+        min_words_for_avg_length_check: int,
+        min_consecutive_repeat_ratio: float,
+        min_words_for_repeat_check: int,
+        substantive_min_chars: int,
+        non_text_min_chars: int,
+        alnum_ws_ratio_threshold: float,
+        pipeline_min_quality: float,
+    ) -> None: ...
+    @staticmethod
+    def default() -> OcrQualityThresholds: ...
+
+class OcrPipelineStage:
+    backend: str
+    priority: int
+    language: str | None
+    tesseract_config: TesseractConfig | None
+    paddle_ocr_config: dict[str, Any] | None
+    vlm_config: LlmConfig | None
+    def __init__(
+        self,
+        backend: str,
+        priority: int,
+        language: str | None = None,
+        tesseract_config: TesseractConfig | None = None,
+        paddle_ocr_config: dict[str, Any] | None = None,
+        vlm_config: LlmConfig | None = None,
+    ) -> None: ...
+
+class OcrPipelineConfig:
+    stages: list[OcrPipelineStage]
+    quality_thresholds: OcrQualityThresholds
+    def __init__(
+        self,
+        stages: list[OcrPipelineStage],
+        quality_thresholds: OcrQualityThresholds,
+    ) -> None: ...
+
+class OcrConfig:
+    backend: str
+    language: str
+    tesseract_config: TesseractConfig | None
+    output_format: OutputFormat | None
+    paddle_ocr_config: dict[str, Any] | None
+    element_config: OcrElementConfig | None
+    quality_thresholds: OcrQualityThresholds | None
+    pipeline: OcrPipelineConfig | None
+    auto_rotate: bool
+    vlm_config: LlmConfig | None
+    vlm_prompt: str | None
+    def __init__(
+        self,
+        backend: str,
+        language: str,
+        auto_rotate: bool,
+        tesseract_config: TesseractConfig | None = None,
+        output_format: OutputFormat | dict[str, Any] | None = None,
+        paddle_ocr_config: dict[str, Any] | None = None,
+        element_config: OcrElementConfig | None = None,
+        quality_thresholds: OcrQualityThresholds | None = None,
+        pipeline: OcrPipelineConfig | None = None,
+        vlm_config: LlmConfig | None = None,
+        vlm_prompt: str | None = None,
+    ) -> None: ...
+    def validate(self) -> None: ...
+    def effective_thresholds(self) -> OcrQualityThresholds: ...
+    def effective_pipeline(self) -> OcrPipelineConfig | None: ...
+    @staticmethod
+    def default() -> OcrConfig: ...
+
+class PageConfig:
+    extract_pages: bool
+    insert_page_markers: bool
+    marker_format: str
+    def __init__(
+        self,
+        extract_pages: bool,
+        insert_page_markers: bool,
+        marker_format: str,
+    ) -> None: ...
+    @staticmethod
+    def default() -> PageConfig: ...
+
+class PdfConfig:
+    backend: PdfBackend
+    extract_images: bool
+    passwords: list[str] | None
+    extract_metadata: bool
+    hierarchy: HierarchyConfig | None
+    extract_annotations: bool
+    top_margin_fraction: float | None
+    bottom_margin_fraction: float | None
+    allow_single_column_tables: bool
+    def __init__(
+        self,
+        backend: PdfBackend | str,
+        extract_images: bool,
+        extract_metadata: bool,
+        extract_annotations: bool,
+        allow_single_column_tables: bool,
+        passwords: list[str] | None = None,
+        hierarchy: HierarchyConfig | None = None,
+        top_margin_fraction: float | None = None,
+        bottom_margin_fraction: float | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> PdfConfig: ...
+
+class HierarchyConfig:
+    enabled: bool
+    k_clusters: int
+    include_bbox: bool
+    ocr_coverage_threshold: float | None
+    def __init__(
+        self,
+        enabled: bool,
+        k_clusters: int,
+        include_bbox: bool,
+        ocr_coverage_threshold: float | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> HierarchyConfig: ...
+
+class PostProcessorConfig:
+    enabled: bool
+    enabled_processors: list[str] | None
+    disabled_processors: list[str] | None
+    enabled_set: str | None
+    disabled_set: str | None
+    def __init__(
+        self,
+        enabled: bool,
+        enabled_processors: list[str] | None = None,
+        disabled_processors: list[str] | None = None,
+        enabled_set: str | None = None,
+        disabled_set: str | None = None,
+    ) -> None: ...
+    def build_lookup_sets(self) -> None: ...
+    @staticmethod
+    def default() -> PostProcessorConfig: ...
+
+class ChunkingConfig:
+    max_characters: int
+    overlap: int
+    trim: bool
+    chunker_type: ChunkerType
+    embedding: EmbeddingConfig | None
+    preset: str | None
+    sizing: ChunkSizing
+    prepend_heading_context: bool
+    def __init__(
+        self,
+        max_characters: int,
+        overlap: int,
+        trim: bool,
+        chunker_type: ChunkerType | str,
+        sizing: ChunkSizing | dict[str, Any],
+        prepend_heading_context: bool,
+        embedding: EmbeddingConfig | None = None,
+        preset: str | None = None,
+    ) -> None: ...
+    def with_chunker_type(self, chunker_type: ChunkerType) -> ChunkingConfig: ...
+    def with_sizing(self, sizing: ChunkSizing) -> ChunkingConfig: ...
+    def with_prepend_heading_context(self, prepend: bool) -> ChunkingConfig: ...
+    @staticmethod
+    def default() -> ChunkingConfig: ...
+
+class EmbeddingConfig:
+    model: EmbeddingModelType
+    normalize: bool
+    batch_size: int
+    show_download_progress: bool
+    cache_dir: str | None
+    def __init__(
+        self,
+        model: EmbeddingModelType | dict[str, Any],
+        normalize: bool,
+        batch_size: int,
+        show_download_progress: bool,
+        cache_dir: str | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> EmbeddingConfig: ...
+
+class TreeSitterConfig:
+    enabled: bool
+    cache_dir: str | None
+    languages: list[str] | None
+    groups: list[str] | None
+    process: TreeSitterProcessConfig
+    def __init__(
+        self,
+        enabled: bool,
+        process: TreeSitterProcessConfig,
+        cache_dir: str | None = None,
+        languages: list[str] | None = None,
+        groups: list[str] | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> TreeSitterConfig: ...
+
+class TreeSitterProcessConfig:
+    structure: bool
+    imports: bool
+    exports: bool
+    comments: bool
+    docstrings: bool
+    symbols: bool
+    diagnostics: bool
+    chunk_max_size: int | None
+    content_mode: CodeContentMode
+    def __init__(
+        self,
+        structure: bool,
+        imports: bool,
+        exports: bool,
+        comments: bool,
+        docstrings: bool,
+        symbols: bool,
+        diagnostics: bool,
+        content_mode: CodeContentMode | str,
+        chunk_max_size: int | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> TreeSitterProcessConfig: ...
+
+class FileBytes:
+    def deref(self) -> bytes: ...
+    def as_ref(self) -> bytes: ...
+
 class SupportedFormat:
     extension: str
     mime_type: str
     def __init__(self, extension: str, mime_type: str) -> None: ...
+
+class ServerConfig:
+    host: str
+    port: int
+    cors_origins: list[str]
+    max_request_body_bytes: int
+    max_multipart_field_bytes: int
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        cors_origins: list[str],
+        max_request_body_bytes: int,
+        max_multipart_field_bytes: int,
+    ) -> None: ...
+    def listen_addr(self) -> str: ...
+    def cors_allows_all(self) -> bool: ...
+    def is_origin_allowed(self, origin: str) -> bool: ...
+    def max_request_body_mb(self) -> int: ...
+    def max_multipart_field_mb(self) -> int: ...
+    def apply_env_overrides(self) -> None: ...
+    @staticmethod
+    def default() -> ServerConfig: ...
+    @staticmethod
+    def from_file(path: str) -> ServerConfig: ...
+    @staticmethod
+    def from_toml_file(path: str) -> ServerConfig: ...
+    @staticmethod
+    def from_yaml_file(path: str) -> ServerConfig: ...
+    @staticmethod
+    def from_json_file(path: str) -> ServerConfig: ...
+
+class StructuredDataResult:
+    content: str
+    format: str
+    metadata: dict[str, str]
+    text_fields: list[str]
+    def __init__(
+        self,
+        content: str,
+        format: str,  # noqa: A002
+        metadata: dict[str, str],
+        text_fields: list[str],
+    ) -> None: ...
+
+class JsonExtractionConfig:
+    extract_schema: bool
+    max_depth: int
+    array_item_limit: int
+    include_type_info: bool
+    flatten_nested_objects: bool
+    custom_text_field_patterns: list[str]
+    def __init__(
+        self,
+        extract_schema: bool,
+        max_depth: int,
+        array_item_limit: int,
+        include_type_info: bool,
+        flatten_nested_objects: bool,
+        custom_text_field_patterns: list[str],
+    ) -> None: ...
+    @staticmethod
+    def default() -> JsonExtractionConfig: ...
+
+class ListItemMetadata:
+    list_type: ListType
+    byte_start: int
+    byte_end: int
+    indent_level: int
+    def __init__(
+        self,
+        list_type: ListType | str,
+        byte_start: int,
+        byte_end: int,
+        indent_level: int,
+    ) -> None: ...
+
+class HwpDocument:
+    sections: list[Section]
+    def __init__(self, sections: list[Section]) -> None: ...
+    def extract_text(self) -> str: ...
+
+class Section:
+    paragraphs: list[str]
+    def __init__(self, paragraphs: list[str]) -> None: ...
+
+class ParaText:
+    content: str
+    def __init__(self, content: str) -> None: ...
+    @staticmethod
+    def from_record(record: Record) -> ParaText: ...
+
+class FileHeader:
+    flags: int
+    def __init__(self, flags: int) -> None: ...
+    def is_compressed(self) -> bool: ...
+    def is_encrypted(self) -> bool: ...
+    def is_distribute(self) -> bool: ...
+    @staticmethod
+    def parse(data: bytes) -> FileHeader: ...
+
+class Record:
+    tag_id: int
+    data: bytes
+    def __init__(self, tag_id: int, data: bytes) -> None: ...
+    def data_reader(self) -> StreamReader: ...
+    @staticmethod
+    def parse(reader: StreamReader) -> Record: ...
+
+class StreamReader:
+    def read_u8(self) -> int: ...
+    def read_u16(self) -> int: ...
+    def read_u32(self) -> int: ...
+    def read_bytes(self, len: int) -> bytes: ...
+    def position(self) -> int: ...
+    def remaining(self) -> int: ...
+
+class CfbReader:
+    @staticmethod
+    def from_bytes(bytes: bytes) -> CfbReader: ...
+
+class ImageOcrResult:
+    content: str
+    boundaries: list[PageBoundary] | None
+    page_contents: list[PageContent] | None
+    def __init__(
+        self,
+        content: str,
+        boundaries: list[PageBoundary] | None = None,
+        page_contents: list[PageContent] | None = None,
+    ) -> None: ...
+
+class HtmlExtractionResult:
+    markdown: str
+    images: list[ExtractedInlineImage]
+    warnings: list[str]
+    def __init__(
+        self,
+        markdown: str,
+        images: list[ExtractedInlineImage],
+        warnings: list[str],
+    ) -> None: ...
+
+class ExtractedInlineImage:
+    data: bytes
+    format: str
+    filename: str | None
+    description: str | None
+    dimensions: str | None
+    attributes: list[str]
+    def __init__(
+        self,
+        data: bytes,
+        format: str,  # noqa: A002
+        attributes: list[str],
+        filename: str | None = None,
+        description: str | None = None,
+        dimensions: str | None = None,
+    ) -> None: ...
+
+class DocExtractionResult:
+    text: str
+    metadata: DocMetadata
+    def __init__(self, text: str, metadata: DocMetadata) -> None: ...
+
+class DocMetadata:
+    title: str | None
+    subject: str | None
+    author: str | None
+    last_author: str | None
+    created: str | None
+    modified: str | None
+    revision_number: str | None
+    def __init__(
+        self,
+        title: str | None = None,
+        subject: str | None = None,
+        author: str | None = None,
+        last_author: str | None = None,
+        created: str | None = None,
+        modified: str | None = None,
+        revision_number: str | None = None,
+    ) -> None: ...
+
+class Drawing:
+    drawing_type: DrawingType
+    extent: Extent | None
+    doc_properties: DocProperties | None
+    image_ref: str | None
+    def __init__(
+        self,
+        drawing_type: DrawingType | dict[str, Any],
+        extent: Extent | None = None,
+        doc_properties: DocProperties | None = None,
+        image_ref: str | None = None,
+    ) -> None: ...
+
+class Extent:
+    cx: int
+    cy: int
+    def __init__(self, cx: int, cy: int) -> None: ...
+    def width_inches(self) -> float: ...
+    def height_inches(self) -> float: ...
+
+class DocProperties:
+    id: str | None
+    name: str | None
+    description: str | None
+    def __init__(
+        self,
+        id: str | None = None,  # noqa: A002
+        name: str | None = None,
+        description: str | None = None,
+    ) -> None: ...
+
+class AnchorProperties:
+    behind_doc: bool
+    layout_in_cell: bool
+    relative_height: int | None
+    position_h: Position | None
+    position_v: Position | None
+    wrap_type: WrapType
+    def __init__(
+        self,
+        behind_doc: bool,
+        layout_in_cell: bool,
+        wrap_type: WrapType | str,
+        relative_height: int | None = None,
+        position_h: Position | None = None,
+        position_v: Position | None = None,
+    ) -> None: ...
+
+class Position:
+    relative_from: str
+    offset: int | None
+    def __init__(self, relative_from: str, offset: int | None = None) -> None: ...
+
+class Document:
+    paragraphs: list[str]
+    tables: list[Table]
+    headers: list[HeaderFooter]
+    footers: list[HeaderFooter]
+    footnotes: list[Note]
+    endnotes: list[Note]
+    numbering_defs: str
+    elements: list[DocumentElement]
+    style_catalog: StyleCatalog | None
+    theme: Theme | None
+    sections: list[SectionProperties]
+    drawings: list[Drawing]
+    image_relationships: str
+    def __init__(
+        self,
+        paragraphs: list[str],
+        tables: list[Table],
+        headers: list[HeaderFooter],
+        footers: list[HeaderFooter],
+        footnotes: list[Note],
+        endnotes: list[Note],
+        numbering_defs: str,
+        elements: list[DocumentElement],
+        sections: list[SectionProperties],
+        drawings: list[Drawing],
+        image_relationships: str,
+        style_catalog: StyleCatalog | None = None,
+        theme: Theme | None = None,
+    ) -> None: ...
+    def resolve_heading_level(self, style_id: str) -> int | None: ...
+    def extract_text(self) -> str: ...
+    def to_markdown(self, inject_placeholders: bool) -> str: ...
+    def to_plain_text(self) -> str: ...
+
+class TableRow:
+    cells: list[TableCell]
+    properties: RowProperties | None
+    def __init__(self, cells: list[TableCell], properties: RowProperties | None = None) -> None: ...
+
+class HeaderFooter:
+    paragraphs: list[str]
+    tables: list[Table]
+    header_type: HeaderFooterType
+    def __init__(
+        self,
+        paragraphs: list[str],
+        tables: list[Table],
+        header_type: HeaderFooterType | str,
+    ) -> None: ...
+
+class Note:
+    id: str
+    note_type: NoteType
+    paragraphs: list[str]
+    def __init__(self, id: str, note_type: NoteType | str, paragraphs: list[str]) -> None: ...
+
+class PageMargins:
+    top: int | None
+    right: int | None
+    bottom: int | None
+    left: int | None
+    header: int | None
+    footer: int | None
+    gutter: int | None
+    def __init__(
+        self,
+        top: int | None = None,
+        right: int | None = None,
+        bottom: int | None = None,
+        left: int | None = None,
+        header: int | None = None,
+        footer: int | None = None,
+        gutter: int | None = None,
+    ) -> None: ...
+    def to_points(self) -> PageMarginsPoints: ...
+
+class PageMarginsPoints:
+    top: float | None
+    right: float | None
+    bottom: float | None
+    left: float | None
+    header: float | None
+    footer: float | None
+    gutter: float | None
+    def __init__(
+        self,
+        top: float | None = None,
+        right: float | None = None,
+        bottom: float | None = None,
+        left: float | None = None,
+        header: float | None = None,
+        footer: float | None = None,
+        gutter: float | None = None,
+    ) -> None: ...
+
+class ColumnLayout:
+    count: int | None
+    space_twips: int | None
+    equal_width: bool | None
+    def __init__(
+        self,
+        count: int | None = None,
+        space_twips: int | None = None,
+        equal_width: bool | None = None,
+    ) -> None: ...
+
+class SectionProperties:
+    page_width_twips: int | None
+    page_height_twips: int | None
+    orientation: Orientation | None
+    margins: PageMargins
+    columns: ColumnLayout
+    doc_grid_line_pitch: int | None
+    def __init__(
+        self,
+        margins: PageMargins,
+        columns: ColumnLayout,
+        page_width_twips: int | None = None,
+        page_height_twips: int | None = None,
+        orientation: Orientation | str | None = None,
+        doc_grid_line_pitch: int | None = None,
+    ) -> None: ...
+    def page_width_points(self) -> float | None: ...
+    def page_height_points(self) -> float | None: ...
+
+class RunProperties:
+    bold: bool | None
+    italic: bool | None
+    underline: bool | None
+    strikethrough: bool | None
+    color: str | None
+    font_size_half_points: int | None
+    font_ascii: str | None
+    font_ascii_theme: str | None
+    vert_align: str | None
+    font_h_ansi: str | None
+    font_cs: str | None
+    font_east_asia: str | None
+    highlight: str | None
+    caps: bool | None
+    small_caps: bool | None
+    shadow: bool | None
+    outline: bool | None
+    emboss: bool | None
+    imprint: bool | None
+    char_spacing: int | None
+    position: int | None
+    kern: int | None
+    theme_color: str | None
+    theme_tint: str | None
+    theme_shade: str | None
+    def __init__(
+        self,
+        bold: bool | None = None,
+        italic: bool | None = None,
+        underline: bool | None = None,
+        strikethrough: bool | None = None,
+        color: str | None = None,
+        font_size_half_points: int | None = None,
+        font_ascii: str | None = None,
+        font_ascii_theme: str | None = None,
+        vert_align: str | None = None,
+        font_h_ansi: str | None = None,
+        font_cs: str | None = None,
+        font_east_asia: str | None = None,
+        highlight: str | None = None,
+        caps: bool | None = None,
+        small_caps: bool | None = None,
+        shadow: bool | None = None,
+        outline: bool | None = None,
+        emboss: bool | None = None,
+        imprint: bool | None = None,
+        char_spacing: int | None = None,
+        position: int | None = None,
+        kern: int | None = None,
+        theme_color: str | None = None,
+        theme_tint: str | None = None,
+        theme_shade: str | None = None,
+    ) -> None: ...
+
+class StyleDefinition:
+    id: str
+    name: str | None
+    style_type: StyleType
+    based_on: str | None
+    next_style: str | None
+    is_default: bool
+    paragraph_properties: str
+    run_properties: RunProperties
+    def __init__(
+        self,
+        id: str,  # noqa: A002
+        style_type: StyleType | str,
+        is_default: bool,
+        paragraph_properties: str,
+        run_properties: RunProperties,
+        name: str | None = None,
+        based_on: str | None = None,
+        next_style: str | None = None,
+    ) -> None: ...
+
+class ResolvedStyle:
+    paragraph_properties: str
+    run_properties: RunProperties
+    def __init__(self, paragraph_properties: str, run_properties: RunProperties) -> None: ...
+
+class StyleCatalog:
+    styles: str
+    default_paragraph_properties: str
+    default_run_properties: RunProperties
+    def __init__(
+        self,
+        styles: str,
+        default_paragraph_properties: str,
+        default_run_properties: RunProperties,
+    ) -> None: ...
+    def resolve_style(self, style_id: str) -> ResolvedStyle: ...
+
+class TableProperties:
+    style_id: str | None
+    width: str | None
+    alignment: str | None
+    layout: str | None
+    look: TableLook | None
+    borders: TableBorders | None
+    cell_margins: str | None
+    indent: str | None
+    caption: str | None
+    def __init__(
+        self,
+        style_id: str | None = None,
+        width: str | None = None,
+        alignment: str | None = None,
+        layout: str | None = None,
+        look: TableLook | None = None,
+        borders: TableBorders | None = None,
+        cell_margins: str | None = None,
+        indent: str | None = None,
+        caption: str | None = None,
+    ) -> None: ...
+
+class TableLook:
+    first_row: bool
+    last_row: bool
+    first_column: bool
+    last_column: bool
+    no_h_band: bool
+    no_v_band: bool
+    def __init__(
+        self,
+        first_row: bool,
+        last_row: bool,
+        first_column: bool,
+        last_column: bool,
+        no_h_band: bool,
+        no_v_band: bool,
+    ) -> None: ...
+
+class TableBorders:
+    top: str | None
+    bottom: str | None
+    left: str | None
+    right: str | None
+    inside_h: str | None
+    inside_v: str | None
+    def __init__(
+        self,
+        top: str | None = None,
+        bottom: str | None = None,
+        left: str | None = None,
+        right: str | None = None,
+        inside_h: str | None = None,
+        inside_v: str | None = None,
+    ) -> None: ...
+
+class RowProperties:
+    height: int | None
+    height_rule: str | None
+    is_header: bool
+    cant_split: bool
+    def __init__(
+        self,
+        is_header: bool,
+        cant_split: bool,
+        height: int | None = None,
+        height_rule: str | None = None,
+    ) -> None: ...
+
+class ColorScheme:
+    name: str
+    dk1: ThemeColor | None
+    lt1: ThemeColor | None
+    dk2: ThemeColor | None
+    lt2: ThemeColor | None
+    accent1: ThemeColor | None
+    accent2: ThemeColor | None
+    accent3: ThemeColor | None
+    accent4: ThemeColor | None
+    accent5: ThemeColor | None
+    accent6: ThemeColor | None
+    hlink: ThemeColor | None
+    fol_hlink: ThemeColor | None
+    def __init__(
+        self,
+        name: str,
+        dk1: ThemeColor | dict[str, Any] | None = None,
+        lt1: ThemeColor | dict[str, Any] | None = None,
+        dk2: ThemeColor | dict[str, Any] | None = None,
+        lt2: ThemeColor | dict[str, Any] | None = None,
+        accent1: ThemeColor | dict[str, Any] | None = None,
+        accent2: ThemeColor | dict[str, Any] | None = None,
+        accent3: ThemeColor | dict[str, Any] | None = None,
+        accent4: ThemeColor | dict[str, Any] | None = None,
+        accent5: ThemeColor | dict[str, Any] | None = None,
+        accent6: ThemeColor | dict[str, Any] | None = None,
+        hlink: ThemeColor | dict[str, Any] | None = None,
+        fol_hlink: ThemeColor | dict[str, Any] | None = None,
+    ) -> None: ...
+
+class FontScheme:
+    name: str
+    major_latin: str | None
+    major_east_asian: str | None
+    major_complex_script: str | None
+    minor_latin: str | None
+    minor_east_asian: str | None
+    minor_complex_script: str | None
+    def __init__(
+        self,
+        name: str,
+        major_latin: str | None = None,
+        major_east_asian: str | None = None,
+        major_complex_script: str | None = None,
+        minor_latin: str | None = None,
+        minor_east_asian: str | None = None,
+        minor_complex_script: str | None = None,
+    ) -> None: ...
+
+class Theme:
+    name: str
+    color_scheme: ColorScheme | None
+    font_scheme: FontScheme | None
+    def __init__(
+        self,
+        name: str,
+        color_scheme: ColorScheme | None = None,
+        font_scheme: FontScheme | None = None,
+    ) -> None: ...
+
+class XlsxAppProperties:
+    application: str | None
+    app_version: str | None
+    doc_security: int | None
+    scale_crop: bool | None
+    links_up_to_date: bool | None
+    shared_doc: bool | None
+    hyperlinks_changed: bool | None
+    company: str | None
+    worksheet_names: list[str]
+    def __init__(
+        self,
+        worksheet_names: list[str],
+        application: str | None = None,
+        app_version: str | None = None,
+        doc_security: int | None = None,
+        scale_crop: bool | None = None,
+        links_up_to_date: bool | None = None,
+        shared_doc: bool | None = None,
+        hyperlinks_changed: bool | None = None,
+        company: str | None = None,
+    ) -> None: ...
+
+class PptxAppProperties:
+    application: str | None
+    app_version: str | None
+    total_time: int | None
+    company: str | None
+    doc_security: int | None
+    scale_crop: bool | None
+    links_up_to_date: bool | None
+    shared_doc: bool | None
+    hyperlinks_changed: bool | None
+    slides: int | None
+    notes: int | None
+    hidden_slides: int | None
+    multimedia_clips: int | None
+    presentation_format: str | None
+    slide_titles: list[str]
+    def __init__(
+        self,
+        slide_titles: list[str],
+        application: str | None = None,
+        app_version: str | None = None,
+        total_time: int | None = None,
+        company: str | None = None,
+        doc_security: int | None = None,
+        scale_crop: bool | None = None,
+        links_up_to_date: bool | None = None,
+        shared_doc: bool | None = None,
+        hyperlinks_changed: bool | None = None,
+        slides: int | None = None,
+        notes: int | None = None,
+        hidden_slides: int | None = None,
+        multimedia_clips: int | None = None,
+        presentation_format: str | None = None,
+    ) -> None: ...
+
+class CustomProperties:
+    ...
+
+class OdtProperties:
+    title: str | None
+    subject: str | None
+    creator: str | None
+    initial_creator: str | None
+    keywords: str | None
+    description: str | None
+    date: str | None
+    creation_date: str | None
+    language: str | None
+    generator: str | None
+    editing_duration: str | None
+    editing_cycles: str | None
+    page_count: int | None
+    word_count: int | None
+    character_count: int | None
+    paragraph_count: int | None
+    table_count: int | None
+    image_count: int | None
+    def __init__(
+        self,
+        title: str | None = None,
+        subject: str | None = None,
+        creator: str | None = None,
+        initial_creator: str | None = None,
+        keywords: str | None = None,
+        description: str | None = None,
+        date: str | None = None,
+        creation_date: str | None = None,
+        language: str | None = None,
+        generator: str | None = None,
+        editing_duration: str | None = None,
+        editing_cycles: str | None = None,
+        page_count: int | None = None,
+        word_count: int | None = None,
+        character_count: int | None = None,
+        paragraph_count: int | None = None,
+        table_count: int | None = None,
+        image_count: int | None = None,
+    ) -> None: ...
+
+class PptExtractionResult:
+    text: str
+    slide_count: int
+    metadata: PptMetadata
+    speaker_notes: list[str]
+    def __init__(
+        self,
+        text: str,
+        slide_count: int,
+        metadata: PptMetadata,
+        speaker_notes: list[str],
+    ) -> None: ...
+
+class PptMetadata:
+    title: str | None
+    subject: str | None
+    author: str | None
+    last_author: str | None
+    def __init__(
+        self,
+        title: str | None = None,
+        subject: str | None = None,
+        author: str | None = None,
+        last_author: str | None = None,
+    ) -> None: ...
+
+class PptxExtractionOptions:
+    extract_images: bool
+    page_config: PageConfig | None
+    plain: bool
+    include_structure: bool
+    inject_placeholders: bool
+    def __init__(
+        self,
+        extract_images: bool,
+        plain: bool,
+        include_structure: bool,
+        inject_placeholders: bool,
+        page_config: PageConfig | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> PptxExtractionOptions: ...
+
+class SyncExtractor:
+    def extract_sync(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+
+class CodeExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, _mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, _mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    def extract_sync(self, content: bytes, _mime_type: str, config: ExtractionConfig) -> str: ...
+    @staticmethod
+    def default() -> CodeExtractor: ...
+
+class CsvExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> CsvExtractor: ...
+
+class StructuredExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> StructuredExtractor: ...
+
+class PlainTextExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> PlainTextExtractor: ...
+
+class DjotExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def build_internal_document(events: list[str]) -> str: ...
+    @staticmethod
+    def default() -> DjotExtractor: ...
+
+class ZipBombValidator:
+    ...
+
+class StringGrowthValidator:
+    def check_append(self, len: int) -> None: ...
+    def current_size(self) -> int: ...
+
+class IterationValidator:
+    def check_iteration(self) -> None: ...
+    def current_count(self) -> int: ...
+
+class DepthValidator:
+    def push(self) -> None: ...
+    def pop(self) -> None: ...
+    def current_depth(self) -> int: ...
+
+class EntityValidator:
+    def validate(self, content: str) -> None: ...
+
+class TableValidator:
+    def add_cells(self, count: int) -> None: ...
+    def current_cells(self) -> int: ...
+
+class ImageExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> ImageExtractor: ...
+
+class ZipExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    def extract_sync(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    @staticmethod
+    def default() -> ZipExtractor: ...
+
+class TarExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    def extract_sync(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    @staticmethod
+    def default() -> TarExtractor: ...
+
+class SevenZExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    def extract_sync(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    @staticmethod
+    def default() -> SevenZExtractor: ...
+
+class GzipExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    def extract_sync(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    @staticmethod
+    def default() -> GzipExtractor: ...
+
+class EmailExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def extract_sync(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    @staticmethod
+    def default() -> EmailExtractor: ...
+
+class PstExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def extract_sync(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    @staticmethod
+    def default() -> PstExtractor: ...
+
+class ExcelExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def extract_sync(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    @staticmethod
+    def default() -> ExcelExtractor: ...
+
+class HwpExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> HwpExtractor: ...
+
+class KeynoteExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> KeynoteExtractor: ...
+
+class NumbersExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> NumbersExtractor: ...
+
+class PagesExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> PagesExtractor: ...
+
+class HtmlExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def extract_sync(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    @staticmethod
+    def default() -> HtmlExtractor: ...
+
+class BibtexExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> BibtexExtractor: ...
+
+class CitationExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> CitationExtractor: ...
+
+class DocExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> DocExtractor: ...
+
+class DbfExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> DbfExtractor: ...
+
+class DocxExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> DocxExtractor: ...
+
+class EpubExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> EpubExtractor: ...
+
+class FictionBookExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> FictionBookExtractor: ...
+
+class MarkdownExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def build_internal_document(events: list[str], yaml: str | None = None) -> str: ...
+    @staticmethod
+    def default() -> MarkdownExtractor: ...
+
+class MdxExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def build_internal_document(
+        events: list[str],
+        raw_jsx_blocks: list[str],
+        yaml: str | None = None,
+    ) -> str: ...
+    @staticmethod
+    def default() -> MdxExtractor: ...
+
+class RstExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def build_internal_document(content: str, inject_placeholders: bool) -> str: ...
+    @staticmethod
+    def default() -> RstExtractor: ...
+
+class LatexExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def build_internal_document(source: str, inject_placeholders: bool) -> str: ...
+    @staticmethod
+    def default() -> LatexExtractor: ...
+
+class JupyterExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> JupyterExtractor: ...
+
+class OrgModeExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def build_internal_document(org_text: str) -> str: ...
+    @staticmethod
+    def default() -> OrgModeExtractor: ...
+
+class OdtExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> OdtExtractor: ...
+
+class OpmlExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> OpmlExtractor: ...
+
+class TypstExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> TypstExtractor: ...
+
+class JatsExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def extract_bytes(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> JatsExtractor: ...
+
+class NativeTextStats:
+    non_whitespace: int
+    alnum: int
+    meaningful_words: int
+    alnum_ratio: float
+    garbage_char_count: int
+    fragmented_word_ratio: float
+    consecutive_repeat_ratio: float
+    avg_word_length: float
+    word_count: int
+    def __init__(
+        self,
+        non_whitespace: int,
+        alnum: int,
+        meaningful_words: int,
+        alnum_ratio: float,
+        garbage_char_count: int,
+        fragmented_word_ratio: float,
+        consecutive_repeat_ratio: float,
+        avg_word_length: float,
+        word_count: int,
+    ) -> None: ...
+    @staticmethod
+    def compute(text: str, thresholds: OcrQualityThresholds) -> NativeTextStats: ...
+    @staticmethod
+    def from_(text: str) -> NativeTextStats: ...
+
+class OcrFallbackDecision:
+    stats: NativeTextStats
+    avg_non_whitespace: float
+    avg_alnum: float
+    fallback: bool
+    def __init__(
+        self,
+        stats: NativeTextStats,
+        avg_non_whitespace: float,
+        avg_alnum: float,
+        fallback: bool,
+    ) -> None: ...
+
+class PdfExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    @staticmethod
+    def default() -> PdfExtractor: ...
+
+class PptExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> PptExtractor: ...
+
+class PptxExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def extract_file(self, path: str, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> PptxExtractor: ...
+
+class RtfImage:
+    format: str
+    width_goal: int | None
+    height_goal: int | None
+    data: bytes
+    def __init__(
+        self,
+        format: str,  # noqa: A002
+        data: bytes,
+        width_goal: int | None = None,
+        height_goal: int | None = None,
+    ) -> None: ...
+
+class RtfFormattingSpan:
+    start: int
+    end: int
+    bold: bool
+    italic: bool
+    underline: bool
+    strikethrough: bool
+    color_index: int
+    def __init__(
+        self,
+        start: int,
+        end: int,
+        bold: bool,
+        italic: bool,
+        underline: bool,
+        strikethrough: bool,
+        color_index: int,
+    ) -> None: ...
+
+class RtfFormattingData:
+    spans: list[RtfFormattingSpan]
+    color_table: list[str]
+    header_text: str | None
+    footer_text: str | None
+    hyperlinks: list[str]
+    def __init__(
+        self,
+        spans: list[RtfFormattingSpan],
+        color_table: list[str],
+        hyperlinks: list[str],
+        header_text: str | None = None,
+        footer_text: str | None = None,
+    ) -> None: ...
+
+class RtfExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> RtfExtractor: ...
+
+class XmlExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+    def extract_sync(self, content: bytes, mime_type: str, _config: ExtractionConfig) -> str: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    def as_sync_extractor(self) -> SyncExtractor | None: ...
+    @staticmethod
+    def default() -> XmlExtractor: ...
+
+class DocbookExtractor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def extract_bytes(self, content: bytes, mime_type: str, config: ExtractionConfig) -> str: ...
+    def supported_mime_types(self) -> list[str]: ...
+    def priority(self) -> int: ...
+    @staticmethod
+    def default() -> DocbookExtractor: ...
+
+class ModelCache:
+    def put(self, model: str) -> None: ...
+    def take(self) -> str | None: ...
+
+class PanicContext:
+    file: str
+    line: int
+    function: str
+    message: str
+    timestamp: str
+    def __init__(
+        self,
+        file: str,
+        line: int,
+        function: str,
+        message: str,
+        timestamp: str,
+    ) -> None: ...
+    def format(self) -> str: ...
+
+class OcrBackend:
+    def process_image(self, image_bytes: bytes, config: OcrConfig) -> ExtractionResult: ...
+    def process_image_file(self, path: str, config: OcrConfig) -> ExtractionResult: ...
+    def supports_language(self, lang: str) -> bool: ...
+    def backend_type(self) -> OcrBackendType: ...
+    def supported_languages(self) -> list[str]: ...
+    def supports_table_detection(self) -> bool: ...
+    def supports_document_processing(self) -> bool: ...
+    def process_document(self, _path: str, _config: OcrConfig) -> ExtractionResult: ...
+
+class DocumentExtractorRegistry:
+    def register(self, extractor: str) -> None: ...
+    def get(self, mime_type: str) -> str: ...
+    def list(self) -> list[str]: ...
+    def remove(self, name: str) -> None: ...
+    def shutdown_all(self) -> None: ...
+    @staticmethod
+    def default() -> DocumentExtractorRegistry: ...
+
+class OcrBackendRegistry:
+    def register(self, backend: OcrBackend) -> None: ...
+    def get(self, name: str) -> OcrBackend: ...
+    def get_for_language(self, language: str) -> OcrBackend: ...
+    def list(self) -> list[str]: ...
+    def remove(self, name: str) -> None: ...
+    def shutdown_all(self) -> None: ...
+    def reset_to_defaults(self) -> None: ...
+    @staticmethod
+    def new_empty() -> OcrBackendRegistry: ...
+    @staticmethod
+    def default() -> OcrBackendRegistry: ...
+
+class PostProcessorRegistry:
+    def register(self, processor: str, priority: int) -> None: ...
+    def get_for_stage(self, stage: str) -> list[str]: ...
+    def list(self) -> list[str]: ...
+    def remove(self, name: str) -> None: ...
+    def shutdown_all(self) -> None: ...
+    @staticmethod
+    def default() -> PostProcessorRegistry: ...
+
+class RendererRegistry:
+    def register(self, renderer: Renderer) -> None: ...
+    def get(self, name: str) -> Renderer: ...
+    def render(self, name: str, doc: str) -> str: ...
+    def list(self) -> list[str]: ...
+    def remove(self, name: str) -> None: ...
+    def reset_to_defaults(self) -> None: ...
+    @staticmethod
+    def new_empty() -> RendererRegistry: ...
+    @staticmethod
+    def default() -> RendererRegistry: ...
+
+class ValidatorRegistry:
+    def register(self, validator: str) -> None: ...
+    def get_all(self) -> list[str]: ...
+    def list(self) -> list[str]: ...
+    def remove(self, name: str) -> None: ...
+    def shutdown_all(self) -> None: ...
+    @staticmethod
+    def default() -> ValidatorRegistry: ...
+
+class Renderer:
+    def name(self) -> str: ...
+    def render(self, doc: str) -> str: ...
+
+class Plugin:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def description(self) -> str: ...
+    def author(self) -> str: ...
+
+class ExtractionMetrics:
+    extraction_total: str
+    cache_hits: str
+    cache_misses: str
+    batch_total: str
+    extraction_duration_ms: str
+    extraction_input_bytes: str
+    extraction_output_bytes: str
+    pipeline_duration_ms: str
+    ocr_duration_ms: str
+    batch_duration_ms: str
+    concurrent_extractions: str
+    def __init__(
+        self,
+        extraction_total: str,
+        cache_hits: str,
+        cache_misses: str,
+        batch_total: str,
+        extraction_duration_ms: str,
+        extraction_input_bytes: str,
+        extraction_output_bytes: str,
+        pipeline_duration_ms: str,
+        ocr_duration_ms: str,
+        batch_duration_ms: str,
+        concurrent_extractions: str,
+    ) -> None: ...
+
+class TokenReducer:
+    def language(self) -> str: ...
+    def reduce(self, text: str) -> str: ...
+    def batch_reduce(self, texts: list[str]) -> list[str]: ...
+    @staticmethod
+    def new(config: TokenReductionConfig, language_hint: str | None = None) -> TokenReducer: ...
+
+class QualityProcessor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def process(self, result: ExtractionResult, _config: ExtractionConfig) -> None: ...
+    def processing_stage(self) -> str: ...
+    def should_process(self, _result: ExtractionResult, config: ExtractionConfig) -> bool: ...
+    def estimated_duration_ms(self, result: ExtractionResult) -> int: ...
+
+class PdfAnnotation:
+    annotation_type: PdfAnnotationType
+    content: str | None
+    page_number: int
+    bounding_box: BoundingBox | None
+    def __init__(
+        self,
+        annotation_type: PdfAnnotationType | str,
+        page_number: int,
+        content: str | None = None,
+        bounding_box: BoundingBox | None = None,
+    ) -> None: ...
+
+class DjotContent:
+    plain_text: str
+    blocks: list[FormattedBlock]
+    metadata: Metadata
+    tables: list[Table]
+    images: list[DjotImage]
+    links: list[DjotLink]
+    footnotes: list[Footnote]
+    attributes: list[str]
+    def __init__(
+        self,
+        plain_text: str,
+        blocks: list[FormattedBlock],
+        metadata: Metadata,
+        tables: list[Table],
+        images: list[DjotImage],
+        links: list[DjotLink],
+        footnotes: list[Footnote],
+        attributes: list[str],
+    ) -> None: ...
+
+class FormattedBlock:
+    block_type: BlockType
+    level: int | None
+    inline_content: list[InlineElement]
+    attributes: Attributes | None
+    language: str | None
+    code: str | None
+    children: list[FormattedBlock]
+    def __init__(
+        self,
+        block_type: BlockType | str,
+        inline_content: list[InlineElement],
+        children: list[FormattedBlock],
+        level: int | None = None,
+        attributes: Attributes | None = None,
+        language: str | None = None,
+        code: str | None = None,
+    ) -> None: ...
+
+class InlineElement:
+    element_type: InlineType
+    content: str
+    attributes: Attributes | None
+    metadata: dict[str, str] | None
+    def __init__(
+        self,
+        element_type: InlineType | str,
+        content: str,
+        attributes: Attributes | None = None,
+        metadata: dict[str, str] | None = None,
+    ) -> None: ...
+
+class Attributes:
+    id: str | None
+    classes: list[str]
+    key_values: list[str]
+    def __init__(
+        self,
+        classes: list[str],
+        key_values: list[str],
+        id: str | None = None,  # noqa: A002
+    ) -> None: ...
+
+class DjotImage:
+    src: str
+    alt: str
+    title: str | None
+    attributes: Attributes | None
+    def __init__(
+        self,
+        src: str,
+        alt: str,
+        title: str | None = None,
+        attributes: Attributes | None = None,
+    ) -> None: ...
+
+class DjotLink:
+    url: str
+    text: str
+    title: str | None
+    attributes: Attributes | None
+    def __init__(
+        self,
+        url: str,
+        text: str,
+        title: str | None = None,
+        attributes: Attributes | None = None,
+    ) -> None: ...
+
+class Footnote:
+    label: str
+    content: list[FormattedBlock]
+    def __init__(self, label: str, content: list[FormattedBlock]) -> None: ...
+
+class NodeId:
+    def as_ref(self) -> str: ...
+    def fmt(self, f: str) -> str: ...
+    @staticmethod
+    def generate(node_type: str, text: str, index: int, page: int | None = None) -> NodeId: ...
+
+class DocumentStructure:
+    nodes: list[DocumentNode]
+    source_format: str | None
+    relationships: list[DocumentRelationship]
+    def __init__(
+        self,
+        nodes: list[DocumentNode],
+        relationships: list[DocumentRelationship],
+        source_format: str | None = None,
+    ) -> None: ...
+    def push_node(self, node: DocumentNode) -> int: ...
+    def add_child(self, parent: int, child: int) -> None: ...
+    def validate(self) -> None: ...
+    def body_roots(self) -> str: ...
+    def furniture_roots(self) -> str: ...
+    def get(self, index: int) -> DocumentNode | None: ...
+    def len(self) -> int: ...
+    def is_empty(self) -> bool: ...
+    @staticmethod
+    def with_capacity(capacity: int) -> DocumentStructure: ...
+    @staticmethod
+    def default() -> DocumentStructure: ...
+
+class DocumentRelationship:
+    source: int
+    target: int
+    kind: RelationshipKind
+    def __init__(self, source: int, target: int, kind: RelationshipKind | str) -> None: ...
+
+class DocumentNode:
+    id: NodeId
+    content: NodeContent
+    parent: int | None
+    children: list[int]
+    content_layer: ContentLayer
+    page: int | None
+    page_end: int | None
+    bbox: BoundingBox | None
+    annotations: list[TextAnnotation]
+    attributes: dict[str, str] | None
+    def __init__(
+        self,
+        id: NodeId,  # noqa: A002
+        content: NodeContent | dict[str, Any],
+        children: list[int],
+        content_layer: ContentLayer | str,
+        annotations: list[TextAnnotation],
+        parent: int | None = None,
+        page: int | None = None,
+        page_end: int | None = None,
+        bbox: BoundingBox | None = None,
+        attributes: dict[str, str] | None = None,
+    ) -> None: ...
+
+class TableGrid:
+    rows: int
+    cols: int
+    cells: list[GridCell]
+    def __init__(self, rows: int, cols: int, cells: list[GridCell]) -> None: ...
+
+class GridCell:
+    content: str
+    row: int
+    col: int
+    row_span: int
+    col_span: int
+    is_header: bool
+    bbox: BoundingBox | None
+    def __init__(
+        self,
+        content: str,
+        row: int,
+        col: int,
+        row_span: int,
+        col_span: int,
+        is_header: bool,
+        bbox: BoundingBox | None = None,
+    ) -> None: ...
+
+class TextAnnotation:
+    start: int
+    end: int
+    kind: AnnotationKind
+    def __init__(self, start: int, end: int, kind: AnnotationKind | dict[str, Any]) -> None: ...
+
+class ExtractionResult:
+    content: str
+    mime_type: str
+    metadata: Metadata
+    tables: list[Table]
+    detected_languages: list[str] | None
+    chunks: list[Chunk] | None
+    images: list[ExtractedImage] | None
+    pages: list[PageContent] | None
+    elements: list[Element] | None
+    djot_content: DjotContent | None
+    ocr_elements: list[OcrElement] | None
+    document: DocumentStructure | None
+    quality_score: float | None
+    processing_warnings: list[ProcessingWarning]
+    annotations: list[PdfAnnotation] | None
+    children: list[ArchiveEntry] | None
+    uris: list[Uri] | None
+    structured_output: dict[str, Any] | None
+    code_intelligence: str | None
+    llm_usage: list[LlmUsage] | None
+    formatted_content: str | None
+    ocr_internal_document: str | None
+    def __init__(
+        self,
+        content: str,
+        mime_type: str,
+        metadata: Metadata,
+        tables: list[Table],
+        processing_warnings: list[ProcessingWarning],
+        detected_languages: list[str] | None = None,
+        chunks: list[Chunk] | None = None,
+        images: list[ExtractedImage] | None = None,
+        pages: list[PageContent] | None = None,
+        elements: list[Element] | None = None,
+        djot_content: DjotContent | None = None,
+        ocr_elements: list[OcrElement] | None = None,
+        document: DocumentStructure | None = None,
+        quality_score: float | None = None,
+        annotations: list[PdfAnnotation] | None = None,
+        children: list[ArchiveEntry] | None = None,
+        uris: list[Uri] | None = None,
+        structured_output: dict[str, Any] | None = None,
+        code_intelligence: str | None = None,
+        llm_usage: list[LlmUsage] | None = None,
+        formatted_content: str | None = None,
+        ocr_internal_document: str | None = None,
+    ) -> None: ...
+
+class ArchiveEntry:
+    path: str
+    mime_type: str
+    result: ExtractionResult
+    def __init__(self, path: str, mime_type: str, result: ExtractionResult) -> None: ...
+
+class ProcessingWarning:
+    source: str
+    message: str
+    def __init__(self, source: str, message: str) -> None: ...
 
 class LlmUsage:
     model: str
@@ -27,14 +2392,3426 @@ class LlmUsage:
         finish_reason: str | None = None,
     ) -> None: ...
 
+class Chunk:
+    content: str
+    chunk_type: ChunkType
+    embedding: list[float] | None
+    metadata: ChunkMetadata
+    def __init__(
+        self,
+        content: str,
+        chunk_type: ChunkType | str,
+        metadata: ChunkMetadata,
+        embedding: list[float] | None = None,
+    ) -> None: ...
+
+class HeadingContext:
+    headings: list[HeadingLevel]
+    def __init__(self, headings: list[HeadingLevel]) -> None: ...
+
+class HeadingLevel:
+    level: int
+    text: str
+    def __init__(self, level: int, text: str) -> None: ...
+
+class ChunkMetadata:
+    byte_start: int
+    byte_end: int
+    token_count: int | None
+    chunk_index: int
+    total_chunks: int
+    first_page: int | None
+    last_page: int | None
+    heading_context: HeadingContext | None
+    def __init__(
+        self,
+        byte_start: int,
+        byte_end: int,
+        chunk_index: int,
+        total_chunks: int,
+        token_count: int | None = None,
+        first_page: int | None = None,
+        last_page: int | None = None,
+        heading_context: HeadingContext | None = None,
+    ) -> None: ...
+
+class ExtractedImage:
+    data: bytes
+    format: str
+    image_index: int
+    page_number: int | None
+    width: int | None
+    height: int | None
+    colorspace: str | None
+    bits_per_component: int | None
+    is_mask: bool
+    description: str | None
+    ocr_result: ExtractionResult | None
+    bounding_box: BoundingBox | None
+    source_path: str | None
+    def __init__(
+        self,
+        data: bytes,
+        format: str,  # noqa: A002
+        image_index: int,
+        is_mask: bool,
+        page_number: int | None = None,
+        width: int | None = None,
+        height: int | None = None,
+        colorspace: str | None = None,
+        bits_per_component: int | None = None,
+        description: str | None = None,
+        ocr_result: ExtractionResult | None = None,
+        bounding_box: BoundingBox | None = None,
+        source_path: str | None = None,
+    ) -> None: ...
+
+class ElementId:
+    def as_ref(self) -> str: ...
+    def fmt(self, f: str) -> str: ...
+    @staticmethod
+    def new(hex_str: str) -> ElementId: ...
+
+class BoundingBox:
+    x0: float
+    y0: float
+    x1: float
+    y1: float
+    def __init__(self, x0: float, y0: float, x1: float, y1: float) -> None: ...
+
+class ElementMetadata:
+    page_number: int | None
+    filename: str | None
+    coordinates: BoundingBox | None
+    element_index: int | None
+    additional: dict[str, str]
+    def __init__(
+        self,
+        additional: dict[str, str],
+        page_number: int | None = None,
+        filename: str | None = None,
+        coordinates: BoundingBox | None = None,
+        element_index: int | None = None,
+    ) -> None: ...
+
+class Element:
+    element_id: ElementId
+    element_type: ElementType
+    text: str
+    metadata: ElementMetadata
+    def __init__(
+        self,
+        element_id: ElementId,
+        element_type: ElementType | str,
+        text: str,
+        metadata: ElementMetadata,
+    ) -> None: ...
+
+class ExcelWorkbook:
+    sheets: list[ExcelSheet]
+    metadata: dict[str, str]
+    def __init__(self, sheets: list[ExcelSheet], metadata: dict[str, str]) -> None: ...
+
+class ExcelSheet:
+    name: str
+    markdown: str
+    row_count: int
+    col_count: int
+    cell_count: int
+    table_cells: list[list[str]] | None
+    def __init__(
+        self,
+        name: str,
+        markdown: str,
+        row_count: int,
+        col_count: int,
+        cell_count: int,
+        table_cells: list[list[str]] | None = None,
+    ) -> None: ...
+
+class XmlExtractionResult:
+    content: str
+    element_count: int
+    unique_elements: list[str]
+    def __init__(self, content: str, element_count: int, unique_elements: list[str]) -> None: ...
+
+class TextExtractionResult:
+    content: str
+    line_count: int
+    word_count: int
+    character_count: int
+    headers: list[str] | None
+    links: list[str] | None
+    code_blocks: list[str] | None
+    def __init__(
+        self,
+        content: str,
+        line_count: int,
+        word_count: int,
+        character_count: int,
+        headers: list[str] | None = None,
+        links: list[str] | None = None,
+        code_blocks: list[str] | None = None,
+    ) -> None: ...
+
+class PptxExtractionResult:
+    content: str
+    metadata: PptxMetadata
+    slide_count: int
+    image_count: int
+    table_count: int
+    images: list[ExtractedImage]
+    page_structure: PageStructure | None
+    page_contents: list[PageContent] | None
+    document: DocumentStructure | None
+    hyperlinks: list[str]
+    office_metadata: dict[str, str]
+    def __init__(
+        self,
+        content: str,
+        metadata: PptxMetadata,
+        slide_count: int,
+        image_count: int,
+        table_count: int,
+        images: list[ExtractedImage],
+        hyperlinks: list[str],
+        office_metadata: dict[str, str],
+        page_structure: PageStructure | None = None,
+        page_contents: list[PageContent] | None = None,
+        document: DocumentStructure | None = None,
+    ) -> None: ...
+
+class EmailExtractionResult:
+    subject: str | None
+    from_email: str | None
+    to_emails: list[str]
+    cc_emails: list[str]
+    bcc_emails: list[str]
+    date: str | None
+    message_id: str | None
+    plain_text: str | None
+    html_content: str | None
+    cleaned_text: str
+    attachments: list[EmailAttachment]
+    metadata: dict[str, str]
+    def __init__(
+        self,
+        to_emails: list[str],
+        cc_emails: list[str],
+        bcc_emails: list[str],
+        cleaned_text: str,
+        attachments: list[EmailAttachment],
+        metadata: dict[str, str],
+        subject: str | None = None,
+        from_email: str | None = None,
+        date: str | None = None,
+        message_id: str | None = None,
+        plain_text: str | None = None,
+        html_content: str | None = None,
+    ) -> None: ...
+
+class EmailAttachment:
+    name: str | None
+    filename: str | None
+    mime_type: str | None
+    size: int | None
+    is_image: bool
+    data: bytes | None
+    def __init__(
+        self,
+        is_image: bool,
+        name: str | None = None,
+        filename: str | None = None,
+        mime_type: str | None = None,
+        size: int | None = None,
+        data: bytes | None = None,
+    ) -> None: ...
+
+class OcrExtractionResult:
+    content: str
+    mime_type: str
+    metadata: dict[str, dict[str, Any]]
+    tables: list[OcrTable]
+    ocr_elements: list[OcrElement] | None
+    internal_document: str | None
+    def __init__(
+        self,
+        content: str,
+        mime_type: str,
+        metadata: dict[str, dict[str, Any]],
+        tables: list[OcrTable],
+        ocr_elements: list[OcrElement] | None = None,
+        internal_document: str | None = None,
+    ) -> None: ...
+
+class OcrTable:
+    cells: list[list[str]]
+    markdown: str
+    page_number: int
+    bounding_box: OcrTableBoundingBox | None
+    def __init__(
+        self,
+        cells: list[list[str]],
+        markdown: str,
+        page_number: int,
+        bounding_box: OcrTableBoundingBox | None = None,
+    ) -> None: ...
+
+class OcrTableBoundingBox:
+    left: int
+    top: int
+    right: int
+    bottom: int
+    def __init__(self, left: int, top: int, right: int, bottom: int) -> None: ...
+
+class ImagePreprocessingConfig:
+    target_dpi: int
+    auto_rotate: bool
+    deskew: bool
+    denoise: bool
+    contrast_enhance: bool
+    binarization_method: str
+    invert_colors: bool
+    def __init__(
+        self,
+        target_dpi: int,
+        auto_rotate: bool,
+        deskew: bool,
+        denoise: bool,
+        contrast_enhance: bool,
+        binarization_method: str,
+        invert_colors: bool,
+    ) -> None: ...
+    @staticmethod
+    def default() -> ImagePreprocessingConfig: ...
+
+class TesseractConfig:
+    language: str
+    psm: int
+    output_format: str
+    oem: int
+    min_confidence: float
+    preprocessing: ImagePreprocessingConfig | None
+    enable_table_detection: bool
+    table_min_confidence: float
+    table_column_threshold: int
+    table_row_threshold_ratio: float
+    use_cache: bool
+    classify_use_pre_adapted_templates: bool
+    language_model_ngram_on: bool
+    tessedit_dont_blkrej_good_wds: bool
+    tessedit_dont_rowrej_good_wds: bool
+    tessedit_enable_dict_correction: bool
+    tessedit_char_whitelist: str
+    tessedit_char_blacklist: str
+    tessedit_use_primary_params_model: bool
+    textord_space_size_is_variable: bool
+    thresholding_method: bool
+    def __init__(
+        self,
+        language: str,
+        psm: int,
+        output_format: str,
+        oem: int,
+        min_confidence: float,
+        enable_table_detection: bool,
+        table_min_confidence: float,
+        table_column_threshold: int,
+        table_row_threshold_ratio: float,
+        use_cache: bool,
+        classify_use_pre_adapted_templates: bool,
+        language_model_ngram_on: bool,
+        tessedit_dont_blkrej_good_wds: bool,
+        tessedit_dont_rowrej_good_wds: bool,
+        tessedit_enable_dict_correction: bool,
+        tessedit_char_whitelist: str,
+        tessedit_char_blacklist: str,
+        tessedit_use_primary_params_model: bool,
+        textord_space_size_is_variable: bool,
+        thresholding_method: bool,
+        preprocessing: ImagePreprocessingConfig | None = None,
+    ) -> None: ...
+    @staticmethod
+    def default() -> TesseractConfig: ...
+
+class ImagePreprocessingMetadata:
+    original_dimensions: str
+    original_dpi: str
+    target_dpi: int
+    scale_factor: float
+    auto_adjusted: bool
+    final_dpi: int
+    new_dimensions: str | None
+    resample_method: str
+    dimension_clamped: bool
+    calculated_dpi: int | None
+    skipped_resize: bool
+    resize_error: str | None
+    def __init__(
+        self,
+        original_dimensions: str,
+        original_dpi: str,
+        target_dpi: int,
+        scale_factor: float,
+        auto_adjusted: bool,
+        final_dpi: int,
+        resample_method: str,
+        dimension_clamped: bool,
+        skipped_resize: bool,
+        new_dimensions: str | None = None,
+        calculated_dpi: int | None = None,
+        resize_error: str | None = None,
+    ) -> None: ...
+
+class Metadata:
+    title: str | None
+    subject: str | None
+    authors: list[str] | None
+    keywords: list[str] | None
+    language: str | None
+    created_at: str | None
+    modified_at: str | None
+    created_by: str | None
+    modified_by: str | None
+    pages: PageStructure | None
+    format: FormatMetadata | None
+    image_preprocessing: ImagePreprocessingMetadata | None
+    json_schema: dict[str, Any] | None
+    error: ErrorMetadata | None
+    extraction_duration_ms: int | None
+    category: str | None
+    tags: list[str] | None
+    document_version: str | None
+    abstract_text: str | None
+    output_format: str | None
+    additional: str
+    def __init__(
+        self,
+        additional: str,
+        title: str | None = None,
+        subject: str | None = None,
+        authors: list[str] | None = None,
+        keywords: list[str] | None = None,
+        language: str | None = None,
+        created_at: str | None = None,
+        modified_at: str | None = None,
+        created_by: str | None = None,
+        modified_by: str | None = None,
+        pages: PageStructure | None = None,
+        format: FormatMetadata | dict[str, Any] | None = None,  # noqa: A002
+        image_preprocessing: ImagePreprocessingMetadata | None = None,
+        json_schema: dict[str, Any] | None = None,
+        error: ErrorMetadata | None = None,
+        extraction_duration_ms: int | None = None,
+        category: str | None = None,
+        tags: list[str] | None = None,
+        document_version: str | None = None,
+        abstract_text: str | None = None,
+        output_format: str | None = None,
+    ) -> None: ...
+
+class ExcelMetadata:
+    sheet_count: int
+    sheet_names: list[str]
+    def __init__(self, sheet_count: int, sheet_names: list[str]) -> None: ...
+
+class EmailMetadata:
+    from_email: str | None
+    from_name: str | None
+    to_emails: list[str]
+    cc_emails: list[str]
+    bcc_emails: list[str]
+    message_id: str | None
+    attachments: list[str]
+    def __init__(
+        self,
+        to_emails: list[str],
+        cc_emails: list[str],
+        bcc_emails: list[str],
+        attachments: list[str],
+        from_email: str | None = None,
+        from_name: str | None = None,
+        message_id: str | None = None,
+    ) -> None: ...
+
+class ArchiveMetadata:
+    format: str
+    file_count: int
+    file_list: list[str]
+    total_size: int
+    compressed_size: int | None
+    def __init__(
+        self,
+        format: str,  # noqa: A002
+        file_count: int,
+        file_list: list[str],
+        total_size: int,
+        compressed_size: int | None = None,
+    ) -> None: ...
+
+class ImageMetadata:
+    width: int
+    height: int
+    format: str
+    exif: dict[str, str]
+    def __init__(self, width: int, height: int, format: str, exif: dict[str, str]) -> None: ...
+
+class XmlMetadata:
+    element_count: int
+    unique_elements: list[str]
+    def __init__(self, element_count: int, unique_elements: list[str]) -> None: ...
+
+class TextMetadata:
+    line_count: int
+    word_count: int
+    character_count: int
+    headers: list[str] | None
+    links: list[str] | None
+    code_blocks: list[str] | None
+    def __init__(
+        self,
+        line_count: int,
+        word_count: int,
+        character_count: int,
+        headers: list[str] | None = None,
+        links: list[str] | None = None,
+        code_blocks: list[str] | None = None,
+    ) -> None: ...
+
+class HeaderMetadata:
+    level: int
+    text: str
+    id: str | None
+    depth: int
+    html_offset: int
+    def __init__(
+        self,
+        level: int,
+        text: str,
+        depth: int,
+        html_offset: int,
+        id: str | None = None,  # noqa: A002
+    ) -> None: ...
+
+class LinkMetadata:
+    href: str
+    text: str
+    title: str | None
+    link_type: LinkType
+    rel: list[str]
+    attributes: list[str]
+    def __init__(
+        self,
+        href: str,
+        text: str,
+        link_type: LinkType | str,
+        rel: list[str],
+        attributes: list[str],
+        title: str | None = None,
+    ) -> None: ...
+
+class ImageMetadataType:
+    src: str
+    alt: str | None
+    title: str | None
+    dimensions: str | None
+    image_type: ImageType
+    attributes: list[str]
+    def __init__(
+        self,
+        src: str,
+        image_type: ImageType | str,
+        attributes: list[str],
+        alt: str | None = None,
+        title: str | None = None,
+        dimensions: str | None = None,
+    ) -> None: ...
+
+class StructuredData:
+    data_type: StructuredDataType
+    raw_json: str
+    schema_type: str | None
+    def __init__(
+        self,
+        data_type: StructuredDataType | str,
+        raw_json: str,
+        schema_type: str | None = None,
+    ) -> None: ...
+
+class HtmlMetadata:
+    title: str | None
+    description: str | None
+    keywords: list[str]
+    author: str | None
+    canonical_url: str | None
+    base_href: str | None
+    language: str | None
+    text_direction: TextDirection | None
+    open_graph: dict[str, str]
+    twitter_card: dict[str, str]
+    meta_tags: dict[str, str]
+    headers: list[HeaderMetadata]
+    links: list[LinkMetadata]
+    images: list[ImageMetadataType]
+    structured_data: list[StructuredData]
+    def __init__(
+        self,
+        keywords: list[str],
+        open_graph: dict[str, str],
+        twitter_card: dict[str, str],
+        meta_tags: dict[str, str],
+        headers: list[HeaderMetadata],
+        links: list[LinkMetadata],
+        images: list[ImageMetadataType],
+        structured_data: list[StructuredData],
+        title: str | None = None,
+        description: str | None = None,
+        author: str | None = None,
+        canonical_url: str | None = None,
+        base_href: str | None = None,
+        language: str | None = None,
+        text_direction: TextDirection | str | None = None,
+    ) -> None: ...
+    def is_empty(self) -> bool: ...
+    @staticmethod
+    def from_(metadata: HtmlMetadata) -> HtmlMetadata: ...
+
+class OcrMetadata:
+    language: str
+    psm: int
+    output_format: str
+    table_count: int
+    table_rows: int | None
+    table_cols: int | None
+    def __init__(
+        self,
+        language: str,
+        psm: int,
+        output_format: str,
+        table_count: int,
+        table_rows: int | None = None,
+        table_cols: int | None = None,
+    ) -> None: ...
+
+class ErrorMetadata:
+    error_type: str
+    message: str
+    def __init__(self, error_type: str, message: str) -> None: ...
+
+class PptxMetadata:
+    slide_count: int
+    slide_names: list[str]
+    image_count: int | None
+    table_count: int | None
+    def __init__(
+        self,
+        slide_count: int,
+        slide_names: list[str],
+        image_count: int | None = None,
+        table_count: int | None = None,
+    ) -> None: ...
+
+class DocxMetadata:
+    core_properties: str | None
+    app_properties: str | None
+    custom_properties: dict[str, dict[str, Any]] | None
+    def __init__(
+        self,
+        core_properties: str | None = None,
+        app_properties: str | None = None,
+        custom_properties: dict[str, dict[str, Any]] | None = None,
+    ) -> None: ...
+
+class CsvMetadata:
+    row_count: int
+    column_count: int
+    delimiter: str | None
+    has_header: bool
+    column_types: list[str] | None
+    def __init__(
+        self,
+        row_count: int,
+        column_count: int,
+        has_header: bool,
+        delimiter: str | None = None,
+        column_types: list[str] | None = None,
+    ) -> None: ...
+
+class BibtexMetadata:
+    entry_count: int
+    citation_keys: list[str]
+    authors: list[str]
+    year_range: YearRange | None
+    entry_types: dict[str, int] | None
+    def __init__(
+        self,
+        entry_count: int,
+        citation_keys: list[str],
+        authors: list[str],
+        year_range: YearRange | None = None,
+        entry_types: dict[str, int] | None = None,
+    ) -> None: ...
+
+class CitationMetadata:
+    citation_count: int
+    format: str | None
+    authors: list[str]
+    year_range: YearRange | None
+    dois: list[str]
+    keywords: list[str]
+    def __init__(
+        self,
+        citation_count: int,
+        authors: list[str],
+        dois: list[str],
+        keywords: list[str],
+        format: str | None = None,  # noqa: A002
+        year_range: YearRange | None = None,
+    ) -> None: ...
+
+class YearRange:
+    min: int | None
+    max: int | None
+    years: list[int]
+    def __init__(
+        self,
+        years: list[int],
+        min: int | None = None,  # noqa: A002
+        max: int | None = None,  # noqa: A002
+    ) -> None: ...
+
+class FictionBookMetadata:
+    genres: list[str]
+    sequences: list[str]
+    annotation: str | None
+    def __init__(
+        self,
+        genres: list[str],
+        sequences: list[str],
+        annotation: str | None = None,
+    ) -> None: ...
+
+class DbfMetadata:
+    record_count: int
+    field_count: int
+    fields: list[DbfFieldInfo]
+    def __init__(self, record_count: int, field_count: int, fields: list[DbfFieldInfo]) -> None: ...
+
+class DbfFieldInfo:
+    name: str
+    field_type: str
+    def __init__(self, name: str, field_type: str) -> None: ...
+
+class JatsMetadata:
+    copyright: str | None
+    license: str | None
+    history_dates: dict[str, str]
+    contributor_roles: list[ContributorRole]
+    def __init__(
+        self,
+        history_dates: dict[str, str],
+        contributor_roles: list[ContributorRole],
+        copyright: str | None = None,
+        license: str | None = None,
+    ) -> None: ...
+
+class ContributorRole:
+    name: str
+    role: str | None
+    def __init__(self, name: str, role: str | None = None) -> None: ...
+
+class EpubMetadata:
+    coverage: str | None
+    dc_format: str | None
+    relation: str | None
+    source: str | None
+    dc_type: str | None
+    cover_image: str | None
+    def __init__(
+        self,
+        coverage: str | None = None,
+        dc_format: str | None = None,
+        relation: str | None = None,
+        source: str | None = None,
+        dc_type: str | None = None,
+        cover_image: str | None = None,
+    ) -> None: ...
+
+class PstMetadata:
+    message_count: int
+    def __init__(self, message_count: int) -> None: ...
+
+class OcrConfidence:
+    detection: float | None
+    recognition: float
+    def __init__(self, recognition: float, detection: float | None = None) -> None: ...
+    @staticmethod
+    def from_tesseract(confidence: float) -> OcrConfidence: ...
+    @staticmethod
+    def from_paddle(box_score: float, text_score: float) -> OcrConfidence: ...
+
+class OcrRotation:
+    angle_degrees: float
+    confidence: float | None
+    def __init__(self, angle_degrees: float, confidence: float | None = None) -> None: ...
+    @staticmethod
+    def from_paddle(angle_index: int, angle_score: float) -> OcrRotation: ...
+
+class OcrElement:
+    text: str
+    geometry: OcrBoundingGeometry
+    confidence: OcrConfidence
+    level: OcrElementLevel
+    rotation: OcrRotation | None
+    page_number: int
+    parent_id: str | None
+    backend_metadata: dict[str, dict[str, Any]]
+    def __init__(
+        self,
+        text: str,
+        geometry: OcrBoundingGeometry | dict[str, Any],
+        confidence: OcrConfidence,
+        level: OcrElementLevel | str,
+        page_number: int,
+        backend_metadata: dict[str, dict[str, Any]],
+        rotation: OcrRotation | None = None,
+        parent_id: str | None = None,
+    ) -> None: ...
+    def with_level(self, level: OcrElementLevel) -> OcrElement: ...
+    def with_rotation(self, rotation: OcrRotation) -> OcrElement: ...
+    def with_page_number(self, page_number: int) -> OcrElement: ...
+    def with_parent_id(self, parent_id: str) -> OcrElement: ...
+    def with_metadata(self, key: str, value: dict[str, Any]) -> OcrElement: ...
+    def with_rotation_opt(self, rotation: OcrRotation | None = None) -> OcrElement: ...
+
+class OcrElementConfig:
+    include_elements: bool
+    min_level: OcrElementLevel
+    min_confidence: float
+    build_hierarchy: bool
+    def __init__(
+        self,
+        include_elements: bool,
+        min_level: OcrElementLevel | str,
+        min_confidence: float,
+        build_hierarchy: bool,
+    ) -> None: ...
+
+class PageStructure:
+    total_count: int
+    unit_type: PageUnitType
+    boundaries: list[PageBoundary] | None
+    pages: list[PageInfo] | None
+    def __init__(
+        self,
+        total_count: int,
+        unit_type: PageUnitType | str,
+        boundaries: list[PageBoundary] | None = None,
+        pages: list[PageInfo] | None = None,
+    ) -> None: ...
+
+class PageBoundary:
+    byte_start: int
+    byte_end: int
+    page_number: int
+    def __init__(self, byte_start: int, byte_end: int, page_number: int) -> None: ...
+
+class PageInfo:
+    number: int
+    title: str | None
+    dimensions: str | None
+    image_count: int | None
+    table_count: int | None
+    hidden: bool | None
+    is_blank: bool | None
+    def __init__(
+        self,
+        number: int,
+        title: str | None = None,
+        dimensions: str | None = None,
+        image_count: int | None = None,
+        table_count: int | None = None,
+        hidden: bool | None = None,
+        is_blank: bool | None = None,
+    ) -> None: ...
+
+class PageContent:
+    page_number: int
+    content: str
+    tables: list[Table]
+    images: list[ExtractedImage]
+    hierarchy: PageHierarchy | None
+    is_blank: bool | None
+    def __init__(
+        self,
+        page_number: int,
+        content: str,
+        tables: list[Table],
+        images: list[ExtractedImage],
+        hierarchy: PageHierarchy | None = None,
+        is_blank: bool | None = None,
+    ) -> None: ...
+
+class PageHierarchy:
+    block_count: int
+    blocks: list[HierarchicalBlock]
+    def __init__(self, block_count: int, blocks: list[HierarchicalBlock]) -> None: ...
+
+class HierarchicalBlock:
+    text: str
+    font_size: float
+    level: str
+    bbox: str | None
+    def __init__(
+        self,
+        text: str,
+        font_size: float,
+        level: str,
+        bbox: str | None = None,
+    ) -> None: ...
+
+class Table:
+    cells: list[list[str]]
+    markdown: str
+    page_number: int
+    bounding_box: BoundingBox | None
+    def __init__(
+        self,
+        cells: list[list[str]],
+        markdown: str,
+        page_number: int,
+        bounding_box: BoundingBox | None = None,
+    ) -> None: ...
+
+class TableCell:
+    content: str
+    row_span: int
+    col_span: int
+    is_header: bool
+    def __init__(self, content: str, row_span: int, col_span: int, is_header: bool) -> None: ...
+
+class Uri:
+    url: str
+    label: str | None
+    page: int | None
+    kind: UriKind
+    def __init__(
+        self,
+        url: str,
+        kind: UriKind | str,
+        label: str | None = None,
+        page: int | None = None,
+    ) -> None: ...
+    def with_page(self, page: int) -> Uri: ...
+    @staticmethod
+    def hyperlink(url: str, label: str | None = None) -> Uri: ...
+    @staticmethod
+    def image(url: str, label: str | None = None) -> Uri: ...
+    @staticmethod
+    def citation(url: str, label: str | None = None) -> Uri: ...
+    @staticmethod
+    def anchor(url: str, label: str | None = None) -> Uri: ...
+    @staticmethod
+    def email(url: str, label: str | None = None) -> Uri: ...
+    @staticmethod
+    def reference(url: str, label: str | None = None) -> Uri: ...
+
+class PoolMetrics:
+    total_acquires: str
+    total_cache_hits: str
+    peak_items_stored: str
+    total_creations: str
+    def __init__(
+        self,
+        total_acquires: str,
+        total_cache_hits: str,
+        peak_items_stored: str,
+        total_creations: str,
+    ) -> None: ...
+    def hit_rate(self) -> float: ...
+    def snapshot(self) -> PoolMetricsSnapshot: ...
+    def reset(self) -> None: ...
+    @staticmethod
+    def default() -> PoolMetrics: ...
+
+class PoolMetricsSnapshot:
+    total_acquires: int
+    total_cache_hits: int
+    peak_items_stored: int
+    total_creations: int
+    def __init__(
+        self,
+        total_acquires: int,
+        total_cache_hits: int,
+        peak_items_stored: int,
+        total_creations: int,
+    ) -> None: ...
+
+class Recyclable:
+    def reset(self) -> None: ...
+
+class StringBufferPool:
+    ...
+
+class ByteBufferPool:
+    ...
+
+class Pool:
+    def acquire(self) -> str: ...
+    def size(self) -> int: ...
+    def clear(self) -> None: ...
+
+class PoolSizeHint:
+    estimated_total_size: int
+    string_buffer_count: int
+    string_buffer_capacity: int
+    byte_buffer_count: int
+    byte_buffer_capacity: int
+    def __init__(
+        self,
+        estimated_total_size: int,
+        string_buffer_count: int,
+        string_buffer_capacity: int,
+        byte_buffer_count: int,
+        byte_buffer_capacity: int,
+    ) -> None: ...
+    def estimated_string_pool_memory(self) -> int: ...
+    def estimated_byte_pool_memory(self) -> int: ...
+    def total_pool_memory(self) -> int: ...
+
+class PoolConfig:
+    max_buffers_per_size: int
+    initial_capacity: int
+    max_capacity_before_discard: int
+    def __init__(
+        self,
+        max_buffers_per_size: int,
+        initial_capacity: int,
+        max_capacity_before_discard: int,
+    ) -> None: ...
+    @staticmethod
+    def default() -> PoolConfig: ...
+
+class StringBufferPoolMetrics:
+    total_acquires: int
+    total_reuses: int
+    hit_rate: float
+    def __init__(self, total_acquires: int, total_reuses: int, hit_rate: float) -> None: ...
+
+class PooledString:
+    def buffer_mut(self) -> str: ...
+    def as_str(self) -> str: ...
+    def deref(self) -> str: ...
+    def deref_mut(self) -> str: ...
+    def drop(self) -> None: ...
+    def fmt(self, f: str) -> str: ...
+
+class InternedString:
+    def as_str(self) -> str: ...
+    def as_ref(self) -> str: ...
+    def fmt(self, f: str) -> str: ...
+    def eq(self, other: InternedString) -> bool: ...
+    def deref(self) -> str: ...
+
+class Instant:
+    def elapsed_secs_f64(self) -> float: ...
+    def elapsed_ms(self) -> float: ...
+    def elapsed_millis(self) -> str: ...
+    @staticmethod
+    def now() -> Instant: ...
+
+class HocrWord:
+    text: str
+    left: int
+    top: int
+    width: int
+    height: int
+    confidence: float
+    def __init__(
+        self,
+        text: str,
+        left: int,
+        top: int,
+        width: int,
+        height: int,
+        confidence: float,
+    ) -> None: ...
+    def right(self) -> int: ...
+    def bottom(self) -> int: ...
+    def y_center(self) -> float: ...
+    def x_center(self) -> float: ...
+
+class ExtractionService:
+    def poll_ready(self, _cx: str) -> str: ...
+    def call(self, req: ExtractionRequest) -> str: ...
+    @staticmethod
+    def default() -> ExtractionService: ...
+
+class TracingLayer:
+    def layer(self, inner: str) -> str: ...
+
+class MetricsLayer:
+    def layer(self, inner: str) -> str: ...
+
+class ExtractionRequest:
+    source: ExtractionSource
+    config: ExtractionConfig
+    file_overrides: FileExtractionConfig | None
+    def __init__(
+        self,
+        source: ExtractionSource | dict[str, Any],
+        config: ExtractionConfig,
+        file_overrides: FileExtractionConfig | None = None,
+    ) -> None: ...
+    def with_overrides(self, overrides: FileExtractionConfig) -> ExtractionRequest: ...
+    @staticmethod
+    def file(path: str, config: ExtractionConfig) -> ExtractionRequest: ...
+    @staticmethod
+    def file_with_mime(
+        path: str,
+        mime_hint: str,
+        config: ExtractionConfig,
+    ) -> ExtractionRequest: ...
+    @staticmethod
+    def bytes(data: bytes, mime_type: str, config: ExtractionConfig) -> ExtractionRequest: ...
+
+class ExtractionServiceBuilder:
+    def with_timeout(self, duration: int) -> ExtractionServiceBuilder: ...
+    def with_concurrency_limit(self, max: int) -> ExtractionServiceBuilder: ...
+    def with_tracing(self) -> ExtractionServiceBuilder: ...
+    def with_metrics(self) -> ExtractionServiceBuilder: ...
+    def build(self) -> str: ...
+    @staticmethod
+    def default() -> ExtractionServiceBuilder: ...
+
+class MultipartApi:
+    _0: str
+    def __init__(self, _0: str) -> None: ...
+    @staticmethod
+    def from_request(req: str, state: str) -> MultipartApi: ...
+
+class ApiError:
+    status: str
+    body: ErrorResponse
+    def __init__(self, status: str, body: ErrorResponse) -> None: ...
+    def into_response(self) -> str: ...
+    @staticmethod
+    def validation(error: str) -> ApiError: ...
+    @staticmethod
+    def unprocessable(error: str) -> ApiError: ...
+    @staticmethod
+    def internal(error: str) -> ApiError: ...
+    @staticmethod
+    def bad_gateway(error: str) -> ApiError: ...
+    @staticmethod
+    def from_(error: str) -> ApiError: ...
+
+class ApiDoc:
+    ...
+
+class ApiSizeLimits:
+    max_request_body_bytes: int
+    max_multipart_field_bytes: int
+    def __init__(self, max_request_body_bytes: int, max_multipart_field_bytes: int) -> None: ...
+    @staticmethod
+    def default() -> ApiSizeLimits: ...
+    @staticmethod
+    def from_mb(max_request_body_mb: int, max_multipart_field_mb: int) -> ApiSizeLimits: ...
+
+class PluginStatus:
+    ocr_backends_count: int
+    ocr_backends: list[str]
+    extractors_count: int
+    post_processors_count: int
+    def __init__(
+        self,
+        ocr_backends_count: int,
+        ocr_backends: list[str],
+        extractors_count: int,
+        post_processors_count: int,
+    ) -> None: ...
+
+class HealthResponse:
+    status: str
+    version: str
+    plugins: PluginStatus | None
+    def __init__(self, status: str, version: str, plugins: PluginStatus | None = None) -> None: ...
+
+class InfoResponse:
+    version: str
+    rust_backend: bool
+    def __init__(self, version: str, rust_backend: bool) -> None: ...
+
+class ExtractResponse:
+    ...
+
+class ErrorResponse:
+    error_type: str
+    message: str
+    traceback: str | None
+    status_code: int
+    def __init__(
+        self,
+        error_type: str,
+        message: str,
+        status_code: int,
+        traceback: str | None = None,
+    ) -> None: ...
+
+class ApiState:
+    default_config: ExtractionConfig
+    extraction_service: str
+    def __init__(self, default_config: ExtractionConfig, extraction_service: str) -> None: ...
+
+class CacheStatsResponse:
+    directory: str
+    total_files: int
+    total_size_mb: float
+    available_space_mb: float
+    oldest_file_age_days: float
+    newest_file_age_days: float
+    def __init__(
+        self,
+        directory: str,
+        total_files: int,
+        total_size_mb: float,
+        available_space_mb: float,
+        oldest_file_age_days: float,
+        newest_file_age_days: float,
+    ) -> None: ...
+
+class CacheClearResponse:
+    directory: str
+    removed_files: int
+    freed_mb: float
+    def __init__(self, directory: str, removed_files: int, freed_mb: float) -> None: ...
+
+class EmbedRequest:
+    texts: list[str]
+    config: EmbeddingConfig | None
+    def __init__(self, texts: list[str], config: EmbeddingConfig | None = None) -> None: ...
+
+class EmbedResponse:
+    embeddings: list[list[float]]
+    model: str
+    dimensions: int
+    count: int
+    def __init__(
+        self,
+        embeddings: list[list[float]],
+        model: str,
+        dimensions: int,
+        count: int,
+    ) -> None: ...
+
+class ChunkRequest:
+    text: str
+    config: ChunkingConfigRequest | None
+    chunker_type: str
+    def __init__(
+        self,
+        text: str,
+        chunker_type: str,
+        config: ChunkingConfigRequest | None = None,
+    ) -> None: ...
+
+class ChunkingConfigRequest:
+    max_characters: int | None
+    overlap: int | None
+    trim: bool | None
+    def __init__(
+        self,
+        max_characters: int | None = None,
+        overlap: int | None = None,
+        trim: bool | None = None,
+    ) -> None: ...
+
+class ChunkResponse:
+    chunks: list[ChunkItem]
+    chunk_count: int
+    config: ChunkingConfigResponse
+    input_size_bytes: int
+    chunker_type: str
+    def __init__(
+        self,
+        chunks: list[ChunkItem],
+        chunk_count: int,
+        config: ChunkingConfigResponse,
+        input_size_bytes: int,
+        chunker_type: str,
+    ) -> None: ...
+
+class ChunkItem:
+    content: str
+    byte_start: int
+    byte_end: int
+    chunk_index: int
+    total_chunks: int
+    first_page: int | None
+    last_page: int | None
+    def __init__(
+        self,
+        content: str,
+        byte_start: int,
+        byte_end: int,
+        chunk_index: int,
+        total_chunks: int,
+        first_page: int | None = None,
+        last_page: int | None = None,
+    ) -> None: ...
+
+class VersionResponse:
+    version: str
+    def __init__(self, version: str) -> None: ...
+
+class DetectResponse:
+    mime_type: str
+    filename: str | None
+    def __init__(self, mime_type: str, filename: str | None = None) -> None: ...
+
+class ManifestEntryResponse:
+    relative_path: str
+    sha256: str
+    size_bytes: int
+    source_url: str
+    def __init__(
+        self,
+        relative_path: str,
+        sha256: str,
+        size_bytes: int,
+        source_url: str,
+    ) -> None: ...
+
+class ManifestResponse:
+    kreuzberg_version: str
+    total_size_bytes: int
+    model_count: int
+    models: list[ManifestEntryResponse]
+    def __init__(
+        self,
+        kreuzberg_version: str,
+        total_size_bytes: int,
+        model_count: int,
+        models: list[ManifestEntryResponse],
+    ) -> None: ...
+
+class WarmRequest:
+    all_embeddings: bool
+    embedding_model: str | None
+    def __init__(self, all_embeddings: bool, embedding_model: str | None = None) -> None: ...
+
+class WarmResponse:
+    cache_dir: str
+    downloaded: list[str]
+    already_cached: list[str]
+    def __init__(
+        self,
+        cache_dir: str,
+        downloaded: list[str],
+        already_cached: list[str],
+    ) -> None: ...
+
+class StructuredExtractionResponse:
+    structured_output: dict[str, Any]
+    content: str
+    mime_type: str
+    def __init__(self, structured_output: dict[str, Any], content: str, mime_type: str) -> None: ...
+
+class OpenWebDocumentResponse:
+    page_content: str
+    metadata: OpenWebDocumentMetadata
+    def __init__(self, page_content: str, metadata: OpenWebDocumentMetadata) -> None: ...
+
+class OpenWebDocumentMetadata:
+    source: str
+    def __init__(self, source: str) -> None: ...
+
+class DoclingCompatResponse:
+    document: DoclingCompatDocument
+    status: str
+    def __init__(self, document: DoclingCompatDocument, status: str) -> None: ...
+
+class DoclingCompatDocument:
+    md_content: str
+    def __init__(self, md_content: str) -> None: ...
+
+class ChunkingConfigResponse:
+    max_characters: int
+    overlap: int
+    trim: bool
+    chunker_type: str
+    def __init__(
+        self,
+        max_characters: int,
+        overlap: int,
+        trim: bool,
+        chunker_type: str,
+    ) -> None: ...
+
+class ExtractFileParams:
+    path: str
+    mime_type: str | None
+    config: dict[str, Any] | None
+    pdf_password: str | None
+    response_format: str | None
+    def __init__(
+        self,
+        path: str,
+        mime_type: str | None = None,
+        config: dict[str, Any] | None = None,
+        pdf_password: str | None = None,
+        response_format: str | None = None,
+    ) -> None: ...
+
+class ExtractBytesParams:
+    data: str
+    mime_type: str | None
+    config: dict[str, Any] | None
+    pdf_password: str | None
+    response_format: str | None
+    def __init__(
+        self,
+        data: str,
+        mime_type: str | None = None,
+        config: dict[str, Any] | None = None,
+        pdf_password: str | None = None,
+        response_format: str | None = None,
+    ) -> None: ...
+
+class BatchExtractFilesParams:
+    paths: list[str]
+    config: dict[str, Any] | None
+    pdf_password: str | None
+    file_configs: list[dict[str, Any] | None]
+    response_format: str | None
+    def __init__(
+        self,
+        paths: list[str],
+        config: dict[str, Any] | None = None,
+        pdf_password: str | None = None,
+        file_configs: list[dict[str, Any] | None] = None,
+        response_format: str | None = None,
+    ) -> None: ...
+
+class DetectMimeTypeParams:
+    path: str
+    use_content: bool
+    def __init__(self, path: str, use_content: bool) -> None: ...
+
+class EmptyParams:
+    ...
+
+class CacheWarmParams:
+    all_embeddings: bool
+    embedding_model: str | None
+    def __init__(self, all_embeddings: bool, embedding_model: str | None = None) -> None: ...
+
+class EmbedTextParams:
+    texts: list[str]
+    preset: str | None
+    model: str | None
+    api_key: str | None
+    def __init__(
+        self,
+        texts: list[str],
+        preset: str | None = None,
+        model: str | None = None,
+        api_key: str | None = None,
+    ) -> None: ...
+
+class ExtractStructuredParams:
+    path: str
+    schema: dict[str, Any]
+    model: str
+    schema_name: str
+    schema_description: str | None
+    prompt: str | None
+    api_key: str | None
+    strict: bool
+    def __init__(
+        self,
+        path: str,
+        schema: dict[str, Any],
+        model: str,
+        schema_name: str,
+        strict: bool,
+        schema_description: str | None = None,
+        prompt: str | None = None,
+        api_key: str | None = None,
+    ) -> None: ...
+
+class ChunkTextParams:
+    text: str
+    max_characters: int | None
+    overlap: int | None
+    chunker_type: str | None
+    def __init__(
+        self,
+        text: str,
+        max_characters: int | None = None,
+        overlap: int | None = None,
+        chunker_type: str | None = None,
+    ) -> None: ...
+
+class DownloadGrammarsParams:
+    languages: list[str] | None
+    groups: list[str] | None
+    all: bool | None
+    def __init__(
+        self,
+        languages: list[str] | None = None,
+        groups: list[str] | None = None,
+        all: bool | None = None,  # noqa: A002
+    ) -> None: ...
+
+class ListGrammarsParams:
+    downloaded_only: bool
+    filter: str | None
+    def __init__(self, downloaded_only: bool, filter: str | None = None) -> None: ...
+
+class KreuzbergMcp:
+    def clone(self) -> KreuzbergMcp: ...
+    def get_info(self) -> str: ...
+    @staticmethod
+    def new() -> KreuzbergMcp: ...
+    @staticmethod
+    def with_config(config: ExtractionConfig) -> KreuzbergMcp: ...
+    @staticmethod
+    def default() -> KreuzbergMcp: ...
+
+class ChunkingResult:
+    chunks: list[Chunk]
+    chunk_count: int
+    def __init__(self, chunks: list[Chunk], chunk_count: int) -> None: ...
+
+class ChunkingProcessor:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def process(self, result: ExtractionResult, config: ExtractionConfig) -> None: ...
+    def processing_stage(self) -> str: ...
+    def should_process(self, _result: ExtractionResult, config: ExtractionConfig) -> bool: ...
+    def estimated_duration_ms(self, result: ExtractionResult) -> int: ...
+
+class VlmOcrBackend:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def process_image(self, image_bytes: bytes, config: OcrConfig) -> ExtractionResult: ...
+    def supports_language(self, _lang: str) -> bool: ...
+    def backend_type(self) -> OcrBackendType: ...
+
+class YakeParams:
+    window_size: int
+    def __init__(self, window_size: int) -> None: ...
+    @staticmethod
+    def default() -> YakeParams: ...
+
+class RakeParams:
+    min_word_length: int
+    max_words_per_phrase: int
+    def __init__(self, min_word_length: int, max_words_per_phrase: int) -> None: ...
+    @staticmethod
+    def default() -> RakeParams: ...
+
+class KeywordConfig:
+    algorithm: KeywordAlgorithm
+    max_keywords: int
+    min_score: float
+    ngram_range: str
+    language: str | None
+    yake_params: YakeParams | None
+    rake_params: RakeParams | None
+    def __init__(
+        self,
+        algorithm: KeywordAlgorithm | str,
+        max_keywords: int,
+        min_score: float,
+        ngram_range: str,
+        language: str | None = None,
+        yake_params: YakeParams | None = None,
+        rake_params: RakeParams | None = None,
+    ) -> None: ...
+    def with_max_keywords(self, max: int) -> KeywordConfig: ...
+    def with_min_score(self, score: float) -> KeywordConfig: ...
+    def with_ngram_range(self, min: int, max: int) -> KeywordConfig: ...
+    def with_language(self, lang: str) -> KeywordConfig: ...
+    @staticmethod
+    def default() -> KeywordConfig: ...
+
+class Keyword:
+    text: str
+    score: float
+    algorithm: KeywordAlgorithm
+    positions: list[int] | None
+    def __init__(
+        self,
+        text: str,
+        score: float,
+        algorithm: KeywordAlgorithm | str,
+        positions: list[int] | None = None,
+    ) -> None: ...
+    @staticmethod
+    def with_positions(
+        text: str,
+        score: float,
+        algorithm: KeywordAlgorithm,
+        positions: list[int],
+    ) -> Keyword: ...
+
+class OcrCache:
+    def get_cached_result(
+        self,
+        image_hash: str,
+        backend: str,
+        config: str,
+    ) -> OcrExtractionResult | None: ...
+    def set_cached_result(
+        self,
+        image_hash: str,
+        backend: str,
+        config: str,
+        result: OcrExtractionResult,
+    ) -> None: ...
+    def clear(self) -> None: ...
+    def get_stats(self) -> OcrCacheStats: ...
+    @staticmethod
+    def new(cache_dir: str | None = None) -> OcrCache: ...
+
+class OcrCacheStats:
+    total_files: int
+    total_size_mb: float
+    def __init__(self, total_files: int, total_size_mb: float) -> None: ...
+
+class TsvRow:
+    level: int
+    page_num: int
+    block_num: int
+    par_num: int
+    line_num: int
+    word_num: int
+    left: int
+    top: int
+    width: int
+    height: int
+    conf: float
+    text: str
+    def __init__(
+        self,
+        level: int,
+        page_num: int,
+        block_num: int,
+        par_num: int,
+        line_num: int,
+        word_num: int,
+        left: int,
+        top: int,
+        width: int,
+        height: int,
+        conf: float,
+        text: str,
+    ) -> None: ...
+
+class LanguageRegistry:
+    def get_supported_languages(self, backend: str) -> list[str] | None: ...
+    def is_language_supported(self, backend: str, language: str) -> bool: ...
+    def get_backends(self) -> list[str]: ...
+    def get_language_count(self, backend: str) -> int: ...
+    @staticmethod
+    def global_() -> LanguageRegistry: ...
+    @staticmethod
+    def default() -> LanguageRegistry: ...
+
+class RecognizedTable:
+    detection_bbox: BBox
+    cells: list[list[str]]
+    markdown: str
+    def __init__(self, detection_bbox: BBox, cells: list[list[str]], markdown: str) -> None: ...
+
+class OcrProcessor:
+    def process_image(self, image_bytes: bytes, config: TesseractConfig) -> OcrExtractionResult: ...
+    def process_image_with_format(
+        self,
+        image_bytes: bytes,
+        config: TesseractConfig,
+        output_format: OutputFormat,
+    ) -> OcrExtractionResult: ...
+    def clear_cache(self) -> None: ...
+    def get_cache_stats(self) -> OcrCacheStats: ...
+    def process_image_file(
+        self,
+        file_path: str,
+        config: TesseractConfig,
+    ) -> OcrExtractionResult: ...
+    def process_image_file_with_format(
+        self,
+        file_path: str,
+        config: TesseractConfig,
+        output_format: OutputFormat,
+    ) -> OcrExtractionResult: ...
+    def process_image_files_batch(
+        self,
+        file_paths: list[str],
+        config: TesseractConfig,
+    ) -> list[str]: ...
+    @staticmethod
+    def new(cache_dir: str | None = None) -> OcrProcessor: ...
+
+class TessdataManager:
+    def cache_dir(self) -> str: ...
+    def is_language_cached(self, lang: str) -> bool: ...
+
+class TesseractBackend:
+    def name(self) -> str: ...
+    def version(self) -> str: ...
+    def initialize(self) -> None: ...
+    def shutdown(self) -> None: ...
+    def process_image(self, image_bytes: bytes, config: OcrConfig) -> ExtractionResult: ...
+    def process_image_file(self, path: str, config: OcrConfig) -> ExtractionResult: ...
+    def supports_language(self, lang: str) -> bool: ...
+    def backend_type(self) -> OcrBackendType: ...
+    def supported_languages(self) -> list[str]: ...
+    def supports_table_detection(self) -> bool: ...
+    @staticmethod
+    def new() -> TesseractBackend: ...
+    @staticmethod
+    def with_cache_dir(cache_dir: str) -> TesseractBackend: ...
+    @staticmethod
+    def default() -> TesseractBackend: ...
+
+class PaddleOcrConfig:
+    language: str
+    cache_dir: str | None
+    use_angle_cls: bool
+    enable_table_detection: bool
+    det_db_thresh: float
+    det_db_box_thresh: float
+    det_db_unclip_ratio: float
+    det_limit_side_len: int
+    rec_batch_num: int
+    padding: int
+    drop_score: float
+    model_tier: str
+    def __init__(
+        self,
+        language: str,
+        use_angle_cls: bool,
+        enable_table_detection: bool,
+        det_db_thresh: float,
+        det_db_box_thresh: float,
+        det_db_unclip_ratio: float,
+        det_limit_side_len: int,
+        rec_batch_num: int,
+        padding: int,
+        drop_score: float,
+        model_tier: str,
+        cache_dir: str | None = None,
+    ) -> None: ...
+    def with_cache_dir(self, path: str) -> PaddleOcrConfig: ...
+    def with_table_detection(self, enable: bool) -> PaddleOcrConfig: ...
+    def with_angle_cls(self, enable: bool) -> PaddleOcrConfig: ...
+    def with_det_db_thresh(self, threshold: float) -> PaddleOcrConfig: ...
+    def with_det_db_box_thresh(self, threshold: float) -> PaddleOcrConfig: ...
+    def with_det_db_unclip_ratio(self, ratio: float) -> PaddleOcrConfig: ...
+    def with_det_limit_side_len(self, length: int) -> PaddleOcrConfig: ...
+    def with_rec_batch_num(self, batch_size: int) -> PaddleOcrConfig: ...
+    def with_drop_score(self, score: float) -> PaddleOcrConfig: ...
+    def with_padding(self, padding: int) -> PaddleOcrConfig: ...
+    def with_model_tier(self, tier: str) -> PaddleOcrConfig: ...
+    def resolve_cache_dir(self) -> str: ...
+    @staticmethod
+    def default() -> PaddleOcrConfig: ...
+
+class ModelPaths:
+    det_model: str
+    cls_model: str
+    rec_model: str
+    dict_file: str
+    def __init__(self, det_model: str, cls_model: str, rec_model: str, dict_file: str) -> None: ...
+
+class OrientationResult:
+    degrees: int
+    confidence: float
+    def __init__(self, degrees: int, confidence: float) -> None: ...
+
+class LayoutModel:
+    def detect(self, img: str) -> list[LayoutDetection]: ...
+    def detect_with_threshold(self, img: str, threshold: float) -> list[LayoutDetection]: ...
+    def detect_batch(
+        self,
+        images: list[str],
+        threshold: float | None = None,
+    ) -> list[list[LayoutDetection]]: ...
+    def name(self) -> str: ...
+
+class BBox:
+    x1: float
+    y1: float
+    x2: float
+    y2: float
+    def __init__(self, x1: float, y1: float, x2: float, y2: float) -> None: ...
+    def width(self) -> float: ...
+    def height(self) -> float: ...
+    def area(self) -> float: ...
+    def center(self) -> str: ...
+    def intersection_area(self, other: BBox) -> float: ...
+    def iou(self, other: BBox) -> float: ...
+    def containment_of(self, other: BBox) -> float: ...
+    def page_coverage(self, page_width: float, page_height: float) -> float: ...
+    def fmt(self, f: str) -> str: ...
+
+class LayoutDetection:
+    class: LayoutClass
+    confidence: float
+    bbox: BBox
+    def __init__(self, class: LayoutClass | str, confidence: float, bbox: BBox) -> None: ...
+    def fmt(self, f: str) -> str: ...
+    @staticmethod
+    def sort_by_confidence_desc(detections: list[LayoutDetection]) -> None: ...
+
+class DetectionResult:
+    page_width: int
+    page_height: int
+    detections: list[LayoutDetection]
+    def __init__(
+        self,
+        page_width: int,
+        page_height: int,
+        detections: list[LayoutDetection],
+    ) -> None: ...
+
+class EmbeddedFile:
+    name: str
+    data: bytes
+    mime_type: str | None
+    def __init__(self, name: str, data: bytes, mime_type: str | None = None) -> None: ...
+
+class FontSizeCluster:
+    centroid: float
+    members: list[TextBlock]
+    def __init__(self, centroid: float, members: list[TextBlock]) -> None: ...
+
+class CharData:
+    text: str
+    x: float
+    y: float
+    font_size: float
+    width: float
+    height: float
+    is_bold: bool
+    is_italic: bool
+    baseline_y: float
+    def __init__(
+        self,
+        text: str,
+        x: float,
+        y: float,
+        font_size: float,
+        width: float,
+        height: float,
+        is_bold: bool,
+        is_italic: bool,
+        baseline_y: float,
+    ) -> None: ...
+
+class TextBlock:
+    text: str
+    bbox: BoundingBox
+    font_size: float
+    def __init__(self, text: str, bbox: BoundingBox, font_size: float) -> None: ...
+
+class KMeansResult:
+    labels: list[int]
+    def __init__(self, labels: list[int]) -> None: ...
+
+class HierarchyBlock:
+    text: str
+    bbox: BoundingBox
+    font_size: float
+    hierarchy_level: HierarchyLevel
+    def __init__(
+        self,
+        text: str,
+        bbox: BoundingBox,
+        font_size: float,
+        hierarchy_level: HierarchyLevel | str,
+    ) -> None: ...
+
+class SegmentData:
+    text: str
+    x: float
+    y: float
+    width: float
+    height: float
+    font_size: float
+    is_bold: bool
+    is_italic: bool
+    is_monospace: bool
+    baseline_y: float
+    assigned_role: int | None
+    def __init__(
+        self,
+        text: str,
+        x: float,
+        y: float,
+        width: float,
+        height: float,
+        font_size: float,
+        is_bold: bool,
+        is_italic: bool,
+        is_monospace: bool,
+        baseline_y: float,
+        assigned_role: int | None = None,
+    ) -> None: ...
+
+class PdfImage:
+    page_number: int
+    image_index: int
+    width: int
+    height: int
+    color_space: str | None
+    bits_per_component: int | None
+    filters: list[str]
+    data: bytes
+    decoded_format: str
+    def __init__(
+        self,
+        page_number: int,
+        image_index: int,
+        width: int,
+        height: int,
+        filters: list[str],
+        data: bytes,
+        decoded_format: str,
+        color_space: str | None = None,
+        bits_per_component: int | None = None,
+    ) -> None: ...
+
+class PdfImageExtractor:
+    def extract_images(self) -> list[PdfImage]: ...
+    def extract_images_from_page(self, page_number: int) -> list[PdfImage]: ...
+    def get_image_count(self) -> int: ...
+    @staticmethod
+    def new(pdf_bytes: bytes) -> PdfImageExtractor: ...
+    @staticmethod
+    def new_with_password(pdf_bytes: bytes, password: str | None = None) -> PdfImageExtractor: ...
+
+class PdfLayoutBBox:
+    left: float
+    bottom: float
+    right: float
+    top: float
+    def __init__(self, left: float, bottom: float, right: float, top: float) -> None: ...
+    def width(self) -> float: ...
+    def height(self) -> float: ...
+
+class PageLayoutRegion:
+    class: LayoutClass
+    confidence: float
+    bbox: PdfLayoutBBox
+    def __init__(
+        self,
+        class: LayoutClass | str,
+        confidence: float,
+        bbox: PdfLayoutBBox,
+    ) -> None: ...
+
+class PageLayoutResult:
+    page_index: int
+    regions: list[PageLayoutRegion]
+    page_width_pts: float
+    page_height_pts: float
+    render_width_px: int
+    render_height_px: int
+    def __init__(
+        self,
+        page_index: int,
+        regions: list[PageLayoutRegion],
+        page_width_pts: float,
+        page_height_pts: float,
+        render_width_px: int,
+        render_height_px: int,
+    ) -> None: ...
+
+class PageTiming:
+    render_ms: float
+    preprocess_ms: float
+    onnx_ms: float
+    inference_ms: float
+    postprocess_ms: float
+    mapping_ms: float
+    def __init__(
+        self,
+        render_ms: float,
+        preprocess_ms: float,
+        onnx_ms: float,
+        inference_ms: float,
+        postprocess_ms: float,
+        mapping_ms: float,
+    ) -> None: ...
+
+class LayoutTimingReport:
+    total_ms: float
+    per_page: list[PageTiming]
+    def __init__(self, total_ms: float, per_page: list[PageTiming]) -> None: ...
+    def avg_render_ms(self) -> float: ...
+    def avg_inference_ms(self) -> float: ...
+    def avg_preprocess_ms(self) -> float: ...
+    def avg_onnx_ms(self) -> float: ...
+    def avg_postprocess_ms(self) -> float: ...
+    def total_inference_ms(self) -> float: ...
+    def total_render_ms(self) -> float: ...
+    def total_preprocess_ms(self) -> float: ...
+    def total_onnx_ms(self) -> float: ...
+    def total_postprocess_ms(self) -> float: ...
+
+class PdfMetadata:
+    pdf_version: str | None
+    producer: str | None
+    is_encrypted: bool | None
+    width: int | None
+    height: int | None
+    page_count: int | None
+    def __init__(
+        self,
+        pdf_version: str | None = None,
+        producer: str | None = None,
+        is_encrypted: bool | None = None,
+        width: int | None = None,
+        height: int | None = None,
+        page_count: int | None = None,
+    ) -> None: ...
+
+class PdfExtractionMetadata:
+    title: str | None
+    subject: str | None
+    authors: list[str] | None
+    keywords: list[str] | None
+    created_at: str | None
+    modified_at: str | None
+    created_by: str | None
+    pdf_specific: PdfMetadata
+    page_structure: PageStructure | None
+    def __init__(
+        self,
+        pdf_specific: PdfMetadata,
+        title: str | None = None,
+        subject: str | None = None,
+        authors: list[str] | None = None,
+        keywords: list[str] | None = None,
+        created_at: str | None = None,
+        modified_at: str | None = None,
+        created_by: str | None = None,
+        page_structure: PageStructure | None = None,
+    ) -> None: ...
+
+class CommonPdfMetadata:
+    title: str | None
+    subject: str | None
+    authors: list[str] | None
+    keywords: list[str] | None
+    created_at: str | None
+    modified_at: str | None
+    created_by: str | None
+    def __init__(
+        self,
+        title: str | None = None,
+        subject: str | None = None,
+        authors: list[str] | None = None,
+        keywords: list[str] | None = None,
+        created_at: str | None = None,
+        modified_at: str | None = None,
+        created_by: str | None = None,
+    ) -> None: ...
+
+class PageRenderOptions:
+    target_dpi: int
+    max_image_dimension: int
+    auto_adjust_dpi: bool
+    min_dpi: int
+    max_dpi: int
+    def __init__(
+        self,
+        target_dpi: int,
+        max_image_dimension: int,
+        auto_adjust_dpi: bool,
+        min_dpi: int,
+        max_dpi: int,
+    ) -> None: ...
+    @staticmethod
+    def default() -> PageRenderOptions: ...
+
+class PdfPageIterator:
+    def page_count(self) -> int: ...
+    def next(self) -> str | None: ...
+    def size_hint(self) -> str: ...
+    @staticmethod
+    def new(
+        pdf_bytes: bytes,
+        dpi: int | None = None,
+        password: str | None = None,
+    ) -> PdfPageIterator: ...
+    @staticmethod
+    def from_file(
+        path: str,
+        dpi: int | None = None,
+        password: str | None = None,
+    ) -> PdfPageIterator: ...
+
+class PdfRenderer:
+    @staticmethod
+    def new() -> PdfRenderer: ...
+
+class PdfUnifiedExtractionResult:
+    ...
+
+class PdfTextExtractor:
+    @staticmethod
+    def new() -> PdfTextExtractor: ...
+
+class ExecutionProviderType:
+    Auto: ExecutionProviderType = ...
+    Cpu: ExecutionProviderType = ...
+    CoreMl: ExecutionProviderType = ...
+    Cuda: ExecutionProviderType = ...
+    TensorRt: ExecutionProviderType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class OutputFormat:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class HtmlTheme:
+    Default: HtmlTheme = ...
+    GitHub: HtmlTheme = ...
+    Dark: HtmlTheme = ...
+    Light: HtmlTheme = ...
+    Unstyled: HtmlTheme = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class TableModel:
+    Tatr: TableModel = ...
+    SlanetWired: TableModel = ...
+    SlanetWireless: TableModel = ...
+    SlanetPlus: TableModel = ...
+    SlanetAuto: TableModel = ...
+    Disabled: TableModel = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class PdfBackend:
+    Pdfium: PdfBackend = ...
+    PdfOxide: PdfBackend = ...
+    Auto: PdfBackend = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class ChunkerType:
+    Text: ChunkerType = ...
+    Markdown: ChunkerType = ...
+    Yaml: ChunkerType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class ChunkSizing:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class EmbeddingModelType:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class CodeContentMode:
+    Chunks: CodeContentMode = ...
+    Raw: CodeContentMode = ...
+    Structure: CodeContentMode = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class ListType:
+    Bullet: ListType = ...
+    Numbered: ListType = ...
+    Lettered: ListType = ...
+    Indented: ListType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class HwpError:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class DrawingType:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class WrapType:
+    None_: WrapType = ...
+    Square: WrapType = ...
+    Tight: WrapType = ...
+    TopAndBottom: WrapType = ...
+    Through: WrapType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class FracType:
+    Bar: FracType = ...
+    NoBar: FracType = ...
+    Linear: FracType = ...
+    Skewed: FracType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class MathNode:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class DocumentElement:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class HeaderFooterType:
+    Default: HeaderFooterType = ...
+    First: HeaderFooterType = ...
+    Even: HeaderFooterType = ...
+    Odd: HeaderFooterType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class NoteType:
+    Footnote: NoteType = ...
+    Endnote: NoteType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class Orientation:
+    Portrait: Orientation = ...
+    Landscape: Orientation = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class StyleType:
+    Paragraph: StyleType = ...
+    Character: StyleType = ...
+    Table: StyleType = ...
+    Numbering: StyleType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class ThemeColor:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class SecurityError:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class OcrBackendType:
+    Tesseract: OcrBackendType = ...
+    EasyOCR: OcrBackendType = ...
+    PaddleOCR: OcrBackendType = ...
+    Custom: OcrBackendType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class ReductionLevel:
+    Off: ReductionLevel = ...
+    Light: ReductionLevel = ...
+    Moderate: ReductionLevel = ...
+    Aggressive: ReductionLevel = ...
+    Maximum: ReductionLevel = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class PdfAnnotationType:
+    Text: PdfAnnotationType = ...
+    Highlight: PdfAnnotationType = ...
+    Link: PdfAnnotationType = ...
+    Stamp: PdfAnnotationType = ...
+    Underline: PdfAnnotationType = ...
+    StrikeOut: PdfAnnotationType = ...
+    Other: PdfAnnotationType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class BlockType:
+    Paragraph: BlockType = ...
+    Heading: BlockType = ...
+    Blockquote: BlockType = ...
+    CodeBlock: BlockType = ...
+    ListItem: BlockType = ...
+    OrderedList: BlockType = ...
+    BulletList: BlockType = ...
+    TaskList: BlockType = ...
+    DefinitionList: BlockType = ...
+    DefinitionTerm: BlockType = ...
+    DefinitionDescription: BlockType = ...
+    Div: BlockType = ...
+    Section: BlockType = ...
+    ThematicBreak: BlockType = ...
+    RawBlock: BlockType = ...
+    MathDisplay: BlockType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class InlineType:
+    Text: InlineType = ...
+    Strong: InlineType = ...
+    Emphasis: InlineType = ...
+    Highlight: InlineType = ...
+    Subscript: InlineType = ...
+    Superscript: InlineType = ...
+    Insert: InlineType = ...
+    Delete: InlineType = ...
+    Code: InlineType = ...
+    Link: InlineType = ...
+    Image: InlineType = ...
+    Span: InlineType = ...
+    Math: InlineType = ...
+    RawInline: InlineType = ...
+    FootnoteRef: InlineType = ...
+    Symbol: InlineType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class RelationshipKind:
+    FootnoteReference: RelationshipKind = ...
+    CitationReference: RelationshipKind = ...
+    InternalLink: RelationshipKind = ...
+    Caption: RelationshipKind = ...
+    Label: RelationshipKind = ...
+    TocEntry: RelationshipKind = ...
+    CrossReference: RelationshipKind = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class ContentLayer:
+    Body: ContentLayer = ...
+    Header: ContentLayer = ...
+    Footer: ContentLayer = ...
+    Footnote: ContentLayer = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class NodeContent:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class AnnotationKind:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class ChunkType:
+    Heading: ChunkType = ...
+    PartyList: ChunkType = ...
+    Definitions: ChunkType = ...
+    OperativeClause: ChunkType = ...
+    SignatureBlock: ChunkType = ...
+    Schedule: ChunkType = ...
+    TableLike: ChunkType = ...
+    Formula: ChunkType = ...
+    CodeBlock: ChunkType = ...
+    Image: ChunkType = ...
+    OrgChart: ChunkType = ...
+    Diagram: ChunkType = ...
+    Unknown: ChunkType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class ElementType:
+    Title: ElementType = ...
+    NarrativeText: ElementType = ...
+    Heading: ElementType = ...
+    ListItem: ElementType = ...
+    Table: ElementType = ...
+    Image: ElementType = ...
+    PageBreak: ElementType = ...
+    CodeBlock: ElementType = ...
+    BlockQuote: ElementType = ...
+    Footer: ElementType = ...
+    Header: ElementType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class FormatMetadata:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class TextDirection:
+    LeftToRight: TextDirection = ...
+    RightToLeft: TextDirection = ...
+    Auto: TextDirection = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class LinkType:
+    Anchor: LinkType = ...
+    Internal: LinkType = ...
+    External: LinkType = ...
+    Email: LinkType = ...
+    Phone: LinkType = ...
+    Other: LinkType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class ImageType:
+    DataUri: ImageType = ...
+    InlineSvg: ImageType = ...
+    External: ImageType = ...
+    Relative: ImageType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class StructuredDataType:
+    JsonLd: StructuredDataType = ...
+    Microdata: StructuredDataType = ...
+    RDFa: StructuredDataType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class OcrBoundingGeometry:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class OcrElementLevel:
+    Word: OcrElementLevel = ...
+    Line: OcrElementLevel = ...
+    Block: OcrElementLevel = ...
+    Page: OcrElementLevel = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class PageUnitType:
+    Page: PageUnitType = ...
+    Slide: PageUnitType = ...
+    Sheet: PageUnitType = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class UriKind:
+    Hyperlink: UriKind = ...
+    Image: UriKind = ...
+    Anchor: UriKind = ...
+    Citation: UriKind = ...
+    Reference: UriKind = ...
+    Email: UriKind = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class PoolError:
+    LockPoisoned: PoolError = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class ExtractionSource:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class KeywordAlgorithm:
+    Yake: KeywordAlgorithm = ...
+    Rake: KeywordAlgorithm = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class OcrError:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class PSMMode:
+    OsdOnly: PSMMode = ...
+    AutoOsd: PSMMode = ...
+    AutoOnly: PSMMode = ...
+    Auto: PSMMode = ...
+    SingleColumn: PSMMode = ...
+    SingleBlockVertical: PSMMode = ...
+    SingleBlock: PSMMode = ...
+    SingleLine: PSMMode = ...
+    SingleWord: PSMMode = ...
+    CircleWord: PSMMode = ...
+    SingleChar: PSMMode = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class PaddleLanguage:
+    English: PaddleLanguage = ...
+    Chinese: PaddleLanguage = ...
+    Japanese: PaddleLanguage = ...
+    Korean: PaddleLanguage = ...
+    German: PaddleLanguage = ...
+    French: PaddleLanguage = ...
+    Latin: PaddleLanguage = ...
+    Cyrillic: PaddleLanguage = ...
+    TraditionalChinese: PaddleLanguage = ...
+    Thai: PaddleLanguage = ...
+    Greek: PaddleLanguage = ...
+    EastSlavic: PaddleLanguage = ...
+    Arabic: PaddleLanguage = ...
+    Devanagari: PaddleLanguage = ...
+    Tamil: PaddleLanguage = ...
+    Telugu: PaddleLanguage = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class LayoutClass:
+    Caption: LayoutClass = ...
+    Footnote: LayoutClass = ...
+    Formula: LayoutClass = ...
+    ListItem: LayoutClass = ...
+    PageFooter: LayoutClass = ...
+    PageHeader: LayoutClass = ...
+    Picture: LayoutClass = ...
+    SectionHeader: LayoutClass = ...
+    Table: LayoutClass = ...
+    Text: LayoutClass = ...
+    Title: LayoutClass = ...
+    DocumentIndex: LayoutClass = ...
+    Code: LayoutClass = ...
+    CheckboxSelected: LayoutClass = ...
+    CheckboxUnselected: LayoutClass = ...
+    Form: LayoutClass = ...
+    KeyValueRegion: LayoutClass = ...
+    def __init__(self, value: int | str) -> None: ...
+
+class PdfError:
+    def __init__(self, value: dict[str, Any]) -> None: ...
+
+class HierarchyLevel:
+    H1: HierarchyLevel = ...
+    H2: HierarchyLevel = ...
+    H3: HierarchyLevel = ...
+    H4: HierarchyLevel = ...
+    H5: HierarchyLevel = ...
+    H6: HierarchyLevel = ...
+    Body: HierarchyLevel = ...
+    def __init__(self, value: int | str) -> None: ...
+
+def get_cache_metadata(cache_dir: str) -> str: ...
+
+def cleanup_cache(
+    cache_dir: str,
+    max_age_days: float,
+    max_size_mb: float,
+    target_size_ratio: float,
+) -> str: ...
+
+def smart_cleanup_cache(
+    cache_dir: str,
+    max_age_days: float,
+    max_size_mb: float,
+    min_free_space_mb: float,
+) -> str: ...
+
+def is_cache_valid(cache_path: str, max_age_days: float) -> bool: ...
+
+def clear_cache_directory(cache_dir: str) -> str: ...
+
+def batch_cleanup_caches(
+    cache_dirs: list[str],
+    max_age_days: float,
+    max_size_mb: float,
+    min_free_space_mb: float,
+) -> list[str]: ...
+
+def generate_cache_key(parts: list[str]) -> str: ...
+
+def blake3_hash_bytes(data: bytes) -> str: ...
+
+def blake3_hash_file(path: str) -> str: ...
+
+def get_available_disk_space(path: str) -> float: ...
+
+def fast_hash(data: bytes) -> int: ...
+
+def validate_cache_key(key: str) -> bool: ...
+
+def filter_old_cache_entries(
+    cache_times: list[float],
+    current_time: float,
+    max_age_seconds: float,
+) -> list[int]: ...
+
+def sort_cache_by_access_time(entries: list[str]) -> list[str]: ...
+
+def sanitize_namespace(namespace: str) -> str | None: ...
+
+def is_batch_mode() -> bool: ...
+
+def resolve_thread_budget(config: str | None = None) -> int: ...
+
+def init_thread_pools(budget: int) -> None: ...
+
+def merge_config_json(
+    base: ExtractionConfig,
+    override_json: dict[str, Any],
+) -> ExtractionConfig: ...
+
+def build_config_from_json(
+    base: ExtractionConfig,
+    override_json: dict[str, Any] | None = None,
+) -> ExtractionConfig: ...
+
+def validate_port(port: int) -> None: ...
+
+def validate_host(host: str) -> None: ...
+
+def validate_cors_origin(origin: str) -> None: ...
+
+def validate_upload_size(size: int) -> None: ...
+
+def validate_binarization_method(method: str) -> None: ...
+
+def validate_token_reduction_level(level: str) -> None: ...
+
+def validate_ocr_backend(backend: str) -> None: ...
+
+def validate_language_code(code: str) -> None: ...
+
+def validate_tesseract_psm(psm: int) -> None: ...
+
+def validate_tesseract_oem(oem: int) -> None: ...
+
+def validate_output_format(format: str) -> None: ...
+
+def validate_confidence(confidence: float) -> None: ...
+
+def validate_dpi(dpi: int) -> None: ...
+
+def validate_chunking_params(max_chars: int, max_overlap: int) -> None: ...
+
+def validate_llm_config_model(model: str) -> None: ...
+
+def validate_vlm_backend_config(backend: str, vlm_config: LlmConfig | None = None) -> None: ...
+
+def validate_structured_extraction_schema(schema: dict[str, Any], llm_model: str) -> None: ...
+
+def extract_bytes(content: bytes, mime_type: str, config: ExtractionConfig) -> ExtractionResult: ...
+
+def extract_file(
+    path: str,
+    config: ExtractionConfig,
+    mime_type: str | None = None,
+) -> ExtractionResult: ...
+
+def get_pool_sizing_hint(file_size: int, mime_type: str) -> PoolSizeHint: ...
+
+def extract_file_sync(
+    path: str,
+    config: ExtractionConfig,
+    mime_type: str | None = None,
+) -> ExtractionResult: ...
+
+def extract_bytes_sync(
+    content: bytes,
+    mime_type: str,
+    config: ExtractionConfig,
+) -> ExtractionResult: ...
+
+def batch_extract_file_sync(
+    items: list[str],
+    config: ExtractionConfig,
+) -> list[ExtractionResult]: ...
+
+def batch_extract_bytes_sync(
+    items: list[str],
+    config: ExtractionConfig,
+) -> list[ExtractionResult]: ...
+
+def batch_extract_file(items: list[str], config: ExtractionConfig) -> list[ExtractionResult]: ...
+
+def batch_extract_bytes(items: list[str], config: ExtractionConfig) -> list[ExtractionResult]: ...
+
 def is_valid_format_field(field: str) -> bool: ...
+
+def open_file_bytes(path: str) -> FileBytes: ...
+
+def read_file_async(path: str) -> bytes: ...
+
+def read_file_sync(path: str) -> bytes: ...
+
+def file_exists(path: str) -> bool: ...
+
+def validate_file_exists(path: str) -> None: ...
+
+def find_files_by_extension(dir: str, extension: str, recursive: bool) -> list[str]: ...
 
 def detect_mime_type(path: str, check_exists: bool) -> str: ...
 
 def validate_mime_type(mime_type: str) -> str: ...
+
+def detect_or_validate(path: str | None = None, mime_type: str | None = None) -> str: ...
 
 def detect_mime_type_from_bytes(content: bytes) -> str: ...
 
 def get_extensions_for_mime(mime_type: str) -> list[str]: ...
 
 def list_supported_formats() -> list[SupportedFormat]: ...
+
+def clear_processor_cache() -> None: ...
+
+def apply_output_format(result: ExtractionResult, output_format: OutputFormat) -> None: ...
+
+def run_pipeline(doc: str, config: ExtractionConfig) -> ExtractionResult: ...
+
+def run_pipeline_sync(doc: str, config: ExtractionConfig) -> ExtractionResult: ...
+
+def is_page_text_blank(text: str) -> bool: ...
+
+def resolve_relationships(doc: str) -> None: ...
+
+def derive_document_structure(doc: str) -> DocumentStructure: ...
+
+def derive_extraction_result(
+    doc: str,
+    include_document_structure: bool,
+    output_format: OutputFormat,
+) -> ExtractionResult: ...
+
+def parse_json(data: bytes, config: JsonExtractionConfig | None = None) -> StructuredDataResult: ...
+
+def parse_jsonl(
+    data: bytes,
+    config: JsonExtractionConfig | None = None,
+) -> StructuredDataResult: ...
+
+def parse_yaml(data: bytes) -> StructuredDataResult: ...
+
+def parse_toml(data: bytes) -> StructuredDataResult: ...
+
+def parse_text(text_bytes: bytes, is_markdown: bool) -> TextExtractionResult: ...
+
+def transform_to_document_structure(result: ExtractionResult) -> DocumentStructure: ...
+
+def detect_list_items(text: str) -> list[ListItemMetadata]: ...
+
+def generate_element_id(
+    text: str,
+    element_type: ElementType,
+    page_number: int | None = None,
+) -> ElementId: ...
+
+def transform_extraction_result_to_elements(result: ExtractionResult) -> list[Element]: ...
+
+def parse_body_text(data: bytes, is_compressed: bool) -> list[Section]: ...
+
+def decompress_stream(data: bytes) -> bytes: ...
+
+def extract_hwp_text(bytes: bytes) -> str: ...
+
+def load_image_for_ocr(image_bytes: bytes) -> str: ...
+
+def extract_image_metadata(bytes: bytes) -> ImageMetadata: ...
+
+def extract_text_from_image_with_ocr(
+    bytes: bytes,
+    mime_type: str,
+    ocr_result: str,
+    page_config: PageConfig | None = None,
+) -> ImageOcrResult: ...
+
+def estimate_content_capacity(file_size: int, format: str) -> int: ...
+
+def estimate_html_markdown_capacity(html_size: int) -> int: ...
+
+def estimate_spreadsheet_capacity(file_size: int) -> int: ...
+
+def estimate_presentation_capacity(file_size: int) -> int: ...
+
+def estimate_table_markdown_capacity(row_count: int, col_count: int) -> int: ...
+
+def decompress_gzip(bytes: bytes, limits: str) -> bytes: ...
+
+def extract_gzip(bytes: bytes, limits: str) -> str: ...
+
+def extract_gzip_metadata(bytes: bytes, limits: str) -> ArchiveMetadata: ...
+
+def extract_gzip_text_content(bytes: bytes, limits: str) -> str: ...
+
+def extract_gzip_with_bytes(bytes: bytes, limits: str) -> str: ...
+
+def extract_7z_metadata(bytes: bytes, limits: str) -> ArchiveMetadata: ...
+
+def extract_7z_text_content(bytes: bytes, limits: str) -> str: ...
+
+def extract_7z_file_bytes(bytes: bytes, limits: str) -> str: ...
+
+def extract_tar_metadata(bytes: bytes, limits: str) -> ArchiveMetadata: ...
+
+def extract_tar_text_content(bytes: bytes, limits: str) -> str: ...
+
+def extract_tar_file_bytes(bytes: bytes, limits: str) -> str: ...
+
+def extract_zip_metadata(bytes: bytes, limits: str) -> ArchiveMetadata: ...
+
+def extract_zip_text_content(bytes: bytes, limits: str) -> str: ...
+
+def extract_zip_file_bytes(bytes: bytes, limits: str) -> str: ...
+
+def parse_eml_content(data: bytes) -> EmailExtractionResult: ...
+
+def parse_msg_content(
+    data: bytes,
+    fallback_codepage: int | None = None,
+) -> EmailExtractionResult: ...
+
+def extract_email_content(
+    data: bytes,
+    mime_type: str,
+    fallback_codepage: int | None = None,
+) -> EmailExtractionResult: ...
+
+def build_email_text_output(result: EmailExtractionResult) -> str: ...
+
+def extract_pst_messages(pst_data: bytes) -> str: ...
+
+def read_excel_file(file_path: str) -> ExcelWorkbook: ...
+
+def read_excel_bytes(data: bytes, file_extension: str) -> ExcelWorkbook: ...
+
+def excel_to_text(workbook: ExcelWorkbook) -> str: ...
+
+def excel_to_markdown(workbook: ExcelWorkbook) -> str: ...
+
+def resolve_conversion_options(output_format: str, options: str | None = None) -> str: ...
+
+def convert_html_to_markdown(
+    html: str,
+    options: str | None = None,
+    output_format: str | None = None,
+) -> str: ...
+
+def convert_html_to_markdown_with_metadata(
+    html: str,
+    options: str | None = None,
+    output_format: str | None = None,
+) -> str: ...
+
+def convert_html_to_markdown_with_tables(
+    html: str,
+    options: str | None = None,
+    output_format: str | None = None,
+) -> str: ...
+
+def extract_html_inline_images(html: str, options: str | None = None) -> list[str]: ...
+
+def extract_doc_text(content: bytes) -> DocExtractionResult: ...
+
+def parse_drawing(reader: str) -> Drawing: ...
+
+def collect_and_convert_omath_para(reader: str) -> str: ...
+
+def collect_and_convert_omath(reader: str) -> str: ...
+
+def parse_document(bytes: bytes) -> Document: ...
+
+def extract_text_from_bytes(bytes: bytes) -> str: ...
+
+def parse_section_properties(node: str) -> SectionProperties: ...
+
+def parse_section_properties_streaming(reader: str) -> SectionProperties: ...
+
+def parse_styles_xml(xml: str) -> StyleCatalog: ...
+
+def parse_table_properties(reader: str) -> TableProperties: ...
+
+def parse_row_properties(reader: str) -> RowProperties: ...
+
+def parse_cell_properties(reader: str) -> str: ...
+
+def parse_table_grid(reader: str) -> TableGrid: ...
+
+def parse_theme_xml(xml: str) -> Theme: ...
+
+def extract_text(bytes: bytes) -> str: ...
+
+def extract_text_with_page_breaks(bytes: bytes) -> str: ...
+
+def detect_page_breaks_from_docx(bytes: bytes) -> list[PageBoundary] | None: ...
+
+def extract_ooxml_embedded_objects(
+    zip_bytes: bytes,
+    embeddings_prefix: str,
+    source_label: str,
+    config: ExtractionConfig,
+) -> str: ...
+
+def detect_image_format(data: bytes) -> str: ...
+
+def process_images_with_ocr(
+    images: list[ExtractedImage],
+    config: ExtractionConfig,
+) -> list[ExtractedImage]: ...
+
+def extract_ppt_text(content: bytes) -> PptExtractionResult: ...
+
+def extract_ppt_text_with_options(
+    content: bytes,
+    include_master_slides: bool,
+) -> PptExtractionResult: ...
+
+def extract_pptx_from_path(path: str, options: PptxExtractionOptions) -> PptxExtractionResult: ...
+
+def extract_pptx_from_bytes(
+    data: bytes,
+    options: PptxExtractionOptions,
+) -> PptxExtractionResult: ...
+
+def parse_xml_svg(xml_bytes: bytes, preserve_whitespace: bool) -> XmlExtractionResult: ...
+
+def parse_xml(xml_bytes: bytes, preserve_whitespace: bool) -> XmlExtractionResult: ...
+
+def cells_to_text(cells: list[list[str]]) -> str: ...
+
+def cells_to_markdown(cells: list[list[str]]) -> str: ...
+
+def parse_jotdown_attributes(attrs: Attributes) -> Attributes: ...
+
+def render_attributes(attrs: Attributes) -> str: ...
+
+def djot_content_to_djot(content: DjotContent) -> str: ...
+
+def extraction_result_to_djot(result: ExtractionResult) -> str: ...
+
+def djot_to_html(djot_source: str) -> str: ...
+
+def extract_complete_djot_content(
+    events: list[str],
+    metadata: Metadata,
+    tables: list[Table],
+) -> DjotContent: ...
+
+def extract_tables_from_events(events: list[str]) -> list[Table]: ...
+
+def extract_text_from_events(events: list[str]) -> str: ...
+
+def render_block_to_djot(output: str, block: FormattedBlock, indent_level: int) -> None: ...
+
+def render_list_item(output: str, item: FormattedBlock, indent: str, marker: str) -> None: ...
+
+def render_inline_content(output: str, elements: list[InlineElement]) -> None: ...
+
+def extract_frontmatter(content: str) -> str: ...
+
+def extract_metadata_from_yaml(yaml: str) -> Metadata: ...
+
+def extract_title_from_content(content: str) -> str | None: ...
+
+def collect_iwa_paths(content: bytes) -> list[str]: ...
+
+def read_iwa_file(content: bytes, path: str) -> bytes: ...
+
+def decode_iwa_stream(data: bytes) -> bytes: ...
+
+def extract_text_from_proto(data: bytes) -> list[str]: ...
+
+def extract_text_from_iwa_files(content: bytes, iwa_paths: list[str]) -> str: ...
+
+def extract_metadata_from_zip(content: bytes) -> Metadata: ...
+
+def dedup_text(texts: list[str]) -> list[str]: ...
+
+def evaluate_native_text_for_ocr(
+    native_text: str,
+    thresholds: OcrQualityThresholds,
+    page_count: int | None = None,
+) -> OcrFallbackDecision: ...
+
+def compute_quality_score(text: str, thresholds: OcrQualityThresholds) -> float: ...
+
+def evaluate_per_page_ocr(
+    native_text: str,
+    thresholds: OcrQualityThresholds,
+    boundaries: list[PageBoundary] | None = None,
+    page_count: int | None = None,
+) -> OcrFallbackDecision: ...
+
+def hex_digit_to_u8(c: str) -> int | None: ...
+
+def parse_hex_byte(h1: str, h2: str) -> int | None: ...
+
+def decode_windows_1252(byte: int) -> str: ...
+
+def parse_rtf_control_word(chars: str) -> str: ...
+
+def normalize_whitespace_with_mapping(s: str) -> str: ...
+
+def map_offset(mapping: list[str], offset: int) -> int: ...
+
+def normalize_whitespace(s: str) -> str: ...
+
+def extract_pict_image(chars: str) -> str: ...
+
+def parse_rtf_datetime(segment: str) -> str | None: ...
+
+def extract_rtf_metadata(rtf_content: str, extracted_text: str) -> str: ...
+
+def extract_rtf_formatting(content: str) -> RtfFormattingData: ...
+
+def spans_to_annotations(
+    para_start: int,
+    para_end: int,
+    formatting: RtfFormattingData,
+) -> list[TextAnnotation]: ...
+
+def extract_text_from_rtf(content: str, plain: bool) -> str: ...
+
+def register_default_extractors() -> None: ...
+
+def extract_panic_message(panic_info: str) -> str: ...
+
+def register_extractor(extractor: str) -> None: ...
+
+def unregister_extractor(name: str) -> None: ...
+
+def list_extractors() -> list[str]: ...
+
+def clear_extractors() -> None: ...
+
+def register_ocr_backend(backend: OcrBackend) -> None: ...
+
+def unregister_ocr_backend(name: str) -> None: ...
+
+def list_ocr_backends() -> list[str]: ...
+
+def clear_ocr_backends() -> None: ...
+
+def list_post_processors() -> list[str]: ...
+
+def get_ocr_backend_registry() -> str: ...
+
+def get_document_extractor_registry() -> str: ...
+
+def get_post_processor_registry() -> str: ...
+
+def get_validator_registry() -> str: ...
+
+def get_renderer_registry() -> str: ...
+
+def register_renderer(renderer: Renderer) -> None: ...
+
+def unregister_renderer(name: str) -> None: ...
+
+def list_renderers() -> list[str]: ...
+
+def clear_renderers() -> None: ...
+
+def validate_plugins_at_startup() -> str: ...
+
+def register_validator(validator: str) -> None: ...
+
+def unregister_validator(name: str) -> None: ...
+
+def list_validators() -> list[str]: ...
+
+def clear_validators() -> None: ...
+
+def render_djot(doc: str) -> str: ...
+
+def render_html(doc: str) -> str: ...
+
+def render_json(doc: str) -> str: ...
+
+def render_markdown(doc: str) -> str: ...
+
+def render_plain(doc: str) -> str: ...
+
+def sanitize_filename(path: str) -> str: ...
+
+def get_metrics() -> ExtractionMetrics: ...
+
+def record_error_on_current_span(error: str) -> None: ...
+
+def record_success_on_current_span() -> None: ...
+
+def sanitize_path(path: str) -> str: ...
+
+def extractor_span(extractor_name: str, mime_type: str, size_bytes: int) -> str: ...
+
+def pipeline_stage_span(stage: str) -> str: ...
+
+def pipeline_processor_span(stage: str, processor_name: str) -> str: ...
+
+def ocr_span(backend: str, language: str) -> str: ...
+
+def model_inference_span(model_name: str) -> str: ...
+
+def from_utf8(bytes: bytes) -> str: ...
+
+def string_from_utf8(bytes: bytes) -> str: ...
+
+def is_valid_utf8(bytes: bytes) -> bool: ...
+
+def calculate_quality_score(text: str, metadata: str | None = None) -> float: ...
+
+def clean_extracted_text(text: str) -> str: ...
+
+def normalize_spaces(text: str) -> str: ...
+
+def reduce_tokens(
+    text: str,
+    config: TokenReductionConfig,
+    language_hint: str | None = None,
+) -> str: ...
+
+def batch_reduce_tokens(
+    texts: list[str],
+    config: TokenReductionConfig,
+    language_hint: str | None = None,
+) -> list[str]: ...
+
+def get_reduction_statistics(original: str, reduced: str) -> str: ...
+
+def bold(start: int, end: int) -> TextAnnotation: ...
+
+def italic(start: int, end: int) -> TextAnnotation: ...
+
+def underline(start: int, end: int) -> TextAnnotation: ...
+
+def link(start: int, end: int, url: str, title: str | None = None) -> TextAnnotation: ...
+
+def code(start: int, end: int) -> TextAnnotation: ...
+
+def strikethrough(start: int, end: int) -> TextAnnotation: ...
+
+def subscript(start: int, end: int) -> TextAnnotation: ...
+
+def superscript(start: int, end: int) -> TextAnnotation: ...
+
+def font_size(start: int, end: int, value: str) -> TextAnnotation: ...
+
+def color(start: int, end: int, value: str) -> TextAnnotation: ...
+
+def highlight(start: int, end: int) -> TextAnnotation: ...
+
+def classify_uri(url: str) -> UriKind: ...
+
+def safe_decode(byte_data: bytes, encoding: str | None = None) -> str: ...
+
+def calculate_text_confidence(text: str) -> float: ...
+
+def fix_mojibake(text: str) -> str: ...
+
+def snake_to_camel(val: str) -> str: ...
+
+def camel_to_snake(val: str) -> str: ...
+
+def create_string_buffer_pool(pool_size: int, buffer_capacity: int) -> StringBufferPool: ...
+
+def create_byte_buffer_pool(pool_size: int, buffer_capacity: int) -> ByteBufferPool: ...
+
+def estimate_pool_size(file_size: int, mime_type: str) -> PoolSizeHint: ...
+
+def acquire_string_buffer() -> PooledString: ...
+
+def intern_language_code(lang_code: str) -> InternedString: ...
+
+def intern_mime_type(mime_type: str) -> InternedString: ...
+
+def xml_tag_name(name: bytes) -> str: ...
+
+def escape_html_entities(text: str) -> str: ...
+
+def detect_columns(words: list[HocrWord], column_threshold: int) -> list[int]: ...
+
+def detect_rows(words: list[HocrWord], row_threshold_ratio: float) -> list[int]: ...
+
+def reconstruct_table(
+    words: list[HocrWord],
+    column_threshold: int,
+    row_threshold_ratio: float,
+) -> list[list[str]]: ...
+
+def table_to_markdown(table: list[list[str]]) -> str: ...
+
+def load_server_config(config_path: str | None = None) -> ServerConfig: ...
+
+def openapi_json() -> str: ...
+
+def create_router(config: ExtractionConfig) -> str: ...
+
+def create_router_with_limits(config: ExtractionConfig, limits: ApiSizeLimits) -> str: ...
+
+def create_router_with_limits_and_server_config(
+    config: ExtractionConfig,
+    limits: ApiSizeLimits,
+    server_config: ServerConfig,
+) -> str: ...
+
+def serve(host: str, port: int) -> None: ...
+
+def serve_with_config(host: str, port: int, config: ExtractionConfig) -> None: ...
+
+def serve_with_config_and_limits(
+    host: str,
+    port: int,
+    config: ExtractionConfig,
+    limits: ApiSizeLimits,
+) -> None: ...
+
+def serve_with_server_config(
+    extraction_config: ExtractionConfig,
+    server_config: ServerConfig,
+) -> None: ...
+
+def serve_default() -> None: ...
+
+def map_kreuzberg_error_to_mcp(error: str) -> str: ...
+
+def start_mcp_server() -> None: ...
+
+def start_mcp_server_with_config(config: ExtractionConfig) -> None: ...
+
+def start_mcp_server_http(host: str, port: int) -> None: ...
+
+def start_mcp_server_http_with_config(host: str, port: int, config: ExtractionConfig) -> None: ...
+
+def validate_page_boundaries(boundaries: list[PageBoundary]) -> None: ...
+
+def calculate_page_range(byte_start: int, byte_end: int, boundaries: list[PageBoundary]) -> str: ...
+
+def classify_chunk(content: str, heading_context: HeadingContext | None = None) -> ChunkType: ...
+
+def chunk_text(
+    text: str,
+    config: ChunkingConfig,
+    page_boundaries: list[PageBoundary] | None = None,
+) -> ChunkingResult: ...
+
+def chunk_text_with_heading_source(
+    text: str,
+    config: ChunkingConfig,
+    page_boundaries: list[PageBoundary] | None = None,
+    heading_source: str | None = None,
+) -> ChunkingResult: ...
+
+def chunk_text_with_type(
+    text: str,
+    max_characters: int,
+    overlap: int,
+    trim: bool,
+    chunker_type: ChunkerType,
+) -> ChunkingResult: ...
+
+def chunk_texts_batch(texts: list[str], config: ChunkingConfig) -> list[ChunkingResult]: ...
+
+def precompute_utf8_boundaries(text: str) -> str: ...
+
+def validate_utf8_boundaries(text: str, boundaries: list[PageBoundary]) -> None: ...
+
+def create_client(config: LlmConfig) -> str: ...
+
+def render_template(template: str, context: str) -> str: ...
+
+def extract_structured(content: str, config: StructuredExtractionConfig) -> str: ...
+
+def vlm_ocr(image_bytes: bytes, image_mime_type: str, language: str, config: LlmConfig) -> str: ...
+
+def normalize(v: list[float]) -> list[float]: ...
+
+def get_preset(name: str) -> str | None: ...
+
+def list_presets() -> list[str]: ...
+
+def warm_model(model_type: EmbeddingModelType, cache_dir: str | None = None) -> None: ...
+
+def download_model(model_type: EmbeddingModelType, cache_dir: str | None = None) -> None: ...
+
+def generate_embeddings_for_chunks(chunks: list[Chunk], config: EmbeddingConfig) -> None: ...
+
+def calculate_smart_dpi(
+    page_width: float,
+    page_height: float,
+    target_dpi: int,
+    max_dimension: int,
+    max_memory_mb: float,
+) -> int: ...
+
+def calculate_optimal_dpi(
+    page_width: float,
+    page_height: float,
+    target_dpi: int,
+    max_dimension: int,
+    min_dpi: int,
+    max_dpi: int,
+) -> int: ...
+
+def normalize_image_dpi(
+    rgb_data: bytes,
+    width: int,
+    height: int,
+    config: ExtractionConfig,
+    current_dpi: float | None = None,
+) -> str: ...
+
+def resize_image(image: str, new_width: int, new_height: int, scale_factor: float) -> str: ...
+
+def detect_languages(text: str, config: LanguageDetectionConfig) -> list[str] | None: ...
+
+def register_language_detection_processor() -> None: ...
+
+def get_stopwords(lang: str) -> str | None: ...
+
+def get_stopwords_with_fallback(language: str, fallback: str) -> str | None: ...
+
+def extract_keywords(text: str, config: KeywordConfig) -> list[Keyword]: ...
+
+def text_block_to_element(block: TextBlock, page_number: int) -> OcrElement | None: ...
+
+def tsv_row_to_element(row: TsvRow) -> OcrElement: ...
+
+def iterator_word_to_element(
+    word: str,
+    page_number: int,
+    block_type: str | None = None,
+    para_info: str | None = None,
+) -> OcrElement: ...
+
+def element_to_hocr_word(element: OcrElement) -> HocrWord: ...
+
+def elements_to_hocr_words(elements: list[OcrElement], min_confidence: float) -> list[HocrWord]: ...
+
+def parse_hocr_to_internal_document(hocr_html: str) -> str: ...
+
+def assemble_ocr_markdown(
+    elements: list[OcrElement],
+    img_width: int,
+    img_height: int,
+    recognized_tables: list[RecognizedTable],
+    detection: DetectionResult | None = None,
+) -> str: ...
+
+def recognize_page_tables(
+    page_image: str,
+    detection: DetectionResult,
+    elements: list[OcrElement],
+    tatr_model: str,
+) -> list[RecognizedTable]: ...
+
+def extract_words_from_tsv(tsv_data: str, min_confidence: float) -> list[HocrWord]: ...
+
+def compute_hash(data: str) -> str: ...
+
+def validate_tesseract_version(version: int) -> None: ...
+
+def ensure_ort_available() -> None: ...
+
+def is_language_supported(lang: str) -> bool: ...
+
+def language_to_script_family(paddle_lang: str) -> str: ...
+
+def map_language_code(kreuzberg_code: str) -> str | None: ...
+
+def build_cell_grid(result: str, table_bbox: str | None = None) -> list[list[str]]: ...
+
+def apply_heuristics(
+    detections: list[LayoutDetection],
+    page_width: float,
+    page_height: float,
+) -> None: ...
+
+def greedy_nms(detections: list[LayoutDetection], iou_threshold: float) -> None: ...
+
+def preprocess_imagenet(img: str, target_size: int) -> str: ...
+
+def preprocess_imagenet_letterbox(img: str, target_size: int) -> str: ...
+
+def preprocess_rescale(img: str, target_size: int) -> str: ...
+
+def preprocess_letterbox(img: str, target_width: int, target_height: int) -> str: ...
+
+def build_session(
+    path: str,
+    thread_budget: int,
+    accel: AccelerationConfig | None = None,
+) -> str: ...
+
+def config_from_extraction(layout_config: LayoutDetectionConfig) -> str: ...
+
+def create_engine(layout_config: LayoutDetectionConfig) -> str: ...
+
+def take_or_create_engine(layout_config: LayoutDetectionConfig) -> str: ...
+
+def return_engine(engine: str) -> None: ...
+
+def take_or_create_tatr() -> str | None: ...
+
+def return_tatr(model: str) -> None: ...
+
+def take_or_create_slanet(variant: str) -> str | None: ...
+
+def return_slanet(variant: str, model: str) -> None: ...
+
+def take_or_create_table_classifier() -> str | None: ...
+
+def return_table_classifier(model: str) -> None: ...
+
+def extract_annotations_from_document(document: str) -> list[PdfAnnotation]: ...
+
+def extract_bookmarks(document: Document) -> list[Uri]: ...
+
+def extract_bundled_pdfium() -> str: ...
+
+def extract_embedded_files(document: Document) -> list[EmbeddedFile]: ...
+
+def extract_and_process_embedded_files(pdf_bytes: bytes, config: ExtractionConfig) -> str: ...
+
+def initialize_font_cache() -> None: ...
+
+def get_font_descriptors() -> list[str]: ...
+
+def cached_font_count() -> int: ...
+
+def clear_font_cache() -> None: ...
+
+def cluster_font_sizes(blocks: list[TextBlock], k: int) -> list[FontSizeCluster]: ...
+
+def assign_heading_levels_smart(
+    clusters: list[FontSizeCluster],
+    min_heading_ratio: float,
+    min_heading_gap: float,
+) -> list[str]: ...
+
+def assign_hierarchy_levels(
+    blocks: list[TextBlock],
+    kmeans_result: KMeansResult,
+) -> list[HierarchyBlock]: ...
+
+def assign_hierarchy_levels_from_clusters(
+    blocks: list[TextBlock],
+    clusters: list[FontSizeCluster],
+) -> list[str]: ...
+
+def extract_chars_with_fonts(page: str) -> list[CharData]: ...
+
+def extract_segments_from_page(page: str) -> list[SegmentData]: ...
+
+def merge_chars_into_blocks(chars: list[CharData]) -> list[TextBlock]: ...
+
+def should_trigger_ocr(page: str, blocks: list[TextBlock], config: ExtractionConfig) -> bool: ...
+
+def extract_images_from_pdf(pdf_bytes: bytes) -> list[PdfImage]: ...
+
+def extract_images_from_pdf_with_password(pdf_bytes: bytes, password: str) -> list[PdfImage]: ...
+
+def reextract_raw_images_via_pdfium(pdf_bytes: bytes, images: list[PdfImage]) -> int: ...
+
+def detect_layout_for_document(pdf_bytes: bytes, engine: str) -> str: ...
+
+def detect_layout_for_images(images: list[str], engine: str) -> list[DetectionResult]: ...
+
+def extract_metadata(pdf_bytes: bytes) -> PdfMetadata: ...
+
+def extract_metadata_with_password(
+    pdf_bytes: bytes,
+    password: str | None = None,
+) -> PdfMetadata: ...
+
+def extract_metadata_with_passwords(pdf_bytes: bytes, passwords: list[str]) -> PdfMetadata: ...
+
+def extract_metadata_from_document(
+    document: str,
+    page_boundaries: list[PageBoundary] | None = None,
+    content: str | None = None,
+) -> PdfExtractionMetadata: ...
+
+def extract_common_metadata_from_document(document: str) -> CommonPdfMetadata: ...
+
+def render_page_to_image(pdf_bytes: bytes, page_index: int, options: PageRenderOptions) -> str: ...
+
+def render_pdf_page_to_png(
+    pdf_bytes: bytes,
+    page_index: int,
+    dpi: int | None = None,
+    password: str | None = None,
+) -> bytes: ...
+
+def extract_words_from_page(page: str, min_confidence: float) -> list[HocrWord]: ...
+
+def segment_to_hocr_word(seg: SegmentData, page_height: float) -> HocrWord: ...
+
+def split_segment_to_words(seg: SegmentData, page_height: float) -> list[HocrWord]: ...
+
+def segments_to_words(segments: list[SegmentData], page_height: float) -> list[HocrWord]: ...
+
+def post_process_table(
+    table: list[list[str]],
+    layout_guided: bool,
+    allow_single_column: bool,
+) -> list[list[str]] | None: ...
+
+def is_well_formed_table(grid: list[list[str]]) -> bool: ...
+
+def extract_text_from_pdf(pdf_bytes: bytes) -> str: ...
+
+def extract_text_from_pdf_with_password(pdf_bytes: bytes, password: str) -> str: ...
+
+def extract_text_from_pdf_with_passwords(pdf_bytes: bytes, passwords: list[str]) -> str: ...
+
+def extract_text_and_metadata_from_pdf_document(
+    document: str,
+    extraction_config: ExtractionConfig | None = None,
+) -> PdfUnifiedExtractionResult: ...
+
+def extract_text_from_pdf_document(
+    document: str,
+    page_config: PageConfig | None = None,
+    extraction_config: ExtractionConfig | None = None,
+) -> str: ...
+
+def serialize_to_toon(result: ExtractionResult) -> str: ...
+
+def serialize_to_json(result: ExtractionResult) -> str: ...

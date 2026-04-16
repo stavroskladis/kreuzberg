@@ -2,6 +2,2341 @@
 // Re-generate with: alef generate
 
 use extendr_api::prelude::*;
+use kreuzberg::extractors::SyncExtractor;
+use kreuzberg::plugins::OcrBackend;
+use kreuzberg::plugins::Plugin;
+use kreuzberg::plugins::Renderer;
+use kreuzberg::utils::Recyclable;
+use std::ops::Deref;
+use std::ops::DerefMut;
+
+#[derive(Clone, serde::Serialize)]
+pub struct GenericCache {
+}
+
+impl GenericCache {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get(
+        &self,
+        cache_key: String,
+        source_file: Option<String>,
+        namespace: Option<String>,
+        ttl_override_secs: Option<f64>
+    ) -> Result<Option<Vec<u8>>> {
+        let core_self = kreuzberg::cache::GenericCache {
+        };
+        let result = core_self.get(&cache_key, source_file.as_deref(), namespace.as_deref(), ttl_override_secs).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get_default(&self, cache_key: String, source_file: Option<String>) -> Result<Option<Vec<u8>>> {
+        let core_self = kreuzberg::cache::GenericCache {
+        };
+        let result = core_self.get_default(&cache_key, source_file.as_deref()).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn set(
+        &self,
+        cache_key: String,
+        data: Vec<u8>,
+        source_file: Option<String>,
+        namespace: Option<String>,
+        ttl_secs: Option<f64>
+    ) -> Result<()> {
+        let core_self = kreuzberg::cache::GenericCache {
+        };
+        let result = core_self.set(&cache_key, &data, source_file.as_deref(), namespace.as_deref(), ttl_secs).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn set_default(&self, cache_key: String, data: Vec<u8>, source_file: Option<String>) -> Result<()> {
+        let core_self = kreuzberg::cache::GenericCache {
+        };
+        let result = core_self.set_default(&cache_key, &data, source_file.as_deref()).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn is_processing(&self, cache_key: String) -> Result<bool> {
+        let core_self = kreuzberg::cache::GenericCache {
+        };
+        let result = core_self.is_processing(&cache_key).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn mark_processing(&self, cache_key: String) -> Result<()> {
+        let core_self = kreuzberg::cache::GenericCache {
+        };
+        let result = core_self.mark_processing(cache_key).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn mark_complete(&self, cache_key: String) -> Result<()> {
+        let core_self = kreuzberg::cache::GenericCache {
+        };
+        let result = core_self.mark_complete(&cache_key).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn clear(&self) -> Result<String> {
+        Err("Not implemented: GenericCache.clear".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn delete_namespace(&self, namespace: String) -> Result<String> {
+        let _ = namespace;
+        Err("Not implemented: GenericCache.delete_namespace".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get_stats(&self) -> Result<String> {
+        Err("Not implemented: GenericCache.get_stats".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get_stats_filtered(&self, namespace: Option<String>) -> Result<String> {
+        let _ = namespace;
+        Err("Not implemented: GenericCache.get_stats_filtered".to_string())
+    }
+
+    pub fn cache_dir(&self) -> String {
+        let core_self = kreuzberg::cache::GenericCache {
+        };
+        core_self.cache_dir().to_owned()
+    }
+
+    pub fn cache_type(&self) -> String {
+        let core_self = kreuzberg::cache::GenericCache {
+        };
+        core_self.cache_type().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new(
+        cache_type: String,
+        cache_dir: Option<String>,
+        max_age_days: f64,
+        max_cache_size_mb: f64,
+        min_free_space_mb: f64
+    ) -> Result<GenericCache> {
+        kreuzberg::cache::GenericCache::new(cache_type, cache_dir, max_age_days.expect("'max_age_days' is required"), max_cache_size_mb.expect("'max_cache_size_mb' is required"), min_free_space_mb.expect("'min_free_space_mb' is required")).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct BatchProcessorConfig {
+    /// Maximum number of string buffers to maintain in the pool
+    pub string_pool_size: f64,
+    /// Initial capacity for pooled string buffers in bytes
+    pub string_buffer_capacity: f64,
+    /// Maximum number of byte buffers to maintain in the pool
+    pub byte_pool_size: f64,
+    /// Initial capacity for pooled byte buffers in bytes
+    pub byte_buffer_capacity: f64,
+    /// Maximum concurrent extractions (for concurrency control)
+    pub max_concurrent: Option<f64>,
+}
+
+impl Default for BatchProcessorConfig {
+    fn default() -> Self {
+        Self {
+            string_pool_size: Default::default(),
+            string_buffer_capacity: Default::default(),
+            byte_pool_size: Default::default(),
+            byte_buffer_capacity: Default::default(),
+            max_concurrent: Default::default(),
+        }
+    }
+}
+
+impl BatchProcessorConfig {
+    #[must_use]
+    
+    pub fn new(
+        string_pool_size: Option<f64>,
+        string_buffer_capacity: Option<f64>,
+        byte_pool_size: Option<f64>,
+        byte_buffer_capacity: Option<f64>,
+        max_concurrent: Option<f64>,
+    ) -> Self {
+        Self { string_pool_size: string_pool_size.unwrap_or(10), string_buffer_capacity: string_buffer_capacity.unwrap_or(8192), byte_pool_size: byte_pool_size.unwrap_or(10), byte_buffer_capacity: byte_buffer_capacity.unwrap_or(65536), max_concurrent: max_concurrent }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> BatchProcessorConfig {
+        kreuzberg::core::BatchProcessorConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_batchprocessorconfig(
+    string_pool_size: f64 = 10,
+    string_buffer_capacity: f64 = 8192,
+    byte_pool_size: f64 = 10,
+    byte_buffer_capacity: f64 = 65536,
+    max_concurrent: f64 = NULL
+) -> BatchProcessorConfig {
+    BatchProcessorConfig {
+        string_pool_size,
+        string_buffer_capacity,
+        byte_pool_size,
+        byte_buffer_capacity,
+        max_concurrent,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct BatchProcessor {
+}
+
+impl Default for BatchProcessor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl BatchProcessor {
+    pub fn string_pool(&self) -> StringBufferPool {
+        let core_self = kreuzberg::core::BatchProcessor {
+        };
+        core_self.string_pool().into()
+    }
+
+    pub fn byte_pool(&self) -> ByteBufferPool {
+        let core_self = kreuzberg::core::BatchProcessor {
+        };
+        core_self.byte_pool().into()
+    }
+
+    pub fn config(&self) -> BatchProcessorConfig {
+        let core_self = kreuzberg::core::BatchProcessor {
+        };
+        core_self.config().into_owned().into()
+    }
+
+    pub fn string_pool_size(&self) -> f64 {
+        let core_self = kreuzberg::core::BatchProcessor {
+        };
+        core_self.string_pool_size()
+    }
+
+    pub fn byte_pool_size(&self) -> f64 {
+        let core_self = kreuzberg::core::BatchProcessor {
+        };
+        core_self.byte_pool_size()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn clear_pools(&self) -> Result<()> {
+        let core_self = kreuzberg::core::BatchProcessor {
+        };
+        let result = core_self.clear_pools().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn with_config(config: BatchProcessorConfig) -> BatchProcessor {
+        Self { inner: Arc::new(kreuzberg::core::BatchProcessor::with_config(config.into())) }
+    }
+
+    pub fn with_pool_hint(hint: PoolSizeHint) -> BatchProcessor {
+        let hint_core = hint.into();
+    Self { inner: Arc::new(kreuzberg::core::BatchProcessor::with_pool_hint(&hint_core)) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> BatchProcessor {
+        Self { inner: Arc::new(kreuzberg::core::BatchProcessor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct AccelerationConfig {
+    /// Execution provider to use for ONNX inference.
+    pub provider: ExecutionProviderType,
+    /// GPU device ID (for CUDA/TensorRT). Ignored for CPU/CoreML/Auto.
+    pub device_id: i32,
+}
+
+impl Default for AccelerationConfig {
+    fn default() -> Self {
+        Self {
+            provider: Default::default(),
+            device_id: Default::default(),
+        }
+    }
+}
+
+impl AccelerationConfig {
+    #[must_use]
+    
+    pub fn new(provider: Option<ExecutionProviderType>, device_id: Option<i32>) -> Self {
+        Self { provider: provider.unwrap_or_default(), device_id: device_id.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_accelerationconfig(
+    provider: ExecutionProviderType = null,
+    device_id: i32 = 0
+) -> AccelerationConfig {
+    AccelerationConfig {
+        provider,
+        device_id,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ContentFilterConfig {
+    /// Include running headers in extraction output.
+    /// 
+    /// - PDF: Disables top-margin furniture stripping and prevents the layout
+    ///   model from treating `PageHeader`-classified regions as furniture.
+    /// - DOCX: Includes document headers in text output.
+    /// - RTF/ODT: Headers already included; this is a no-op when true.
+    /// - HTML/EPUB: Keeps `<header>` element content.
+    /// 
+    /// Default: `false` (headers are stripped or excluded).
+    pub include_headers: bool,
+    /// Include running footers in extraction output.
+    /// 
+    /// - PDF: Disables bottom-margin furniture stripping and prevents the layout
+    ///   model from treating `PageFooter`-classified regions as furniture.
+    /// - DOCX: Includes document footers in text output.
+    /// - RTF/ODT: Footers already included; this is a no-op when true.
+    /// - HTML/EPUB: Keeps `<footer>` element content.
+    /// 
+    /// Default: `false` (footers are stripped or excluded).
+    pub include_footers: bool,
+    /// Enable the heuristic cross-page repeating text detector.
+    /// 
+    /// When `true` (default), text that repeats verbatim across a supermajority
+    /// of pages is classified as furniture and stripped.  Disable this if brand
+    /// names or repeated headings are being incorrectly removed by the heuristic.
+    /// 
+    /// Note: when a layout-detection model is active, the model may independently
+    /// classify page-header / page-footer regions as furniture on a per-page basis.
+    /// To preserve those regions, set `include_headers = true` and/or
+    /// `include_footers = true` in addition to disabling this flag.
+    /// 
+    /// Primarily affects PDF extraction.
+    /// 
+    /// Default: `true`.
+    pub strip_repeating_text: bool,
+    /// Include watermark text in extraction output.
+    /// 
+    /// - PDF: Keeps watermark artifacts and arXiv identifiers.
+    /// - Other formats: No effect currently.
+    /// 
+    /// Default: `false` (watermarks are stripped).
+    pub include_watermarks: bool,
+}
+
+impl Default for ContentFilterConfig {
+    fn default() -> Self {
+        Self {
+            include_headers: Default::default(),
+            include_footers: Default::default(),
+            strip_repeating_text: Default::default(),
+            include_watermarks: Default::default(),
+        }
+    }
+}
+
+impl ContentFilterConfig {
+    #[must_use]
+    
+    pub fn new(
+        include_headers: Option<bool>,
+        include_footers: Option<bool>,
+        strip_repeating_text: Option<bool>,
+        include_watermarks: Option<bool>,
+    ) -> Self {
+        Self { include_headers: include_headers.unwrap_or(false), include_footers: include_footers.unwrap_or(false), strip_repeating_text: strip_repeating_text.unwrap_or(true), include_watermarks: include_watermarks.unwrap_or(false) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ContentFilterConfig {
+        kreuzberg::ContentFilterConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_contentfilterconfig(
+    include_headers: bool = FALSE,
+    include_footers: bool = FALSE,
+    strip_repeating_text: bool = TRUE,
+    include_watermarks: bool = FALSE
+) -> ContentFilterConfig {
+    ContentFilterConfig {
+        include_headers,
+        include_footers,
+        strip_repeating_text,
+        include_watermarks,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct EmailConfig {
+    /// Windows codepage number to use when an MSG file contains no codepage property.
+    /// Defaults to `None`, which falls back to windows-1252.
+    /// 
+    /// If an unrecognized or invalid codepage number is supplied (including 0),
+    /// the behavior silently falls back to windows-1252 — the same as when the
+    /// MSG file itself contains an unrecognized codepage. No error or warning is
+    /// emitted. Users should verify output when supplying unusual values.
+    /// 
+    /// Common values:
+    /// - 1250: Central European (Polish, Czech, Hungarian, etc.)
+    /// - 1251: Cyrillic (Russian, Ukrainian, Bulgarian, etc.)
+    /// - 1252: Western European (default)
+    /// - 1253: Greek
+    /// - 1254: Turkish
+    /// - 1255: Hebrew
+    /// - 1256: Arabic
+    /// - 932:  Japanese (Shift-JIS)
+    /// - 936:  Simplified Chinese (GBK)
+    pub msg_fallback_codepage: Option<i32>,
+}
+
+impl Default for EmailConfig {
+    fn default() -> Self {
+        Self {
+            msg_fallback_codepage: Default::default(),
+        }
+    }
+}
+
+impl EmailConfig {
+    #[must_use]
+    
+    pub fn new(msg_fallback_codepage: Option<i32>) -> Self {
+        Self { msg_fallback_codepage: msg_fallback_codepage }
+    }
+}
+
+#[extendr]
+pub fn new_emailconfig(
+    msg_fallback_codepage: i32 = 0
+) -> EmailConfig {
+    EmailConfig {
+        msg_fallback_codepage,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ExtractionConfig {
+    /// Enable caching of extraction results
+    pub use_cache: bool,
+    /// Enable quality post-processing
+    pub enable_quality_processing: bool,
+    /// OCR configuration (None = OCR disabled)
+    pub ocr: Option<OcrConfig>,
+    /// Force OCR even for searchable PDFs
+    pub force_ocr: bool,
+    /// Force OCR on specific pages only (1-indexed page numbers, must be >= 1).
+    /// 
+    /// When set, only the listed pages are OCR'd regardless of text layer quality.
+    /// Unlisted pages use native text extraction. Ignored when `force_ocr` is `true`.
+    /// Only applies to PDF documents. Duplicates are automatically deduplicated.
+    /// An `ocr` config is recommended for backend/language selection; defaults are used if absent.
+    pub force_ocr_pages: Option<Vec<f64>>,
+    /// Disable OCR entirely, even for images.
+    /// 
+    /// When `true`, OCR is skipped for all document types. Images return metadata
+    /// only (dimensions, format, EXIF) without text extraction. PDFs use only
+    /// native text extraction without OCR fallback.
+    /// 
+    /// Cannot be `true` simultaneously with `force_ocr`.
+    /// 
+    /// *Added in v4.7.0.*
+    pub disable_ocr: bool,
+    /// Text chunking configuration (None = chunking disabled)
+    pub chunking: Option<ChunkingConfig>,
+    /// Content filtering configuration (None = use extractor defaults).
+    /// 
+    /// Controls whether document "furniture" (headers, footers, watermarks,
+    /// repeating text) is included in or stripped from extraction results.
+    /// See [`ContentFilterConfig`] for per-field documentation.
+    pub content_filter: Option<ContentFilterConfig>,
+    /// Image extraction configuration (None = no image extraction)
+    pub images: Option<ImageExtractionConfig>,
+    /// PDF-specific options (None = use defaults)
+    pub pdf_options: Option<PdfConfig>,
+    /// Token reduction configuration (None = no token reduction)
+    pub token_reduction: Option<TokenReductionConfig>,
+    /// Language detection configuration (None = no language detection)
+    pub language_detection: Option<LanguageDetectionConfig>,
+    /// Page extraction configuration (None = no page tracking)
+    pub pages: Option<PageConfig>,
+    /// Post-processor configuration (None = use defaults)
+    pub postprocessor: Option<PostProcessorConfig>,
+    /// HTML to Markdown conversion options (None = use defaults)
+    /// 
+    /// Configure how HTML documents are converted to Markdown, including heading styles,
+    /// list formatting, code block styles, and preprocessing options.
+    pub html_options: Option<String>,
+    /// Styled HTML output configuration.
+    /// 
+    /// When set alongside `output_format = OutputFormat::Html`, the extraction
+    /// pipeline uses [`StyledHtmlRenderer`](crate::rendering::StyledHtmlRenderer)
+    /// which emits stable `kb-*` CSS class hooks on every structural element
+    /// and optionally embeds theme CSS or user-supplied CSS in a `<style>` block.
+    /// 
+    /// When `None`, the existing plain comrak-based HTML renderer is used.
+    pub html_output: Option<HtmlOutputConfig>,
+    /// Default per-file timeout in seconds for batch extraction.
+    /// 
+    /// When set, each file in a batch will be canceled after this duration
+    /// unless overridden by [`FileExtractionConfig::timeout_secs`].
+    /// `None` means no timeout (unbounded extraction time).
+    pub extraction_timeout_secs: Option<f64>,
+    /// Maximum concurrent extractions in batch operations (None = (num_cpus × 1.5).ceil()).
+    /// 
+    /// Limits parallelism to prevent resource exhaustion when processing
+    /// large batches. Defaults to (num_cpus × 1.5).ceil() when not set.
+    pub max_concurrent_extractions: Option<f64>,
+    /// Result structure format
+    /// 
+    /// Controls whether results are returned in unified format (default) with all
+    /// content in the `content` field, or element-based format with semantic
+    /// elements (for Unstructured-compatible output).
+    pub result_format: OutputFormat,
+    /// Security limits for archive extraction.
+    /// 
+    /// Controls maximum archive size, compression ratio, file count, and other
+    /// security thresholds to prevent decompression bomb attacks.
+    /// When `None`, default limits are used (500MB archive, 100:1 ratio, 10K files).
+    pub security_limits: Option<String>,
+    /// Content text format (default: Plain).
+    /// 
+    /// Controls the format of the extracted content:
+    /// - `Plain`: Raw extracted text (default)
+    /// - `Markdown`: Markdown formatted output
+    /// - `Djot`: Djot markup format (requires djot feature)
+    /// - `Html`: HTML formatted output
+    /// 
+    /// When set to a structured format, extraction results will include
+    /// formatted output. The `formatted_content` field may be populated
+    /// when format conversion is applied.
+    pub output_format: OutputFormat,
+    /// Layout detection configuration (None = layout detection disabled).
+    /// 
+    /// When set, PDF pages and images are analyzed for document structure
+    /// (headings, code, formulas, tables, figures, etc.) using RT-DETR models
+    /// via ONNX Runtime. For PDFs, layout hints override paragraph classification
+    /// in the markdown pipeline. For images, per-region OCR is performed with
+    /// markdown formatting based on detected layout classes.
+    /// Requires the `layout-detection` feature.
+    pub layout: Option<LayoutDetectionConfig>,
+    /// Enable structured document tree output.
+    /// 
+    /// When true, populates the `document` field on `ExtractionResult` with a
+    /// hierarchical `DocumentStructure` containing heading-driven section nesting,
+    /// table grids, content layer classification, and inline annotations.
+    /// 
+    /// Independent of `result_format` — can be combined with Unified or ElementBased.
+    pub include_document_structure: bool,
+    /// Hardware acceleration configuration for ONNX Runtime models.
+    /// 
+    /// Controls execution provider selection for layout detection and embedding
+    /// models. When `None`, uses platform defaults (CoreML on macOS, CUDA on
+    /// Linux, CPU on Windows).
+    pub acceleration: Option<AccelerationConfig>,
+    /// Cache namespace for tenant isolation.
+    /// 
+    /// When set, cache entries are stored under `{cache_dir}/{namespace}/`.
+    /// Must be alphanumeric, hyphens, or underscores only (max 64 chars).
+    /// Different namespaces have isolated cache spaces on the same filesystem.
+    pub cache_namespace: Option<String>,
+    /// Per-request cache TTL in seconds.
+    /// 
+    /// Overrides the global `max_age_days` for this specific extraction.
+    /// When `0`, caching is completely skipped (no read or write).
+    /// When `None`, the global TTL applies.
+    pub cache_ttl_secs: Option<f64>,
+    /// Email extraction configuration (None = use defaults).
+    /// 
+    /// Currently supports configuring the fallback codepage for MSG files
+    /// that do not specify one. See [`crate::core::config::EmailConfig`] for details.
+    pub email: Option<EmailConfig>,
+    /// Concurrency limits for constrained environments (None = use defaults).
+    /// 
+    /// Controls Rayon thread pool size, ONNX Runtime intra-op threads, and
+    /// (when `max_concurrent_extractions` is unset) the batch concurrency
+    /// semaphore. See [`crate::core::config::ConcurrencyConfig`] for details.
+    pub concurrency: Option<String>,
+    /// Maximum recursion depth for archive extraction (default: 3).
+    /// Set to 0 to disable recursive extraction (legacy behavior).
+    pub max_archive_depth: f64,
+    /// Tree-sitter language pack configuration (None = tree-sitter disabled).
+    /// 
+    /// When set, enables code file extraction using tree-sitter parsers.
+    /// Controls grammar download behavior and code analysis options.
+    pub tree_sitter: Option<TreeSitterConfig>,
+    /// Structured extraction via LLM (None = disabled).
+    /// 
+    /// When set, the extracted document content is sent to an LLM with the
+    /// provided JSON schema. The structured response is stored in
+    /// `ExtractionResult::structured_output`.
+    pub structured_extraction: Option<StructuredExtractionConfig>,
+}
+
+impl Default for ExtractionConfig {
+    fn default() -> Self {
+        Self {
+            use_cache: Default::default(),
+            enable_quality_processing: Default::default(),
+            ocr: Default::default(),
+            force_ocr: Default::default(),
+            force_ocr_pages: Default::default(),
+            disable_ocr: Default::default(),
+            chunking: Default::default(),
+            content_filter: Default::default(),
+            images: Default::default(),
+            pdf_options: Default::default(),
+            token_reduction: Default::default(),
+            language_detection: Default::default(),
+            pages: Default::default(),
+            postprocessor: Default::default(),
+            html_options: Default::default(),
+            html_output: Default::default(),
+            extraction_timeout_secs: Default::default(),
+            max_concurrent_extractions: Default::default(),
+            result_format: Default::default(),
+            security_limits: Default::default(),
+            output_format: Default::default(),
+            layout: Default::default(),
+            include_document_structure: Default::default(),
+            acceleration: Default::default(),
+            cache_namespace: Default::default(),
+            cache_ttl_secs: Default::default(),
+            email: Default::default(),
+            concurrency: Default::default(),
+            max_archive_depth: Default::default(),
+            tree_sitter: Default::default(),
+            structured_extraction: Default::default(),
+        }
+    }
+}
+
+impl ExtractionConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        use_cache: Option<bool>,
+        enable_quality_processing: Option<bool>,
+        force_ocr: Option<bool>,
+        disable_ocr: Option<bool>,
+        result_format: Option<OutputFormat>,
+        output_format: Option<OutputFormat>,
+        include_document_structure: Option<bool>,
+        max_archive_depth: Option<f64>,
+        ocr: Option<OcrConfig>,
+        force_ocr_pages: Option<Vec<f64>>,
+        chunking: Option<ChunkingConfig>,
+        content_filter: Option<ContentFilterConfig>,
+        images: Option<ImageExtractionConfig>,
+        pdf_options: Option<PdfConfig>,
+        token_reduction: Option<TokenReductionConfig>,
+        language_detection: Option<LanguageDetectionConfig>,
+        pages: Option<PageConfig>,
+        postprocessor: Option<PostProcessorConfig>,
+        html_options: Option<String>,
+        html_output: Option<HtmlOutputConfig>,
+        extraction_timeout_secs: Option<f64>,
+        max_concurrent_extractions: Option<f64>,
+        security_limits: Option<String>,
+        layout: Option<LayoutDetectionConfig>,
+        acceleration: Option<AccelerationConfig>,
+        cache_namespace: Option<String>,
+        cache_ttl_secs: Option<f64>,
+        email: Option<EmailConfig>,
+        concurrency: Option<String>,
+        tree_sitter: Option<TreeSitterConfig>,
+        structured_extraction: Option<StructuredExtractionConfig>,
+    ) -> Self {
+        Self { use_cache: use_cache.unwrap_or(true), enable_quality_processing: enable_quality_processing.unwrap_or(true), ocr: ocr, force_ocr: force_ocr.unwrap_or(false), force_ocr_pages: force_ocr_pages, disable_ocr: disable_ocr.unwrap_or(false), chunking: chunking, content_filter: content_filter, images: images, pdf_options: pdf_options, token_reduction: token_reduction, language_detection: language_detection, pages: pages, postprocessor: postprocessor, html_options: html_options, html_output: html_output, extraction_timeout_secs: extraction_timeout_secs, max_concurrent_extractions: max_concurrent_extractions, result_format: result_format.unwrap_or_default(), security_limits: security_limits, output_format: output_format.unwrap_or_default(), layout: layout, include_document_structure: include_document_structure.unwrap_or(false), acceleration: acceleration, cache_namespace: cache_namespace, cache_ttl_secs: cache_ttl_secs, email: email, concurrency: concurrency, max_archive_depth: max_archive_depth.unwrap_or_default(), tree_sitter: tree_sitter, structured_extraction: structured_extraction }
+    }
+
+    pub fn with_file_overrides(&self, overrides: FileExtractionConfig) -> ExtractionConfig {
+        let overrides_core = overrides.into();
+    let _ = overrides;
+        compile_error!("alef: ExtractionConfig.with_file_overrides returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn normalized(&self) -> ExtractionConfig {
+        let core_self = kreuzberg::ExtractionConfig {
+            use_cache: self.use_cache,
+            enable_quality_processing: self.enable_quality_processing,
+            ocr: self.ocr.clone().map(Into::into),
+            force_ocr: self.force_ocr,
+            force_ocr_pages: self.force_ocr_pages.clone(),
+            disable_ocr: self.disable_ocr,
+            chunking: self.chunking.clone().map(Into::into),
+            content_filter: self.content_filter.clone().map(Into::into),
+            images: self.images.clone().map(Into::into),
+            pdf_options: self.pdf_options.clone().map(Into::into),
+            token_reduction: self.token_reduction.clone().map(Into::into),
+            language_detection: self.language_detection.clone().map(Into::into),
+            pages: self.pages.clone().map(Into::into),
+            postprocessor: self.postprocessor.clone().map(Into::into),
+            html_options: Default::default(),
+            html_output: self.html_output.clone().map(Into::into),
+            extraction_timeout_secs: self.extraction_timeout_secs,
+            max_concurrent_extractions: self.max_concurrent_extractions,
+            result_format: self.result_format.clone().into(),
+            security_limits: Default::default(),
+            output_format: self.output_format.clone().into(),
+            layout: self.layout.clone().map(Into::into),
+            include_document_structure: self.include_document_structure,
+            acceleration: self.acceleration.clone().map(Into::into),
+            cache_namespace: self.cache_namespace.clone(),
+            cache_ttl_secs: self.cache_ttl_secs,
+            email: self.email.clone().map(Into::into),
+            concurrency: Default::default(),
+            max_archive_depth: self.max_archive_depth,
+            tree_sitter: self.tree_sitter.clone().map(Into::into),
+            structured_extraction: self.structured_extraction.clone().map(Into::into),
+            ..Default::default()
+        };
+        core_self.normalized().into_owned().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn validate(&self) -> Result<()> {
+        let core_self = kreuzberg::ExtractionConfig {
+            use_cache: self.use_cache,
+            enable_quality_processing: self.enable_quality_processing,
+            ocr: self.ocr.clone().map(Into::into),
+            force_ocr: self.force_ocr,
+            force_ocr_pages: self.force_ocr_pages.clone(),
+            disable_ocr: self.disable_ocr,
+            chunking: self.chunking.clone().map(Into::into),
+            content_filter: self.content_filter.clone().map(Into::into),
+            images: self.images.clone().map(Into::into),
+            pdf_options: self.pdf_options.clone().map(Into::into),
+            token_reduction: self.token_reduction.clone().map(Into::into),
+            language_detection: self.language_detection.clone().map(Into::into),
+            pages: self.pages.clone().map(Into::into),
+            postprocessor: self.postprocessor.clone().map(Into::into),
+            html_options: Default::default(),
+            html_output: self.html_output.clone().map(Into::into),
+            extraction_timeout_secs: self.extraction_timeout_secs,
+            max_concurrent_extractions: self.max_concurrent_extractions,
+            result_format: self.result_format.clone().into(),
+            security_limits: Default::default(),
+            output_format: self.output_format.clone().into(),
+            layout: self.layout.clone().map(Into::into),
+            include_document_structure: self.include_document_structure,
+            acceleration: self.acceleration.clone().map(Into::into),
+            cache_namespace: self.cache_namespace.clone(),
+            cache_ttl_secs: self.cache_ttl_secs,
+            email: self.email.clone().map(Into::into),
+            concurrency: Default::default(),
+            max_archive_depth: self.max_archive_depth,
+            tree_sitter: self.tree_sitter.clone().map(Into::into),
+            structured_extraction: self.structured_extraction.clone().map(Into::into),
+            ..Default::default()
+        };
+        let result = core_self.validate().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn needs_image_processing(&self) -> bool {
+        let core_self = kreuzberg::ExtractionConfig {
+            use_cache: self.use_cache,
+            enable_quality_processing: self.enable_quality_processing,
+            ocr: self.ocr.clone().map(Into::into),
+            force_ocr: self.force_ocr,
+            force_ocr_pages: self.force_ocr_pages.clone(),
+            disable_ocr: self.disable_ocr,
+            chunking: self.chunking.clone().map(Into::into),
+            content_filter: self.content_filter.clone().map(Into::into),
+            images: self.images.clone().map(Into::into),
+            pdf_options: self.pdf_options.clone().map(Into::into),
+            token_reduction: self.token_reduction.clone().map(Into::into),
+            language_detection: self.language_detection.clone().map(Into::into),
+            pages: self.pages.clone().map(Into::into),
+            postprocessor: self.postprocessor.clone().map(Into::into),
+            html_options: Default::default(),
+            html_output: self.html_output.clone().map(Into::into),
+            extraction_timeout_secs: self.extraction_timeout_secs,
+            max_concurrent_extractions: self.max_concurrent_extractions,
+            result_format: self.result_format.clone().into(),
+            security_limits: Default::default(),
+            output_format: self.output_format.clone().into(),
+            layout: self.layout.clone().map(Into::into),
+            include_document_structure: self.include_document_structure,
+            acceleration: self.acceleration.clone().map(Into::into),
+            cache_namespace: self.cache_namespace.clone(),
+            cache_ttl_secs: self.cache_ttl_secs,
+            email: self.email.clone().map(Into::into),
+            concurrency: Default::default(),
+            max_archive_depth: self.max_archive_depth,
+            tree_sitter: self.tree_sitter.clone().map(Into::into),
+            structured_extraction: self.structured_extraction.clone().map(Into::into),
+            ..Default::default()
+        };
+        core_self.needs_image_processing()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ExtractionConfig {
+        kreuzberg::ExtractionConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_extractionconfig(
+    use_cache: bool = TRUE,
+    enable_quality_processing: bool = TRUE,
+    ocr: OcrConfig = NULL,
+    force_ocr: bool = FALSE,
+    force_ocr_pages: Vec<f64> = NULL,
+    disable_ocr: bool = FALSE,
+    chunking: ChunkingConfig = NULL,
+    content_filter: ContentFilterConfig = NULL,
+    images: ImageExtractionConfig = NULL,
+    pdf_options: PdfConfig = NULL,
+    token_reduction: TokenReductionConfig = NULL,
+    language_detection: LanguageDetectionConfig = NULL,
+    pages: PageConfig = NULL,
+    postprocessor: PostProcessorConfig = NULL,
+    html_options: String = NULL,
+    html_output: HtmlOutputConfig = NULL,
+    extraction_timeout_secs: f64 = NULL,
+    max_concurrent_extractions: f64 = NULL,
+    result_format: OutputFormat = null,
+    security_limits: String = NULL,
+    output_format: OutputFormat = OutputFormat$Plain,
+    layout: LayoutDetectionConfig = NULL,
+    include_document_structure: bool = FALSE,
+    acceleration: AccelerationConfig = NULL,
+    cache_namespace: String = NULL,
+    cache_ttl_secs: f64 = NULL,
+    email: EmailConfig = NULL,
+    concurrency: String = NULL,
+    max_archive_depth: f64 = 0,
+    tree_sitter: TreeSitterConfig = NULL,
+    structured_extraction: StructuredExtractionConfig = NULL
+) -> ExtractionConfig {
+    ExtractionConfig {
+        use_cache,
+        enable_quality_processing,
+        ocr,
+        force_ocr,
+        force_ocr_pages,
+        disable_ocr,
+        chunking,
+        content_filter,
+        images,
+        pdf_options,
+        token_reduction,
+        language_detection,
+        pages,
+        postprocessor,
+        html_options,
+        html_output,
+        extraction_timeout_secs,
+        max_concurrent_extractions,
+        result_format,
+        security_limits,
+        output_format,
+        layout,
+        include_document_structure,
+        acceleration,
+        cache_namespace,
+        cache_ttl_secs,
+        email,
+        concurrency,
+        max_archive_depth,
+        tree_sitter,
+        structured_extraction,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct FileExtractionConfig {
+    /// Override quality post-processing for this file.
+    pub enable_quality_processing: Option<bool>,
+    /// Override OCR configuration for this file (None in the Option = use batch default).
+    pub ocr: Option<OcrConfig>,
+    /// Override force OCR for this file.
+    pub force_ocr: Option<bool>,
+    /// Override force OCR pages for this file (1-indexed page numbers).
+    pub force_ocr_pages: Option<Vec<f64>>,
+    /// Override disable OCR for this file.
+    pub disable_ocr: Option<bool>,
+    /// Override chunking configuration for this file.
+    pub chunking: Option<ChunkingConfig>,
+    /// Override content filtering configuration for this file.
+    pub content_filter: Option<ContentFilterConfig>,
+    /// Override image extraction configuration for this file.
+    pub images: Option<ImageExtractionConfig>,
+    /// Override PDF options for this file.
+    pub pdf_options: Option<PdfConfig>,
+    /// Override token reduction for this file.
+    pub token_reduction: Option<TokenReductionConfig>,
+    /// Override language detection for this file.
+    pub language_detection: Option<LanguageDetectionConfig>,
+    /// Override page extraction for this file.
+    pub pages: Option<PageConfig>,
+    /// Override post-processor for this file.
+    pub postprocessor: Option<PostProcessorConfig>,
+    /// Override HTML conversion options for this file.
+    pub html_options: Option<String>,
+    /// Override result format for this file.
+    pub result_format: Option<OutputFormat>,
+    /// Override output content format for this file.
+    pub output_format: Option<OutputFormat>,
+    /// Override document structure output for this file.
+    pub include_document_structure: Option<bool>,
+    /// Override layout detection for this file.
+    pub layout: Option<LayoutDetectionConfig>,
+    /// Override per-file extraction timeout in seconds.
+    /// 
+    /// When set, the extraction for this file will be canceled after the
+    /// specified duration. A timed-out file produces an error result without
+    /// affecting other files in the batch.
+    pub timeout_secs: Option<f64>,
+    /// Override tree-sitter configuration for this file.
+    pub tree_sitter: Option<TreeSitterConfig>,
+    /// Override structured extraction configuration for this file.
+    /// 
+    /// When set, enables LLM-based structured extraction with a JSON schema
+    /// for this specific file. The extracted content is sent to a VLM/LLM
+    /// and the response is parsed according to the provided schema.
+    pub structured_extraction: Option<StructuredExtractionConfig>,
+}
+
+impl Default for FileExtractionConfig {
+    fn default() -> Self {
+        Self {
+            enable_quality_processing: Default::default(),
+            ocr: Default::default(),
+            force_ocr: Default::default(),
+            force_ocr_pages: Default::default(),
+            disable_ocr: Default::default(),
+            chunking: Default::default(),
+            content_filter: Default::default(),
+            images: Default::default(),
+            pdf_options: Default::default(),
+            token_reduction: Default::default(),
+            language_detection: Default::default(),
+            pages: Default::default(),
+            postprocessor: Default::default(),
+            html_options: Default::default(),
+            result_format: Default::default(),
+            output_format: Default::default(),
+            include_document_structure: Default::default(),
+            layout: Default::default(),
+            timeout_secs: Default::default(),
+            tree_sitter: Default::default(),
+            structured_extraction: Default::default(),
+        }
+    }
+}
+
+impl FileExtractionConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        enable_quality_processing: Option<bool>,
+        ocr: Option<OcrConfig>,
+        force_ocr: Option<bool>,
+        force_ocr_pages: Option<Vec<f64>>,
+        disable_ocr: Option<bool>,
+        chunking: Option<ChunkingConfig>,
+        content_filter: Option<ContentFilterConfig>,
+        images: Option<ImageExtractionConfig>,
+        pdf_options: Option<PdfConfig>,
+        token_reduction: Option<TokenReductionConfig>,
+        language_detection: Option<LanguageDetectionConfig>,
+        pages: Option<PageConfig>,
+        postprocessor: Option<PostProcessorConfig>,
+        html_options: Option<String>,
+        result_format: Option<OutputFormat>,
+        output_format: Option<OutputFormat>,
+        include_document_structure: Option<bool>,
+        layout: Option<LayoutDetectionConfig>,
+        timeout_secs: Option<f64>,
+        tree_sitter: Option<TreeSitterConfig>,
+        structured_extraction: Option<StructuredExtractionConfig>,
+    ) -> Self {
+        Self { enable_quality_processing: enable_quality_processing, ocr: ocr, force_ocr: force_ocr, force_ocr_pages: force_ocr_pages, disable_ocr: disable_ocr, chunking: chunking, content_filter: content_filter, images: images, pdf_options: pdf_options, token_reduction: token_reduction, language_detection: language_detection, pages: pages, postprocessor: postprocessor, html_options: html_options, result_format: result_format, output_format: output_format, include_document_structure: include_document_structure, layout: layout, timeout_secs: timeout_secs, tree_sitter: tree_sitter, structured_extraction: structured_extraction }
+    }
+}
+
+#[extendr]
+pub fn new_fileextractionconfig(
+    enable_quality_processing: bool = false,
+    ocr: OcrConfig = null,
+    force_ocr: bool = false,
+    force_ocr_pages: Vec<f64> = c(),
+    disable_ocr: bool = false,
+    chunking: ChunkingConfig = null,
+    content_filter: ContentFilterConfig = null,
+    images: ImageExtractionConfig = null,
+    pdf_options: PdfConfig = null,
+    token_reduction: TokenReductionConfig = null,
+    language_detection: LanguageDetectionConfig = null,
+    pages: PageConfig = null,
+    postprocessor: PostProcessorConfig = null,
+    html_options: String = "",
+    result_format: OutputFormat = null,
+    output_format: OutputFormat = null,
+    include_document_structure: bool = false,
+    layout: LayoutDetectionConfig = null,
+    timeout_secs: f64 = 0,
+    tree_sitter: TreeSitterConfig = null,
+    structured_extraction: StructuredExtractionConfig = null
+) -> FileExtractionConfig {
+    FileExtractionConfig {
+        enable_quality_processing,
+        ocr,
+        force_ocr,
+        force_ocr_pages,
+        disable_ocr,
+        chunking,
+        content_filter,
+        images,
+        pdf_options,
+        token_reduction,
+        language_detection,
+        pages,
+        postprocessor,
+        html_options,
+        result_format,
+        output_format,
+        include_document_structure,
+        layout,
+        timeout_secs,
+        tree_sitter,
+        structured_extraction,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct ImageExtractionConfig {
+    /// Extract images from documents
+    pub extract_images: bool,
+    /// Target DPI for image normalization
+    pub target_dpi: i32,
+    /// Maximum dimension for images (width or height)
+    pub max_image_dimension: i32,
+    /// Whether to inject image reference placeholders into markdown output.
+    /// When `true` (default), image references like `![Image 1](embedded:p1_i0)`
+    /// are appended to the markdown. Set to `false` to extract images as data
+    /// without polluting the markdown output.
+    pub inject_placeholders: bool,
+    /// Automatically adjust DPI based on image content
+    pub auto_adjust_dpi: bool,
+    /// Minimum DPI threshold
+    pub min_dpi: i32,
+    /// Maximum DPI threshold
+    pub max_dpi: i32,
+}
+
+impl Default for ImageExtractionConfig {
+    fn default() -> Self {
+        Self {
+            extract_images: Default::default(),
+            target_dpi: Default::default(),
+            max_image_dimension: Default::default(),
+            inject_placeholders: Default::default(),
+            auto_adjust_dpi: Default::default(),
+            min_dpi: Default::default(),
+            max_dpi: Default::default(),
+        }
+    }
+}
+
+impl ImageExtractionConfig {
+    #[must_use]
+    
+    pub fn new(
+        extract_images: Option<bool>,
+        target_dpi: Option<i32>,
+        max_image_dimension: Option<i32>,
+        inject_placeholders: Option<bool>,
+        auto_adjust_dpi: Option<bool>,
+        min_dpi: Option<i32>,
+        max_dpi: Option<i32>,
+    ) -> Self {
+        Self { extract_images: extract_images.unwrap_or_default(), target_dpi: target_dpi.unwrap_or_default(), max_image_dimension: max_image_dimension.unwrap_or_default(), inject_placeholders: inject_placeholders.unwrap_or_default(), auto_adjust_dpi: auto_adjust_dpi.unwrap_or_default(), min_dpi: min_dpi.unwrap_or_default(), max_dpi: max_dpi.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_imageextractionconfig(
+    extract_images: bool = false,
+    target_dpi: i32 = 0,
+    max_image_dimension: i32 = 0,
+    inject_placeholders: bool = false,
+    auto_adjust_dpi: bool = false,
+    min_dpi: i32 = 0,
+    max_dpi: i32 = 0
+) -> ImageExtractionConfig {
+    ImageExtractionConfig {
+        extract_images,
+        target_dpi,
+        max_image_dimension,
+        inject_placeholders,
+        auto_adjust_dpi,
+        min_dpi,
+        max_dpi,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct TokenReductionConfig {
+    /// Reduction mode: "off", "light", "moderate", "aggressive", "maximum"
+    pub mode: String,
+    /// Preserve important words (capitalized, technical terms)
+    pub preserve_important_words: bool,
+}
+
+impl TokenReductionConfig {
+    #[must_use]
+    
+    pub fn new(mode: String, preserve_important_words: bool) -> Self {
+        Self { mode, preserve_important_words }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct LanguageDetectionConfig {
+    /// Enable language detection
+    pub enabled: bool,
+    /// Minimum confidence threshold (0.0-1.0)
+    pub min_confidence: f64,
+    /// Detect multiple languages in the document
+    pub detect_multiple: bool,
+}
+
+impl LanguageDetectionConfig {
+    #[must_use]
+    
+    pub fn new(enabled: bool, min_confidence: f64, detect_multiple: bool) -> Self {
+        Self { enabled, min_confidence, detect_multiple }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct HtmlOutputConfig {
+    /// Inline CSS string injected into the output after the theme stylesheet.
+    /// Concatenated after `css_file` content when both are set.
+    pub css: Option<String>,
+    /// Path to a CSS file loaded once at renderer construction time.
+    /// Concatenated before `css` when both are set.
+    pub css_file: Option<String>,
+    /// Built-in colour/typography theme. Default: [`HtmlTheme::Unstyled`].
+    pub theme: HtmlTheme,
+    /// CSS class prefix applied to every emitted class name.
+    /// 
+    /// Default: `"kb-"`. Change this if your host application already uses
+    /// classes that start with `kb-`.
+    pub class_prefix: String,
+    /// When `true` (default), write the resolved CSS into a `<style>` block
+    /// immediately after the opening `<div class="{prefix}doc">`.
+    /// 
+    /// Set to `false` to emit only the structural markup and wire up your
+    /// own stylesheet targeting the `kb-*` class names.
+    pub embed_css: bool,
+}
+
+impl Default for HtmlOutputConfig {
+    fn default() -> Self {
+        Self {
+            css: Default::default(),
+            css_file: Default::default(),
+            theme: Default::default(),
+            class_prefix: Default::default(),
+            embed_css: Default::default(),
+        }
+    }
+}
+
+impl HtmlOutputConfig {
+    #[must_use]
+    
+    pub fn new(
+        theme: Option<HtmlTheme>,
+        class_prefix: Option<String>,
+        embed_css: Option<bool>,
+        css: Option<String>,
+        css_file: Option<String>,
+    ) -> Self {
+        Self { css: css, css_file: css_file, theme: theme.unwrap_or_default(), class_prefix: class_prefix.unwrap_or_default(), embed_css: embed_css.unwrap_or(true) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> HtmlOutputConfig {
+        kreuzberg::HtmlOutputConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_htmloutputconfig(
+    css: String = NULL,
+    css_file: String = NULL,
+    theme: HtmlTheme = HtmlTheme$Unstyled,
+    class_prefix: String = "",
+    embed_css: bool = TRUE
+) -> HtmlOutputConfig {
+    HtmlOutputConfig {
+        css,
+        css_file,
+        theme,
+        class_prefix,
+        embed_css,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct LayoutDetectionConfig {
+    /// Confidence threshold override (None = use model default).
+    pub confidence_threshold: Option<f64>,
+    /// Whether to apply postprocessing heuristics (default: true).
+    pub apply_heuristics: bool,
+    /// Table structure recognition model.
+    /// 
+    /// Controls which model is used for table cell detection within layout-detected
+    /// table regions. Defaults to [`TableModel::Tatr`].
+    pub table_model: TableModel,
+}
+
+impl Default for LayoutDetectionConfig {
+    fn default() -> Self {
+        Self {
+            confidence_threshold: Default::default(),
+            apply_heuristics: Default::default(),
+            table_model: Default::default(),
+        }
+    }
+}
+
+impl LayoutDetectionConfig {
+    #[must_use]
+    
+    pub fn new(apply_heuristics: Option<bool>, table_model: Option<TableModel>, confidence_threshold: Option<f64>) -> Self {
+        Self { confidence_threshold: confidence_threshold, apply_heuristics: apply_heuristics.unwrap_or(true), table_model: table_model.unwrap_or_default() }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> LayoutDetectionConfig {
+        kreuzberg::LayoutDetectionConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_layoutdetectionconfig(
+    confidence_threshold: f64 = NULL,
+    apply_heuristics: bool = TRUE,
+    table_model: TableModel = null
+) -> LayoutDetectionConfig {
+    LayoutDetectionConfig {
+        confidence_threshold,
+        apply_heuristics,
+        table_model,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct LlmConfig {
+    /// Provider/model string using liter-llm routing format.
+    /// 
+    /// Examples: `"openai/gpt-4o"`, `"anthropic/claude-sonnet-4-20250514"`,
+    /// `"groq/llama-3.1-70b-versatile"`.
+    pub model: String,
+    /// API key for the provider. When `None`, liter-llm falls back to
+    /// the provider's standard environment variable (e.g., `OPENAI_API_KEY`).
+    pub api_key: Option<String>,
+    /// Custom base URL override for the provider endpoint.
+    pub base_url: Option<String>,
+    /// Request timeout in seconds (default: 60).
+    pub timeout_secs: Option<f64>,
+    /// Maximum retry attempts (default: 3).
+    pub max_retries: Option<i32>,
+    /// Sampling temperature for generation tasks.
+    pub temperature: Option<f64>,
+    /// Maximum tokens to generate.
+    pub max_tokens: Option<f64>,
+}
+
+impl LlmConfig {
+    #[must_use]
+    
+    pub fn new(
+        model: String,
+        api_key: Option<String>,
+        base_url: Option<String>,
+        timeout_secs: Option<f64>,
+        max_retries: Option<i32>,
+        temperature: Option<f64>,
+        max_tokens: Option<f64>,
+    ) -> Self {
+        Self { model, api_key, base_url, timeout_secs, max_retries, temperature, max_tokens }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct StructuredExtractionConfig {
+    /// JSON Schema defining the desired output structure.
+    pub schema: String,
+    /// Schema name passed to the LLM's structured output mode.
+    pub schema_name: String,
+    /// Optional schema description for the LLM.
+    pub schema_description: Option<String>,
+    /// Enable strict mode — output must exactly match the schema.
+    pub strict: bool,
+    /// Custom Jinja2 extraction prompt template. When `None`, a default template is used.
+    /// 
+    /// Available template variables:
+    /// - `{{ content }}` — The extracted document text.
+    /// - `{{ schema }}` — The JSON schema as a formatted string.
+    /// - `{{ schema_name }}` — The schema name.
+    /// - `{{ schema_description }}` — The schema description (may be empty).
+    pub prompt: Option<String>,
+    /// LLM configuration for the extraction.
+    pub llm: LlmConfig,
+}
+
+impl StructuredExtractionConfig {
+    #[must_use]
+    
+    pub fn new(
+        schema: String,
+        schema_name: String,
+        strict: bool,
+        llm: LlmConfig,
+        schema_description: Option<String>,
+        prompt: Option<String>,
+    ) -> Self {
+        Self { schema, schema_name, schema_description, strict, prompt, llm }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct OcrQualityThresholds {
+    /// Minimum total non-whitespace characters to consider text substantive.
+    pub min_total_non_whitespace: f64,
+    /// Minimum non-whitespace characters per page on average.
+    pub min_non_whitespace_per_page: f64,
+    /// Minimum character count for a word to be "meaningful".
+    pub min_meaningful_word_len: f64,
+    /// Minimum count of meaningful words before text is accepted.
+    pub min_meaningful_words: f64,
+    /// Minimum alphanumeric ratio (non-whitespace chars that are alphanumeric).
+    pub min_alnum_ratio: f64,
+    /// Minimum Unicode replacement characters (U+FFFD) to trigger OCR fallback.
+    pub min_garbage_chars: f64,
+    /// Maximum fraction of short (1-2 char) words before text is considered fragmented.
+    pub max_fragmented_word_ratio: f64,
+    /// Critical fragmentation threshold — triggers OCR regardless of meaningful words.
+    /// Normal English text has ~20-30% short words. 80%+ is definitive garbage.
+    pub critical_fragmented_word_ratio: f64,
+    /// Minimum average word length. Below this with enough words indicates garbled extraction.
+    pub min_avg_word_length: f64,
+    /// Minimum word count before average word length check applies.
+    pub min_words_for_avg_length_check: f64,
+    /// Minimum consecutive word repetition ratio to detect column scrambling.
+    pub min_consecutive_repeat_ratio: f64,
+    /// Minimum word count before consecutive repetition check is applied.
+    pub min_words_for_repeat_check: f64,
+    /// Minimum character count for "substantive markdown" OCR skip gate.
+    pub substantive_min_chars: f64,
+    /// Minimum character count for "non-text content" OCR skip gate.
+    pub non_text_min_chars: f64,
+    /// Alphanumeric+whitespace ratio threshold for skip decisions.
+    pub alnum_ws_ratio_threshold: f64,
+    /// Minimum quality score (0.0-1.0) for a pipeline stage result to be accepted.
+    /// If the result from a backend scores below this, try the next backend.
+    pub pipeline_min_quality: f64,
+}
+
+impl Default for OcrQualityThresholds {
+    fn default() -> Self {
+        Self {
+            min_total_non_whitespace: Default::default(),
+            min_non_whitespace_per_page: Default::default(),
+            min_meaningful_word_len: Default::default(),
+            min_meaningful_words: Default::default(),
+            min_alnum_ratio: Default::default(),
+            min_garbage_chars: Default::default(),
+            max_fragmented_word_ratio: Default::default(),
+            critical_fragmented_word_ratio: Default::default(),
+            min_avg_word_length: Default::default(),
+            min_words_for_avg_length_check: Default::default(),
+            min_consecutive_repeat_ratio: Default::default(),
+            min_words_for_repeat_check: Default::default(),
+            substantive_min_chars: Default::default(),
+            non_text_min_chars: Default::default(),
+            alnum_ws_ratio_threshold: Default::default(),
+            pipeline_min_quality: Default::default(),
+        }
+    }
+}
+
+impl OcrQualityThresholds {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        min_total_non_whitespace: Option<f64>,
+        min_non_whitespace_per_page: Option<f64>,
+        min_meaningful_word_len: Option<f64>,
+        min_meaningful_words: Option<f64>,
+        min_alnum_ratio: Option<f64>,
+        min_garbage_chars: Option<f64>,
+        max_fragmented_word_ratio: Option<f64>,
+        critical_fragmented_word_ratio: Option<f64>,
+        min_avg_word_length: Option<f64>,
+        min_words_for_avg_length_check: Option<f64>,
+        min_consecutive_repeat_ratio: Option<f64>,
+        min_words_for_repeat_check: Option<f64>,
+        substantive_min_chars: Option<f64>,
+        non_text_min_chars: Option<f64>,
+        alnum_ws_ratio_threshold: Option<f64>,
+        pipeline_min_quality: Option<f64>,
+    ) -> Self {
+        Self { min_total_non_whitespace: min_total_non_whitespace.unwrap_or(64), min_non_whitespace_per_page: min_non_whitespace_per_page.unwrap_or(32.0), min_meaningful_word_len: min_meaningful_word_len.unwrap_or(4), min_meaningful_words: min_meaningful_words.unwrap_or(3), min_alnum_ratio: min_alnum_ratio.unwrap_or(0.3), min_garbage_chars: min_garbage_chars.unwrap_or(5), max_fragmented_word_ratio: max_fragmented_word_ratio.unwrap_or(0.6), critical_fragmented_word_ratio: critical_fragmented_word_ratio.unwrap_or(0.8), min_avg_word_length: min_avg_word_length.unwrap_or(2.0), min_words_for_avg_length_check: min_words_for_avg_length_check.unwrap_or(50), min_consecutive_repeat_ratio: min_consecutive_repeat_ratio.unwrap_or(0.08), min_words_for_repeat_check: min_words_for_repeat_check.unwrap_or(50), substantive_min_chars: substantive_min_chars.unwrap_or(100), non_text_min_chars: non_text_min_chars.unwrap_or(20), alnum_ws_ratio_threshold: alnum_ws_ratio_threshold.unwrap_or(0.4), pipeline_min_quality: pipeline_min_quality.unwrap_or(0.5) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> OcrQualityThresholds {
+        kreuzberg::OcrQualityThresholds::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_ocrqualitythresholds(
+    min_total_non_whitespace: f64 = 64,
+    min_non_whitespace_per_page: f64 = 32.0,
+    min_meaningful_word_len: f64 = 4,
+    min_meaningful_words: f64 = 3,
+    min_alnum_ratio: f64 = 0.3,
+    min_garbage_chars: f64 = 5,
+    max_fragmented_word_ratio: f64 = 0.6,
+    critical_fragmented_word_ratio: f64 = 0.8,
+    min_avg_word_length: f64 = 2.0,
+    min_words_for_avg_length_check: f64 = 50,
+    min_consecutive_repeat_ratio: f64 = 0.08,
+    min_words_for_repeat_check: f64 = 50,
+    substantive_min_chars: f64 = 100,
+    non_text_min_chars: f64 = 20,
+    alnum_ws_ratio_threshold: f64 = 0.4,
+    pipeline_min_quality: f64 = 0.5
+) -> OcrQualityThresholds {
+    OcrQualityThresholds {
+        min_total_non_whitespace,
+        min_non_whitespace_per_page,
+        min_meaningful_word_len,
+        min_meaningful_words,
+        min_alnum_ratio,
+        min_garbage_chars,
+        max_fragmented_word_ratio,
+        critical_fragmented_word_ratio,
+        min_avg_word_length,
+        min_words_for_avg_length_check,
+        min_consecutive_repeat_ratio,
+        min_words_for_repeat_check,
+        substantive_min_chars,
+        non_text_min_chars,
+        alnum_ws_ratio_threshold,
+        pipeline_min_quality,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrPipelineStage {
+    /// Backend name: "tesseract", "paddleocr", "easyocr", or a custom registered name.
+    pub backend: String,
+    /// Priority weight (higher = tried first). Stages are sorted by priority descending.
+    pub priority: i32,
+    /// Language override for this stage (None = use parent OcrConfig.language).
+    pub language: Option<String>,
+    /// Tesseract-specific config override for this stage.
+    pub tesseract_config: Option<TesseractConfig>,
+    /// PaddleOCR-specific config for this stage.
+    pub paddle_ocr_config: Option<String>,
+    /// VLM config override for this pipeline stage.
+    pub vlm_config: Option<LlmConfig>,
+}
+
+impl OcrPipelineStage {
+    #[must_use]
+    
+    pub fn new(
+        backend: String,
+        priority: i32,
+        language: Option<String>,
+        tesseract_config: Option<TesseractConfig>,
+        paddle_ocr_config: Option<String>,
+        vlm_config: Option<LlmConfig>,
+    ) -> Self {
+        Self { backend, priority, language, tesseract_config, paddle_ocr_config, vlm_config }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrPipelineConfig {
+    /// Ordered list of backends to try. Sorted by priority (descending) at runtime.
+    pub stages: Vec<OcrPipelineStage>,
+    /// Quality thresholds for deciding whether to accept a result or try the next backend.
+    pub quality_thresholds: OcrQualityThresholds,
+}
+
+impl OcrPipelineConfig {
+    #[must_use]
+    
+    pub fn new(stages: Vec<OcrPipelineStage>, quality_thresholds: OcrQualityThresholds) -> Self {
+        Self { stages, quality_thresholds }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct OcrConfig {
+    /// OCR backend: tesseract, easyocr, paddleocr
+    pub backend: String,
+    /// Language code (e.g., "eng", "deu")
+    pub language: String,
+    /// Tesseract-specific configuration (optional)
+    pub tesseract_config: Option<TesseractConfig>,
+    /// Output format for OCR results (optional, for format conversion)
+    pub output_format: Option<OutputFormat>,
+    /// PaddleOCR-specific configuration (optional, JSON passthrough)
+    pub paddle_ocr_config: Option<String>,
+    /// OCR element extraction configuration
+    pub element_config: Option<OcrElementConfig>,
+    /// Quality thresholds for the native-text-to-OCR fallback decision.
+    /// When None, uses compiled defaults (matching previous hardcoded behavior).
+    pub quality_thresholds: Option<OcrQualityThresholds>,
+    /// Multi-backend OCR pipeline configuration. When set, enables weighted
+    /// fallback across multiple OCR backends based on output quality.
+    /// When None, uses the single `backend` field (same as today).
+    pub pipeline: Option<OcrPipelineConfig>,
+    /// Enable automatic page rotation based on orientation detection.
+    /// 
+    /// When enabled, uses Tesseract's `DetectOrientationScript()` to detect
+    /// page orientation (0/90/180/270 degrees) before OCR. If the page is
+    /// rotated with high confidence, the image is corrected before recognition.
+    /// This is critical for handling rotated scanned documents.
+    pub auto_rotate: bool,
+    /// VLM (Vision Language Model) OCR configuration.
+    /// 
+    /// Required when `backend` is `"vlm"`. Uses liter-llm to send page
+    /// images to a vision model for text extraction.
+    pub vlm_config: Option<LlmConfig>,
+    /// Custom Jinja2 prompt template for VLM OCR.
+    /// 
+    /// When `None`, uses the default template. Available variables:
+    /// - `{{ language }}` — The document language code (e.g., "eng", "deu").
+    pub vlm_prompt: Option<String>,
+}
+
+impl Default for OcrConfig {
+    fn default() -> Self {
+        Self {
+            backend: Default::default(),
+            language: Default::default(),
+            tesseract_config: Default::default(),
+            output_format: Default::default(),
+            paddle_ocr_config: Default::default(),
+            element_config: Default::default(),
+            quality_thresholds: Default::default(),
+            pipeline: Default::default(),
+            auto_rotate: Default::default(),
+            vlm_config: Default::default(),
+            vlm_prompt: Default::default(),
+        }
+    }
+}
+
+impl OcrConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        backend: Option<String>,
+        language: Option<String>,
+        auto_rotate: Option<bool>,
+        tesseract_config: Option<TesseractConfig>,
+        output_format: Option<OutputFormat>,
+        paddle_ocr_config: Option<String>,
+        element_config: Option<OcrElementConfig>,
+        quality_thresholds: Option<OcrQualityThresholds>,
+        pipeline: Option<OcrPipelineConfig>,
+        vlm_config: Option<LlmConfig>,
+        vlm_prompt: Option<String>,
+    ) -> Self {
+        Self { backend: backend.unwrap_or_default(), language: language.unwrap_or_default(), tesseract_config: tesseract_config, output_format: output_format, paddle_ocr_config: paddle_ocr_config, element_config: element_config, quality_thresholds: quality_thresholds, pipeline: pipeline, auto_rotate: auto_rotate.unwrap_or(false), vlm_config: vlm_config, vlm_prompt: vlm_prompt }
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn validate(&self) -> Result<()> {
+        let core_self = kreuzberg::OcrConfig {
+            backend: self.backend.clone(),
+            language: self.language.clone(),
+            tesseract_config: self.tesseract_config.clone().map(Into::into),
+            output_format: self.output_format.clone().map(Into::into),
+            paddle_ocr_config: self.paddle_ocr_config.as_ref().and_then(|s| serde_json::from_str(s).ok()),
+            element_config: self.element_config.clone().map(Into::into),
+            quality_thresholds: self.quality_thresholds.clone().map(Into::into),
+            pipeline: self.pipeline.clone().map(Into::into),
+            auto_rotate: self.auto_rotate,
+            vlm_config: self.vlm_config.clone().map(Into::into),
+            vlm_prompt: self.vlm_prompt.clone(),
+        };
+        let result = core_self.validate().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn effective_thresholds(&self) -> OcrQualityThresholds {
+        let core_self = kreuzberg::OcrConfig {
+            backend: self.backend.clone(),
+            language: self.language.clone(),
+            tesseract_config: self.tesseract_config.clone().map(Into::into),
+            output_format: self.output_format.clone().map(Into::into),
+            paddle_ocr_config: self.paddle_ocr_config.as_ref().and_then(|s| serde_json::from_str(s).ok()),
+            element_config: self.element_config.clone().map(Into::into),
+            quality_thresholds: self.quality_thresholds.clone().map(Into::into),
+            pipeline: self.pipeline.clone().map(Into::into),
+            auto_rotate: self.auto_rotate,
+            vlm_config: self.vlm_config.clone().map(Into::into),
+            vlm_prompt: self.vlm_prompt.clone(),
+        };
+        core_self.effective_thresholds().into()
+    }
+
+    pub fn effective_pipeline(&self) -> Option<OcrPipelineConfig> {
+        let core_self = kreuzberg::OcrConfig {
+            backend: self.backend.clone(),
+            language: self.language.clone(),
+            tesseract_config: self.tesseract_config.clone().map(Into::into),
+            output_format: self.output_format.clone().map(Into::into),
+            paddle_ocr_config: self.paddle_ocr_config.as_ref().and_then(|s| serde_json::from_str(s).ok()),
+            element_config: self.element_config.clone().map(Into::into),
+            quality_thresholds: self.quality_thresholds.clone().map(Into::into),
+            pipeline: self.pipeline.clone().map(Into::into),
+            auto_rotate: self.auto_rotate,
+            vlm_config: self.vlm_config.clone().map(Into::into),
+            vlm_prompt: self.vlm_prompt.clone(),
+        };
+        core_self.effective_pipeline().map(Into::into)
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> OcrConfig {
+        kreuzberg::OcrConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_ocrconfig(
+    backend: String = "",
+    language: String = "",
+    tesseract_config: TesseractConfig = NULL,
+    output_format: OutputFormat = NULL,
+    paddle_ocr_config: String = NULL,
+    element_config: OcrElementConfig = NULL,
+    quality_thresholds: OcrQualityThresholds = NULL,
+    pipeline: OcrPipelineConfig = NULL,
+    auto_rotate: bool = FALSE,
+    vlm_config: LlmConfig = NULL,
+    vlm_prompt: String = NULL
+) -> OcrConfig {
+    OcrConfig {
+        backend,
+        language,
+        tesseract_config,
+        output_format,
+        paddle_ocr_config,
+        element_config,
+        quality_thresholds,
+        pipeline,
+        auto_rotate,
+        vlm_config,
+        vlm_prompt,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PageConfig {
+    /// Extract pages as separate array (ExtractionResult.pages)
+    pub extract_pages: bool,
+    /// Insert page markers in main content string
+    pub insert_page_markers: bool,
+    /// Page marker format (use {page_num} placeholder)
+    /// Default: "\n\n<!-- PAGE {page_num} -->\n\n"
+    pub marker_format: String,
+}
+
+impl Default for PageConfig {
+    fn default() -> Self {
+        Self {
+            extract_pages: Default::default(),
+            insert_page_markers: Default::default(),
+            marker_format: Default::default(),
+        }
+    }
+}
+
+impl PageConfig {
+    #[must_use]
+    
+    pub fn new(extract_pages: Option<bool>, insert_page_markers: Option<bool>, marker_format: Option<String>) -> Self {
+        Self { extract_pages: extract_pages.unwrap_or(false), insert_page_markers: insert_page_markers.unwrap_or(false), marker_format: marker_format.unwrap_or_else(|| "\n\n<!-- PAGE {page_num} -->\n\n".to_string()) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PageConfig {
+        kreuzberg::PageConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_pageconfig(
+    extract_pages: bool = FALSE,
+    insert_page_markers: bool = FALSE,
+    marker_format: String = "
+
+<!-- PAGE {page_num} -->
+
+"
+) -> PageConfig {
+    PageConfig {
+        extract_pages,
+        insert_page_markers,
+        marker_format,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PdfConfig {
+    /// PDF extraction backend. Default: `Pdfium`.
+    pub backend: PdfBackend,
+    /// Extract images from PDF
+    pub extract_images: bool,
+    /// List of passwords to try when opening encrypted PDFs
+    pub passwords: Option<Vec<String>>,
+    /// Extract PDF metadata
+    pub extract_metadata: bool,
+    /// Hierarchy extraction configuration (None = hierarchy extraction disabled)
+    pub hierarchy: Option<HierarchyConfig>,
+    /// Extract PDF annotations (text notes, highlights, links, stamps).
+    /// Default: false
+    pub extract_annotations: bool,
+    /// Top margin fraction (0.0–1.0) of page height to exclude headers/running heads.
+    /// Default: 0.06 (6%)
+    pub top_margin_fraction: Option<f64>,
+    /// Bottom margin fraction (0.0–1.0) of page height to exclude footers/page numbers.
+    /// Default: 0.05 (5%)
+    pub bottom_margin_fraction: Option<f64>,
+    /// Allow single-column pseudo tables in extraction results.
+    /// 
+    /// By default, tables with fewer than 2 columns (layout-guided) or 3 columns
+    /// (heuristic) are rejected. When `true`, the minimum column count is relaxed
+    /// to 1, allowing single-column structured data (glossaries, itemized lists)
+    /// to be emitted as tables. Other quality filters (density, sparsity, prose
+    /// detection) still apply.
+    pub allow_single_column_tables: bool,
+}
+
+impl Default for PdfConfig {
+    fn default() -> Self {
+        Self {
+            backend: Default::default(),
+            extract_images: Default::default(),
+            passwords: Default::default(),
+            extract_metadata: Default::default(),
+            hierarchy: Default::default(),
+            extract_annotations: Default::default(),
+            top_margin_fraction: Default::default(),
+            bottom_margin_fraction: Default::default(),
+            allow_single_column_tables: Default::default(),
+        }
+    }
+}
+
+impl PdfConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        backend: Option<PdfBackend>,
+        extract_images: Option<bool>,
+        extract_metadata: Option<bool>,
+        extract_annotations: Option<bool>,
+        allow_single_column_tables: Option<bool>,
+        passwords: Option<Vec<String>>,
+        hierarchy: Option<HierarchyConfig>,
+        top_margin_fraction: Option<f64>,
+        bottom_margin_fraction: Option<f64>,
+    ) -> Self {
+        Self { backend: backend.unwrap_or_default(), extract_images: extract_images.unwrap_or(false), passwords: passwords, extract_metadata: extract_metadata.unwrap_or(true), hierarchy: hierarchy, extract_annotations: extract_annotations.unwrap_or(false), top_margin_fraction: top_margin_fraction, bottom_margin_fraction: bottom_margin_fraction, allow_single_column_tables: allow_single_column_tables.unwrap_or(false) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PdfConfig {
+        kreuzberg::PdfConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_pdfconfig(
+    backend: PdfBackend = null,
+    extract_images: bool = FALSE,
+    passwords: Vec<String> = NULL,
+    extract_metadata: bool = TRUE,
+    hierarchy: HierarchyConfig = NULL,
+    extract_annotations: bool = FALSE,
+    top_margin_fraction: f64 = NULL,
+    bottom_margin_fraction: f64 = NULL,
+    allow_single_column_tables: bool = FALSE
+) -> PdfConfig {
+    PdfConfig {
+        backend,
+        extract_images,
+        passwords,
+        extract_metadata,
+        hierarchy,
+        extract_annotations,
+        top_margin_fraction,
+        bottom_margin_fraction,
+        allow_single_column_tables,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct HierarchyConfig {
+    /// Enable hierarchy extraction
+    pub enabled: bool,
+    /// Number of font size clusters to use for hierarchy levels (1-7)
+    /// 
+    /// Default: 6, which provides H1-H6 heading levels with body text.
+    /// Larger values create more fine-grained hierarchy levels.
+    pub k_clusters: f64,
+    /// Include bounding box information in hierarchy blocks
+    pub include_bbox: bool,
+    /// OCR coverage threshold for smart OCR triggering (0.0-1.0)
+    /// 
+    /// Determines when OCR should be triggered based on text block coverage.
+    /// OCR is triggered when text blocks cover less than this fraction of the page.
+    /// Default: 0.5 (trigger OCR if less than 50% of page has text)
+    pub ocr_coverage_threshold: Option<f64>,
+}
+
+impl Default for HierarchyConfig {
+    fn default() -> Self {
+        Self {
+            enabled: Default::default(),
+            k_clusters: Default::default(),
+            include_bbox: Default::default(),
+            ocr_coverage_threshold: Default::default(),
+        }
+    }
+}
+
+impl HierarchyConfig {
+    #[must_use]
+    
+    pub fn new(
+        enabled: Option<bool>,
+        k_clusters: Option<f64>,
+        include_bbox: Option<bool>,
+        ocr_coverage_threshold: Option<f64>,
+    ) -> Self {
+        Self { enabled: enabled.unwrap_or(true), k_clusters: k_clusters.unwrap_or(3), include_bbox: include_bbox.unwrap_or(true), ocr_coverage_threshold: ocr_coverage_threshold }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> HierarchyConfig {
+        kreuzberg::HierarchyConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_hierarchyconfig(
+    enabled: bool = TRUE,
+    k_clusters: f64 = 3,
+    include_bbox: bool = TRUE,
+    ocr_coverage_threshold: f64 = NULL
+) -> HierarchyConfig {
+    HierarchyConfig {
+        enabled,
+        k_clusters,
+        include_bbox,
+        ocr_coverage_threshold,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PostProcessorConfig {
+    /// Enable post-processors
+    pub enabled: bool,
+    /// Whitelist of processor names to run (None = all enabled)
+    pub enabled_processors: Option<Vec<String>>,
+    /// Blacklist of processor names to skip (None = none disabled)
+    pub disabled_processors: Option<Vec<String>>,
+    /// Pre-computed AHashSet for O(1) enabled processor lookup
+    pub enabled_set: Option<String>,
+    /// Pre-computed AHashSet for O(1) disabled processor lookup
+    pub disabled_set: Option<String>,
+}
+
+impl Default for PostProcessorConfig {
+    fn default() -> Self {
+        Self {
+            enabled: Default::default(),
+            enabled_processors: Default::default(),
+            disabled_processors: Default::default(),
+            enabled_set: Default::default(),
+            disabled_set: Default::default(),
+        }
+    }
+}
+
+impl PostProcessorConfig {
+    #[must_use]
+    
+    pub fn new(
+        enabled: Option<bool>,
+        enabled_processors: Option<Vec<String>>,
+        disabled_processors: Option<Vec<String>>,
+        enabled_set: Option<String>,
+        disabled_set: Option<String>,
+    ) -> Self {
+        Self { enabled: enabled.unwrap_or(true), enabled_processors: enabled_processors, disabled_processors: disabled_processors, enabled_set: enabled_set, disabled_set: disabled_set }
+    }
+
+    pub fn build_lookup_sets(&self) -> () {
+        let mut core_self = kreuzberg::PostProcessorConfig {
+            enabled: self.enabled,
+            enabled_processors: self.enabled_processors.clone(),
+            disabled_processors: self.disabled_processors.clone(),
+            enabled_set: Default::default(),
+            disabled_set: Default::default(),
+        };
+        core_self.build_lookup_sets()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PostProcessorConfig {
+        kreuzberg::PostProcessorConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_postprocessorconfig(
+    enabled: bool = TRUE,
+    enabled_processors: Vec<String> = NULL,
+    disabled_processors: Vec<String> = NULL,
+    enabled_set: String = NULL,
+    disabled_set: String = NULL
+) -> PostProcessorConfig {
+    PostProcessorConfig {
+        enabled,
+        enabled_processors,
+        disabled_processors,
+        enabled_set,
+        disabled_set,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ChunkingConfig {
+    /// Maximum size per chunk (in units determined by `sizing`).
+    /// 
+    /// When `sizing` is `Characters` (default), this is the max character count.
+    /// When using token-based sizing, this is the max token count.
+    /// 
+    /// Default: 1000
+    pub max_characters: f64,
+    /// Overlap between chunks (in units determined by `sizing`).
+    /// 
+    /// Default: 200
+    pub overlap: f64,
+    /// Whether to trim whitespace from chunk boundaries.
+    /// 
+    /// Default: true
+    pub trim: bool,
+    /// Type of chunker to use (Text or Markdown).
+    /// 
+    /// Default: Text
+    pub chunker_type: ChunkerType,
+    /// Optional embedding configuration for chunk embeddings.
+    pub embedding: Option<EmbeddingConfig>,
+    /// Use a preset configuration (overrides individual settings if provided).
+    pub preset: Option<String>,
+    /// How to measure chunk size.
+    /// 
+    /// Default: `Characters` (Unicode character count).
+    /// Enable `chunking-tiktoken` or `chunking-tokenizers` features for token-based sizing.
+    pub sizing: ChunkSizing,
+    /// When `true` and `chunker_type` is `Markdown`, prepend the heading hierarchy
+    /// path (e.g. `"# Title > ## Section\n\n"`) to each chunk's content string.
+    /// 
+    /// This is useful for RAG pipelines where each chunk needs self-contained
+    /// context about its position in the document structure.
+    /// 
+    /// Default: `false`
+    pub prepend_heading_context: bool,
+}
+
+impl Default for ChunkingConfig {
+    fn default() -> Self {
+        Self {
+            max_characters: Default::default(),
+            overlap: Default::default(),
+            trim: Default::default(),
+            chunker_type: Default::default(),
+            embedding: Default::default(),
+            preset: Default::default(),
+            sizing: Default::default(),
+            prepend_heading_context: Default::default(),
+        }
+    }
+}
+
+impl ChunkingConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        max_characters: Option<f64>,
+        overlap: Option<f64>,
+        trim: Option<bool>,
+        chunker_type: Option<ChunkerType>,
+        sizing: Option<ChunkSizing>,
+        prepend_heading_context: Option<bool>,
+        embedding: Option<EmbeddingConfig>,
+        preset: Option<String>,
+    ) -> Self {
+        Self { max_characters: max_characters.unwrap_or(1000), overlap: overlap.unwrap_or(200), trim: trim.unwrap_or(true), chunker_type: chunker_type.unwrap_or_default(), embedding: embedding, preset: preset, sizing: sizing.unwrap_or_default(), prepend_heading_context: prepend_heading_context.unwrap_or(false) }
+    }
+
+    pub fn with_chunker_type(&self, chunker_type: ChunkerType) -> ChunkingConfig {
+        let _ = chunker_type;
+        compile_error!("alef: ChunkingConfig.with_chunker_type returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn with_sizing(&self, sizing: ChunkSizing) -> ChunkingConfig {
+        let _ = sizing;
+        compile_error!("alef: ChunkingConfig.with_sizing returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn with_prepend_heading_context(&self, prepend: bool) -> ChunkingConfig {
+        let core_self = kreuzberg::ChunkingConfig {
+            max_characters: self.max_characters,
+            overlap: self.overlap,
+            trim: self.trim,
+            chunker_type: self.chunker_type.clone().into(),
+            embedding: self.embedding.clone().map(Into::into),
+            preset: self.preset.clone(),
+            sizing: self.sizing.clone().into(),
+            prepend_heading_context: self.prepend_heading_context,
+        };
+        core_self.with_prepend_heading_context(prepend).into()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ChunkingConfig {
+        kreuzberg::ChunkingConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_chunkingconfig(
+    max_characters: f64 = 1000,
+    overlap: f64 = 200,
+    trim: bool = TRUE,
+    chunker_type: ChunkerType = ChunkerType$Text,
+    embedding: EmbeddingConfig = NULL,
+    preset: String = NULL,
+    sizing: ChunkSizing = null,
+    prepend_heading_context: bool = FALSE
+) -> ChunkingConfig {
+    ChunkingConfig {
+        max_characters,
+        overlap,
+        trim,
+        chunker_type,
+        embedding,
+        preset,
+        sizing,
+        prepend_heading_context,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct EmbeddingConfig {
+    /// The embedding model to use (defaults to "balanced" preset if not specified)
+    pub model: EmbeddingModelType,
+    /// Whether to normalize embedding vectors (recommended for cosine similarity)
+    pub normalize: bool,
+    /// Batch size for embedding generation
+    pub batch_size: f64,
+    /// Show model download progress
+    pub show_download_progress: bool,
+    /// Custom cache directory for model files
+    /// 
+    /// Defaults to `~/.cache/kreuzberg/embeddings/` if not specified.
+    /// Allows full customization of model download location.
+    pub cache_dir: Option<String>,
+}
+
+impl Default for EmbeddingConfig {
+    fn default() -> Self {
+        Self {
+            model: Default::default(),
+            normalize: Default::default(),
+            batch_size: Default::default(),
+            show_download_progress: Default::default(),
+            cache_dir: Default::default(),
+        }
+    }
+}
+
+impl EmbeddingConfig {
+    #[must_use]
+    
+    pub fn new(
+        model: Option<EmbeddingModelType>,
+        normalize: Option<bool>,
+        batch_size: Option<f64>,
+        show_download_progress: Option<bool>,
+        cache_dir: Option<String>,
+    ) -> Self {
+        Self { model: model.unwrap_or_default(), normalize: normalize.unwrap_or(true), batch_size: batch_size.unwrap_or(32), show_download_progress: show_download_progress.unwrap_or(false), cache_dir: cache_dir }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> EmbeddingConfig {
+        kreuzberg::EmbeddingConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_embeddingconfig(
+    model: EmbeddingModelType = null,
+    normalize: bool = TRUE,
+    batch_size: f64 = 32,
+    show_download_progress: bool = FALSE,
+    cache_dir: String = NULL
+) -> EmbeddingConfig {
+    EmbeddingConfig {
+        model,
+        normalize,
+        batch_size,
+        show_download_progress,
+        cache_dir,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct TreeSitterConfig {
+    /// Enable code intelligence processing (default: true).
+    /// 
+    /// When `false`, tree-sitter analysis is completely skipped even if
+    /// the config section is present.
+    pub enabled: bool,
+    /// Custom cache directory for downloaded grammars.
+    /// 
+    /// When `None`, uses the default: `~/.cache/tree-sitter-language-pack/v{version}/libs/`.
+    pub cache_dir: Option<String>,
+    /// Languages to pre-download on init (e.g., `["python", "rust"]`).
+    pub languages: Option<Vec<String>>,
+    /// Language groups to pre-download (e.g., `["web", "systems", "scripting"]`).
+    pub groups: Option<Vec<String>>,
+    /// Processing options for code analysis.
+    pub process: TreeSitterProcessConfig,
+}
+
+impl Default for TreeSitterConfig {
+    fn default() -> Self {
+        Self {
+            enabled: Default::default(),
+            cache_dir: Default::default(),
+            languages: Default::default(),
+            groups: Default::default(),
+            process: Default::default(),
+        }
+    }
+}
+
+impl TreeSitterConfig {
+    #[must_use]
+    
+    pub fn new(
+        enabled: Option<bool>,
+        process: Option<TreeSitterProcessConfig>,
+        cache_dir: Option<String>,
+        languages: Option<Vec<String>>,
+        groups: Option<Vec<String>>,
+    ) -> Self {
+        Self { enabled: enabled.unwrap_or(true), cache_dir: cache_dir, languages: languages, groups: groups, process: process.unwrap_or_default() }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> TreeSitterConfig {
+        kreuzberg::TreeSitterConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_treesitterconfig(
+    enabled: bool = TRUE,
+    cache_dir: String = NULL,
+    languages: Vec<String> = NULL,
+    groups: Vec<String> = NULL,
+    process: TreeSitterProcessConfig = null
+) -> TreeSitterConfig {
+    TreeSitterConfig {
+        enabled,
+        cache_dir,
+        languages,
+        groups,
+        process,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct TreeSitterProcessConfig {
+    /// Extract structural items (functions, classes, structs, etc.). Default: true.
+    pub structure: bool,
+    /// Extract import statements. Default: true.
+    pub imports: bool,
+    /// Extract export statements. Default: true.
+    pub exports: bool,
+    /// Extract comments. Default: false.
+    pub comments: bool,
+    /// Extract docstrings. Default: false.
+    pub docstrings: bool,
+    /// Extract symbol definitions. Default: false.
+    pub symbols: bool,
+    /// Include parse diagnostics. Default: false.
+    pub diagnostics: bool,
+    /// Maximum chunk size in bytes. `None` disables chunking.
+    pub chunk_max_size: Option<f64>,
+    /// Content rendering mode for code extraction.
+    pub content_mode: CodeContentMode,
+}
+
+impl Default for TreeSitterProcessConfig {
+    fn default() -> Self {
+        Self {
+            structure: Default::default(),
+            imports: Default::default(),
+            exports: Default::default(),
+            comments: Default::default(),
+            docstrings: Default::default(),
+            symbols: Default::default(),
+            diagnostics: Default::default(),
+            chunk_max_size: Default::default(),
+            content_mode: Default::default(),
+        }
+    }
+}
+
+impl TreeSitterProcessConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        structure: Option<bool>,
+        imports: Option<bool>,
+        exports: Option<bool>,
+        comments: Option<bool>,
+        docstrings: Option<bool>,
+        symbols: Option<bool>,
+        diagnostics: Option<bool>,
+        content_mode: Option<CodeContentMode>,
+        chunk_max_size: Option<f64>,
+    ) -> Self {
+        Self { structure: structure.unwrap_or(true), imports: imports.unwrap_or(true), exports: exports.unwrap_or(true), comments: comments.unwrap_or(false), docstrings: docstrings.unwrap_or(false), symbols: symbols.unwrap_or(false), diagnostics: diagnostics.unwrap_or(false), chunk_max_size: chunk_max_size, content_mode: content_mode.unwrap_or_default() }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> TreeSitterProcessConfig {
+        kreuzberg::TreeSitterProcessConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_treesitterprocessconfig(
+    structure: bool = TRUE,
+    imports: bool = TRUE,
+    exports: bool = TRUE,
+    comments: bool = FALSE,
+    docstrings: bool = FALSE,
+    symbols: bool = FALSE,
+    diagnostics: bool = FALSE,
+    chunk_max_size: f64 = NULL,
+    content_mode: CodeContentMode = null
+) -> TreeSitterProcessConfig {
+    TreeSitterProcessConfig {
+        structure,
+        imports,
+        exports,
+        comments,
+        docstrings,
+        symbols,
+        diagnostics,
+        chunk_max_size,
+        content_mode,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct FileBytes {
+}
+
+impl FileBytes {
+    #[allow(clippy::should_implement_trait)]
+    pub fn deref(&self) -> Vec<u8> {
+        let core_self = kreuzberg::core::io::FileBytes {
+        };
+        core_self.deref().to_owned()
+    }
+
+    pub fn as_ref(&self) -> Vec<u8> {
+        let core_self = kreuzberg::core::io::FileBytes {
+        };
+        core_self.as_ref().to_owned()
+    }
+}
 
 #[derive(Clone, serde::Serialize)]
 pub struct SupportedFormat {
@@ -16,6 +2351,7484 @@ impl SupportedFormat {
     
     pub fn new(extension: String, mime_type: String) -> Self {
         Self { extension, mime_type }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct ServerConfig {
+    /// Server host address (e.g., "127.0.0.1", "0.0.0.0")
+    pub host: String,
+    /// Server port number
+    pub port: i32,
+    /// CORS allowed origins. Empty vector means allow all origins.
+    /// 
+    /// If this is an empty vector, the server will accept requests from any origin.
+    /// If populated with specific origins (e.g., ["https://example.com"]), only
+    /// those origins will be allowed.
+    pub cors_origins: Vec<String>,
+    /// Maximum size of request body in bytes (default: 100 MB)
+    pub max_request_body_bytes: f64,
+    /// Maximum size of multipart fields in bytes (default: 100 MB)
+    pub max_multipart_field_bytes: f64,
+}
+
+impl Default for ServerConfig {
+    fn default() -> Self {
+        Self {
+            host: Default::default(),
+            port: Default::default(),
+            cors_origins: Default::default(),
+            max_request_body_bytes: Default::default(),
+            max_multipart_field_bytes: Default::default(),
+        }
+    }
+}
+
+impl ServerConfig {
+    #[must_use]
+    
+    pub fn new(
+        host: Option<String>,
+        port: Option<i32>,
+        cors_origins: Option<Vec<String>>,
+        max_request_body_bytes: Option<f64>,
+        max_multipart_field_bytes: Option<f64>,
+    ) -> Self {
+        Self { host: host.unwrap_or_default(), port: port.unwrap_or_default(), cors_origins: cors_origins.unwrap_or_default(), max_request_body_bytes: max_request_body_bytes.unwrap_or_default(), max_multipart_field_bytes: max_multipart_field_bytes.unwrap_or_default() }
+    }
+
+    pub fn listen_addr(&self) -> String {
+        let core_self = kreuzberg::ServerConfig {
+            host: self.host.clone(),
+            port: self.port,
+            cors_origins: self.cors_origins.clone(),
+            max_request_body_bytes: self.max_request_body_bytes,
+            max_multipart_field_bytes: self.max_multipart_field_bytes,
+        };
+        core_self.listen_addr().into()
+    }
+
+    pub fn cors_allows_all(&self) -> bool {
+        let core_self = kreuzberg::ServerConfig {
+            host: self.host.clone(),
+            port: self.port,
+            cors_origins: self.cors_origins.clone(),
+            max_request_body_bytes: self.max_request_body_bytes,
+            max_multipart_field_bytes: self.max_multipart_field_bytes,
+        };
+        core_self.cors_allows_all()
+    }
+
+    pub fn is_origin_allowed(&self, origin: String) -> bool {
+        let core_self = kreuzberg::ServerConfig {
+            host: self.host.clone(),
+            port: self.port,
+            cors_origins: self.cors_origins.clone(),
+            max_request_body_bytes: self.max_request_body_bytes,
+            max_multipart_field_bytes: self.max_multipart_field_bytes,
+        };
+        core_self.is_origin_allowed(&origin)
+    }
+
+    pub fn max_request_body_mb(&self) -> f64 {
+        let core_self = kreuzberg::ServerConfig {
+            host: self.host.clone(),
+            port: self.port,
+            cors_origins: self.cors_origins.clone(),
+            max_request_body_bytes: self.max_request_body_bytes,
+            max_multipart_field_bytes: self.max_multipart_field_bytes,
+        };
+        core_self.max_request_body_mb()
+    }
+
+    pub fn max_multipart_field_mb(&self) -> f64 {
+        let core_self = kreuzberg::ServerConfig {
+            host: self.host.clone(),
+            port: self.port,
+            cors_origins: self.cors_origins.clone(),
+            max_request_body_bytes: self.max_request_body_bytes,
+            max_multipart_field_bytes: self.max_multipart_field_bytes,
+        };
+        core_self.max_multipart_field_mb()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn apply_env_overrides(&self) -> Result<()> {
+        let mut core_self = kreuzberg::ServerConfig {
+            host: self.host.clone(),
+            port: self.port,
+            cors_origins: self.cors_origins.clone(),
+            max_request_body_bytes: self.max_request_body_bytes,
+            max_multipart_field_bytes: self.max_multipart_field_bytes,
+        };
+        let result = core_self.apply_env_overrides().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ServerConfig {
+        kreuzberg::ServerConfig::default().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn from_file(path: String) -> Result<ServerConfig> {
+        let _ = path;
+        Err("Not implemented: ServerConfig::from_file".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn from_toml_file(path: String) -> Result<ServerConfig> {
+        let _ = path;
+        Err("Not implemented: ServerConfig::from_toml_file".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn from_yaml_file(path: String) -> Result<ServerConfig> {
+        let _ = path;
+        Err("Not implemented: ServerConfig::from_yaml_file".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn from_json_file(path: String) -> Result<ServerConfig> {
+        let _ = path;
+        Err("Not implemented: ServerConfig::from_json_file".to_string())
+    }
+}
+
+#[extendr]
+pub fn new_serverconfig(
+    host: String = "",
+    port: i32 = 0,
+    cors_origins: Vec<String> = c(),
+    max_request_body_bytes: f64 = 0,
+    max_multipart_field_bytes: f64 = 0
+) -> ServerConfig {
+    ServerConfig {
+        host,
+        port,
+        cors_origins,
+        max_request_body_bytes,
+        max_multipart_field_bytes,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct StructuredDataResult {
+    pub content: String,
+    pub format: String,
+    pub metadata: HashMap<String, String>,
+    pub text_fields: Vec<String>,
+}
+
+impl StructuredDataResult {
+    #[must_use]
+    
+    pub fn new(content: String, format: String, metadata: HashMap<String, String>, text_fields: Vec<String>) -> Self {
+        Self { content, format, metadata, text_fields }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct JsonExtractionConfig {
+    pub extract_schema: bool,
+    pub max_depth: f64,
+    pub array_item_limit: f64,
+    pub include_type_info: bool,
+    pub flatten_nested_objects: bool,
+    pub custom_text_field_patterns: Vec<String>,
+}
+
+impl Default for JsonExtractionConfig {
+    fn default() -> Self {
+        Self {
+            extract_schema: Default::default(),
+            max_depth: Default::default(),
+            array_item_limit: Default::default(),
+            include_type_info: Default::default(),
+            flatten_nested_objects: Default::default(),
+            custom_text_field_patterns: Default::default(),
+        }
+    }
+}
+
+impl JsonExtractionConfig {
+    #[must_use]
+    
+    pub fn new(
+        extract_schema: Option<bool>,
+        max_depth: Option<f64>,
+        array_item_limit: Option<f64>,
+        include_type_info: Option<bool>,
+        flatten_nested_objects: Option<bool>,
+        custom_text_field_patterns: Option<Vec<String>>,
+    ) -> Self {
+        Self { extract_schema: extract_schema.unwrap_or(false), max_depth: max_depth.unwrap_or(20), array_item_limit: array_item_limit.unwrap_or(500), include_type_info: include_type_info.unwrap_or(false), flatten_nested_objects: flatten_nested_objects.unwrap_or(true), custom_text_field_patterns: custom_text_field_patterns.unwrap_or_default() }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> JsonExtractionConfig {
+        kreuzberg::extraction::JsonExtractionConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_jsonextractionconfig(
+    extract_schema: bool = FALSE,
+    max_depth: f64 = 20,
+    array_item_limit: f64 = 500,
+    include_type_info: bool = FALSE,
+    flatten_nested_objects: bool = TRUE,
+    custom_text_field_patterns: Vec<String> = c()
+) -> JsonExtractionConfig {
+    JsonExtractionConfig {
+        extract_schema,
+        max_depth,
+        array_item_limit,
+        include_type_info,
+        flatten_nested_objects,
+        custom_text_field_patterns,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct ListItemMetadata {
+    /// Type of list (Bullet, Numbered, etc.)
+    pub list_type: ListType,
+    /// Starting byte offset in the content string
+    pub byte_start: f64,
+    /// Ending byte offset in the content string
+    pub byte_end: f64,
+    /// List item indent level
+    pub indent_level: i32,
+}
+
+impl ListItemMetadata {
+    #[must_use]
+    
+    pub fn new(list_type: ListType, byte_start: f64, byte_end: f64, indent_level: i32) -> Self {
+        Self { list_type, byte_start, byte_end, indent_level }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct HwpDocument {
+    /// All sections from all BodyText/SectionN streams.
+    pub sections: Vec<Section>,
+}
+
+impl Default for HwpDocument {
+    fn default() -> Self {
+        Self {
+            sections: Default::default(),
+        }
+    }
+}
+
+impl HwpDocument {
+    #[must_use]
+    
+    pub fn new(sections: Option<Vec<Section>>) -> Self {
+        Self { sections: sections.unwrap_or_default() }
+    }
+
+    pub fn extract_text(&self) -> String {
+        let core_self = kreuzberg::extraction::hwp::model::HwpDocument {
+            sections: self.sections.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.extract_text().into()
+    }
+}
+
+#[extendr]
+pub fn new_hwpdocument(
+    sections: Vec<Section> = c()
+) -> HwpDocument {
+    HwpDocument {
+        sections,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct Section {
+    pub paragraphs: Vec<String>,
+}
+
+impl Default for Section {
+    fn default() -> Self {
+        Self {
+            paragraphs: Default::default(),
+        }
+    }
+}
+
+impl Section {
+    #[must_use]
+    
+    pub fn new(paragraphs: Option<Vec<String>>) -> Self {
+        Self { paragraphs: paragraphs.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_section(
+    paragraphs: Vec<String> = c()
+) -> Section {
+    Section {
+        paragraphs,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct ParaText {
+    pub content: String,
+}
+
+impl ParaText {
+    #[must_use]
+    
+    pub fn new(content: String) -> Self {
+        Self { content }
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn from_record(record: Record) -> Result<ParaText> {
+        let record_core = record.into();
+    kreuzberg::extraction::hwp::model::ParaText::from_record(&record_core).map(|val| val.into()).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct FileHeader {
+    pub flags: i32,
+}
+
+impl FileHeader {
+    #[must_use]
+    
+    pub fn new(flags: i32) -> Self {
+        Self { flags }
+    }
+
+    pub fn is_compressed(&self) -> bool {
+        let core_self = kreuzberg::extraction::hwp::parser::FileHeader {
+            flags: self.flags,
+        };
+        core_self.is_compressed()
+    }
+
+    pub fn is_encrypted(&self) -> bool {
+        let core_self = kreuzberg::extraction::hwp::parser::FileHeader {
+            flags: self.flags,
+        };
+        core_self.is_encrypted()
+    }
+
+    pub fn is_distribute(&self) -> bool {
+        let core_self = kreuzberg::extraction::hwp::parser::FileHeader {
+            flags: self.flags,
+        };
+        core_self.is_distribute()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn parse(data: Vec<u8>) -> Result<FileHeader> {
+        kreuzberg::extraction::hwp::parser::FileHeader::parse(&data).map(|val| val.into()).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Record {
+    pub tag_id: i32,
+    pub data: Vec<u8>,
+}
+
+impl Record {
+    #[must_use]
+    
+    pub fn new(tag_id: i32, data: Vec<u8>) -> Self {
+        Self { tag_id, data }
+    }
+
+    pub fn data_reader(&self) -> StreamReader {
+        let core_self = kreuzberg::extraction::hwp::parser::Record {
+            tag_id: self.tag_id,
+            data: self.data.clone(),
+        };
+        core_self.data_reader().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn parse(reader: StreamReader) -> Result<Record> {
+        kreuzberg::extraction::hwp::parser::Record::parse(&reader.inner).map(|val| val.into()).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct StreamReader {
+}
+
+impl StreamReader {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn read_u8(&self) -> Result<i32> {
+        let mut core_self = kreuzberg::extraction::hwp::reader::StreamReader {
+        };
+        let result = core_self.read_u8().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn read_u16(&self) -> Result<i32> {
+        let mut core_self = kreuzberg::extraction::hwp::reader::StreamReader {
+        };
+        let result = core_self.read_u16().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn read_u32(&self) -> Result<i32> {
+        let mut core_self = kreuzberg::extraction::hwp::reader::StreamReader {
+        };
+        let result = core_self.read_u32().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn read_bytes(&self, len: f64) -> Result<Vec<u8>> {
+        let mut core_self = kreuzberg::extraction::hwp::reader::StreamReader {
+        };
+        let result = core_self.read_bytes(len).map_err(|e| e.to_string())?;
+        Ok(result.into())
+    }
+
+    pub fn position(&self) -> f64 {
+        let core_self = kreuzberg::extraction::hwp::reader::StreamReader {
+        };
+        core_self.position()
+    }
+
+    pub fn remaining(&self) -> f64 {
+        let core_self = kreuzberg::extraction::hwp::reader::StreamReader {
+        };
+        core_self.remaining()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct CfbReader {
+}
+
+impl CfbReader {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn from_bytes(bytes: Vec<u8>) -> Result<CfbReader> {
+        kreuzberg::extraction::hwp::reader::CfbReader::from_bytes(&bytes).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ImageOcrResult {
+    /// Extracted text content
+    pub content: String,
+    /// Character byte boundaries per frame (for multi-frame TIFFs)
+    pub boundaries: Option<Vec<PageBoundary>>,
+    /// Per-frame content information
+    pub page_contents: Option<Vec<PageContent>>,
+}
+
+impl ImageOcrResult {
+    #[must_use]
+    
+    pub fn new(content: String, boundaries: Option<Vec<PageBoundary>>, page_contents: Option<Vec<PageContent>>) -> Self {
+        Self { content, boundaries, page_contents }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct HtmlExtractionResult {
+    pub markdown: String,
+    pub images: Vec<ExtractedInlineImage>,
+    pub warnings: Vec<String>,
+}
+
+impl HtmlExtractionResult {
+    #[must_use]
+    
+    pub fn new(markdown: String, images: Vec<ExtractedInlineImage>, warnings: Vec<String>) -> Self {
+        Self { markdown, images, warnings }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExtractedInlineImage {
+    /// Uses `bytes::Bytes` for cheap cloning of large buffers.
+    pub data: Vec<u8>,
+    pub format: String,
+    pub filename: Option<String>,
+    pub description: Option<String>,
+    pub dimensions: Option<String>,
+    pub attributes: Vec<String>,
+}
+
+impl ExtractedInlineImage {
+    #[must_use]
+    
+    pub fn new(
+        data: Vec<u8>,
+        format: String,
+        attributes: Vec<String>,
+        filename: Option<String>,
+        description: Option<String>,
+        dimensions: Option<String>,
+    ) -> Self {
+        Self { data, format, filename, description, dimensions, attributes }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DocExtractionResult {
+    /// Extracted text content.
+    pub text: String,
+    /// Document metadata.
+    pub metadata: DocMetadata,
+}
+
+impl DocExtractionResult {
+    #[must_use]
+    
+    pub fn new(text: String, metadata: DocMetadata) -> Self {
+        Self { text, metadata }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DocMetadata {
+    pub title: Option<String>,
+    pub subject: Option<String>,
+    pub author: Option<String>,
+    pub last_author: Option<String>,
+    pub created: Option<String>,
+    pub modified: Option<String>,
+    pub revision_number: Option<String>,
+}
+
+impl Default for DocMetadata {
+    fn default() -> Self {
+        Self {
+            title: Default::default(),
+            subject: Default::default(),
+            author: Default::default(),
+            last_author: Default::default(),
+            created: Default::default(),
+            modified: Default::default(),
+            revision_number: Default::default(),
+        }
+    }
+}
+
+impl DocMetadata {
+    #[must_use]
+    
+    pub fn new(
+        title: Option<String>,
+        subject: Option<String>,
+        author: Option<String>,
+        last_author: Option<String>,
+        created: Option<String>,
+        modified: Option<String>,
+        revision_number: Option<String>,
+    ) -> Self {
+        Self { title: title, subject: subject, author: author, last_author: last_author, created: created, modified: modified, revision_number: revision_number }
+    }
+}
+
+#[extendr]
+pub fn new_docmetadata(
+    title: String = "",
+    subject: String = "",
+    author: String = "",
+    last_author: String = "",
+    created: String = "",
+    modified: String = "",
+    revision_number: String = ""
+) -> DocMetadata {
+    DocMetadata {
+        title,
+        subject,
+        author,
+        last_author,
+        created,
+        modified,
+        revision_number,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct Drawing {
+    pub drawing_type: DrawingType,
+    pub extent: Option<Extent>,
+    pub doc_properties: Option<DocProperties>,
+    pub image_ref: Option<String>,
+}
+
+impl Drawing {
+    #[must_use]
+    
+    pub fn new(
+        drawing_type: DrawingType,
+        extent: Option<Extent>,
+        doc_properties: Option<DocProperties>,
+        image_ref: Option<String>,
+    ) -> Self {
+        Self { drawing_type, extent, doc_properties, image_ref }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct Extent {
+    pub cx: f64,
+    pub cy: f64,
+}
+
+impl Default for Extent {
+    fn default() -> Self {
+        Self {
+            cx: Default::default(),
+            cy: Default::default(),
+        }
+    }
+}
+
+impl Extent {
+    #[must_use]
+    
+    pub fn new(cx: Option<f64>, cy: Option<f64>) -> Self {
+        Self { cx: cx.unwrap_or_default(), cy: cy.unwrap_or_default() }
+    }
+
+    pub fn width_inches(&self) -> f64 {
+        let core_self = kreuzberg::extraction::docx::drawing::Extent {
+            cx: self.cx,
+            cy: self.cy,
+        };
+        core_self.width_inches()
+    }
+
+    pub fn height_inches(&self) -> f64 {
+        let core_self = kreuzberg::extraction::docx::drawing::Extent {
+            cx: self.cx,
+            cy: self.cy,
+        };
+        core_self.height_inches()
+    }
+}
+
+#[extendr]
+pub fn new_extent(
+    cx: f64 = 0,
+    cy: f64 = 0
+) -> Extent {
+    Extent {
+        cx,
+        cy,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DocProperties {
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub description: Option<String>,
+}
+
+impl Default for DocProperties {
+    fn default() -> Self {
+        Self {
+            id: Default::default(),
+            name: Default::default(),
+            description: Default::default(),
+        }
+    }
+}
+
+impl DocProperties {
+    #[must_use]
+    
+    pub fn new(id: Option<String>, name: Option<String>, description: Option<String>) -> Self {
+        Self { id: id, name: name, description: description }
+    }
+}
+
+#[extendr]
+pub fn new_docproperties(
+    id: String = "",
+    name: String = "",
+    description: String = ""
+) -> DocProperties {
+    DocProperties {
+        id,
+        name,
+        description,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct AnchorProperties {
+    pub behind_doc: bool,
+    pub layout_in_cell: bool,
+    pub relative_height: Option<f64>,
+    pub position_h: Option<Position>,
+    pub position_v: Option<Position>,
+    pub wrap_type: WrapType,
+}
+
+impl Default for AnchorProperties {
+    fn default() -> Self {
+        Self {
+            behind_doc: Default::default(),
+            layout_in_cell: Default::default(),
+            relative_height: Default::default(),
+            position_h: Default::default(),
+            position_v: Default::default(),
+            wrap_type: Default::default(),
+        }
+    }
+}
+
+impl AnchorProperties {
+    #[must_use]
+    
+    pub fn new(
+        behind_doc: Option<bool>,
+        layout_in_cell: Option<bool>,
+        wrap_type: Option<WrapType>,
+        relative_height: Option<f64>,
+        position_h: Option<Position>,
+        position_v: Option<Position>,
+    ) -> Self {
+        Self { behind_doc: behind_doc.unwrap_or_default(), layout_in_cell: layout_in_cell.unwrap_or_default(), relative_height: relative_height, position_h: position_h, position_v: position_v, wrap_type: wrap_type.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_anchorproperties(
+    behind_doc: bool = false,
+    layout_in_cell: bool = false,
+    relative_height: f64 = 0,
+    position_h: Position = null,
+    position_v: Position = null,
+    wrap_type: WrapType = null
+) -> AnchorProperties {
+    AnchorProperties {
+        behind_doc,
+        layout_in_cell,
+        relative_height,
+        position_h,
+        position_v,
+        wrap_type,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct Position {
+    pub relative_from: String,
+    pub offset: Option<f64>,
+}
+
+impl Position {
+    #[must_use]
+    
+    pub fn new(relative_from: String, offset: Option<f64>) -> Self {
+        Self { relative_from, offset }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct Document {
+    pub paragraphs: Vec<String>,
+    pub tables: Vec<Table>,
+    pub headers: Vec<HeaderFooter>,
+    pub footers: Vec<HeaderFooter>,
+    pub footnotes: Vec<Note>,
+    pub endnotes: Vec<Note>,
+    pub numbering_defs: String,
+    /// Document elements in their original order.
+    pub elements: Vec<DocumentElement>,
+    /// Parsed style catalog from `word/styles.xml`, if available.
+    pub style_catalog: Option<StyleCatalog>,
+    /// Parsed theme from `word/theme/theme1.xml`, if available.
+    pub theme: Option<Theme>,
+    /// Section properties parsed from `w:sectPr` elements.
+    pub sections: Vec<SectionProperties>,
+    /// Drawing objects parsed from `w:drawing` elements.
+    pub drawings: Vec<Drawing>,
+    /// Image relationships (rId → target path) for image extraction.
+    pub image_relationships: String,
+}
+
+impl Default for Document {
+    fn default() -> Self {
+        Self {
+            paragraphs: Default::default(),
+            tables: Default::default(),
+            headers: Default::default(),
+            footers: Default::default(),
+            footnotes: Default::default(),
+            endnotes: Default::default(),
+            numbering_defs: Default::default(),
+            elements: Default::default(),
+            style_catalog: Default::default(),
+            theme: Default::default(),
+            sections: Default::default(),
+            drawings: Default::default(),
+            image_relationships: Default::default(),
+        }
+    }
+}
+
+impl Document {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        paragraphs: Option<Vec<String>>,
+        tables: Option<Vec<Table>>,
+        headers: Option<Vec<HeaderFooter>>,
+        footers: Option<Vec<HeaderFooter>>,
+        footnotes: Option<Vec<Note>>,
+        endnotes: Option<Vec<Note>>,
+        numbering_defs: Option<String>,
+        elements: Option<Vec<DocumentElement>>,
+        sections: Option<Vec<SectionProperties>>,
+        drawings: Option<Vec<Drawing>>,
+        image_relationships: Option<String>,
+        style_catalog: Option<StyleCatalog>,
+        theme: Option<Theme>,
+    ) -> Self {
+        Self { paragraphs: paragraphs.unwrap_or_default(), tables: tables.unwrap_or_default(), headers: headers.unwrap_or_default(), footers: footers.unwrap_or_default(), footnotes: footnotes.unwrap_or_default(), endnotes: endnotes.unwrap_or_default(), numbering_defs: numbering_defs.unwrap_or_default(), elements: elements.unwrap_or_default(), style_catalog: style_catalog, theme: theme, sections: sections.unwrap_or_default(), drawings: drawings.unwrap_or_default(), image_relationships: image_relationships.unwrap_or_default() }
+    }
+
+    pub fn resolve_heading_level(&self, style_id: String) -> Option<i32> {
+        let core_self = kreuzberg::extraction::docx::parser::Document {
+            paragraphs: Default::default(),
+            tables: self.tables.clone().into_iter().map(Into::into).collect(),
+            headers: self.headers.clone().into_iter().map(Into::into).collect(),
+            footers: self.footers.clone().into_iter().map(Into::into).collect(),
+            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
+            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
+            numbering_defs: Default::default(),
+            elements: self.elements.clone().into_iter().map(Into::into).collect(),
+            style_catalog: self.style_catalog.clone().map(Into::into),
+            theme: self.theme.clone().map(Into::into),
+            sections: self.sections.clone().into_iter().map(Into::into).collect(),
+            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
+            image_relationships: Default::default(),
+        };
+        core_self.resolve_heading_level(&style_id)
+    }
+
+    pub fn extract_text(&self) -> String {
+        let core_self = kreuzberg::extraction::docx::parser::Document {
+            paragraphs: Default::default(),
+            tables: self.tables.clone().into_iter().map(Into::into).collect(),
+            headers: self.headers.clone().into_iter().map(Into::into).collect(),
+            footers: self.footers.clone().into_iter().map(Into::into).collect(),
+            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
+            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
+            numbering_defs: Default::default(),
+            elements: self.elements.clone().into_iter().map(Into::into).collect(),
+            style_catalog: self.style_catalog.clone().map(Into::into),
+            theme: self.theme.clone().map(Into::into),
+            sections: self.sections.clone().into_iter().map(Into::into).collect(),
+            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
+            image_relationships: Default::default(),
+        };
+        core_self.extract_text().into()
+    }
+
+    pub fn to_markdown(&self, inject_placeholders: bool) -> String {
+        let core_self = kreuzberg::extraction::docx::parser::Document {
+            paragraphs: Default::default(),
+            tables: self.tables.clone().into_iter().map(Into::into).collect(),
+            headers: self.headers.clone().into_iter().map(Into::into).collect(),
+            footers: self.footers.clone().into_iter().map(Into::into).collect(),
+            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
+            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
+            numbering_defs: Default::default(),
+            elements: self.elements.clone().into_iter().map(Into::into).collect(),
+            style_catalog: self.style_catalog.clone().map(Into::into),
+            theme: self.theme.clone().map(Into::into),
+            sections: self.sections.clone().into_iter().map(Into::into).collect(),
+            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
+            image_relationships: Default::default(),
+        };
+        core_self.to_markdown(inject_placeholders).into()
+    }
+
+    pub fn to_plain_text(&self) -> String {
+        let core_self = kreuzberg::extraction::docx::parser::Document {
+            paragraphs: Default::default(),
+            tables: self.tables.clone().into_iter().map(Into::into).collect(),
+            headers: self.headers.clone().into_iter().map(Into::into).collect(),
+            footers: self.footers.clone().into_iter().map(Into::into).collect(),
+            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
+            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
+            numbering_defs: Default::default(),
+            elements: self.elements.clone().into_iter().map(Into::into).collect(),
+            style_catalog: self.style_catalog.clone().map(Into::into),
+            theme: self.theme.clone().map(Into::into),
+            sections: self.sections.clone().into_iter().map(Into::into).collect(),
+            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
+            image_relationships: Default::default(),
+        };
+        core_self.to_plain_text().into()
+    }
+}
+
+#[extendr]
+pub fn new_document(
+    paragraphs: Vec<String> = c(),
+    tables: Vec<Table> = c(),
+    headers: Vec<HeaderFooter> = c(),
+    footers: Vec<HeaderFooter> = c(),
+    footnotes: Vec<Note> = c(),
+    endnotes: Vec<Note> = c(),
+    numbering_defs: String = "",
+    elements: Vec<DocumentElement> = c(),
+    style_catalog: StyleCatalog = null,
+    theme: Theme = null,
+    sections: Vec<SectionProperties> = c(),
+    drawings: Vec<Drawing> = c(),
+    image_relationships: String = ""
+) -> Document {
+    Document {
+        paragraphs,
+        tables,
+        headers,
+        footers,
+        footnotes,
+        endnotes,
+        numbering_defs,
+        elements,
+        style_catalog,
+        theme,
+        sections,
+        drawings,
+        image_relationships,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct TableRow {
+    pub cells: Vec<TableCell>,
+    pub properties: Option<RowProperties>,
+}
+
+impl Default for TableRow {
+    fn default() -> Self {
+        Self {
+            cells: Default::default(),
+            properties: Default::default(),
+        }
+    }
+}
+
+impl TableRow {
+    #[must_use]
+    
+    pub fn new(cells: Option<Vec<TableCell>>, properties: Option<RowProperties>) -> Self {
+        Self { cells: cells.unwrap_or_default(), properties: properties }
+    }
+}
+
+#[extendr]
+pub fn new_tablerow(
+    cells: Vec<TableCell> = c(),
+    properties: RowProperties = null
+) -> TableRow {
+    TableRow {
+        cells,
+        properties,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct HeaderFooter {
+    pub paragraphs: Vec<String>,
+    pub tables: Vec<Table>,
+    pub header_type: HeaderFooterType,
+}
+
+impl Default for HeaderFooter {
+    fn default() -> Self {
+        Self {
+            paragraphs: Default::default(),
+            tables: Default::default(),
+            header_type: Default::default(),
+        }
+    }
+}
+
+impl HeaderFooter {
+    #[must_use]
+    
+    pub fn new(paragraphs: Option<Vec<String>>, tables: Option<Vec<Table>>, header_type: Option<HeaderFooterType>) -> Self {
+        Self { paragraphs: paragraphs.unwrap_or_default(), tables: tables.unwrap_or_default(), header_type: header_type.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_headerfooter(
+    paragraphs: Vec<String> = c(),
+    tables: Vec<Table> = c(),
+    header_type: HeaderFooterType = null
+) -> HeaderFooter {
+    HeaderFooter {
+        paragraphs,
+        tables,
+        header_type,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct Note {
+    pub id: String,
+    pub note_type: NoteType,
+    pub paragraphs: Vec<String>,
+}
+
+impl Note {
+    #[must_use]
+    
+    pub fn new(id: String, note_type: NoteType, paragraphs: Vec<String>) -> Self {
+        Self { id, note_type, paragraphs }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PageMargins {
+    /// Top margin in twips.
+    pub top: Option<i32>,
+    /// Right margin in twips.
+    pub right: Option<i32>,
+    /// Bottom margin in twips.
+    pub bottom: Option<i32>,
+    /// Left margin in twips.
+    pub left: Option<i32>,
+    /// Header offset in twips.
+    pub header: Option<i32>,
+    /// Footer offset in twips.
+    pub footer: Option<i32>,
+    /// Gutter margin in twips.
+    pub gutter: Option<i32>,
+}
+
+impl Default for PageMargins {
+    fn default() -> Self {
+        Self {
+            top: Default::default(),
+            right: Default::default(),
+            bottom: Default::default(),
+            left: Default::default(),
+            header: Default::default(),
+            footer: Default::default(),
+            gutter: Default::default(),
+        }
+    }
+}
+
+impl PageMargins {
+    #[must_use]
+    
+    pub fn new(
+        top: Option<i32>,
+        right: Option<i32>,
+        bottom: Option<i32>,
+        left: Option<i32>,
+        header: Option<i32>,
+        footer: Option<i32>,
+        gutter: Option<i32>,
+    ) -> Self {
+        Self { top: top, right: right, bottom: bottom, left: left, header: header, footer: footer, gutter: gutter }
+    }
+
+    pub fn to_points(&self) -> PageMarginsPoints {
+        let core_self = kreuzberg::extraction::docx::section::PageMargins {
+            top: self.top,
+            right: self.right,
+            bottom: self.bottom,
+            left: self.left,
+            header: self.header,
+            footer: self.footer,
+            gutter: self.gutter,
+        };
+        core_self.to_points().into()
+    }
+}
+
+#[extendr]
+pub fn new_pagemargins(
+    top: i32 = 0,
+    right: i32 = 0,
+    bottom: i32 = 0,
+    left: i32 = 0,
+    header: i32 = 0,
+    footer: i32 = 0,
+    gutter: i32 = 0
+) -> PageMargins {
+    PageMargins {
+        top,
+        right,
+        bottom,
+        left,
+        header,
+        footer,
+        gutter,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PageMarginsPoints {
+    pub top: Option<f64>,
+    pub right: Option<f64>,
+    pub bottom: Option<f64>,
+    pub left: Option<f64>,
+    pub header: Option<f64>,
+    pub footer: Option<f64>,
+    pub gutter: Option<f64>,
+}
+
+impl Default for PageMarginsPoints {
+    fn default() -> Self {
+        Self {
+            top: Default::default(),
+            right: Default::default(),
+            bottom: Default::default(),
+            left: Default::default(),
+            header: Default::default(),
+            footer: Default::default(),
+            gutter: Default::default(),
+        }
+    }
+}
+
+impl PageMarginsPoints {
+    #[must_use]
+    
+    pub fn new(
+        top: Option<f64>,
+        right: Option<f64>,
+        bottom: Option<f64>,
+        left: Option<f64>,
+        header: Option<f64>,
+        footer: Option<f64>,
+        gutter: Option<f64>,
+    ) -> Self {
+        Self { top: top, right: right, bottom: bottom, left: left, header: header, footer: footer, gutter: gutter }
+    }
+}
+
+#[extendr]
+pub fn new_pagemarginspoints(
+    top: f64 = 0.0,
+    right: f64 = 0.0,
+    bottom: f64 = 0.0,
+    left: f64 = 0.0,
+    header: f64 = 0.0,
+    footer: f64 = 0.0,
+    gutter: f64 = 0.0
+) -> PageMarginsPoints {
+    PageMarginsPoints {
+        top,
+        right,
+        bottom,
+        left,
+        header,
+        footer,
+        gutter,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ColumnLayout {
+    /// Number of columns.
+    pub count: Option<i32>,
+    /// Space between columns in twips.
+    pub space_twips: Option<i32>,
+    /// Whether columns have equal width.
+    pub equal_width: Option<bool>,
+}
+
+impl Default for ColumnLayout {
+    fn default() -> Self {
+        Self {
+            count: Default::default(),
+            space_twips: Default::default(),
+            equal_width: Default::default(),
+        }
+    }
+}
+
+impl ColumnLayout {
+    #[must_use]
+    
+    pub fn new(count: Option<i32>, space_twips: Option<i32>, equal_width: Option<bool>) -> Self {
+        Self { count: count, space_twips: space_twips, equal_width: equal_width }
+    }
+}
+
+#[extendr]
+pub fn new_columnlayout(
+    count: i32 = 0,
+    space_twips: i32 = 0,
+    equal_width: bool = false
+) -> ColumnLayout {
+    ColumnLayout {
+        count,
+        space_twips,
+        equal_width,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct SectionProperties {
+    /// Page width in twips (from `w:pgSz w:w`).
+    pub page_width_twips: Option<i32>,
+    /// Page height in twips (from `w:pgSz w:h`).
+    pub page_height_twips: Option<i32>,
+    /// Page orientation (from `w:pgSz w:orient`).
+    pub orientation: Option<Orientation>,
+    /// Page margins (from `w:pgMar`).
+    pub margins: PageMargins,
+    /// Column layout (from `w:cols`).
+    pub columns: ColumnLayout,
+    /// Document grid line pitch in twips (from `w:docGrid w:linePitch`).
+    pub doc_grid_line_pitch: Option<i32>,
+}
+
+impl Default for SectionProperties {
+    fn default() -> Self {
+        Self {
+            page_width_twips: Default::default(),
+            page_height_twips: Default::default(),
+            orientation: Default::default(),
+            margins: Default::default(),
+            columns: Default::default(),
+            doc_grid_line_pitch: Default::default(),
+        }
+    }
+}
+
+impl SectionProperties {
+    #[must_use]
+    
+    pub fn new(
+        margins: Option<PageMargins>,
+        columns: Option<ColumnLayout>,
+        page_width_twips: Option<i32>,
+        page_height_twips: Option<i32>,
+        orientation: Option<Orientation>,
+        doc_grid_line_pitch: Option<i32>,
+    ) -> Self {
+        Self { page_width_twips: page_width_twips, page_height_twips: page_height_twips, orientation: orientation, margins: margins.unwrap_or_default(), columns: columns.unwrap_or_default(), doc_grid_line_pitch: doc_grid_line_pitch }
+    }
+
+    pub fn page_width_points(&self) -> Option<f64> {
+        let core_self = kreuzberg::extraction::docx::section::SectionProperties {
+            page_width_twips: self.page_width_twips,
+            page_height_twips: self.page_height_twips,
+            orientation: self.orientation.clone().map(Into::into),
+            margins: self.margins.clone().into(),
+            columns: self.columns.clone().into(),
+            doc_grid_line_pitch: self.doc_grid_line_pitch,
+        };
+        core_self.page_width_points()
+    }
+
+    pub fn page_height_points(&self) -> Option<f64> {
+        let core_self = kreuzberg::extraction::docx::section::SectionProperties {
+            page_width_twips: self.page_width_twips,
+            page_height_twips: self.page_height_twips,
+            orientation: self.orientation.clone().map(Into::into),
+            margins: self.margins.clone().into(),
+            columns: self.columns.clone().into(),
+            doc_grid_line_pitch: self.doc_grid_line_pitch,
+        };
+        core_self.page_height_points()
+    }
+}
+
+#[extendr]
+pub fn new_sectionproperties(
+    page_width_twips: i32 = 0,
+    page_height_twips: i32 = 0,
+    orientation: Orientation = null,
+    margins: PageMargins = null,
+    columns: ColumnLayout = null,
+    doc_grid_line_pitch: i32 = 0
+) -> SectionProperties {
+    SectionProperties {
+        page_width_twips,
+        page_height_twips,
+        orientation,
+        margins,
+        columns,
+        doc_grid_line_pitch,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct RunProperties {
+    pub bold: Option<bool>,
+    pub italic: Option<bool>,
+    pub underline: Option<bool>,
+    pub strikethrough: Option<bool>,
+    /// Hex RGB color, e.g. `"2F5496"`.
+    pub color: Option<String>,
+    /// Font size in half-points (`w:sz` val). Divide by 2 to get points.
+    pub font_size_half_points: Option<i32>,
+    /// ASCII font family (`w:rFonts w:ascii`).
+    pub font_ascii: Option<String>,
+    /// ASCII theme font (`w:rFonts w:asciiTheme`).
+    pub font_ascii_theme: Option<String>,
+    /// Vertical alignment: "superscript", "subscript", or "baseline".
+    pub vert_align: Option<String>,
+    /// High ANSI font family (w:rFonts w:hAnsi).
+    pub font_h_ansi: Option<String>,
+    /// Complex script font family (w:rFonts w:cs).
+    pub font_cs: Option<String>,
+    /// East Asian font family (w:rFonts w:eastAsia).
+    pub font_east_asia: Option<String>,
+    /// Highlight color name (e.g., "yellow", "green", "cyan").
+    pub highlight: Option<String>,
+    /// All caps text transformation.
+    pub caps: Option<bool>,
+    /// Small caps text transformation.
+    pub small_caps: Option<bool>,
+    /// Text shadow effect.
+    pub shadow: Option<bool>,
+    /// Text outline effect.
+    pub outline: Option<bool>,
+    /// Text emboss effect.
+    pub emboss: Option<bool>,
+    /// Text imprint (engrave) effect.
+    pub imprint: Option<bool>,
+    /// Character spacing in twips (from w:spacing w:val).
+    pub char_spacing: Option<i32>,
+    /// Vertical position offset in half-points (from w:position w:val).
+    pub position: Option<i32>,
+    /// Kerning threshold in half-points (from w:kern w:val).
+    pub kern: Option<i32>,
+    /// Theme color reference (e.g., "accent1", "dk1").
+    pub theme_color: Option<String>,
+    /// Theme color tint modification (hex value).
+    pub theme_tint: Option<String>,
+    /// Theme color shade modification (hex value).
+    pub theme_shade: Option<String>,
+}
+
+impl Default for RunProperties {
+    fn default() -> Self {
+        Self {
+            bold: Default::default(),
+            italic: Default::default(),
+            underline: Default::default(),
+            strikethrough: Default::default(),
+            color: Default::default(),
+            font_size_half_points: Default::default(),
+            font_ascii: Default::default(),
+            font_ascii_theme: Default::default(),
+            vert_align: Default::default(),
+            font_h_ansi: Default::default(),
+            font_cs: Default::default(),
+            font_east_asia: Default::default(),
+            highlight: Default::default(),
+            caps: Default::default(),
+            small_caps: Default::default(),
+            shadow: Default::default(),
+            outline: Default::default(),
+            emboss: Default::default(),
+            imprint: Default::default(),
+            char_spacing: Default::default(),
+            position: Default::default(),
+            kern: Default::default(),
+            theme_color: Default::default(),
+            theme_tint: Default::default(),
+            theme_shade: Default::default(),
+        }
+    }
+}
+
+impl RunProperties {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        bold: Option<bool>,
+        italic: Option<bool>,
+        underline: Option<bool>,
+        strikethrough: Option<bool>,
+        color: Option<String>,
+        font_size_half_points: Option<i32>,
+        font_ascii: Option<String>,
+        font_ascii_theme: Option<String>,
+        vert_align: Option<String>,
+        font_h_ansi: Option<String>,
+        font_cs: Option<String>,
+        font_east_asia: Option<String>,
+        highlight: Option<String>,
+        caps: Option<bool>,
+        small_caps: Option<bool>,
+        shadow: Option<bool>,
+        outline: Option<bool>,
+        emboss: Option<bool>,
+        imprint: Option<bool>,
+        char_spacing: Option<i32>,
+        position: Option<i32>,
+        kern: Option<i32>,
+        theme_color: Option<String>,
+        theme_tint: Option<String>,
+        theme_shade: Option<String>,
+    ) -> Self {
+        Self { bold: bold, italic: italic, underline: underline, strikethrough: strikethrough, color: color, font_size_half_points: font_size_half_points, font_ascii: font_ascii, font_ascii_theme: font_ascii_theme, vert_align: vert_align, font_h_ansi: font_h_ansi, font_cs: font_cs, font_east_asia: font_east_asia, highlight: highlight, caps: caps, small_caps: small_caps, shadow: shadow, outline: outline, emboss: emboss, imprint: imprint, char_spacing: char_spacing, position: position, kern: kern, theme_color: theme_color, theme_tint: theme_tint, theme_shade: theme_shade }
+    }
+}
+
+#[extendr]
+pub fn new_runproperties(
+    bold: bool = false,
+    italic: bool = false,
+    underline: bool = false,
+    strikethrough: bool = false,
+    color: String = "",
+    font_size_half_points: i32 = 0,
+    font_ascii: String = "",
+    font_ascii_theme: String = "",
+    vert_align: String = "",
+    font_h_ansi: String = "",
+    font_cs: String = "",
+    font_east_asia: String = "",
+    highlight: String = "",
+    caps: bool = false,
+    small_caps: bool = false,
+    shadow: bool = false,
+    outline: bool = false,
+    emboss: bool = false,
+    imprint: bool = false,
+    char_spacing: i32 = 0,
+    position: i32 = 0,
+    kern: i32 = 0,
+    theme_color: String = "",
+    theme_tint: String = "",
+    theme_shade: String = ""
+) -> RunProperties {
+    RunProperties {
+        bold,
+        italic,
+        underline,
+        strikethrough,
+        color,
+        font_size_half_points,
+        font_ascii,
+        font_ascii_theme,
+        vert_align,
+        font_h_ansi,
+        font_cs,
+        font_east_asia,
+        highlight,
+        caps,
+        small_caps,
+        shadow,
+        outline,
+        emboss,
+        imprint,
+        char_spacing,
+        position,
+        kern,
+        theme_color,
+        theme_tint,
+        theme_shade,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct StyleDefinition {
+    /// The style ID (`w:styleId` attribute).
+    pub id: String,
+    /// Human-readable name (`<w:name w:val="..."/>`).
+    pub name: Option<String>,
+    /// Style type: paragraph, character, table, or numbering.
+    pub style_type: StyleType,
+    /// ID of the parent style (`<w:basedOn w:val="..."/>`).
+    pub based_on: Option<String>,
+    /// ID of the style to apply to the next paragraph (`<w:next w:val="..."/>`).
+    pub next_style: Option<String>,
+    /// Whether this is the default style for its type.
+    pub is_default: bool,
+    /// Paragraph properties defined directly on this style.
+    pub paragraph_properties: String,
+    /// Run properties defined directly on this style.
+    pub run_properties: RunProperties,
+}
+
+impl StyleDefinition {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        id: String,
+        style_type: StyleType,
+        is_default: bool,
+        paragraph_properties: String,
+        run_properties: RunProperties,
+        name: Option<String>,
+        based_on: Option<String>,
+        next_style: Option<String>,
+    ) -> Self {
+        Self { id, name, style_type, based_on, next_style, is_default, paragraph_properties, run_properties }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ResolvedStyle {
+    pub paragraph_properties: String,
+    pub run_properties: RunProperties,
+}
+
+impl Default for ResolvedStyle {
+    fn default() -> Self {
+        Self {
+            paragraph_properties: Default::default(),
+            run_properties: Default::default(),
+        }
+    }
+}
+
+impl ResolvedStyle {
+    #[must_use]
+    
+    pub fn new(paragraph_properties: Option<String>, run_properties: Option<RunProperties>) -> Self {
+        Self { paragraph_properties: paragraph_properties.unwrap_or_default(), run_properties: run_properties.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_resolvedstyle(
+    paragraph_properties: String = "",
+    run_properties: RunProperties = null
+) -> ResolvedStyle {
+    ResolvedStyle {
+        paragraph_properties,
+        run_properties,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct StyleCatalog {
+    pub styles: String,
+    pub default_paragraph_properties: String,
+    pub default_run_properties: RunProperties,
+}
+
+impl Default for StyleCatalog {
+    fn default() -> Self {
+        Self {
+            styles: Default::default(),
+            default_paragraph_properties: Default::default(),
+            default_run_properties: Default::default(),
+        }
+    }
+}
+
+impl StyleCatalog {
+    #[must_use]
+    
+    pub fn new(
+        styles: Option<String>,
+        default_paragraph_properties: Option<String>,
+        default_run_properties: Option<RunProperties>,
+    ) -> Self {
+        Self { styles: styles.unwrap_or_default(), default_paragraph_properties: default_paragraph_properties.unwrap_or_default(), default_run_properties: default_run_properties.unwrap_or_default() }
+    }
+
+    pub fn resolve_style(&self, style_id: String) -> ResolvedStyle {
+        let core_self = kreuzberg::extraction::docx::styles::StyleCatalog {
+            styles: Default::default(),
+            default_paragraph_properties: Default::default(),
+            default_run_properties: self.default_run_properties.clone().into(),
+        };
+        core_self.resolve_style(&style_id).into()
+    }
+}
+
+#[extendr]
+pub fn new_stylecatalog(
+    styles: String = "",
+    default_paragraph_properties: String = "",
+    default_run_properties: RunProperties = null
+) -> StyleCatalog {
+    StyleCatalog {
+        styles,
+        default_paragraph_properties,
+        default_run_properties,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct TableProperties {
+    pub style_id: Option<String>,
+    pub width: Option<String>,
+    pub alignment: Option<String>,
+    pub layout: Option<String>,
+    pub look: Option<TableLook>,
+    pub borders: Option<TableBorders>,
+    pub cell_margins: Option<String>,
+    pub indent: Option<String>,
+    pub caption: Option<String>,
+}
+
+impl Default for TableProperties {
+    fn default() -> Self {
+        Self {
+            style_id: Default::default(),
+            width: Default::default(),
+            alignment: Default::default(),
+            layout: Default::default(),
+            look: Default::default(),
+            borders: Default::default(),
+            cell_margins: Default::default(),
+            indent: Default::default(),
+            caption: Default::default(),
+        }
+    }
+}
+
+impl TableProperties {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        style_id: Option<String>,
+        width: Option<String>,
+        alignment: Option<String>,
+        layout: Option<String>,
+        look: Option<TableLook>,
+        borders: Option<TableBorders>,
+        cell_margins: Option<String>,
+        indent: Option<String>,
+        caption: Option<String>,
+    ) -> Self {
+        Self { style_id: style_id, width: width, alignment: alignment, layout: layout, look: look, borders: borders, cell_margins: cell_margins, indent: indent, caption: caption }
+    }
+}
+
+#[extendr]
+pub fn new_tableproperties(
+    style_id: String = "",
+    width: String = "",
+    alignment: String = "",
+    layout: String = "",
+    look: TableLook = null,
+    borders: TableBorders = null,
+    cell_margins: String = "",
+    indent: String = "",
+    caption: String = ""
+) -> TableProperties {
+    TableProperties {
+        style_id,
+        width,
+        alignment,
+        layout,
+        look,
+        borders,
+        cell_margins,
+        indent,
+        caption,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct TableLook {
+    pub first_row: bool,
+    pub last_row: bool,
+    pub first_column: bool,
+    pub last_column: bool,
+    pub no_h_band: bool,
+    pub no_v_band: bool,
+}
+
+impl Default for TableLook {
+    fn default() -> Self {
+        Self {
+            first_row: Default::default(),
+            last_row: Default::default(),
+            first_column: Default::default(),
+            last_column: Default::default(),
+            no_h_band: Default::default(),
+            no_v_band: Default::default(),
+        }
+    }
+}
+
+impl TableLook {
+    #[must_use]
+    
+    pub fn new(
+        first_row: Option<bool>,
+        last_row: Option<bool>,
+        first_column: Option<bool>,
+        last_column: Option<bool>,
+        no_h_band: Option<bool>,
+        no_v_band: Option<bool>,
+    ) -> Self {
+        Self { first_row: first_row.unwrap_or_default(), last_row: last_row.unwrap_or_default(), first_column: first_column.unwrap_or_default(), last_column: last_column.unwrap_or_default(), no_h_band: no_h_band.unwrap_or_default(), no_v_band: no_v_band.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_tablelook(
+    first_row: bool = false,
+    last_row: bool = false,
+    first_column: bool = false,
+    last_column: bool = false,
+    no_h_band: bool = false,
+    no_v_band: bool = false
+) -> TableLook {
+    TableLook {
+        first_row,
+        last_row,
+        first_column,
+        last_column,
+        no_h_band,
+        no_v_band,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct TableBorders {
+    pub top: Option<String>,
+    pub bottom: Option<String>,
+    pub left: Option<String>,
+    pub right: Option<String>,
+    pub inside_h: Option<String>,
+    pub inside_v: Option<String>,
+}
+
+impl Default for TableBorders {
+    fn default() -> Self {
+        Self {
+            top: Default::default(),
+            bottom: Default::default(),
+            left: Default::default(),
+            right: Default::default(),
+            inside_h: Default::default(),
+            inside_v: Default::default(),
+        }
+    }
+}
+
+impl TableBorders {
+    #[must_use]
+    
+    pub fn new(
+        top: Option<String>,
+        bottom: Option<String>,
+        left: Option<String>,
+        right: Option<String>,
+        inside_h: Option<String>,
+        inside_v: Option<String>,
+    ) -> Self {
+        Self { top: top, bottom: bottom, left: left, right: right, inside_h: inside_h, inside_v: inside_v }
+    }
+}
+
+#[extendr]
+pub fn new_tableborders(
+    top: String = "",
+    bottom: String = "",
+    left: String = "",
+    right: String = "",
+    inside_h: String = "",
+    inside_v: String = ""
+) -> TableBorders {
+    TableBorders {
+        top,
+        bottom,
+        left,
+        right,
+        inside_h,
+        inside_v,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct RowProperties {
+    pub height: Option<i32>,
+    pub height_rule: Option<String>,
+    pub is_header: bool,
+    pub cant_split: bool,
+}
+
+impl Default for RowProperties {
+    fn default() -> Self {
+        Self {
+            height: Default::default(),
+            height_rule: Default::default(),
+            is_header: Default::default(),
+            cant_split: Default::default(),
+        }
+    }
+}
+
+impl RowProperties {
+    #[must_use]
+    
+    pub fn new(is_header: Option<bool>, cant_split: Option<bool>, height: Option<i32>, height_rule: Option<String>) -> Self {
+        Self { height: height, height_rule: height_rule, is_header: is_header.unwrap_or_default(), cant_split: cant_split.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_rowproperties(
+    height: i32 = 0,
+    height_rule: String = "",
+    is_header: bool = false,
+    cant_split: bool = false
+) -> RowProperties {
+    RowProperties {
+        height,
+        height_rule,
+        is_header,
+        cant_split,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct ColorScheme {
+    /// Color scheme name.
+    pub name: String,
+    /// Dark 1 (dark background) color.
+    pub dk1: Option<ThemeColor>,
+    /// Light 1 (light background) color.
+    pub lt1: Option<ThemeColor>,
+    /// Dark 2 color.
+    pub dk2: Option<ThemeColor>,
+    /// Light 2 color.
+    pub lt2: Option<ThemeColor>,
+    /// Accent color 1.
+    pub accent1: Option<ThemeColor>,
+    /// Accent color 2.
+    pub accent2: Option<ThemeColor>,
+    /// Accent color 3.
+    pub accent3: Option<ThemeColor>,
+    /// Accent color 4.
+    pub accent4: Option<ThemeColor>,
+    /// Accent color 5.
+    pub accent5: Option<ThemeColor>,
+    /// Accent color 6.
+    pub accent6: Option<ThemeColor>,
+    /// Hyperlink color.
+    pub hlink: Option<ThemeColor>,
+    /// Followed hyperlink color.
+    pub fol_hlink: Option<ThemeColor>,
+}
+
+impl Default for ColorScheme {
+    fn default() -> Self {
+        Self {
+            name: Default::default(),
+            dk1: Default::default(),
+            lt1: Default::default(),
+            dk2: Default::default(),
+            lt2: Default::default(),
+            accent1: Default::default(),
+            accent2: Default::default(),
+            accent3: Default::default(),
+            accent4: Default::default(),
+            accent5: Default::default(),
+            accent6: Default::default(),
+            hlink: Default::default(),
+            fol_hlink: Default::default(),
+        }
+    }
+}
+
+impl ColorScheme {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        name: Option<String>,
+        dk1: Option<ThemeColor>,
+        lt1: Option<ThemeColor>,
+        dk2: Option<ThemeColor>,
+        lt2: Option<ThemeColor>,
+        accent1: Option<ThemeColor>,
+        accent2: Option<ThemeColor>,
+        accent3: Option<ThemeColor>,
+        accent4: Option<ThemeColor>,
+        accent5: Option<ThemeColor>,
+        accent6: Option<ThemeColor>,
+        hlink: Option<ThemeColor>,
+        fol_hlink: Option<ThemeColor>,
+    ) -> Self {
+        Self { name: name.unwrap_or_default(), dk1: dk1, lt1: lt1, dk2: dk2, lt2: lt2, accent1: accent1, accent2: accent2, accent3: accent3, accent4: accent4, accent5: accent5, accent6: accent6, hlink: hlink, fol_hlink: fol_hlink }
+    }
+}
+
+#[extendr]
+pub fn new_colorscheme(
+    name: String = "",
+    dk1: ThemeColor = null,
+    lt1: ThemeColor = null,
+    dk2: ThemeColor = null,
+    lt2: ThemeColor = null,
+    accent1: ThemeColor = null,
+    accent2: ThemeColor = null,
+    accent3: ThemeColor = null,
+    accent4: ThemeColor = null,
+    accent5: ThemeColor = null,
+    accent6: ThemeColor = null,
+    hlink: ThemeColor = null,
+    fol_hlink: ThemeColor = null
+) -> ColorScheme {
+    ColorScheme {
+        name,
+        dk1,
+        lt1,
+        dk2,
+        lt2,
+        accent1,
+        accent2,
+        accent3,
+        accent4,
+        accent5,
+        accent6,
+        hlink,
+        fol_hlink,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct FontScheme {
+    /// Font scheme name.
+    pub name: String,
+    /// Major (heading) font - Latin script.
+    pub major_latin: Option<String>,
+    /// Major (heading) font - East Asian script.
+    pub major_east_asian: Option<String>,
+    /// Major (heading) font - Complex script.
+    pub major_complex_script: Option<String>,
+    /// Minor (body) font - Latin script.
+    pub minor_latin: Option<String>,
+    /// Minor (body) font - East Asian script.
+    pub minor_east_asian: Option<String>,
+    /// Minor (body) font - Complex script.
+    pub minor_complex_script: Option<String>,
+}
+
+impl Default for FontScheme {
+    fn default() -> Self {
+        Self {
+            name: Default::default(),
+            major_latin: Default::default(),
+            major_east_asian: Default::default(),
+            major_complex_script: Default::default(),
+            minor_latin: Default::default(),
+            minor_east_asian: Default::default(),
+            minor_complex_script: Default::default(),
+        }
+    }
+}
+
+impl FontScheme {
+    #[must_use]
+    
+    pub fn new(
+        name: Option<String>,
+        major_latin: Option<String>,
+        major_east_asian: Option<String>,
+        major_complex_script: Option<String>,
+        minor_latin: Option<String>,
+        minor_east_asian: Option<String>,
+        minor_complex_script: Option<String>,
+    ) -> Self {
+        Self { name: name.unwrap_or_default(), major_latin: major_latin, major_east_asian: major_east_asian, major_complex_script: major_complex_script, minor_latin: minor_latin, minor_east_asian: minor_east_asian, minor_complex_script: minor_complex_script }
+    }
+}
+
+#[extendr]
+pub fn new_fontscheme(
+    name: String = "",
+    major_latin: String = "",
+    major_east_asian: String = "",
+    major_complex_script: String = "",
+    minor_latin: String = "",
+    minor_east_asian: String = "",
+    minor_complex_script: String = ""
+) -> FontScheme {
+    FontScheme {
+        name,
+        major_latin,
+        major_east_asian,
+        major_complex_script,
+        minor_latin,
+        minor_east_asian,
+        minor_complex_script,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct Theme {
+    /// Theme name (e.g., "Office Theme").
+    pub name: String,
+    /// Color scheme (12 standard colors).
+    pub color_scheme: Option<ColorScheme>,
+    /// Font scheme (major and minor fonts).
+    pub font_scheme: Option<FontScheme>,
+}
+
+impl Default for Theme {
+    fn default() -> Self {
+        Self {
+            name: Default::default(),
+            color_scheme: Default::default(),
+            font_scheme: Default::default(),
+        }
+    }
+}
+
+impl Theme {
+    #[must_use]
+    
+    pub fn new(name: Option<String>, color_scheme: Option<ColorScheme>, font_scheme: Option<FontScheme>) -> Self {
+        Self { name: name.unwrap_or_default(), color_scheme: color_scheme, font_scheme: font_scheme }
+    }
+}
+
+#[extendr]
+pub fn new_theme(
+    name: String = "",
+    color_scheme: ColorScheme = null,
+    font_scheme: FontScheme = null
+) -> Theme {
+    Theme {
+        name,
+        color_scheme,
+        font_scheme,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct XlsxAppProperties {
+    /// Application name (e.g., "Microsoft Excel")
+    pub application: Option<String>,
+    /// Application version
+    pub app_version: Option<String>,
+    /// Document security level
+    pub doc_security: Option<i32>,
+    /// Scale crop flag
+    pub scale_crop: Option<bool>,
+    /// Links up to date flag
+    pub links_up_to_date: Option<bool>,
+    /// Shared document flag
+    pub shared_doc: Option<bool>,
+    /// Hyperlinks changed flag
+    pub hyperlinks_changed: Option<bool>,
+    /// Company name
+    pub company: Option<String>,
+    /// Worksheet names
+    pub worksheet_names: Vec<String>,
+}
+
+impl Default for XlsxAppProperties {
+    fn default() -> Self {
+        Self {
+            application: Default::default(),
+            app_version: Default::default(),
+            doc_security: Default::default(),
+            scale_crop: Default::default(),
+            links_up_to_date: Default::default(),
+            shared_doc: Default::default(),
+            hyperlinks_changed: Default::default(),
+            company: Default::default(),
+            worksheet_names: Default::default(),
+        }
+    }
+}
+
+impl XlsxAppProperties {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        worksheet_names: Option<Vec<String>>,
+        application: Option<String>,
+        app_version: Option<String>,
+        doc_security: Option<i32>,
+        scale_crop: Option<bool>,
+        links_up_to_date: Option<bool>,
+        shared_doc: Option<bool>,
+        hyperlinks_changed: Option<bool>,
+        company: Option<String>,
+    ) -> Self {
+        Self { application: application, app_version: app_version, doc_security: doc_security, scale_crop: scale_crop, links_up_to_date: links_up_to_date, shared_doc: shared_doc, hyperlinks_changed: hyperlinks_changed, company: company, worksheet_names: worksheet_names.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_xlsxappproperties(
+    application: String = "",
+    app_version: String = "",
+    doc_security: i32 = 0,
+    scale_crop: bool = false,
+    links_up_to_date: bool = false,
+    shared_doc: bool = false,
+    hyperlinks_changed: bool = false,
+    company: String = "",
+    worksheet_names: Vec<String> = c()
+) -> XlsxAppProperties {
+    XlsxAppProperties {
+        application,
+        app_version,
+        doc_security,
+        scale_crop,
+        links_up_to_date,
+        shared_doc,
+        hyperlinks_changed,
+        company,
+        worksheet_names,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PptxAppProperties {
+    /// Application name (e.g., "Microsoft Office PowerPoint")
+    pub application: Option<String>,
+    /// Application version
+    pub app_version: Option<String>,
+    /// Total editing time in minutes
+    pub total_time: Option<i32>,
+    /// Company name
+    pub company: Option<String>,
+    /// Document security level
+    pub doc_security: Option<i32>,
+    /// Scale crop flag
+    pub scale_crop: Option<bool>,
+    /// Links up to date flag
+    pub links_up_to_date: Option<bool>,
+    /// Shared document flag
+    pub shared_doc: Option<bool>,
+    /// Hyperlinks changed flag
+    pub hyperlinks_changed: Option<bool>,
+    /// Number of slides
+    pub slides: Option<i32>,
+    /// Number of notes
+    pub notes: Option<i32>,
+    /// Number of hidden slides
+    pub hidden_slides: Option<i32>,
+    /// Number of multimedia clips
+    pub multimedia_clips: Option<i32>,
+    /// Presentation format (e.g., "Widescreen", "Standard")
+    pub presentation_format: Option<String>,
+    /// Slide titles
+    pub slide_titles: Vec<String>,
+}
+
+impl Default for PptxAppProperties {
+    fn default() -> Self {
+        Self {
+            application: Default::default(),
+            app_version: Default::default(),
+            total_time: Default::default(),
+            company: Default::default(),
+            doc_security: Default::default(),
+            scale_crop: Default::default(),
+            links_up_to_date: Default::default(),
+            shared_doc: Default::default(),
+            hyperlinks_changed: Default::default(),
+            slides: Default::default(),
+            notes: Default::default(),
+            hidden_slides: Default::default(),
+            multimedia_clips: Default::default(),
+            presentation_format: Default::default(),
+            slide_titles: Default::default(),
+        }
+    }
+}
+
+impl PptxAppProperties {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        slide_titles: Option<Vec<String>>,
+        application: Option<String>,
+        app_version: Option<String>,
+        total_time: Option<i32>,
+        company: Option<String>,
+        doc_security: Option<i32>,
+        scale_crop: Option<bool>,
+        links_up_to_date: Option<bool>,
+        shared_doc: Option<bool>,
+        hyperlinks_changed: Option<bool>,
+        slides: Option<i32>,
+        notes: Option<i32>,
+        hidden_slides: Option<i32>,
+        multimedia_clips: Option<i32>,
+        presentation_format: Option<String>,
+    ) -> Self {
+        Self { application: application, app_version: app_version, total_time: total_time, company: company, doc_security: doc_security, scale_crop: scale_crop, links_up_to_date: links_up_to_date, shared_doc: shared_doc, hyperlinks_changed: hyperlinks_changed, slides: slides, notes: notes, hidden_slides: hidden_slides, multimedia_clips: multimedia_clips, presentation_format: presentation_format, slide_titles: slide_titles.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_pptxappproperties(
+    application: String = "",
+    app_version: String = "",
+    total_time: i32 = 0,
+    company: String = "",
+    doc_security: i32 = 0,
+    scale_crop: bool = false,
+    links_up_to_date: bool = false,
+    shared_doc: bool = false,
+    hyperlinks_changed: bool = false,
+    slides: i32 = 0,
+    notes: i32 = 0,
+    hidden_slides: i32 = 0,
+    multimedia_clips: i32 = 0,
+    presentation_format: String = "",
+    slide_titles: Vec<String> = c()
+) -> PptxAppProperties {
+    PptxAppProperties {
+        application,
+        app_version,
+        total_time,
+        company,
+        doc_security,
+        scale_crop,
+        links_up_to_date,
+        shared_doc,
+        hyperlinks_changed,
+        slides,
+        notes,
+        hidden_slides,
+        multimedia_clips,
+        presentation_format,
+        slide_titles,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct CustomProperties {
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct OdtProperties {
+    /// Document title (dc:title)
+    pub title: Option<String>,
+    /// Document subject/topic (dc:subject)
+    pub subject: Option<String>,
+    /// Current document creator/author (dc:creator)
+    pub creator: Option<String>,
+    /// Initial creator of the document (meta:initial-creator)
+    pub initial_creator: Option<String>,
+    /// Keywords or tags (meta:keyword)
+    pub keywords: Option<String>,
+    /// Document description (dc:description)
+    pub description: Option<String>,
+    /// Current modification date (dc:date)
+    pub date: Option<String>,
+    /// Initial creation date (meta:creation-date)
+    pub creation_date: Option<String>,
+    /// Document language (dc:language)
+    pub language: Option<String>,
+    /// Generator/application that created the document (meta:generator)
+    pub generator: Option<String>,
+    /// Editing duration in ISO 8601 format (meta:editing-duration)
+    pub editing_duration: Option<String>,
+    /// Number of edits/revisions (meta:editing-cycles)
+    pub editing_cycles: Option<String>,
+    /// Document statistics - page count (meta:page-count)
+    pub page_count: Option<i32>,
+    /// Document statistics - word count (meta:word-count)
+    pub word_count: Option<i32>,
+    /// Document statistics - character count (meta:character-count)
+    pub character_count: Option<i32>,
+    /// Document statistics - paragraph count (meta:paragraph-count)
+    pub paragraph_count: Option<i32>,
+    /// Document statistics - table count (meta:table-count)
+    pub table_count: Option<i32>,
+    /// Document statistics - image count (meta:image-count)
+    pub image_count: Option<i32>,
+}
+
+impl Default for OdtProperties {
+    fn default() -> Self {
+        Self {
+            title: Default::default(),
+            subject: Default::default(),
+            creator: Default::default(),
+            initial_creator: Default::default(),
+            keywords: Default::default(),
+            description: Default::default(),
+            date: Default::default(),
+            creation_date: Default::default(),
+            language: Default::default(),
+            generator: Default::default(),
+            editing_duration: Default::default(),
+            editing_cycles: Default::default(),
+            page_count: Default::default(),
+            word_count: Default::default(),
+            character_count: Default::default(),
+            paragraph_count: Default::default(),
+            table_count: Default::default(),
+            image_count: Default::default(),
+        }
+    }
+}
+
+impl OdtProperties {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        title: Option<String>,
+        subject: Option<String>,
+        creator: Option<String>,
+        initial_creator: Option<String>,
+        keywords: Option<String>,
+        description: Option<String>,
+        date: Option<String>,
+        creation_date: Option<String>,
+        language: Option<String>,
+        generator: Option<String>,
+        editing_duration: Option<String>,
+        editing_cycles: Option<String>,
+        page_count: Option<i32>,
+        word_count: Option<i32>,
+        character_count: Option<i32>,
+        paragraph_count: Option<i32>,
+        table_count: Option<i32>,
+        image_count: Option<i32>,
+    ) -> Self {
+        Self { title: title, subject: subject, creator: creator, initial_creator: initial_creator, keywords: keywords, description: description, date: date, creation_date: creation_date, language: language, generator: generator, editing_duration: editing_duration, editing_cycles: editing_cycles, page_count: page_count, word_count: word_count, character_count: character_count, paragraph_count: paragraph_count, table_count: table_count, image_count: image_count }
+    }
+}
+
+#[extendr]
+pub fn new_odtproperties(
+    title: String = "",
+    subject: String = "",
+    creator: String = "",
+    initial_creator: String = "",
+    keywords: String = "",
+    description: String = "",
+    date: String = "",
+    creation_date: String = "",
+    language: String = "",
+    generator: String = "",
+    editing_duration: String = "",
+    editing_cycles: String = "",
+    page_count: i32 = 0,
+    word_count: i32 = 0,
+    character_count: i32 = 0,
+    paragraph_count: i32 = 0,
+    table_count: i32 = 0,
+    image_count: i32 = 0
+) -> OdtProperties {
+    OdtProperties {
+        title,
+        subject,
+        creator,
+        initial_creator,
+        keywords,
+        description,
+        date,
+        creation_date,
+        language,
+        generator,
+        editing_duration,
+        editing_cycles,
+        page_count,
+        word_count,
+        character_count,
+        paragraph_count,
+        table_count,
+        image_count,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct PptExtractionResult {
+    /// Extracted text content, with slides separated by double newlines.
+    pub text: String,
+    /// Number of slides found.
+    pub slide_count: f64,
+    /// Document metadata.
+    pub metadata: PptMetadata,
+    /// Speaker notes text per slide (if available).
+    pub speaker_notes: Vec<String>,
+}
+
+impl PptExtractionResult {
+    #[must_use]
+    
+    pub fn new(text: String, slide_count: f64, metadata: PptMetadata, speaker_notes: Vec<String>) -> Self {
+        Self { text, slide_count, metadata, speaker_notes }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PptMetadata {
+    pub title: Option<String>,
+    pub subject: Option<String>,
+    pub author: Option<String>,
+    pub last_author: Option<String>,
+}
+
+impl Default for PptMetadata {
+    fn default() -> Self {
+        Self {
+            title: Default::default(),
+            subject: Default::default(),
+            author: Default::default(),
+            last_author: Default::default(),
+        }
+    }
+}
+
+impl PptMetadata {
+    #[must_use]
+    
+    pub fn new(title: Option<String>, subject: Option<String>, author: Option<String>, last_author: Option<String>) -> Self {
+        Self { title: title, subject: subject, author: author, last_author: last_author }
+    }
+}
+
+#[extendr]
+pub fn new_pptmetadata(
+    title: String = "",
+    subject: String = "",
+    author: String = "",
+    last_author: String = ""
+) -> PptMetadata {
+    PptMetadata {
+        title,
+        subject,
+        author,
+        last_author,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PptxExtractionOptions {
+    /// Whether to extract embedded images.
+    pub extract_images: bool,
+    /// Optional page configuration for boundary tracking.
+    pub page_config: Option<PageConfig>,
+    /// Whether to output plain text (no markdown).
+    pub plain: bool,
+    /// Whether to build the `DocumentStructure` tree.
+    pub include_structure: bool,
+    /// Whether to emit `![alt](target)` references in markdown output.
+    pub inject_placeholders: bool,
+}
+
+impl Default for PptxExtractionOptions {
+    fn default() -> Self {
+        Self {
+            extract_images: Default::default(),
+            page_config: Default::default(),
+            plain: Default::default(),
+            include_structure: Default::default(),
+            inject_placeholders: Default::default(),
+        }
+    }
+}
+
+impl PptxExtractionOptions {
+    #[must_use]
+    
+    pub fn new(
+        extract_images: Option<bool>,
+        plain: Option<bool>,
+        include_structure: Option<bool>,
+        inject_placeholders: Option<bool>,
+        page_config: Option<PageConfig>,
+    ) -> Self {
+        Self { extract_images: extract_images.unwrap_or(true), page_config: page_config, plain: plain.unwrap_or(false), include_structure: include_structure.unwrap_or(false), inject_placeholders: inject_placeholders.unwrap_or(true) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PptxExtractionOptions {
+        kreuzberg::extraction::PptxExtractionOptions::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_pptxextractionoptions(
+    extract_images: bool = TRUE,
+    page_config: PageConfig = NULL,
+    plain: bool = FALSE,
+    include_structure: bool = FALSE,
+    inject_placeholders: bool = TRUE
+) -> PptxExtractionOptions {
+    PptxExtractionOptions {
+        extract_images,
+        page_config,
+        plain,
+        include_structure,
+        inject_placeholders,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct SyncExtractor {
+}
+
+impl SyncExtractor {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: SyncExtractor.extract_sync".to_string())
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct CodeExtractor {
+}
+
+impl Default for CodeExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl CodeExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::CodeExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::CodeExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::CodeExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::CodeExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::CodeExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::CodeExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, _mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, _mime_type, config);
+        Err("Not implemented: CodeExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, _mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (path, _mime_type, config);
+        Err("Not implemented: CodeExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::CodeExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::CodeExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::CodeExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, _mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, _mime_type, config);
+        Err("Not implemented: CodeExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> CodeExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::CodeExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct CsvExtractor {
+}
+
+impl Default for CsvExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl CsvExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::CsvExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::CsvExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::CsvExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::CsvExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::CsvExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::CsvExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: CsvExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::CsvExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::CsvExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> CsvExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::CsvExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct StructuredExtractor {
+}
+
+impl Default for StructuredExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl StructuredExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::StructuredExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::StructuredExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::StructuredExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::StructuredExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: StructuredExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::StructuredExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::StructuredExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> StructuredExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::StructuredExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PlainTextExtractor {
+}
+
+impl Default for PlainTextExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl PlainTextExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::PlainTextExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::PlainTextExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PlainTextExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PlainTextExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::PlainTextExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::PlainTextExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: PlainTextExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::PlainTextExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::PlainTextExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PlainTextExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::PlainTextExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DjotExtractor {
+}
+
+impl Default for DjotExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl DjotExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::DjotExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::DjotExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DjotExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DjotExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::DjotExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::DjotExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: DjotExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (path, mime_type, config);
+        Err("Not implemented: DjotExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::DjotExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::DjotExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn build_internal_document(events: Vec<String>) -> String {
+        let _ = events;
+        String::from("[unimplemented: DjotExtractor::build_internal_document]")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> DjotExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::DjotExtractor::default()) }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ZipBombValidator {
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct StringGrowthValidator {
+}
+
+impl StringGrowthValidator {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn check_append(&self, len: f64) -> Result<()> {
+        let mut core_self = kreuzberg::extractors::security::StringGrowthValidator {
+        };
+        let result = core_self.check_append(len).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn current_size(&self) -> f64 {
+        let core_self = kreuzberg::extractors::security::StringGrowthValidator {
+        };
+        core_self.current_size()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct IterationValidator {
+}
+
+impl IterationValidator {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn check_iteration(&self) -> Result<()> {
+        let mut core_self = kreuzberg::extractors::security::IterationValidator {
+        };
+        let result = core_self.check_iteration().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn current_count(&self) -> f64 {
+        let core_self = kreuzberg::extractors::security::IterationValidator {
+        };
+        core_self.current_count()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DepthValidator {
+}
+
+impl DepthValidator {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn push(&self) -> Result<()> {
+        let mut core_self = kreuzberg::extractors::security::DepthValidator {
+        };
+        let result = core_self.push().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn pop(&self) -> () {
+        let mut core_self = kreuzberg::extractors::security::DepthValidator {
+        };
+        core_self.pop()
+    }
+
+    pub fn current_depth(&self) -> f64 {
+        let core_self = kreuzberg::extractors::security::DepthValidator {
+        };
+        core_self.current_depth()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct EntityValidator {
+}
+
+impl EntityValidator {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn validate(&self, content: String) -> Result<()> {
+        let core_self = kreuzberg::extractors::security::EntityValidator {
+        };
+        let result = core_self.validate(&content).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct TableValidator {
+}
+
+impl TableValidator {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn add_cells(&self, count: f64) -> Result<()> {
+        let mut core_self = kreuzberg::extractors::security::TableValidator {
+        };
+        let result = core_self.add_cells(count).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn current_cells(&self) -> f64 {
+        let core_self = kreuzberg::extractors::security::TableValidator {
+        };
+        core_self.current_cells()
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ImageExtractor {
+}
+
+impl Default for ImageExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl ImageExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::ImageExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::ImageExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::ImageExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::ImageExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::ImageExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::ImageExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: ImageExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::ImageExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::ImageExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ImageExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::ImageExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ZipExtractor {
+}
+
+impl Default for ZipExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl ZipExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::ZipExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::ZipExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::ZipExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::ZipExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::ZipExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::ZipExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: ZipExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::ZipExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::ZipExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::ZipExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: ZipExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ZipExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::ZipExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct TarExtractor {
+}
+
+impl Default for TarExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl TarExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::TarExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::TarExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::TarExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::TarExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::TarExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::TarExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: TarExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::TarExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::TarExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::TarExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: TarExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> TarExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::TarExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct SevenZExtractor {
+}
+
+impl Default for SevenZExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl SevenZExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::SevenZExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::SevenZExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::SevenZExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::SevenZExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::SevenZExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::SevenZExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: SevenZExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::SevenZExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::SevenZExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::SevenZExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: SevenZExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> SevenZExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::SevenZExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct GzipExtractor {
+}
+
+impl Default for GzipExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl GzipExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::GzipExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::GzipExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::GzipExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::GzipExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::GzipExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::GzipExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: GzipExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::GzipExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::GzipExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::GzipExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: GzipExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> GzipExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::GzipExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct EmailExtractor {
+}
+
+impl Default for EmailExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl EmailExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::EmailExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::EmailExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::EmailExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::EmailExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: EmailExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: EmailExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::EmailExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::EmailExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::EmailExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> EmailExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::EmailExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PstExtractor {
+}
+
+impl Default for PstExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl PstExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::PstExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::PstExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PstExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PstExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: PstExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: PstExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::PstExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::PstExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::PstExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PstExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::PstExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ExcelExtractor {
+}
+
+impl Default for ExcelExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl ExcelExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::ExcelExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::ExcelExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::ExcelExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::ExcelExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: ExcelExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: ExcelExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (path, mime_type, _config);
+        Err("Not implemented: ExcelExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::ExcelExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::ExcelExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::ExcelExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ExcelExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::ExcelExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct HwpExtractor {
+}
+
+impl Default for HwpExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl HwpExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::HwpExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::HwpExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::HwpExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::HwpExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::HwpExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::HwpExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: HwpExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::HwpExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::HwpExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> HwpExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::HwpExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct KeynoteExtractor {
+}
+
+impl Default for KeynoteExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl KeynoteExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::KeynoteExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::KeynoteExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::KeynoteExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::KeynoteExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::KeynoteExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::KeynoteExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: KeynoteExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::KeynoteExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::KeynoteExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> KeynoteExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::KeynoteExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct NumbersExtractor {
+}
+
+impl Default for NumbersExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl NumbersExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::NumbersExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::NumbersExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::NumbersExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::NumbersExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::NumbersExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::NumbersExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: NumbersExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::NumbersExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::NumbersExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> NumbersExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::NumbersExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PagesExtractor {
+}
+
+impl Default for PagesExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl PagesExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::PagesExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::PagesExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PagesExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PagesExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::PagesExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::PagesExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: PagesExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::PagesExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::PagesExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PagesExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::PagesExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct HtmlExtractor {
+}
+
+impl Default for HtmlExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl HtmlExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::HtmlExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::HtmlExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::HtmlExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::HtmlExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: HtmlExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: HtmlExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::HtmlExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::HtmlExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::HtmlExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> HtmlExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::HtmlExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct BibtexExtractor {
+}
+
+impl Default for BibtexExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl BibtexExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::BibtexExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::BibtexExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::BibtexExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::BibtexExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::BibtexExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::BibtexExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: BibtexExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::BibtexExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::BibtexExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> BibtexExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::BibtexExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct CitationExtractor {
+}
+
+impl Default for CitationExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl CitationExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::CitationExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::CitationExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::CitationExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::CitationExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::CitationExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::CitationExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: CitationExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::CitationExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::CitationExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> CitationExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::CitationExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DocExtractor {
+}
+
+impl Default for DocExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl DocExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::DocExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::DocExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DocExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DocExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::DocExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::DocExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: DocExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::DocExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::DocExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> DocExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::DocExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DbfExtractor {
+}
+
+impl Default for DbfExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl DbfExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::DbfExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::DbfExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DbfExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DbfExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::DbfExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::DbfExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: DbfExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::DbfExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::DbfExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> DbfExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::DbfExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DocxExtractor {
+}
+
+impl Default for DocxExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl DocxExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::DocxExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::DocxExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DocxExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DocxExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::DocxExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::DocxExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: DocxExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::DocxExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::DocxExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> DocxExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::DocxExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct EpubExtractor {
+}
+
+impl Default for EpubExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl EpubExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::EpubExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::EpubExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::EpubExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::EpubExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::EpubExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::EpubExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: EpubExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::EpubExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::EpubExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> EpubExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::EpubExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct FictionBookExtractor {
+}
+
+impl Default for FictionBookExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl FictionBookExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::FictionBookExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::FictionBookExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::FictionBookExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::FictionBookExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::FictionBookExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::FictionBookExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: FictionBookExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::FictionBookExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::FictionBookExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> FictionBookExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::FictionBookExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct MarkdownExtractor {
+}
+
+impl Default for MarkdownExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl MarkdownExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::MarkdownExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::MarkdownExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::MarkdownExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::MarkdownExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::MarkdownExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::MarkdownExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: MarkdownExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (path, mime_type, config);
+        Err("Not implemented: MarkdownExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::MarkdownExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::MarkdownExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn build_internal_document(events: Vec<String>, yaml: Option<String>) -> String {
+        let _ = (events, yaml);
+        String::from("[unimplemented: MarkdownExtractor::build_internal_document]")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> MarkdownExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::MarkdownExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct MdxExtractor {
+}
+
+impl Default for MdxExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl MdxExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::MdxExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::MdxExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::MdxExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::MdxExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::MdxExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::MdxExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: MdxExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (path, mime_type, config);
+        Err("Not implemented: MdxExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::MdxExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::MdxExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn build_internal_document(events: Vec<String>, yaml: Option<String>, raw_jsx_blocks: Option<Vec<String>>) -> String {
+        let _ = (events, yaml, raw_jsx_blocks);
+        String::from("[unimplemented: MdxExtractor::build_internal_document]")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> MdxExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::MdxExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct RstExtractor {
+}
+
+impl Default for RstExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl RstExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::RstExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::RstExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::RstExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::RstExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::RstExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::RstExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: RstExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (path, mime_type, config);
+        Err("Not implemented: RstExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::RstExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::RstExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn build_internal_document(content: String, inject_placeholders: bool) -> String {
+        let _ = (content, inject_placeholders);
+        String::from("[unimplemented: RstExtractor::build_internal_document]")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> RstExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::RstExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct LatexExtractor {
+}
+
+impl Default for LatexExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl LatexExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::LatexExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::LatexExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::LatexExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::LatexExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::LatexExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::LatexExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: LatexExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (path, mime_type, config);
+        Err("Not implemented: LatexExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::LatexExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::LatexExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn build_internal_document(source: String, inject_placeholders: bool) -> String {
+        let _ = (source, inject_placeholders);
+        String::from("[unimplemented: LatexExtractor::build_internal_document]")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> LatexExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::LatexExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct JupyterExtractor {
+}
+
+impl Default for JupyterExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl JupyterExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::JupyterExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::JupyterExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::JupyterExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::JupyterExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::JupyterExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::JupyterExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: JupyterExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::JupyterExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::JupyterExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> JupyterExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::JupyterExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct OrgModeExtractor {
+}
+
+impl Default for OrgModeExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl OrgModeExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::OrgModeExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::OrgModeExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::OrgModeExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::OrgModeExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::OrgModeExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::OrgModeExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: OrgModeExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (path, mime_type, config);
+        Err("Not implemented: OrgModeExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::OrgModeExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::OrgModeExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn build_internal_document(org_text: String) -> String {
+        let _ = org_text;
+        String::from("[unimplemented: OrgModeExtractor::build_internal_document]")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> OrgModeExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::OrgModeExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct OdtExtractor {
+}
+
+impl Default for OdtExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl OdtExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::OdtExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::OdtExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::OdtExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::OdtExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::OdtExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::OdtExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: OdtExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::OdtExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::OdtExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> OdtExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::OdtExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct OpmlExtractor {
+}
+
+impl Default for OpmlExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl OpmlExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::OpmlExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::OpmlExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::OpmlExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::OpmlExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::OpmlExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::OpmlExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: OpmlExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::OpmlExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::OpmlExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> OpmlExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::OpmlExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct TypstExtractor {
+}
+
+impl Default for TypstExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl TypstExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::TypstExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::TypstExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::TypstExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::TypstExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::TypstExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::TypstExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: TypstExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (path, mime_type, config);
+        Err("Not implemented: TypstExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::TypstExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::TypstExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> TypstExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::TypstExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct JatsExtractor {
+}
+
+impl Default for JatsExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl JatsExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::JatsExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::JatsExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::JatsExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::JatsExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: JatsExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::JatsExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::JatsExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> JatsExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::JatsExtractor::default()) }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct NativeTextStats {
+    pub non_whitespace: f64,
+    pub alnum: f64,
+    pub meaningful_words: f64,
+    pub alnum_ratio: f64,
+    /// Count of Unicode replacement characters (U+FFFD) indicating encoding failures.
+    pub garbage_char_count: f64,
+    /// Fraction of whitespace-delimited words that are 1-2 characters (0.0-1.0).
+    /// High values indicate fragmented/garbled text extraction.
+    pub fragmented_word_ratio: f64,
+    /// Fraction of consecutive word pairs that are identical (0.0-1.0).
+    /// High values indicate column scrambling where text is duplicated.
+    pub consecutive_repeat_ratio: f64,
+    /// Average word length (by chars). Very low values indicate garbled extraction.
+    pub avg_word_length: f64,
+    /// Total word count (whitespace-delimited).
+    pub word_count: f64,
+}
+
+impl NativeTextStats {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        non_whitespace: f64,
+        alnum: f64,
+        meaningful_words: f64,
+        alnum_ratio: f64,
+        garbage_char_count: f64,
+        fragmented_word_ratio: f64,
+        consecutive_repeat_ratio: f64,
+        avg_word_length: f64,
+        word_count: f64,
+    ) -> Self {
+        Self { non_whitespace, alnum, meaningful_words, alnum_ratio, garbage_char_count, fragmented_word_ratio, consecutive_repeat_ratio, avg_word_length, word_count }
+    }
+
+    pub fn compute(text: String, thresholds: OcrQualityThresholds) -> NativeTextStats {
+        let thresholds_core = thresholds.into();
+    kreuzberg::extractors::pdf::NativeTextStats::compute(&text, &thresholds_core).into()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn from(text: String) -> NativeTextStats {
+        kreuzberg::extractors::pdf::NativeTextStats::from(&text).into()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrFallbackDecision {
+    pub stats: NativeTextStats,
+    pub avg_non_whitespace: f64,
+    pub avg_alnum: f64,
+    pub fallback: bool,
+}
+
+impl OcrFallbackDecision {
+    #[must_use]
+    
+    pub fn new(stats: NativeTextStats, avg_non_whitespace: f64, avg_alnum: f64, fallback: bool) -> Self {
+        Self { stats, avg_non_whitespace, avg_alnum, fallback }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PdfExtractor {
+}
+
+impl Default for PdfExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl PdfExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::PdfExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::PdfExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PdfExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PdfExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: PdfExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::PdfExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PdfExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::PdfExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PptExtractor {
+}
+
+impl Default for PptExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl PptExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::PptExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::PptExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PptExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PptExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::PptExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::PptExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: PptExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::PptExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::PptExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PptExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::PptExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PptxExtractor {
+}
+
+impl Default for PptxExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl PptxExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::PptxExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::PptxExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PptxExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::PptxExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: PptxExtractor.extract_bytes".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_file(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (path, mime_type, config);
+        Err("Not implemented: PptxExtractor.extract_file".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::PptxExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::PptxExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PptxExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::PptxExtractor::default()) }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct RtfImage {
+    /// Image format string (e.g., "jpeg", "png", "wmf", "bmp").
+    pub format: String,
+    /// Width in twips (goal width).
+    pub width_goal: Option<i32>,
+    /// Height in twips (goal height).
+    pub height_goal: Option<i32>,
+    /// Decoded binary image data.
+    pub data: Vec<u8>,
+}
+
+impl RtfImage {
+    #[must_use]
+    
+    pub fn new(format: String, data: Vec<u8>, width_goal: Option<i32>, height_goal: Option<i32>) -> Self {
+        Self { format, width_goal, height_goal, data }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct RtfFormattingSpan {
+    /// Byte offset in the output text where this format starts.
+    pub start: f64,
+    /// Byte offset in the output text where this format ends.
+    pub end: f64,
+    /// Whether bold was active.
+    pub bold: bool,
+    /// Whether italic was active.
+    pub italic: bool,
+    /// Whether underline was active.
+    pub underline: bool,
+    /// Whether strikethrough was active.
+    pub strikethrough: bool,
+    /// Color index into the color table (0 = default/auto).
+    pub color_index: i32,
+}
+
+impl RtfFormattingSpan {
+    #[must_use]
+    
+    pub fn new(
+        start: f64,
+        end: f64,
+        bold: bool,
+        italic: bool,
+        underline: bool,
+        strikethrough: bool,
+        color_index: i32,
+    ) -> Self {
+        Self { start, end, bold, italic, underline, strikethrough, color_index }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct RtfFormattingData {
+    /// Formatting spans corresponding to text regions.
+    pub spans: Vec<RtfFormattingSpan>,
+    /// Color table entries (index 0 is auto/default).
+    pub color_table: Vec<String>,
+    /// Header text content (from \header groups).
+    pub header_text: Option<String>,
+    /// Footer text content (from \footer groups).
+    pub footer_text: Option<String>,
+    /// Hyperlink spans: (start_byte, end_byte, url).
+    pub hyperlinks: Vec<String>,
+}
+
+impl RtfFormattingData {
+    #[must_use]
+    
+    pub fn new(
+        spans: Vec<RtfFormattingSpan>,
+        color_table: Vec<String>,
+        hyperlinks: Vec<String>,
+        header_text: Option<String>,
+        footer_text: Option<String>,
+    ) -> Self {
+        Self { spans, color_table, header_text, footer_text, hyperlinks }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct RtfExtractor {
+}
+
+impl Default for RtfExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl RtfExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::RtfExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::RtfExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::RtfExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::RtfExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::RtfExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::RtfExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: RtfExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::RtfExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::RtfExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> RtfExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::RtfExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct XmlExtractor {
+}
+
+impl Default for XmlExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl XmlExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::XmlExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::XmlExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::XmlExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::XmlExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::extractors::XmlExtractor {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::extractors::XmlExtractor {
+        };
+        core_self.author().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String> {
+        let _config_core = _config.into();
+    let _ = (content, mime_type, _config);
+        Err("Not implemented: XmlExtractor.extract_sync".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: XmlExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::XmlExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::XmlExtractor {
+        };
+        core_self.priority()
+    }
+
+    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
+        let core_self = kreuzberg::extractors::XmlExtractor {
+        };
+        core_self.as_sync_extractor().map(|v| v.clone().into())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> XmlExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::XmlExtractor::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DocbookExtractor {
+}
+
+impl Default for DocbookExtractor {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl DocbookExtractor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::extractors::DocbookExtractor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::extractors::DocbookExtractor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DocbookExtractor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::extractors::DocbookExtractor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_bytes(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String> {
+        let config_core = config.into();
+    let _ = (content, mime_type, config);
+        Err("Not implemented: DocbookExtractor.extract_bytes".to_string())
+    }
+
+    pub fn supported_mime_types(&self) -> Vec<String> {
+        let core_self = kreuzberg::extractors::DocbookExtractor {
+        };
+        core_self.supported_mime_types()
+    }
+
+    pub fn priority(&self) -> i32 {
+        let core_self = kreuzberg::extractors::DocbookExtractor {
+        };
+        core_self.priority()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> DocbookExtractor {
+        Self { inner: Arc::new(kreuzberg::extractors::DocbookExtractor::default()) }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ModelCache {
+}
+
+impl ModelCache {
+    pub fn put(&self, model: String) -> () {
+        let _ = model;
+        ()
+    }
+
+    pub fn take(&self) -> Option<String> {
+        None
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct PanicContext {
+    /// Source file where the panic occurred
+    pub file: String,
+    /// Line number where the panic occurred
+    pub line: i32,
+    /// Function name where the panic occurred
+    pub function: String,
+    /// Panic message extracted from the panic payload
+    pub message: String,
+    /// Timestamp when the panic was captured
+    pub timestamp: String,
+}
+
+impl PanicContext {
+    #[must_use]
+    
+    pub fn new(file: String, line: i32, function: String, message: String, timestamp: String) -> Self {
+        Self { file, line, function, message, timestamp }
+    }
+
+    pub fn format(&self) -> String {
+        let core_self = kreuzberg::panic_context::PanicContext {
+            file: self.file.clone(),
+            line: self.line,
+            function: self.function.clone(),
+            message: self.message.clone(),
+            timestamp: Default::default(),
+        };
+        core_self.format().into()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrBackend {
+}
+
+impl OcrBackend {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_image(&self, image_bytes: Vec<u8>, config: OcrConfig) -> Result<ExtractionResult> {
+        let config_core = config.into();
+    let _ = (image_bytes, config);
+        Err("Not implemented: OcrBackend.process_image".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_image_file(&self, path: String, config: OcrConfig) -> Result<ExtractionResult> {
+        let config_core = config.into();
+    let _ = (path, config);
+        Err("Not implemented: OcrBackend.process_image_file".to_string())
+    }
+
+    pub fn supports_language(&self, lang: String) -> bool {
+        let core_self = kreuzberg::plugins::OcrBackend {
+        };
+        core_self.supports_language(&lang)
+    }
+
+    pub fn backend_type(&self) -> OcrBackendType {
+        let core_self = kreuzberg::plugins::OcrBackend {
+        };
+        core_self.backend_type().into()
+    }
+
+    pub fn supported_languages(&self) -> Vec<String> {
+        let core_self = kreuzberg::plugins::OcrBackend {
+        };
+        core_self.supported_languages()
+    }
+
+    pub fn supports_table_detection(&self) -> bool {
+        let core_self = kreuzberg::plugins::OcrBackend {
+        };
+        core_self.supports_table_detection()
+    }
+
+    pub fn supports_document_processing(&self) -> bool {
+        let core_self = kreuzberg::plugins::OcrBackend {
+        };
+        core_self.supports_document_processing()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_document(&self, _path: String, _config: OcrConfig) -> Result<ExtractionResult> {
+        let _config_core = _config.into();
+    let _ = (_path, _config);
+        Err("Not implemented: OcrBackend.process_document".to_string())
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DocumentExtractorRegistry {
+}
+
+impl Default for DocumentExtractorRegistry {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl DocumentExtractorRegistry {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn register(&self, extractor: String) -> Result<()> {
+        let _ = extractor;
+        Err("Not implemented: DocumentExtractorRegistry.register".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get(&self, mime_type: String) -> Result<String> {
+        let _ = mime_type;
+        Err("Not implemented: DocumentExtractorRegistry.get".to_string())
+    }
+
+    pub fn list(&self) -> Vec<String> {
+        let core_self = kreuzberg::plugins::DocumentExtractorRegistry {
+        };
+        core_self.list()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn remove(&self, name: String) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::DocumentExtractorRegistry {
+        };
+        let result = core_self.remove(&name).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown_all(&self) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::DocumentExtractorRegistry {
+        };
+        let result = core_self.shutdown_all().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> DocumentExtractorRegistry {
+        Self { inner: Arc::new(kreuzberg::plugins::DocumentExtractorRegistry::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct OcrBackendRegistry {
+}
+
+impl Default for OcrBackendRegistry {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl OcrBackendRegistry {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn register(&self, backend: OcrBackend) -> Result<()> {
+        let _ = backend;
+        Err("Not implemented: OcrBackendRegistry.register".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get(&self, name: String) -> Result<OcrBackend> {
+        let core_self = kreuzberg::plugins::OcrBackendRegistry {
+        };
+        let result = core_self.get(&name).map_err(|e| e.to_string())?;
+        Ok(result.into())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get_for_language(&self, language: String) -> Result<OcrBackend> {
+        let core_self = kreuzberg::plugins::OcrBackendRegistry {
+        };
+        let result = core_self.get_for_language(&language).map_err(|e| e.to_string())?;
+        Ok(result.into())
+    }
+
+    pub fn list(&self) -> Vec<String> {
+        let core_self = kreuzberg::plugins::OcrBackendRegistry {
+        };
+        core_self.list()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn remove(&self, name: String) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::OcrBackendRegistry {
+        };
+        let result = core_self.remove(&name).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown_all(&self) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::OcrBackendRegistry {
+        };
+        let result = core_self.shutdown_all().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn reset_to_defaults(&self) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::OcrBackendRegistry {
+        };
+        let result = core_self.reset_to_defaults().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn new_empty() -> OcrBackendRegistry {
+        Self { inner: Arc::new(kreuzberg::plugins::OcrBackendRegistry::new_empty()) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> OcrBackendRegistry {
+        Self { inner: Arc::new(kreuzberg::plugins::OcrBackendRegistry::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PostProcessorRegistry {
+}
+
+impl Default for PostProcessorRegistry {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl PostProcessorRegistry {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn register(&self, processor: String, priority: i32) -> Result<()> {
+        let _ = (processor, priority);
+        Err("Not implemented: PostProcessorRegistry.register".to_string())
+    }
+
+    pub fn get_for_stage(&self, stage: String) -> Vec<String> {
+        let _ = stage;
+        Vec::new()
+    }
+
+    pub fn list(&self) -> Vec<String> {
+        let core_self = kreuzberg::plugins::PostProcessorRegistry {
+        };
+        core_self.list()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn remove(&self, name: String) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::PostProcessorRegistry {
+        };
+        let result = core_self.remove(&name).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown_all(&self) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::PostProcessorRegistry {
+        };
+        let result = core_self.shutdown_all().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PostProcessorRegistry {
+        Self { inner: Arc::new(kreuzberg::plugins::PostProcessorRegistry::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct RendererRegistry {
+}
+
+impl Default for RendererRegistry {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl RendererRegistry {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn register(&self, renderer: Renderer) -> Result<()> {
+        let _ = renderer;
+        Err("Not implemented: RendererRegistry.register".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get(&self, name: String) -> Result<Renderer> {
+        let core_self = kreuzberg::plugins::RendererRegistry {
+        };
+        let result = core_self.get(&name).map_err(|e| e.to_string())?;
+        Ok(result.into())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn render(&self, name: String, doc: String) -> Result<String> {
+        let _ = (name, doc);
+        Err("Not implemented: RendererRegistry.render".to_string())
+    }
+
+    pub fn list(&self) -> Vec<String> {
+        let core_self = kreuzberg::plugins::RendererRegistry {
+        };
+        core_self.list()
+    }
+
+    pub fn remove(&self, name: String) -> () {
+        let mut core_self = kreuzberg::plugins::RendererRegistry {
+        };
+        core_self.remove(&name)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn reset_to_defaults(&self) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::RendererRegistry {
+        };
+        let result = core_self.reset_to_defaults().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn new_empty() -> RendererRegistry {
+        Self { inner: Arc::new(kreuzberg::plugins::RendererRegistry::new_empty()) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> RendererRegistry {
+        Self { inner: Arc::new(kreuzberg::plugins::RendererRegistry::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ValidatorRegistry {
+}
+
+impl Default for ValidatorRegistry {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl ValidatorRegistry {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn register(&self, validator: String) -> Result<()> {
+        let _ = validator;
+        Err("Not implemented: ValidatorRegistry.register".to_string())
+    }
+
+    pub fn get_all(&self) -> Vec<String> {
+        Vec::new()
+    }
+
+    pub fn list(&self) -> Vec<String> {
+        let core_self = kreuzberg::plugins::ValidatorRegistry {
+        };
+        core_self.list()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn remove(&self, name: String) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::ValidatorRegistry {
+        };
+        let result = core_self.remove(&name).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown_all(&self) -> Result<()> {
+        let mut core_self = kreuzberg::plugins::ValidatorRegistry {
+        };
+        let result = core_self.shutdown_all().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ValidatorRegistry {
+        Self { inner: Arc::new(kreuzberg::plugins::ValidatorRegistry::default()) }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Renderer {
+}
+
+impl Renderer {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::plugins::Renderer {
+        };
+        core_self.name().to_owned()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn render(&self, doc: String) -> Result<String> {
+        let _ = doc;
+        Err("Not implemented: Renderer.render".to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Plugin {
+}
+
+impl Plugin {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::plugins::Plugin {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::plugins::Plugin {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::plugins::Plugin {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::plugins::Plugin {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn description(&self) -> String {
+        let core_self = kreuzberg::plugins::Plugin {
+        };
+        core_self.description().to_owned()
+    }
+
+    pub fn author(&self) -> String {
+        let core_self = kreuzberg::plugins::Plugin {
+        };
+        core_self.author().to_owned()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExtractionMetrics {
+    /// Total extractions (attributes: mime_type, extractor, status).
+    pub extraction_total: String,
+    /// Cache hits.
+    pub cache_hits: String,
+    /// Cache misses.
+    pub cache_misses: String,
+    /// Total batch requests (attributes: status).
+    pub batch_total: String,
+    /// Extraction wall-clock duration in milliseconds (attributes: mime_type, extractor).
+    pub extraction_duration_ms: String,
+    /// Input document size in bytes (attributes: mime_type).
+    pub extraction_input_bytes: String,
+    /// Output content size in bytes (attributes: mime_type).
+    pub extraction_output_bytes: String,
+    /// Pipeline stage duration in milliseconds (attributes: stage).
+    pub pipeline_duration_ms: String,
+    /// OCR duration in milliseconds (attributes: backend, language).
+    pub ocr_duration_ms: String,
+    /// Batch total duration in milliseconds.
+    pub batch_duration_ms: String,
+    /// Currently in-flight extractions.
+    pub concurrent_extractions: String,
+}
+
+impl ExtractionMetrics {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        extraction_total: String,
+        cache_hits: String,
+        cache_misses: String,
+        batch_total: String,
+        extraction_duration_ms: String,
+        extraction_input_bytes: String,
+        extraction_output_bytes: String,
+        pipeline_duration_ms: String,
+        ocr_duration_ms: String,
+        batch_duration_ms: String,
+        concurrent_extractions: String,
+    ) -> Self {
+        Self { extraction_total, cache_hits, cache_misses, batch_total, extraction_duration_ms, extraction_input_bytes, extraction_output_bytes, pipeline_duration_ms, ocr_duration_ms, batch_duration_ms, concurrent_extractions }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct TokenReducer {
+}
+
+impl TokenReducer {
+    pub fn language(&self) -> String {
+        let core_self = kreuzberg::text::token_reduction::TokenReducer {
+        };
+        core_self.language().to_owned()
+    }
+
+    pub fn reduce(&self, text: String) -> String {
+        let core_self = kreuzberg::text::token_reduction::TokenReducer {
+        };
+        core_self.reduce(&text).into()
+    }
+
+    pub fn batch_reduce(&self, texts: Vec<String>) -> Vec<String> {
+        let _ = texts;
+        Vec::new()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new(config: TokenReductionConfig, language_hint: Option<String>) -> Result<TokenReducer> {
+        let config_core = config.into();
+    kreuzberg::text::token_reduction::TokenReducer::new(&config_core, language_hint.as_deref()).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct QualityProcessor {
+}
+
+impl QualityProcessor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::text::QualityProcessor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::text::QualityProcessor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::text::QualityProcessor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::text::QualityProcessor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process(&self, result: ExtractionResult, _config: ExtractionConfig) -> Result<()> {
+        let result_core = result.into();
+    let _config_core = _config.into();
+    let _ = (result, _config);
+        Err("Not implemented: QualityProcessor.process".to_string())
+    }
+
+    pub fn processing_stage(&self) -> String {
+        String::from("[unimplemented: QualityProcessor.processing_stage]")
+    }
+
+    pub fn should_process(&self, _result: ExtractionResult, config: ExtractionConfig) -> bool {
+        let _result_core = _result.into();
+    let config_core = config.into();
+    let _ = (_result, config);
+        false
+    }
+
+    pub fn estimated_duration_ms(&self, result: ExtractionResult) -> f64 {
+        let result_core = result.into();
+    let _ = result;
+        0
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PdfAnnotation {
+    /// The type of annotation.
+    pub annotation_type: PdfAnnotationType,
+    /// Text content of the annotation (e.g., comment text, link URL).
+    pub content: Option<String>,
+    /// Page number where the annotation appears (1-indexed).
+    pub page_number: f64,
+    /// Bounding box of the annotation on the page.
+    pub bounding_box: Option<BoundingBox>,
+}
+
+impl PdfAnnotation {
+    #[must_use]
+    
+    pub fn new(
+        annotation_type: PdfAnnotationType,
+        page_number: f64,
+        content: Option<String>,
+        bounding_box: Option<BoundingBox>,
+    ) -> Self {
+        Self { annotation_type, content, page_number, bounding_box }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DjotContent {
+    /// Plain text representation for backwards compatibility
+    pub plain_text: String,
+    /// Structured block-level content
+    pub blocks: Vec<FormattedBlock>,
+    /// Metadata from YAML frontmatter
+    pub metadata: Metadata,
+    /// Extracted tables as structured data
+    pub tables: Vec<Table>,
+    /// Extracted images with metadata
+    pub images: Vec<DjotImage>,
+    /// Extracted links with URLs
+    pub links: Vec<DjotLink>,
+    /// Footnote definitions
+    pub footnotes: Vec<Footnote>,
+    /// Attributes mapped by element identifier (if present)
+    pub attributes: Vec<String>,
+}
+
+impl DjotContent {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        plain_text: String,
+        blocks: Vec<FormattedBlock>,
+        metadata: Metadata,
+        tables: Vec<Table>,
+        images: Vec<DjotImage>,
+        links: Vec<DjotLink>,
+        footnotes: Vec<Footnote>,
+        attributes: Vec<String>,
+    ) -> Self {
+        Self { plain_text, blocks, metadata, tables, images, links, footnotes, attributes }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct FormattedBlock {
+    /// Type of block element
+    pub block_type: BlockType,
+    /// Heading level (1-6) for headings, or nesting level for lists
+    pub level: Option<f64>,
+    /// Inline content within the block
+    pub inline_content: Vec<InlineElement>,
+    /// Element attributes (classes, IDs, key-value pairs)
+    pub attributes: Option<Attributes>,
+    /// Language identifier for code blocks
+    pub language: Option<String>,
+    /// Raw code content for code blocks
+    pub code: Option<String>,
+    /// Nested blocks for containers (blockquotes, list items, divs)
+    pub children: Vec<FormattedBlock>,
+}
+
+impl FormattedBlock {
+    #[must_use]
+    
+    pub fn new(
+        block_type: BlockType,
+        inline_content: Vec<InlineElement>,
+        children: Vec<FormattedBlock>,
+        level: Option<f64>,
+        attributes: Option<Attributes>,
+        language: Option<String>,
+        code: Option<String>,
+    ) -> Self {
+        Self { block_type, level, inline_content, attributes, language, code, children }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct InlineElement {
+    /// Type of inline element
+    pub element_type: InlineType,
+    /// Text content
+    pub content: String,
+    /// Element attributes
+    pub attributes: Option<Attributes>,
+    /// Additional metadata (e.g., href for links, src/alt for images)
+    pub metadata: Option<HashMap<String, String>>,
+}
+
+impl InlineElement {
+    #[must_use]
+    
+    pub fn new(
+        element_type: InlineType,
+        content: String,
+        attributes: Option<Attributes>,
+        metadata: Option<HashMap<String, String>>,
+    ) -> Self {
+        Self { element_type, content, attributes, metadata }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct Attributes {
+    /// Element ID (#identifier)
+    pub id: Option<String>,
+    /// CSS classes (.class1 .class2)
+    pub classes: Vec<String>,
+    /// Key-value pairs (key="value")
+    pub key_values: Vec<String>,
+}
+
+impl Default for Attributes {
+    fn default() -> Self {
+        Self {
+            id: Default::default(),
+            classes: Default::default(),
+            key_values: Default::default(),
+        }
+    }
+}
+
+impl Attributes {
+    #[must_use]
+    
+    pub fn new(classes: Option<Vec<String>>, key_values: Option<Vec<String>>, id: Option<String>) -> Self {
+        Self { id: id, classes: classes.unwrap_or_default(), key_values: key_values.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_attributes(
+    id: String = "",
+    classes: Vec<String> = c(),
+    key_values: Vec<String> = c()
+) -> Attributes {
+    Attributes {
+        id,
+        classes,
+        key_values,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct DjotImage {
+    /// Image source URL or path
+    pub src: String,
+    /// Alternative text
+    pub alt: String,
+    /// Optional title
+    pub title: Option<String>,
+    /// Element attributes
+    pub attributes: Option<Attributes>,
+}
+
+impl DjotImage {
+    #[must_use]
+    
+    pub fn new(src: String, alt: String, title: Option<String>, attributes: Option<Attributes>) -> Self {
+        Self { src, alt, title, attributes }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DjotLink {
+    /// Link URL
+    pub url: String,
+    /// Link text content
+    pub text: String,
+    /// Optional title
+    pub title: Option<String>,
+    /// Element attributes
+    pub attributes: Option<Attributes>,
+}
+
+impl DjotLink {
+    #[must_use]
+    
+    pub fn new(url: String, text: String, title: Option<String>, attributes: Option<Attributes>) -> Self {
+        Self { url, text, title, attributes }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Footnote {
+    /// Footnote label
+    pub label: String,
+    /// Footnote content blocks
+    pub content: Vec<FormattedBlock>,
+}
+
+impl Footnote {
+    #[must_use]
+    
+    pub fn new(label: String, content: Vec<FormattedBlock>) -> Self {
+        Self { label, content }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct NodeId {
+}
+
+impl NodeId {
+    pub fn as_ref(&self) -> String {
+        let core_self = kreuzberg::NodeId {
+        };
+        core_self.as_ref().to_owned()
+    }
+
+    pub fn fmt(&self, f: String) -> String {
+        let _ = f;
+        String::from("[unimplemented: NodeId.fmt]")
+    }
+
+    pub fn generate(node_type: String, text: String, page: Option<i32>, index: Option<i32>) -> NodeId {
+        Self { inner: Arc::new(kreuzberg::NodeId::generate(&node_type, &text, page, index.expect("'index' is required"))) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DocumentStructure {
+    /// All nodes in document/reading order.
+    pub nodes: Vec<DocumentNode>,
+    /// Origin format identifier (e.g. "docx", "pptx", "html", "pdf").
+    /// 
+    /// Allows renderers to apply format-aware heuristics when converting
+    /// the document tree to output formats.
+    pub source_format: Option<String>,
+    /// Resolved relationships between nodes (footnote refs, citations, anchor links, etc.).
+    /// 
+    /// Populated during derivation from the internal document representation.
+    /// Empty when no relationships are detected.
+    pub relationships: Vec<DocumentRelationship>,
+}
+
+impl Default for DocumentStructure {
+    fn default() -> Self {
+        Self {
+            nodes: Default::default(),
+            source_format: Default::default(),
+            relationships: Default::default(),
+        }
+    }
+}
+
+impl DocumentStructure {
+    #[must_use]
+    
+    pub fn new(
+        nodes: Option<Vec<DocumentNode>>,
+        relationships: Option<Vec<DocumentRelationship>>,
+        source_format: Option<String>,
+    ) -> Self {
+        Self { nodes: nodes.unwrap_or_default(), source_format: source_format, relationships: relationships.unwrap_or_default() }
+    }
+
+    pub fn push_node(&self, node: DocumentNode) -> i32 {
+        let _ = node;
+        0
+    }
+
+    pub fn add_child(&self, parent: i32, child: i32) -> () {
+        let mut core_self = kreuzberg::DocumentStructure {
+            nodes: self.nodes.clone().into_iter().map(Into::into).collect(),
+            source_format: self.source_format.clone(),
+            relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.add_child(kreuzberg::NodeIndex(parent), kreuzberg::NodeIndex(child))
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn validate(&self) -> Result<()> {
+        let core_self = kreuzberg::DocumentStructure {
+            nodes: self.nodes.clone().into_iter().map(Into::into).collect(),
+            source_format: self.source_format.clone(),
+            relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
+        };
+        let result = core_self.validate().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    pub fn body_roots(&self) -> String {
+        String::from("[unimplemented: DocumentStructure.body_roots]")
+    }
+
+    pub fn furniture_roots(&self) -> String {
+        String::from("[unimplemented: DocumentStructure.furniture_roots]")
+    }
+
+    pub fn get(&self, index: i32) -> Option<DocumentNode> {
+        let core_self = kreuzberg::DocumentStructure {
+            nodes: self.nodes.clone().into_iter().map(Into::into).collect(),
+            source_format: self.source_format.clone(),
+            relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.get(kreuzberg::NodeIndex(index)).map(|v| v.clone().into())
+    }
+
+    pub fn len(&self) -> f64 {
+        let core_self = kreuzberg::DocumentStructure {
+            nodes: self.nodes.clone().into_iter().map(Into::into).collect(),
+            source_format: self.source_format.clone(),
+            relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        let core_self = kreuzberg::DocumentStructure {
+            nodes: self.nodes.clone().into_iter().map(Into::into).collect(),
+            source_format: self.source_format.clone(),
+            relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.is_empty()
+    }
+
+    pub fn with_capacity(capacity: f64) -> DocumentStructure {
+        kreuzberg::DocumentStructure::with_capacity(capacity).into()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> DocumentStructure {
+        kreuzberg::DocumentStructure::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_documentstructure(
+    nodes: Vec<DocumentNode> = c(),
+    source_format: String = "",
+    relationships: Vec<DocumentRelationship> = c()
+) -> DocumentStructure {
+    DocumentStructure {
+        nodes,
+        source_format,
+        relationships,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct DocumentRelationship {
+    /// Source node index (the referencing node).
+    pub source: i32,
+    /// Target node index (the referenced node).
+    pub target: i32,
+    /// Semantic kind of the relationship.
+    pub kind: RelationshipKind,
+}
+
+impl DocumentRelationship {
+    #[must_use]
+    
+    pub fn new(source: i32, target: i32, kind: RelationshipKind) -> Self {
+        Self { source, target, kind }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DocumentNode {
+    /// Deterministic identifier (hash of content + position).
+    pub id: NodeId,
+    /// Node content — tagged enum, type-specific data only.
+    pub content: NodeContent,
+    /// Parent node index (`None` = root-level node).
+    pub parent: Option<i32>,
+    /// Child node indices in reading order.
+    pub children: Vec<i32>,
+    /// Content layer classification.
+    pub content_layer: ContentLayer,
+    /// Page number where this node starts (1-indexed).
+    pub page: Option<i32>,
+    /// Page number where this node ends (for multi-page tables/sections).
+    pub page_end: Option<i32>,
+    /// Bounding box in document coordinates.
+    pub bbox: Option<BoundingBox>,
+    /// Inline annotations (formatting, links) on this node's text content.
+    /// 
+    /// Only meaningful for text-carrying nodes; empty for containers.
+    pub annotations: Vec<TextAnnotation>,
+    /// Format-specific key-value attributes.
+    /// 
+    /// Extensible bag for data that doesn't warrant a typed field: CSS classes,
+    /// LaTeX environment names, Excel cell formulas, slide layout names, etc.
+    pub attributes: Option<HashMap<String, String>>,
+}
+
+impl DocumentNode {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        id: NodeId,
+        content: NodeContent,
+        children: Vec<i32>,
+        content_layer: ContentLayer,
+        annotations: Vec<TextAnnotation>,
+        parent: Option<i32>,
+        page: Option<i32>,
+        page_end: Option<i32>,
+        bbox: Option<BoundingBox>,
+        attributes: Option<HashMap<String, String>>,
+    ) -> Self {
+        Self { id, content, parent, children, content_layer, page, page_end, bbox, annotations, attributes }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct TableGrid {
+    /// Number of rows in the table.
+    pub rows: i32,
+    /// Number of columns in the table.
+    pub cols: i32,
+    /// All cells in row-major order.
+    pub cells: Vec<GridCell>,
+}
+
+impl TableGrid {
+    #[must_use]
+    
+    pub fn new(rows: i32, cols: i32, cells: Vec<GridCell>) -> Self {
+        Self { rows, cols, cells }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct GridCell {
+    /// Cell text content.
+    pub content: String,
+    /// Zero-indexed row position.
+    pub row: i32,
+    /// Zero-indexed column position.
+    pub col: i32,
+    /// Number of rows this cell spans.
+    pub row_span: i32,
+    /// Number of columns this cell spans.
+    pub col_span: i32,
+    /// Whether this is a header cell.
+    pub is_header: bool,
+    /// Bounding box for this cell (if available).
+    pub bbox: Option<BoundingBox>,
+}
+
+impl GridCell {
+    #[must_use]
+    
+    pub fn new(
+        content: String,
+        row: i32,
+        col: i32,
+        row_span: i32,
+        col_span: i32,
+        is_header: bool,
+        bbox: Option<BoundingBox>,
+    ) -> Self {
+        Self { content, row, col, row_span, col_span, is_header, bbox }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct TextAnnotation {
+    /// Start byte offset in the node's text content (inclusive).
+    pub start: i32,
+    /// End byte offset in the node's text content (exclusive).
+    pub end: i32,
+    /// Annotation type.
+    pub kind: AnnotationKind,
+}
+
+impl TextAnnotation {
+    #[must_use]
+    
+    pub fn new(start: i32, end: i32, kind: AnnotationKind) -> Self {
+        Self { start, end, kind }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ExtractionResult {
+    pub content: String,
+    pub mime_type: String,
+    pub metadata: Metadata,
+    pub tables: Vec<Table>,
+    pub detected_languages: Option<Vec<String>>,
+    /// Text chunks when chunking is enabled.
+    /// 
+    /// When chunking configuration is provided, the content is split into
+    /// overlapping chunks for efficient processing. Each chunk contains the text,
+    /// optional embeddings (if enabled), and metadata about its position.
+    pub chunks: Option<Vec<Chunk>>,
+    /// Extracted images from the document.
+    /// 
+    /// When image extraction is enabled via `ImageExtractionConfig`, this field
+    /// contains all images found in the document with their raw data and metadata.
+    /// Each image may optionally contain a nested `ocr_result` if OCR was performed.
+    pub images: Option<Vec<ExtractedImage>>,
+    /// Per-page content when page extraction is enabled.
+    /// 
+    /// When page extraction is configured, the document is split into per-page content
+    /// with tables and images mapped to their respective pages.
+    pub pages: Option<Vec<PageContent>>,
+    /// Semantic elements when element-based result format is enabled.
+    /// 
+    /// When result_format is set to ElementBased, this field contains semantic
+    /// elements with type classification, unique identifiers, and metadata for
+    /// Unstructured-compatible element-based processing.
+    pub elements: Option<Vec<Element>>,
+    /// Rich Djot content structure (when extracting Djot documents).
+    /// 
+    /// When extracting Djot documents with structured extraction enabled,
+    /// this field contains the full semantic structure including:
+    /// - Block-level elements with nesting
+    /// - Inline formatting with attributes
+    /// - Links, images, footnotes
+    /// - Math expressions
+    /// - Complete attribute information
+    /// 
+    /// The `content` field still contains plain text for backward compatibility.
+    /// 
+    /// Always `None` for non-Djot documents.
+    pub djot_content: Option<DjotContent>,
+    /// OCR elements with full spatial and confidence metadata.
+    /// 
+    /// When OCR is performed with element extraction enabled, this field contains
+    /// the structured representation of detected text including:
+    /// - Bounding geometry (rectangles or quadrilaterals)
+    /// - Confidence scores (detection and recognition)
+    /// - Rotation information
+    /// - Hierarchical relationships (Tesseract only)
+    /// 
+    /// This field preserves all metadata that would otherwise be lost when
+    /// converting to plain text or markdown output formats.
+    /// 
+    /// Only populated when `OcrElementConfig.include_elements` is true.
+    pub ocr_elements: Option<Vec<OcrElement>>,
+    /// Structured document tree (when document structure extraction is enabled).
+    /// 
+    /// When `include_document_structure` is true in `ExtractionConfig`, this field
+    /// contains the full hierarchical representation of the document including:
+    /// - Heading-driven section nesting
+    /// - Table grids with cell-level metadata
+    /// - Content layer classification (body, header, footer, footnote)
+    /// - Inline text annotations (formatting, links)
+    /// - Bounding boxes and page numbers
+    /// 
+    /// Independent of `result_format` — can be combined with Unified or ElementBased.
+    pub document: Option<DocumentStructure>,
+    /// Document quality score from quality analysis.
+    /// 
+    /// A value between 0.0 and 1.0 indicating the overall text quality.
+    /// Previously stored in `metadata.additional["quality_score"]`.
+    pub quality_score: Option<f64>,
+    /// Non-fatal warnings collected during processing pipeline stages.
+    /// 
+    /// Captures errors from optional pipeline features (embedding, chunking,
+    /// language detection, output formatting) that don't prevent extraction
+    /// but may indicate degraded results.
+    /// Previously stored as individual keys in `metadata.additional`.
+    pub processing_warnings: Vec<ProcessingWarning>,
+    /// PDF annotations extracted from the document.
+    /// 
+    /// When annotation extraction is enabled via `PdfConfig::extract_annotations`,
+    /// this field contains text notes, highlights, links, stamps, and other
+    /// annotations found in PDF documents.
+    pub annotations: Option<Vec<PdfAnnotation>>,
+    /// Nested extraction results from archive contents.
+    /// 
+    /// When extracting archives, each processable file inside produces its own
+    /// full extraction result. Set to `None` for non-archive formats.
+    /// Use `max_archive_depth` in config to control recursion depth.
+    pub children: Option<Vec<ArchiveEntry>>,
+    /// URIs/links discovered during document extraction.
+    /// 
+    /// Contains hyperlinks, image references, citations, email addresses, and
+    /// other URI-like references found in the document. Always extracted when
+    /// present in the source document.
+    pub uris: Option<Vec<Uri>>,
+    /// Structured extraction output from LLM-based JSON schema extraction.
+    /// 
+    /// When `structured_extraction` is configured in `ExtractionConfig`, the
+    /// extracted document content is sent to a VLM with the provided JSON schema.
+    /// The response is parsed and stored here as a JSON value matching the schema.
+    pub structured_output: Option<String>,
+    /// Code intelligence results from tree-sitter analysis.
+    /// 
+    /// Populated when extracting source code files with the `tree-sitter` feature.
+    /// Contains metrics, structural analysis, imports/exports, comments,
+    /// docstrings, symbols, diagnostics, and optionally chunked code segments.
+    pub code_intelligence: Option<String>,
+    /// LLM token usage and cost data for all LLM calls made during this extraction.
+    /// 
+    /// Contains one entry per LLM call. Multiple entries are produced when
+    /// VLM OCR, structured extraction, and/or LLM embeddings all run during
+    /// the same extraction.
+    /// 
+    /// `None` when no LLM was used.
+    pub llm_usage: Option<Vec<LlmUsage>>,
+    /// Pre-rendered content in the requested output format.
+    /// 
+    /// Populated during `derive_extraction_result` before tree derivation consumes
+    /// element data. `apply_output_format` swaps this into `content` at the end
+    /// of the pipeline, after post-processors have operated on plain text.
+    pub formatted_content: Option<String>,
+    /// Structured hOCR document for the OCR+layout pipeline.
+    /// 
+    /// When tesseract produces hOCR output, the parsed `InternalDocument` carries
+    /// paragraph structure with bounding boxes and confidence scores. The layout
+    /// classification step enriches these elements before final rendering.
+    pub ocr_internal_document: Option<String>,
+}
+
+impl Default for ExtractionResult {
+    fn default() -> Self {
+        Self {
+            content: Default::default(),
+            mime_type: Default::default(),
+            metadata: Default::default(),
+            tables: Default::default(),
+            detected_languages: Default::default(),
+            chunks: Default::default(),
+            images: Default::default(),
+            pages: Default::default(),
+            elements: Default::default(),
+            djot_content: Default::default(),
+            ocr_elements: Default::default(),
+            document: Default::default(),
+            quality_score: Default::default(),
+            processing_warnings: Default::default(),
+            annotations: Default::default(),
+            children: Default::default(),
+            uris: Default::default(),
+            structured_output: Default::default(),
+            code_intelligence: Default::default(),
+            llm_usage: Default::default(),
+            formatted_content: Default::default(),
+            ocr_internal_document: Default::default(),
+        }
+    }
+}
+
+impl ExtractionResult {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        content: Option<String>,
+        mime_type: Option<String>,
+        metadata: Option<Metadata>,
+        tables: Option<Vec<Table>>,
+        processing_warnings: Option<Vec<ProcessingWarning>>,
+        detected_languages: Option<Vec<String>>,
+        chunks: Option<Vec<Chunk>>,
+        images: Option<Vec<ExtractedImage>>,
+        pages: Option<Vec<PageContent>>,
+        elements: Option<Vec<Element>>,
+        djot_content: Option<DjotContent>,
+        ocr_elements: Option<Vec<OcrElement>>,
+        document: Option<DocumentStructure>,
+        quality_score: Option<f64>,
+        annotations: Option<Vec<PdfAnnotation>>,
+        children: Option<Vec<ArchiveEntry>>,
+        uris: Option<Vec<Uri>>,
+        structured_output: Option<String>,
+        code_intelligence: Option<String>,
+        llm_usage: Option<Vec<LlmUsage>>,
+        formatted_content: Option<String>,
+        ocr_internal_document: Option<String>,
+    ) -> Self {
+        Self { content: content.unwrap_or_default(), mime_type: mime_type.unwrap_or_default(), metadata: metadata.unwrap_or_default(), tables: tables.unwrap_or_default(), detected_languages: detected_languages, chunks: chunks, images: images, pages: pages, elements: elements, djot_content: djot_content, ocr_elements: ocr_elements, document: document, quality_score: quality_score, processing_warnings: processing_warnings.unwrap_or_default(), annotations: annotations, children: children, uris: uris, structured_output: structured_output, code_intelligence: code_intelligence, llm_usage: llm_usage, formatted_content: formatted_content, ocr_internal_document: ocr_internal_document }
+    }
+}
+
+#[extendr]
+pub fn new_extractionresult(
+    content: String = "",
+    mime_type: String = "",
+    metadata: Metadata = null,
+    tables: Vec<Table> = c(),
+    detected_languages: Vec<String> = c(),
+    chunks: Vec<Chunk> = c(),
+    images: Vec<ExtractedImage> = c(),
+    pages: Vec<PageContent> = c(),
+    elements: Vec<Element> = c(),
+    djot_content: DjotContent = null,
+    ocr_elements: Vec<OcrElement> = c(),
+    document: DocumentStructure = null,
+    quality_score: f64 = 0.0,
+    processing_warnings: Vec<ProcessingWarning> = c(),
+    annotations: Vec<PdfAnnotation> = c(),
+    children: Vec<ArchiveEntry> = c(),
+    uris: Vec<Uri> = c(),
+    structured_output: String = "",
+    code_intelligence: String = "",
+    llm_usage: Vec<LlmUsage> = c(),
+    formatted_content: String = "",
+    ocr_internal_document: String = ""
+) -> ExtractionResult {
+    ExtractionResult {
+        content,
+        mime_type,
+        metadata,
+        tables,
+        detected_languages,
+        chunks,
+        images,
+        pages,
+        elements,
+        djot_content,
+        ocr_elements,
+        document,
+        quality_score,
+        processing_warnings,
+        annotations,
+        children,
+        uris,
+        structured_output,
+        code_intelligence,
+        llm_usage,
+        formatted_content,
+        ocr_internal_document,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct ArchiveEntry {
+    /// Archive-relative file path (e.g. "folder/document.pdf").
+    pub path: String,
+    /// Detected MIME type of the file.
+    pub mime_type: String,
+    /// Full extraction result for this file.
+    pub result: ExtractionResult,
+}
+
+impl ArchiveEntry {
+    #[must_use]
+    
+    pub fn new(path: String, mime_type: String, result: ExtractionResult) -> Self {
+        Self { path, mime_type, result }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ProcessingWarning {
+    /// The pipeline stage or feature that produced this warning
+    /// (e.g., "embedding", "chunking", "language_detection", "output_format").
+    pub source: String,
+    /// Human-readable description of what went wrong.
+    pub message: String,
+}
+
+impl ProcessingWarning {
+    #[must_use]
+    
+    pub fn new(source: String, message: String) -> Self {
+        Self { source, message }
     }
 }
 
@@ -90,9 +9903,7112 @@ pub fn new_llmusage(
 }
 
 
+#[derive(Clone, serde::Serialize)]
+pub struct Chunk {
+    /// The text content of this chunk.
+    pub content: String,
+    /// Semantic structural classification of this chunk.
+    /// 
+    /// Assigned by the heuristic classifier based on content patterns and
+    /// heading context. Defaults to `ChunkType::Unknown` when no rule matches.
+    pub chunk_type: ChunkType,
+    /// Optional embedding vector for this chunk.
+    /// 
+    /// Only populated when `EmbeddingConfig` is provided in chunking configuration.
+    /// The dimensionality depends on the chosen embedding model.
+    pub embedding: Option<Vec<f64>>,
+    /// Metadata about this chunk's position and properties.
+    pub metadata: ChunkMetadata,
+}
+
+impl Chunk {
+    #[must_use]
+    
+    pub fn new(content: String, chunk_type: ChunkType, metadata: ChunkMetadata, embedding: Option<Vec<f64>>) -> Self {
+        Self { content, chunk_type, embedding, metadata }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct HeadingContext {
+    /// The heading hierarchy from document root to this chunk's section.
+    /// Index 0 is the outermost (h1), last element is the most specific.
+    pub headings: Vec<HeadingLevel>,
+}
+
+impl HeadingContext {
+    #[must_use]
+    
+    pub fn new(headings: Vec<HeadingLevel>) -> Self {
+        Self { headings }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct HeadingLevel {
+    /// Heading depth (1 = h1, 2 = h2, etc.)
+    pub level: i32,
+    /// The text content of the heading.
+    pub text: String,
+}
+
+impl HeadingLevel {
+    #[must_use]
+    
+    pub fn new(level: i32, text: String) -> Self {
+        Self { level, text }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ChunkMetadata {
+    /// Byte offset where this chunk starts in the original text (UTF-8 valid boundary).
+    pub byte_start: f64,
+    /// Byte offset where this chunk ends in the original text (UTF-8 valid boundary).
+    pub byte_end: f64,
+    /// Number of tokens in this chunk (if available).
+    /// 
+    /// This is calculated by the embedding model's tokenizer if embeddings are enabled.
+    pub token_count: Option<f64>,
+    /// Zero-based index of this chunk in the document.
+    pub chunk_index: f64,
+    /// Total number of chunks in the document.
+    pub total_chunks: f64,
+    /// First page number this chunk spans (1-indexed).
+    /// 
+    /// Only populated when page tracking is enabled in extraction configuration.
+    pub first_page: Option<f64>,
+    /// Last page number this chunk spans (1-indexed, equal to first_page for single-page chunks).
+    /// 
+    /// Only populated when page tracking is enabled in extraction configuration.
+    pub last_page: Option<f64>,
+    /// Heading context when using Markdown chunker.
+    /// 
+    /// Contains the heading hierarchy this chunk falls under.
+    /// Only populated when `ChunkerType::Markdown` is used.
+    pub heading_context: Option<HeadingContext>,
+}
+
+impl ChunkMetadata {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        byte_start: f64,
+        byte_end: f64,
+        chunk_index: f64,
+        total_chunks: f64,
+        token_count: Option<f64>,
+        first_page: Option<f64>,
+        last_page: Option<f64>,
+        heading_context: Option<HeadingContext>,
+    ) -> Self {
+        Self { byte_start, byte_end, token_count, chunk_index, total_chunks, first_page, last_page, heading_context }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExtractedImage {
+    /// Raw image data (PNG, JPEG, WebP, etc. bytes).
+    /// Uses `bytes::Bytes` for cheap cloning of large buffers.
+    pub data: Vec<u8>,
+    /// Image format (e.g., "jpeg", "png", "webp")
+    /// Uses Cow<'static, str> to avoid allocation for static literals.
+    pub format: String,
+    /// Zero-indexed position of this image in the document/page
+    pub image_index: f64,
+    /// Page/slide number where image was found (1-indexed)
+    pub page_number: Option<f64>,
+    /// Image width in pixels
+    pub width: Option<i32>,
+    /// Image height in pixels
+    pub height: Option<i32>,
+    /// Colorspace information (e.g., "RGB", "CMYK", "Gray")
+    pub colorspace: Option<String>,
+    /// Bits per color component (e.g., 8, 16)
+    pub bits_per_component: Option<i32>,
+    /// Whether this image is a mask image
+    pub is_mask: bool,
+    /// Optional description of the image
+    pub description: Option<String>,
+    /// Nested OCR extraction result (if image was OCRed)
+    /// 
+    /// When OCR is performed on this image, the result is embedded here
+    /// rather than in a separate collection, making the relationship explicit.
+    pub ocr_result: Option<ExtractionResult>,
+    /// Bounding box of the image on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top).
+    /// Only populated for PDF-extracted images when position data is available from pdfium.
+    pub bounding_box: Option<BoundingBox>,
+    /// Original source path of the image within the document archive (e.g., "media/image1.png" in DOCX).
+    /// Used for rendering image references when the binary data is not extracted.
+    pub source_path: Option<String>,
+}
+
+impl ExtractedImage {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        data: Vec<u8>,
+        format: String,
+        image_index: f64,
+        is_mask: bool,
+        page_number: Option<f64>,
+        width: Option<i32>,
+        height: Option<i32>,
+        colorspace: Option<String>,
+        bits_per_component: Option<i32>,
+        description: Option<String>,
+        ocr_result: Option<ExtractionResult>,
+        bounding_box: Option<BoundingBox>,
+        source_path: Option<String>,
+    ) -> Self {
+        Self { data, format, image_index, page_number, width, height, colorspace, bits_per_component, is_mask, description, ocr_result, bounding_box, source_path }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ElementId {
+}
+
+impl ElementId {
+    pub fn as_ref(&self) -> String {
+        let core_self = kreuzberg::ElementId {
+        };
+        core_self.as_ref().to_owned()
+    }
+
+    pub fn fmt(&self, f: String) -> String {
+        let _ = f;
+        String::from("[unimplemented: ElementId.fmt]")
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new(hex_str: String) -> Result<ElementId> {
+        kreuzberg::ElementId::new(hex_str).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct BoundingBox {
+    /// Left x-coordinate
+    pub x0: f64,
+    /// Bottom y-coordinate
+    pub y0: f64,
+    /// Right x-coordinate
+    pub x1: f64,
+    /// Top y-coordinate
+    pub y1: f64,
+}
+
+impl BoundingBox {
+    #[must_use]
+    
+    pub fn new(x0: f64, y0: f64, x1: f64, y1: f64) -> Self {
+        Self { x0, y0, x1, y1 }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ElementMetadata {
+    /// Page number (1-indexed)
+    pub page_number: Option<f64>,
+    /// Source filename or document name
+    pub filename: Option<String>,
+    /// Bounding box coordinates if available
+    pub coordinates: Option<BoundingBox>,
+    /// Position index in the element sequence
+    pub element_index: Option<f64>,
+    /// Additional custom metadata
+    pub additional: HashMap<String, String>,
+}
+
+impl ElementMetadata {
+    #[must_use]
+    
+    pub fn new(
+        additional: HashMap<String, String>,
+        page_number: Option<f64>,
+        filename: Option<String>,
+        coordinates: Option<BoundingBox>,
+        element_index: Option<f64>,
+    ) -> Self {
+        Self { page_number, filename, coordinates, element_index, additional }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Element {
+    /// Unique element identifier
+    pub element_id: ElementId,
+    /// Semantic type of this element
+    pub element_type: ElementType,
+    /// Text content of the element
+    pub text: String,
+    /// Metadata about the element
+    pub metadata: ElementMetadata,
+}
+
+impl Element {
+    #[must_use]
+    
+    pub fn new(element_id: ElementId, element_type: ElementType, text: String, metadata: ElementMetadata) -> Self {
+        Self { element_id, element_type, text, metadata }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExcelWorkbook {
+    /// All sheets in the workbook
+    pub sheets: Vec<ExcelSheet>,
+    /// Workbook-level metadata (author, creation date, etc.)
+    pub metadata: HashMap<String, String>,
+}
+
+impl ExcelWorkbook {
+    #[must_use]
+    
+    pub fn new(sheets: Vec<ExcelSheet>, metadata: HashMap<String, String>) -> Self {
+        Self { sheets, metadata }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct ExcelSheet {
+    /// Sheet name as it appears in Excel
+    pub name: String,
+    /// Sheet content converted to Markdown tables
+    pub markdown: String,
+    /// Number of rows
+    pub row_count: f64,
+    /// Number of columns
+    pub col_count: f64,
+    /// Total number of non-empty cells
+    pub cell_count: f64,
+    /// Pre-extracted table cells (2D vector of cell values)
+    /// Populated during markdown generation to avoid re-parsing markdown.
+    /// None for empty sheets.
+    pub table_cells: Option<Vec<Vec<String>>>,
+}
+
+impl ExcelSheet {
+    #[must_use]
+    
+    pub fn new(
+        name: String,
+        markdown: String,
+        row_count: f64,
+        col_count: f64,
+        cell_count: f64,
+        table_cells: Option<Vec<Vec<String>>>,
+    ) -> Self {
+        Self { name, markdown, row_count, col_count, cell_count, table_cells }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct XmlExtractionResult {
+    /// Extracted text content (XML structure filtered out)
+    pub content: String,
+    /// Total number of XML elements processed
+    pub element_count: f64,
+    /// List of unique element names found (sorted)
+    pub unique_elements: Vec<String>,
+}
+
+impl XmlExtractionResult {
+    #[must_use]
+    
+    pub fn new(content: String, element_count: f64, unique_elements: Vec<String>) -> Self {
+        Self { content, element_count, unique_elements }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct TextExtractionResult {
+    /// Extracted text content
+    pub content: String,
+    /// Number of lines
+    pub line_count: f64,
+    /// Number of words
+    pub word_count: f64,
+    /// Number of characters
+    pub character_count: f64,
+    /// Markdown headers (text only, Markdown files only)
+    pub headers: Option<Vec<String>>,
+    /// Markdown links as (text, URL) tuples (Markdown files only)
+    pub links: Option<Vec<String>>,
+    /// Code blocks as (language, code) tuples (Markdown files only)
+    pub code_blocks: Option<Vec<String>>,
+}
+
+impl TextExtractionResult {
+    #[must_use]
+    
+    pub fn new(
+        content: String,
+        line_count: f64,
+        word_count: f64,
+        character_count: f64,
+        headers: Option<Vec<String>>,
+        links: Option<Vec<String>>,
+        code_blocks: Option<Vec<String>>,
+    ) -> Self {
+        Self { content, line_count, word_count, character_count, headers, links, code_blocks }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PptxExtractionResult {
+    /// Extracted text content from all slides
+    pub content: String,
+    /// Presentation metadata
+    pub metadata: PptxMetadata,
+    /// Total number of slides
+    pub slide_count: f64,
+    /// Total number of embedded images
+    pub image_count: f64,
+    /// Total number of tables
+    pub table_count: f64,
+    /// Extracted images from the presentation
+    pub images: Vec<ExtractedImage>,
+    /// Slide structure with boundaries (when page tracking is enabled)
+    pub page_structure: Option<PageStructure>,
+    /// Per-slide content (when page tracking is enabled)
+    pub page_contents: Option<Vec<PageContent>>,
+    /// Structured document representation
+    pub document: Option<DocumentStructure>,
+    /// Hyperlinks discovered in slides as (url, optional_label) pairs.
+    pub hyperlinks: Vec<String>,
+    /// Office metadata extracted from docProps/core.xml and docProps/app.xml.
+    /// 
+    /// Contains keys like "title", "author", "created_by", "subject", "keywords",
+    /// "modified_by", "created_at", "modified_at", etc.
+    pub office_metadata: HashMap<String, String>,
+}
+
+impl PptxExtractionResult {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        content: String,
+        metadata: PptxMetadata,
+        slide_count: f64,
+        image_count: f64,
+        table_count: f64,
+        images: Vec<ExtractedImage>,
+        hyperlinks: Vec<String>,
+        office_metadata: HashMap<String, String>,
+        page_structure: Option<PageStructure>,
+        page_contents: Option<Vec<PageContent>>,
+        document: Option<DocumentStructure>,
+    ) -> Self {
+        Self { content, metadata, slide_count, image_count, table_count, images, page_structure, page_contents, document, hyperlinks, office_metadata }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct EmailExtractionResult {
+    /// Email subject line
+    pub subject: Option<String>,
+    /// Sender email address
+    pub from_email: Option<String>,
+    /// Primary recipient email addresses
+    pub to_emails: Vec<String>,
+    /// CC recipient email addresses
+    pub cc_emails: Vec<String>,
+    /// BCC recipient email addresses
+    pub bcc_emails: Vec<String>,
+    /// Email date/timestamp
+    pub date: Option<String>,
+    /// Message-ID header value
+    pub message_id: Option<String>,
+    /// Plain text version of the email body
+    pub plain_text: Option<String>,
+    /// HTML version of the email body
+    pub html_content: Option<String>,
+    /// Cleaned/processed text content
+    pub cleaned_text: String,
+    /// List of email attachments
+    pub attachments: Vec<EmailAttachment>,
+    /// Additional email headers and metadata
+    pub metadata: HashMap<String, String>,
+}
+
+impl EmailExtractionResult {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        to_emails: Vec<String>,
+        cc_emails: Vec<String>,
+        bcc_emails: Vec<String>,
+        cleaned_text: String,
+        attachments: Vec<EmailAttachment>,
+        metadata: HashMap<String, String>,
+        subject: Option<String>,
+        from_email: Option<String>,
+        date: Option<String>,
+        message_id: Option<String>,
+        plain_text: Option<String>,
+        html_content: Option<String>,
+    ) -> Self {
+        Self { subject, from_email, to_emails, cc_emails, bcc_emails, date, message_id, plain_text, html_content, cleaned_text, attachments, metadata }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct EmailAttachment {
+    /// Attachment name (from Content-Disposition header)
+    pub name: Option<String>,
+    /// Filename of the attachment
+    pub filename: Option<String>,
+    /// MIME type of the attachment
+    pub mime_type: Option<String>,
+    /// Size in bytes
+    pub size: Option<f64>,
+    /// Whether this attachment is an image
+    pub is_image: bool,
+    /// Attachment data (if extracted).
+    /// Uses `bytes::Bytes` for cheap cloning of large buffers.
+    pub data: Option<Vec<u8>>,
+}
+
+impl EmailAttachment {
+    #[must_use]
+    
+    pub fn new(
+        is_image: bool,
+        name: Option<String>,
+        filename: Option<String>,
+        mime_type: Option<String>,
+        size: Option<f64>,
+        data: Option<Vec<u8>>,
+    ) -> Self {
+        Self { name, filename, mime_type, size, is_image, data }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrExtractionResult {
+    /// Recognized text content
+    pub content: String,
+    /// Original MIME type of the processed image
+    pub mime_type: String,
+    /// OCR processing metadata (confidence scores, language, etc.)
+    pub metadata: HashMap<String, String>,
+    /// Tables detected and extracted via OCR
+    pub tables: Vec<OcrTable>,
+    /// Structured OCR elements with bounding boxes and confidence scores.
+    /// Available when TSV output is requested or table detection is enabled.
+    pub ocr_elements: Option<Vec<OcrElement>>,
+    /// Structured document produced from hOCR parsing.
+    /// Carries paragraph structure, bounding boxes, and confidence scores
+    /// that the flattened `content` string discards.
+    pub internal_document: Option<String>,
+}
+
+impl OcrExtractionResult {
+    #[must_use]
+    
+    pub fn new(
+        content: String,
+        mime_type: String,
+        metadata: HashMap<String, String>,
+        tables: Vec<OcrTable>,
+        ocr_elements: Option<Vec<OcrElement>>,
+        internal_document: Option<String>,
+    ) -> Self {
+        Self { content, mime_type, metadata, tables, ocr_elements, internal_document }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrTable {
+    /// Table cells as a 2D vector (rows × columns)
+    pub cells: Vec<Vec<String>>,
+    /// Markdown representation of the table
+    pub markdown: String,
+    /// Page number where the table was found (1-indexed)
+    pub page_number: f64,
+    /// Bounding box of the table in pixel coordinates (from OCR word positions).
+    pub bounding_box: Option<OcrTableBoundingBox>,
+}
+
+impl OcrTable {
+    #[must_use]
+    
+    pub fn new(
+        cells: Vec<Vec<String>>,
+        markdown: String,
+        page_number: f64,
+        bounding_box: Option<OcrTableBoundingBox>,
+    ) -> Self {
+        Self { cells, markdown, page_number, bounding_box }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrTableBoundingBox {
+    /// Left x-coordinate (pixels)
+    pub left: i32,
+    /// Top y-coordinate (pixels)
+    pub top: i32,
+    /// Right x-coordinate (pixels)
+    pub right: i32,
+    /// Bottom y-coordinate (pixels)
+    pub bottom: i32,
+}
+
+impl OcrTableBoundingBox {
+    #[must_use]
+    
+    pub fn new(left: i32, top: i32, right: i32, bottom: i32) -> Self {
+        Self { left, top, right, bottom }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ImagePreprocessingConfig {
+    /// Target DPI for the image (300 is standard, 600 for small text).
+    pub target_dpi: i32,
+    /// Auto-detect and correct image rotation.
+    pub auto_rotate: bool,
+    /// Correct skew (tilted images).
+    pub deskew: bool,
+    /// Remove noise from the image.
+    pub denoise: bool,
+    /// Enhance contrast for better text visibility.
+    pub contrast_enhance: bool,
+    /// Binarization method: "otsu", "sauvola", "adaptive".
+    pub binarization_method: String,
+    /// Invert colors (white text on black → black on white).
+    pub invert_colors: bool,
+}
+
+impl Default for ImagePreprocessingConfig {
+    fn default() -> Self {
+        Self {
+            target_dpi: Default::default(),
+            auto_rotate: Default::default(),
+            deskew: Default::default(),
+            denoise: Default::default(),
+            contrast_enhance: Default::default(),
+            binarization_method: Default::default(),
+            invert_colors: Default::default(),
+        }
+    }
+}
+
+impl ImagePreprocessingConfig {
+    #[must_use]
+    
+    pub fn new(
+        target_dpi: Option<i32>,
+        auto_rotate: Option<bool>,
+        deskew: Option<bool>,
+        denoise: Option<bool>,
+        contrast_enhance: Option<bool>,
+        binarization_method: Option<String>,
+        invert_colors: Option<bool>,
+    ) -> Self {
+        Self { target_dpi: target_dpi.unwrap_or(300), auto_rotate: auto_rotate.unwrap_or(true), deskew: deskew.unwrap_or(true), denoise: denoise.unwrap_or(false), contrast_enhance: contrast_enhance.unwrap_or(false), binarization_method: binarization_method.unwrap_or_else(|| "otsu".to_string()), invert_colors: invert_colors.unwrap_or(false) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ImagePreprocessingConfig {
+        kreuzberg::ImagePreprocessingConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_imagepreprocessingconfig(
+    target_dpi: i32 = 300,
+    auto_rotate: bool = TRUE,
+    deskew: bool = TRUE,
+    denoise: bool = FALSE,
+    contrast_enhance: bool = FALSE,
+    binarization_method: String = "otsu",
+    invert_colors: bool = FALSE
+) -> ImagePreprocessingConfig {
+    ImagePreprocessingConfig {
+        target_dpi,
+        auto_rotate,
+        deskew,
+        denoise,
+        contrast_enhance,
+        binarization_method,
+        invert_colors,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct TesseractConfig {
+    /// Language code (e.g., "eng", "deu", "fra")
+    pub language: String,
+    /// Page Segmentation Mode (0-13).
+    /// 
+    /// Common values:
+    /// - 3: Fully automatic page segmentation (default)
+    /// - 6: Assume a single uniform block of text
+    /// - 11: Sparse text with no particular order
+    pub psm: i32,
+    /// Output format ("text" or "markdown")
+    pub output_format: String,
+    /// OCR Engine Mode (0-3).
+    /// 
+    /// - 0: Legacy engine only
+    /// - 1: Neural nets (LSTM) only (usually best)
+    /// - 2: Legacy + LSTM
+    /// - 3: Default (based on what's available)
+    pub oem: i32,
+    /// Minimum confidence threshold (0.0-100.0).
+    /// 
+    /// Words with confidence below this threshold may be rejected or flagged.
+    pub min_confidence: f64,
+    /// Image preprocessing configuration.
+    /// 
+    /// Controls how images are preprocessed before OCR. Can significantly
+    /// improve quality for scanned documents or low-quality images.
+    pub preprocessing: Option<ImagePreprocessingConfig>,
+    /// Enable automatic table detection and reconstruction
+    pub enable_table_detection: bool,
+    /// Minimum confidence threshold for table detection (0.0-1.0)
+    pub table_min_confidence: f64,
+    /// Column threshold for table detection (pixels)
+    pub table_column_threshold: i32,
+    /// Row threshold ratio for table detection (0.0-1.0)
+    pub table_row_threshold_ratio: f64,
+    /// Enable OCR result caching
+    pub use_cache: bool,
+    /// Use pre-adapted templates for character classification
+    pub classify_use_pre_adapted_templates: bool,
+    /// Enable N-gram language model
+    pub language_model_ngram_on: bool,
+    /// Don't reject good words during block-level processing
+    pub tessedit_dont_blkrej_good_wds: bool,
+    /// Don't reject good words during row-level processing
+    pub tessedit_dont_rowrej_good_wds: bool,
+    /// Enable dictionary correction
+    pub tessedit_enable_dict_correction: bool,
+    /// Whitelist of allowed characters (empty = all allowed)
+    pub tessedit_char_whitelist: String,
+    /// Blacklist of forbidden characters (empty = none forbidden)
+    pub tessedit_char_blacklist: String,
+    /// Use primary language params model
+    pub tessedit_use_primary_params_model: bool,
+    /// Variable-width space detection
+    pub textord_space_size_is_variable: bool,
+    /// Use adaptive thresholding method
+    pub thresholding_method: bool,
+}
+
+impl Default for TesseractConfig {
+    fn default() -> Self {
+        Self {
+            language: Default::default(),
+            psm: Default::default(),
+            output_format: Default::default(),
+            oem: Default::default(),
+            min_confidence: Default::default(),
+            preprocessing: Default::default(),
+            enable_table_detection: Default::default(),
+            table_min_confidence: Default::default(),
+            table_column_threshold: Default::default(),
+            table_row_threshold_ratio: Default::default(),
+            use_cache: Default::default(),
+            classify_use_pre_adapted_templates: Default::default(),
+            language_model_ngram_on: Default::default(),
+            tessedit_dont_blkrej_good_wds: Default::default(),
+            tessedit_dont_rowrej_good_wds: Default::default(),
+            tessedit_enable_dict_correction: Default::default(),
+            tessedit_char_whitelist: Default::default(),
+            tessedit_char_blacklist: Default::default(),
+            tessedit_use_primary_params_model: Default::default(),
+            textord_space_size_is_variable: Default::default(),
+            thresholding_method: Default::default(),
+        }
+    }
+}
+
+impl TesseractConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        language: Option<String>,
+        psm: Option<i32>,
+        output_format: Option<String>,
+        oem: Option<i32>,
+        min_confidence: Option<f64>,
+        enable_table_detection: Option<bool>,
+        table_min_confidence: Option<f64>,
+        table_column_threshold: Option<i32>,
+        table_row_threshold_ratio: Option<f64>,
+        use_cache: Option<bool>,
+        classify_use_pre_adapted_templates: Option<bool>,
+        language_model_ngram_on: Option<bool>,
+        tessedit_dont_blkrej_good_wds: Option<bool>,
+        tessedit_dont_rowrej_good_wds: Option<bool>,
+        tessedit_enable_dict_correction: Option<bool>,
+        tessedit_char_whitelist: Option<String>,
+        tessedit_char_blacklist: Option<String>,
+        tessedit_use_primary_params_model: Option<bool>,
+        textord_space_size_is_variable: Option<bool>,
+        thresholding_method: Option<bool>,
+        preprocessing: Option<ImagePreprocessingConfig>,
+    ) -> Self {
+        Self { language: language.unwrap_or_else(|| "eng".to_string()), psm: psm.unwrap_or(3), output_format: output_format.unwrap_or_else(|| "markdown".to_string()), oem: oem.unwrap_or(3), min_confidence: min_confidence.unwrap_or(0.0), preprocessing: preprocessing, enable_table_detection: enable_table_detection.unwrap_or(true), table_min_confidence: table_min_confidence.unwrap_or(0.0), table_column_threshold: table_column_threshold.unwrap_or(50), table_row_threshold_ratio: table_row_threshold_ratio.unwrap_or(0.5), use_cache: use_cache.unwrap_or(true), classify_use_pre_adapted_templates: classify_use_pre_adapted_templates.unwrap_or(true), language_model_ngram_on: language_model_ngram_on.unwrap_or(false), tessedit_dont_blkrej_good_wds: tessedit_dont_blkrej_good_wds.unwrap_or(true), tessedit_dont_rowrej_good_wds: tessedit_dont_rowrej_good_wds.unwrap_or(true), tessedit_enable_dict_correction: tessedit_enable_dict_correction.unwrap_or(true), tessedit_char_whitelist: tessedit_char_whitelist.unwrap_or_else(|| "".to_string()), tessedit_char_blacklist: tessedit_char_blacklist.unwrap_or_else(|| "".to_string()), tessedit_use_primary_params_model: tessedit_use_primary_params_model.unwrap_or(true), textord_space_size_is_variable: textord_space_size_is_variable.unwrap_or(true), thresholding_method: thresholding_method.unwrap_or(false) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> TesseractConfig {
+        kreuzberg::TesseractConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_tesseractconfig(
+    language: String = "eng",
+    psm: i32 = 3,
+    output_format: String = "markdown",
+    oem: i32 = 3,
+    min_confidence: f64 = 0.0,
+    preprocessing: ImagePreprocessingConfig = NULL,
+    enable_table_detection: bool = TRUE,
+    table_min_confidence: f64 = 0.0,
+    table_column_threshold: i32 = 50,
+    table_row_threshold_ratio: f64 = 0.5,
+    use_cache: bool = TRUE,
+    classify_use_pre_adapted_templates: bool = TRUE,
+    language_model_ngram_on: bool = FALSE,
+    tessedit_dont_blkrej_good_wds: bool = TRUE,
+    tessedit_dont_rowrej_good_wds: bool = TRUE,
+    tessedit_enable_dict_correction: bool = TRUE,
+    tessedit_char_whitelist: String = "",
+    tessedit_char_blacklist: String = "",
+    tessedit_use_primary_params_model: bool = TRUE,
+    textord_space_size_is_variable: bool = TRUE,
+    thresholding_method: bool = FALSE
+) -> TesseractConfig {
+    TesseractConfig {
+        language,
+        psm,
+        output_format,
+        oem,
+        min_confidence,
+        preprocessing,
+        enable_table_detection,
+        table_min_confidence,
+        table_column_threshold,
+        table_row_threshold_ratio,
+        use_cache,
+        classify_use_pre_adapted_templates,
+        language_model_ngram_on,
+        tessedit_dont_blkrej_good_wds,
+        tessedit_dont_rowrej_good_wds,
+        tessedit_enable_dict_correction,
+        tessedit_char_whitelist,
+        tessedit_char_blacklist,
+        tessedit_use_primary_params_model,
+        textord_space_size_is_variable,
+        thresholding_method,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct ImagePreprocessingMetadata {
+    /// Original image dimensions (width, height) in pixels
+    pub original_dimensions: String,
+    /// Original image DPI (horizontal, vertical)
+    pub original_dpi: String,
+    /// Target DPI from configuration
+    pub target_dpi: i32,
+    /// Scaling factor applied to the image
+    pub scale_factor: f64,
+    /// Whether DPI was auto-adjusted based on content
+    pub auto_adjusted: bool,
+    /// Final DPI after processing
+    pub final_dpi: i32,
+    /// New dimensions after resizing (if resized)
+    pub new_dimensions: Option<String>,
+    /// Resampling algorithm used ("LANCZOS3", "CATMULLROM", etc.)
+    pub resample_method: String,
+    /// Whether dimensions were clamped to max_image_dimension
+    pub dimension_clamped: bool,
+    /// Calculated optimal DPI (if auto_adjust_dpi enabled)
+    pub calculated_dpi: Option<i32>,
+    /// Whether resize was skipped (dimensions already optimal)
+    pub skipped_resize: bool,
+    /// Error message if resize failed
+    pub resize_error: Option<String>,
+}
+
+impl ImagePreprocessingMetadata {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        original_dimensions: String,
+        original_dpi: String,
+        target_dpi: i32,
+        scale_factor: f64,
+        auto_adjusted: bool,
+        final_dpi: i32,
+        resample_method: String,
+        dimension_clamped: bool,
+        skipped_resize: bool,
+        new_dimensions: Option<String>,
+        calculated_dpi: Option<i32>,
+        resize_error: Option<String>,
+    ) -> Self {
+        Self { original_dimensions, original_dpi, target_dpi, scale_factor, auto_adjusted, final_dpi, new_dimensions, resample_method, dimension_clamped, calculated_dpi, skipped_resize, resize_error }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct Metadata {
+    /// Document title
+    pub title: Option<String>,
+    /// Document subject or description
+    pub subject: Option<String>,
+    /// Primary author(s) - always Vec for consistency
+    pub authors: Option<Vec<String>>,
+    /// Keywords/tags - always Vec for consistency
+    pub keywords: Option<Vec<String>>,
+    /// Primary language (ISO 639 code)
+    pub language: Option<String>,
+    /// Creation timestamp (ISO 8601 format)
+    pub created_at: Option<String>,
+    /// Last modification timestamp (ISO 8601 format)
+    pub modified_at: Option<String>,
+    /// User who created the document
+    pub created_by: Option<String>,
+    /// User who last modified the document
+    pub modified_by: Option<String>,
+    /// Page/slide/sheet structure with boundaries
+    pub pages: Option<PageStructure>,
+    /// Format-specific metadata (discriminated union)
+    /// 
+    /// Contains detailed metadata specific to the document format.
+    /// Serializes with a `format_type` discriminator field.
+    pub format: Option<FormatMetadata>,
+    /// Image preprocessing metadata (when OCR preprocessing was applied)
+    pub image_preprocessing: Option<ImagePreprocessingMetadata>,
+    /// JSON schema (for structured data extraction)
+    pub json_schema: Option<String>,
+    /// Error metadata (for batch operations)
+    pub error: Option<ErrorMetadata>,
+    /// Extraction duration in milliseconds (for benchmarking).
+    /// 
+    /// This field is populated by batch extraction to provide per-file timing
+    /// information. It's `None` for single-file extraction (which uses external timing).
+    pub extraction_duration_ms: Option<f64>,
+    /// Document category (from frontmatter or classification).
+    pub category: Option<String>,
+    /// Document tags (from frontmatter).
+    pub tags: Option<Vec<String>>,
+    /// Document version string (from frontmatter).
+    pub document_version: Option<String>,
+    /// Abstract or summary text (from frontmatter).
+    pub abstract_text: Option<String>,
+    /// Output format identifier (e.g., "markdown", "html", "text").
+    /// 
+    /// Set by the output format pipeline stage when format conversion is applied.
+    /// Previously stored in `metadata.additional["output_format"]`.
+    pub output_format: Option<String>,
+    /// Additional custom fields from postprocessors.
+    /// 
+    /// **Deprecated**: Prefer using typed fields on `ExtractionResult` and `Metadata`
+    /// instead of inserting into this map. Typed fields provide better cross-language
+    /// compatibility and type safety. This field will be removed in a future major version.
+    /// 
+    /// This flattened map allows Python/TypeScript postprocessors to add
+    /// arbitrary fields (entity extraction, keyword extraction, etc.).
+    /// Fields are merged at the root level during serialization.
+    /// Uses `Cow<'static, str>` keys so static string keys avoid allocation.
+    pub additional: String,
+}
+
+impl Default for Metadata {
+    fn default() -> Self {
+        Self {
+            title: Default::default(),
+            subject: Default::default(),
+            authors: Default::default(),
+            keywords: Default::default(),
+            language: Default::default(),
+            created_at: Default::default(),
+            modified_at: Default::default(),
+            created_by: Default::default(),
+            modified_by: Default::default(),
+            pages: Default::default(),
+            format: Default::default(),
+            image_preprocessing: Default::default(),
+            json_schema: Default::default(),
+            error: Default::default(),
+            extraction_duration_ms: Default::default(),
+            category: Default::default(),
+            tags: Default::default(),
+            document_version: Default::default(),
+            abstract_text: Default::default(),
+            output_format: Default::default(),
+            additional: Default::default(),
+        }
+    }
+}
+
+impl Metadata {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        additional: Option<String>,
+        title: Option<String>,
+        subject: Option<String>,
+        authors: Option<Vec<String>>,
+        keywords: Option<Vec<String>>,
+        language: Option<String>,
+        created_at: Option<String>,
+        modified_at: Option<String>,
+        created_by: Option<String>,
+        modified_by: Option<String>,
+        pages: Option<PageStructure>,
+        format: Option<FormatMetadata>,
+        image_preprocessing: Option<ImagePreprocessingMetadata>,
+        json_schema: Option<String>,
+        error: Option<ErrorMetadata>,
+        extraction_duration_ms: Option<f64>,
+        category: Option<String>,
+        tags: Option<Vec<String>>,
+        document_version: Option<String>,
+        abstract_text: Option<String>,
+        output_format: Option<String>,
+    ) -> Self {
+        Self { title: title, subject: subject, authors: authors, keywords: keywords, language: language, created_at: created_at, modified_at: modified_at, created_by: created_by, modified_by: modified_by, pages: pages, format: format, image_preprocessing: image_preprocessing, json_schema: json_schema, error: error, extraction_duration_ms: extraction_duration_ms, category: category, tags: tags, document_version: document_version, abstract_text: abstract_text, output_format: output_format, additional: additional.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_metadata(
+    title: String = "",
+    subject: String = "",
+    authors: Vec<String> = c(),
+    keywords: Vec<String> = c(),
+    language: String = "",
+    created_at: String = "",
+    modified_at: String = "",
+    created_by: String = "",
+    modified_by: String = "",
+    pages: PageStructure = null,
+    format: FormatMetadata = null,
+    image_preprocessing: ImagePreprocessingMetadata = null,
+    json_schema: String = "",
+    error: ErrorMetadata = null,
+    extraction_duration_ms: f64 = 0,
+    category: String = "",
+    tags: Vec<String> = c(),
+    document_version: String = "",
+    abstract_text: String = "",
+    output_format: String = "",
+    additional: String = ""
+) -> Metadata {
+    Metadata {
+        title,
+        subject,
+        authors,
+        keywords,
+        language,
+        created_at,
+        modified_at,
+        created_by,
+        modified_by,
+        pages,
+        format,
+        image_preprocessing,
+        json_schema,
+        error,
+        extraction_duration_ms,
+        category,
+        tags,
+        document_version,
+        abstract_text,
+        output_format,
+        additional,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExcelMetadata {
+    /// Total number of sheets in the workbook
+    pub sheet_count: f64,
+    /// Names of all sheets in order
+    pub sheet_names: Vec<String>,
+}
+
+impl ExcelMetadata {
+    #[must_use]
+    
+    pub fn new(sheet_count: f64, sheet_names: Vec<String>) -> Self {
+        Self { sheet_count, sheet_names }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct EmailMetadata {
+    /// Sender's email address
+    pub from_email: Option<String>,
+    /// Sender's display name
+    pub from_name: Option<String>,
+    /// Primary recipients
+    pub to_emails: Vec<String>,
+    /// CC recipients
+    pub cc_emails: Vec<String>,
+    /// BCC recipients
+    pub bcc_emails: Vec<String>,
+    /// Message-ID header value
+    pub message_id: Option<String>,
+    /// List of attachment filenames
+    pub attachments: Vec<String>,
+}
+
+impl EmailMetadata {
+    #[must_use]
+    
+    pub fn new(
+        to_emails: Vec<String>,
+        cc_emails: Vec<String>,
+        bcc_emails: Vec<String>,
+        attachments: Vec<String>,
+        from_email: Option<String>,
+        from_name: Option<String>,
+        message_id: Option<String>,
+    ) -> Self {
+        Self { from_email, from_name, to_emails, cc_emails, bcc_emails, message_id, attachments }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ArchiveMetadata {
+    /// Archive format ("ZIP", "TAR", "7Z", etc.)
+    pub format: String,
+    /// Total number of files in the archive
+    pub file_count: f64,
+    /// List of file paths within the archive
+    pub file_list: Vec<String>,
+    /// Total uncompressed size in bytes
+    pub total_size: f64,
+    /// Compressed size in bytes (if available)
+    pub compressed_size: Option<f64>,
+}
+
+impl ArchiveMetadata {
+    #[must_use]
+    
+    pub fn new(
+        format: String,
+        file_count: f64,
+        file_list: Vec<String>,
+        total_size: f64,
+        compressed_size: Option<f64>,
+    ) -> Self {
+        Self { format, file_count, file_list, total_size, compressed_size }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ImageMetadata {
+    /// Image width in pixels
+    pub width: i32,
+    /// Image height in pixels
+    pub height: i32,
+    /// Image format (e.g., "PNG", "JPEG", "TIFF")
+    pub format: String,
+    /// EXIF metadata tags
+    pub exif: HashMap<String, String>,
+}
+
+impl ImageMetadata {
+    #[must_use]
+    
+    pub fn new(width: i32, height: i32, format: String, exif: HashMap<String, String>) -> Self {
+        Self { width, height, format, exif }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct XmlMetadata {
+    /// Total number of XML elements processed
+    pub element_count: f64,
+    /// List of unique element tag names (sorted)
+    pub unique_elements: Vec<String>,
+}
+
+impl XmlMetadata {
+    #[must_use]
+    
+    pub fn new(element_count: f64, unique_elements: Vec<String>) -> Self {
+        Self { element_count, unique_elements }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct TextMetadata {
+    /// Number of lines in the document
+    pub line_count: f64,
+    /// Number of words
+    pub word_count: f64,
+    /// Number of characters
+    pub character_count: f64,
+    /// Markdown headers (headings text only, for Markdown files)
+    pub headers: Option<Vec<String>>,
+    /// Markdown links as (text, url) tuples (for Markdown files)
+    pub links: Option<Vec<String>>,
+    /// Code blocks as (language, code) tuples (for Markdown files)
+    pub code_blocks: Option<Vec<String>>,
+}
+
+impl TextMetadata {
+    #[must_use]
+    
+    pub fn new(
+        line_count: f64,
+        word_count: f64,
+        character_count: f64,
+        headers: Option<Vec<String>>,
+        links: Option<Vec<String>>,
+        code_blocks: Option<Vec<String>>,
+    ) -> Self {
+        Self { line_count, word_count, character_count, headers, links, code_blocks }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct HeaderMetadata {
+    /// Header level: 1 (h1) through 6 (h6)
+    pub level: i32,
+    /// Normalized text content of the header
+    pub text: String,
+    /// HTML id attribute if present
+    pub id: Option<String>,
+    /// Document tree depth at the header element
+    pub depth: f64,
+    /// Byte offset in original HTML document
+    pub html_offset: f64,
+}
+
+impl HeaderMetadata {
+    #[must_use]
+    
+    pub fn new(level: i32, text: String, depth: f64, html_offset: f64, id: Option<String>) -> Self {
+        Self { level, text, id, depth, html_offset }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct LinkMetadata {
+    /// The href URL value
+    pub href: String,
+    /// Link text content (normalized)
+    pub text: String,
+    /// Optional title attribute
+    pub title: Option<String>,
+    /// Link type classification
+    pub link_type: LinkType,
+    /// Rel attribute values
+    pub rel: Vec<String>,
+    /// Additional attributes as key-value pairs
+    pub attributes: Vec<String>,
+}
+
+impl LinkMetadata {
+    #[must_use]
+    
+    pub fn new(
+        href: String,
+        text: String,
+        link_type: LinkType,
+        rel: Vec<String>,
+        attributes: Vec<String>,
+        title: Option<String>,
+    ) -> Self {
+        Self { href, text, title, link_type, rel, attributes }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ImageMetadataType {
+    /// Image source (URL, data URI, or SVG content)
+    pub src: String,
+    /// Alternative text from alt attribute
+    pub alt: Option<String>,
+    /// Title attribute
+    pub title: Option<String>,
+    /// Image dimensions as (width, height) if available
+    pub dimensions: Option<String>,
+    /// Image type classification
+    pub image_type: ImageType,
+    /// Additional attributes as key-value pairs
+    pub attributes: Vec<String>,
+}
+
+impl ImageMetadataType {
+    #[must_use]
+    
+    pub fn new(
+        src: String,
+        image_type: ImageType,
+        attributes: Vec<String>,
+        alt: Option<String>,
+        title: Option<String>,
+        dimensions: Option<String>,
+    ) -> Self {
+        Self { src, alt, title, dimensions, image_type, attributes }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct StructuredData {
+    /// Type of structured data
+    pub data_type: StructuredDataType,
+    /// Raw JSON string representation
+    pub raw_json: String,
+    /// Schema type if detectable (e.g., "Article", "Event", "Product")
+    pub schema_type: Option<String>,
+}
+
+impl StructuredData {
+    #[must_use]
+    
+    pub fn new(data_type: StructuredDataType, raw_json: String, schema_type: Option<String>) -> Self {
+        Self { data_type, raw_json, schema_type }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct HtmlMetadata {
+    /// Document title from `<title>` tag
+    pub title: Option<String>,
+    /// Document description from `<meta name="description">` tag
+    pub description: Option<String>,
+    /// Document keywords from `<meta name="keywords">` tag, split on commas
+    pub keywords: Vec<String>,
+    /// Document author from `<meta name="author">` tag
+    pub author: Option<String>,
+    /// Canonical URL from `<link rel="canonical">` tag
+    pub canonical_url: Option<String>,
+    /// Base URL from `<base href="">` tag for resolving relative URLs
+    pub base_href: Option<String>,
+    /// Document language from `lang` attribute
+    pub language: Option<String>,
+    /// Document text direction from `dir` attribute
+    pub text_direction: Option<TextDirection>,
+    /// Open Graph metadata (og:* properties) for social media
+    /// Keys like "title", "description", "image", "url", etc.
+    pub open_graph: HashMap<String, String>,
+    /// Twitter Card metadata (twitter:* properties)
+    /// Keys like "card", "site", "creator", "title", "description", "image", etc.
+    pub twitter_card: HashMap<String, String>,
+    /// Additional meta tags not covered by specific fields
+    /// Keys are meta name/property attributes, values are content
+    pub meta_tags: HashMap<String, String>,
+    /// Extracted header elements with hierarchy
+    pub headers: Vec<HeaderMetadata>,
+    /// Extracted hyperlinks with type classification
+    pub links: Vec<LinkMetadata>,
+    /// Extracted images with source and dimensions
+    pub images: Vec<ImageMetadataType>,
+    /// Extracted structured data blocks
+    pub structured_data: Vec<StructuredData>,
+}
+
+impl Default for HtmlMetadata {
+    fn default() -> Self {
+        Self {
+            title: Default::default(),
+            description: Default::default(),
+            keywords: Default::default(),
+            author: Default::default(),
+            canonical_url: Default::default(),
+            base_href: Default::default(),
+            language: Default::default(),
+            text_direction: Default::default(),
+            open_graph: Default::default(),
+            twitter_card: Default::default(),
+            meta_tags: Default::default(),
+            headers: Default::default(),
+            links: Default::default(),
+            images: Default::default(),
+            structured_data: Default::default(),
+        }
+    }
+}
+
+impl HtmlMetadata {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        keywords: Option<Vec<String>>,
+        open_graph: Option<HashMap<String, String>>,
+        twitter_card: Option<HashMap<String, String>>,
+        meta_tags: Option<HashMap<String, String>>,
+        headers: Option<Vec<HeaderMetadata>>,
+        links: Option<Vec<LinkMetadata>>,
+        images: Option<Vec<ImageMetadataType>>,
+        structured_data: Option<Vec<StructuredData>>,
+        title: Option<String>,
+        description: Option<String>,
+        author: Option<String>,
+        canonical_url: Option<String>,
+        base_href: Option<String>,
+        language: Option<String>,
+        text_direction: Option<TextDirection>,
+    ) -> Self {
+        Self { title: title, description: description, keywords: keywords.unwrap_or_default(), author: author, canonical_url: canonical_url, base_href: base_href, language: language, text_direction: text_direction, open_graph: open_graph.unwrap_or_default(), twitter_card: twitter_card.unwrap_or_default(), meta_tags: meta_tags.unwrap_or_default(), headers: headers.unwrap_or_default(), links: links.unwrap_or_default(), images: images.unwrap_or_default(), structured_data: structured_data.unwrap_or_default() }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        let core_self = kreuzberg::HtmlMetadata {
+            title: self.title.clone(),
+            description: self.description.clone(),
+            keywords: self.keywords.clone(),
+            author: self.author.clone(),
+            canonical_url: self.canonical_url.clone(),
+            base_href: self.base_href.clone(),
+            language: self.language.clone(),
+            text_direction: self.text_direction.clone().map(Into::into),
+            open_graph: self.open_graph.clone().into_iter().collect(),
+            twitter_card: self.twitter_card.clone().into_iter().collect(),
+            meta_tags: self.meta_tags.clone().into_iter().collect(),
+            headers: self.headers.clone().into_iter().map(Into::into).collect(),
+            links: self.links.clone().into_iter().map(Into::into).collect(),
+            images: self.images.clone().into_iter().map(Into::into).collect(),
+            structured_data: self.structured_data.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.is_empty()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn from(metadata: HtmlMetadata) -> HtmlMetadata {
+        kreuzberg::HtmlMetadata::from(metadata.into()).into()
+    }
+}
+
+#[extendr]
+pub fn new_htmlmetadata(
+    title: String = "",
+    description: String = "",
+    keywords: Vec<String> = c(),
+    author: String = "",
+    canonical_url: String = "",
+    base_href: String = "",
+    language: String = "",
+    text_direction: TextDirection = null,
+    open_graph: HashMap<String, String> = null,
+    twitter_card: HashMap<String, String> = null,
+    meta_tags: HashMap<String, String> = null,
+    headers: Vec<HeaderMetadata> = c(),
+    links: Vec<LinkMetadata> = c(),
+    images: Vec<ImageMetadataType> = c(),
+    structured_data: Vec<StructuredData> = c()
+) -> HtmlMetadata {
+    HtmlMetadata {
+        title,
+        description,
+        keywords,
+        author,
+        canonical_url,
+        base_href,
+        language,
+        text_direction,
+        open_graph,
+        twitter_card,
+        meta_tags,
+        headers,
+        links,
+        images,
+        structured_data,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct OcrMetadata {
+    /// OCR language code(s) used
+    pub language: String,
+    /// Tesseract Page Segmentation Mode (PSM)
+    pub psm: i32,
+    /// Output format (e.g., "text", "hocr")
+    pub output_format: String,
+    /// Number of tables detected
+    pub table_count: f64,
+    pub table_rows: Option<f64>,
+    pub table_cols: Option<f64>,
+}
+
+impl OcrMetadata {
+    #[must_use]
+    
+    pub fn new(
+        language: String,
+        psm: i32,
+        output_format: String,
+        table_count: f64,
+        table_rows: Option<f64>,
+        table_cols: Option<f64>,
+    ) -> Self {
+        Self { language, psm, output_format, table_count, table_rows, table_cols }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ErrorMetadata {
+    pub error_type: String,
+    pub message: String,
+}
+
+impl ErrorMetadata {
+    #[must_use]
+    
+    pub fn new(error_type: String, message: String) -> Self {
+        Self { error_type, message }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PptxMetadata {
+    /// Total number of slides in the presentation
+    pub slide_count: f64,
+    /// Names of slides (if available)
+    pub slide_names: Vec<String>,
+    /// Number of embedded images
+    pub image_count: Option<f64>,
+    /// Number of tables
+    pub table_count: Option<f64>,
+}
+
+impl PptxMetadata {
+    #[must_use]
+    
+    pub fn new(slide_count: f64, slide_names: Vec<String>, image_count: Option<f64>, table_count: Option<f64>) -> Self {
+        Self { slide_count, slide_names, image_count, table_count }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DocxMetadata {
+    /// Core properties from docProps/core.xml (Dublin Core metadata)
+    /// 
+    /// Contains title, creator, subject, keywords, dates, etc.
+    /// Shared format across DOCX/PPTX/XLSX documents.
+    pub core_properties: Option<String>,
+    /// Application properties from docProps/app.xml (Word-specific statistics)
+    /// 
+    /// Contains word count, page count, paragraph count, editing time, etc.
+    /// DOCX-specific variant of Office application properties.
+    pub app_properties: Option<String>,
+    /// Custom properties from docProps/custom.xml (user-defined properties)
+    /// 
+    /// Contains key-value pairs defined by users or applications.
+    /// Values can be strings, numbers, booleans, or dates.
+    pub custom_properties: Option<HashMap<String, String>>,
+}
+
+impl DocxMetadata {
+    #[must_use]
+    
+    pub fn new(
+        core_properties: Option<String>,
+        app_properties: Option<String>,
+        custom_properties: Option<HashMap<String, String>>,
+    ) -> Self {
+        Self { core_properties, app_properties, custom_properties }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct CsvMetadata {
+    pub row_count: f64,
+    pub column_count: f64,
+    pub delimiter: Option<String>,
+    pub has_header: bool,
+    pub column_types: Option<Vec<String>>,
+}
+
+impl Default for CsvMetadata {
+    fn default() -> Self {
+        Self {
+            row_count: Default::default(),
+            column_count: Default::default(),
+            delimiter: Default::default(),
+            has_header: Default::default(),
+            column_types: Default::default(),
+        }
+    }
+}
+
+impl CsvMetadata {
+    #[must_use]
+    
+    pub fn new(
+        row_count: Option<f64>,
+        column_count: Option<f64>,
+        has_header: Option<bool>,
+        delimiter: Option<String>,
+        column_types: Option<Vec<String>>,
+    ) -> Self {
+        Self { row_count: row_count.unwrap_or_default(), column_count: column_count.unwrap_or_default(), delimiter: delimiter, has_header: has_header.unwrap_or_default(), column_types: column_types }
+    }
+}
+
+#[extendr]
+pub fn new_csvmetadata(
+    row_count: f64 = 0,
+    column_count: f64 = 0,
+    delimiter: String = "",
+    has_header: bool = false,
+    column_types: Vec<String> = c()
+) -> CsvMetadata {
+    CsvMetadata {
+        row_count,
+        column_count,
+        delimiter,
+        has_header,
+        column_types,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct BibtexMetadata {
+    pub entry_count: f64,
+    pub citation_keys: Vec<String>,
+    pub authors: Vec<String>,
+    pub year_range: Option<YearRange>,
+    pub entry_types: Option<HashMap<String, f64>>,
+}
+
+impl Default for BibtexMetadata {
+    fn default() -> Self {
+        Self {
+            entry_count: Default::default(),
+            citation_keys: Default::default(),
+            authors: Default::default(),
+            year_range: Default::default(),
+            entry_types: Default::default(),
+        }
+    }
+}
+
+impl BibtexMetadata {
+    #[must_use]
+    
+    pub fn new(
+        entry_count: Option<f64>,
+        citation_keys: Option<Vec<String>>,
+        authors: Option<Vec<String>>,
+        year_range: Option<YearRange>,
+        entry_types: Option<HashMap<String, f64>>,
+    ) -> Self {
+        Self { entry_count: entry_count.unwrap_or_default(), citation_keys: citation_keys.unwrap_or_default(), authors: authors.unwrap_or_default(), year_range: year_range, entry_types: entry_types }
+    }
+}
+
+#[extendr]
+pub fn new_bibtexmetadata(
+    entry_count: f64 = 0,
+    citation_keys: Vec<String> = c(),
+    authors: Vec<String> = c(),
+    year_range: YearRange = null,
+    entry_types: HashMap<String, f64> = null
+) -> BibtexMetadata {
+    BibtexMetadata {
+        entry_count,
+        citation_keys,
+        authors,
+        year_range,
+        entry_types,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct CitationMetadata {
+    pub citation_count: f64,
+    pub format: Option<String>,
+    pub authors: Vec<String>,
+    pub year_range: Option<YearRange>,
+    pub dois: Vec<String>,
+    pub keywords: Vec<String>,
+}
+
+impl Default for CitationMetadata {
+    fn default() -> Self {
+        Self {
+            citation_count: Default::default(),
+            format: Default::default(),
+            authors: Default::default(),
+            year_range: Default::default(),
+            dois: Default::default(),
+            keywords: Default::default(),
+        }
+    }
+}
+
+impl CitationMetadata {
+    #[must_use]
+    
+    pub fn new(
+        citation_count: Option<f64>,
+        authors: Option<Vec<String>>,
+        dois: Option<Vec<String>>,
+        keywords: Option<Vec<String>>,
+        format: Option<String>,
+        year_range: Option<YearRange>,
+    ) -> Self {
+        Self { citation_count: citation_count.unwrap_or_default(), format: format, authors: authors.unwrap_or_default(), year_range: year_range, dois: dois.unwrap_or_default(), keywords: keywords.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_citationmetadata(
+    citation_count: f64 = 0,
+    format: String = "",
+    authors: Vec<String> = c(),
+    year_range: YearRange = null,
+    dois: Vec<String> = c(),
+    keywords: Vec<String> = c()
+) -> CitationMetadata {
+    CitationMetadata {
+        citation_count,
+        format,
+        authors,
+        year_range,
+        dois,
+        keywords,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct YearRange {
+    pub min: Option<i32>,
+    pub max: Option<i32>,
+    pub years: Vec<i32>,
+}
+
+impl YearRange {
+    #[must_use]
+    
+    pub fn new(years: Vec<i32>, min: Option<i32>, max: Option<i32>) -> Self {
+        Self { min, max, years }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct FictionBookMetadata {
+    pub genres: Vec<String>,
+    pub sequences: Vec<String>,
+    pub annotation: Option<String>,
+}
+
+impl Default for FictionBookMetadata {
+    fn default() -> Self {
+        Self {
+            genres: Default::default(),
+            sequences: Default::default(),
+            annotation: Default::default(),
+        }
+    }
+}
+
+impl FictionBookMetadata {
+    #[must_use]
+    
+    pub fn new(genres: Option<Vec<String>>, sequences: Option<Vec<String>>, annotation: Option<String>) -> Self {
+        Self { genres: genres.unwrap_or_default(), sequences: sequences.unwrap_or_default(), annotation: annotation }
+    }
+}
+
+#[extendr]
+pub fn new_fictionbookmetadata(
+    genres: Vec<String> = c(),
+    sequences: Vec<String> = c(),
+    annotation: String = ""
+) -> FictionBookMetadata {
+    FictionBookMetadata {
+        genres,
+        sequences,
+        annotation,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct DbfMetadata {
+    pub record_count: f64,
+    pub field_count: f64,
+    pub fields: Vec<DbfFieldInfo>,
+}
+
+impl Default for DbfMetadata {
+    fn default() -> Self {
+        Self {
+            record_count: Default::default(),
+            field_count: Default::default(),
+            fields: Default::default(),
+        }
+    }
+}
+
+impl DbfMetadata {
+    #[must_use]
+    
+    pub fn new(record_count: Option<f64>, field_count: Option<f64>, fields: Option<Vec<DbfFieldInfo>>) -> Self {
+        Self { record_count: record_count.unwrap_or_default(), field_count: field_count.unwrap_or_default(), fields: fields.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_dbfmetadata(
+    record_count: f64 = 0,
+    field_count: f64 = 0,
+    fields: Vec<DbfFieldInfo> = c()
+) -> DbfMetadata {
+    DbfMetadata {
+        record_count,
+        field_count,
+        fields,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct DbfFieldInfo {
+    pub name: String,
+    pub field_type: String,
+}
+
+impl DbfFieldInfo {
+    #[must_use]
+    
+    pub fn new(name: String, field_type: String) -> Self {
+        Self { name, field_type }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct JatsMetadata {
+    pub copyright: Option<String>,
+    pub license: Option<String>,
+    pub history_dates: HashMap<String, String>,
+    pub contributor_roles: Vec<ContributorRole>,
+}
+
+impl Default for JatsMetadata {
+    fn default() -> Self {
+        Self {
+            copyright: Default::default(),
+            license: Default::default(),
+            history_dates: Default::default(),
+            contributor_roles: Default::default(),
+        }
+    }
+}
+
+impl JatsMetadata {
+    #[must_use]
+    
+    pub fn new(
+        history_dates: Option<HashMap<String, String>>,
+        contributor_roles: Option<Vec<ContributorRole>>,
+        copyright: Option<String>,
+        license: Option<String>,
+    ) -> Self {
+        Self { copyright: copyright, license: license, history_dates: history_dates.unwrap_or_default(), contributor_roles: contributor_roles.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_jatsmetadata(
+    copyright: String = "",
+    license: String = "",
+    history_dates: HashMap<String, String> = null,
+    contributor_roles: Vec<ContributorRole> = c()
+) -> JatsMetadata {
+    JatsMetadata {
+        copyright,
+        license,
+        history_dates,
+        contributor_roles,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct ContributorRole {
+    pub name: String,
+    pub role: Option<String>,
+}
+
+impl ContributorRole {
+    #[must_use]
+    
+    pub fn new(name: String, role: Option<String>) -> Self {
+        Self { name, role }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct EpubMetadata {
+    pub coverage: Option<String>,
+    pub dc_format: Option<String>,
+    pub relation: Option<String>,
+    pub source: Option<String>,
+    pub dc_type: Option<String>,
+    pub cover_image: Option<String>,
+}
+
+impl Default for EpubMetadata {
+    fn default() -> Self {
+        Self {
+            coverage: Default::default(),
+            dc_format: Default::default(),
+            relation: Default::default(),
+            source: Default::default(),
+            dc_type: Default::default(),
+            cover_image: Default::default(),
+        }
+    }
+}
+
+impl EpubMetadata {
+    #[must_use]
+    
+    pub fn new(
+        coverage: Option<String>,
+        dc_format: Option<String>,
+        relation: Option<String>,
+        source: Option<String>,
+        dc_type: Option<String>,
+        cover_image: Option<String>,
+    ) -> Self {
+        Self { coverage: coverage, dc_format: dc_format, relation: relation, source: source, dc_type: dc_type, cover_image: cover_image }
+    }
+}
+
+#[extendr]
+pub fn new_epubmetadata(
+    coverage: String = "",
+    dc_format: String = "",
+    relation: String = "",
+    source: String = "",
+    dc_type: String = "",
+    cover_image: String = ""
+) -> EpubMetadata {
+    EpubMetadata {
+        coverage,
+        dc_format,
+        relation,
+        source,
+        dc_type,
+        cover_image,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PstMetadata {
+    pub message_count: f64,
+}
+
+impl Default for PstMetadata {
+    fn default() -> Self {
+        Self {
+            message_count: Default::default(),
+        }
+    }
+}
+
+impl PstMetadata {
+    #[must_use]
+    
+    pub fn new(message_count: Option<f64>) -> Self {
+        Self { message_count: message_count.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_pstmetadata(
+    message_count: f64 = 0
+) -> PstMetadata {
+    PstMetadata {
+        message_count,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrConfidence {
+    /// Detection confidence: how confident the OCR engine is that text exists here.
+    /// 
+    /// PaddleOCR provides this as `box_score`, Tesseract doesn't have a direct equivalent.
+    /// Range: 0.0 to 1.0 (or None if not available).
+    pub detection: Option<f64>,
+    /// Recognition confidence: how confident about the text content.
+    /// 
+    /// Range: 0.0 to 1.0.
+    pub recognition: f64,
+}
+
+impl OcrConfidence {
+    #[must_use]
+    
+    pub fn new(recognition: f64, detection: Option<f64>) -> Self {
+        Self { detection, recognition }
+    }
+
+    pub fn from_tesseract(confidence: f64) -> OcrConfidence {
+        kreuzberg::OcrConfidence::from_tesseract(confidence).into()
+    }
+
+    pub fn from_paddle(box_score: f64, text_score: f64) -> OcrConfidence {
+        kreuzberg::OcrConfidence::from_paddle(box_score, text_score).into()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrRotation {
+    /// Rotation angle in degrees (0, 90, 180, 270 for PaddleOCR).
+    pub angle_degrees: f64,
+    /// Confidence score for the rotation detection.
+    pub confidence: Option<f64>,
+}
+
+impl OcrRotation {
+    #[must_use]
+    
+    pub fn new(angle_degrees: f64, confidence: Option<f64>) -> Self {
+        Self { angle_degrees, confidence }
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn from_paddle(angle_index: i32, angle_score: f64) -> Result<OcrRotation> {
+        kreuzberg::OcrRotation::from_paddle(angle_index, angle_score).map(|val| val.into()).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrElement {
+    /// The recognized text content.
+    pub text: String,
+    /// Bounding geometry (rectangle or quadrilateral).
+    pub geometry: OcrBoundingGeometry,
+    /// Confidence scores for detection and recognition.
+    pub confidence: OcrConfidence,
+    /// Hierarchical level (word, line, block, page).
+    pub level: OcrElementLevel,
+    /// Rotation information (if detected).
+    pub rotation: Option<OcrRotation>,
+    /// Page number (1-indexed).
+    pub page_number: f64,
+    /// Parent element ID for hierarchical relationships.
+    /// 
+    /// Only used for Tesseract output which has word -> line -> block hierarchy.
+    pub parent_id: Option<String>,
+    /// Backend-specific metadata that doesn't fit the unified schema.
+    pub backend_metadata: HashMap<String, String>,
+}
+
+impl OcrElement {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        text: String,
+        geometry: OcrBoundingGeometry,
+        confidence: OcrConfidence,
+        level: OcrElementLevel,
+        page_number: f64,
+        backend_metadata: HashMap<String, String>,
+        rotation: Option<OcrRotation>,
+        parent_id: Option<String>,
+    ) -> Self {
+        Self { text, geometry, confidence, level, rotation, page_number, parent_id, backend_metadata }
+    }
+
+    pub fn with_level(&self, level: OcrElementLevel) -> OcrElement {
+        let _ = level;
+        compile_error!("alef: OcrElement.with_level returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn with_rotation(&self, rotation: OcrRotation) -> OcrElement {
+        let _ = rotation;
+        compile_error!("alef: OcrElement.with_rotation returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn with_page_number(&self, page_number: f64) -> OcrElement {
+        let core_self = kreuzberg::OcrElement {
+            text: self.text.clone(),
+            geometry: self.geometry.clone().into(),
+            confidence: self.confidence.clone().into(),
+            level: self.level.clone().into(),
+            rotation: self.rotation.clone().map(Into::into),
+            page_number: self.page_number,
+            parent_id: self.parent_id.clone(),
+            backend_metadata: self.backend_metadata.clone().into_iter().map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::Value::String(v)))).collect(),
+        };
+        core_self.with_page_number(page_number).into()
+    }
+
+    pub fn with_parent_id(&self, parent_id: String) -> OcrElement {
+        let core_self = kreuzberg::OcrElement {
+            text: self.text.clone(),
+            geometry: self.geometry.clone().into(),
+            confidence: self.confidence.clone().into(),
+            level: self.level.clone().into(),
+            rotation: self.rotation.clone().map(Into::into),
+            page_number: self.page_number,
+            parent_id: self.parent_id.clone(),
+            backend_metadata: self.backend_metadata.clone().into_iter().map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::Value::String(v)))).collect(),
+        };
+        core_self.with_parent_id(parent_id).into()
+    }
+
+    pub fn with_metadata(&self, key: String, value: String) -> OcrElement {
+        let _ = (key, value);
+        compile_error!("alef: OcrElement.with_metadata returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn with_rotation_opt(&self, rotation: Option<OcrRotation>) -> OcrElement {
+        let _ = rotation;
+        compile_error!("alef: OcrElement.with_rotation_opt returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct OcrElementConfig {
+    /// Whether to include OCR elements in the extraction result.
+    /// 
+    /// When true, the `ocr_elements` field in `ExtractionResult` will be populated.
+    pub include_elements: bool,
+    /// Minimum hierarchical level to include.
+    /// 
+    /// Elements below this level (e.g., words when min_level is Line) will be excluded.
+    pub min_level: OcrElementLevel,
+    /// Minimum recognition confidence threshold (0.0-1.0).
+    /// 
+    /// Elements with confidence below this threshold will be filtered out.
+    pub min_confidence: f64,
+    /// Whether to build hierarchical relationships between elements.
+    /// 
+    /// When true, `parent_id` fields will be populated based on spatial containment.
+    /// Only meaningful for Tesseract output.
+    pub build_hierarchy: bool,
+}
+
+impl Default for OcrElementConfig {
+    fn default() -> Self {
+        Self {
+            include_elements: Default::default(),
+            min_level: Default::default(),
+            min_confidence: Default::default(),
+            build_hierarchy: Default::default(),
+        }
+    }
+}
+
+impl OcrElementConfig {
+    #[must_use]
+    
+    pub fn new(
+        include_elements: Option<bool>,
+        min_level: Option<OcrElementLevel>,
+        min_confidence: Option<f64>,
+        build_hierarchy: Option<bool>,
+    ) -> Self {
+        Self { include_elements: include_elements.unwrap_or_default(), min_level: min_level.unwrap_or_default(), min_confidence: min_confidence.unwrap_or_default(), build_hierarchy: build_hierarchy.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_ocrelementconfig(
+    include_elements: bool = false,
+    min_level: OcrElementLevel = null,
+    min_confidence: f64 = 0.0,
+    build_hierarchy: bool = false
+) -> OcrElementConfig {
+    OcrElementConfig {
+        include_elements,
+        min_level,
+        min_confidence,
+        build_hierarchy,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct PageStructure {
+    /// Total number of pages/slides/sheets
+    pub total_count: f64,
+    /// Type of paginated unit
+    pub unit_type: PageUnitType,
+    /// Character offset boundaries for each page
+    /// 
+    /// Maps character ranges in the extracted content to page numbers.
+    /// Used for chunk page range calculation.
+    pub boundaries: Option<Vec<PageBoundary>>,
+    /// Detailed per-page metadata (optional, only when needed)
+    pub pages: Option<Vec<PageInfo>>,
+}
+
+impl PageStructure {
+    #[must_use]
+    
+    pub fn new(
+        total_count: f64,
+        unit_type: PageUnitType,
+        boundaries: Option<Vec<PageBoundary>>,
+        pages: Option<Vec<PageInfo>>,
+    ) -> Self {
+        Self { total_count, unit_type, boundaries, pages }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PageBoundary {
+    /// Byte offset where this page starts in the content string (UTF-8 valid boundary, inclusive)
+    pub byte_start: f64,
+    /// Byte offset where this page ends in the content string (UTF-8 valid boundary, exclusive)
+    pub byte_end: f64,
+    /// Page number (1-indexed)
+    pub page_number: f64,
+}
+
+impl PageBoundary {
+    #[must_use]
+    
+    pub fn new(byte_start: f64, byte_end: f64, page_number: f64) -> Self {
+        Self { byte_start, byte_end, page_number }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PageInfo {
+    /// Page number (1-indexed)
+    pub number: f64,
+    /// Page title (usually for presentations)
+    pub title: Option<String>,
+    /// Dimensions in points (PDF) or pixels (images): (width, height)
+    pub dimensions: Option<String>,
+    /// Number of images on this page
+    pub image_count: Option<f64>,
+    /// Number of tables on this page
+    pub table_count: Option<f64>,
+    /// Whether this page is hidden (e.g., in presentations)
+    pub hidden: Option<bool>,
+    /// Whether this page is blank (no meaningful text, no images, no tables)
+    /// 
+    /// A page is considered blank if it has fewer than 3 non-whitespace characters
+    /// and contains no tables or images. This is useful for filtering out empty pages
+    /// in scanned documents or PDFs with blank separator pages.
+    pub is_blank: Option<bool>,
+}
+
+impl PageInfo {
+    #[must_use]
+    
+    pub fn new(
+        number: f64,
+        title: Option<String>,
+        dimensions: Option<String>,
+        image_count: Option<f64>,
+        table_count: Option<f64>,
+        hidden: Option<bool>,
+        is_blank: Option<bool>,
+    ) -> Self {
+        Self { number, title, dimensions, image_count, table_count, hidden, is_blank }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PageContent {
+    /// Page number (1-indexed)
+    pub page_number: f64,
+    /// Text content for this page
+    pub content: String,
+    /// Tables found on this page (uses Arc for memory efficiency)
+    /// 
+    /// Serializes as Vec<Table> for JSON compatibility while maintaining
+    /// Arc semantics in-memory for zero-copy sharing.
+    pub tables: Vec<Table>,
+    /// Images found on this page (uses Arc for memory efficiency)
+    /// 
+    /// Serializes as Vec<ExtractedImage> for JSON compatibility while maintaining
+    /// Arc semantics in-memory for zero-copy sharing.
+    pub images: Vec<ExtractedImage>,
+    /// Hierarchy information for the page (when hierarchy extraction is enabled)
+    /// 
+    /// Contains text hierarchy levels (H1-H6) extracted from the page content.
+    pub hierarchy: Option<PageHierarchy>,
+    /// Whether this page is blank (no meaningful text content)
+    /// 
+    /// Determined during extraction based on text content analysis.
+    /// A page is blank if it has fewer than 3 non-whitespace characters
+    /// and contains no tables or images.
+    pub is_blank: Option<bool>,
+}
+
+impl PageContent {
+    #[must_use]
+    
+    pub fn new(
+        page_number: f64,
+        content: String,
+        tables: Vec<Table>,
+        images: Vec<ExtractedImage>,
+        hierarchy: Option<PageHierarchy>,
+        is_blank: Option<bool>,
+    ) -> Self {
+        Self { page_number, content, tables, images, hierarchy, is_blank }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PageHierarchy {
+    /// Number of hierarchy blocks on this page
+    pub block_count: f64,
+    /// Hierarchical blocks with heading levels
+    pub blocks: Vec<HierarchicalBlock>,
+}
+
+impl PageHierarchy {
+    #[must_use]
+    
+    pub fn new(block_count: f64, blocks: Vec<HierarchicalBlock>) -> Self {
+        Self { block_count, blocks }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct HierarchicalBlock {
+    /// The text content of this block
+    pub text: String,
+    /// The font size of the text in this block
+    pub font_size: f64,
+    /// The hierarchy level of this block (H1-H6 or Body)
+    /// 
+    /// Levels correspond to HTML heading tags:
+    /// - "h1": Top-level heading
+    /// - "h2": Secondary heading
+    /// - "h3": Tertiary heading
+    /// - "h4": Quaternary heading
+    /// - "h5": Quinary heading
+    /// - "h6": Senary heading
+    /// - "body": Body text (no heading level)
+    pub level: String,
+    /// Bounding box information for the block
+    /// 
+    /// Contains coordinates as (left, top, right, bottom) in PDF units.
+    pub bbox: Option<String>,
+}
+
+impl HierarchicalBlock {
+    #[must_use]
+    
+    pub fn new(text: String, font_size: f64, level: String, bbox: Option<String>) -> Self {
+        Self { text, font_size, level, bbox }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Table {
+    /// Table cells as a 2D vector (rows × columns)
+    pub cells: Vec<Vec<String>>,
+    /// Markdown representation of the table
+    pub markdown: String,
+    /// Page number where the table was found (1-indexed)
+    pub page_number: f64,
+    /// Bounding box of the table on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top).
+    /// Only populated for PDF-extracted tables when position data is available.
+    pub bounding_box: Option<BoundingBox>,
+}
+
+impl Table {
+    #[must_use]
+    
+    pub fn new(cells: Vec<Vec<String>>, markdown: String, page_number: f64, bounding_box: Option<BoundingBox>) -> Self {
+        Self { cells, markdown, page_number, bounding_box }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct TableCell {
+    /// Cell content as text
+    pub content: String,
+    /// Row span (number of rows this cell spans)
+    pub row_span: f64,
+    /// Column span (number of columns this cell spans)
+    pub col_span: f64,
+    /// Whether this is a header cell
+    pub is_header: bool,
+}
+
+impl TableCell {
+    #[must_use]
+    
+    pub fn new(content: String, row_span: f64, col_span: f64, is_header: bool) -> Self {
+        Self { content, row_span, col_span, is_header }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Uri {
+    /// The URL or path string.
+    pub url: String,
+    /// Optional display text / label for the link.
+    pub label: Option<String>,
+    /// Optional page number where the URI was found (1-indexed).
+    pub page: Option<i32>,
+    /// Semantic classification of the URI.
+    pub kind: UriKind,
+}
+
+impl Uri {
+    #[must_use]
+    
+    pub fn new(url: String, kind: UriKind, label: Option<String>, page: Option<i32>) -> Self {
+        Self { url, label, page, kind }
+    }
+
+    pub fn with_page(&self, page: i32) -> Uri {
+        let core_self = kreuzberg::Uri {
+            url: self.url.clone(),
+            label: self.label.clone(),
+            page: self.page,
+            kind: self.kind.clone().into(),
+        };
+        core_self.with_page(page).into()
+    }
+
+    pub fn hyperlink(url: String, label: Option<String>) -> Uri {
+        kreuzberg::Uri::hyperlink(url, label).into()
+    }
+
+    pub fn image(url: String, label: Option<String>) -> Uri {
+        kreuzberg::Uri::image(url, label).into()
+    }
+
+    pub fn citation(url: String, label: Option<String>) -> Uri {
+        kreuzberg::Uri::citation(url, label).into()
+    }
+
+    pub fn anchor(url: String, label: Option<String>) -> Uri {
+        kreuzberg::Uri::anchor(url, label).into()
+    }
+
+    pub fn email(url: String, label: Option<String>) -> Uri {
+        kreuzberg::Uri::email(url, label).into()
+    }
+
+    pub fn reference(url: String, label: Option<String>) -> Uri {
+        kreuzberg::Uri::reference(url, label).into()
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PoolMetrics {
+    /// Total number of acquire calls on this pool
+    pub total_acquires: String,
+    /// Total number of cache hits (reused objects from pool)
+    pub total_cache_hits: String,
+    /// Peak number of objects stored simultaneously in this pool
+    pub peak_items_stored: String,
+    /// Total number of objects created by the factory function
+    pub total_creations: String,
+}
+
+impl Default for PoolMetrics {
+    fn default() -> Self {
+        Self {
+            total_acquires: Default::default(),
+            total_cache_hits: Default::default(),
+            peak_items_stored: Default::default(),
+            total_creations: Default::default(),
+        }
+    }
+}
+
+impl PoolMetrics {
+    #[must_use]
+    
+    pub fn new(
+        total_acquires: Option<String>,
+        total_cache_hits: Option<String>,
+        peak_items_stored: Option<String>,
+        total_creations: Option<String>,
+    ) -> Self {
+        Self { total_acquires: total_acquires.unwrap_or_default(), total_cache_hits: total_cache_hits.unwrap_or_default(), peak_items_stored: peak_items_stored.unwrap_or_default(), total_creations: total_creations.unwrap_or_default() }
+    }
+
+    pub fn hit_rate(&self) -> f64 {
+        let core_self = kreuzberg::utils::pool::PoolMetrics {
+            total_acquires: Default::default(),
+            total_cache_hits: Default::default(),
+            peak_items_stored: Default::default(),
+            total_creations: Default::default(),
+        };
+        core_self.hit_rate()
+    }
+
+    pub fn snapshot(&self) -> PoolMetricsSnapshot {
+        let core_self = kreuzberg::utils::pool::PoolMetrics {
+            total_acquires: Default::default(),
+            total_cache_hits: Default::default(),
+            peak_items_stored: Default::default(),
+            total_creations: Default::default(),
+        };
+        core_self.snapshot().into()
+    }
+
+    pub fn reset(&self) -> () {
+        let core_self = kreuzberg::utils::pool::PoolMetrics {
+            total_acquires: Default::default(),
+            total_cache_hits: Default::default(),
+            peak_items_stored: Default::default(),
+            total_creations: Default::default(),
+        };
+        core_self.reset()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PoolMetrics {
+        kreuzberg::utils::pool::PoolMetrics::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_poolmetrics(
+    total_acquires: String = "",
+    total_cache_hits: String = "",
+    peak_items_stored: String = "",
+    total_creations: String = ""
+) -> PoolMetrics {
+    PoolMetrics {
+        total_acquires,
+        total_cache_hits,
+        peak_items_stored,
+        total_creations,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct PoolMetricsSnapshot {
+    pub total_acquires: f64,
+    pub total_cache_hits: f64,
+    pub peak_items_stored: f64,
+    pub total_creations: f64,
+}
+
+impl PoolMetricsSnapshot {
+    #[must_use]
+    
+    pub fn new(total_acquires: f64, total_cache_hits: f64, peak_items_stored: f64, total_creations: f64) -> Self {
+        Self { total_acquires, total_cache_hits, peak_items_stored, total_creations }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Recyclable {
+}
+
+impl Recyclable {
+    pub fn reset(&self) -> () {
+        let mut core_self = kreuzberg::utils::Recyclable {
+        };
+        core_self.reset()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct StringBufferPool {
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ByteBufferPool {
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Pool {
+}
+
+impl Pool {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn acquire(&self) -> Result<String> {
+        Err("Not implemented: Pool.acquire".to_string())
+    }
+
+    pub fn size(&self) -> f64 {
+        let core_self = kreuzberg::utils::Pool {
+        };
+        core_self.size()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn clear(&self) -> Result<()> {
+        let core_self = kreuzberg::utils::Pool {
+        };
+        let result = core_self.clear().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PoolSizeHint {
+    /// Estimated total string buffer pool size in bytes
+    pub estimated_total_size: f64,
+    /// Recommended number of string buffers
+    pub string_buffer_count: f64,
+    /// Recommended capacity per string buffer in bytes
+    pub string_buffer_capacity: f64,
+    /// Recommended number of byte buffers
+    pub byte_buffer_count: f64,
+    /// Recommended capacity per byte buffer in bytes
+    pub byte_buffer_capacity: f64,
+}
+
+impl PoolSizeHint {
+    #[must_use]
+    
+    pub fn new(
+        estimated_total_size: f64,
+        string_buffer_count: f64,
+        string_buffer_capacity: f64,
+        byte_buffer_count: f64,
+        byte_buffer_capacity: f64,
+    ) -> Self {
+        Self { estimated_total_size, string_buffer_count, string_buffer_capacity, byte_buffer_count, byte_buffer_capacity }
+    }
+
+    pub fn estimated_string_pool_memory(&self) -> f64 {
+        let core_self = kreuzberg::utils::PoolSizeHint {
+            estimated_total_size: self.estimated_total_size,
+            string_buffer_count: self.string_buffer_count,
+            string_buffer_capacity: self.string_buffer_capacity,
+            byte_buffer_count: self.byte_buffer_count,
+            byte_buffer_capacity: self.byte_buffer_capacity,
+        };
+        core_self.estimated_string_pool_memory()
+    }
+
+    pub fn estimated_byte_pool_memory(&self) -> f64 {
+        let core_self = kreuzberg::utils::PoolSizeHint {
+            estimated_total_size: self.estimated_total_size,
+            string_buffer_count: self.string_buffer_count,
+            string_buffer_capacity: self.string_buffer_capacity,
+            byte_buffer_count: self.byte_buffer_count,
+            byte_buffer_capacity: self.byte_buffer_capacity,
+        };
+        core_self.estimated_byte_pool_memory()
+    }
+
+    pub fn total_pool_memory(&self) -> f64 {
+        let core_self = kreuzberg::utils::PoolSizeHint {
+            estimated_total_size: self.estimated_total_size,
+            string_buffer_count: self.string_buffer_count,
+            string_buffer_capacity: self.string_buffer_capacity,
+            byte_buffer_count: self.byte_buffer_count,
+            byte_buffer_capacity: self.byte_buffer_capacity,
+        };
+        core_self.total_pool_memory()
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PoolConfig {
+    /// Maximum buffers per size bucket
+    pub max_buffers_per_size: f64,
+    /// Initial capacity for new buffers
+    pub initial_capacity: f64,
+    /// Maximum capacity before discarding
+    pub max_capacity_before_discard: f64,
+}
+
+impl Default for PoolConfig {
+    fn default() -> Self {
+        Self {
+            max_buffers_per_size: Default::default(),
+            initial_capacity: Default::default(),
+            max_capacity_before_discard: Default::default(),
+        }
+    }
+}
+
+impl PoolConfig {
+    #[must_use]
+    
+    pub fn new(
+        max_buffers_per_size: Option<f64>,
+        initial_capacity: Option<f64>,
+        max_capacity_before_discard: Option<f64>,
+    ) -> Self {
+        Self { max_buffers_per_size: max_buffers_per_size.unwrap_or(4), initial_capacity: initial_capacity.unwrap_or(4096), max_capacity_before_discard: max_capacity_before_discard.unwrap_or(65536) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PoolConfig {
+        kreuzberg::utils::string_pool::PoolConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_poolconfig(
+    max_buffers_per_size: f64 = 4,
+    initial_capacity: f64 = 4096,
+    max_capacity_before_discard: f64 = 65536
+) -> PoolConfig {
+    PoolConfig {
+        max_buffers_per_size,
+        initial_capacity,
+        max_capacity_before_discard,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct StringBufferPoolMetrics {
+    /// Total number of acquire calls
+    pub total_acquires: f64,
+    /// Total number of buffer reuses from pool
+    pub total_reuses: f64,
+    /// Hit rate as percentage (0.0-100.0)
+    pub hit_rate: f64,
+}
+
+impl StringBufferPoolMetrics {
+    #[must_use]
+    
+    pub fn new(total_acquires: f64, total_reuses: f64, hit_rate: f64) -> Self {
+        Self { total_acquires, total_reuses, hit_rate }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PooledString {
+}
+
+impl PooledString {
+    pub fn buffer_mut(&self) -> String {
+        let mut core_self = kreuzberg::utils::string_pool::PooledString {
+        };
+        core_self.buffer_mut().to_owned()
+    }
+
+    pub fn as_str(&self) -> String {
+        let core_self = kreuzberg::utils::string_pool::PooledString {
+        };
+        core_self.as_str().to_owned()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn deref(&self) -> String {
+        String::from("[unimplemented: PooledString.deref]")
+    }
+
+    pub fn deref_mut(&self) -> String {
+        String::from("[unimplemented: PooledString.deref_mut]")
+    }
+
+    pub fn drop(&self) -> () {
+        let mut core_self = kreuzberg::utils::string_pool::PooledString {
+        };
+        core_self.drop()
+    }
+
+    pub fn fmt(&self, f: String) -> String {
+        let _ = f;
+        String::from("[unimplemented: PooledString.fmt]")
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct InternedString {
+}
+
+impl InternedString {
+    pub fn as_str(&self) -> String {
+        let core_self = kreuzberg::utils::string_pool::InternedString {
+        };
+        core_self.as_str().to_owned()
+    }
+
+    pub fn as_ref(&self) -> String {
+        let core_self = kreuzberg::utils::string_pool::InternedString {
+        };
+        core_self.as_ref().to_owned()
+    }
+
+    pub fn fmt(&self, f: String) -> String {
+        let _ = f;
+        String::from("[unimplemented: InternedString.fmt]")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn eq(&self, other: InternedString) -> bool {
+        let _ = other;
+        false
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn deref(&self) -> String {
+        String::from("[unimplemented: InternedString.deref]")
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct Instant {
+}
+
+impl Instant {
+    pub fn elapsed_secs_f64(&self) -> f64 {
+        let core_self = kreuzberg::utils::timing::Instant {
+        };
+        core_self.elapsed_secs_f64()
+    }
+
+    pub fn elapsed_ms(&self) -> f64 {
+        let core_self = kreuzberg::utils::timing::Instant {
+        };
+        core_self.elapsed_ms()
+    }
+
+    pub fn elapsed_millis(&self) -> String {
+        String::from("[unimplemented: Instant.elapsed_millis]")
+    }
+
+    pub fn now() -> Instant {
+        Self { inner: Arc::new(kreuzberg::utils::timing::Instant::now()) }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct HocrWord {
+    pub text: String,
+    pub left: i32,
+    pub top: i32,
+    pub width: i32,
+    pub height: i32,
+    pub confidence: f64,
+}
+
+impl HocrWord {
+    #[must_use]
+    
+    pub fn new(text: String, left: i32, top: i32, width: i32, height: i32, confidence: f64) -> Self {
+        Self { text, left, top, width, height, confidence }
+    }
+
+    pub fn right(&self) -> i32 {
+        let core_self = kreuzberg::table_core::HocrWord {
+            text: self.text.clone(),
+            left: self.left,
+            top: self.top,
+            width: self.width,
+            height: self.height,
+            confidence: self.confidence,
+        };
+        core_self.right()
+    }
+
+    pub fn bottom(&self) -> i32 {
+        let core_self = kreuzberg::table_core::HocrWord {
+            text: self.text.clone(),
+            left: self.left,
+            top: self.top,
+            width: self.width,
+            height: self.height,
+            confidence: self.confidence,
+        };
+        core_self.bottom()
+    }
+
+    pub fn y_center(&self) -> f64 {
+        let core_self = kreuzberg::table_core::HocrWord {
+            text: self.text.clone(),
+            left: self.left,
+            top: self.top,
+            width: self.width,
+            height: self.height,
+            confidence: self.confidence,
+        };
+        core_self.y_center()
+    }
+
+    pub fn x_center(&self) -> f64 {
+        let core_self = kreuzberg::table_core::HocrWord {
+            text: self.text.clone(),
+            left: self.left,
+            top: self.top,
+            width: self.width,
+            height: self.height,
+            confidence: self.confidence,
+        };
+        core_self.x_center()
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ExtractionService {
+}
+
+impl Default for ExtractionService {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl ExtractionService {
+    pub fn poll_ready(&self, _cx: String) -> String {
+        let _ = _cx;
+        String::from("[unimplemented: ExtractionService.poll_ready]")
+    }
+
+    pub fn call(&self, req: ExtractionRequest) -> String {
+        let _ = req;
+        String::from("[unimplemented: ExtractionService.call]")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ExtractionService {
+        Self { inner: Arc::new(kreuzberg::service::ExtractionService::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct TracingLayer {
+}
+
+impl Default for TracingLayer {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl TracingLayer {
+    pub fn layer(&self, inner: String) -> String {
+        let _ = inner;
+        String::from("[unimplemented: TracingLayer.layer]")
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct MetricsLayer {
+}
+
+impl Default for MetricsLayer {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl MetricsLayer {
+    pub fn layer(&self, inner: String) -> String {
+        let _ = inner;
+        String::from("[unimplemented: MetricsLayer.layer]")
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExtractionRequest {
+    /// Where to read the document from.
+    pub source: ExtractionSource,
+    /// Base extraction configuration.
+    pub config: ExtractionConfig,
+    /// Optional per-file overrides (merged on top of `config`).
+    pub file_overrides: Option<FileExtractionConfig>,
+}
+
+impl ExtractionRequest {
+    #[must_use]
+    
+    pub fn new(source: ExtractionSource, config: ExtractionConfig, file_overrides: Option<FileExtractionConfig>) -> Self {
+        Self { source, config, file_overrides }
+    }
+
+    pub fn with_overrides(&self, overrides: FileExtractionConfig) -> ExtractionRequest {
+        let _ = overrides;
+        compile_error!("alef: ExtractionRequest.with_overrides returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn file(path: String, config: ExtractionConfig) -> ExtractionRequest {
+        kreuzberg::service::ExtractionRequest::file(std::path::PathBuf::from(path), config.into()).into()
+    }
+
+    pub fn file_with_mime(path: String, mime_hint: String, config: ExtractionConfig) -> ExtractionRequest {
+        kreuzberg::service::ExtractionRequest::file_with_mime(std::path::PathBuf::from(path), mime_hint, config.into()).into()
+    }
+
+    pub fn bytes(data: Vec<u8>, mime_type: String, config: ExtractionConfig) -> ExtractionRequest {
+        kreuzberg::service::ExtractionRequest::bytes(&data, mime_type, config.into()).into()
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ExtractionServiceBuilder {
+}
+
+impl Default for ExtractionServiceBuilder {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl ExtractionServiceBuilder {
+    pub fn with_timeout(&self, duration: u64) -> ExtractionServiceBuilder {
+        let core_self = kreuzberg::service::ExtractionServiceBuilder {
+        };
+        core_self.with_timeout(std::time::Duration::from_millis(duration)).into()
+    }
+
+    pub fn with_concurrency_limit(&self, max: f64) -> ExtractionServiceBuilder {
+        let core_self = kreuzberg::service::ExtractionServiceBuilder {
+        };
+        core_self.with_concurrency_limit(max).into()
+    }
+
+    pub fn with_tracing(&self) -> ExtractionServiceBuilder {
+        let core_self = kreuzberg::service::ExtractionServiceBuilder {
+        };
+        core_self.with_tracing().into()
+    }
+
+    pub fn with_metrics(&self) -> ExtractionServiceBuilder {
+        let core_self = kreuzberg::service::ExtractionServiceBuilder {
+        };
+        core_self.with_metrics().into()
+    }
+
+    pub fn build(&self) -> String {
+        String::from("[unimplemented: ExtractionServiceBuilder.build]")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ExtractionServiceBuilder {
+        Self { inner: Arc::new(kreuzberg::service::ExtractionServiceBuilder::default()) }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct MultipartApi {
+    pub _0: String,
+}
+
+impl MultipartApi {
+    #[must_use]
+    
+    pub fn new(_0: String) -> Self {
+        Self { _0 }
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn from_request(req: String, state: String) -> Result<MultipartApi> {
+        let _ = (req, state);
+        Err("Not implemented: MultipartApi::from_request".to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ApiError {
+    /// HTTP status code
+    pub status: String,
+    /// Error response body
+    pub body: ErrorResponse,
+}
+
+impl ApiError {
+    #[must_use]
+    
+    pub fn new(status: String, body: ErrorResponse) -> Self {
+        Self { status, body }
+    }
+
+    pub fn into_response(&self) -> String {
+        String::from("[unimplemented: ApiError.into_response]")
+    }
+
+    pub fn validation(error: String) -> ApiError {
+        let _ = error;
+        compile_error!("alef: ApiError::validation returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn unprocessable(error: String) -> ApiError {
+        let _ = error;
+        compile_error!("alef: ApiError::unprocessable returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn internal(error: String) -> ApiError {
+        let _ = error;
+        compile_error!("alef: ApiError::internal returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    pub fn bad_gateway(error: String) -> ApiError {
+        let _ = error;
+        compile_error!("alef: ApiError::bad_gateway returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn from(error: String) -> ApiError {
+        let _ = error;
+        compile_error!("alef: ApiError::from returns a Named/Json type but has no error variant — cannot auto-delegate")
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ApiDoc {
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ApiSizeLimits {
+    /// Maximum size of the entire request body in bytes.
+    /// 
+    /// This applies to the total size of all uploaded files and form data
+    /// in a single request. Default: 100 MB (104,857,600 bytes).
+    pub max_request_body_bytes: f64,
+    /// Maximum size of a single multipart field in bytes.
+    /// 
+    /// This applies to individual files in a multipart upload.
+    /// Default: 100 MB (104,857,600 bytes).
+    pub max_multipart_field_bytes: f64,
+}
+
+impl Default for ApiSizeLimits {
+    fn default() -> Self {
+        Self {
+            max_request_body_bytes: Default::default(),
+            max_multipart_field_bytes: Default::default(),
+        }
+    }
+}
+
+impl ApiSizeLimits {
+    #[must_use]
+    
+    pub fn new(max_request_body_bytes: Option<f64>, max_multipart_field_bytes: Option<f64>) -> Self {
+        Self { max_request_body_bytes: max_request_body_bytes.unwrap_or_default(), max_multipart_field_bytes: max_multipart_field_bytes.unwrap_or_default() }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> ApiSizeLimits {
+        kreuzberg::api::ApiSizeLimits::default().into()
+    }
+
+    pub fn from_mb(max_request_body_mb: f64, max_multipart_field_mb: f64) -> ApiSizeLimits {
+        kreuzberg::api::ApiSizeLimits::from_mb(max_request_body_mb, max_multipart_field_mb).into()
+    }
+}
+
+#[extendr]
+pub fn new_apisizelimits(
+    max_request_body_bytes: f64 = 0,
+    max_multipart_field_bytes: f64 = 0
+) -> ApiSizeLimits {
+    ApiSizeLimits {
+        max_request_body_bytes,
+        max_multipart_field_bytes,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct PluginStatus {
+    /// Number of registered OCR backends
+    pub ocr_backends_count: f64,
+    /// Names of registered OCR backends
+    pub ocr_backends: Vec<String>,
+    /// Number of registered document extractors
+    pub extractors_count: f64,
+    /// Number of registered post-processors
+    pub post_processors_count: f64,
+}
+
+impl PluginStatus {
+    #[must_use]
+    
+    pub fn new(
+        ocr_backends_count: f64,
+        ocr_backends: Vec<String>,
+        extractors_count: f64,
+        post_processors_count: f64,
+    ) -> Self {
+        Self { ocr_backends_count, ocr_backends, extractors_count, post_processors_count }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct HealthResponse {
+    /// Health status
+    pub status: String,
+    /// API version
+    pub version: String,
+    /// Plugin status (optional)
+    pub plugins: Option<PluginStatus>,
+}
+
+impl HealthResponse {
+    #[must_use]
+    
+    pub fn new(status: String, version: String, plugins: Option<PluginStatus>) -> Self {
+        Self { status, version, plugins }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct InfoResponse {
+    /// API version
+    pub version: String,
+    /// Whether using Rust backend
+    pub rust_backend: bool,
+}
+
+impl InfoResponse {
+    #[must_use]
+    
+    pub fn new(version: String, rust_backend: bool) -> Self {
+        Self { version, rust_backend }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExtractResponse {
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ErrorResponse {
+    /// Error type name
+    pub error_type: String,
+    /// Error message
+    pub message: String,
+    /// Stack trace (if available)
+    pub traceback: Option<String>,
+    /// HTTP status code
+    pub status_code: i32,
+}
+
+impl ErrorResponse {
+    #[must_use]
+    
+    pub fn new(error_type: String, message: String, status_code: i32, traceback: Option<String>) -> Self {
+        Self { error_type, message, traceback, status_code }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ApiState {
+    /// Default extraction configuration
+    pub default_config: ExtractionConfig,
+    /// Tower service for extraction requests.
+    /// 
+    /// Wrapped in `Arc<Mutex>` because `BoxCloneService` is `Send` but not `Sync`,
+    /// while `ApiState` must be `Clone + Sync` for Axum's state requirement.
+    /// The lock is held only long enough to clone the service.
+    pub extraction_service: String,
+}
+
+impl ApiState {
+    #[must_use]
+    
+    pub fn new(default_config: ExtractionConfig, extraction_service: String) -> Self {
+        Self { default_config, extraction_service }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct CacheStatsResponse {
+    /// Cache directory path
+    pub directory: String,
+    /// Total number of cache files
+    pub total_files: f64,
+    /// Total cache size in MB
+    pub total_size_mb: f64,
+    /// Available disk space in MB
+    pub available_space_mb: f64,
+    /// Age of oldest file in days
+    pub oldest_file_age_days: f64,
+    /// Age of newest file in days
+    pub newest_file_age_days: f64,
+}
+
+impl CacheStatsResponse {
+    #[must_use]
+    
+    pub fn new(
+        directory: String,
+        total_files: f64,
+        total_size_mb: f64,
+        available_space_mb: f64,
+        oldest_file_age_days: f64,
+        newest_file_age_days: f64,
+    ) -> Self {
+        Self { directory, total_files, total_size_mb, available_space_mb, oldest_file_age_days, newest_file_age_days }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct CacheClearResponse {
+    /// Cache directory path
+    pub directory: String,
+    /// Number of files removed
+    pub removed_files: f64,
+    /// Space freed in MB
+    pub freed_mb: f64,
+}
+
+impl CacheClearResponse {
+    #[must_use]
+    
+    pub fn new(directory: String, removed_files: f64, freed_mb: f64) -> Self {
+        Self { directory, removed_files, freed_mb }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct EmbedRequest {
+    /// Text strings to generate embeddings for (at least one non-empty string required)
+    pub texts: Vec<String>,
+    /// Optional embedding configuration (model, batch size, etc.)
+    pub config: Option<EmbeddingConfig>,
+}
+
+impl EmbedRequest {
+    #[must_use]
+    
+    pub fn new(texts: Vec<String>, config: Option<EmbeddingConfig>) -> Self {
+        Self { texts, config }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct EmbedResponse {
+    /// Generated embeddings (one per input text)
+    pub embeddings: Vec<Vec<f64>>,
+    /// Model used for embedding generation
+    pub model: String,
+    /// Dimensionality of the embeddings
+    pub dimensions: f64,
+    /// Number of embeddings generated
+    pub count: f64,
+}
+
+impl EmbedResponse {
+    #[must_use]
+    
+    pub fn new(embeddings: Vec<Vec<f64>>, model: String, dimensions: f64, count: f64) -> Self {
+        Self { embeddings, model, dimensions, count }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ChunkRequest {
+    /// Text to chunk (must not be empty)
+    pub text: String,
+    /// Optional chunking configuration
+    pub config: Option<ChunkingConfigRequest>,
+    /// Chunker type (text or markdown)
+    pub chunker_type: String,
+}
+
+impl ChunkRequest {
+    #[must_use]
+    
+    pub fn new(text: String, chunker_type: String, config: Option<ChunkingConfigRequest>) -> Self {
+        Self { text, config, chunker_type }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct ChunkingConfigRequest {
+    /// Maximum characters per chunk (must be greater than overlap, default: 2000)
+    pub max_characters: Option<f64>,
+    /// Overlap between chunks in characters (must be less than max_characters, default: 100)
+    pub overlap: Option<f64>,
+    /// Whether to trim whitespace
+    pub trim: Option<bool>,
+}
+
+impl Default for ChunkingConfigRequest {
+    fn default() -> Self {
+        Self {
+            max_characters: Default::default(),
+            overlap: Default::default(),
+            trim: Default::default(),
+        }
+    }
+}
+
+impl ChunkingConfigRequest {
+    #[must_use]
+    
+    pub fn new(max_characters: Option<f64>, overlap: Option<f64>, trim: Option<bool>) -> Self {
+        Self { max_characters: max_characters, overlap: overlap, trim: trim }
+    }
+}
+
+#[extendr]
+pub fn new_chunkingconfigrequest(
+    max_characters: f64 = 0,
+    overlap: f64 = 0,
+    trim: bool = false
+) -> ChunkingConfigRequest {
+    ChunkingConfigRequest {
+        max_characters,
+        overlap,
+        trim,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct ChunkResponse {
+    /// List of chunks
+    pub chunks: Vec<ChunkItem>,
+    /// Total number of chunks
+    pub chunk_count: f64,
+    /// Configuration used for chunking
+    pub config: ChunkingConfigResponse,
+    /// Input text size in bytes
+    pub input_size_bytes: f64,
+    /// Chunker type used for chunking
+    pub chunker_type: String,
+}
+
+impl ChunkResponse {
+    #[must_use]
+    
+    pub fn new(
+        chunks: Vec<ChunkItem>,
+        chunk_count: f64,
+        config: ChunkingConfigResponse,
+        input_size_bytes: f64,
+        chunker_type: String,
+    ) -> Self {
+        Self { chunks, chunk_count, config, input_size_bytes, chunker_type }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ChunkItem {
+    /// Chunk content
+    pub content: String,
+    /// Byte offset start position
+    pub byte_start: f64,
+    /// Byte offset end position
+    pub byte_end: f64,
+    /// Index of this chunk (0-based)
+    pub chunk_index: f64,
+    /// Total number of chunks
+    pub total_chunks: f64,
+    /// First page number (optional, for PDF chunking)
+    pub first_page: Option<f64>,
+    /// Last page number (optional, for PDF chunking)
+    pub last_page: Option<f64>,
+}
+
+impl ChunkItem {
+    #[must_use]
+    
+    pub fn new(
+        content: String,
+        byte_start: f64,
+        byte_end: f64,
+        chunk_index: f64,
+        total_chunks: f64,
+        first_page: Option<f64>,
+        last_page: Option<f64>,
+    ) -> Self {
+        Self { content, byte_start, byte_end, chunk_index, total_chunks, first_page, last_page }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct VersionResponse {
+    /// Kreuzberg version string
+    pub version: String,
+}
+
+impl VersionResponse {
+    #[must_use]
+    
+    pub fn new(version: String) -> Self {
+        Self { version }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DetectResponse {
+    /// Detected MIME type
+    pub mime_type: String,
+    /// Original filename (if provided)
+    pub filename: Option<String>,
+}
+
+impl DetectResponse {
+    #[must_use]
+    
+    pub fn new(mime_type: String, filename: Option<String>) -> Self {
+        Self { mime_type, filename }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ManifestEntryResponse {
+    /// Relative path within the cache directory
+    pub relative_path: String,
+    /// SHA256 checksum of the model file
+    pub sha256: String,
+    /// Expected file size in bytes
+    pub size_bytes: f64,
+    /// HuggingFace source URL for downloading
+    pub source_url: String,
+}
+
+impl ManifestEntryResponse {
+    #[must_use]
+    
+    pub fn new(relative_path: String, sha256: String, size_bytes: f64, source_url: String) -> Self {
+        Self { relative_path, sha256, size_bytes, source_url }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ManifestResponse {
+    /// Kreuzberg version
+    pub kreuzberg_version: String,
+    /// Total size of all models in bytes
+    pub total_size_bytes: f64,
+    /// Number of models in the manifest
+    pub model_count: f64,
+    /// Individual model entries
+    pub models: Vec<ManifestEntryResponse>,
+}
+
+impl ManifestResponse {
+    #[must_use]
+    
+    pub fn new(
+        kreuzberg_version: String,
+        total_size_bytes: f64,
+        model_count: f64,
+        models: Vec<ManifestEntryResponse>,
+    ) -> Self {
+        Self { kreuzberg_version, total_size_bytes, model_count, models }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct WarmRequest {
+    /// Download all embedding model presets
+    pub all_embeddings: bool,
+    /// Specific embedding model preset to download
+    pub embedding_model: Option<String>,
+}
+
+impl Default for WarmRequest {
+    fn default() -> Self {
+        Self {
+            all_embeddings: Default::default(),
+            embedding_model: Default::default(),
+        }
+    }
+}
+
+impl WarmRequest {
+    #[must_use]
+    
+    pub fn new(all_embeddings: Option<bool>, embedding_model: Option<String>) -> Self {
+        Self { all_embeddings: all_embeddings.unwrap_or_default(), embedding_model: embedding_model }
+    }
+}
+
+#[extendr]
+pub fn new_warmrequest(
+    all_embeddings: bool = false,
+    embedding_model: String = ""
+) -> WarmRequest {
+    WarmRequest {
+        all_embeddings,
+        embedding_model,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct WarmResponse {
+    /// Cache directory used
+    pub cache_dir: String,
+    /// Models that were downloaded
+    pub downloaded: Vec<String>,
+    /// Models that were already cached
+    pub already_cached: Vec<String>,
+}
+
+impl WarmResponse {
+    #[must_use]
+    
+    pub fn new(cache_dir: String, downloaded: Vec<String>, already_cached: Vec<String>) -> Self {
+        Self { cache_dir, downloaded, already_cached }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct StructuredExtractionResponse {
+    /// Structured data conforming to the provided JSON schema
+    pub structured_output: String,
+    /// Extracted document text content
+    pub content: String,
+    /// Detected MIME type of the input file
+    pub mime_type: String,
+}
+
+impl StructuredExtractionResponse {
+    #[must_use]
+    
+    pub fn new(structured_output: String, content: String, mime_type: String) -> Self {
+        Self { structured_output, content, mime_type }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OpenWebDocumentResponse {
+    /// Extracted text content
+    pub page_content: String,
+    /// Document metadata
+    pub metadata: OpenWebDocumentMetadata,
+}
+
+impl OpenWebDocumentResponse {
+    #[must_use]
+    
+    pub fn new(page_content: String, metadata: OpenWebDocumentMetadata) -> Self {
+        Self { page_content, metadata }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OpenWebDocumentMetadata {
+    /// Original filename
+    pub source: String,
+}
+
+impl OpenWebDocumentMetadata {
+    #[must_use]
+    
+    pub fn new(source: String) -> Self {
+        Self { source }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DoclingCompatResponse {
+    /// Converted document content
+    pub document: DoclingCompatDocument,
+    /// Processing status
+    pub status: String,
+}
+
+impl DoclingCompatResponse {
+    #[must_use]
+    
+    pub fn new(document: DoclingCompatDocument, status: String) -> Self {
+        Self { document, status }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DoclingCompatDocument {
+    /// Markdown content of the converted document
+    pub md_content: String,
+}
+
+impl DoclingCompatDocument {
+    #[must_use]
+    
+    pub fn new(md_content: String) -> Self {
+        Self { md_content }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ChunkingConfigResponse {
+    /// Maximum characters per chunk
+    pub max_characters: f64,
+    /// Overlap between chunks in characters
+    pub overlap: f64,
+    /// Whether whitespace was trimmed
+    pub trim: bool,
+    /// Type of chunker used
+    pub chunker_type: String,
+}
+
+impl ChunkingConfigResponse {
+    #[must_use]
+    
+    pub fn new(max_characters: f64, overlap: f64, trim: bool, chunker_type: String) -> Self {
+        Self { max_characters, overlap, trim, chunker_type }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExtractFileParams {
+    /// Path to the file to extract
+    pub path: String,
+    /// Optional MIME type hint (auto-detected if not provided)
+    pub mime_type: Option<String>,
+    /// Extraction configuration (JSON object)
+    pub config: Option<String>,
+    /// Password for encrypted PDFs
+    pub pdf_password: Option<String>,
+    /// Wire format for the response: "json" (default) or "toon"
+    pub response_format: Option<String>,
+}
+
+impl ExtractFileParams {
+    #[must_use]
+    
+    pub fn new(
+        path: String,
+        mime_type: Option<String>,
+        config: Option<String>,
+        pdf_password: Option<String>,
+        response_format: Option<String>,
+    ) -> Self {
+        Self { path, mime_type, config, pdf_password, response_format }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExtractBytesParams {
+    /// Base64-encoded file content
+    pub data: String,
+    /// Optional MIME type hint (auto-detected if not provided)
+    pub mime_type: Option<String>,
+    /// Extraction configuration (JSON object)
+    pub config: Option<String>,
+    /// Password for encrypted PDFs
+    pub pdf_password: Option<String>,
+    /// Wire format for the response: "json" (default) or "toon"
+    pub response_format: Option<String>,
+}
+
+impl ExtractBytesParams {
+    #[must_use]
+    
+    pub fn new(
+        data: String,
+        mime_type: Option<String>,
+        config: Option<String>,
+        pdf_password: Option<String>,
+        response_format: Option<String>,
+    ) -> Self {
+        Self { data, mime_type, config, pdf_password, response_format }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct BatchExtractFilesParams {
+    /// Paths to files to extract
+    pub paths: Vec<String>,
+    /// Extraction configuration (JSON object)
+    pub config: Option<String>,
+    /// Password for encrypted PDFs
+    pub pdf_password: Option<String>,
+    /// Per-file extraction configuration overrides (parallel array to paths).
+    /// Each entry is either null (use default) or a FileExtractionConfig JSON object.
+    pub file_configs: Option<Vec<Option<String>>>,
+    /// Wire format for the response: "json" (default) or "toon"
+    pub response_format: Option<String>,
+}
+
+impl BatchExtractFilesParams {
+    #[must_use]
+    
+    pub fn new(
+        paths: Vec<String>,
+        config: Option<String>,
+        pdf_password: Option<String>,
+        file_configs: Option<Vec<Option<String>>>,
+        response_format: Option<String>,
+    ) -> Self {
+        Self { paths, config, pdf_password, file_configs, response_format }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DetectMimeTypeParams {
+    /// Path to the file
+    pub path: String,
+    /// Use content-based detection (default: true)
+    pub use_content: bool,
+}
+
+impl DetectMimeTypeParams {
+    #[must_use]
+    
+    pub fn new(path: String, use_content: bool) -> Self {
+        Self { path, use_content }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct EmptyParams {
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct CacheWarmParams {
+    /// Download all embedding model presets
+    pub all_embeddings: bool,
+    /// Specific embedding preset name to download (e.g. "balanced", "speed", "quality")
+    pub embedding_model: Option<String>,
+}
+
+impl CacheWarmParams {
+    #[must_use]
+    
+    pub fn new(all_embeddings: bool, embedding_model: Option<String>) -> Self {
+        Self { all_embeddings, embedding_model }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct EmbedTextParams {
+    /// List of text strings to generate embeddings for
+    pub texts: Vec<String>,
+    /// Embedding preset name (default: "balanced"). Available: "speed", "balanced", "quality"
+    pub preset: Option<String>,
+    /// LLM model for provider-hosted embeddings (e.g., "openai/text-embedding-3-small").
+    /// When set, overrides preset and uses liter-llm for embedding generation.
+    pub model: Option<String>,
+    /// API key for the LLM provider (optional, falls back to env).
+    pub api_key: Option<String>,
+}
+
+impl EmbedTextParams {
+    #[must_use]
+    
+    pub fn new(texts: Vec<String>, preset: Option<String>, model: Option<String>, api_key: Option<String>) -> Self {
+        Self { texts, preset, model, api_key }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ExtractStructuredParams {
+    /// File path to extract from
+    pub path: String,
+    /// JSON schema for structured output
+    pub schema: String,
+    /// LLM model (e.g., "openai/gpt-4o")
+    pub model: String,
+    /// Schema name (default: "extraction")
+    pub schema_name: String,
+    /// Schema description for the LLM
+    pub schema_description: Option<String>,
+    /// Custom Jinja2 prompt template
+    pub prompt: Option<String>,
+    /// API key (optional, falls back to env)
+    pub api_key: Option<String>,
+    /// Enable strict mode
+    pub strict: bool,
+}
+
+impl ExtractStructuredParams {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        path: String,
+        schema: String,
+        model: String,
+        schema_name: String,
+        strict: bool,
+        schema_description: Option<String>,
+        prompt: Option<String>,
+        api_key: Option<String>,
+    ) -> Self {
+        Self { path, schema, model, schema_name, schema_description, prompt, api_key, strict }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ChunkTextParams {
+    /// Text content to split into chunks
+    pub text: String,
+    /// Maximum characters per chunk (default: 2000)
+    pub max_characters: Option<f64>,
+    /// Number of overlapping characters between chunks (default: 100)
+    pub overlap: Option<f64>,
+    /// Chunker type: "text" or "markdown" (default: "text")
+    pub chunker_type: Option<String>,
+}
+
+impl ChunkTextParams {
+    #[must_use]
+    
+    pub fn new(text: String, max_characters: Option<f64>, overlap: Option<f64>, chunker_type: Option<String>) -> Self {
+        Self { text, max_characters, overlap, chunker_type }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DownloadGrammarsParams {
+    /// Specific languages to download (e.g., ["python", "rust", "javascript"]).
+    /// If not provided, must specify groups or all.
+    pub languages: Option<Vec<String>>,
+    /// Language groups to download (e.g., ["web", "systems", "scripting"]).
+    pub groups: Option<Vec<String>>,
+    /// Download all available languages.
+    pub all: Option<bool>,
+}
+
+impl DownloadGrammarsParams {
+    #[must_use]
+    
+    pub fn new(languages: Option<Vec<String>>, groups: Option<Vec<String>>, all: Option<bool>) -> Self {
+        Self { languages, groups, all }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ListGrammarsParams {
+    /// Only show downloaded/cached languages (default: false, shows all available).
+    pub downloaded_only: bool,
+    /// Filter languages by name substring.
+    pub filter: Option<String>,
+}
+
+impl ListGrammarsParams {
+    #[must_use]
+    
+    pub fn new(downloaded_only: bool, filter: Option<String>) -> Self {
+        Self { downloaded_only, filter }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct KreuzbergMcp {
+}
+
+impl Default for KreuzbergMcp {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl KreuzbergMcp {
+    pub fn clone(&self) -> KreuzbergMcp {
+        let core_self = kreuzberg::mcp::KreuzbergMcp {
+        };
+        core_self.clone().into()
+    }
+
+    pub fn get_info(&self) -> String {
+        String::from("[unimplemented: KreuzbergMcp.get_info]")
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new() -> Result<KreuzbergMcp> {
+        kreuzberg::mcp::KreuzbergMcp::new().map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+
+    pub fn with_config(config: ExtractionConfig) -> KreuzbergMcp {
+        Self { inner: Arc::new(kreuzberg::mcp::KreuzbergMcp::with_config(config.into())) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> KreuzbergMcp {
+        Self { inner: Arc::new(kreuzberg::mcp::KreuzbergMcp::default()) }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ChunkingResult {
+    /// List of text chunks
+    pub chunks: Vec<Chunk>,
+    /// Total number of chunks generated
+    pub chunk_count: f64,
+}
+
+impl ChunkingResult {
+    #[must_use]
+    
+    pub fn new(chunks: Vec<Chunk>, chunk_count: f64) -> Self {
+        Self { chunks, chunk_count }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct ChunkingProcessor {
+}
+
+impl ChunkingProcessor {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::chunking::ChunkingProcessor {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::chunking::ChunkingProcessor {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::chunking::ChunkingProcessor {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::chunking::ChunkingProcessor {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process(&self, result: ExtractionResult, config: ExtractionConfig) -> Result<()> {
+        let result_core = result.into();
+    let config_core = config.into();
+    let _ = (result, config);
+        Err("Not implemented: ChunkingProcessor.process".to_string())
+    }
+
+    pub fn processing_stage(&self) -> String {
+        String::from("[unimplemented: ChunkingProcessor.processing_stage]")
+    }
+
+    pub fn should_process(&self, _result: ExtractionResult, config: ExtractionConfig) -> bool {
+        let _result_core = _result.into();
+    let config_core = config.into();
+    let _ = (_result, config);
+        false
+    }
+
+    pub fn estimated_duration_ms(&self, result: ExtractionResult) -> f64 {
+        let result_core = result.into();
+    let _ = result;
+        0
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct VlmOcrBackend {
+}
+
+impl VlmOcrBackend {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::llm::vlm_ocr::VlmOcrBackend {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::llm::vlm_ocr::VlmOcrBackend {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::llm::vlm_ocr::VlmOcrBackend {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::llm::vlm_ocr::VlmOcrBackend {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_image(&self, image_bytes: Vec<u8>, config: OcrConfig) -> Result<ExtractionResult> {
+        let config_core = config.into();
+    let _ = (image_bytes, config);
+        Err("Not implemented: VlmOcrBackend.process_image".to_string())
+    }
+
+    pub fn supports_language(&self, _lang: String) -> bool {
+        let core_self = kreuzberg::llm::vlm_ocr::VlmOcrBackend {
+        };
+        core_self.supports_language(&_lang)
+    }
+
+    pub fn backend_type(&self) -> OcrBackendType {
+        let core_self = kreuzberg::llm::vlm_ocr::VlmOcrBackend {
+        };
+        core_self.backend_type().into()
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct YakeParams {
+    /// Window size for co-occurrence analysis (default: 2).
+    /// 
+    /// Controls the context window for computing co-occurrence statistics.
+    pub window_size: f64,
+}
+
+impl Default for YakeParams {
+    fn default() -> Self {
+        Self {
+            window_size: Default::default(),
+        }
+    }
+}
+
+impl YakeParams {
+    #[must_use]
+    
+    pub fn new(window_size: Option<f64>) -> Self {
+        Self { window_size: window_size.unwrap_or(2) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> YakeParams {
+        kreuzberg::YakeParams::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_yakeparams(
+    window_size: f64 = 2
+) -> YakeParams {
+    YakeParams {
+        window_size,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct RakeParams {
+    /// Minimum word length to consider (default: 1).
+    pub min_word_length: f64,
+    /// Maximum words in a keyword phrase (default: 3).
+    pub max_words_per_phrase: f64,
+}
+
+impl Default for RakeParams {
+    fn default() -> Self {
+        Self {
+            min_word_length: Default::default(),
+            max_words_per_phrase: Default::default(),
+        }
+    }
+}
+
+impl RakeParams {
+    #[must_use]
+    
+    pub fn new(min_word_length: Option<f64>, max_words_per_phrase: Option<f64>) -> Self {
+        Self { min_word_length: min_word_length.unwrap_or(1), max_words_per_phrase: max_words_per_phrase.unwrap_or(3) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> RakeParams {
+        kreuzberg::RakeParams::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_rakeparams(
+    min_word_length: f64 = 1,
+    max_words_per_phrase: f64 = 3
+) -> RakeParams {
+    RakeParams {
+        min_word_length,
+        max_words_per_phrase,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct KeywordConfig {
+    /// Algorithm to use for extraction.
+    pub algorithm: KeywordAlgorithm,
+    /// Maximum number of keywords to extract (default: 10).
+    pub max_keywords: f64,
+    /// Minimum score threshold (0.0-1.0, default: 0.0).
+    /// 
+    /// Keywords with scores below this threshold are filtered out.
+    /// Note: Score ranges differ between algorithms.
+    pub min_score: f64,
+    /// N-gram range for keyword extraction (min, max).
+    /// 
+    /// (1, 1) = unigrams only
+    /// (1, 2) = unigrams and bigrams
+    /// (1, 3) = unigrams, bigrams, and trigrams (default)
+    pub ngram_range: String,
+    /// Language code for stopword filtering (e.g., "en", "de", "fr").
+    /// 
+    /// If None, no stopword filtering is applied.
+    pub language: Option<String>,
+    /// YAKE-specific tuning parameters.
+    pub yake_params: Option<YakeParams>,
+    /// RAKE-specific tuning parameters.
+    pub rake_params: Option<RakeParams>,
+}
+
+impl Default for KeywordConfig {
+    fn default() -> Self {
+        Self {
+            algorithm: Default::default(),
+            max_keywords: Default::default(),
+            min_score: Default::default(),
+            ngram_range: Default::default(),
+            language: Default::default(),
+            yake_params: Default::default(),
+            rake_params: Default::default(),
+        }
+    }
+}
+
+impl KeywordConfig {
+    #[must_use]
+    
+    pub fn new(
+        algorithm: Option<KeywordAlgorithm>,
+        max_keywords: Option<f64>,
+        min_score: Option<f64>,
+        ngram_range: Option<String>,
+        language: Option<String>,
+        yake_params: Option<YakeParams>,
+        rake_params: Option<RakeParams>,
+    ) -> Self {
+        Self { algorithm: algorithm.unwrap_or_default(), max_keywords: max_keywords.unwrap_or(10), min_score: min_score.unwrap_or(0.0), ngram_range: ngram_range.unwrap_or_default(), language: language, yake_params: yake_params, rake_params: rake_params }
+    }
+
+    pub fn with_max_keywords(&self, max: f64) -> KeywordConfig {
+        let core_self = kreuzberg::KeywordConfig {
+            algorithm: self.algorithm.clone().into(),
+            max_keywords: self.max_keywords,
+            min_score: self.min_score,
+            ngram_range: Default::default(),
+            language: self.language.clone(),
+            yake_params: self.yake_params.clone().map(Into::into),
+            rake_params: self.rake_params.clone().map(Into::into),
+            ..Default::default()
+        };
+        core_self.with_max_keywords(max).into()
+    }
+
+    pub fn with_min_score(&self, score: f64) -> KeywordConfig {
+        let core_self = kreuzberg::KeywordConfig {
+            algorithm: self.algorithm.clone().into(),
+            max_keywords: self.max_keywords,
+            min_score: self.min_score,
+            ngram_range: Default::default(),
+            language: self.language.clone(),
+            yake_params: self.yake_params.clone().map(Into::into),
+            rake_params: self.rake_params.clone().map(Into::into),
+            ..Default::default()
+        };
+        core_self.with_min_score(score).into()
+    }
+
+    pub fn with_ngram_range(&self, min: f64, max: f64) -> KeywordConfig {
+        let core_self = kreuzberg::KeywordConfig {
+            algorithm: self.algorithm.clone().into(),
+            max_keywords: self.max_keywords,
+            min_score: self.min_score,
+            ngram_range: Default::default(),
+            language: self.language.clone(),
+            yake_params: self.yake_params.clone().map(Into::into),
+            rake_params: self.rake_params.clone().map(Into::into),
+            ..Default::default()
+        };
+        core_self.with_ngram_range(min, max).into()
+    }
+
+    pub fn with_language(&self, lang: String) -> KeywordConfig {
+        let core_self = kreuzberg::KeywordConfig {
+            algorithm: self.algorithm.clone().into(),
+            max_keywords: self.max_keywords,
+            min_score: self.min_score,
+            ngram_range: Default::default(),
+            language: self.language.clone(),
+            yake_params: self.yake_params.clone().map(Into::into),
+            rake_params: self.rake_params.clone().map(Into::into),
+            ..Default::default()
+        };
+        core_self.with_language(lang).into()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> KeywordConfig {
+        kreuzberg::KeywordConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_keywordconfig(
+    algorithm: KeywordAlgorithm = null,
+    max_keywords: f64 = 10,
+    min_score: f64 = 0.0,
+    ngram_range: String = "",
+    language: String = "",
+    yake_params: YakeParams = NULL,
+    rake_params: RakeParams = NULL
+) -> KeywordConfig {
+    KeywordConfig {
+        algorithm,
+        max_keywords,
+        min_score,
+        ngram_range,
+        language,
+        yake_params,
+        rake_params,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct Keyword {
+    /// The keyword text.
+    pub text: String,
+    /// Relevance score (higher is better, algorithm-specific range).
+    pub score: f64,
+    /// Algorithm that extracted this keyword.
+    pub algorithm: KeywordAlgorithm,
+    /// Optional positions where keyword appears in text (character offsets).
+    pub positions: Option<Vec<f64>>,
+}
+
+impl Keyword {
+    #[must_use]
+    
+    pub fn new(text: String, score: f64, algorithm: KeywordAlgorithm, positions: Option<Vec<f64>>) -> Self {
+        Self { text, score, algorithm, positions }
+    }
+
+    pub fn with_positions(text: String, score: f64, algorithm: KeywordAlgorithm, positions: Vec<f64>) -> Keyword {
+        kreuzberg::Keyword::with_positions(text, score, algorithm.into(), positions).into()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrCache {
+}
+
+impl OcrCache {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get_cached_result(&self, image_hash: String, backend: String, config: String) -> Result<Option<OcrExtractionResult>> {
+        let core_self = kreuzberg::ocr::OcrCache {
+        };
+        let result = core_self.get_cached_result(&image_hash, &backend, &config).map_err(|e| e.to_string())?;
+        Ok(result.map(Into::into))
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn set_cached_result(&self, image_hash: String, backend: String, config: String, result: OcrExtractionResult) -> Result<()> {
+        let result_core = result.into();
+    let _ = (image_hash, backend, config, result);
+        Err("Not implemented: OcrCache.set_cached_result".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn clear(&self) -> Result<()> {
+        let core_self = kreuzberg::ocr::OcrCache {
+        };
+        let result = core_self.clear().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get_stats(&self) -> Result<OcrCacheStats> {
+        let core_self = kreuzberg::ocr::OcrCache {
+        };
+        let result = core_self.get_stats().map_err(|e| e.to_string())?;
+        Ok(result.into())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new(cache_dir: Option<String>) -> Result<OcrCache> {
+        kreuzberg::ocr::OcrCache::new(cache_dir.map(std::path::PathBuf::from)).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct OcrCacheStats {
+    pub total_files: f64,
+    pub total_size_mb: f64,
+}
+
+impl Default for OcrCacheStats {
+    fn default() -> Self {
+        Self {
+            total_files: Default::default(),
+            total_size_mb: Default::default(),
+        }
+    }
+}
+
+impl OcrCacheStats {
+    #[must_use]
+    
+    pub fn new(total_files: Option<f64>, total_size_mb: Option<f64>) -> Self {
+        Self { total_files: total_files.unwrap_or_default(), total_size_mb: total_size_mb.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_ocrcachestats(
+    total_files: f64 = 0,
+    total_size_mb: f64 = 0.0
+) -> OcrCacheStats {
+    OcrCacheStats {
+        total_files,
+        total_size_mb,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct TsvRow {
+    /// Hierarchical level (1=block, 2=para, 3=line, 4=word, 5=symbol)
+    pub level: i32,
+    /// Page number (1-indexed)
+    pub page_num: i32,
+    /// Block number within page
+    pub block_num: i32,
+    /// Paragraph number within block
+    pub par_num: i32,
+    /// Line number within paragraph
+    pub line_num: i32,
+    /// Word number within line
+    pub word_num: i32,
+    /// Left x-coordinate in pixels
+    pub left: i32,
+    /// Top y-coordinate in pixels
+    pub top: i32,
+    /// Width in pixels
+    pub width: i32,
+    /// Height in pixels
+    pub height: i32,
+    /// Confidence score (0-100)
+    pub conf: f64,
+    /// Recognized text
+    pub text: String,
+}
+
+impl TsvRow {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        level: i32,
+        page_num: i32,
+        block_num: i32,
+        par_num: i32,
+        line_num: i32,
+        word_num: i32,
+        left: i32,
+        top: i32,
+        width: i32,
+        height: i32,
+        conf: f64,
+        text: String,
+    ) -> Self {
+        Self { level, page_num, block_num, par_num, line_num, word_num, left, top, width, height, conf, text }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct LanguageRegistry {
+}
+
+impl Default for LanguageRegistry {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl LanguageRegistry {
+    pub fn get_supported_languages(&self, backend: String) -> Option<Vec<String>> {
+        let core_self = kreuzberg::ocr::LanguageRegistry {
+        };
+        core_self.get_supported_languages(&backend)
+    }
+
+    pub fn is_language_supported(&self, backend: String, language: String) -> bool {
+        let core_self = kreuzberg::ocr::LanguageRegistry {
+        };
+        core_self.is_language_supported(&backend, &language)
+    }
+
+    pub fn get_backends(&self) -> Vec<String> {
+        let core_self = kreuzberg::ocr::LanguageRegistry {
+        };
+        core_self.get_backends()
+    }
+
+    pub fn get_language_count(&self, backend: String) -> f64 {
+        let core_self = kreuzberg::ocr::LanguageRegistry {
+        };
+        core_self.get_language_count(&backend)
+    }
+
+    pub fn global() -> LanguageRegistry {
+        Self { inner: Arc::new(kreuzberg::ocr::LanguageRegistry::global().clone()) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> LanguageRegistry {
+        Self { inner: Arc::new(kreuzberg::ocr::LanguageRegistry::default()) }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct RecognizedTable {
+    /// Detection bbox that this table corresponds to (for matching).
+    pub detection_bbox: BBox,
+    /// Table cells as a 2D vector (rows x columns).
+    pub cells: Vec<Vec<String>>,
+    /// Rendered markdown table.
+    pub markdown: String,
+}
+
+impl RecognizedTable {
+    #[must_use]
+    
+    pub fn new(detection_bbox: BBox, cells: Vec<Vec<String>>, markdown: String) -> Self {
+        Self { detection_bbox, cells, markdown }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OcrProcessor {
+}
+
+impl OcrProcessor {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_image(&self, image_bytes: Vec<u8>, config: TesseractConfig) -> Result<OcrExtractionResult> {
+        let config_core = config.into();
+    let _ = (image_bytes, config);
+        Err("Not implemented: OcrProcessor.process_image".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_image_with_format(&self, image_bytes: Vec<u8>, config: TesseractConfig, output_format: OutputFormat) -> Result<OcrExtractionResult> {
+        let config_core = config.into();
+    let output_format_core = output_format.into();
+    let _ = (image_bytes, config, output_format);
+        Err("Not implemented: OcrProcessor.process_image_with_format".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn clear_cache(&self) -> Result<()> {
+        let core_self = kreuzberg::ocr::OcrProcessor {
+        };
+        let result = core_self.clear_cache().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get_cache_stats(&self) -> Result<OcrCacheStats> {
+        let core_self = kreuzberg::ocr::OcrProcessor {
+        };
+        let result = core_self.get_cache_stats().map_err(|e| e.to_string())?;
+        Ok(result.into())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_image_file(&self, file_path: String, config: TesseractConfig) -> Result<OcrExtractionResult> {
+        let config_core = config.into();
+    let _ = (file_path, config);
+        Err("Not implemented: OcrProcessor.process_image_file".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_image_file_with_format(&self, file_path: String, config: TesseractConfig, output_format: OutputFormat) -> Result<OcrExtractionResult> {
+        let config_core = config.into();
+    let output_format_core = output_format.into();
+    let _ = (file_path, config, output_format);
+        Err("Not implemented: OcrProcessor.process_image_file_with_format".to_string())
+    }
+
+    pub fn process_image_files_batch(&self, file_paths: Vec<String>, config: TesseractConfig) -> Vec<String> {
+        let config_core = config.into();
+    let _ = (file_paths, config);
+        Vec::new()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new(cache_dir: Option<String>) -> Result<OcrProcessor> {
+        kreuzberg::ocr::OcrProcessor::new(cache_dir.map(std::path::PathBuf::from)).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct TessdataManager {
+}
+
+impl TessdataManager {
+    pub fn cache_dir(&self) -> String {
+        let core_self = kreuzberg::ocr::TessdataManager {
+        };
+        core_self.cache_dir().to_owned()
+    }
+
+    pub fn is_language_cached(&self, lang: String) -> bool {
+        let core_self = kreuzberg::ocr::TessdataManager {
+        };
+        core_self.is_language_cached(&lang)
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct TesseractBackend {
+}
+
+impl Default for TesseractBackend {
+    fn default() -> Self {
+        Self {
+        }
+    }
+}
+
+impl TesseractBackend {
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::ocr::TesseractBackend {
+        };
+        core_self.name().to_owned()
+    }
+
+    pub fn version(&self) -> String {
+        let core_self = kreuzberg::ocr::TesseractBackend {
+        };
+        core_self.version().into()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn initialize(&self) -> Result<()> {
+        let core_self = kreuzberg::ocr::TesseractBackend {
+        };
+        let result = core_self.initialize().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn shutdown(&self) -> Result<()> {
+        let core_self = kreuzberg::ocr::TesseractBackend {
+        };
+        let result = core_self.shutdown().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_image(&self, image_bytes: Vec<u8>, config: OcrConfig) -> Result<ExtractionResult> {
+        let config_core = config.into();
+    let _ = (image_bytes, config);
+        Err("Not implemented: TesseractBackend.process_image".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn process_image_file(&self, path: String, config: OcrConfig) -> Result<ExtractionResult> {
+        let config_core = config.into();
+    let _ = (path, config);
+        Err("Not implemented: TesseractBackend.process_image_file".to_string())
+    }
+
+    pub fn supports_language(&self, lang: String) -> bool {
+        let core_self = kreuzberg::ocr::TesseractBackend {
+        };
+        core_self.supports_language(&lang)
+    }
+
+    pub fn backend_type(&self) -> OcrBackendType {
+        let core_self = kreuzberg::ocr::TesseractBackend {
+        };
+        core_self.backend_type().into()
+    }
+
+    pub fn supported_languages(&self) -> Vec<String> {
+        let core_self = kreuzberg::ocr::TesseractBackend {
+        };
+        core_self.supported_languages()
+    }
+
+    pub fn supports_table_detection(&self) -> bool {
+        let core_self = kreuzberg::ocr::TesseractBackend {
+        };
+        core_self.supports_table_detection()
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new() -> Result<TesseractBackend> {
+        kreuzberg::ocr::TesseractBackend::new().map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn with_cache_dir(cache_dir: String) -> Result<TesseractBackend> {
+        kreuzberg::ocr::TesseractBackend::with_cache_dir(std::path::PathBuf::from(cache_dir)).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> TesseractBackend {
+        Self { inner: Arc::new(kreuzberg::ocr::TesseractBackend::default()) }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PaddleOcrConfig {
+    /// Language code (e.g., "en", "ch", "jpn", "kor", "deu", "fra")
+    pub language: String,
+    /// Optional custom cache directory for model files
+    pub cache_dir: Option<String>,
+    /// Enable angle classification for rotated text (default: false).
+    /// Can misfire on short text regions, rotating crops incorrectly before recognition.
+    pub use_angle_cls: bool,
+    /// Enable table structure detection (default: false)
+    pub enable_table_detection: bool,
+    /// Database threshold for text detection (default: 0.3)
+    /// Range: 0.0-1.0, higher values require more confident detections
+    pub det_db_thresh: f64,
+    /// Box threshold for text bounding box refinement (default: 0.5)
+    /// Range: 0.0-1.0
+    pub det_db_box_thresh: f64,
+    /// Unclip ratio for expanding text bounding boxes (default: 1.6)
+    /// Controls the expansion of detected text regions
+    pub det_db_unclip_ratio: f64,
+    /// Maximum side length for detection image (default: 960)
+    /// Larger images may be resized to this limit for faster inference
+    pub det_limit_side_len: i32,
+    /// Batch size for recognition inference (default: 6)
+    /// Number of text regions to process simultaneously
+    pub rec_batch_num: i32,
+    /// Padding in pixels added around the image before detection (default: 10).
+    /// Large values can include surrounding content like table gridlines.
+    pub padding: i32,
+    /// Minimum recognition confidence score for text lines (default: 0.5).
+    /// Text regions with recognition confidence below this threshold are discarded.
+    /// Matches PaddleOCR Python's `drop_score` parameter.
+    /// Range: 0.0-1.0
+    pub drop_score: f64,
+    /// Model tier controlling detection/recognition model size and accuracy trade-off.
+    /// - `"mobile"` (default): Lightweight models (~4.5MB detection, ~16.5MB recognition), fast download and inference
+    /// - `"server"`: Large, high-accuracy models (~88MB detection, ~84MB recognition), best for GPU or complex documents
+    pub model_tier: String,
+}
+
+impl Default for PaddleOcrConfig {
+    fn default() -> Self {
+        Self {
+            language: Default::default(),
+            cache_dir: Default::default(),
+            use_angle_cls: Default::default(),
+            enable_table_detection: Default::default(),
+            det_db_thresh: Default::default(),
+            det_db_box_thresh: Default::default(),
+            det_db_unclip_ratio: Default::default(),
+            det_limit_side_len: Default::default(),
+            rec_batch_num: Default::default(),
+            padding: Default::default(),
+            drop_score: Default::default(),
+            model_tier: Default::default(),
+        }
+    }
+}
+
+impl PaddleOcrConfig {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        language: Option<String>,
+        use_angle_cls: Option<bool>,
+        enable_table_detection: Option<bool>,
+        det_db_thresh: Option<f64>,
+        det_db_box_thresh: Option<f64>,
+        det_db_unclip_ratio: Option<f64>,
+        det_limit_side_len: Option<i32>,
+        rec_batch_num: Option<i32>,
+        padding: Option<i32>,
+        drop_score: Option<f64>,
+        model_tier: Option<String>,
+        cache_dir: Option<String>,
+    ) -> Self {
+        Self { language: language.unwrap_or_default(), cache_dir: cache_dir, use_angle_cls: use_angle_cls.unwrap_or_default(), enable_table_detection: enable_table_detection.unwrap_or_default(), det_db_thresh: det_db_thresh.unwrap_or_default(), det_db_box_thresh: det_db_box_thresh.unwrap_or_default(), det_db_unclip_ratio: det_db_unclip_ratio.unwrap_or_default(), det_limit_side_len: det_limit_side_len.unwrap_or_default(), rec_batch_num: rec_batch_num.unwrap_or_default(), padding: padding.unwrap_or_default(), drop_score: drop_score.unwrap_or_default(), model_tier: model_tier.unwrap_or_default() }
+    }
+
+    pub fn with_cache_dir(&self, path: String) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_cache_dir(std::path::PathBuf::from(path)).into()
+    }
+
+    pub fn with_table_detection(&self, enable: bool) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_table_detection(enable).into()
+    }
+
+    pub fn with_angle_cls(&self, enable: bool) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_angle_cls(enable).into()
+    }
+
+    pub fn with_det_db_thresh(&self, threshold: f64) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_det_db_thresh(threshold).into()
+    }
+
+    pub fn with_det_db_box_thresh(&self, threshold: f64) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_det_db_box_thresh(threshold).into()
+    }
+
+    pub fn with_det_db_unclip_ratio(&self, ratio: f64) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_det_db_unclip_ratio(ratio).into()
+    }
+
+    pub fn with_det_limit_side_len(&self, length: i32) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_det_limit_side_len(length).into()
+    }
+
+    pub fn with_rec_batch_num(&self, batch_size: i32) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_rec_batch_num(batch_size).into()
+    }
+
+    pub fn with_drop_score(&self, score: f64) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_drop_score(score).into()
+    }
+
+    pub fn with_padding(&self, padding: i32) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_padding(padding).into()
+    }
+
+    pub fn with_model_tier(&self, tier: String) -> PaddleOcrConfig {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.with_model_tier(tier).into()
+    }
+
+    pub fn resolve_cache_dir(&self) -> String {
+        let core_self = kreuzberg::PaddleOcrConfig {
+            language: self.language.clone(),
+            cache_dir: self.cache_dir.clone().map(Into::into),
+            use_angle_cls: self.use_angle_cls,
+            enable_table_detection: self.enable_table_detection,
+            det_db_thresh: self.det_db_thresh,
+            det_db_box_thresh: self.det_db_box_thresh,
+            det_db_unclip_ratio: self.det_db_unclip_ratio,
+            det_limit_side_len: self.det_limit_side_len,
+            rec_batch_num: self.rec_batch_num,
+            padding: self.padding,
+            drop_score: self.drop_score,
+            model_tier: self.model_tier.clone(),
+        };
+        core_self.resolve_cache_dir().into()
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PaddleOcrConfig {
+        kreuzberg::PaddleOcrConfig::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_paddleocrconfig(
+    language: String = "",
+    cache_dir: String = "",
+    use_angle_cls: bool = false,
+    enable_table_detection: bool = false,
+    det_db_thresh: f64 = 0.0,
+    det_db_box_thresh: f64 = 0.0,
+    det_db_unclip_ratio: f64 = 0.0,
+    det_limit_side_len: i32 = 0,
+    rec_batch_num: i32 = 0,
+    padding: i32 = 0,
+    drop_score: f64 = 0.0,
+    model_tier: String = ""
+) -> PaddleOcrConfig {
+    PaddleOcrConfig {
+        language,
+        cache_dir,
+        use_angle_cls,
+        enable_table_detection,
+        det_db_thresh,
+        det_db_box_thresh,
+        det_db_unclip_ratio,
+        det_limit_side_len,
+        rec_batch_num,
+        padding,
+        drop_score,
+        model_tier,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct ModelPaths {
+    /// Path to the detection model directory.
+    pub det_model: String,
+    /// Path to the classification model directory.
+    pub cls_model: String,
+    /// Path to the recognition model directory.
+    pub rec_model: String,
+    /// Path to the character dictionary file.
+    pub dict_file: String,
+}
+
+impl ModelPaths {
+    #[must_use]
+    
+    pub fn new(det_model: String, cls_model: String, rec_model: String, dict_file: String) -> Self {
+        Self { det_model, cls_model, rec_model, dict_file }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct OrientationResult {
+    /// Detected orientation in degrees (0, 90, 180, or 270).
+    pub degrees: i32,
+    /// Confidence score (0.0-1.0).
+    pub confidence: f64,
+}
+
+impl OrientationResult {
+    #[must_use]
+    
+    pub fn new(degrees: i32, confidence: f64) -> Self {
+        Self { degrees, confidence }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct LayoutModel {
+}
+
+impl LayoutModel {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn detect(&self, img: String) -> Result<Vec<LayoutDetection>> {
+        let _ = img;
+        Err("Not implemented: LayoutModel.detect".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn detect_with_threshold(&self, img: String, threshold: f64) -> Result<Vec<LayoutDetection>> {
+        let _ = (img, threshold);
+        Err("Not implemented: LayoutModel.detect_with_threshold".to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn detect_batch(&self, images: Vec<String>, threshold: Option<f64>) -> Result<Vec<Vec<LayoutDetection>>> {
+        let _ = (images, threshold);
+        Err("Not implemented: LayoutModel.detect_batch".to_string())
+    }
+
+    pub fn name(&self) -> String {
+        let core_self = kreuzberg::layout::LayoutModel {
+        };
+        core_self.name().to_owned()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct BBox {
+    pub x1: f64,
+    pub y1: f64,
+    pub x2: f64,
+    pub y2: f64,
+}
+
+impl BBox {
+    #[must_use]
+    
+    pub fn new(x1: f64, y1: f64, x2: f64, y2: f64) -> Self {
+        Self { x1, y1, x2, y2 }
+    }
+
+    pub fn width(&self) -> f64 {
+        let core_self = kreuzberg::BBox {
+            x1: self.x1,
+            y1: self.y1,
+            x2: self.x2,
+            y2: self.y2,
+        };
+        core_self.width()
+    }
+
+    pub fn height(&self) -> f64 {
+        let core_self = kreuzberg::BBox {
+            x1: self.x1,
+            y1: self.y1,
+            x2: self.x2,
+            y2: self.y2,
+        };
+        core_self.height()
+    }
+
+    pub fn area(&self) -> f64 {
+        let core_self = kreuzberg::BBox {
+            x1: self.x1,
+            y1: self.y1,
+            x2: self.x2,
+            y2: self.y2,
+        };
+        core_self.area()
+    }
+
+    pub fn center(&self) -> String {
+        String::from("[unimplemented: BBox.center]")
+    }
+
+    pub fn intersection_area(&self, other: BBox) -> f64 {
+        let other_core = other.into();
+    let _ = other;
+        0
+    }
+
+    pub fn iou(&self, other: BBox) -> f64 {
+        let other_core = other.into();
+    let _ = other;
+        0
+    }
+
+    pub fn containment_of(&self, other: BBox) -> f64 {
+        let other_core = other.into();
+    let _ = other;
+        0
+    }
+
+    pub fn page_coverage(&self, page_width: f64, page_height: f64) -> f64 {
+        let core_self = kreuzberg::BBox {
+            x1: self.x1,
+            y1: self.y1,
+            x2: self.x2,
+            y2: self.y2,
+        };
+        core_self.page_coverage(page_width, page_height)
+    }
+
+    pub fn fmt(&self, f: String) -> String {
+        let _ = f;
+        String::from("[unimplemented: BBox.fmt]")
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct LayoutDetection {
+    pub class: LayoutClass,
+    pub confidence: f64,
+    pub bbox: BBox,
+}
+
+impl LayoutDetection {
+    #[must_use]
+    
+    pub fn new(class: LayoutClass, confidence: f64, bbox: BBox) -> Self {
+        Self { class, confidence, bbox }
+    }
+
+    pub fn fmt(&self, f: String) -> String {
+        let _ = f;
+        String::from("[unimplemented: LayoutDetection.fmt]")
+    }
+
+    pub fn sort_by_confidence_desc(detections: Vec<LayoutDetection>) -> () {
+        kreuzberg::LayoutDetection::sort_by_confidence_desc(&detections)
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct DetectionResult {
+    pub page_width: i32,
+    pub page_height: i32,
+    pub detections: Vec<LayoutDetection>,
+}
+
+impl DetectionResult {
+    #[must_use]
+    
+    pub fn new(page_width: i32, page_height: i32, detections: Vec<LayoutDetection>) -> Self {
+        Self { page_width, page_height, detections }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct EmbeddedFile {
+    /// The filename as stored in the PDF name tree.
+    pub name: String,
+    /// Raw file bytes from the embedded stream.
+    pub data: Vec<u8>,
+    /// MIME type if specified in the filespec, otherwise `None`.
+    pub mime_type: Option<String>,
+}
+
+impl EmbeddedFile {
+    #[must_use]
+    
+    pub fn new(name: String, data: Vec<u8>, mime_type: Option<String>) -> Self {
+        Self { name, data, mime_type }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct FontSizeCluster {
+    /// The centroid (mean) font size of this cluster
+    pub centroid: f64,
+    /// The text blocks that belong to this cluster
+    pub members: Vec<TextBlock>,
+}
+
+impl FontSizeCluster {
+    #[must_use]
+    
+    pub fn new(centroid: f64, members: Vec<TextBlock>) -> Self {
+        Self { centroid, members }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct CharData {
+    /// The character text content
+    pub text: String,
+    /// X position in PDF units
+    pub x: f64,
+    /// Y position in PDF units
+    pub y: f64,
+    /// Font size in points
+    pub font_size: f64,
+    /// Character width in PDF units
+    pub width: f64,
+    /// Character height in PDF units
+    pub height: f64,
+    /// Whether the font is bold (from pdfium force-bold flag)
+    pub is_bold: bool,
+    /// Whether the font is italic
+    pub is_italic: bool,
+    /// Baseline Y position (from character origin, falls back to bounds bottom)
+    pub baseline_y: f64,
+}
+
+impl CharData {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        text: String,
+        x: f64,
+        y: f64,
+        font_size: f64,
+        width: f64,
+        height: f64,
+        is_bold: bool,
+        is_italic: bool,
+        baseline_y: f64,
+    ) -> Self {
+        Self { text, x, y, font_size, width, height, is_bold, is_italic, baseline_y }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct TextBlock {
+    /// The text content
+    pub text: String,
+    /// The bounding box of the block
+    pub bbox: BoundingBox,
+    /// The font size of the text in this block
+    pub font_size: f64,
+}
+
+impl TextBlock {
+    #[must_use]
+    
+    pub fn new(text: String, bbox: BoundingBox, font_size: f64) -> Self {
+        Self { text, bbox, font_size }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct KMeansResult {
+    /// Cluster label for each block (0-indexed)
+    pub labels: Vec<i32>,
+}
+
+impl KMeansResult {
+    #[must_use]
+    
+    pub fn new(labels: Vec<i32>) -> Self {
+        Self { labels }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct HierarchyBlock {
+    /// The text content
+    pub text: String,
+    /// The bounding box of the block
+    pub bbox: BoundingBox,
+    /// The font size of the text in this block
+    pub font_size: f64,
+    /// The hierarchy level of this block (H1-H6 or Body)
+    pub hierarchy_level: HierarchyLevel,
+}
+
+impl HierarchyBlock {
+    #[must_use]
+    
+    pub fn new(text: String, bbox: BoundingBox, font_size: f64, hierarchy_level: HierarchyLevel) -> Self {
+        Self { text, bbox, font_size, hierarchy_level }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct SegmentData {
+    /// The segment text content (may contain spaces / multiple words)
+    pub text: String,
+    /// Left x position in PDF units
+    pub x: f64,
+    /// Bottom y position in PDF units (PDF coordinate system, y=0 at bottom)
+    pub y: f64,
+    /// Width of the segment bounding box
+    pub width: f64,
+    /// Height of the segment bounding box
+    pub height: f64,
+    /// Font size in points (from first character)
+    pub font_size: f64,
+    /// Whether the font is bold
+    pub is_bold: bool,
+    /// Whether the font is italic
+    pub is_italic: bool,
+    /// Whether the font is monospace (e.g. Courier, Consolas)
+    pub is_monospace: bool,
+    /// Baseline Y position (from first character origin, falls back to bounds bottom)
+    pub baseline_y: f64,
+    /// Pre-assigned heading level from the PDF structure tree (1-6), or `None`
+    /// when the heading level is unknown and must be inferred via font-size clustering.
+    pub assigned_role: Option<i32>,
+}
+
+impl SegmentData {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        text: String,
+        x: f64,
+        y: f64,
+        width: f64,
+        height: f64,
+        font_size: f64,
+        is_bold: bool,
+        is_italic: bool,
+        is_monospace: bool,
+        baseline_y: f64,
+        assigned_role: Option<i32>,
+    ) -> Self {
+        Self { text, x, y, width, height, font_size, is_bold, is_italic, is_monospace, baseline_y, assigned_role }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PdfImage {
+    pub page_number: f64,
+    pub image_index: f64,
+    pub width: f64,
+    pub height: f64,
+    pub color_space: Option<String>,
+    pub bits_per_component: Option<f64>,
+    /// Original PDF stream filters (e.g. `["FlateDecode"]`, `["DCTDecode"]`).
+    pub filters: Vec<String>,
+    /// The decoded image bytes in a standard format (JPEG, PNG, etc.).
+    pub data: Vec<u8>,
+    /// The format of `data` after decoding: `"jpeg"`, `"png"`, `"jpeg2000"`, `"ccitt"`, or `"raw"`.
+    pub decoded_format: String,
+}
+
+impl PdfImage {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        page_number: f64,
+        image_index: f64,
+        width: f64,
+        height: f64,
+        filters: Vec<String>,
+        data: Vec<u8>,
+        decoded_format: String,
+        color_space: Option<String>,
+        bits_per_component: Option<f64>,
+    ) -> Self {
+        Self { page_number, image_index, width, height, color_space, bits_per_component, filters, data, decoded_format }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PdfImageExtractor {
+}
+
+impl PdfImageExtractor {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_images(&self) -> Result<Vec<PdfImage>> {
+        let core_self = kreuzberg::pdf::PdfImageExtractor {
+        };
+        let result = core_self.extract_images().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn extract_images_from_page(&self, page_number: i32) -> Result<Vec<PdfImage>> {
+        let core_self = kreuzberg::pdf::PdfImageExtractor {
+        };
+        let result = core_self.extract_images_from_page(page_number).map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn get_image_count(&self) -> Result<f64> {
+        let core_self = kreuzberg::pdf::PdfImageExtractor {
+        };
+        let result = core_self.get_image_count().map_err(|e| e.to_string())?;
+        Ok(result)
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new(pdf_bytes: Vec<u8>) -> Result<PdfImageExtractor> {
+        kreuzberg::pdf::PdfImageExtractor::new(&pdf_bytes).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> Result<PdfImageExtractor> {
+        kreuzberg::pdf::PdfImageExtractor::new_with_password(&pdf_bytes, password.as_deref()).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PdfLayoutBBox {
+    pub left: f64,
+    pub bottom: f64,
+    pub right: f64,
+    pub top: f64,
+}
+
+impl PdfLayoutBBox {
+    #[must_use]
+    
+    pub fn new(left: f64, bottom: f64, right: f64, top: f64) -> Self {
+        Self { left, bottom, right, top }
+    }
+
+    pub fn width(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::PdfLayoutBBox {
+            left: self.left,
+            bottom: self.bottom,
+            right: self.right,
+            top: self.top,
+        };
+        core_self.width()
+    }
+
+    pub fn height(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::PdfLayoutBBox {
+            left: self.left,
+            bottom: self.bottom,
+            right: self.right,
+            top: self.top,
+        };
+        core_self.height()
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PageLayoutRegion {
+    pub class: LayoutClass,
+    pub confidence: f64,
+    pub bbox: PdfLayoutBBox,
+}
+
+impl PageLayoutRegion {
+    #[must_use]
+    
+    pub fn new(class: LayoutClass, confidence: f64, bbox: PdfLayoutBBox) -> Self {
+        Self { class, confidence, bbox }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PageLayoutResult {
+    pub page_index: f64,
+    pub regions: Vec<PageLayoutRegion>,
+    pub page_width_pts: f64,
+    pub page_height_pts: f64,
+    /// Width of the rendered image used for layout detection (pixels).
+    pub render_width_px: i32,
+    /// Height of the rendered image used for layout detection (pixels).
+    pub render_height_px: i32,
+}
+
+impl PageLayoutResult {
+    #[must_use]
+    
+    pub fn new(
+        page_index: f64,
+        regions: Vec<PageLayoutRegion>,
+        page_width_pts: f64,
+        page_height_pts: f64,
+        render_width_px: i32,
+        render_height_px: i32,
+    ) -> Self {
+        Self { page_index, regions, page_width_pts, page_height_pts, render_width_px, render_height_px }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PageTiming {
+    /// Time to render the PDF page to a raster image (amortized from batch render).
+    pub render_ms: f64,
+    /// Time spent in image preprocessing (resize, normalize, tensor construction).
+    pub preprocess_ms: f64,
+    /// Time for the ONNX model session.run() call (actual neural network inference).
+    pub onnx_ms: f64,
+    /// Total model inference time (preprocess + onnx), as measured by the engine.
+    pub inference_ms: f64,
+    /// Time spent in postprocessing (confidence filtering, overlap resolution).
+    pub postprocess_ms: f64,
+    /// Time to map pixel-space bounding boxes to PDF coordinate space.
+    pub mapping_ms: f64,
+}
+
+impl PageTiming {
+    #[must_use]
+    
+    pub fn new(
+        render_ms: f64,
+        preprocess_ms: f64,
+        onnx_ms: f64,
+        inference_ms: f64,
+        postprocess_ms: f64,
+        mapping_ms: f64,
+    ) -> Self {
+        Self { render_ms, preprocess_ms, onnx_ms, inference_ms, postprocess_ms, mapping_ms }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct LayoutTimingReport {
+    pub total_ms: f64,
+    pub per_page: Vec<PageTiming>,
+}
+
+impl LayoutTimingReport {
+    #[must_use]
+    
+    pub fn new(total_ms: f64, per_page: Vec<PageTiming>) -> Self {
+        Self { total_ms, per_page }
+    }
+
+    pub fn avg_render_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.avg_render_ms()
+    }
+
+    pub fn avg_inference_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.avg_inference_ms()
+    }
+
+    pub fn avg_preprocess_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.avg_preprocess_ms()
+    }
+
+    pub fn avg_onnx_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.avg_onnx_ms()
+    }
+
+    pub fn avg_postprocess_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.avg_postprocess_ms()
+    }
+
+    pub fn total_inference_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.total_inference_ms()
+    }
+
+    pub fn total_render_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.total_render_ms()
+    }
+
+    pub fn total_preprocess_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.total_preprocess_ms()
+    }
+
+    pub fn total_onnx_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.total_onnx_ms()
+    }
+
+    pub fn total_postprocess_ms(&self) -> f64 {
+        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
+            total_ms: self.total_ms,
+            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
+        };
+        core_self.total_postprocess_ms()
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+pub struct PdfMetadata {
+    /// PDF version (e.g., "1.7", "2.0")
+    pub pdf_version: Option<String>,
+    /// PDF producer (application that created the PDF)
+    pub producer: Option<String>,
+    /// Whether the PDF is encrypted/password-protected
+    pub is_encrypted: Option<bool>,
+    /// First page width in points (1/72 inch)
+    pub width: Option<f64>,
+    /// First page height in points (1/72 inch)
+    pub height: Option<f64>,
+    /// Total number of pages in the PDF document
+    pub page_count: Option<f64>,
+}
+
+impl Default for PdfMetadata {
+    fn default() -> Self {
+        Self {
+            pdf_version: Default::default(),
+            producer: Default::default(),
+            is_encrypted: Default::default(),
+            width: Default::default(),
+            height: Default::default(),
+            page_count: Default::default(),
+        }
+    }
+}
+
+impl PdfMetadata {
+    #[must_use]
+    
+    pub fn new(
+        pdf_version: Option<String>,
+        producer: Option<String>,
+        is_encrypted: Option<bool>,
+        width: Option<f64>,
+        height: Option<f64>,
+        page_count: Option<f64>,
+    ) -> Self {
+        Self { pdf_version: pdf_version, producer: producer, is_encrypted: is_encrypted, width: width, height: height, page_count: page_count }
+    }
+}
+
+#[extendr]
+pub fn new_pdfmetadata(
+    pdf_version: String = "",
+    producer: String = "",
+    is_encrypted: bool = false,
+    width: f64 = 0,
+    height: f64 = 0,
+    page_count: f64 = 0
+) -> PdfMetadata {
+    PdfMetadata {
+        pdf_version,
+        producer,
+        is_encrypted,
+        width,
+        height,
+        page_count,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct PdfExtractionMetadata {
+    /// Document title
+    pub title: Option<String>,
+    /// Document subject or description
+    pub subject: Option<String>,
+    /// Document authors (parsed from PDF Author field)
+    pub authors: Option<Vec<String>>,
+    /// Document keywords (parsed from PDF Keywords field)
+    pub keywords: Option<Vec<String>>,
+    /// Creation timestamp (ISO 8601 format)
+    pub created_at: Option<String>,
+    /// Last modification timestamp (ISO 8601 format)
+    pub modified_at: Option<String>,
+    /// Application or user that created the document
+    pub created_by: Option<String>,
+    /// PDF-specific metadata
+    pub pdf_specific: PdfMetadata,
+    /// Page structure with boundaries and optional per-page metadata
+    pub page_structure: Option<PageStructure>,
+}
+
+impl PdfExtractionMetadata {
+    #[allow(clippy::too_many_arguments)]
+    #[must_use]
+    
+    pub fn new(
+        pdf_specific: PdfMetadata,
+        title: Option<String>,
+        subject: Option<String>,
+        authors: Option<Vec<String>>,
+        keywords: Option<Vec<String>>,
+        created_at: Option<String>,
+        modified_at: Option<String>,
+        created_by: Option<String>,
+        page_structure: Option<PageStructure>,
+    ) -> Self {
+        Self { title, subject, authors, keywords, created_at, modified_at, created_by, pdf_specific, page_structure }
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct CommonPdfMetadata {
+    pub title: Option<String>,
+    pub subject: Option<String>,
+    pub authors: Option<Vec<String>>,
+    pub keywords: Option<Vec<String>>,
+    pub created_at: Option<String>,
+    pub modified_at: Option<String>,
+    pub created_by: Option<String>,
+}
+
+impl CommonPdfMetadata {
+    #[must_use]
+    
+    pub fn new(
+        title: Option<String>,
+        subject: Option<String>,
+        authors: Option<Vec<String>>,
+        keywords: Option<Vec<String>>,
+        created_at: Option<String>,
+        modified_at: Option<String>,
+        created_by: Option<String>,
+    ) -> Self {
+        Self { title, subject, authors, keywords, created_at, modified_at, created_by }
+    }
+}
+
+#[derive(Clone, Default, serde::Serialize)]
+#[allow(clippy::similar_names)]
+pub struct PageRenderOptions {
+    pub target_dpi: i32,
+    pub max_image_dimension: i32,
+    pub auto_adjust_dpi: bool,
+    pub min_dpi: i32,
+    pub max_dpi: i32,
+}
+
+impl Default for PageRenderOptions {
+    fn default() -> Self {
+        Self {
+            target_dpi: Default::default(),
+            max_image_dimension: Default::default(),
+            auto_adjust_dpi: Default::default(),
+            min_dpi: Default::default(),
+            max_dpi: Default::default(),
+        }
+    }
+}
+
+impl PageRenderOptions {
+    #[must_use]
+    
+    pub fn new(
+        target_dpi: Option<i32>,
+        max_image_dimension: Option<i32>,
+        auto_adjust_dpi: Option<bool>,
+        min_dpi: Option<i32>,
+        max_dpi: Option<i32>,
+    ) -> Self {
+        Self { target_dpi: target_dpi.unwrap_or(300), max_image_dimension: max_image_dimension.unwrap_or(65536), auto_adjust_dpi: auto_adjust_dpi.unwrap_or(true), min_dpi: min_dpi.unwrap_or(72), max_dpi: max_dpi.unwrap_or(600) }
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> PageRenderOptions {
+        kreuzberg::pdf::PageRenderOptions::default().into()
+    }
+}
+
+#[extendr]
+pub fn new_pagerenderoptions(
+    target_dpi: i32 = 300,
+    max_image_dimension: i32 = 65536,
+    auto_adjust_dpi: bool = TRUE,
+    min_dpi: i32 = 72,
+    max_dpi: i32 = 600
+) -> PageRenderOptions {
+    PageRenderOptions {
+        target_dpi,
+        max_image_dimension,
+        auto_adjust_dpi,
+        min_dpi,
+        max_dpi,
+    }
+}
+
+
+#[derive(Clone, serde::Serialize)]
+pub struct PdfPageIterator {
+}
+
+impl PdfPageIterator {
+    pub fn page_count(&self) -> f64 {
+        let core_self = kreuzberg::pdf::PdfPageIterator {
+        };
+        core_self.page_count()
+    }
+
+    pub fn next(&self) -> Option<String> {
+        None
+    }
+
+    pub fn size_hint(&self) -> String {
+        String::from("[unimplemented: PdfPageIterator.size_hint]")
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new(pdf_bytes: Vec<u8>, dpi: Option<i32>, password: Option<String>) -> Result<PdfPageIterator> {
+        kreuzberg::pdf::PdfPageIterator::new(&pdf_bytes, dpi, password).map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+
+    #[allow(clippy::missing_errors_doc)]
+    pub fn from_file(path: String, dpi: Option<i32>, password: Option<String>) -> Result<PdfPageIterator> {
+        let _ = (path, dpi, password);
+        Err("Not implemented: PdfPageIterator::from_file".to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PdfRenderer {
+}
+
+impl PdfRenderer {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new() -> Result<PdfRenderer> {
+        kreuzberg::pdf::rendering::PdfRenderer::new().map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PdfUnifiedExtractionResult {
+}
+
+#[derive(Clone, serde::Serialize)]
+pub struct PdfTextExtractor {
+}
+
+impl PdfTextExtractor {
+    #[allow(clippy::missing_errors_doc)]
+    pub fn new() -> Result<PdfTextExtractor> {
+        kreuzberg::pdf::text::PdfTextExtractor::new().map(|val| Self { inner: Arc::new(val) }).map_err(|e| e.to_string())
+    }
+}
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ExecutionProviderType {
+    Auto = 0,
+    Cpu = 1,
+    CoreMl = 2,
+    Cuda = 3,
+    TensorRt = 4,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ExecutionProviderType {
+    fn default() -> Self { Self::Auto }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum OutputFormat {
+    Plain = 0,
+    Markdown = 1,
+    Djot = 2,
+    Html = 3,
+    Json = 4,
+    Structured = 5,
+    Custom = 6,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for OutputFormat {
+    fn default() -> Self { Self::Plain }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum HtmlTheme {
+    Default = 0,
+    GitHub = 1,
+    Dark = 2,
+    Light = 3,
+    Unstyled = 4,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for HtmlTheme {
+    fn default() -> Self { Self::Default }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum TableModel {
+    Tatr = 0,
+    SlanetWired = 1,
+    SlanetWireless = 2,
+    SlanetPlus = 3,
+    SlanetAuto = 4,
+    Disabled = 5,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for TableModel {
+    fn default() -> Self { Self::Tatr }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum PdfBackend {
+    Pdfium = 0,
+    PdfOxide = 1,
+    Auto = 2,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for PdfBackend {
+    fn default() -> Self { Self::Pdfium }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ChunkerType {
+    Text = 0,
+    Markdown = 1,
+    Yaml = 2,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ChunkerType {
+    fn default() -> Self { Self::Text }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ChunkSizing {
+    Characters = 0,
+    Tokenizer = 1,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ChunkSizing {
+    fn default() -> Self { Self::Characters }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum EmbeddingModelType {
+    Preset = 0,
+    Custom = 1,
+    Llm = 2,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for EmbeddingModelType {
+    fn default() -> Self { Self::Preset }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum CodeContentMode {
+    Chunks = 0,
+    Raw = 1,
+    Structure = 2,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for CodeContentMode {
+    fn default() -> Self { Self::Chunks }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ListType {
+    Bullet = 0,
+    Numbered = 1,
+    Lettered = 2,
+    Indented = 3,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ListType {
+    fn default() -> Self { Self::Bullet }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum HwpError {
+    InvalidFormat = 0,
+    UnsupportedVersion = 1,
+    Io = 2,
+    Cfb = 3,
+    CompressionError = 4,
+    ParseError = 5,
+    EncodingError = 6,
+    NotFound = 7,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for HwpError {
+    fn default() -> Self { Self::InvalidFormat }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum DrawingType {
+    Inline = 0,
+    Anchored = 1,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for DrawingType {
+    fn default() -> Self { Self::Inline }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum WrapType {
+    None = 0,
+    Square = 1,
+    Tight = 2,
+    TopAndBottom = 3,
+    Through = 4,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for WrapType {
+    fn default() -> Self { Self::None }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum FracType {
+    Bar = 0,
+    NoBar = 1,
+    Linear = 2,
+    Skewed = 3,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for FracType {
+    fn default() -> Self { Self::Bar }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum MathNode {
+    Run = 0,
+    SSup = 1,
+    SSub = 2,
+    SSubSup = 3,
+    Frac = 4,
+    Rad = 5,
+    Nary = 6,
+    Delim = 7,
+    Func = 8,
+    Acc = 9,
+    EqArr = 10,
+    LimLow = 11,
+    LimUpp = 12,
+    Bar = 13,
+    BorderBox = 14,
+    Matrix = 15,
+    Group = 16,
+    SPre = 17,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for MathNode {
+    fn default() -> Self { Self::Run }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum DocumentElement {
+    Paragraph = 0,
+    Table = 1,
+    Drawing = 2,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for DocumentElement {
+    fn default() -> Self { Self::Paragraph }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum HeaderFooterType {
+    Default = 0,
+    First = 1,
+    Even = 2,
+    Odd = 3,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for HeaderFooterType {
+    fn default() -> Self { Self::Default }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum NoteType {
+    Footnote = 0,
+    Endnote = 1,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for NoteType {
+    fn default() -> Self { Self::Footnote }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum Orientation {
+    Portrait = 0,
+    Landscape = 1,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for Orientation {
+    fn default() -> Self { Self::Portrait }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum StyleType {
+    Paragraph = 0,
+    Character = 1,
+    Table = 2,
+    Numbering = 3,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for StyleType {
+    fn default() -> Self { Self::Paragraph }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ThemeColor {
+    Rgb = 0,
+    System = 1,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ThemeColor {
+    fn default() -> Self { Self::Rgb }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum SecurityError {
+    ZipBombDetected = 0,
+    ArchiveTooLarge = 1,
+    TooManyFiles = 2,
+    NestingTooDeep = 3,
+    ContentTooLarge = 4,
+    EntityTooLong = 5,
+    TooManyIterations = 6,
+    XmlDepthExceeded = 7,
+    TooManyCells = 8,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for SecurityError {
+    fn default() -> Self { Self::ZipBombDetected }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum OcrBackendType {
+    Tesseract = 0,
+    EasyOCR = 1,
+    PaddleOCR = 2,
+    Custom = 3,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for OcrBackendType {
+    fn default() -> Self { Self::Tesseract }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ReductionLevel {
+    Off = 0,
+    Light = 1,
+    Moderate = 2,
+    Aggressive = 3,
+    Maximum = 4,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ReductionLevel {
+    fn default() -> Self { Self::Off }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum PdfAnnotationType {
+    Text = 0,
+    Highlight = 1,
+    Link = 2,
+    Stamp = 3,
+    Underline = 4,
+    StrikeOut = 5,
+    Other = 6,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for PdfAnnotationType {
+    fn default() -> Self { Self::Text }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum BlockType {
+    Paragraph = 0,
+    Heading = 1,
+    Blockquote = 2,
+    CodeBlock = 3,
+    ListItem = 4,
+    OrderedList = 5,
+    BulletList = 6,
+    TaskList = 7,
+    DefinitionList = 8,
+    DefinitionTerm = 9,
+    DefinitionDescription = 10,
+    Div = 11,
+    Section = 12,
+    ThematicBreak = 13,
+    RawBlock = 14,
+    MathDisplay = 15,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for BlockType {
+    fn default() -> Self { Self::Paragraph }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum InlineType {
+    Text = 0,
+    Strong = 1,
+    Emphasis = 2,
+    Highlight = 3,
+    Subscript = 4,
+    Superscript = 5,
+    Insert = 6,
+    Delete = 7,
+    Code = 8,
+    Link = 9,
+    Image = 10,
+    Span = 11,
+    Math = 12,
+    RawInline = 13,
+    FootnoteRef = 14,
+    Symbol = 15,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for InlineType {
+    fn default() -> Self { Self::Text }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum RelationshipKind {
+    FootnoteReference = 0,
+    CitationReference = 1,
+    InternalLink = 2,
+    Caption = 3,
+    Label = 4,
+    TocEntry = 5,
+    CrossReference = 6,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for RelationshipKind {
+    fn default() -> Self { Self::FootnoteReference }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ContentLayer {
+    Body = 0,
+    Header = 1,
+    Footer = 2,
+    Footnote = 3,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ContentLayer {
+    fn default() -> Self { Self::Body }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum NodeContent {
+    Title = 0,
+    Heading = 1,
+    Paragraph = 2,
+    List = 3,
+    ListItem = 4,
+    Table = 5,
+    Image = 6,
+    Code = 7,
+    Quote = 8,
+    Formula = 9,
+    Footnote = 10,
+    Group = 11,
+    PageBreak = 12,
+    Slide = 13,
+    DefinitionList = 14,
+    DefinitionItem = 15,
+    Citation = 16,
+    Admonition = 17,
+    RawBlock = 18,
+    MetadataBlock = 19,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for NodeContent {
+    fn default() -> Self { Self::Title }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum AnnotationKind {
+    Bold = 0,
+    Italic = 1,
+    Underline = 2,
+    Strikethrough = 3,
+    Code = 4,
+    Subscript = 5,
+    Superscript = 6,
+    Link = 7,
+    Highlight = 8,
+    Color = 9,
+    FontSize = 10,
+    Custom = 11,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for AnnotationKind {
+    fn default() -> Self { Self::Bold }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ChunkType {
+    Heading = 0,
+    PartyList = 1,
+    Definitions = 2,
+    OperativeClause = 3,
+    SignatureBlock = 4,
+    Schedule = 5,
+    TableLike = 6,
+    Formula = 7,
+    CodeBlock = 8,
+    Image = 9,
+    OrgChart = 10,
+    Diagram = 11,
+    Unknown = 12,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ChunkType {
+    fn default() -> Self { Self::Heading }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ElementType {
+    Title = 0,
+    NarrativeText = 1,
+    Heading = 2,
+    ListItem = 3,
+    Table = 4,
+    Image = 5,
+    PageBreak = 6,
+    CodeBlock = 7,
+    BlockQuote = 8,
+    Footer = 9,
+    Header = 10,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ElementType {
+    fn default() -> Self { Self::Title }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum FormatMetadata {
+    Pdf = 0,
+    Docx = 1,
+    Excel = 2,
+    Email = 3,
+    Pptx = 4,
+    Archive = 5,
+    Image = 6,
+    Xml = 7,
+    Text = 8,
+    Html = 9,
+    Ocr = 10,
+    Csv = 11,
+    Bibtex = 12,
+    Citation = 13,
+    FictionBook = 14,
+    Dbf = 15,
+    Jats = 16,
+    Epub = 17,
+    Pst = 18,
+    Code = 19,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for FormatMetadata {
+    fn default() -> Self { Self::Pdf }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum TextDirection {
+    LeftToRight = 0,
+    RightToLeft = 1,
+    Auto = 2,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for TextDirection {
+    fn default() -> Self { Self::LeftToRight }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum LinkType {
+    Anchor = 0,
+    Internal = 1,
+    External = 2,
+    Email = 3,
+    Phone = 4,
+    Other = 5,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for LinkType {
+    fn default() -> Self { Self::Anchor }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ImageType {
+    DataUri = 0,
+    InlineSvg = 1,
+    External = 2,
+    Relative = 3,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ImageType {
+    fn default() -> Self { Self::DataUri }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum StructuredDataType {
+    JsonLd = 0,
+    Microdata = 1,
+    RDFa = 2,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for StructuredDataType {
+    fn default() -> Self { Self::JsonLd }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum OcrBoundingGeometry {
+    Rectangle = 0,
+    Quadrilateral = 1,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for OcrBoundingGeometry {
+    fn default() -> Self { Self::Rectangle }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum OcrElementLevel {
+    Word = 0,
+    Line = 1,
+    Block = 2,
+    Page = 3,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for OcrElementLevel {
+    fn default() -> Self { Self::Word }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum PageUnitType {
+    Page = 0,
+    Slide = 1,
+    Sheet = 2,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for PageUnitType {
+    fn default() -> Self { Self::Page }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum UriKind {
+    Hyperlink = 0,
+    Image = 1,
+    Anchor = 2,
+    Citation = 3,
+    Reference = 4,
+    Email = 5,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for UriKind {
+    fn default() -> Self { Self::Hyperlink }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum PoolError {
+    LockPoisoned = 0,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for PoolError {
+    fn default() -> Self { Self::LockPoisoned }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum ExtractionSource {
+    File = 0,
+    Bytes = 1,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ExtractionSource {
+    fn default() -> Self { Self::File }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum KeywordAlgorithm {
+    Yake = 0,
+    Rake = 1,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for KeywordAlgorithm {
+    fn default() -> Self { Self::Yake }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum OcrError {
+    TesseractInitializationFailed = 0,
+    UnsupportedVersion = 1,
+    InvalidConfiguration = 2,
+    InvalidLanguageCode = 3,
+    ImageProcessingFailed = 4,
+    ProcessingFailed = 5,
+    CacheError = 6,
+    IOError = 7,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for OcrError {
+    fn default() -> Self { Self::TesseractInitializationFailed }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum PSMMode {
+    OsdOnly = 0,
+    AutoOsd = 1,
+    AutoOnly = 2,
+    Auto = 3,
+    SingleColumn = 4,
+    SingleBlockVertical = 5,
+    SingleBlock = 6,
+    SingleLine = 7,
+    SingleWord = 8,
+    CircleWord = 9,
+    SingleChar = 10,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for PSMMode {
+    fn default() -> Self { Self::OsdOnly }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum PaddleLanguage {
+    English = 0,
+    Chinese = 1,
+    Japanese = 2,
+    Korean = 3,
+    German = 4,
+    French = 5,
+    Latin = 6,
+    Cyrillic = 7,
+    TraditionalChinese = 8,
+    Thai = 9,
+    Greek = 10,
+    EastSlavic = 11,
+    Arabic = 12,
+    Devanagari = 13,
+    Tamil = 14,
+    Telugu = 15,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for PaddleLanguage {
+    fn default() -> Self { Self::English }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum LayoutClass {
+    Caption = 0,
+    Footnote = 1,
+    Formula = 2,
+    ListItem = 3,
+    PageFooter = 4,
+    PageHeader = 5,
+    Picture = 6,
+    SectionHeader = 7,
+    Table = 8,
+    Text = 9,
+    Title = 10,
+    DocumentIndex = 11,
+    Code = 12,
+    CheckboxSelected = 13,
+    CheckboxUnselected = 14,
+    Form = 15,
+    KeyValueRegion = 16,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for LayoutClass {
+    fn default() -> Self { Self::Caption }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum PdfError {
+    InvalidPdf = 0,
+    PasswordRequired = 1,
+    InvalidPassword = 2,
+    EncryptionNotSupported = 3,
+    PageNotFound = 4,
+    TextExtractionFailed = 5,
+    RenderingFailed = 6,
+    MetadataExtractionFailed = 7,
+    ExtractionFailed = 8,
+    FontLoadingFailed = 9,
+    IOError = 10,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for PdfError {
+    fn default() -> Self { Self::InvalidPdf }
+}
+
+
+#[derive(Clone, PartialEq, serde::Serialize)]
+pub enum HierarchyLevel {
+    H1 = 0,
+    H2 = 1,
+    H3 = 2,
+    H4 = 3,
+    H5 = 4,
+    H6 = 5,
+    Body = 6,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for HierarchyLevel {
+    fn default() -> Self { Self::H1 }
+}
+
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn get_cache_metadata(cache_dir: String) -> Result<String> {
+    let _ = cache_dir;
+        Err("Not implemented: get_cache_metadata".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn cleanup_cache(cache_dir: String, max_age_days: f64, max_size_mb: f64, target_size_ratio: f64) -> Result<String> {
+    let _ = (cache_dir, max_age_days, max_size_mb, target_size_ratio);
+        Err("Not implemented: cleanup_cache".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn smart_cleanup_cache(cache_dir: String, max_age_days: f64, max_size_mb: f64, min_free_space_mb: f64) -> Result<String> {
+    let _ = (cache_dir, max_age_days, max_size_mb, min_free_space_mb);
+        Err("Not implemented: smart_cleanup_cache".to_string())
+}
+
+#[extendr]
+pub fn is_cache_valid(cache_path: String, max_age_days: f64) -> bool {
+    kreuzberg::cache::is_cache_valid(&cache_path, max_age_days)
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn clear_cache_directory(cache_dir: String) -> Result<String> {
+    let _ = cache_dir;
+        Err("Not implemented: clear_cache_directory".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn batch_cleanup_caches(cache_dirs: Vec<String>, max_age_days: f64, max_size_mb: f64, min_free_space_mb: f64) -> Result<Vec<String>> {
+    let _ = (cache_dirs, max_age_days, max_size_mb, min_free_space_mb);
+        Err("Not implemented: batch_cleanup_caches".to_string())
+}
+
+#[extendr]
+pub fn generate_cache_key(parts: Vec<String>) -> String {
+    let _ = parts;
+        String::from("[unimplemented: generate_cache_key]")
+}
+
+#[extendr]
+pub fn blake3_hash_bytes(data: Vec<u8>) -> String {
+    kreuzberg::cache::blake3_hash_bytes(&data).into()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn blake3_hash_file(path: String) -> Result<String> {
+    kreuzberg::cache::blake3_hash_file(std::path::Path::new(&path)).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn get_available_disk_space(path: String) -> Result<f64> {
+    kreuzberg::cache::get_available_disk_space(&path).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn fast_hash(data: Vec<u8>) -> f64 {
+    kreuzberg::cache::fast_hash(&data)
+}
+
+#[extendr]
+pub fn validate_cache_key(key: String) -> bool {
+    kreuzberg::cache::validate_cache_key(&key)
+}
+
+#[extendr]
+pub fn filter_old_cache_entries(cache_times: Vec<f64>, current_time: f64, max_age_seconds: f64) -> Vec<f64> {
+    kreuzberg::cache::filter_old_cache_entries(&cache_times, current_time, max_age_seconds)
+}
+
+#[extendr]
+pub fn sort_cache_by_access_time(entries: Vec<String>) -> Vec<String> {
+    let _ = entries;
+        Vec::new()
+}
+
+#[extendr]
+pub fn sanitize_namespace(namespace: String) -> Option<String> {
+    kreuzberg::cache::sanitize_namespace(&namespace).map(Into::into)
+}
+
+#[extendr]
+pub fn is_batch_mode() -> bool {
+    kreuzberg::core::batch_mode::is_batch_mode()
+}
+
+#[extendr]
+pub fn resolve_thread_budget(config: Option<String>) -> f64 {
+    let _ = config;
+        0
+}
+
+#[extendr]
+pub fn init_thread_pools(budget: f64) -> () {
+    kreuzberg::core::config::concurrency::init_thread_pools(budget)
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn merge_config_json(base: ExtractionConfig, override_json: String) -> Result<ExtractionConfig> {
+    let base_json = serde_json::to_string(&base).map_err(|e| e.to_string())?;
+    let base_core: kreuzberg::ExtractionConfig = serde_json::from_str(&base_json).map_err(|e| e.to_string())?;
+    kreuzberg::core::config::merge::merge_config_json(&base_core, override_json).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn build_config_from_json(base: ExtractionConfig, override_json: Option<String>) -> Result<ExtractionConfig> {
+    let base_json = serde_json::to_string(&base).map_err(|e| e.to_string())?;
+    let base_core: kreuzberg::ExtractionConfig = serde_json::from_str(&base_json).map_err(|e| e.to_string())?;
+    kreuzberg::core::config::merge::build_config_from_json(&base_core, override_json).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_port(port: i32) -> Result<()> {
+    kreuzberg::core::config_validation::validate_port(port).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_host(host: String) -> Result<()> {
+    kreuzberg::core::config_validation::validate_host(&host).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_cors_origin(origin: String) -> Result<()> {
+    kreuzberg::core::config_validation::validate_cors_origin(&origin).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_upload_size(size: f64) -> Result<()> {
+    kreuzberg::core::config_validation::validate_upload_size(size).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_binarization_method(method: String) -> Result<()> {
+    kreuzberg::core::validate_binarization_method(&method).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_token_reduction_level(level: String) -> Result<()> {
+    kreuzberg::core::validate_token_reduction_level(&level).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_ocr_backend(backend: String) -> Result<()> {
+    kreuzberg::core::validate_ocr_backend(&backend).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_language_code(code: String) -> Result<()> {
+    kreuzberg::core::validate_language_code(&code).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_tesseract_psm(psm: i32) -> Result<()> {
+    kreuzberg::core::validate_tesseract_psm(psm).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_tesseract_oem(oem: i32) -> Result<()> {
+    kreuzberg::core::validate_tesseract_oem(oem).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_output_format(format: String) -> Result<()> {
+    kreuzberg::core::validate_output_format(&format).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_confidence(confidence: f64) -> Result<()> {
+    kreuzberg::core::validate_confidence(confidence).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_dpi(dpi: i32) -> Result<()> {
+    kreuzberg::core::validate_dpi(dpi).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_chunking_params(max_chars: f64, max_overlap: f64) -> Result<()> {
+    kreuzberg::core::validate_chunking_params(max_chars, max_overlap).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_llm_config_model(model: String) -> Result<()> {
+    kreuzberg::core::config_validation::validate_llm_config_model(&model).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<LlmConfig>) -> Result<()> {
+    let vlm_config_core = vlm_config.map(Into::into);
+    kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, &vlm_config_core).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_structured_extraction_schema(schema: String, llm_model: String) -> Result<()> {
+    let _ = (schema, llm_model);
+        Err("Not implemented: validate_structured_extraction_schema".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn extract_bytes(content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<ExtractionResult> {
+    let config_core = config.into();
+    todo!("async not supported by backend")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn extract_file(path: String, mime_type: Option<String>, config: Option<ExtractionConfig>) -> Result<ExtractionResult> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::extract_file(path, mime_type.as_deref(), &config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn get_pool_sizing_hint(file_size: f64, mime_type: String) -> PoolSizeHint {
+    kreuzberg::core::extractor::get_pool_sizing_hint(file_size, &mime_type).into()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_file_sync(path: String, mime_type: Option<String>, config: Option<ExtractionConfig>) -> Result<ExtractionResult> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::extract_file_sync(path, mime_type.as_deref(), &config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_bytes_sync(content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<ExtractionResult> {
+    let config_core = config.into();
+    kreuzberg::extract_bytes_sync(&content, &mime_type, &config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn batch_extract_file_sync(items: Vec<String>, config: ExtractionConfig) -> Result<Vec<ExtractionResult>> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::batch_extract_file_sync(items, &config_core).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn batch_extract_bytes_sync(items: Vec<String>, config: ExtractionConfig) -> Result<Vec<ExtractionResult>> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::batch_extract_bytes_sync(items, &config_core).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn batch_extract_file(items: Vec<String>, config: ExtractionConfig) -> Result<Vec<ExtractionResult>> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::batch_extract_file(items, &config_core).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn batch_extract_bytes(items: Vec<String>, config: ExtractionConfig) -> Result<Vec<ExtractionResult>> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::batch_extract_bytes(items, &config_core).map_err(|e| e.to_string())
+}
+
 #[extendr]
 pub fn is_valid_format_field(field: String) -> bool {
     kreuzberg::is_valid_format_field(&field)
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn open_file_bytes(path: String) -> Result<FileBytes> {
+    kreuzberg::core::io::open_file_bytes(std::path::Path::new(&path)).map(|val| FileBytes { inner: Arc::new(val) }).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn read_file_async(path: String) -> Result<Vec<u8>> {
+    let _ = path;
+        Err("Not implemented: read_file_async".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn read_file_sync(path: String) -> Result<Vec<u8>> {
+    let _ = path;
+        Err("Not implemented: read_file_sync".to_string())
+}
+
+#[extendr]
+pub fn file_exists(path: String) -> bool {
+    let _ = path;
+        false
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_file_exists(path: String) -> Result<()> {
+    let _ = path;
+        Err("Not implemented: validate_file_exists".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn find_files_by_extension(dir: String, extension: String, recursive: bool) -> Result<Vec<String>> {
+    let _ = (dir, extension, recursive);
+        Err("Not implemented: find_files_by_extension".to_string())
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -106,6 +17022,12 @@ pub fn detect_mime_type(path: String, check_exists: bool) -> Result<String> {
 #[extendr]
 pub fn validate_mime_type(mime_type: String) -> Result<String> {
     kreuzberg::validate_mime_type(&mime_type).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn detect_or_validate(path: Option<String>, mime_type: Option<String>) -> Result<String> {
+    kreuzberg::detect_or_validate(path.as_deref().map(std::path::Path::new), mime_type.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -125,14 +17047,2654 @@ pub fn list_supported_formats() -> Vec<SupportedFormat> {
     kreuzberg::list_supported_formats().into_iter().map(Into::into).collect()
 }
 
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn clear_processor_cache() -> Result<()> {
+    kreuzberg::core::pipeline::clear_processor_cache().map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn apply_output_format(result: ExtractionResult, output_format: OutputFormat) -> () {
+    let result_core = result.into();
+    let output_format_core = output_format.into();
+    kreuzberg::core::pipeline::apply_output_format(&result_core, output_format_core)
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn run_pipeline(doc: String, config: ExtractionConfig) -> Result<ExtractionResult> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::core::pipeline::run_pipeline(doc, &config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn run_pipeline_sync(doc: String, config: ExtractionConfig) -> Result<ExtractionResult> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::core::pipeline::run_pipeline_sync(doc, &config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn is_page_text_blank(text: String) -> bool {
+    kreuzberg::extraction::blank_detection::is_page_text_blank(&text)
+}
+
+#[extendr]
+pub fn resolve_relationships(doc: String) -> () {
+    let _ = doc;
+        ()
+}
+
+#[extendr]
+pub fn derive_document_structure(doc: String) -> DocumentStructure {
+    let _ = doc;
+        compile_error!("alef: derive_document_structure returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[extendr]
+pub fn derive_extraction_result(doc: String, include_document_structure: bool, output_format: OutputFormat) -> ExtractionResult {
+    let _ = (doc, include_document_structure, output_format);
+        compile_error!("alef: derive_extraction_result returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_json(data: Vec<u8>, config: Option<JsonExtractionConfig>) -> Result<StructuredDataResult> {
+    let config_core = config.map(Into::into);
+    kreuzberg::extraction::parse_json(&data, config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_jsonl(data: Vec<u8>, config: Option<JsonExtractionConfig>) -> Result<StructuredDataResult> {
+    let config_core = config.map(Into::into);
+    kreuzberg::extraction::structured::parse_jsonl(&data, config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_yaml(data: Vec<u8>) -> Result<StructuredDataResult> {
+    kreuzberg::extraction::parse_yaml(&data).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_toml(data: Vec<u8>) -> Result<StructuredDataResult> {
+    kreuzberg::extraction::parse_toml(&data).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_text(text_bytes: Vec<u8>, is_markdown: bool) -> Result<TextExtractionResult> {
+    kreuzberg::extraction::parse_text(&text_bytes, is_markdown).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn transform_to_document_structure(result: ExtractionResult) -> DocumentStructure {
+    let result_core = result.into();
+    kreuzberg::extraction::transform_to_document_structure(&result_core).into()
+}
+
+#[extendr]
+pub fn detect_list_items(text: String) -> Vec<ListItemMetadata> {
+    kreuzberg::extraction::detect_list_items(&text).into_iter().map(Into::into).collect()
+}
+
+#[extendr]
+pub fn generate_element_id(text: String, element_type: ElementType, page_number: Option<f64>) -> ElementId {
+    let element_type_core = element_type.into();
+    ElementId { inner: Arc::new(kreuzberg::extraction::generate_element_id(&text, element_type_core, page_number)) }
+}
+
+#[extendr]
+pub fn transform_extraction_result_to_elements(result: ExtractionResult) -> Vec<Element> {
+    let result_core = result.into();
+    kreuzberg::extraction::transform_extraction_result_to_elements(&result_core).into_iter().map(Into::into).collect()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> Result<Vec<Section>> {
+    kreuzberg::extraction::hwp::parser::parse_body_text(&data, is_compressed).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn decompress_stream(data: Vec<u8>) -> Result<Vec<u8>> {
+    kreuzberg::extraction::hwp::reader::decompress_stream(&data).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_hwp_text(bytes: Vec<u8>) -> Result<String> {
+    kreuzberg::extraction::hwp::extract_hwp_text(&bytes).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn load_image_for_ocr(image_bytes: Vec<u8>) -> Result<String> {
+    let _ = image_bytes;
+        Err("Not implemented: load_image_for_ocr".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_image_metadata(bytes: Vec<u8>) -> Result<ImageMetadata> {
+    kreuzberg::extraction::extract_image_metadata(&bytes).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text_from_image_with_ocr(bytes: Vec<u8>, mime_type: String, ocr_result: String, page_config: Option<PageConfig>) -> Result<ImageOcrResult> {
+    let page_config_core = page_config.map(Into::into);
+    kreuzberg::extraction::image::extract_text_from_image_with_ocr(&bytes, &mime_type, ocr_result, &page_config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn estimate_content_capacity(file_size: f64, format: String) -> f64 {
+    kreuzberg::extraction::estimate_content_capacity(file_size, &format)
+}
+
+#[extendr]
+pub fn estimate_html_markdown_capacity(html_size: f64) -> f64 {
+    kreuzberg::extraction::estimate_html_markdown_capacity(html_size)
+}
+
+#[extendr]
+pub fn estimate_spreadsheet_capacity(file_size: f64) -> f64 {
+    kreuzberg::extraction::estimate_spreadsheet_capacity(file_size)
+}
+
+#[extendr]
+pub fn estimate_presentation_capacity(file_size: f64) -> f64 {
+    kreuzberg::extraction::estimate_presentation_capacity(file_size)
+}
+
+#[extendr]
+pub fn estimate_table_markdown_capacity(row_count: f64, col_count: f64) -> f64 {
+    kreuzberg::extraction::estimate_table_markdown_capacity(row_count, col_count)
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn decompress_gzip(bytes: Vec<u8>, limits: String) -> Result<Vec<u8>> {
+    let _ = (bytes, limits);
+        Err("Not implemented: decompress_gzip".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_gzip(bytes: Vec<u8>, limits: String) -> Result<String> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_gzip".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_gzip_metadata(bytes: Vec<u8>, limits: String) -> Result<ArchiveMetadata> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_gzip_metadata".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_gzip_text_content(bytes: Vec<u8>, limits: String) -> Result<String> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_gzip_text_content".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_gzip_with_bytes(bytes: Vec<u8>, limits: String) -> Result<String> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_gzip_with_bytes".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_7z_metadata(bytes: Vec<u8>, limits: String) -> Result<ArchiveMetadata> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_7z_metadata".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_7z_text_content(bytes: Vec<u8>, limits: String) -> Result<String> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_7z_text_content".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_7z_file_bytes(bytes: Vec<u8>, limits: String) -> Result<String> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_7z_file_bytes".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_tar_metadata(bytes: Vec<u8>, limits: String) -> Result<ArchiveMetadata> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_tar_metadata".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_tar_text_content(bytes: Vec<u8>, limits: String) -> Result<String> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_tar_text_content".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_tar_file_bytes(bytes: Vec<u8>, limits: String) -> Result<String> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_tar_file_bytes".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_zip_metadata(bytes: Vec<u8>, limits: String) -> Result<ArchiveMetadata> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_zip_metadata".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_zip_text_content(bytes: Vec<u8>, limits: String) -> Result<String> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_zip_text_content".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_zip_file_bytes(bytes: Vec<u8>, limits: String) -> Result<String> {
+    let _ = (bytes, limits);
+        Err("Not implemented: extract_zip_file_bytes".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_eml_content(data: Vec<u8>) -> Result<EmailExtractionResult> {
+    kreuzberg::extraction::parse_eml_content(&data).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_msg_content(data: Vec<u8>, fallback_codepage: Option<i32>) -> Result<EmailExtractionResult> {
+    kreuzberg::extraction::parse_msg_content(&data, fallback_codepage).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_email_content(data: Vec<u8>, mime_type: String, fallback_codepage: Option<i32>) -> Result<EmailExtractionResult> {
+    kreuzberg::extraction::extract_email_content(&data, &mime_type, fallback_codepage).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn build_email_text_output(result: EmailExtractionResult) -> String {
+    let result_core = result.into();
+    kreuzberg::extraction::build_email_text_output(&result_core).into()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_pst_messages(pst_data: Vec<u8>) -> Result<String> {
+    let _ = pst_data;
+        Err("Not implemented: extract_pst_messages".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn read_excel_file(file_path: String) -> Result<ExcelWorkbook> {
+    kreuzberg::extraction::read_excel_file(&file_path).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn read_excel_bytes(data: Vec<u8>, file_extension: String) -> Result<ExcelWorkbook> {
+    kreuzberg::extraction::read_excel_bytes(&data, &file_extension).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn excel_to_text(workbook: ExcelWorkbook) -> String {
+    let workbook_core = workbook.into();
+    kreuzberg::extraction::excel::excel_to_text(&workbook_core).into()
+}
+
+#[extendr]
+pub fn excel_to_markdown(workbook: ExcelWorkbook) -> String {
+    let workbook_core = workbook.into();
+    kreuzberg::extraction::excel_to_markdown(&workbook_core).into()
+}
+
+#[extendr]
+pub fn resolve_conversion_options(options: Option<String>, output_format: Option<String>) -> String {
+    let _ = (options, output_format);
+        String::from("[unimplemented: resolve_conversion_options]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn convert_html_to_markdown(html: String, options: Option<String>, output_format: Option<String>) -> Result<String> {
+    let _ = (html, options, output_format);
+        Err("Not implemented: convert_html_to_markdown".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn convert_html_to_markdown_with_metadata(html: String, options: Option<String>, output_format: Option<String>) -> Result<String> {
+    let _ = (html, options, output_format);
+        Err("Not implemented: convert_html_to_markdown_with_metadata".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn convert_html_to_markdown_with_tables(html: String, options: Option<String>, output_format: Option<String>) -> Result<String> {
+    let _ = (html, options, output_format);
+        Err("Not implemented: convert_html_to_markdown_with_tables".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_html_inline_images(html: String, options: Option<String>) -> Result<Vec<String>> {
+    let _ = (html, options);
+        Err("Not implemented: extract_html_inline_images".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_doc_text(content: Vec<u8>) -> Result<DocExtractionResult> {
+    kreuzberg::extraction::extract_doc_text(&content).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn parse_drawing(reader: String) -> Drawing {
+    let _ = reader;
+        compile_error!("alef: parse_drawing returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[extendr]
+pub fn collect_and_convert_omath_para(reader: String) -> String {
+    let _ = reader;
+        String::from("[unimplemented: collect_and_convert_omath_para]")
+}
+
+#[extendr]
+pub fn collect_and_convert_omath(reader: String) -> String {
+    let _ = reader;
+        String::from("[unimplemented: collect_and_convert_omath]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_document(bytes: Vec<u8>) -> Result<Document> {
+    kreuzberg::extraction::docx::parser::parse_document(&bytes).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text_from_bytes(bytes: Vec<u8>) -> Result<String> {
+    kreuzberg::extraction::docx::parser::extract_text_from_bytes(&bytes).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn parse_section_properties(node: String) -> SectionProperties {
+    let _ = node;
+        compile_error!("alef: parse_section_properties returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[extendr]
+pub fn parse_section_properties_streaming(reader: String) -> SectionProperties {
+    let _ = reader;
+        compile_error!("alef: parse_section_properties_streaming returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_styles_xml(xml: String) -> Result<StyleCatalog> {
+    kreuzberg::extraction::docx::styles::parse_styles_xml(&xml).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn parse_table_properties(reader: String) -> TableProperties {
+    let _ = reader;
+        compile_error!("alef: parse_table_properties returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[extendr]
+pub fn parse_row_properties(reader: String) -> RowProperties {
+    let _ = reader;
+        compile_error!("alef: parse_row_properties returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[extendr]
+pub fn parse_cell_properties(reader: String) -> String {
+    let _ = reader;
+        String::from("[unimplemented: parse_cell_properties]")
+}
+
+#[extendr]
+pub fn parse_table_grid(reader: String) -> TableGrid {
+    let _ = reader;
+        compile_error!("alef: parse_table_grid returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_theme_xml(xml: String) -> Result<Theme> {
+    kreuzberg::extraction::docx::theme::parse_theme_xml(&xml).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text(bytes: Vec<u8>) -> Result<String> {
+    kreuzberg::extraction::docx::extract_text(&bytes).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String> {
+    let _ = bytes;
+        Err("Not implemented: extract_text_with_page_breaks".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<PageBoundary>>> {
+    kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub async fn extract_ooxml_embedded_objects(zip_bytes: Vec<u8>, embeddings_prefix: String, source_label: String, config: ExtractionConfig) -> String {
+    let _ = (zip_bytes, embeddings_prefix, source_label, config);
+        String::from("[unimplemented: extract_ooxml_embedded_objects]")
+}
+
+#[extendr]
+pub fn detect_image_format(data: Vec<u8>) -> String {
+    let _ = data;
+        String::from("[unimplemented: detect_image_format]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn process_images_with_ocr(images: Vec<ExtractedImage>, config: ExtractionConfig) -> Result<Vec<ExtractedImage>> {
+    let config_core = config.into();
+    todo!("async not supported by backend")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_ppt_text(content: Vec<u8>) -> Result<PptExtractionResult> {
+    kreuzberg::extraction::extract_ppt_text(&content).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bool) -> Result<PptExtractionResult> {
+    kreuzberg::extraction::extract_ppt_text_with_options(&content, include_master_slides).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_pptx_from_path(path: String, options: PptxExtractionOptions) -> Result<PptxExtractionResult> {
+    let options_core = options.into();
+    kreuzberg::extraction::extract_pptx_from_path(&path, &options_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_pptx_from_bytes(data: Vec<u8>, options: PptxExtractionOptions) -> Result<PptxExtractionResult> {
+    let options_core = options.into();
+    kreuzberg::extraction::extract_pptx_from_bytes(&data, &options_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_xml_svg(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<XmlExtractionResult> {
+    kreuzberg::extraction::xml::parse_xml_svg(&xml_bytes, preserve_whitespace).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn parse_xml(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<XmlExtractionResult> {
+    kreuzberg::extraction::parse_xml(&xml_bytes, preserve_whitespace).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn cells_to_text(cells: Vec<Vec<String>>) -> String {
+    kreuzberg::extraction::cells_to_text(&cells).into()
+}
+
+#[extendr]
+pub fn cells_to_markdown(cells: Vec<Vec<String>>) -> String {
+    kreuzberg::extraction::cells_to_markdown(&cells).into()
+}
+
+#[extendr]
+pub fn parse_jotdown_attributes(attrs: Attributes) -> Attributes {
+    let attrs_core = attrs.into();
+    kreuzberg::extractors::djot_format::attributes::parse_jotdown_attributes(&attrs_core).into()
+}
+
+#[extendr]
+pub fn render_attributes(attrs: Attributes) -> String {
+    let attrs_core = attrs.into();
+    kreuzberg::extractors::djot_format::attributes::render_attributes(&attrs_core).into()
+}
+
+#[extendr]
+pub fn djot_content_to_djot(content: DjotContent) -> String {
+    let content_core = content.into();
+    kreuzberg::extractors::djot_format::djot_content_to_djot(&content_core).into()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extraction_result_to_djot(result: ExtractionResult) -> Result<String> {
+    let result_core = result.into();
+    kreuzberg::extractors::djot_format::extraction_result_to_djot(&result_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn djot_to_html(djot_source: String) -> Result<String> {
+    kreuzberg::extractors::djot_format::djot_to_html(&djot_source).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn extract_complete_djot_content(events: Vec<String>, metadata: Metadata, tables: Vec<Table>) -> DjotContent {
+    let _ = (events, metadata, tables);
+        compile_error!("alef: extract_complete_djot_content returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[extendr]
+pub fn extract_tables_from_events(events: Vec<String>) -> Vec<Table> {
+    let _ = events;
+        Vec::new()
+}
+
+#[extendr]
+pub fn extract_text_from_events(events: Vec<String>) -> String {
+    let _ = events;
+        String::from("[unimplemented: extract_text_from_events]")
+}
+
+#[extendr]
+pub fn render_block_to_djot(output: String, block: FormattedBlock, indent_level: f64) -> () {
+    let block_core = block.into();
+    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(&output, &block_core, indent_level)
+}
+
+#[extendr]
+pub fn render_list_item(output: String, item: FormattedBlock, indent: String, marker: String) -> () {
+    let item_core = item.into();
+    kreuzberg::extractors::djot_format::rendering::render_list_item(&output, &item_core, &indent, &marker)
+}
+
+#[extendr]
+pub fn render_inline_content(output: String, elements: Vec<InlineElement>) -> () {
+    kreuzberg::extractors::djot_format::rendering::render_inline_content(&output, &elements)
+}
+
+#[extendr]
+pub fn extract_frontmatter(content: String) -> String {
+    let _ = content;
+        String::from("[unimplemented: extract_frontmatter]")
+}
+
+#[extendr]
+pub fn extract_metadata_from_yaml(yaml: String) -> Metadata {
+    let _ = yaml;
+        compile_error!("alef: extract_metadata_from_yaml returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[extendr]
+pub fn extract_title_from_content(content: String) -> Option<String> {
+    kreuzberg::extractors::frontmatter_utils::extract_title_from_content(&content).map(Into::into)
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn collect_iwa_paths(content: Vec<u8>) -> Result<Vec<String>> {
+    kreuzberg::extractors::iwork::collect_iwa_paths(&content).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn read_iwa_file(content: Vec<u8>, path: String) -> Result<Vec<u8>> {
+    kreuzberg::extractors::iwork::read_iwa_file(&content, &path).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn decode_iwa_stream(data: Vec<u8>) -> Result<Vec<u8>> {
+    kreuzberg::extractors::iwork::decode_iwa_stream(&data).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn extract_text_from_proto(data: Vec<u8>) -> Vec<String> {
+    kreuzberg::extractors::iwork::extract_text_from_proto(&data).into_iter().map(Into::into).collect()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text_from_iwa_files(content: Vec<u8>, iwa_paths: Vec<String>) -> Result<String> {
+    kreuzberg::extractors::iwork::extract_text_from_iwa_files(&content, &iwa_paths).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn extract_metadata_from_zip(content: Vec<u8>) -> Metadata {
+    kreuzberg::extractors::iwork::extract_metadata_from_zip(&content).into()
+}
+
+#[extendr]
+pub fn dedup_text(texts: Vec<String>) -> Vec<String> {
+    kreuzberg::extractors::iwork::dedup_text(texts).into_iter().map(Into::into).collect()
+}
+
+#[extendr]
+pub fn evaluate_native_text_for_ocr(native_text: String, page_count: Option<f64>, thresholds: Option<OcrQualityThresholds>) -> OcrFallbackDecision {
+    let thresholds_core = thresholds.expect("'thresholds' is required").into();
+    kreuzberg::extractors::pdf::evaluate_native_text_for_ocr(&native_text, page_count, &thresholds_core).into()
+}
+
+#[extendr]
+pub fn compute_quality_score(text: String, thresholds: OcrQualityThresholds) -> f64 {
+    let thresholds_core = thresholds.into();
+    kreuzberg::extractors::pdf::ocr::compute_quality_score(&text, &thresholds_core)
+}
+
+#[extendr]
+pub fn evaluate_per_page_ocr(
+    native_text: String,
+    boundaries: Option<Vec<PageBoundary>>,
+    page_count: Option<f64>,
+    thresholds: OcrQualityThresholds
+) -> OcrFallbackDecision {
+    let thresholds_core = thresholds.expect("'thresholds' is required").into();
+    kreuzberg::extractors::pdf::evaluate_per_page_ocr(&native_text, boundaries.as_deref(), page_count, &thresholds_core).into()
+}
+
+#[extendr]
+pub fn hex_digit_to_u8(c: String) -> Option<i32> {
+    kreuzberg::extractors::rtf::hex_digit_to_u8(c)
+}
+
+#[extendr]
+pub fn parse_hex_byte(h1: String, h2: String) -> Option<i32> {
+    kreuzberg::extractors::rtf::parse_hex_byte(h1, h2)
+}
+
+#[extendr]
+pub fn decode_windows_1252(byte: i32) -> String {
+    kreuzberg::extractors::rtf::encoding::decode_windows_1252(byte)
+}
+
+#[extendr]
+pub fn parse_rtf_control_word(chars: String) -> String {
+    let _ = chars;
+        String::from("[unimplemented: parse_rtf_control_word]")
+}
+
+#[extendr]
+pub fn normalize_whitespace_with_mapping(s: String) -> String {
+    let _ = s;
+        String::from("[unimplemented: normalize_whitespace_with_mapping]")
+}
+
+#[extendr]
+pub fn map_offset(mapping: Vec<String>, offset: f64) -> f64 {
+    let _ = (mapping, offset);
+        0
+}
+
+#[extendr]
+pub fn normalize_whitespace(s: String) -> String {
+    kreuzberg::extractors::rtf::normalize_whitespace(&s).into()
+}
+
+#[extendr]
+pub fn extract_pict_image(chars: String) -> String {
+    let _ = chars;
+        String::from("[unimplemented: extract_pict_image]")
+}
+
+#[extendr]
+pub fn parse_rtf_datetime(segment: String) -> Option<String> {
+    kreuzberg::extractors::rtf::parse_rtf_datetime(&segment).map(Into::into)
+}
+
+#[extendr]
+pub fn extract_rtf_metadata(rtf_content: String, extracted_text: String) -> String {
+    let _ = (rtf_content, extracted_text);
+        String::from("[unimplemented: extract_rtf_metadata]")
+}
+
+#[extendr]
+pub fn extract_rtf_formatting(content: String) -> RtfFormattingData {
+    kreuzberg::extractors::rtf::extract_rtf_formatting(&content).into()
+}
+
+#[extendr]
+pub fn spans_to_annotations(para_start: f64, para_end: f64, formatting: RtfFormattingData) -> Vec<TextAnnotation> {
+    let formatting_core = formatting.into();
+    kreuzberg::extractors::rtf::spans_to_annotations(para_start, para_end, &formatting_core).into_iter().map(Into::into).collect()
+}
+
+#[extendr]
+pub fn extract_text_from_rtf(content: String, plain: bool) -> String {
+    let _ = (content, plain);
+        String::from("[unimplemented: extract_text_from_rtf]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn register_default_extractors() -> Result<()> {
+    kreuzberg::extractors::register_default_extractors().map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn extract_panic_message(panic_info: String) -> String {
+    let _ = panic_info;
+        String::from("[unimplemented: extract_panic_message]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn register_extractor(extractor: String) -> Result<()> {
+    let _ = extractor;
+        Err("Not implemented: register_extractor".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn unregister_extractor(name: String) -> Result<()> {
+    kreuzberg::plugins::unregister_extractor(&name).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn list_extractors() -> Result<Vec<String>> {
+    kreuzberg::plugins::list_extractors().map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn clear_extractors() -> Result<()> {
+    kreuzberg::plugins::clear_extractors().map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn register_ocr_backend(backend: OcrBackend) -> Result<()> {
+    kreuzberg::plugins::register_ocr_backend(&backend.inner).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn unregister_ocr_backend(name: String) -> Result<()> {
+    kreuzberg::plugins::unregister_ocr_backend(&name).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn list_ocr_backends() -> Result<Vec<String>> {
+    kreuzberg::plugins::list_ocr_backends().map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn clear_ocr_backends() -> Result<()> {
+    kreuzberg::plugins::clear_ocr_backends().map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn list_post_processors() -> Result<Vec<String>> {
+    kreuzberg::plugins::list_post_processors().map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn get_ocr_backend_registry() -> String {
+    String::from("[unimplemented: get_ocr_backend_registry]")
+}
+
+#[extendr]
+pub fn get_document_extractor_registry() -> String {
+    String::from("[unimplemented: get_document_extractor_registry]")
+}
+
+#[extendr]
+pub fn get_post_processor_registry() -> String {
+    String::from("[unimplemented: get_post_processor_registry]")
+}
+
+#[extendr]
+pub fn get_validator_registry() -> String {
+    String::from("[unimplemented: get_validator_registry]")
+}
+
+#[extendr]
+pub fn get_renderer_registry() -> String {
+    String::from("[unimplemented: get_renderer_registry]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn register_renderer(renderer: Renderer) -> Result<()> {
+    kreuzberg::plugins::register_renderer(&renderer.inner).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn unregister_renderer(name: String) -> Result<()> {
+    kreuzberg::plugins::unregister_renderer(&name).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn list_renderers() -> Vec<String> {
+    kreuzberg::plugins::list_renderers().into_iter().map(Into::into).collect()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn clear_renderers() -> Result<()> {
+    kreuzberg::plugins::clear_renderers().map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_plugins_at_startup() -> Result<String> {
+    Err("Not implemented: validate_plugins_at_startup".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn register_validator(validator: String) -> Result<()> {
+    let _ = validator;
+        Err("Not implemented: register_validator".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn unregister_validator(name: String) -> Result<()> {
+    kreuzberg::plugins::unregister_validator(&name).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn list_validators() -> Result<Vec<String>> {
+    kreuzberg::plugins::list_validators().map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn clear_validators() -> Result<()> {
+    kreuzberg::plugins::clear_validators().map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn render_djot(doc: String) -> String {
+    let _ = doc;
+        String::from("[unimplemented: render_djot]")
+}
+
+#[extendr]
+pub fn render_html(doc: String) -> String {
+    let _ = doc;
+        String::from("[unimplemented: render_html]")
+}
+
+#[extendr]
+pub fn render_json(doc: String) -> String {
+    let _ = doc;
+        String::from("[unimplemented: render_json]")
+}
+
+#[extendr]
+pub fn render_markdown(doc: String) -> String {
+    let _ = doc;
+        String::from("[unimplemented: render_markdown]")
+}
+
+#[extendr]
+pub fn render_plain(doc: String) -> String {
+    let _ = doc;
+        String::from("[unimplemented: render_plain]")
+}
+
+#[extendr]
+pub fn sanitize_filename(path: String) -> String {
+    kreuzberg::telemetry::conventions::sanitize_filename(std::path::Path::new(&path)).into()
+}
+
+#[extendr]
+pub fn get_metrics() -> ExtractionMetrics {
+    kreuzberg::telemetry::metrics::get_metrics().clone().into()
+}
+
+#[extendr]
+pub fn record_error_on_current_span(error: String) -> () {
+    let _ = error;
+        ()
+}
+
+#[extendr]
+pub fn record_success_on_current_span() -> () {
+    kreuzberg::telemetry::spans::record_success_on_current_span()
+}
+
+#[extendr]
+pub fn sanitize_path(path: String) -> String {
+    kreuzberg::telemetry::spans::sanitize_path(std::path::Path::new(&path)).into()
+}
+
+#[extendr]
+pub fn extractor_span(extractor_name: String, mime_type: String, size_bytes: f64) -> String {
+    let _ = (extractor_name, mime_type, size_bytes);
+        String::from("[unimplemented: extractor_span]")
+}
+
+#[extendr]
+pub fn pipeline_stage_span(stage: String) -> String {
+    let _ = stage;
+        String::from("[unimplemented: pipeline_stage_span]")
+}
+
+#[extendr]
+pub fn pipeline_processor_span(stage: String, processor_name: String) -> String {
+    let _ = (stage, processor_name);
+        String::from("[unimplemented: pipeline_processor_span]")
+}
+
+#[extendr]
+pub fn ocr_span(backend: String, language: String) -> String {
+    let _ = (backend, language);
+        String::from("[unimplemented: ocr_span]")
+}
+
+#[extendr]
+pub fn model_inference_span(model_name: String) -> String {
+    let _ = model_name;
+        String::from("[unimplemented: model_inference_span]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn from_utf8(bytes: Vec<u8>) -> Result<String> {
+    kreuzberg::text::utf8_validation::from_utf8(&bytes).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn string_from_utf8(bytes: Vec<u8>) -> Result<String> {
+    kreuzberg::text::utf8_validation::string_from_utf8(&bytes).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn is_valid_utf8(bytes: Vec<u8>) -> bool {
+    kreuzberg::text::utf8_validation::is_valid_utf8(&bytes)
+}
+
+#[extendr]
+pub fn calculate_quality_score(text: String, metadata: Option<String>) -> f64 {
+    let _ = (text, metadata);
+        0
+}
+
+#[extendr]
+pub fn clean_extracted_text(text: String) -> String {
+    kreuzberg::text::clean_extracted_text(&text).into()
+}
+
+#[extendr]
+pub fn normalize_spaces(text: String) -> String {
+    kreuzberg::text::normalize_spaces(&text).into()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn reduce_tokens(text: String, config: TokenReductionConfig, language_hint: Option<String>) -> Result<String> {
+    let config_core = config.into();
+    kreuzberg::text::reduce_tokens(&text, &config_core, language_hint.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn batch_reduce_tokens(texts: Vec<String>, config: TokenReductionConfig, language_hint: Option<String>) -> Result<Vec<String>> {
+    let config_core = config.into();
+    kreuzberg::text::batch_reduce_tokens(&texts, &config_core, language_hint.as_deref()).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn get_reduction_statistics(original: String, reduced: String) -> String {
+    let _ = (original, reduced);
+        String::from("[unimplemented: get_reduction_statistics]")
+}
+
+#[extendr]
+pub fn bold(start: i32, end: i32) -> TextAnnotation {
+    kreuzberg::builder::bold(start, end).into()
+}
+
+#[extendr]
+pub fn italic(start: i32, end: i32) -> TextAnnotation {
+    kreuzberg::builder::italic(start, end).into()
+}
+
+#[extendr]
+pub fn underline(start: i32, end: i32) -> TextAnnotation {
+    kreuzberg::builder::underline(start, end).into()
+}
+
+#[extendr]
+pub fn link(start: i32, end: i32, url: String, title: Option<String>) -> TextAnnotation {
+    kreuzberg::builder::link(start, end, &url, title.as_deref()).into()
+}
+
+#[extendr]
+pub fn code(start: i32, end: i32) -> TextAnnotation {
+    kreuzberg::builder::code(start, end).into()
+}
+
+#[extendr]
+pub fn strikethrough(start: i32, end: i32) -> TextAnnotation {
+    kreuzberg::builder::strikethrough(start, end).into()
+}
+
+#[extendr]
+pub fn subscript(start: i32, end: i32) -> TextAnnotation {
+    kreuzberg::builder::subscript(start, end).into()
+}
+
+#[extendr]
+pub fn superscript(start: i32, end: i32) -> TextAnnotation {
+    kreuzberg::builder::superscript(start, end).into()
+}
+
+#[extendr]
+pub fn font_size(start: i32, end: i32, value: String) -> TextAnnotation {
+    kreuzberg::builder::font_size(start, end, &value).into()
+}
+
+#[extendr]
+pub fn color(start: i32, end: i32, value: String) -> TextAnnotation {
+    kreuzberg::builder::color(start, end, &value).into()
+}
+
+#[extendr]
+pub fn highlight(start: i32, end: i32) -> TextAnnotation {
+    kreuzberg::builder::highlight(start, end).into()
+}
+
+#[extendr]
+pub fn classify_uri(url: String) -> UriKind {
+    kreuzberg::classify_uri(&url).into()
+}
+
+#[extendr]
+pub fn safe_decode(byte_data: Vec<u8>, encoding: Option<String>) -> String {
+    kreuzberg::utils::safe_decode(&byte_data, encoding.as_deref()).into()
+}
+
+#[extendr]
+pub fn calculate_text_confidence(text: String) -> f64 {
+    kreuzberg::utils::calculate_text_confidence(&text)
+}
+
+#[extendr]
+pub fn fix_mojibake(text: String) -> String {
+    let _ = text;
+        String::from("[unimplemented: fix_mojibake]")
+}
+
+#[extendr]
+pub fn snake_to_camel(val: String) -> String {
+    let _ = val;
+        String::from("[unimplemented: snake_to_camel]")
+}
+
+#[extendr]
+pub fn camel_to_snake(val: String) -> String {
+    let _ = val;
+        String::from("[unimplemented: camel_to_snake]")
+}
+
+#[extendr]
+pub fn create_string_buffer_pool(pool_size: f64, buffer_capacity: f64) -> StringBufferPool {
+    StringBufferPool { inner: Arc::new(kreuzberg::utils::create_string_buffer_pool(pool_size, buffer_capacity)) }
+}
+
+#[extendr]
+pub fn create_byte_buffer_pool(pool_size: f64, buffer_capacity: f64) -> ByteBufferPool {
+    ByteBufferPool { inner: Arc::new(kreuzberg::utils::create_byte_buffer_pool(pool_size, buffer_capacity)) }
+}
+
+#[extendr]
+pub fn estimate_pool_size(file_size: f64, mime_type: String) -> PoolSizeHint {
+    kreuzberg::utils::estimate_pool_size(file_size, &mime_type).into()
+}
+
+#[extendr]
+pub fn acquire_string_buffer() -> PooledString {
+    PooledString { inner: Arc::new(kreuzberg::utils::string_pool::acquire_string_buffer()) }
+}
+
+#[extendr]
+pub fn intern_language_code(lang_code: String) -> InternedString {
+    InternedString { inner: Arc::new(kreuzberg::utils::string_pool::intern_language_code(&lang_code)) }
+}
+
+#[extendr]
+pub fn intern_mime_type(mime_type: String) -> InternedString {
+    InternedString { inner: Arc::new(kreuzberg::utils::string_pool::intern_mime_type(&mime_type)) }
+}
+
+#[extendr]
+pub fn xml_tag_name(name: Vec<u8>) -> String {
+    let _ = name;
+        String::from("[unimplemented: xml_tag_name]")
+}
+
+#[extendr]
+pub fn escape_html_entities(text: String) -> String {
+    let _ = text;
+        String::from("[unimplemented: escape_html_entities]")
+}
+
+#[extendr]
+pub fn detect_columns(words: Vec<HocrWord>, column_threshold: i32) -> Vec<i32> {
+    kreuzberg::table_core::detect_columns(&words, column_threshold)
+}
+
+#[extendr]
+pub fn detect_rows(words: Vec<HocrWord>, row_threshold_ratio: f64) -> Vec<i32> {
+    kreuzberg::table_core::detect_rows(&words, row_threshold_ratio)
+}
+
+#[extendr]
+pub fn reconstruct_table(words: Vec<HocrWord>, column_threshold: i32, row_threshold_ratio: f64) -> Vec<Vec<String>> {
+    kreuzberg::table_core::reconstruct_table(&words, column_threshold, row_threshold_ratio)
+}
+
+#[extendr]
+pub fn table_to_markdown(table: Vec<Vec<String>>) -> String {
+    kreuzberg::table_core::table_to_markdown(&table).into()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn load_server_config(config_path: Option<String>) -> Result<ServerConfig> {
+    kreuzberg::api::load_server_config(config_path.as_deref().map(std::path::Path::new)).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn openapi_json() -> String {
+    kreuzberg::api::openapi::openapi_json().into()
+}
+
+#[extendr]
+pub fn create_router(config: ExtractionConfig) -> String {
+    let _ = config;
+        String::from("[unimplemented: create_router]")
+}
+
+#[extendr]
+pub fn create_router_with_limits(config: ExtractionConfig, limits: ApiSizeLimits) -> String {
+    let _ = (config, limits);
+        String::from("[unimplemented: create_router_with_limits]")
+}
+
+#[extendr]
+pub fn create_router_with_limits_and_server_config(config: ExtractionConfig, limits: ApiSizeLimits, server_config: ServerConfig) -> String {
+    let _ = (config, limits, server_config);
+        String::from("[unimplemented: create_router_with_limits_and_server_config]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn serve(host: String, port: i32) -> Result<()> {
+    let _ = (host, port);
+        Err("Not implemented: serve".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn serve_with_config(host: String, port: i32, config: ExtractionConfig) -> Result<()> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::api::serve_with_config(host, port, config_core).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn serve_with_config_and_limits(host: String, port: i32, config: ExtractionConfig, limits: ApiSizeLimits) -> Result<()> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    let limits_json = serde_json::to_string(&limits).map_err(|e| e.to_string())?;
+    let limits_core: kreuzberg::ApiSizeLimits = serde_json::from_str(&limits_json).map_err(|e| e.to_string())?;
+    kreuzberg::api::serve_with_config_and_limits(host, port, config_core, limits_core).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn serve_with_server_config(extraction_config: ExtractionConfig, server_config: ServerConfig) -> Result<()> {
+    let extraction_config_core = extraction_config.into();
+    let server_config_core = server_config.into();
+    todo!("async not supported by backend")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn serve_default() -> Result<()> {
+    todo!("async not supported by backend")
+}
+
+#[extendr]
+pub fn map_kreuzberg_error_to_mcp(error: String) -> String {
+    let _ = error;
+        String::from("[unimplemented: map_kreuzberg_error_to_mcp]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn start_mcp_server() -> Result<()> {
+    todo!("async not supported by backend")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn start_mcp_server_with_config(config: ExtractionConfig) -> Result<()> {
+    let config_core = config.into();
+    todo!("async not supported by backend")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn start_mcp_server_http(host: String, port: i32) -> Result<()> {
+    let _ = (host, port);
+        Err("Not implemented: start_mcp_server_http".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn start_mcp_server_http_with_config(host: String, port: i32, config: ExtractionConfig) -> Result<()> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::mcp::start_mcp_server_http_with_config(host, port, config_core).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> Result<()> {
+    kreuzberg::chunking::validate_page_boundaries(&boundaries).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn calculate_page_range(byte_start: f64, byte_end: f64, boundaries: Vec<PageBoundary>) -> Result<String> {
+    let _ = (byte_start, byte_end, boundaries);
+        Err("Not implemented: calculate_page_range".to_string())
+}
+
+#[extendr]
+pub fn classify_chunk(content: String, heading_context: Option<HeadingContext>) -> ChunkType {
+    let heading_context_core = heading_context.map(Into::into);
+    kreuzberg::chunking::classify_chunk(&content, &heading_context_core).into()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn chunk_text(text: String, config: ChunkingConfig, page_boundaries: Option<Vec<PageBoundary>>) -> Result<ChunkingResult> {
+    let config_core = config.into();
+    kreuzberg::chunking::chunk_text(&text, &config_core, page_boundaries.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn chunk_text_with_heading_source(
+    text: String,
+    config: ChunkingConfig,
+    page_boundaries: Option<Vec<PageBoundary>>,
+    heading_source: Option<String>
+) -> Result<ChunkingResult> {
+    let config_core = config.into();
+    kreuzberg::chunking::chunk_text_with_heading_source(&text, &config_core, page_boundaries.as_deref(), heading_source.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn chunk_text_with_type(text: String, max_characters: f64, overlap: f64, trim: bool, chunker_type: ChunkerType) -> Result<ChunkingResult> {
+    let chunker_type_core = chunker_type.into();
+    kreuzberg::chunking::chunk_text_with_type(&text, max_characters, overlap, trim, chunker_type_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn chunk_texts_batch(texts: Vec<String>, config: ChunkingConfig) -> Result<Vec<ChunkingResult>> {
+    let config_core = config.into();
+    kreuzberg::chunking::chunk_texts_batch(&texts, &config_core).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn precompute_utf8_boundaries(text: String) -> String {
+    let _ = text;
+        String::from("[unimplemented: precompute_utf8_boundaries]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_utf8_boundaries(text: String, boundaries: Vec<PageBoundary>) -> Result<()> {
+    kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn create_client(config: LlmConfig) -> Result<String> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::LlmConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::llm::client::create_client(&config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn render_template(template: String, context: String) -> Result<String> {
+    let _ = (template, context);
+        Err("Not implemented: render_template".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn extract_structured(content: String, config: StructuredExtractionConfig) -> Result<String> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::llm::structured::extract_structured(&content, &config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub async fn vlm_ocr(image_bytes: Vec<u8>, image_mime_type: String, language: String, config: LlmConfig) -> Result<String> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::LlmConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::llm::vlm_ocr::vlm_ocr(&image_bytes, &image_mime_type, &language, &config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn normalize(v: Vec<f64>) -> Vec<f64> {
+    kreuzberg::embeddings::engine::normalize(&v)
+}
+
+#[extendr]
+pub fn get_preset(name: String) -> Option<String> {
+    let _ = name;
+        None
+}
+
+#[extendr]
+pub fn list_presets() -> Vec<String> {
+    kreuzberg::list_presets().into_iter().map(Into::into).collect()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn warm_model(model_type: EmbeddingModelType, cache_dir: Option<String>) -> Result<()> {
+    let model_type_core = model_type.into();
+    kreuzberg::warm_model(&model_type_core, cache_dir.map(std::path::PathBuf::from)).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn download_model(model_type: EmbeddingModelType, cache_dir: Option<String>) -> Result<()> {
+    let model_type_core = model_type.into();
+    kreuzberg::download_model(&model_type_core, cache_dir.map(std::path::PathBuf::from)).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: EmbeddingConfig) -> Result<()> {
+    let config_core = config.into();
+    kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks, &config_core).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn calculate_smart_dpi(page_width: f64, page_height: f64, target_dpi: i32, max_dimension: i32, max_memory_mb: f64) -> i32 {
+    kreuzberg::image::dpi::calculate_smart_dpi(page_width, page_height, target_dpi, max_dimension, max_memory_mb)
+}
+
+#[extendr]
+pub fn calculate_optimal_dpi(page_width: f64, page_height: f64, target_dpi: i32, max_dimension: i32, min_dpi: i32, max_dpi: i32) -> i32 {
+    kreuzberg::image::calculate_optimal_dpi(page_width, page_height, target_dpi, max_dimension, min_dpi, max_dpi)
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn normalize_image_dpi(rgb_data: Vec<u8>, width: f64, height: f64, config: ExtractionConfig, current_dpi: Option<f64>) -> Result<String> {
+    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
+    kreuzberg::image::normalize_image_dpi(&rgb_data, width, height, &config_core, current_dpi).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn resize_image(image: String, new_width: i32, new_height: i32, scale_factor: f64) -> Result<String> {
+    let _ = (image, new_width, new_height, scale_factor);
+        Err("Not implemented: resize_image".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn detect_languages(text: String, config: LanguageDetectionConfig) -> Result<Option<Vec<String>>> {
+    let config_core = config.into();
+    kreuzberg::language_detection::detect_languages(&text, &config_core).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn register_language_detection_processor() -> Result<()> {
+    kreuzberg::language_detection::register_language_detection_processor().map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn get_stopwords(lang: String) -> Option<String> {
+    let _ = lang;
+        None
+}
+
+#[extendr]
+pub fn get_stopwords_with_fallback(language: String, fallback: String) -> Option<String> {
+    let _ = (language, fallback);
+        None
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_keywords(text: String, config: KeywordConfig) -> Result<Vec<Keyword>> {
+    let config_core = config.into();
+    kreuzberg::extract_keywords(&text, &config_core).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn text_block_to_element(block: TextBlock, page_number: f64) -> Result<Option<OcrElement>> {
+    let block_core = block.into();
+    kreuzberg::ocr::text_block_to_element(&block_core, page_number).map(|val| val.map(Into::into)).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn tsv_row_to_element(row: TsvRow) -> OcrElement {
+    let row_core = row.into();
+    kreuzberg::ocr::tsv_row_to_element(&row_core).into()
+}
+
+#[extendr]
+pub fn iterator_word_to_element(word: String, block_type: Option<String>, para_info: Option<String>, page_number: Option<f64>) -> OcrElement {
+    let _ = (word, block_type, para_info, page_number);
+        compile_error!("alef: iterator_word_to_element returns a Named/Json type but has no error variant — cannot auto-delegate")
+}
+
+#[extendr]
+pub fn element_to_hocr_word(element: OcrElement) -> HocrWord {
+    let element_core = element.into();
+    kreuzberg::ocr::element_to_hocr_word(&element_core).into()
+}
+
+#[extendr]
+pub fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<HocrWord> {
+    kreuzberg::ocr::elements_to_hocr_words(&elements, min_confidence).into_iter().map(Into::into).collect()
+}
+
+#[extendr]
+pub fn parse_hocr_to_internal_document(hocr_html: String) -> String {
+    let _ = hocr_html;
+        String::from("[unimplemented: parse_hocr_to_internal_document]")
+}
+
+#[extendr]
+pub fn assemble_ocr_markdown(
+    elements: Vec<OcrElement>,
+    detection: Option<DetectionResult>,
+    img_width: i32,
+    img_height: i32,
+    recognized_tables: Vec<RecognizedTable>
+) -> String {
+    let detection_core = detection.map(Into::into);
+    kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(&elements, &detection_core, img_width.expect("'img_width' is required"), img_height.expect("'img_height' is required"), recognized_tables.expect("'recognized_tables' is required")).into()
+}
+
+#[extendr]
+pub fn recognize_page_tables(page_image: String, detection: DetectionResult, elements: Vec<OcrElement>, tatr_model: String) -> Vec<RecognizedTable> {
+    let _ = (page_image, detection, elements, tatr_model);
+        Vec::new()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<HocrWord>> {
+    kreuzberg::ocr::extract_words_from_tsv(&tsv_data, min_confidence).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn compute_hash(data: String) -> String {
+    kreuzberg::ocr::compute_hash(&data).into()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn validate_tesseract_version(version: i32) -> Result<()> {
+    kreuzberg::ocr::validate_tesseract_version(version).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn ensure_ort_available() -> () {
+    kreuzberg::ort_discovery::ensure_ort_available()
+}
+
+#[extendr]
+pub fn is_language_supported(lang: String) -> bool {
+    kreuzberg::paddle_ocr::is_language_supported(&lang)
+}
+
+#[extendr]
+pub fn language_to_script_family(paddle_lang: String) -> String {
+    kreuzberg::paddle_ocr::language_to_script_family(&paddle_lang).into()
+}
+
+#[extendr]
+pub fn map_language_code(kreuzberg_code: String) -> Option<String> {
+    kreuzberg::paddle_ocr::map_language_code(&kreuzberg_code).map(Into::into)
+}
+
+#[extendr]
+pub fn build_cell_grid(result: String, table_bbox: Option<String>) -> Vec<Vec<String>> {
+    let _ = (result, table_bbox);
+        Vec::new()
+}
+
+#[extendr]
+pub fn apply_heuristics(detections: Vec<LayoutDetection>, page_width: f64, page_height: f64) -> () {
+    kreuzberg::layout::postprocessing::heuristics::apply_heuristics(&detections, page_width, page_height)
+}
+
+#[extendr]
+pub fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f64) -> () {
+    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections, iou_threshold)
+}
+
+#[extendr]
+pub fn preprocess_imagenet(img: String, target_size: i32) -> String {
+    let _ = (img, target_size);
+        String::from("[unimplemented: preprocess_imagenet]")
+}
+
+#[extendr]
+pub fn preprocess_imagenet_letterbox(img: String, target_size: i32) -> String {
+    let _ = (img, target_size);
+        String::from("[unimplemented: preprocess_imagenet_letterbox]")
+}
+
+#[extendr]
+pub fn preprocess_rescale(img: String, target_size: i32) -> String {
+    let _ = (img, target_size);
+        String::from("[unimplemented: preprocess_rescale]")
+}
+
+#[extendr]
+pub fn preprocess_letterbox(img: String, target_width: i32, target_height: i32) -> String {
+    let _ = (img, target_width, target_height);
+        String::from("[unimplemented: preprocess_letterbox]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn build_session(path: String, accel: Option<AccelerationConfig>, thread_budget: Option<f64>) -> Result<String> {
+    let accel_core: Option<kreuzberg::AccelerationConfig> = accel.map(|v| {
+        let json = serde_json::to_string(&v).map_err(|e| e.to_string())?;
+        serde_json::from_str(&json).map_err(|e| e.to_string())
+    }).transpose()?;
+    kreuzberg::layout::session::build_session(&path, &accel_core, thread_budget.expect("'thread_budget' is required")).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn config_from_extraction(layout_config: LayoutDetectionConfig) -> String {
+    let _ = layout_config;
+        String::from("[unimplemented: config_from_extraction]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn create_engine(layout_config: LayoutDetectionConfig) -> Result<String> {
+    let layout_config_json = serde_json::to_string(&layout_config).map_err(|e| e.to_string())?;
+    let layout_config_core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config_json).map_err(|e| e.to_string())?;
+    kreuzberg::layout::create_engine(&layout_config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn take_or_create_engine(layout_config: LayoutDetectionConfig) -> Result<String> {
+    let layout_config_json = serde_json::to_string(&layout_config).map_err(|e| e.to_string())?;
+    let layout_config_core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config_json).map_err(|e| e.to_string())?;
+    kreuzberg::layout::take_or_create_engine(&layout_config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn return_engine(engine: String) -> () {
+    let _ = engine;
+        ()
+}
+
+#[extendr]
+pub fn take_or_create_tatr() -> Option<String> {
+    None
+}
+
+#[extendr]
+pub fn return_tatr(model: String) -> () {
+    let _ = model;
+        ()
+}
+
+#[extendr]
+pub fn take_or_create_slanet(variant: String) -> Option<String> {
+    let _ = variant;
+        None
+}
+
+#[extendr]
+pub fn return_slanet(variant: String, model: String) -> () {
+    let _ = (variant, model);
+        ()
+}
+
+#[extendr]
+pub fn take_or_create_table_classifier() -> Option<String> {
+    None
+}
+
+#[extendr]
+pub fn return_table_classifier(model: String) -> () {
+    let _ = model;
+        ()
+}
+
+#[extendr]
+pub fn extract_annotations_from_document(document: String) -> Vec<PdfAnnotation> {
+    let _ = document;
+        Vec::new()
+}
+
+#[extendr]
+pub fn extract_bookmarks(document: Document) -> Vec<Uri> {
+    let document_core = document.into();
+    kreuzberg::pdf::bookmarks::extract_bookmarks(&document_core).into_iter().map(Into::into).collect()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_bundled_pdfium() -> Result<String> {
+    kreuzberg::pdf::extract_bundled_pdfium().map(|val| val.to_string_lossy().to_string()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn extract_embedded_files(document: Document) -> Vec<EmbeddedFile> {
+    let document_core = document.into();
+    kreuzberg::pdf::embedded_files::extract_embedded_files(&document_core).into_iter().map(Into::into).collect()
+}
+
+#[extendr]
+pub async fn extract_and_process_embedded_files(pdf_bytes: Vec<u8>, config: ExtractionConfig) -> String {
+    let _ = (pdf_bytes, config);
+        String::from("[unimplemented: extract_and_process_embedded_files]")
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn initialize_font_cache() -> Result<()> {
+    kreuzberg::pdf::initialize_font_cache().map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn get_font_descriptors() -> Result<Vec<String>> {
+    Err("Not implemented: get_font_descriptors".to_string())
+}
+
+#[extendr]
+pub fn cached_font_count() -> f64 {
+    kreuzberg::pdf::cached_font_count()
+}
+
+#[extendr]
+pub fn clear_font_cache() -> () {
+    kreuzberg::pdf::fonts::clear_font_cache()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn cluster_font_sizes(blocks: Vec<TextBlock>, k: f64) -> Result<Vec<FontSizeCluster>> {
+    kreuzberg::pdf::cluster_font_sizes(&blocks, k).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[extendr]
+pub fn assign_heading_levels_smart(clusters: Vec<FontSizeCluster>, min_heading_ratio: f64, min_heading_gap: f64) -> Vec<String> {
+    let _ = (clusters, min_heading_ratio, min_heading_gap);
+        Vec::new()
+}
+
+#[extendr]
+pub fn assign_hierarchy_levels(blocks: Vec<TextBlock>, kmeans_result: KMeansResult) -> Vec<HierarchyBlock> {
+    let kmeans_result_core = kmeans_result.into();
+    kreuzberg::pdf::assign_hierarchy_levels(&blocks, &kmeans_result_core).into_iter().map(Into::into).collect()
+}
+
+#[extendr]
+pub fn assign_hierarchy_levels_from_clusters(blocks: Vec<TextBlock>, clusters: Vec<FontSizeCluster>) -> Vec<String> {
+    let _ = (blocks, clusters);
+        Vec::new()
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_chars_with_fonts(page: String) -> Result<Vec<CharData>> {
+    let _ = page;
+        Err("Not implemented: extract_chars_with_fonts".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_segments_from_page(page: String) -> Result<Vec<SegmentData>> {
+    let _ = page;
+        Err("Not implemented: extract_segments_from_page".to_string())
+}
+
+#[extendr]
+pub fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<TextBlock> {
+    kreuzberg::pdf::hierarchy::merge_chars_into_blocks(chars).into_iter().map(Into::into).collect()
+}
+
+#[extendr]
+pub fn should_trigger_ocr(page: String, blocks: Vec<TextBlock>, config: ExtractionConfig) -> bool {
+    let _ = (page, blocks, config);
+        false
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_images_from_pdf(pdf_bytes: Vec<u8>) -> Result<Vec<PdfImage>> {
+    kreuzberg::pdf::extract_images_from_pdf(&pdf_bytes).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_images_from_pdf_with_password(pdf_bytes: Vec<u8>, password: String) -> Result<Vec<PdfImage>> {
+    kreuzberg::pdf::images::extract_images_from_pdf_with_password(&pdf_bytes, &password).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn reextract_raw_images_via_pdfium(pdf_bytes: Vec<u8>, images: Vec<PdfImage>) -> Result<i32> {
+    kreuzberg::pdf::images::reextract_raw_images_via_pdfium(&pdf_bytes, &images).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn detect_layout_for_document(pdf_bytes: Vec<u8>, engine: String) -> Result<String> {
+    let _ = (pdf_bytes, engine);
+        Err("Not implemented: detect_layout_for_document".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn detect_layout_for_images(images: Vec<String>, engine: String) -> Result<Vec<DetectionResult>> {
+    let _ = (images, engine);
+        Err("Not implemented: detect_layout_for_images".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_metadata(pdf_bytes: Vec<u8>) -> Result<PdfMetadata> {
+    kreuzberg::pdf::extract_metadata(&pdf_bytes).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> Result<PdfMetadata> {
+    kreuzberg::pdf::metadata::extract_metadata_with_password(&pdf_bytes, password.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<PdfMetadata> {
+    kreuzberg::pdf::metadata::extract_metadata_with_passwords(&pdf_bytes, &passwords).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_metadata_from_document(document: String, page_boundaries: Option<Vec<PageBoundary>>, content: Option<String>) -> Result<PdfExtractionMetadata> {
+    let _ = (document, page_boundaries, content);
+        Err("Not implemented: extract_metadata_from_document".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_common_metadata_from_document(document: String) -> Result<CommonPdfMetadata> {
+    let _ = document;
+        Err("Not implemented: extract_common_metadata_from_document".to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn render_page_to_image(pdf_bytes: Vec<u8>, page_index: f64, options: PageRenderOptions) -> Result<String> {
+    let options_json = serde_json::to_string(&options).map_err(|e| e.to_string())?;
+    let options_core: kreuzberg::PageRenderOptions = serde_json::from_str(&options_json).map_err(|e| e.to_string())?;
+    kreuzberg::pdf::render_page_to_image(&pdf_bytes, page_index, &options_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn render_pdf_page_to_png(pdf_bytes: Vec<u8>, page_index: f64, dpi: Option<i32>, password: Option<String>) -> Result<Vec<u8>> {
+    kreuzberg::pdf::render_pdf_page_to_png(&pdf_bytes, page_index, dpi, password.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_words_from_page(page: String, min_confidence: f64) -> Result<Vec<HocrWord>> {
+    let _ = (page, min_confidence);
+        Err("Not implemented: extract_words_from_page".to_string())
+}
+
+#[extendr]
+pub fn segment_to_hocr_word(seg: SegmentData, page_height: f64) -> HocrWord {
+    let seg_core = seg.into();
+    kreuzberg::pdf::table_reconstruct::segment_to_hocr_word(&seg_core, page_height).into()
+}
+
+#[extendr]
+pub fn split_segment_to_words(seg: SegmentData, page_height: f64) -> Vec<HocrWord> {
+    let seg_core = seg.into();
+    kreuzberg::pdf::table_reconstruct::split_segment_to_words(&seg_core, page_height).into_iter().map(Into::into).collect()
+}
+
+#[extendr]
+pub fn segments_to_words(segments: Vec<SegmentData>, page_height: f64) -> Vec<HocrWord> {
+    kreuzberg::pdf::table_reconstruct::segments_to_words(&segments, page_height).into_iter().map(Into::into).collect()
+}
+
+#[extendr]
+pub fn post_process_table(table: Vec<Vec<String>>, layout_guided: bool, allow_single_column: bool) -> Option<Vec<Vec<String>>> {
+    kreuzberg::pdf::table_reconstruct::post_process_table(table, layout_guided, allow_single_column)
+}
+
+#[extendr]
+pub fn is_well_formed_table(grid: Vec<Vec<String>>) -> bool {
+    kreuzberg::pdf::table_reconstruct::is_well_formed_table(&grid)
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text_from_pdf(pdf_bytes: Vec<u8>) -> Result<String> {
+    kreuzberg::pdf::extract_text_from_pdf(&pdf_bytes).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text_from_pdf_with_password(pdf_bytes: Vec<u8>, password: String) -> Result<String> {
+    kreuzberg::pdf::text::extract_text_from_pdf_with_password(&pdf_bytes, &password).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text_from_pdf_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<String> {
+    kreuzberg::pdf::text::extract_text_from_pdf_with_passwords(&pdf_bytes, &passwords).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text_and_metadata_from_pdf_document(document: String, extraction_config: Option<ExtractionConfig>) -> Result<PdfUnifiedExtractionResult> {
+    let extraction_config_core: Option<kreuzberg::ExtractionConfig> = extraction_config.map(|v| {
+        let json = serde_json::to_string(&v).map_err(|e| e.to_string())?;
+        serde_json::from_str(&json).map_err(|e| e.to_string())
+    }).transpose()?;
+    kreuzberg::pdf::text::extract_text_and_metadata_from_pdf_document(&document, &extraction_config_core).map(|val| PdfUnifiedExtractionResult { inner: Arc::new(val) }).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn extract_text_from_pdf_document(document: String, page_config: Option<PageConfig>, extraction_config: Option<ExtractionConfig>) -> Result<String> {
+    let page_config_core: Option<kreuzberg::PageConfig> = page_config.map(|v| {
+        let json = serde_json::to_string(&v).map_err(|e| e.to_string())?;
+        serde_json::from_str(&json).map_err(|e| e.to_string())
+    }).transpose()?;
+    let extraction_config_core: Option<kreuzberg::ExtractionConfig> = extraction_config.map(|v| {
+        let json = serde_json::to_string(&v).map_err(|e| e.to_string())?;
+        serde_json::from_str(&json).map_err(|e| e.to_string())
+    }).transpose()?;
+    kreuzberg::pdf::text::extract_text_from_pdf_document(&document, &page_config_core, &extraction_config_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn serialize_to_toon(result: ExtractionResult) -> Result<String> {
+    let result_core = result.into();
+    kreuzberg::serialize_to_toon(&result_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn serialize_to_json(result: ExtractionResult) -> Result<String> {
+    let result_core = result.into();
+    kreuzberg::serialize_to_json(&result_core).map(|val| val.into()).map_err(|e| e.to_string())
+}
+
 extendr_module! {
     mod kreuzberg;
+    impl GenericCache;
+    impl BatchProcessorConfig;
+    impl BatchProcessor;
+    impl AccelerationConfig;
+    impl ContentFilterConfig;
+    impl EmailConfig;
+    impl ExtractionConfig;
+    impl FileExtractionConfig;
+    impl ImageExtractionConfig;
+    impl TokenReductionConfig;
+    impl LanguageDetectionConfig;
+    impl HtmlOutputConfig;
+    impl LayoutDetectionConfig;
+    impl LlmConfig;
+    impl StructuredExtractionConfig;
+    impl OcrQualityThresholds;
+    impl OcrPipelineStage;
+    impl OcrPipelineConfig;
+    impl OcrConfig;
+    impl PageConfig;
+    impl PdfConfig;
+    impl HierarchyConfig;
+    impl PostProcessorConfig;
+    impl ChunkingConfig;
+    impl EmbeddingConfig;
+    impl TreeSitterConfig;
+    impl TreeSitterProcessConfig;
+    impl FileBytes;
     impl SupportedFormat;
+    impl ServerConfig;
+    impl StructuredDataResult;
+    impl JsonExtractionConfig;
+    impl ListItemMetadata;
+    impl HwpDocument;
+    impl Section;
+    impl ParaText;
+    impl FileHeader;
+    impl Record;
+    impl StreamReader;
+    impl CfbReader;
+    impl ImageOcrResult;
+    impl HtmlExtractionResult;
+    impl ExtractedInlineImage;
+    impl DocExtractionResult;
+    impl DocMetadata;
+    impl Drawing;
+    impl Extent;
+    impl DocProperties;
+    impl AnchorProperties;
+    impl Position;
+    impl Document;
+    impl TableRow;
+    impl HeaderFooter;
+    impl Note;
+    impl PageMargins;
+    impl PageMarginsPoints;
+    impl ColumnLayout;
+    impl SectionProperties;
+    impl RunProperties;
+    impl StyleDefinition;
+    impl ResolvedStyle;
+    impl StyleCatalog;
+    impl TableProperties;
+    impl TableLook;
+    impl TableBorders;
+    impl RowProperties;
+    impl ColorScheme;
+    impl FontScheme;
+    impl Theme;
+    impl XlsxAppProperties;
+    impl PptxAppProperties;
+    impl CustomProperties;
+    impl OdtProperties;
+    impl PptExtractionResult;
+    impl PptMetadata;
+    impl PptxExtractionOptions;
+    impl SyncExtractor;
+    impl CodeExtractor;
+    impl CsvExtractor;
+    impl StructuredExtractor;
+    impl PlainTextExtractor;
+    impl DjotExtractor;
+    impl ZipBombValidator;
+    impl StringGrowthValidator;
+    impl IterationValidator;
+    impl DepthValidator;
+    impl EntityValidator;
+    impl TableValidator;
+    impl ImageExtractor;
+    impl ZipExtractor;
+    impl TarExtractor;
+    impl SevenZExtractor;
+    impl GzipExtractor;
+    impl EmailExtractor;
+    impl PstExtractor;
+    impl ExcelExtractor;
+    impl HwpExtractor;
+    impl KeynoteExtractor;
+    impl NumbersExtractor;
+    impl PagesExtractor;
+    impl HtmlExtractor;
+    impl BibtexExtractor;
+    impl CitationExtractor;
+    impl DocExtractor;
+    impl DbfExtractor;
+    impl DocxExtractor;
+    impl EpubExtractor;
+    impl FictionBookExtractor;
+    impl MarkdownExtractor;
+    impl MdxExtractor;
+    impl RstExtractor;
+    impl LatexExtractor;
+    impl JupyterExtractor;
+    impl OrgModeExtractor;
+    impl OdtExtractor;
+    impl OpmlExtractor;
+    impl TypstExtractor;
+    impl JatsExtractor;
+    impl NativeTextStats;
+    impl OcrFallbackDecision;
+    impl PdfExtractor;
+    impl PptExtractor;
+    impl PptxExtractor;
+    impl RtfImage;
+    impl RtfFormattingSpan;
+    impl RtfFormattingData;
+    impl RtfExtractor;
+    impl XmlExtractor;
+    impl DocbookExtractor;
+    impl ModelCache;
+    impl PanicContext;
+    impl OcrBackend;
+    impl DocumentExtractorRegistry;
+    impl OcrBackendRegistry;
+    impl PostProcessorRegistry;
+    impl RendererRegistry;
+    impl ValidatorRegistry;
+    impl Renderer;
+    impl Plugin;
+    impl ExtractionMetrics;
+    impl TokenReducer;
+    impl QualityProcessor;
+    impl PdfAnnotation;
+    impl DjotContent;
+    impl FormattedBlock;
+    impl InlineElement;
+    impl Attributes;
+    impl DjotImage;
+    impl DjotLink;
+    impl Footnote;
+    impl NodeId;
+    impl DocumentStructure;
+    impl DocumentRelationship;
+    impl DocumentNode;
+    impl TableGrid;
+    impl GridCell;
+    impl TextAnnotation;
+    impl ExtractionResult;
+    impl ArchiveEntry;
+    impl ProcessingWarning;
     impl LlmUsage;
+    impl Chunk;
+    impl HeadingContext;
+    impl HeadingLevel;
+    impl ChunkMetadata;
+    impl ExtractedImage;
+    impl ElementId;
+    impl BoundingBox;
+    impl ElementMetadata;
+    impl Element;
+    impl ExcelWorkbook;
+    impl ExcelSheet;
+    impl XmlExtractionResult;
+    impl TextExtractionResult;
+    impl PptxExtractionResult;
+    impl EmailExtractionResult;
+    impl EmailAttachment;
+    impl OcrExtractionResult;
+    impl OcrTable;
+    impl OcrTableBoundingBox;
+    impl ImagePreprocessingConfig;
+    impl TesseractConfig;
+    impl ImagePreprocessingMetadata;
+    impl Metadata;
+    impl ExcelMetadata;
+    impl EmailMetadata;
+    impl ArchiveMetadata;
+    impl ImageMetadata;
+    impl XmlMetadata;
+    impl TextMetadata;
+    impl HeaderMetadata;
+    impl LinkMetadata;
+    impl ImageMetadataType;
+    impl StructuredData;
+    impl HtmlMetadata;
+    impl OcrMetadata;
+    impl ErrorMetadata;
+    impl PptxMetadata;
+    impl DocxMetadata;
+    impl CsvMetadata;
+    impl BibtexMetadata;
+    impl CitationMetadata;
+    impl YearRange;
+    impl FictionBookMetadata;
+    impl DbfMetadata;
+    impl DbfFieldInfo;
+    impl JatsMetadata;
+    impl ContributorRole;
+    impl EpubMetadata;
+    impl PstMetadata;
+    impl OcrConfidence;
+    impl OcrRotation;
+    impl OcrElement;
+    impl OcrElementConfig;
+    impl PageStructure;
+    impl PageBoundary;
+    impl PageInfo;
+    impl PageContent;
+    impl PageHierarchy;
+    impl HierarchicalBlock;
+    impl Table;
+    impl TableCell;
+    impl Uri;
+    impl PoolMetrics;
+    impl PoolMetricsSnapshot;
+    impl Recyclable;
+    impl StringBufferPool;
+    impl ByteBufferPool;
+    impl Pool;
+    impl PoolSizeHint;
+    impl PoolConfig;
+    impl StringBufferPoolMetrics;
+    impl PooledString;
+    impl InternedString;
+    impl Instant;
+    impl HocrWord;
+    impl ExtractionService;
+    impl TracingLayer;
+    impl MetricsLayer;
+    impl ExtractionRequest;
+    impl ExtractionServiceBuilder;
+    impl MultipartApi;
+    impl ApiError;
+    impl ApiDoc;
+    impl ApiSizeLimits;
+    impl PluginStatus;
+    impl HealthResponse;
+    impl InfoResponse;
+    impl ExtractResponse;
+    impl ErrorResponse;
+    impl ApiState;
+    impl CacheStatsResponse;
+    impl CacheClearResponse;
+    impl EmbedRequest;
+    impl EmbedResponse;
+    impl ChunkRequest;
+    impl ChunkingConfigRequest;
+    impl ChunkResponse;
+    impl ChunkItem;
+    impl VersionResponse;
+    impl DetectResponse;
+    impl ManifestEntryResponse;
+    impl ManifestResponse;
+    impl WarmRequest;
+    impl WarmResponse;
+    impl StructuredExtractionResponse;
+    impl OpenWebDocumentResponse;
+    impl OpenWebDocumentMetadata;
+    impl DoclingCompatResponse;
+    impl DoclingCompatDocument;
+    impl ChunkingConfigResponse;
+    impl ExtractFileParams;
+    impl ExtractBytesParams;
+    impl BatchExtractFilesParams;
+    impl DetectMimeTypeParams;
+    impl EmptyParams;
+    impl CacheWarmParams;
+    impl EmbedTextParams;
+    impl ExtractStructuredParams;
+    impl ChunkTextParams;
+    impl DownloadGrammarsParams;
+    impl ListGrammarsParams;
+    impl KreuzbergMcp;
+    impl ChunkingResult;
+    impl ChunkingProcessor;
+    impl VlmOcrBackend;
+    impl YakeParams;
+    impl RakeParams;
+    impl KeywordConfig;
+    impl Keyword;
+    impl OcrCache;
+    impl OcrCacheStats;
+    impl TsvRow;
+    impl LanguageRegistry;
+    impl RecognizedTable;
+    impl OcrProcessor;
+    impl TessdataManager;
+    impl TesseractBackend;
+    impl PaddleOcrConfig;
+    impl ModelPaths;
+    impl OrientationResult;
+    impl LayoutModel;
+    impl BBox;
+    impl LayoutDetection;
+    impl DetectionResult;
+    impl EmbeddedFile;
+    impl FontSizeCluster;
+    impl CharData;
+    impl TextBlock;
+    impl KMeansResult;
+    impl HierarchyBlock;
+    impl SegmentData;
+    impl PdfImage;
+    impl PdfImageExtractor;
+    impl PdfLayoutBBox;
+    impl PageLayoutRegion;
+    impl PageLayoutResult;
+    impl PageTiming;
+    impl LayoutTimingReport;
+    impl PdfMetadata;
+    impl PdfExtractionMetadata;
+    impl CommonPdfMetadata;
+    impl PageRenderOptions;
+    impl PdfPageIterator;
+    impl PdfRenderer;
+    impl PdfUnifiedExtractionResult;
+    impl PdfTextExtractor;
+    fn get_cache_metadata;
+    fn cleanup_cache;
+    fn smart_cleanup_cache;
+    fn is_cache_valid;
+    fn clear_cache_directory;
+    fn batch_cleanup_caches;
+    fn generate_cache_key;
+    fn blake3_hash_bytes;
+    fn blake3_hash_file;
+    fn get_available_disk_space;
+    fn fast_hash;
+    fn validate_cache_key;
+    fn filter_old_cache_entries;
+    fn sort_cache_by_access_time;
+    fn sanitize_namespace;
+    fn is_batch_mode;
+    fn resolve_thread_budget;
+    fn init_thread_pools;
+    fn merge_config_json;
+    fn build_config_from_json;
+    fn validate_port;
+    fn validate_host;
+    fn validate_cors_origin;
+    fn validate_upload_size;
+    fn validate_binarization_method;
+    fn validate_token_reduction_level;
+    fn validate_ocr_backend;
+    fn validate_language_code;
+    fn validate_tesseract_psm;
+    fn validate_tesseract_oem;
+    fn validate_output_format;
+    fn validate_confidence;
+    fn validate_dpi;
+    fn validate_chunking_params;
+    fn validate_llm_config_model;
+    fn validate_vlm_backend_config;
+    fn validate_structured_extraction_schema;
+    fn extract_bytes;
+    fn extract_file;
+    fn get_pool_sizing_hint;
+    fn extract_file_sync;
+    fn extract_bytes_sync;
+    fn batch_extract_file_sync;
+    fn batch_extract_bytes_sync;
+    fn batch_extract_file;
+    fn batch_extract_bytes;
     fn is_valid_format_field;
+    fn open_file_bytes;
+    fn read_file_async;
+    fn read_file_sync;
+    fn file_exists;
+    fn validate_file_exists;
+    fn find_files_by_extension;
     fn detect_mime_type;
     fn validate_mime_type;
+    fn detect_or_validate;
     fn detect_mime_type_from_bytes;
     fn get_extensions_for_mime;
     fn list_supported_formats;
+    fn clear_processor_cache;
+    fn apply_output_format;
+    fn run_pipeline;
+    fn run_pipeline_sync;
+    fn is_page_text_blank;
+    fn resolve_relationships;
+    fn derive_document_structure;
+    fn derive_extraction_result;
+    fn parse_json;
+    fn parse_jsonl;
+    fn parse_yaml;
+    fn parse_toml;
+    fn parse_text;
+    fn transform_to_document_structure;
+    fn detect_list_items;
+    fn generate_element_id;
+    fn transform_extraction_result_to_elements;
+    fn parse_body_text;
+    fn decompress_stream;
+    fn extract_hwp_text;
+    fn load_image_for_ocr;
+    fn extract_image_metadata;
+    fn extract_text_from_image_with_ocr;
+    fn estimate_content_capacity;
+    fn estimate_html_markdown_capacity;
+    fn estimate_spreadsheet_capacity;
+    fn estimate_presentation_capacity;
+    fn estimate_table_markdown_capacity;
+    fn decompress_gzip;
+    fn extract_gzip;
+    fn extract_gzip_metadata;
+    fn extract_gzip_text_content;
+    fn extract_gzip_with_bytes;
+    fn extract_7z_metadata;
+    fn extract_7z_text_content;
+    fn extract_7z_file_bytes;
+    fn extract_tar_metadata;
+    fn extract_tar_text_content;
+    fn extract_tar_file_bytes;
+    fn extract_zip_metadata;
+    fn extract_zip_text_content;
+    fn extract_zip_file_bytes;
+    fn parse_eml_content;
+    fn parse_msg_content;
+    fn extract_email_content;
+    fn build_email_text_output;
+    fn extract_pst_messages;
+    fn read_excel_file;
+    fn read_excel_bytes;
+    fn excel_to_text;
+    fn excel_to_markdown;
+    fn resolve_conversion_options;
+    fn convert_html_to_markdown;
+    fn convert_html_to_markdown_with_metadata;
+    fn convert_html_to_markdown_with_tables;
+    fn extract_html_inline_images;
+    fn extract_doc_text;
+    fn parse_drawing;
+    fn collect_and_convert_omath_para;
+    fn collect_and_convert_omath;
+    fn parse_document;
+    fn extract_text_from_bytes;
+    fn parse_section_properties;
+    fn parse_section_properties_streaming;
+    fn parse_styles_xml;
+    fn parse_table_properties;
+    fn parse_row_properties;
+    fn parse_cell_properties;
+    fn parse_table_grid;
+    fn parse_theme_xml;
+    fn extract_text;
+    fn extract_text_with_page_breaks;
+    fn detect_page_breaks_from_docx;
+    fn extract_ooxml_embedded_objects;
+    fn detect_image_format;
+    fn process_images_with_ocr;
+    fn extract_ppt_text;
+    fn extract_ppt_text_with_options;
+    fn extract_pptx_from_path;
+    fn extract_pptx_from_bytes;
+    fn parse_xml_svg;
+    fn parse_xml;
+    fn cells_to_text;
+    fn cells_to_markdown;
+    fn parse_jotdown_attributes;
+    fn render_attributes;
+    fn djot_content_to_djot;
+    fn extraction_result_to_djot;
+    fn djot_to_html;
+    fn extract_complete_djot_content;
+    fn extract_tables_from_events;
+    fn extract_text_from_events;
+    fn render_block_to_djot;
+    fn render_list_item;
+    fn render_inline_content;
+    fn extract_frontmatter;
+    fn extract_metadata_from_yaml;
+    fn extract_title_from_content;
+    fn collect_iwa_paths;
+    fn read_iwa_file;
+    fn decode_iwa_stream;
+    fn extract_text_from_proto;
+    fn extract_text_from_iwa_files;
+    fn extract_metadata_from_zip;
+    fn dedup_text;
+    fn evaluate_native_text_for_ocr;
+    fn compute_quality_score;
+    fn evaluate_per_page_ocr;
+    fn hex_digit_to_u8;
+    fn parse_hex_byte;
+    fn decode_windows_1252;
+    fn parse_rtf_control_word;
+    fn normalize_whitespace_with_mapping;
+    fn map_offset;
+    fn normalize_whitespace;
+    fn extract_pict_image;
+    fn parse_rtf_datetime;
+    fn extract_rtf_metadata;
+    fn extract_rtf_formatting;
+    fn spans_to_annotations;
+    fn extract_text_from_rtf;
+    fn register_default_extractors;
+    fn extract_panic_message;
+    fn register_extractor;
+    fn unregister_extractor;
+    fn list_extractors;
+    fn clear_extractors;
+    fn register_ocr_backend;
+    fn unregister_ocr_backend;
+    fn list_ocr_backends;
+    fn clear_ocr_backends;
+    fn list_post_processors;
+    fn get_ocr_backend_registry;
+    fn get_document_extractor_registry;
+    fn get_post_processor_registry;
+    fn get_validator_registry;
+    fn get_renderer_registry;
+    fn register_renderer;
+    fn unregister_renderer;
+    fn list_renderers;
+    fn clear_renderers;
+    fn validate_plugins_at_startup;
+    fn register_validator;
+    fn unregister_validator;
+    fn list_validators;
+    fn clear_validators;
+    fn render_djot;
+    fn render_html;
+    fn render_json;
+    fn render_markdown;
+    fn render_plain;
+    fn sanitize_filename;
+    fn get_metrics;
+    fn record_error_on_current_span;
+    fn record_success_on_current_span;
+    fn sanitize_path;
+    fn extractor_span;
+    fn pipeline_stage_span;
+    fn pipeline_processor_span;
+    fn ocr_span;
+    fn model_inference_span;
+    fn from_utf8;
+    fn string_from_utf8;
+    fn is_valid_utf8;
+    fn calculate_quality_score;
+    fn clean_extracted_text;
+    fn normalize_spaces;
+    fn reduce_tokens;
+    fn batch_reduce_tokens;
+    fn get_reduction_statistics;
+    fn bold;
+    fn italic;
+    fn underline;
+    fn link;
+    fn code;
+    fn strikethrough;
+    fn subscript;
+    fn superscript;
+    fn font_size;
+    fn color;
+    fn highlight;
+    fn classify_uri;
+    fn safe_decode;
+    fn calculate_text_confidence;
+    fn fix_mojibake;
+    fn snake_to_camel;
+    fn camel_to_snake;
+    fn create_string_buffer_pool;
+    fn create_byte_buffer_pool;
+    fn estimate_pool_size;
+    fn acquire_string_buffer;
+    fn intern_language_code;
+    fn intern_mime_type;
+    fn xml_tag_name;
+    fn escape_html_entities;
+    fn detect_columns;
+    fn detect_rows;
+    fn reconstruct_table;
+    fn table_to_markdown;
+    fn load_server_config;
+    fn openapi_json;
+    fn create_router;
+    fn create_router_with_limits;
+    fn create_router_with_limits_and_server_config;
+    fn serve;
+    fn serve_with_config;
+    fn serve_with_config_and_limits;
+    fn serve_with_server_config;
+    fn serve_default;
+    fn map_kreuzberg_error_to_mcp;
+    fn start_mcp_server;
+    fn start_mcp_server_with_config;
+    fn start_mcp_server_http;
+    fn start_mcp_server_http_with_config;
+    fn validate_page_boundaries;
+    fn calculate_page_range;
+    fn classify_chunk;
+    fn chunk_text;
+    fn chunk_text_with_heading_source;
+    fn chunk_text_with_type;
+    fn chunk_texts_batch;
+    fn precompute_utf8_boundaries;
+    fn validate_utf8_boundaries;
+    fn create_client;
+    fn render_template;
+    fn extract_structured;
+    fn vlm_ocr;
+    fn normalize;
+    fn get_preset;
+    fn list_presets;
+    fn warm_model;
+    fn download_model;
+    fn generate_embeddings_for_chunks;
+    fn calculate_smart_dpi;
+    fn calculate_optimal_dpi;
+    fn normalize_image_dpi;
+    fn resize_image;
+    fn detect_languages;
+    fn register_language_detection_processor;
+    fn get_stopwords;
+    fn get_stopwords_with_fallback;
+    fn extract_keywords;
+    fn text_block_to_element;
+    fn tsv_row_to_element;
+    fn iterator_word_to_element;
+    fn element_to_hocr_word;
+    fn elements_to_hocr_words;
+    fn parse_hocr_to_internal_document;
+    fn assemble_ocr_markdown;
+    fn recognize_page_tables;
+    fn extract_words_from_tsv;
+    fn compute_hash;
+    fn validate_tesseract_version;
+    fn ensure_ort_available;
+    fn is_language_supported;
+    fn language_to_script_family;
+    fn map_language_code;
+    fn build_cell_grid;
+    fn apply_heuristics;
+    fn greedy_nms;
+    fn preprocess_imagenet;
+    fn preprocess_imagenet_letterbox;
+    fn preprocess_rescale;
+    fn preprocess_letterbox;
+    fn build_session;
+    fn config_from_extraction;
+    fn create_engine;
+    fn take_or_create_engine;
+    fn return_engine;
+    fn take_or_create_tatr;
+    fn return_tatr;
+    fn take_or_create_slanet;
+    fn return_slanet;
+    fn take_or_create_table_classifier;
+    fn return_table_classifier;
+    fn extract_annotations_from_document;
+    fn extract_bookmarks;
+    fn extract_bundled_pdfium;
+    fn extract_embedded_files;
+    fn extract_and_process_embedded_files;
+    fn initialize_font_cache;
+    fn get_font_descriptors;
+    fn cached_font_count;
+    fn clear_font_cache;
+    fn cluster_font_sizes;
+    fn assign_heading_levels_smart;
+    fn assign_hierarchy_levels;
+    fn assign_hierarchy_levels_from_clusters;
+    fn extract_chars_with_fonts;
+    fn extract_segments_from_page;
+    fn merge_chars_into_blocks;
+    fn should_trigger_ocr;
+    fn extract_images_from_pdf;
+    fn extract_images_from_pdf_with_password;
+    fn reextract_raw_images_via_pdfium;
+    fn detect_layout_for_document;
+    fn detect_layout_for_images;
+    fn extract_metadata;
+    fn extract_metadata_with_password;
+    fn extract_metadata_with_passwords;
+    fn extract_metadata_from_document;
+    fn extract_common_metadata_from_document;
+    fn render_page_to_image;
+    fn render_pdf_page_to_png;
+    fn extract_words_from_page;
+    fn segment_to_hocr_word;
+    fn split_segment_to_words;
+    fn segments_to_words;
+    fn post_process_table;
+    fn is_well_formed_table;
+    fn extract_text_from_pdf;
+    fn extract_text_from_pdf_with_password;
+    fn extract_text_from_pdf_with_passwords;
+    fn extract_text_and_metadata_from_pdf_document;
+    fn extract_text_from_pdf_document;
+    fn serialize_to_toon;
+    fn serialize_to_json;
 }

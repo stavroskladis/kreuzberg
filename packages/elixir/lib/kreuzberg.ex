@@ -2,10 +2,340 @@
 defmodule Kreuzberg do
   @moduledoc "High-level API for kreuzberg."
 
+  @doc "Function"
+  @spec get_cache_metadata(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def get_cache_metadata(cache_dir) do
+    Kreuzberg.Native.get_cache_metadata(cache_dir)
+  end
+
+  @doc "Function"
+  @spec cleanup_cache(String.t(), float(), float(), float()) :: {:ok, String.t()} | {:error, String.t()}
+  def cleanup_cache(cache_dir, max_age_days, max_size_mb, target_size_ratio) do
+    Kreuzberg.Native.cleanup_cache(cache_dir, max_age_days, max_size_mb, target_size_ratio)
+  end
+
+  @doc "Function"
+  @spec smart_cleanup_cache(String.t(), float(), float(), float()) :: {:ok, String.t()} | {:error, String.t()}
+  def smart_cleanup_cache(cache_dir, max_age_days, max_size_mb, min_free_space_mb) do
+    Kreuzberg.Native.smart_cleanup_cache(cache_dir, max_age_days, max_size_mb, min_free_space_mb)
+  end
+
+  @doc "Function"
+  @spec is_cache_valid(String.t(), float()) :: boolean()
+  def is_cache_valid(cache_path, max_age_days) do
+    Kreuzberg.Native.is_cache_valid(cache_path, max_age_days)
+  end
+
+  @doc "Function"
+  @spec clear_cache_directory(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def clear_cache_directory(cache_dir) do
+    Kreuzberg.Native.clear_cache_directory(cache_dir)
+  end
+
+  @doc "Function"
+  @spec batch_cleanup_caches([String.t()], float(), float(), float()) :: {:ok, [String.t()]} | {:error, String.t()}
+  def batch_cleanup_caches(cache_dirs, max_age_days, max_size_mb, min_free_space_mb) do
+    Kreuzberg.Native.batch_cleanup_caches(cache_dirs, max_age_days, max_size_mb, min_free_space_mb)
+  end
+
+  @doc "Generate a deterministic cache key from configuration parameters."
+  @spec generate_cache_key([String.t()]) :: String.t()
+  def generate_cache_key(parts) do
+    Kreuzberg.Native.generate_cache_key(parts)
+  end
+
+  @doc "Hash arbitrary bytes with blake3, returning a 32-char hex string."
+  @spec blake3_hash_bytes(binary()) :: String.t()
+  def blake3_hash_bytes(data) do
+    Kreuzberg.Native.blake3_hash_bytes(data)
+  end
+
+  @doc "Hash a file's content with blake3 using streaming 64 KiB reads."
+  @spec blake3_hash_file(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def blake3_hash_file(path) do
+    Kreuzberg.Native.blake3_hash_file(path)
+  end
+
+  @doc "Function"
+  @spec get_available_disk_space(String.t()) :: {:ok, float()} | {:error, String.t()}
+  def get_available_disk_space(path) do
+    Kreuzberg.Native.get_available_disk_space(path)
+  end
+
+  @doc "Function"
+  @spec fast_hash(binary()) :: non_neg_integer()
+  def fast_hash(data) do
+    Kreuzberg.Native.fast_hash(data)
+  end
+
+  @doc "Function"
+  @spec validate_cache_key(String.t()) :: boolean()
+  def validate_cache_key(key) do
+    Kreuzberg.Native.validate_cache_key(key)
+  end
+
+  @doc "Function"
+  @spec filter_old_cache_entries([float()], float(), float()) :: [non_neg_integer()]
+  def filter_old_cache_entries(cache_times, current_time, max_age_seconds) do
+    Kreuzberg.Native.filter_old_cache_entries(cache_times, current_time, max_age_seconds)
+  end
+
+  @doc "Function"
+  @spec sort_cache_by_access_time([String.t()]) :: [String.t()]
+  def sort_cache_by_access_time(entries) do
+    Kreuzberg.Native.sort_cache_by_access_time(entries)
+  end
+
+  @doc "Validate and sanitize a cache namespace string."
+  @spec sanitize_namespace(String.t()) :: String.t() | nil
+  def sanitize_namespace(namespace) do
+    Kreuzberg.Native.sanitize_namespace(namespace)
+  end
+
+  @doc "Check if we're currently in batch processing mode."
+  @spec is_batch_mode() :: boolean()
+  def is_batch_mode do
+    Kreuzberg.Native.is_batch_mode()
+  end
+
+  @doc "Resolve the effective thread budget from config or auto-detection."
+  @spec resolve_thread_budget() :: non_neg_integer()
+  def resolve_thread_budget do
+    Kreuzberg.Native.resolve_thread_budget(nil)
+  end
+
+  @doc "Resolve the effective thread budget from config or auto-detection."
+  @spec resolve_thread_budget(String.t() | nil) :: non_neg_integer()
+  def resolve_thread_budget(config) do
+    Kreuzberg.Native.resolve_thread_budget(config)
+  end
+
+  @doc "Initialize the global Rayon thread pool with the given budget."
+  @spec init_thread_pools(non_neg_integer()) :: nil
+  def init_thread_pools(budget) do
+    Kreuzberg.Native.init_thread_pools(budget)
+  end
+
+  @doc "Merge extraction configuration using JSON-level field override."
+  @spec merge_config_json(String.t() | nil, String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def merge_config_json(base, override_json) do
+    Kreuzberg.Native.merge_config_json(base, override_json)
+  end
+
+  @doc "Build extraction config by optionally merging JSON overrides into a base config."
+  @spec build_config_from_json(String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def build_config_from_json(base) do
+    Kreuzberg.Native.build_config_from_json(base, nil)
+  end
+
+  @doc "Build extraction config by optionally merging JSON overrides into a base config."
+  @spec build_config_from_json(String.t() | nil, String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def build_config_from_json(base, override_json) do
+    Kreuzberg.Native.build_config_from_json(base, override_json)
+  end
+
+  @doc "Validate a port number for server configuration."
+  @spec validate_port(non_neg_integer()) :: {:ok, nil} | {:error, String.t()}
+  def validate_port(port) do
+    Kreuzberg.Native.validate_port(port)
+  end
+
+  @doc "Validate a host/IP address string for server configuration."
+  @spec validate_host(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_host(host) do
+    Kreuzberg.Native.validate_host(host)
+  end
+
+  @doc "Validate a CORS (Cross-Origin Resource Sharing) origin URL."
+  @spec validate_cors_origin(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_cors_origin(origin) do
+    Kreuzberg.Native.validate_cors_origin(origin)
+  end
+
+  @doc "Validate an upload size limit for server configuration."
+  @spec validate_upload_size(non_neg_integer()) :: {:ok, nil} | {:error, String.t()}
+  def validate_upload_size(size) do
+    Kreuzberg.Native.validate_upload_size(size)
+  end
+
+  @doc "Validate a binarization method string."
+  @spec validate_binarization_method(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_binarization_method(method) do
+    Kreuzberg.Native.validate_binarization_method(method)
+  end
+
+  @doc "Validate a token reduction level string."
+  @spec validate_token_reduction_level(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_token_reduction_level(level) do
+    Kreuzberg.Native.validate_token_reduction_level(level)
+  end
+
+  @doc "Validate an OCR backend string."
+  @spec validate_ocr_backend(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_ocr_backend(backend) do
+    Kreuzberg.Native.validate_ocr_backend(backend)
+  end
+
+  @doc "Validate a language code (ISO 639-1 or 639-3 format)."
+  @spec validate_language_code(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_language_code(code) do
+    Kreuzberg.Native.validate_language_code(code)
+  end
+
+  @doc "Validate a tesseract Page Segmentation Mode (PSM)."
+  @spec validate_tesseract_psm(integer()) :: {:ok, nil} | {:error, String.t()}
+  def validate_tesseract_psm(psm) do
+    Kreuzberg.Native.validate_tesseract_psm(psm)
+  end
+
+  @doc "Validate a tesseract OCR Engine Mode (OEM)."
+  @spec validate_tesseract_oem(integer()) :: {:ok, nil} | {:error, String.t()}
+  def validate_tesseract_oem(oem) do
+    Kreuzberg.Native.validate_tesseract_oem(oem)
+  end
+
+  @doc "Validate a document extraction output format."
+  @spec validate_output_format(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_output_format(format) do
+    Kreuzberg.Native.validate_output_format(format)
+  end
+
+  @doc "Validate a confidence threshold value."
+  @spec validate_confidence(float()) :: {:ok, nil} | {:error, String.t()}
+  def validate_confidence(confidence) do
+    Kreuzberg.Native.validate_confidence(confidence)
+  end
+
+  @doc "Validate a DPI (dots per inch) value."
+  @spec validate_dpi(integer()) :: {:ok, nil} | {:error, String.t()}
+  def validate_dpi(dpi) do
+    Kreuzberg.Native.validate_dpi(dpi)
+  end
+
+  @doc "Validate chunk size parameters."
+  @spec validate_chunking_params(non_neg_integer(), non_neg_integer()) :: {:ok, nil} | {:error, String.t()}
+  def validate_chunking_params(max_chars, max_overlap) do
+    Kreuzberg.Native.validate_chunking_params(max_chars, max_overlap)
+  end
+
+  @doc "Validate that an [`LlmConfig`](crate::core::config::LlmConfig) has a non-empty model string."
+  @spec validate_llm_config_model(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_llm_config_model(model) do
+    Kreuzberg.Native.validate_llm_config_model(model)
+  end
+
+  @doc "Validate that a VLM OCR backend has the required `vlm_config`."
+  @spec validate_vlm_backend_config(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_vlm_backend_config(backend) do
+    Kreuzberg.Native.validate_vlm_backend_config(backend, nil)
+  end
+
+  @doc "Validate that a VLM OCR backend has the required `vlm_config`."
+  @spec validate_vlm_backend_config(String.t(), map() | nil) :: {:ok, nil} | {:error, String.t()}
+  def validate_vlm_backend_config(backend, vlm_config) do
+    Kreuzberg.Native.validate_vlm_backend_config(backend, vlm_config)
+  end
+
+  @doc "Validate structured extraction configuration."
+  @spec validate_structured_extraction_schema(String.t(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_structured_extraction_schema(schema, llm_model) do
+    Kreuzberg.Native.validate_structured_extraction_schema(schema, llm_model)
+  end
+
+  @doc "Extract content from a byte array."
+  @spec extract_bytes_async(binary(), String.t(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def extract_bytes_async(content, mime_type, config) do
+    Kreuzberg.Native.extract_bytes_async(content, mime_type, config)
+  end
+
+  @doc "Extract content from a file."
+  @spec extract_file_async(String.t(), String.t() | nil, String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def extract_file_async(path, mime_type, config) do
+    Kreuzberg.Native.extract_file_async(path, mime_type, config)
+  end
+
+  @doc "Function"
+  @spec get_pool_sizing_hint(non_neg_integer(), String.t()) :: map()
+  def get_pool_sizing_hint(file_size, mime_type) do
+    Kreuzberg.Native.get_pool_sizing_hint(file_size, mime_type)
+  end
+
+  @doc "Synchronous wrapper for `extract_file`."
+  @spec extract_file_sync(String.t(), String.t() | nil, String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def extract_file_sync(path, mime_type, config) do
+    Kreuzberg.Native.extract_file_sync(path, mime_type, config)
+  end
+
+  @doc "Synchronous wrapper for `extract_bytes`."
+  @spec extract_bytes_sync(binary(), String.t(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def extract_bytes_sync(content, mime_type, config) do
+    Kreuzberg.Native.extract_bytes_sync(content, mime_type, config)
+  end
+
+  @doc "Synchronous wrapper for `batch_extract_file`."
+  @spec batch_extract_file_sync([String.t()], String.t() | nil) :: {:ok, [String.t() | nil]} | {:error, String.t()}
+  def batch_extract_file_sync(items, config) do
+    Kreuzberg.Native.batch_extract_file_sync(items, config)
+  end
+
+  @doc "Synchronous wrapper for `batch_extract_bytes`."
+  @spec batch_extract_bytes_sync([String.t()], String.t() | nil) :: {:ok, [String.t() | nil]} | {:error, String.t()}
+  def batch_extract_bytes_sync(items, config) do
+    Kreuzberg.Native.batch_extract_bytes_sync(items, config)
+  end
+
+  @doc "Extract content from multiple files concurrently."
+  @spec batch_extract_file_async([String.t()], String.t() | nil) :: {:ok, [String.t() | nil]} | {:error, String.t()}
+  def batch_extract_file_async(items, config) do
+    Kreuzberg.Native.batch_extract_file_async(items, config)
+  end
+
+  @doc "Extract content from multiple byte arrays concurrently."
+  @spec batch_extract_bytes_async([String.t()], String.t() | nil) :: {:ok, [String.t() | nil]} | {:error, String.t()}
+  def batch_extract_bytes_async(items, config) do
+    Kreuzberg.Native.batch_extract_bytes_async(items, config)
+  end
+
   @doc "Validates whether a field name is in the known formats registry."
   @spec is_valid_format_field(String.t()) :: boolean()
   def is_valid_format_field(field) do
     Kreuzberg.Native.is_valid_format_field(field)
+  end
+
+  @doc "Open a file and return its bytes with zero-copy for large files."
+  @spec open_file_bytes(String.t()) :: {:ok, reference()} | {:error, String.t()}
+  def open_file_bytes(path) do
+    Kreuzberg.Native.open_file_bytes(path)
+  end
+
+  @doc "Read a file asynchronously."
+  @spec read_file_async_async(String.t()) :: {:ok, binary()} | {:error, String.t()}
+  def read_file_async_async(path) do
+    Kreuzberg.Native.read_file_async_async(path)
+  end
+
+  @doc "Read a file synchronously."
+  @spec read_file_sync(String.t()) :: {:ok, binary()} | {:error, String.t()}
+  def read_file_sync(path) do
+    Kreuzberg.Native.read_file_sync(path)
+  end
+
+  @doc "Check if a file exists."
+  @spec file_exists(String.t()) :: boolean()
+  def file_exists(path) do
+    Kreuzberg.Native.file_exists(path)
+  end
+
+  @doc "Validate that a file exists."
+  @spec validate_file_exists(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validate_file_exists(path) do
+    Kreuzberg.Native.validate_file_exists(path)
+  end
+
+  @doc "Get all files in a directory with a specific extension."
+  @spec find_files_by_extension(String.t(), String.t(), boolean()) :: {:ok, [String.t()]} | {:error, String.t()}
+  def find_files_by_extension(dir, extension, recursive) do
+    Kreuzberg.Native.find_files_by_extension(dir, extension, recursive)
   end
 
   @doc "Detect MIME type from a file path."
@@ -18,6 +348,24 @@ defmodule Kreuzberg do
   @spec validate_mime_type(String.t()) :: {:ok, String.t()} | {:error, String.t()}
   def validate_mime_type(mime_type) do
     Kreuzberg.Native.validate_mime_type(mime_type)
+  end
+
+  @doc "Detect or validate MIME type."
+  @spec detect_or_validate() :: {:ok, String.t()} | {:error, String.t()}
+  def detect_or_validate do
+    Kreuzberg.Native.detect_or_validate(nil, nil)
+  end
+
+  @doc "Detect or validate MIME type."
+  @spec detect_or_validate(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def detect_or_validate(path) do
+    Kreuzberg.Native.detect_or_validate(path, nil)
+  end
+
+  @doc "Detect or validate MIME type."
+  @spec detect_or_validate(String.t() | nil, String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def detect_or_validate(path, mime_type) do
+    Kreuzberg.Native.detect_or_validate(path, mime_type)
   end
 
   @doc "Detect MIME type from raw file bytes."
@@ -36,5 +384,6923 @@ defmodule Kreuzberg do
   @spec list_supported_formats() :: [map()]
   def list_supported_formats do
     Kreuzberg.Native.list_supported_formats()
+  end
+
+  @doc "Clear the processor cache (primarily for testing when registry changes)."
+  @spec clear_processor_cache() :: {:ok, nil} | {:error, String.t()}
+  def clear_processor_cache do
+    Kreuzberg.Native.clear_processor_cache()
+  end
+
+  @doc "Apply output format conversion to the extraction result."
+  @spec apply_output_format(String.t() | nil, map()) :: nil
+  def apply_output_format(result, output_format) do
+    Kreuzberg.Native.apply_output_format(result, output_format)
+  end
+
+  @doc "Run the post-processing pipeline on an `InternalDocument`."
+  @spec run_pipeline_async(String.t(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def run_pipeline_async(doc, config) do
+    Kreuzberg.Native.run_pipeline_async(doc, config)
+  end
+
+  @doc "Run the post-processing pipeline synchronously (WASM-compatible version)."
+  @spec run_pipeline_sync(String.t(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def run_pipeline_sync(doc, config) do
+    Kreuzberg.Native.run_pipeline_sync(doc, config)
+  end
+
+  @doc "Determine if a page's text content indicates a blank page."
+  @spec is_page_text_blank(String.t()) :: boolean()
+  def is_page_text_blank(text) do
+    Kreuzberg.Native.is_page_text_blank(text)
+  end
+
+  @doc "Resolve `RelationshipTarget::Key` entries to `RelationshipTarget::Index`."
+  @spec resolve_relationships(String.t()) :: nil
+  def resolve_relationships(doc) do
+    Kreuzberg.Native.resolve_relationships(doc)
+  end
+
+  @doc "Derive a hierarchical `DocumentStructure` from the flat internal document."
+  @spec derive_document_structure(String.t()) :: String.t() | nil
+  def derive_document_structure(doc) do
+    Kreuzberg.Native.derive_document_structure(doc)
+  end
+
+  @doc "Derive a complete `ExtractionResult` from an `InternalDocument`."
+  @spec derive_extraction_result(String.t(), boolean(), map()) :: String.t() | nil
+  def derive_extraction_result(doc, include_document_structure, output_format) do
+    Kreuzberg.Native.derive_extraction_result(doc, include_document_structure, output_format)
+  end
+
+  @doc "Function"
+  @spec parse_json(binary()) :: {:ok, map()} | {:error, String.t()}
+  def parse_json(data) do
+    Kreuzberg.Native.parse_json(data, nil)
+  end
+
+  @doc "Function"
+  @spec parse_json(binary(), String.t() | nil | nil) :: {:ok, map()} | {:error, String.t()}
+  def parse_json(data, config) do
+    Kreuzberg.Native.parse_json(data, config)
+  end
+
+  @doc "Parse JSONL (newline-delimited JSON) into a structured data result."
+  @spec parse_jsonl(binary()) :: {:ok, map()} | {:error, String.t()}
+  def parse_jsonl(data) do
+    Kreuzberg.Native.parse_jsonl(data, nil)
+  end
+
+  @doc "Parse JSONL (newline-delimited JSON) into a structured data result."
+  @spec parse_jsonl(binary(), String.t() | nil | nil) :: {:ok, map()} | {:error, String.t()}
+  def parse_jsonl(data, config) do
+    Kreuzberg.Native.parse_jsonl(data, config)
+  end
+
+  @doc "Function"
+  @spec parse_yaml(binary()) :: {:ok, map()} | {:error, String.t()}
+  def parse_yaml(data) do
+    Kreuzberg.Native.parse_yaml(data)
+  end
+
+  @doc "Function"
+  @spec parse_toml(binary()) :: {:ok, map()} | {:error, String.t()}
+  def parse_toml(data) do
+    Kreuzberg.Native.parse_toml(data)
+  end
+
+  @doc "Function"
+  @spec parse_text(binary(), boolean()) :: {:ok, map()} | {:error, String.t()}
+  def parse_text(text_bytes, is_markdown) do
+    Kreuzberg.Native.parse_text(text_bytes, is_markdown)
+  end
+
+  @doc "Transform an `ExtractionResult` into a `DocumentStructure`."
+  @spec transform_to_document_structure(String.t() | nil) :: String.t() | nil
+  def transform_to_document_structure(result) do
+    Kreuzberg.Native.transform_to_document_structure(result)
+  end
+
+  @doc "Detect list items in text with support for multiple formats."
+  @spec detect_list_items(String.t()) :: [map()]
+  def detect_list_items(text) do
+    Kreuzberg.Native.detect_list_items(text)
+  end
+
+  @doc "Generate a unique element ID for semantic content."
+  @spec generate_element_id(String.t(), map()) :: reference()
+  def generate_element_id(text, element_type) do
+    Kreuzberg.Native.generate_element_id(text, element_type, nil)
+  end
+
+  @doc "Generate a unique element ID for semantic content."
+  @spec generate_element_id(String.t(), map(), non_neg_integer() | nil) :: reference()
+  def generate_element_id(text, element_type, page_number) do
+    Kreuzberg.Native.generate_element_id(text, element_type, page_number)
+  end
+
+  @doc "Transform an extraction result into semantic elements."
+  @spec transform_extraction_result_to_elements(String.t() | nil) :: [map()]
+  def transform_extraction_result_to_elements(result) do
+    Kreuzberg.Native.transform_extraction_result_to_elements(result)
+  end
+
+  @doc "Parse a raw (possibly compressed) BodyText/SectionN stream."
+  @spec parse_body_text(binary(), boolean()) :: {:ok, [String.t() | nil]} | {:error, String.t()}
+  def parse_body_text(data, is_compressed) do
+    Kreuzberg.Native.parse_body_text(data, is_compressed)
+  end
+
+  @doc "Decompress a raw-deflate stream from an HWP section."
+  @spec decompress_stream(binary()) :: {:ok, binary()} | {:error, String.t()}
+  def decompress_stream(data) do
+    Kreuzberg.Native.decompress_stream(data)
+  end
+
+  @doc "Extract all plain text from an HWP 5.0 document given its raw bytes."
+  @spec extract_hwp_text(binary()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_hwp_text(bytes) do
+    Kreuzberg.Native.extract_hwp_text(bytes)
+  end
+
+  @doc "Load image bytes for OCR, with JPEG 2000 and JBIG2 fallback support."
+  @spec load_image_for_ocr(binary()) :: {:ok, String.t()} | {:error, String.t()}
+  def load_image_for_ocr(image_bytes) do
+    Kreuzberg.Native.load_image_for_ocr(image_bytes)
+  end
+
+  @doc "Extract metadata from image bytes."
+  @spec extract_image_metadata(binary()) :: {:ok, map()} | {:error, String.t()}
+  def extract_image_metadata(bytes) do
+    Kreuzberg.Native.extract_image_metadata(bytes)
+  end
+
+  @doc "Extract text from image bytes using OCR with optional page tracking for multi-frame TIFFs."
+  @spec extract_text_from_image_with_ocr(binary(), String.t(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  def extract_text_from_image_with_ocr(bytes, mime_type, ocr_result) do
+    Kreuzberg.Native.extract_text_from_image_with_ocr(bytes, mime_type, ocr_result, nil)
+  end
+
+  @doc "Extract text from image bytes using OCR with optional page tracking for multi-frame TIFFs."
+  @spec extract_text_from_image_with_ocr(binary(), String.t(), String.t(), String.t() | nil | nil) :: {:ok, map()} | {:error, String.t()}
+  def extract_text_from_image_with_ocr(bytes, mime_type, ocr_result, page_config) do
+    Kreuzberg.Native.extract_text_from_image_with_ocr(bytes, mime_type, ocr_result, page_config)
+  end
+
+  @doc "Estimate the capacity needed for content extracted from a file."
+  @spec estimate_content_capacity(non_neg_integer(), String.t()) :: non_neg_integer()
+  def estimate_content_capacity(file_size, format) do
+    Kreuzberg.Native.estimate_content_capacity(file_size, format)
+  end
+
+  @doc "Estimate capacity for HTML to Markdown conversion."
+  @spec estimate_html_markdown_capacity(non_neg_integer()) :: non_neg_integer()
+  def estimate_html_markdown_capacity(html_size) do
+    Kreuzberg.Native.estimate_html_markdown_capacity(html_size)
+  end
+
+  @doc "Estimate capacity for cell extraction from spreadsheets."
+  @spec estimate_spreadsheet_capacity(non_neg_integer()) :: non_neg_integer()
+  def estimate_spreadsheet_capacity(file_size) do
+    Kreuzberg.Native.estimate_spreadsheet_capacity(file_size)
+  end
+
+  @doc "Estimate capacity for slide content extraction from presentations."
+  @spec estimate_presentation_capacity(non_neg_integer()) :: non_neg_integer()
+  def estimate_presentation_capacity(file_size) do
+    Kreuzberg.Native.estimate_presentation_capacity(file_size)
+  end
+
+  @doc "Estimate capacity for markdown table generation."
+  @spec estimate_table_markdown_capacity(non_neg_integer(), non_neg_integer()) :: non_neg_integer()
+  def estimate_table_markdown_capacity(row_count, col_count) do
+    Kreuzberg.Native.estimate_table_markdown_capacity(row_count, col_count)
+  end
+
+  @doc "Decompress gzip bytes, returning the raw decompressed data."
+  @spec decompress_gzip(binary(), String.t()) :: {:ok, binary()} | {:error, String.t()}
+  def decompress_gzip(bytes, limits) do
+    Kreuzberg.Native.decompress_gzip(bytes, limits)
+  end
+
+  @doc "Extract both metadata and text content from gzip in a single decompression pass."
+  @spec extract_gzip(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_gzip(bytes, limits) do
+    Kreuzberg.Native.extract_gzip(bytes, limits)
+  end
+
+  @doc "Extract metadata from a gzip-compressed file."
+  @spec extract_gzip_metadata(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  def extract_gzip_metadata(bytes, limits) do
+    Kreuzberg.Native.extract_gzip_metadata(bytes, limits)
+  end
+
+  @doc "Extract text content from a gzip-compressed file."
+  @spec extract_gzip_text_content(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_gzip_text_content(bytes, limits) do
+    Kreuzberg.Native.extract_gzip_text_content(bytes, limits)
+  end
+
+  @doc "Extract metadata, text content, and raw file bytes from gzip in a single pass."
+  @spec extract_gzip_with_bytes(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_gzip_with_bytes(bytes, limits) do
+    Kreuzberg.Native.extract_gzip_with_bytes(bytes, limits)
+  end
+
+  @doc "Extract metadata from a 7z archive."
+  @spec extract_7z_metadata(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  def extract_7z_metadata(bytes, limits) do
+    Kreuzberg.Native.extract_7z_metadata(bytes, limits)
+  end
+
+  @doc "Extract text content from files within a 7z archive."
+  @spec extract_7z_text_content(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_7z_text_content(bytes, limits) do
+    Kreuzberg.Native.extract_7z_text_content(bytes, limits)
+  end
+
+  @doc "Extract raw file bytes for all non-directory entries in a 7z archive."
+  @spec extract_7z_file_bytes(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_7z_file_bytes(bytes, limits) do
+    Kreuzberg.Native.extract_7z_file_bytes(bytes, limits)
+  end
+
+  @doc "Extract metadata from a TAR archive."
+  @spec extract_tar_metadata(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  def extract_tar_metadata(bytes, limits) do
+    Kreuzberg.Native.extract_tar_metadata(bytes, limits)
+  end
+
+  @doc "Extract text content from files within a TAR archive."
+  @spec extract_tar_text_content(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_tar_text_content(bytes, limits) do
+    Kreuzberg.Native.extract_tar_text_content(bytes, limits)
+  end
+
+  @doc "Extract raw file bytes for all non-directory entries in a TAR archive."
+  @spec extract_tar_file_bytes(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_tar_file_bytes(bytes, limits) do
+    Kreuzberg.Native.extract_tar_file_bytes(bytes, limits)
+  end
+
+  @doc "Extract metadata from a ZIP archive."
+  @spec extract_zip_metadata(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  def extract_zip_metadata(bytes, limits) do
+    Kreuzberg.Native.extract_zip_metadata(bytes, limits)
+  end
+
+  @doc "Extract text content from files within a ZIP archive."
+  @spec extract_zip_text_content(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_zip_text_content(bytes, limits) do
+    Kreuzberg.Native.extract_zip_text_content(bytes, limits)
+  end
+
+  @doc "Extract raw file bytes for all non-directory entries in a ZIP archive."
+  @spec extract_zip_file_bytes(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_zip_file_bytes(bytes, limits) do
+    Kreuzberg.Native.extract_zip_file_bytes(bytes, limits)
+  end
+
+  @doc "Parse .eml file content (RFC822 format)"
+  @spec parse_eml_content(binary()) :: {:ok, map()} | {:error, String.t()}
+  def parse_eml_content(data) do
+    Kreuzberg.Native.parse_eml_content(data)
+  end
+
+  @doc "Parse .msg file content (Outlook format)."
+  @spec parse_msg_content(binary()) :: {:ok, map()} | {:error, String.t()}
+  def parse_msg_content(data) do
+    Kreuzberg.Native.parse_msg_content(data, nil)
+  end
+
+  @doc "Parse .msg file content (Outlook format)."
+  @spec parse_msg_content(binary(), non_neg_integer() | nil) :: {:ok, map()} | {:error, String.t()}
+  def parse_msg_content(data, fallback_codepage) do
+    Kreuzberg.Native.parse_msg_content(data, fallback_codepage)
+  end
+
+  @doc "Extract email content from either .eml or .msg format"
+  @spec extract_email_content(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  def extract_email_content(data, mime_type) do
+    Kreuzberg.Native.extract_email_content(data, mime_type, nil)
+  end
+
+  @doc "Extract email content from either .eml or .msg format"
+  @spec extract_email_content(binary(), String.t(), non_neg_integer() | nil) :: {:ok, map()} | {:error, String.t()}
+  def extract_email_content(data, mime_type, fallback_codepage) do
+    Kreuzberg.Native.extract_email_content(data, mime_type, fallback_codepage)
+  end
+
+  @doc "Build text output from email extraction result"
+  @spec build_email_text_output(map()) :: String.t()
+  def build_email_text_output(result) do
+    Kreuzberg.Native.build_email_text_output(result)
+  end
+
+  @doc "Extract all email messages from a PST file."
+  @spec extract_pst_messages(binary()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_pst_messages(pst_data) do
+    Kreuzberg.Native.extract_pst_messages(pst_data)
+  end
+
+  @doc "Function"
+  @spec read_excel_file(String.t()) :: {:ok, map()} | {:error, String.t()}
+  def read_excel_file(file_path) do
+    Kreuzberg.Native.read_excel_file(file_path)
+  end
+
+  @doc "Function"
+  @spec read_excel_bytes(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  def read_excel_bytes(data, file_extension) do
+    Kreuzberg.Native.read_excel_bytes(data, file_extension)
+  end
+
+  @doc "Convert an Excel workbook to plain text (space-separated cells, one row per line)."
+  @spec excel_to_text(map()) :: String.t()
+  def excel_to_text(workbook) do
+    Kreuzberg.Native.excel_to_text(workbook)
+  end
+
+  @doc "Function"
+  @spec excel_to_markdown(map()) :: String.t()
+  def excel_to_markdown(workbook) do
+    Kreuzberg.Native.excel_to_markdown(workbook)
+  end
+
+  @doc "Resolve conversion options with sensible defaults."
+  @spec resolve_conversion_options(String.t() | nil, String.t()) :: String.t()
+  def resolve_conversion_options(options, output_format) do
+    Kreuzberg.Native.resolve_conversion_options(options, output_format)
+  end
+
+  @doc "Convert HTML with optional configuration and output format."
+  @spec convert_html_to_markdown(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def convert_html_to_markdown(html) do
+    Kreuzberg.Native.convert_html_to_markdown(html, nil, nil)
+  end
+
+  @doc "Convert HTML with optional configuration and output format."
+  @spec convert_html_to_markdown(String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def convert_html_to_markdown(html, options) do
+    Kreuzberg.Native.convert_html_to_markdown(html, options, nil)
+  end
+
+  @doc "Convert HTML with optional configuration and output format."
+  @spec convert_html_to_markdown(String.t(), String.t() | nil, String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def convert_html_to_markdown(html, options, output_format) do
+    Kreuzberg.Native.convert_html_to_markdown(html, options, output_format)
+  end
+
+  @doc "Convert HTML with direct metadata extraction and output format support."
+  @spec convert_html_to_markdown_with_metadata(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def convert_html_to_markdown_with_metadata(html) do
+    Kreuzberg.Native.convert_html_to_markdown_with_metadata(html, nil, nil)
+  end
+
+  @doc "Convert HTML with direct metadata extraction and output format support."
+  @spec convert_html_to_markdown_with_metadata(String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def convert_html_to_markdown_with_metadata(html, options) do
+    Kreuzberg.Native.convert_html_to_markdown_with_metadata(html, options, nil)
+  end
+
+  @doc "Convert HTML with direct metadata extraction and output format support."
+  @spec convert_html_to_markdown_with_metadata(String.t(), String.t() | nil, String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def convert_html_to_markdown_with_metadata(html, options, output_format) do
+    Kreuzberg.Native.convert_html_to_markdown_with_metadata(html, options, output_format)
+  end
+
+  @doc "Convert HTML to markdown/djot/plain with metadata, structured tables, and document structure."
+  @spec convert_html_to_markdown_with_tables(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def convert_html_to_markdown_with_tables(html) do
+    Kreuzberg.Native.convert_html_to_markdown_with_tables(html, nil, nil)
+  end
+
+  @doc "Convert HTML to markdown/djot/plain with metadata, structured tables, and document structure."
+  @spec convert_html_to_markdown_with_tables(String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def convert_html_to_markdown_with_tables(html, options) do
+    Kreuzberg.Native.convert_html_to_markdown_with_tables(html, options, nil)
+  end
+
+  @doc "Convert HTML to markdown/djot/plain with metadata, structured tables, and document structure."
+  @spec convert_html_to_markdown_with_tables(String.t(), String.t() | nil, String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def convert_html_to_markdown_with_tables(html, options, output_format) do
+    Kreuzberg.Native.convert_html_to_markdown_with_tables(html, options, output_format)
+  end
+
+  @doc "Extract inline images (data URIs and SVGs) from HTML."
+  @spec extract_html_inline_images(String.t()) :: {:ok, [String.t()]} | {:error, String.t()}
+  def extract_html_inline_images(html) do
+    Kreuzberg.Native.extract_html_inline_images(html, nil)
+  end
+
+  @doc "Extract inline images (data URIs and SVGs) from HTML."
+  @spec extract_html_inline_images(String.t(), String.t() | nil) :: {:ok, [String.t()]} | {:error, String.t()}
+  def extract_html_inline_images(html, options) do
+    Kreuzberg.Native.extract_html_inline_images(html, options)
+  end
+
+  @doc "Extract text from DOC bytes."
+  @spec extract_doc_text(binary()) :: {:ok, map()} | {:error, String.t()}
+  def extract_doc_text(content) do
+    Kreuzberg.Native.extract_doc_text(content)
+  end
+
+  @doc "Parse a drawing object starting after the `<w:drawing>` Start event."
+  @spec parse_drawing(String.t()) :: map()
+  def parse_drawing(reader) do
+    Kreuzberg.Native.parse_drawing(reader)
+  end
+
+  @doc "Collect an `m:oMathPara` subtree and convert to LaTeX (display math)."
+  @spec collect_and_convert_omath_para(String.t()) :: String.t()
+  def collect_and_convert_omath_para(reader) do
+    Kreuzberg.Native.collect_and_convert_omath_para(reader)
+  end
+
+  @doc "Collect an `m:oMath` subtree and convert to LaTeX (inline math)."
+  @spec collect_and_convert_omath(String.t()) :: String.t()
+  def collect_and_convert_omath(reader) do
+    Kreuzberg.Native.collect_and_convert_omath(reader)
+  end
+
+  @doc "Parse a DOCX document from bytes and return the structured document."
+  @spec parse_document(binary()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def parse_document(bytes) do
+    Kreuzberg.Native.parse_document(bytes)
+  end
+
+  @doc "Extract text from DOCX bytes."
+  @spec extract_text_from_bytes(binary()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text_from_bytes(bytes) do
+    Kreuzberg.Native.extract_text_from_bytes(bytes)
+  end
+
+  @doc "Parse a `w:sectPr` XML element (roxmltree node) into `SectionProperties`."
+  @spec parse_section_properties(String.t()) :: String.t() | nil
+  def parse_section_properties(node) do
+    Kreuzberg.Native.parse_section_properties(node)
+  end
+
+  @doc "Parse section properties from a quick_xml event stream."
+  @spec parse_section_properties_streaming(String.t()) :: String.t() | nil
+  def parse_section_properties_streaming(reader) do
+    Kreuzberg.Native.parse_section_properties_streaming(reader)
+  end
+
+  @doc "Parse `word/styles.xml` content into a `StyleCatalog`."
+  @spec parse_styles_xml(String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def parse_styles_xml(xml) do
+    Kreuzberg.Native.parse_styles_xml(xml)
+  end
+
+  @doc "Parse table-level properties from streaming XML reader."
+  @spec parse_table_properties(String.t()) :: String.t() | nil
+  def parse_table_properties(reader) do
+    Kreuzberg.Native.parse_table_properties(reader)
+  end
+
+  @doc "Parse row-level properties from streaming XML reader."
+  @spec parse_row_properties(String.t()) :: String.t() | nil
+  def parse_row_properties(reader) do
+    Kreuzberg.Native.parse_row_properties(reader)
+  end
+
+  @doc "Parse cell-level properties from streaming XML reader."
+  @spec parse_cell_properties(String.t()) :: String.t()
+  def parse_cell_properties(reader) do
+    Kreuzberg.Native.parse_cell_properties(reader)
+  end
+
+  @doc "Parse table grid (column widths) from streaming XML reader."
+  @spec parse_table_grid(String.t()) :: map()
+  def parse_table_grid(reader) do
+    Kreuzberg.Native.parse_table_grid(reader)
+  end
+
+  @doc "Parse `word/theme/theme1.xml` content into a `Theme`."
+  @spec parse_theme_xml(String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def parse_theme_xml(xml) do
+    Kreuzberg.Native.parse_theme_xml(xml)
+  end
+
+  @doc "Extract text from DOCX bytes."
+  @spec extract_text(binary()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text(bytes) do
+    Kreuzberg.Native.extract_text(bytes)
+  end
+
+  @doc "Extract text and page boundaries from DOCX bytes."
+  @spec extract_text_with_page_breaks(binary()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text_with_page_breaks(bytes) do
+    Kreuzberg.Native.extract_text_with_page_breaks(bytes)
+  end
+
+  @doc "Detect explicit page break positions in document.xml and extract full text with page boundaries."
+  @spec detect_page_breaks_from_docx(binary()) :: {:ok, [map()] | nil} | {:error, String.t()}
+  def detect_page_breaks_from_docx(bytes) do
+    Kreuzberg.Native.detect_page_breaks_from_docx(bytes)
+  end
+
+  @doc "Extract embedded objects from an OOXML ZIP archive and recursively process them."
+  @spec extract_ooxml_embedded_objects_async(binary(), String.t(), String.t(), String.t() | nil) :: String.t()
+  def extract_ooxml_embedded_objects_async(zip_bytes, embeddings_prefix, source_label, config) do
+    Kreuzberg.Native.extract_ooxml_embedded_objects_async(zip_bytes, embeddings_prefix, source_label, config)
+  end
+
+  @doc "Detect image format from raw bytes using magic byte signatures."
+  @spec detect_image_format(binary()) :: String.t()
+  def detect_image_format(data) do
+    Kreuzberg.Native.detect_image_format(data)
+  end
+
+  @doc "Process extracted images with OCR if configured."
+  @spec process_images_with_ocr_async([map()], String.t() | nil) :: {:ok, [map()]} | {:error, String.t()}
+  def process_images_with_ocr_async(images, config) do
+    Kreuzberg.Native.process_images_with_ocr_async(images, config)
+  end
+
+  @doc "Extract text from PPT bytes."
+  @spec extract_ppt_text(binary()) :: {:ok, map()} | {:error, String.t()}
+  def extract_ppt_text(content) do
+    Kreuzberg.Native.extract_ppt_text(content)
+  end
+
+  @doc "Extract text from PPT bytes with configurable master slide inclusion."
+  @spec extract_ppt_text_with_options(binary(), boolean()) :: {:ok, map()} | {:error, String.t()}
+  def extract_ppt_text_with_options(content, include_master_slides) do
+    Kreuzberg.Native.extract_ppt_text_with_options(content, include_master_slides)
+  end
+
+  @doc "Extract PPTX content from a file path."
+  @spec extract_pptx_from_path(String.t(), String.t() | nil) :: {:ok, map()} | {:error, String.t()}
+  def extract_pptx_from_path(path, options) do
+    Kreuzberg.Native.extract_pptx_from_path(path, options)
+  end
+
+  @doc "Extract PPTX content from a byte buffer."
+  @spec extract_pptx_from_bytes(binary(), String.t() | nil) :: {:ok, map()} | {:error, String.t()}
+  def extract_pptx_from_bytes(data, options) do
+    Kreuzberg.Native.extract_pptx_from_bytes(data, options)
+  end
+
+  @doc "Parse XML with optional SVG mode."
+  @spec parse_xml_svg(binary(), boolean()) :: {:ok, map()} | {:error, String.t()}
+  def parse_xml_svg(xml_bytes, preserve_whitespace) do
+    Kreuzberg.Native.parse_xml_svg(xml_bytes, preserve_whitespace)
+  end
+
+  @doc "Function"
+  @spec parse_xml(binary(), boolean()) :: {:ok, map()} | {:error, String.t()}
+  def parse_xml(xml_bytes, preserve_whitespace) do
+    Kreuzberg.Native.parse_xml(xml_bytes, preserve_whitespace)
+  end
+
+  @doc "Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table."
+  @spec cells_to_text([[String.t()]]) :: String.t()
+  def cells_to_text(cells) do
+    Kreuzberg.Native.cells_to_text(cells)
+  end
+
+  @doc "Function"
+  @spec cells_to_markdown([[String.t()]]) :: String.t()
+  def cells_to_markdown(cells) do
+    Kreuzberg.Native.cells_to_markdown(cells)
+  end
+
+  @doc "Parse jotdown attributes into our Attributes representation."
+  @spec parse_jotdown_attributes(String.t() | nil) :: String.t() | nil
+  def parse_jotdown_attributes(attrs) do
+    Kreuzberg.Native.parse_jotdown_attributes(attrs)
+  end
+
+  @doc "Render attributes to djot attribute syntax."
+  @spec render_attributes(String.t() | nil) :: String.t()
+  def render_attributes(attrs) do
+    Kreuzberg.Native.render_attributes(attrs)
+  end
+
+  @doc "Convert DjotContent back to djot markup."
+  @spec djot_content_to_djot(map()) :: String.t()
+  def djot_content_to_djot(content) do
+    Kreuzberg.Native.djot_content_to_djot(content)
+  end
+
+  @doc "Convert any ExtractionResult to djot format."
+  @spec extraction_result_to_djot(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def extraction_result_to_djot(result) do
+    Kreuzberg.Native.extraction_result_to_djot(result)
+  end
+
+  @doc "Render djot content to HTML."
+  @spec djot_to_html(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def djot_to_html(djot_source) do
+    Kreuzberg.Native.djot_to_html(djot_source)
+  end
+
+  @doc "Extract complete djot content with 100% feature extraction."
+  @spec extract_complete_djot_content([String.t()], String.t() | nil, [map()]) :: map()
+  def extract_complete_djot_content(events, metadata, tables) do
+    Kreuzberg.Native.extract_complete_djot_content(events, metadata, tables)
+  end
+
+  @doc "Extract tables from Djot events."
+  @spec extract_tables_from_events([String.t()]) :: [map()]
+  def extract_tables_from_events(events) do
+    Kreuzberg.Native.extract_tables_from_events(events)
+  end
+
+  @doc "Extract plain text from Djot events."
+  @spec extract_text_from_events([String.t()]) :: String.t()
+  def extract_text_from_events(events) do
+    Kreuzberg.Native.extract_text_from_events(events)
+  end
+
+  @doc "Render a single block to djot markup."
+  @spec render_block_to_djot(String.t(), map(), non_neg_integer()) :: nil
+  def render_block_to_djot(output, block, indent_level) do
+    Kreuzberg.Native.render_block_to_djot(output, block, indent_level)
+  end
+
+  @doc "Render a list item with the given marker."
+  @spec render_list_item(String.t(), map(), String.t(), String.t()) :: nil
+  def render_list_item(output, item, indent, marker) do
+    Kreuzberg.Native.render_list_item(output, item, indent, marker)
+  end
+
+  @doc "Render inline content to djot markup."
+  @spec render_inline_content(String.t(), [map()]) :: nil
+  def render_inline_content(output, elements) do
+    Kreuzberg.Native.render_inline_content(output, elements)
+  end
+
+  @doc "Extract YAML frontmatter from document content."
+  @spec extract_frontmatter(String.t()) :: String.t()
+  def extract_frontmatter(content) do
+    Kreuzberg.Native.extract_frontmatter(content)
+  end
+
+  @doc "Extract metadata from YAML frontmatter."
+  @spec extract_metadata_from_yaml(String.t()) :: String.t() | nil
+  def extract_metadata_from_yaml(yaml) do
+    Kreuzberg.Native.extract_metadata_from_yaml(yaml)
+  end
+
+  @doc "Extract first heading as title from content."
+  @spec extract_title_from_content(String.t()) :: String.t() | nil
+  def extract_title_from_content(content) do
+    Kreuzberg.Native.extract_title_from_content(content)
+  end
+
+  @doc "Collects all .iwa file paths from a ZIP archive."
+  @spec collect_iwa_paths(binary()) :: {:ok, [String.t()]} | {:error, String.t()}
+  def collect_iwa_paths(content) do
+    Kreuzberg.Native.collect_iwa_paths(content)
+  end
+
+  @doc "Read and Snappy-decompress a single `.iwa` file from the ZIP archive."
+  @spec read_iwa_file(binary(), String.t()) :: {:ok, binary()} | {:error, String.t()}
+  def read_iwa_file(content, path) do
+    Kreuzberg.Native.read_iwa_file(content, path)
+  end
+
+  @doc "Decode an Apple IWA byte stream into the raw protobuf payload."
+  @spec decode_iwa_stream(binary()) :: {:ok, binary()} | {:error, String.t()}
+  def decode_iwa_stream(data) do
+    Kreuzberg.Native.decode_iwa_stream(data)
+  end
+
+  @doc "Extract all UTF-8 text strings from a raw protobuf byte slice."
+  @spec extract_text_from_proto(binary()) :: [String.t()]
+  def extract_text_from_proto(data) do
+    Kreuzberg.Native.extract_text_from_proto(data)
+  end
+
+  @doc "Extract all text from an iWork ZIP archive by reading specified IWA entries."
+  @spec extract_text_from_iwa_files(binary(), [String.t()]) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text_from_iwa_files(content, iwa_paths) do
+    Kreuzberg.Native.extract_text_from_iwa_files(content, iwa_paths)
+  end
+
+  @doc "Extract metadata from an iWork ZIP archive."
+  @spec extract_metadata_from_zip(binary()) :: String.t() | nil
+  def extract_metadata_from_zip(content) do
+    Kreuzberg.Native.extract_metadata_from_zip(content)
+  end
+
+  @doc "Deduplicate a list of text strings while preserving order."
+  @spec dedup_text([String.t()]) :: [String.t()]
+  def dedup_text(texts) do
+    Kreuzberg.Native.dedup_text(texts)
+  end
+
+  @doc "Evaluates native PDF text quality to determine if OCR fallback is needed."
+  @spec evaluate_native_text_for_ocr(String.t(), non_neg_integer() | nil, String.t() | nil) :: map()
+  def evaluate_native_text_for_ocr(native_text, page_count, thresholds) do
+    Kreuzberg.Native.evaluate_native_text_for_ocr(native_text, page_count, thresholds)
+  end
+
+  @doc "Compute a quality score (0.0-1.0) for OCR output text."
+  @spec compute_quality_score(String.t(), String.t() | nil) :: float()
+  def compute_quality_score(text, thresholds) do
+    Kreuzberg.Native.compute_quality_score(text, thresholds)
+  end
+
+  @doc "Function"
+  @spec evaluate_per_page_ocr(String.t(), [map()] | nil, non_neg_integer() | nil, String.t() | nil) :: map()
+  def evaluate_per_page_ocr(native_text, boundaries, page_count, thresholds) do
+    Kreuzberg.Native.evaluate_per_page_ocr(native_text, boundaries, page_count, thresholds)
+  end
+
+  @doc "Convert a hex digit character to its numeric value."
+  @spec hex_digit_to_u8(String.t()) :: non_neg_integer() | nil
+  def hex_digit_to_u8(c) do
+    Kreuzberg.Native.hex_digit_to_u8(c)
+  end
+
+  @doc "Parse a hex-encoded byte from two characters."
+  @spec parse_hex_byte(String.t(), String.t()) :: non_neg_integer() | nil
+  def parse_hex_byte(h1, h2) do
+    Kreuzberg.Native.parse_hex_byte(h1, h2)
+  end
+
+  @doc "Decode a byte using Windows-1252 encoding for the 0x80-0x9F range."
+  @spec decode_windows_1252(non_neg_integer()) :: String.t()
+  def decode_windows_1252(byte) do
+    Kreuzberg.Native.decode_windows_1252(byte)
+  end
+
+  @doc "Parse an RTF control word and extract its value."
+  @spec parse_rtf_control_word(String.t()) :: String.t()
+  def parse_rtf_control_word(chars) do
+    Kreuzberg.Native.parse_rtf_control_word(chars)
+  end
+
+  @doc "Normalize whitespace in a string, also producing a byte-offset mapping from"
+  @spec normalize_whitespace_with_mapping(String.t()) :: String.t()
+  def normalize_whitespace_with_mapping(s) do
+    Kreuzberg.Native.normalize_whitespace_with_mapping(s)
+  end
+
+  @doc "Map a byte offset from the pre-normalized string to the post-normalized string."
+  @spec map_offset([String.t()], non_neg_integer()) :: non_neg_integer()
+  def map_offset(mapping, offset) do
+    Kreuzberg.Native.map_offset(mapping, offset)
+  end
+
+  @doc "Normalize whitespace in a string."
+  @spec normalize_whitespace(String.t()) :: String.t()
+  def normalize_whitespace(s) do
+    Kreuzberg.Native.normalize_whitespace(s)
+  end
+
+  @doc "Extract image metadata and binary data from within a `\pict` group."
+  @spec extract_pict_image(String.t()) :: String.t()
+  def extract_pict_image(chars) do
+    Kreuzberg.Native.extract_pict_image(chars)
+  end
+
+  @doc "Parse a `{\\creatim ...}` or `{\\revtim ...}` RTF info block into ISO 8601 format."
+  @spec parse_rtf_datetime(String.t()) :: String.t() | nil
+  def parse_rtf_datetime(segment) do
+    Kreuzberg.Native.parse_rtf_datetime(segment)
+  end
+
+  @doc "Extract metadata from the RTF `\\info` block and augment with computed statistics."
+  @spec extract_rtf_metadata(String.t(), String.t()) :: String.t()
+  def extract_rtf_metadata(rtf_content, extracted_text) do
+    Kreuzberg.Native.extract_rtf_metadata(rtf_content, extracted_text)
+  end
+
+  @doc "Extract formatting metadata from RTF content."
+  @spec extract_rtf_formatting(String.t()) :: map()
+  def extract_rtf_formatting(content) do
+    Kreuzberg.Native.extract_rtf_formatting(content)
+  end
+
+  @doc "Convert RTF formatting spans into `TextAnnotation` vectors for a paragraph."
+  @spec spans_to_annotations(non_neg_integer(), non_neg_integer(), map()) :: [map()]
+  def spans_to_annotations(para_start, para_end, formatting) do
+    Kreuzberg.Native.spans_to_annotations(para_start, para_end, formatting)
+  end
+
+  @doc "Extract text and image metadata from RTF document."
+  @spec extract_text_from_rtf(String.t(), boolean()) :: String.t()
+  def extract_text_from_rtf(content, plain) do
+    Kreuzberg.Native.extract_text_from_rtf(content, plain)
+  end
+
+  @doc "Register all built-in extractors with the global registry."
+  @spec register_default_extractors() :: {:ok, nil} | {:error, String.t()}
+  def register_default_extractors do
+    Kreuzberg.Native.register_default_extractors()
+  end
+
+  @doc "Extracts a human-readable message from a panic payload."
+  @spec extract_panic_message(String.t()) :: String.t()
+  def extract_panic_message(panic_info) do
+    Kreuzberg.Native.extract_panic_message(panic_info)
+  end
+
+  @doc "Register a document extractor with the global registry."
+  @spec register_extractor(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def register_extractor(extractor) do
+    Kreuzberg.Native.register_extractor(extractor)
+  end
+
+  @doc "Unregister a document extractor by name."
+  @spec unregister_extractor(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def unregister_extractor(name) do
+    Kreuzberg.Native.unregister_extractor(name)
+  end
+
+  @doc "List all registered extractors."
+  @spec list_extractors() :: {:ok, [String.t()]} | {:error, String.t()}
+  def list_extractors do
+    Kreuzberg.Native.list_extractors()
+  end
+
+  @doc "Clear all extractors from the global registry."
+  @spec clear_extractors() :: {:ok, nil} | {:error, String.t()}
+  def clear_extractors do
+    Kreuzberg.Native.clear_extractors()
+  end
+
+  @doc "Register an OCR backend with the global registry."
+  @spec register_ocr_backend(reference()) :: {:ok, nil} | {:error, String.t()}
+  def register_ocr_backend(backend) do
+    Kreuzberg.Native.register_ocr_backend(backend)
+  end
+
+  @doc "Unregister an OCR backend by name."
+  @spec unregister_ocr_backend(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def unregister_ocr_backend(name) do
+    Kreuzberg.Native.unregister_ocr_backend(name)
+  end
+
+  @doc "List all registered OCR backends."
+  @spec list_ocr_backends() :: {:ok, [String.t()]} | {:error, String.t()}
+  def list_ocr_backends do
+    Kreuzberg.Native.list_ocr_backends()
+  end
+
+  @doc "Clear all OCR backends from the global registry."
+  @spec clear_ocr_backends() :: {:ok, nil} | {:error, String.t()}
+  def clear_ocr_backends do
+    Kreuzberg.Native.clear_ocr_backends()
+  end
+
+  @doc "List all registered post-processor names."
+  @spec list_post_processors() :: {:ok, [String.t()]} | {:error, String.t()}
+  def list_post_processors do
+    Kreuzberg.Native.list_post_processors()
+  end
+
+  @doc "Get the global OCR backend registry."
+  @spec get_ocr_backend_registry() :: String.t()
+  def get_ocr_backend_registry do
+    Kreuzberg.Native.get_ocr_backend_registry()
+  end
+
+  @doc "Get the global document extractor registry."
+  @spec get_document_extractor_registry() :: String.t()
+  def get_document_extractor_registry do
+    Kreuzberg.Native.get_document_extractor_registry()
+  end
+
+  @doc "Get the global post-processor registry."
+  @spec get_post_processor_registry() :: String.t()
+  def get_post_processor_registry do
+    Kreuzberg.Native.get_post_processor_registry()
+  end
+
+  @doc "Get the global validator registry."
+  @spec get_validator_registry() :: String.t()
+  def get_validator_registry do
+    Kreuzberg.Native.get_validator_registry()
+  end
+
+  @doc "Get the global renderer registry."
+  @spec get_renderer_registry() :: String.t()
+  def get_renderer_registry do
+    Kreuzberg.Native.get_renderer_registry()
+  end
+
+  @doc "Register a renderer with the global registry."
+  @spec register_renderer(reference()) :: {:ok, nil} | {:error, String.t()}
+  def register_renderer(renderer) do
+    Kreuzberg.Native.register_renderer(renderer)
+  end
+
+  @doc "Unregister a renderer by name."
+  @spec unregister_renderer(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def unregister_renderer(name) do
+    Kreuzberg.Native.unregister_renderer(name)
+  end
+
+  @doc "List all registered renderers."
+  @spec list_renderers() :: [String.t()]
+  def list_renderers do
+    Kreuzberg.Native.list_renderers()
+  end
+
+  @doc "Clear all renderers from the global registry and re-register built-in defaults."
+  @spec clear_renderers() :: {:ok, nil} | {:error, String.t()}
+  def clear_renderers do
+    Kreuzberg.Native.clear_renderers()
+  end
+
+  @doc "Validate plugin registries at startup and emit diagnostic logs."
+  @spec validate_plugins_at_startup() :: {:ok, String.t()} | {:error, String.t()}
+  def validate_plugins_at_startup do
+    Kreuzberg.Native.validate_plugins_at_startup()
+  end
+
+  @doc "Register a validator with the global registry."
+  @spec register_validator(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def register_validator(validator) do
+    Kreuzberg.Native.register_validator(validator)
+  end
+
+  @doc "Unregister a validator by name."
+  @spec unregister_validator(String.t()) :: {:ok, nil} | {:error, String.t()}
+  def unregister_validator(name) do
+    Kreuzberg.Native.unregister_validator(name)
+  end
+
+  @doc "List all registered validators."
+  @spec list_validators() :: {:ok, [String.t()]} | {:error, String.t()}
+  def list_validators do
+    Kreuzberg.Native.list_validators()
+  end
+
+  @doc "Clear all validators from the global registry."
+  @spec clear_validators() :: {:ok, nil} | {:error, String.t()}
+  def clear_validators do
+    Kreuzberg.Native.clear_validators()
+  end
+
+  @doc "Render an `InternalDocument` to Djot markup."
+  @spec render_djot(String.t()) :: String.t()
+  def render_djot(doc) do
+    Kreuzberg.Native.render_djot(doc)
+  end
+
+  @doc "Render an `InternalDocument` to HTML5."
+  @spec render_html(String.t()) :: String.t()
+  def render_html(doc) do
+    Kreuzberg.Native.render_html(doc)
+  end
+
+  @doc "Render an `InternalDocument` as a JSON tree string."
+  @spec render_json(String.t()) :: String.t()
+  def render_json(doc) do
+    Kreuzberg.Native.render_json(doc)
+  end
+
+  @doc "Render an `InternalDocument` to GFM Markdown."
+  @spec render_markdown(String.t()) :: String.t()
+  def render_markdown(doc) do
+    Kreuzberg.Native.render_markdown(doc)
+  end
+
+  @doc "Render an `InternalDocument` to plain text."
+  @spec render_plain(String.t()) :: String.t()
+  def render_plain(doc) do
+    Kreuzberg.Native.render_plain(doc)
+  end
+
+  @doc "Sanitize a file path to return only the filename (no directory)."
+  @spec sanitize_filename(String.t()) :: String.t()
+  def sanitize_filename(path) do
+    Kreuzberg.Native.sanitize_filename(path)
+  end
+
+  @doc "Get the global extraction metrics, initialising on first call."
+  @spec get_metrics() :: map()
+  def get_metrics do
+    Kreuzberg.Native.get_metrics()
+  end
+
+  @doc "Record an error on the current span using semantic conventions."
+  @spec record_error_on_current_span(String.t()) :: nil
+  def record_error_on_current_span(error) do
+    Kreuzberg.Native.record_error_on_current_span(error)
+  end
+
+  @doc "Record extraction success on the current span."
+  @spec record_success_on_current_span() :: nil
+  def record_success_on_current_span do
+    Kreuzberg.Native.record_success_on_current_span()
+  end
+
+  @doc "Sanitize a file path to return only the filename."
+  @spec sanitize_path(String.t()) :: String.t()
+  def sanitize_path(path) do
+    Kreuzberg.Native.sanitize_path(path)
+  end
+
+  @doc "Create an extractor-level span with semantic convention fields."
+  @spec extractor_span(String.t(), String.t(), non_neg_integer()) :: String.t()
+  def extractor_span(extractor_name, mime_type, size_bytes) do
+    Kreuzberg.Native.extractor_span(extractor_name, mime_type, size_bytes)
+  end
+
+  @doc "Create a pipeline stage span."
+  @spec pipeline_stage_span(String.t()) :: String.t()
+  def pipeline_stage_span(stage) do
+    Kreuzberg.Native.pipeline_stage_span(stage)
+  end
+
+  @doc "Create a pipeline processor span."
+  @spec pipeline_processor_span(String.t(), String.t()) :: String.t()
+  def pipeline_processor_span(stage, processor_name) do
+    Kreuzberg.Native.pipeline_processor_span(stage, processor_name)
+  end
+
+  @doc "Create an OCR operation span."
+  @spec ocr_span(String.t(), String.t()) :: String.t()
+  def ocr_span(backend, language) do
+    Kreuzberg.Native.ocr_span(backend, language)
+  end
+
+  @doc "Create a model inference span."
+  @spec model_inference_span(String.t()) :: String.t()
+  def model_inference_span(model_name) do
+    Kreuzberg.Native.model_inference_span(model_name)
+  end
+
+  @doc "Validates and converts bytes to string using SIMD when available."
+  @spec from_utf8(binary()) :: {:ok, String.t()} | {:error, String.t()}
+  def from_utf8(bytes) do
+    Kreuzberg.Native.from_utf8(bytes)
+  end
+
+  @doc "Validates and converts owned bytes to String using SIMD when available."
+  @spec string_from_utf8(binary()) :: {:ok, String.t()} | {:error, String.t()}
+  def string_from_utf8(bytes) do
+    Kreuzberg.Native.string_from_utf8(bytes)
+  end
+
+  @doc "Validates bytes as UTF-8 without conversion to string slice."
+  @spec is_valid_utf8(binary()) :: boolean()
+  def is_valid_utf8(bytes) do
+    Kreuzberg.Native.is_valid_utf8(bytes)
+  end
+
+  @doc "Function"
+  @spec calculate_quality_score(String.t()) :: float()
+  def calculate_quality_score(text) do
+    Kreuzberg.Native.calculate_quality_score(text, nil)
+  end
+
+  @doc "Function"
+  @spec calculate_quality_score(String.t(), String.t() | nil) :: float()
+  def calculate_quality_score(text, metadata) do
+    Kreuzberg.Native.calculate_quality_score(text, metadata)
+  end
+
+  @doc "Function"
+  @spec clean_extracted_text(String.t()) :: String.t()
+  def clean_extracted_text(text) do
+    Kreuzberg.Native.clean_extracted_text(text)
+  end
+
+  @doc "Function"
+  @spec normalize_spaces(String.t()) :: String.t()
+  def normalize_spaces(text) do
+    Kreuzberg.Native.normalize_spaces(text)
+  end
+
+  @doc "Reduces token count in text while preserving meaning and structure."
+  @spec reduce_tokens(String.t(), map()) :: {:ok, String.t()} | {:error, String.t()}
+  def reduce_tokens(text, config) do
+    Kreuzberg.Native.reduce_tokens(text, config, nil)
+  end
+
+  @doc "Reduces token count in text while preserving meaning and structure."
+  @spec reduce_tokens(String.t(), map(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def reduce_tokens(text, config, language_hint) do
+    Kreuzberg.Native.reduce_tokens(text, config, language_hint)
+  end
+
+  @doc "Reduces token count for multiple texts efficiently using parallel processing."
+  @spec batch_reduce_tokens([String.t()], map()) :: {:ok, [String.t()]} | {:error, String.t()}
+  def batch_reduce_tokens(texts, config) do
+    Kreuzberg.Native.batch_reduce_tokens(texts, config, nil)
+  end
+
+  @doc "Reduces token count for multiple texts efficiently using parallel processing."
+  @spec batch_reduce_tokens([String.t()], map(), String.t() | nil) :: {:ok, [String.t()]} | {:error, String.t()}
+  def batch_reduce_tokens(texts, config, language_hint) do
+    Kreuzberg.Native.batch_reduce_tokens(texts, config, language_hint)
+  end
+
+  @doc "Calculates detailed statistics comparing original and reduced text."
+  @spec get_reduction_statistics(String.t(), String.t()) :: String.t()
+  def get_reduction_statistics(original, reduced) do
+    Kreuzberg.Native.get_reduction_statistics(original, reduced)
+  end
+
+  @doc "Create a bold annotation for the given byte range."
+  @spec bold(non_neg_integer(), non_neg_integer()) :: map()
+  def bold(start, end) do
+    Kreuzberg.Native.bold(start, end)
+  end
+
+  @doc "Create an italic annotation for the given byte range."
+  @spec italic(non_neg_integer(), non_neg_integer()) :: map()
+  def italic(start, end) do
+    Kreuzberg.Native.italic(start, end)
+  end
+
+  @doc "Create an underline annotation for the given byte range."
+  @spec underline(non_neg_integer(), non_neg_integer()) :: map()
+  def underline(start, end) do
+    Kreuzberg.Native.underline(start, end)
+  end
+
+  @doc "Create a link annotation for the given byte range."
+  @spec link(non_neg_integer(), non_neg_integer(), String.t()) :: map()
+  def link(start, end, url) do
+    Kreuzberg.Native.link(start, end, url, nil)
+  end
+
+  @doc "Create a link annotation for the given byte range."
+  @spec link(non_neg_integer(), non_neg_integer(), String.t(), String.t() | nil) :: map()
+  def link(start, end, url, title) do
+    Kreuzberg.Native.link(start, end, url, title)
+  end
+
+  @doc "Create a code (inline) annotation for the given byte range."
+  @spec code(non_neg_integer(), non_neg_integer()) :: map()
+  def code(start, end) do
+    Kreuzberg.Native.code(start, end)
+  end
+
+  @doc "Create a strikethrough annotation for the given byte range."
+  @spec strikethrough(non_neg_integer(), non_neg_integer()) :: map()
+  def strikethrough(start, end) do
+    Kreuzberg.Native.strikethrough(start, end)
+  end
+
+  @doc "Create a subscript annotation for the given byte range."
+  @spec subscript(non_neg_integer(), non_neg_integer()) :: map()
+  def subscript(start, end) do
+    Kreuzberg.Native.subscript(start, end)
+  end
+
+  @doc "Create a superscript annotation for the given byte range."
+  @spec superscript(non_neg_integer(), non_neg_integer()) :: map()
+  def superscript(start, end) do
+    Kreuzberg.Native.superscript(start, end)
+  end
+
+  @doc "Create a font size annotation for the given byte range."
+  @spec font_size(non_neg_integer(), non_neg_integer(), String.t()) :: map()
+  def font_size(start, end, value) do
+    Kreuzberg.Native.font_size(start, end, value)
+  end
+
+  @doc "Create a color annotation for the given byte range."
+  @spec color(non_neg_integer(), non_neg_integer(), String.t()) :: map()
+  def color(start, end, value) do
+    Kreuzberg.Native.color(start, end, value)
+  end
+
+  @doc "Create a highlight annotation for the given byte range."
+  @spec highlight(non_neg_integer(), non_neg_integer()) :: map()
+  def highlight(start, end) do
+    Kreuzberg.Native.highlight(start, end)
+  end
+
+  @doc "Classify a URL string into the appropriate `UriKind`."
+  @spec classify_uri(String.t()) :: map()
+  def classify_uri(url) do
+    Kreuzberg.Native.classify_uri(url)
+  end
+
+  @doc "Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary."
+  @spec safe_decode(binary()) :: String.t()
+  def safe_decode(byte_data) do
+    Kreuzberg.Native.safe_decode(byte_data, nil)
+  end
+
+  @doc "Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary."
+  @spec safe_decode(binary(), String.t() | nil) :: String.t()
+  def safe_decode(byte_data, encoding) do
+    Kreuzberg.Native.safe_decode(byte_data, encoding)
+  end
+
+  @doc "Estimate how trustworthy a decoded string is on a 0.0–1.0 scale."
+  @spec calculate_text_confidence(String.t()) :: float()
+  def calculate_text_confidence(text) do
+    Kreuzberg.Native.calculate_text_confidence(text)
+  end
+
+  @doc "Strip control characters and replacement glyphs that typically arise from mojibake."
+  @spec fix_mojibake(String.t()) :: String.t()
+  def fix_mojibake(text) do
+    Kreuzberg.Native.fix_mojibake(text)
+  end
+
+  @doc "Recursively convert snake_case keys in a JSON Value to camelCase."
+  @spec snake_to_camel(String.t()) :: String.t()
+  def snake_to_camel(val) do
+    Kreuzberg.Native.snake_to_camel(val)
+  end
+
+  @doc "Recursively convert camelCase keys in a JSON Value to snake_case."
+  @spec camel_to_snake(String.t()) :: String.t()
+  def camel_to_snake(val) do
+    Kreuzberg.Native.camel_to_snake(val)
+  end
+
+  @doc "Create a pre-configured string buffer pool for batch processing."
+  @spec create_string_buffer_pool(non_neg_integer(), non_neg_integer()) :: reference()
+  def create_string_buffer_pool(pool_size, buffer_capacity) do
+    Kreuzberg.Native.create_string_buffer_pool(pool_size, buffer_capacity)
+  end
+
+  @doc "Create a pre-configured byte buffer pool for batch processing."
+  @spec create_byte_buffer_pool(non_neg_integer(), non_neg_integer()) :: reference()
+  def create_byte_buffer_pool(pool_size, buffer_capacity) do
+    Kreuzberg.Native.create_byte_buffer_pool(pool_size, buffer_capacity)
+  end
+
+  @doc "Estimate optimal pool sizing based on file size and document type."
+  @spec estimate_pool_size(non_neg_integer(), String.t()) :: map()
+  def estimate_pool_size(file_size, mime_type) do
+    Kreuzberg.Native.estimate_pool_size(file_size, mime_type)
+  end
+
+  @doc "Acquire a string buffer from the global pool."
+  @spec acquire_string_buffer() :: reference()
+  def acquire_string_buffer do
+    Kreuzberg.Native.acquire_string_buffer()
+  end
+
+  @doc "Get or intern a language code string."
+  @spec intern_language_code(String.t()) :: reference()
+  def intern_language_code(lang_code) do
+    Kreuzberg.Native.intern_language_code(lang_code)
+  end
+
+  @doc "Get or intern a MIME type string."
+  @spec intern_mime_type(String.t()) :: reference()
+  def intern_mime_type(mime_type) do
+    Kreuzberg.Native.intern_mime_type(mime_type)
+  end
+
+  @doc "Converts XML tag name bytes to a string, avoiding allocation when possible."
+  @spec xml_tag_name(binary()) :: String.t()
+  def xml_tag_name(name) do
+    Kreuzberg.Native.xml_tag_name(name)
+  end
+
+  @doc "Escape `&`, `<`, and `>` in text destined for markdown/HTML output."
+  @spec escape_html_entities(String.t()) :: String.t()
+  def escape_html_entities(text) do
+    Kreuzberg.Native.escape_html_entities(text)
+  end
+
+  @doc "Detect column positions from word x-coordinates."
+  @spec detect_columns([map()], non_neg_integer()) :: [non_neg_integer()]
+  def detect_columns(words, column_threshold) do
+    Kreuzberg.Native.detect_columns(words, column_threshold)
+  end
+
+  @doc "Detect row positions from word y-coordinates."
+  @spec detect_rows([map()], float()) :: [non_neg_integer()]
+  def detect_rows(words, row_threshold_ratio) do
+    Kreuzberg.Native.detect_rows(words, row_threshold_ratio)
+  end
+
+  @doc "Reconstruct a table grid from words with bounding box positions."
+  @spec reconstruct_table([map()], non_neg_integer(), float()) :: [[String.t()]]
+  def reconstruct_table(words, column_threshold, row_threshold_ratio) do
+    Kreuzberg.Native.reconstruct_table(words, column_threshold, row_threshold_ratio)
+  end
+
+  @doc "Convert a table grid to markdown format."
+  @spec table_to_markdown([[String.t()]]) :: String.t()
+  def table_to_markdown(table) do
+    Kreuzberg.Native.table_to_markdown(table)
+  end
+
+  @doc "Load ServerConfig with proper precedence order."
+  @spec load_server_config() :: {:ok, String.t() | nil} | {:error, String.t()}
+  def load_server_config do
+    Kreuzberg.Native.load_server_config(nil)
+  end
+
+  @doc "Load ServerConfig with proper precedence order."
+  @spec load_server_config(String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def load_server_config(config_path) do
+    Kreuzberg.Native.load_server_config(config_path)
+  end
+
+  @doc "Generate OpenAPI JSON schema."
+  @spec openapi_json() :: String.t()
+  def openapi_json do
+    Kreuzberg.Native.openapi_json()
+  end
+
+  @doc "Create the API router with all routes configured."
+  @spec create_router(String.t() | nil) :: String.t()
+  def create_router(config) do
+    Kreuzberg.Native.create_router(config)
+  end
+
+  @doc "Create the API router with custom size limits."
+  @spec create_router_with_limits(String.t() | nil, String.t() | nil) :: String.t()
+  def create_router_with_limits(config, limits) do
+    Kreuzberg.Native.create_router_with_limits(config, limits)
+  end
+
+  @doc "Create the API router with custom size limits and server configuration."
+  @spec create_router_with_limits_and_server_config(String.t() | nil, String.t() | nil, String.t() | nil) :: String.t()
+  def create_router_with_limits_and_server_config(config, limits, server_config) do
+    Kreuzberg.Native.create_router_with_limits_and_server_config(config, limits, server_config)
+  end
+
+  @doc "Start the API server with config file discovery."
+  @spec serve_async(String.t(), non_neg_integer()) :: {:ok, nil} | {:error, String.t()}
+  def serve_async(host, port) do
+    Kreuzberg.Native.serve_async(host, port)
+  end
+
+  @doc "Start the API server with explicit config."
+  @spec serve_with_config_async(String.t(), non_neg_integer(), String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def serve_with_config_async(host, port, config) do
+    Kreuzberg.Native.serve_with_config_async(host, port, config)
+  end
+
+  @doc "Start the API server with explicit config and size limits."
+  @spec serve_with_config_and_limits_async(String.t(), non_neg_integer(), String.t() | nil, String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def serve_with_config_and_limits_async(host, port, config, limits) do
+    Kreuzberg.Native.serve_with_config_and_limits_async(host, port, config, limits)
+  end
+
+  @doc "Start the API server with explicit extraction config and server config."
+  @spec serve_with_server_config_async(String.t() | nil, String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def serve_with_server_config_async(extraction_config, server_config) do
+    Kreuzberg.Native.serve_with_server_config_async(extraction_config, server_config)
+  end
+
+  @doc "Start the API server with default host and port."
+  @spec serve_default_async() :: {:ok, nil} | {:error, String.t()}
+  def serve_default_async do
+    Kreuzberg.Native.serve_default_async()
+  end
+
+  @doc "Map Kreuzberg errors to MCP error responses with appropriate error codes."
+  @spec map_kreuzberg_error_to_mcp(String.t()) :: String.t()
+  def map_kreuzberg_error_to_mcp(error) do
+    Kreuzberg.Native.map_kreuzberg_error_to_mcp(error)
+  end
+
+  @doc "Start the Kreuzberg MCP server."
+  @spec start_mcp_server_async() :: {:ok, nil} | {:error, String.t()}
+  def start_mcp_server_async do
+    Kreuzberg.Native.start_mcp_server_async()
+  end
+
+  @doc "Start MCP server with custom extraction config."
+  @spec start_mcp_server_with_config_async(String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def start_mcp_server_with_config_async(config) do
+    Kreuzberg.Native.start_mcp_server_with_config_async(config)
+  end
+
+  @doc "Start MCP server with HTTP Stream transport."
+  @spec start_mcp_server_http_async(String.t(), non_neg_integer()) :: {:ok, nil} | {:error, String.t()}
+  def start_mcp_server_http_async(host, port) do
+    Kreuzberg.Native.start_mcp_server_http_async(host, port)
+  end
+
+  @doc "Start MCP HTTP server with custom extraction config."
+  @spec start_mcp_server_http_with_config_async(String.t(), non_neg_integer(), String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def start_mcp_server_http_with_config_async(host, port, config) do
+    Kreuzberg.Native.start_mcp_server_http_with_config_async(host, port, config)
+  end
+
+  @doc "Validates the consistency and correctness of page boundaries."
+  @spec validate_page_boundaries([map()]) :: {:ok, nil} | {:error, String.t()}
+  def validate_page_boundaries(boundaries) do
+    Kreuzberg.Native.validate_page_boundaries(boundaries)
+  end
+
+  @doc "Calculate which pages a byte range spans."
+  @spec calculate_page_range(non_neg_integer(), non_neg_integer(), [map()]) :: {:ok, String.t()} | {:error, String.t()}
+  def calculate_page_range(byte_start, byte_end, boundaries) do
+    Kreuzberg.Native.calculate_page_range(byte_start, byte_end, boundaries)
+  end
+
+  @doc "Classify a single chunk based on its content and optional heading context."
+  @spec classify_chunk(String.t()) :: map()
+  def classify_chunk(content) do
+    Kreuzberg.Native.classify_chunk(content, nil)
+  end
+
+  @doc "Classify a single chunk based on its content and optional heading context."
+  @spec classify_chunk(String.t(), map() | nil) :: map()
+  def classify_chunk(content, heading_context) do
+    Kreuzberg.Native.classify_chunk(content, heading_context)
+  end
+
+  @doc "Split text into chunks with optional page boundary tracking."
+  @spec chunk_text(String.t(), String.t() | nil) :: {:ok, map()} | {:error, String.t()}
+  def chunk_text(text, config) do
+    Kreuzberg.Native.chunk_text(text, config, nil)
+  end
+
+  @doc "Split text into chunks with optional page boundary tracking."
+  @spec chunk_text(String.t(), String.t() | nil, [map()] | nil) :: {:ok, map()} | {:error, String.t()}
+  def chunk_text(text, config, page_boundaries) do
+    Kreuzberg.Native.chunk_text(text, config, page_boundaries)
+  end
+
+  @doc "Chunk text with an optional separate markdown source for heading context resolution."
+  @spec chunk_text_with_heading_source(String.t(), String.t() | nil) :: {:ok, map()} | {:error, String.t()}
+  def chunk_text_with_heading_source(text, config) do
+    Kreuzberg.Native.chunk_text_with_heading_source(text, config, nil, nil)
+  end
+
+  @doc "Chunk text with an optional separate markdown source for heading context resolution."
+  @spec chunk_text_with_heading_source(String.t(), String.t() | nil, [map()] | nil) :: {:ok, map()} | {:error, String.t()}
+  def chunk_text_with_heading_source(text, config, page_boundaries) do
+    Kreuzberg.Native.chunk_text_with_heading_source(text, config, page_boundaries, nil)
+  end
+
+  @doc "Chunk text with an optional separate markdown source for heading context resolution."
+  @spec chunk_text_with_heading_source(String.t(), String.t() | nil, [map()] | nil, String.t() | nil) :: {:ok, map()} | {:error, String.t()}
+  def chunk_text_with_heading_source(text, config, page_boundaries, heading_source) do
+    Kreuzberg.Native.chunk_text_with_heading_source(text, config, page_boundaries, heading_source)
+  end
+
+  @doc "Chunk text with explicit type specification."
+  @spec chunk_text_with_type(String.t(), non_neg_integer(), non_neg_integer(), boolean(), map()) :: {:ok, map()} | {:error, String.t()}
+  def chunk_text_with_type(text, max_characters, overlap, trim, chunker_type) do
+    Kreuzberg.Native.chunk_text_with_type(text, max_characters, overlap, trim, chunker_type)
+  end
+
+  @doc "Batch process multiple texts with the same configuration."
+  @spec chunk_texts_batch([String.t()], String.t() | nil) :: {:ok, [map()]} | {:error, String.t()}
+  def chunk_texts_batch(texts, config) do
+    Kreuzberg.Native.chunk_texts_batch(texts, config)
+  end
+
+  @doc "Pre-computes valid UTF-8 character boundaries for a text string."
+  @spec precompute_utf8_boundaries(String.t()) :: String.t()
+  def precompute_utf8_boundaries(text) do
+    Kreuzberg.Native.precompute_utf8_boundaries(text)
+  end
+
+  @doc "Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries."
+  @spec validate_utf8_boundaries(String.t(), [map()]) :: {:ok, nil} | {:error, String.t()}
+  def validate_utf8_boundaries(text, boundaries) do
+    Kreuzberg.Native.validate_utf8_boundaries(text, boundaries)
+  end
+
+  @doc "Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`]."
+  @spec create_client(map()) :: {:ok, String.t()} | {:error, String.t()}
+  def create_client(config) do
+    Kreuzberg.Native.create_client(config)
+  end
+
+  @doc "Render a Jinja2 template with the given context variables."
+  @spec render_template(String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def render_template(template, context) do
+    Kreuzberg.Native.render_template(template, context)
+  end
+
+  @doc "Extract structured data from document content using an LLM with JSON schema."
+  @spec extract_structured_async(String.t(), map()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_structured_async(content, config) do
+    Kreuzberg.Native.extract_structured_async(content, config)
+  end
+
+  @doc "Perform OCR on an image using a vision language model."
+  @spec vlm_ocr_async(binary(), String.t(), String.t(), map()) :: {:ok, String.t()} | {:error, String.t()}
+  def vlm_ocr_async(image_bytes, image_mime_type, language, config) do
+    Kreuzberg.Native.vlm_ocr_async(image_bytes, image_mime_type, language, config)
+  end
+
+  @doc "L2-normalize a vector."
+  @spec normalize([float()]) :: [float()]
+  def normalize(v) do
+    Kreuzberg.Native.normalize(v)
+  end
+
+  @doc "Get a preset by name."
+  @spec get_preset(String.t()) :: String.t() | nil
+  def get_preset(name) do
+    Kreuzberg.Native.get_preset(name)
+  end
+
+  @doc "List all available preset names."
+  @spec list_presets() :: [String.t()]
+  def list_presets do
+    Kreuzberg.Native.list_presets()
+  end
+
+  @doc "Eagerly download and cache an embedding model without returning the handle."
+  @spec warm_model(map()) :: {:ok, nil} | {:error, String.t()}
+  def warm_model(model_type) do
+    Kreuzberg.Native.warm_model(model_type, nil)
+  end
+
+  @doc "Eagerly download and cache an embedding model without returning the handle."
+  @spec warm_model(map(), String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def warm_model(model_type, cache_dir) do
+    Kreuzberg.Native.warm_model(model_type, cache_dir)
+  end
+
+  @doc "Download an embedding model's files without initializing ONNX Runtime."
+  @spec download_model(map()) :: {:ok, nil} | {:error, String.t()}
+  def download_model(model_type) do
+    Kreuzberg.Native.download_model(model_type, nil)
+  end
+
+  @doc "Download an embedding model's files without initializing ONNX Runtime."
+  @spec download_model(map(), String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def download_model(model_type, cache_dir) do
+    Kreuzberg.Native.download_model(model_type, cache_dir)
+  end
+
+  @doc "Generate embeddings for text chunks using the specified configuration."
+  @spec generate_embeddings_for_chunks([map()], String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def generate_embeddings_for_chunks(chunks, config) do
+    Kreuzberg.Native.generate_embeddings_for_chunks(chunks, config)
+  end
+
+  @doc "Calculate smart DPI based on page dimensions, memory constraints, and target DPI"
+  @spec calculate_smart_dpi(float(), float(), integer(), integer(), float()) :: integer()
+  def calculate_smart_dpi(page_width, page_height, target_dpi, max_dimension, max_memory_mb) do
+    Kreuzberg.Native.calculate_smart_dpi(page_width, page_height, target_dpi, max_dimension, max_memory_mb)
+  end
+
+  @doc "Calculate optimal DPI with min/max constraints"
+  @spec calculate_optimal_dpi(float(), float(), integer(), integer(), integer(), integer()) :: integer()
+  def calculate_optimal_dpi(page_width, page_height, target_dpi, max_dimension, min_dpi, max_dpi) do
+    Kreuzberg.Native.calculate_optimal_dpi(page_width, page_height, target_dpi, max_dimension, min_dpi, max_dpi)
+  end
+
+  @doc "Normalize image DPI based on extraction configuration"
+  @spec normalize_image_dpi(binary(), non_neg_integer(), non_neg_integer(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def normalize_image_dpi(rgb_data, width, height, config) do
+    Kreuzberg.Native.normalize_image_dpi(rgb_data, width, height, config, nil)
+  end
+
+  @doc "Normalize image DPI based on extraction configuration"
+  @spec normalize_image_dpi(binary(), non_neg_integer(), non_neg_integer(), String.t() | nil, float() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def normalize_image_dpi(rgb_data, width, height, config, current_dpi) do
+    Kreuzberg.Native.normalize_image_dpi(rgb_data, width, height, config, current_dpi)
+  end
+
+  @doc "Resize an image using fast_image_resize with appropriate algorithm based on scale factor"
+  @spec resize_image(String.t(), non_neg_integer(), non_neg_integer(), float()) :: {:ok, String.t()} | {:error, String.t()}
+  def resize_image(image, new_width, new_height, scale_factor) do
+    Kreuzberg.Native.resize_image(image, new_width, new_height, scale_factor)
+  end
+
+  @doc "Detect languages in text using whatlang."
+  @spec detect_languages(String.t(), map()) :: {:ok, [String.t()] | nil} | {:error, String.t()}
+  def detect_languages(text, config) do
+    Kreuzberg.Native.detect_languages(text, config)
+  end
+
+  @doc "Register the language detection processor with the global registry."
+  @spec register_language_detection_processor() :: {:ok, nil} | {:error, String.t()}
+  def register_language_detection_processor do
+    Kreuzberg.Native.register_language_detection_processor()
+  end
+
+  @doc "Get stopwords for a language with normalization."
+  @spec get_stopwords(String.t()) :: String.t() | nil
+  def get_stopwords(lang) do
+    Kreuzberg.Native.get_stopwords(lang)
+  end
+
+  @doc "Get stopwords for a language with fallback support."
+  @spec get_stopwords_with_fallback(String.t(), String.t()) :: String.t() | nil
+  def get_stopwords_with_fallback(language, fallback) do
+    Kreuzberg.Native.get_stopwords_with_fallback(language, fallback)
+  end
+
+  @doc "Extract keywords from text using the specified algorithm."
+  @spec extract_keywords(String.t(), String.t() | nil) :: {:ok, [map()]} | {:error, String.t()}
+  def extract_keywords(text, config) do
+    Kreuzberg.Native.extract_keywords(text, config)
+  end
+
+  @doc "Convert a PaddleOCR TextBlock to a unified OcrElement."
+  @spec text_block_to_element(map(), non_neg_integer()) :: {:ok, map() | nil} | {:error, String.t()}
+  def text_block_to_element(block, page_number) do
+    Kreuzberg.Native.text_block_to_element(block, page_number)
+  end
+
+  @doc "Convert a Tesseract TSV row to a unified OcrElement."
+  @spec tsv_row_to_element(map()) :: map()
+  def tsv_row_to_element(row) do
+    Kreuzberg.Native.tsv_row_to_element(row)
+  end
+
+  @doc "Convert a Tesseract iterator WordData to a unified OcrElement with rich metadata."
+  @spec iterator_word_to_element(String.t(), String.t() | nil, String.t() | nil, non_neg_integer()) :: map()
+  def iterator_word_to_element(word, block_type, para_info, page_number) do
+    Kreuzberg.Native.iterator_word_to_element(word, block_type, para_info, page_number)
+  end
+
+  @doc "Convert an OcrElement to an HocrWord for table reconstruction."
+  @spec element_to_hocr_word(map()) :: map()
+  def element_to_hocr_word(element) do
+    Kreuzberg.Native.element_to_hocr_word(element)
+  end
+
+  @doc "Convert a vector of OcrElements to HocrWords for batch table processing."
+  @spec elements_to_hocr_words([map()], float()) :: [map()]
+  def elements_to_hocr_words(elements, min_confidence) do
+    Kreuzberg.Native.elements_to_hocr_words(elements, min_confidence)
+  end
+
+  @doc "Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata."
+  @spec parse_hocr_to_internal_document(String.t()) :: String.t()
+  def parse_hocr_to_internal_document(hocr_html) do
+    Kreuzberg.Native.parse_hocr_to_internal_document(hocr_html)
+  end
+
+  @doc "Assemble structured markdown from OCR elements using layout detection results."
+  @spec assemble_ocr_markdown([map()], map() | nil, non_neg_integer(), non_neg_integer(), [map()]) :: String.t()
+  def assemble_ocr_markdown(elements, detection, img_width, img_height, recognized_tables) do
+    Kreuzberg.Native.assemble_ocr_markdown(elements, detection, img_width, img_height, recognized_tables)
+  end
+
+  @doc "Run TATR table recognition for all Table regions in a page."
+  @spec recognize_page_tables(String.t(), map(), [map()], String.t()) :: [map()]
+  def recognize_page_tables(page_image, detection, elements, tatr_model) do
+    Kreuzberg.Native.recognize_page_tables(page_image, detection, elements, tatr_model)
+  end
+
+  @doc "Extract words from Tesseract TSV output and convert to HocrWord format."
+  @spec extract_words_from_tsv(String.t(), float()) :: {:ok, [map()]} | {:error, String.t()}
+  def extract_words_from_tsv(tsv_data, min_confidence) do
+    Kreuzberg.Native.extract_words_from_tsv(tsv_data, min_confidence)
+  end
+
+  @doc "Compute a blake3 hash string from input data."
+  @spec compute_hash(String.t()) :: String.t()
+  def compute_hash(data) do
+    Kreuzberg.Native.compute_hash(data)
+  end
+
+  @doc "Function"
+  @spec validate_tesseract_version(non_neg_integer()) :: {:ok, nil} | {:error, String.t()}
+  def validate_tesseract_version(version) do
+    Kreuzberg.Native.validate_tesseract_version(version)
+  end
+
+  @doc "Ensure ONNX Runtime is discoverable. Safe to call multiple times (no-op after first)."
+  @spec ensure_ort_available() :: nil
+  def ensure_ort_available do
+    Kreuzberg.Native.ensure_ort_available()
+  end
+
+  @doc "Check if a language code is supported by PaddleOCR."
+  @spec is_language_supported(String.t()) :: boolean()
+  def is_language_supported(lang) do
+    Kreuzberg.Native.is_language_supported(lang)
+  end
+
+  @doc "Map a PaddleOCR language code to its script family."
+  @spec language_to_script_family(String.t()) :: String.t()
+  def language_to_script_family(paddle_lang) do
+    Kreuzberg.Native.language_to_script_family(paddle_lang)
+  end
+
+  @doc "Map Kreuzberg language codes to PaddleOCR language codes."
+  @spec map_language_code(String.t()) :: String.t() | nil
+  def map_language_code(kreuzberg_code) do
+    Kreuzberg.Native.map_language_code(kreuzberg_code)
+  end
+
+  @doc "Build a 2D cell grid from TATR detections."
+  @spec build_cell_grid(String.t()) :: [[String.t()]]
+  def build_cell_grid(result) do
+    Kreuzberg.Native.build_cell_grid(result, nil)
+  end
+
+  @doc "Build a 2D cell grid from TATR detections."
+  @spec build_cell_grid(String.t(), String.t() | nil) :: [[String.t()]]
+  def build_cell_grid(result, table_bbox) do
+    Kreuzberg.Native.build_cell_grid(result, table_bbox)
+  end
+
+  @doc "Apply Docling-style postprocessing heuristics to raw detections."
+  @spec apply_heuristics([map()], float(), float()) :: nil
+  def apply_heuristics(detections, page_width, page_height) do
+    Kreuzberg.Native.apply_heuristics(detections, page_width, page_height)
+  end
+
+  @doc "Standard greedy Non-Maximum Suppression."
+  @spec greedy_nms([map()], float()) :: nil
+  def greedy_nms(detections, iou_threshold) do
+    Kreuzberg.Native.greedy_nms(detections, iou_threshold)
+  end
+
+  @doc "Preprocess an image for models using ImageNet normalization (e.g., RT-DETR)."
+  @spec preprocess_imagenet(String.t(), non_neg_integer()) :: String.t()
+  def preprocess_imagenet(img, target_size) do
+    Kreuzberg.Native.preprocess_imagenet(img, target_size)
+  end
+
+  @doc "Preprocess with aspect-preserving letterbox and ImageNet normalization."
+  @spec preprocess_imagenet_letterbox(String.t(), non_neg_integer()) :: String.t()
+  def preprocess_imagenet_letterbox(img, target_size) do
+    Kreuzberg.Native.preprocess_imagenet_letterbox(img, target_size)
+  end
+
+  @doc "Preprocess with rescale only (no ImageNet normalization)."
+  @spec preprocess_rescale(String.t(), non_neg_integer()) :: String.t()
+  def preprocess_rescale(img, target_size) do
+    Kreuzberg.Native.preprocess_rescale(img, target_size)
+  end
+
+  @doc "Letterbox preprocessing for YOLOX-style models."
+  @spec preprocess_letterbox(String.t(), non_neg_integer(), non_neg_integer()) :: String.t()
+  def preprocess_letterbox(img, target_width, target_height) do
+    Kreuzberg.Native.preprocess_letterbox(img, target_width, target_height)
+  end
+
+  @doc "Build an optimized ORT session from an ONNX model file."
+  @spec build_session(String.t(), String.t() | nil | nil, non_neg_integer()) :: {:ok, String.t()} | {:error, String.t()}
+  def build_session(path, accel, thread_budget) do
+    Kreuzberg.Native.build_session(path, accel, thread_budget)
+  end
+
+  @doc "Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`]."
+  @spec config_from_extraction(String.t() | nil) :: String.t()
+  def config_from_extraction(layout_config) do
+    Kreuzberg.Native.config_from_extraction(layout_config)
+  end
+
+  @doc "Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`]."
+  @spec create_engine(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def create_engine(layout_config) do
+    Kreuzberg.Native.create_engine(layout_config)
+  end
+
+  @doc "Take the cached layout engine, or create a new one if the cache is empty."
+  @spec take_or_create_engine(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def take_or_create_engine(layout_config) do
+    Kreuzberg.Native.take_or_create_engine(layout_config)
+  end
+
+  @doc "Return a layout engine to the global cache for reuse by future extractions."
+  @spec return_engine(String.t()) :: nil
+  def return_engine(engine) do
+    Kreuzberg.Native.return_engine(engine)
+  end
+
+  @doc "Take the cached TATR model, or create a new one if the cache is empty."
+  @spec take_or_create_tatr() :: String.t() | nil
+  def take_or_create_tatr do
+    Kreuzberg.Native.take_or_create_tatr()
+  end
+
+  @doc "Return a TATR model to the global cache for reuse."
+  @spec return_tatr(String.t()) :: nil
+  def return_tatr(model) do
+    Kreuzberg.Native.return_tatr(model)
+  end
+
+  @doc "Take a cached SLANeXT model for the given variant, or create a new one."
+  @spec take_or_create_slanet(String.t()) :: String.t() | nil
+  def take_or_create_slanet(variant) do
+    Kreuzberg.Native.take_or_create_slanet(variant)
+  end
+
+  @doc "Return a SLANeXT model to the global cache for reuse."
+  @spec return_slanet(String.t(), String.t()) :: nil
+  def return_slanet(variant, model) do
+    Kreuzberg.Native.return_slanet(variant, model)
+  end
+
+  @doc "Take a cached table classifier, or create a new one."
+  @spec take_or_create_table_classifier() :: String.t() | nil
+  def take_or_create_table_classifier do
+    Kreuzberg.Native.take_or_create_table_classifier()
+  end
+
+  @doc "Return a table classifier to the global cache for reuse."
+  @spec return_table_classifier(String.t()) :: nil
+  def return_table_classifier(model) do
+    Kreuzberg.Native.return_table_classifier(model)
+  end
+
+  @doc "Extract annotations from all pages of a PDF document."
+  @spec extract_annotations_from_document(String.t()) :: [map()]
+  def extract_annotations_from_document(document) do
+    Kreuzberg.Native.extract_annotations_from_document(document)
+  end
+
+  @doc "Extract bookmarks (outlines) from a PDF document loaded via lopdf."
+  @spec extract_bookmarks(String.t() | nil) :: [map()]
+  def extract_bookmarks(document) do
+    Kreuzberg.Native.extract_bookmarks(document)
+  end
+
+  @doc "Extract bundled PDFium library to temporary directory."
+  @spec extract_bundled_pdfium() :: {:ok, String.t()} | {:error, String.t()}
+  def extract_bundled_pdfium do
+    Kreuzberg.Native.extract_bundled_pdfium()
+  end
+
+  @doc "Extract embedded file descriptors from a PDF document loaded via lopdf."
+  @spec extract_embedded_files(String.t() | nil) :: [map()]
+  def extract_embedded_files(document) do
+    Kreuzberg.Native.extract_embedded_files(document)
+  end
+
+  @doc "Extract embedded files from PDF bytes and recursively process them."
+  @spec extract_and_process_embedded_files_async(binary(), String.t() | nil) :: String.t()
+  def extract_and_process_embedded_files_async(pdf_bytes, config) do
+    Kreuzberg.Native.extract_and_process_embedded_files_async(pdf_bytes, config)
+  end
+
+  @doc "Initialize the global font cache."
+  @spec initialize_font_cache() :: {:ok, nil} | {:error, String.t()}
+  def initialize_font_cache do
+    Kreuzberg.Native.initialize_font_cache()
+  end
+
+  @doc "Get cached font descriptors for Pdfium configuration."
+  @spec get_font_descriptors() :: {:ok, [String.t()]} | {:error, String.t()}
+  def get_font_descriptors do
+    Kreuzberg.Native.get_font_descriptors()
+  end
+
+  @doc "Get the number of cached fonts."
+  @spec cached_font_count() :: non_neg_integer()
+  def cached_font_count do
+    Kreuzberg.Native.cached_font_count()
+  end
+
+  @doc "Clear the font cache (for testing purposes)."
+  @spec clear_font_cache() :: nil
+  def clear_font_cache do
+    Kreuzberg.Native.clear_font_cache()
+  end
+
+  @doc "Cluster text blocks by font size using k-means algorithm."
+  @spec cluster_font_sizes([map()], non_neg_integer()) :: {:ok, [map()]} | {:error, String.t()}
+  def cluster_font_sizes(blocks, k) do
+    Kreuzberg.Native.cluster_font_sizes(blocks, k)
+  end
+
+  @doc "Assign heading levels using the "most frequent cluster = Body" rule."
+  @spec assign_heading_levels_smart([map()], float(), float()) :: [String.t()]
+  def assign_heading_levels_smart(clusters, min_heading_ratio, min_heading_gap) do
+    Kreuzberg.Native.assign_heading_levels_smart(clusters, min_heading_ratio, min_heading_gap)
+  end
+
+  @doc "Assign hierarchy levels to text blocks based on KMeans clustering results."
+  @spec assign_hierarchy_levels([map()], map()) :: [map()]
+  def assign_hierarchy_levels(blocks, kmeans_result) do
+    Kreuzberg.Native.assign_hierarchy_levels(blocks, kmeans_result)
+  end
+
+  @doc "Assign hierarchy levels to text blocks based on font size clusters."
+  @spec assign_hierarchy_levels_from_clusters([map()], [map()]) :: [String.t()]
+  def assign_hierarchy_levels_from_clusters(blocks, clusters) do
+    Kreuzberg.Native.assign_hierarchy_levels_from_clusters(blocks, clusters)
+  end
+
+  @doc "Extract characters with fonts from a PDF page."
+  @spec extract_chars_with_fonts(String.t()) :: {:ok, [map()]} | {:error, String.t()}
+  def extract_chars_with_fonts(page) do
+    Kreuzberg.Native.extract_chars_with_fonts(page)
+  end
+
+  @doc "Extract text segments from a PDF page using pdfium's segment merging."
+  @spec extract_segments_from_page(String.t()) :: {:ok, [map()]} | {:error, String.t()}
+  def extract_segments_from_page(page) do
+    Kreuzberg.Native.extract_segments_from_page(page)
+  end
+
+  @doc "Merge characters into text blocks using a greedy clustering algorithm."
+  @spec merge_chars_into_blocks([map()]) :: [map()]
+  def merge_chars_into_blocks(chars) do
+    Kreuzberg.Native.merge_chars_into_blocks(chars)
+  end
+
+  @doc "Determine whether OCR should be triggered based on text block coverage."
+  @spec should_trigger_ocr(String.t(), [map()], String.t() | nil) :: boolean()
+  def should_trigger_ocr(page, blocks, config) do
+    Kreuzberg.Native.should_trigger_ocr(page, blocks, config)
+  end
+
+  @doc "Function"
+  @spec extract_images_from_pdf(binary()) :: {:ok, [map()]} | {:error, String.t()}
+  def extract_images_from_pdf(pdf_bytes) do
+    Kreuzberg.Native.extract_images_from_pdf(pdf_bytes)
+  end
+
+  @doc "Function"
+  @spec extract_images_from_pdf_with_password(binary(), String.t()) :: {:ok, [map()]} | {:error, String.t()}
+  def extract_images_from_pdf_with_password(pdf_bytes, password) do
+    Kreuzberg.Native.extract_images_from_pdf_with_password(pdf_bytes, password)
+  end
+
+  @doc "Re-extract images that have unusable formats (`"raw"`, `"ccitt"`, `"jbig2"`) by"
+  @spec reextract_raw_images_via_pdfium(binary(), [map()]) :: {:ok, non_neg_integer()} | {:error, String.t()}
+  def reextract_raw_images_via_pdfium(pdf_bytes, images) do
+    Kreuzberg.Native.reextract_raw_images_via_pdfium(pdf_bytes, images)
+  end
+
+  @doc "Run layout detection on all pages of a PDF document."
+  @spec detect_layout_for_document(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def detect_layout_for_document(pdf_bytes, engine) do
+    Kreuzberg.Native.detect_layout_for_document(pdf_bytes, engine)
+  end
+
+  @doc "Run layout detection on pre-rendered images."
+  @spec detect_layout_for_images([String.t()], String.t()) :: {:ok, [map()]} | {:error, String.t()}
+  def detect_layout_for_images(images, engine) do
+    Kreuzberg.Native.detect_layout_for_images(images, engine)
+  end
+
+  @doc "Extract PDF-specific metadata from raw bytes."
+  @spec extract_metadata(binary()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def extract_metadata(pdf_bytes) do
+    Kreuzberg.Native.extract_metadata(pdf_bytes)
+  end
+
+  @doc "Extract PDF-specific metadata from raw bytes with optional password."
+  @spec extract_metadata_with_password(binary()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def extract_metadata_with_password(pdf_bytes) do
+    Kreuzberg.Native.extract_metadata_with_password(pdf_bytes, nil)
+  end
+
+  @doc "Extract PDF-specific metadata from raw bytes with optional password."
+  @spec extract_metadata_with_password(binary(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def extract_metadata_with_password(pdf_bytes, password) do
+    Kreuzberg.Native.extract_metadata_with_password(pdf_bytes, password)
+  end
+
+  @doc "Function"
+  @spec extract_metadata_with_passwords(binary(), [String.t()]) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def extract_metadata_with_passwords(pdf_bytes, passwords) do
+    Kreuzberg.Native.extract_metadata_with_passwords(pdf_bytes, passwords)
+  end
+
+  @doc "Extract complete PDF metadata from a document."
+  @spec extract_metadata_from_document(String.t()) :: {:ok, map()} | {:error, String.t()}
+  def extract_metadata_from_document(document) do
+    Kreuzberg.Native.extract_metadata_from_document(document, nil, nil)
+  end
+
+  @doc "Extract complete PDF metadata from a document."
+  @spec extract_metadata_from_document(String.t(), [map()] | nil) :: {:ok, map()} | {:error, String.t()}
+  def extract_metadata_from_document(document, page_boundaries) do
+    Kreuzberg.Native.extract_metadata_from_document(document, page_boundaries, nil)
+  end
+
+  @doc "Extract complete PDF metadata from a document."
+  @spec extract_metadata_from_document(String.t(), [map()] | nil, String.t() | nil) :: {:ok, map()} | {:error, String.t()}
+  def extract_metadata_from_document(document, page_boundaries, content) do
+    Kreuzberg.Native.extract_metadata_from_document(document, page_boundaries, content)
+  end
+
+  @doc "Extract common metadata from a PDF document."
+  @spec extract_common_metadata_from_document(String.t()) :: {:ok, map()} | {:error, String.t()}
+  def extract_common_metadata_from_document(document) do
+    Kreuzberg.Native.extract_common_metadata_from_document(document)
+  end
+
+  @doc "Function"
+  @spec render_page_to_image(binary(), non_neg_integer(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def render_page_to_image(pdf_bytes, page_index, options) do
+    Kreuzberg.Native.render_page_to_image(pdf_bytes, page_index, options)
+  end
+
+  @doc "Render a single PDF page to a PNG-encoded byte buffer."
+  @spec render_pdf_page_to_png(binary(), non_neg_integer()) :: {:ok, binary()} | {:error, String.t()}
+  def render_pdf_page_to_png(pdf_bytes, page_index) do
+    Kreuzberg.Native.render_pdf_page_to_png(pdf_bytes, page_index, nil, nil)
+  end
+
+  @doc "Render a single PDF page to a PNG-encoded byte buffer."
+  @spec render_pdf_page_to_png(binary(), non_neg_integer(), integer() | nil) :: {:ok, binary()} | {:error, String.t()}
+  def render_pdf_page_to_png(pdf_bytes, page_index, dpi) do
+    Kreuzberg.Native.render_pdf_page_to_png(pdf_bytes, page_index, dpi, nil)
+  end
+
+  @doc "Render a single PDF page to a PNG-encoded byte buffer."
+  @spec render_pdf_page_to_png(binary(), non_neg_integer(), integer() | nil, String.t() | nil) :: {:ok, binary()} | {:error, String.t()}
+  def render_pdf_page_to_png(pdf_bytes, page_index, dpi, password) do
+    Kreuzberg.Native.render_pdf_page_to_png(pdf_bytes, page_index, dpi, password)
+  end
+
+  @doc "Extract words with positions from PDF page for table detection."
+  @spec extract_words_from_page(String.t(), float()) :: {:ok, [map()]} | {:error, String.t()}
+  def extract_words_from_page(page, min_confidence) do
+    Kreuzberg.Native.extract_words_from_page(page, min_confidence)
+  end
+
+  @doc "Convert a PDF `SegmentData` to an `HocrWord` for table reconstruction."
+  @spec segment_to_hocr_word(map(), float()) :: map()
+  def segment_to_hocr_word(seg, page_height) do
+    Kreuzberg.Native.segment_to_hocr_word(seg, page_height)
+  end
+
+  @doc "Split a `SegmentData` into word-level `HocrWord`s for table reconstruction."
+  @spec split_segment_to_words(map(), float()) :: [map()]
+  def split_segment_to_words(seg, page_height) do
+    Kreuzberg.Native.split_segment_to_words(seg, page_height)
+  end
+
+  @doc "Convert a page's segments to word-level `HocrWord`s for table extraction."
+  @spec segments_to_words([map()], float()) :: [map()]
+  def segments_to_words(segments, page_height) do
+    Kreuzberg.Native.segments_to_words(segments, page_height)
+  end
+
+  @doc "Post-process a raw table grid to validate structure and clean up."
+  @spec post_process_table([[String.t()]], boolean(), boolean()) :: [[String.t()]] | nil
+  def post_process_table(table, layout_guided, allow_single_column) do
+    Kreuzberg.Native.post_process_table(table, layout_guided, allow_single_column)
+  end
+
+  @doc "Validate whether a reconstructed table grid represents a well-formed table"
+  @spec is_well_formed_table([[String.t()]]) :: boolean()
+  def is_well_formed_table(grid) do
+    Kreuzberg.Native.is_well_formed_table(grid)
+  end
+
+  @doc "Function"
+  @spec extract_text_from_pdf(binary()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text_from_pdf(pdf_bytes) do
+    Kreuzberg.Native.extract_text_from_pdf(pdf_bytes)
+  end
+
+  @doc "Function"
+  @spec extract_text_from_pdf_with_password(binary(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text_from_pdf_with_password(pdf_bytes, password) do
+    Kreuzberg.Native.extract_text_from_pdf_with_password(pdf_bytes, password)
+  end
+
+  @doc "Function"
+  @spec extract_text_from_pdf_with_passwords(binary(), [String.t()]) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text_from_pdf_with_passwords(pdf_bytes, passwords) do
+    Kreuzberg.Native.extract_text_from_pdf_with_passwords(pdf_bytes, passwords)
+  end
+
+  @doc "Extract text and metadata from PDF document in a single pass."
+  @spec extract_text_and_metadata_from_pdf_document(String.t()) :: {:ok, reference()} | {:error, String.t()}
+  def extract_text_and_metadata_from_pdf_document(document) do
+    Kreuzberg.Native.extract_text_and_metadata_from_pdf_document(document, nil)
+  end
+
+  @doc "Extract text and metadata from PDF document in a single pass."
+  @spec extract_text_and_metadata_from_pdf_document(String.t(), String.t() | nil | nil) :: {:ok, reference()} | {:error, String.t()}
+  def extract_text_and_metadata_from_pdf_document(document, extraction_config) do
+    Kreuzberg.Native.extract_text_and_metadata_from_pdf_document(document, extraction_config)
+  end
+
+  @doc "Extract text from PDF document with optional page boundary tracking."
+  @spec extract_text_from_pdf_document(String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text_from_pdf_document(document) do
+    Kreuzberg.Native.extract_text_from_pdf_document(document, nil, nil)
+  end
+
+  @doc "Extract text from PDF document with optional page boundary tracking."
+  @spec extract_text_from_pdf_document(String.t(), String.t() | nil | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text_from_pdf_document(document, page_config) do
+    Kreuzberg.Native.extract_text_from_pdf_document(document, page_config, nil)
+  end
+
+  @doc "Extract text from PDF document with optional page boundary tracking."
+  @spec extract_text_from_pdf_document(String.t(), String.t() | nil | nil, String.t() | nil | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def extract_text_from_pdf_document(document, page_config, extraction_config) do
+    Kreuzberg.Native.extract_text_from_pdf_document(document, page_config, extraction_config)
+  end
+
+  @doc "Serialize an [`ExtractionResult`] to TOON (Token-Oriented Object Notation)."
+  @spec serialize_to_toon(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def serialize_to_toon(result) do
+    Kreuzberg.Native.serialize_to_toon(result)
+  end
+
+  @doc "Serialize an [`ExtractionResult`] to pretty-printed JSON."
+  @spec serialize_to_json(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def serialize_to_json(result) do
+    Kreuzberg.Native.serialize_to_json(result)
+  end
+
+  @doc "Method"
+  @spec genericcache_new(String.t(), String.t() | nil, float(), float(), float()) :: {:ok, reference()} | {:error, String.t()}
+  def genericcache_new(cache_type, cache_dir, max_age_days, max_cache_size_mb, min_free_space_mb) do
+    Kreuzberg.Native.genericcache_new(cache_type, cache_dir, max_age_days, max_cache_size_mb, min_free_space_mb)
+  end
+
+  @doc "Method"
+  @spec genericcache_get(map(), String.t(), String.t() | nil, String.t() | nil, non_neg_integer() | nil) :: {:ok, binary() | nil} | {:error, String.t()}
+  def genericcache_get(obj, cache_key, source_file, namespace, ttl_override_secs) do
+    Kreuzberg.Native.genericcache_get(obj, cache_key, source_file, namespace, ttl_override_secs)
+  end
+
+  @doc "Backward-compatible get without namespace/TTL."
+  @spec genericcache_get_default(map(), String.t(), String.t() | nil) :: {:ok, binary() | nil} | {:error, String.t()}
+  def genericcache_get_default(obj, cache_key, source_file) do
+    Kreuzberg.Native.genericcache_get_default(obj, cache_key, source_file)
+  end
+
+  @doc "Method"
+  @spec genericcache_set(map(), String.t(), binary(), String.t() | nil, String.t() | nil, non_neg_integer() | nil) :: {:ok, nil} | {:error, String.t()}
+  def genericcache_set(obj, cache_key, data, source_file, namespace, ttl_secs) do
+    Kreuzberg.Native.genericcache_set(obj, cache_key, data, source_file, namespace, ttl_secs)
+  end
+
+  @doc "Backward-compatible set without namespace/TTL."
+  @spec genericcache_set_default(map(), String.t(), binary(), String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def genericcache_set_default(obj, cache_key, data, source_file) do
+    Kreuzberg.Native.genericcache_set_default(obj, cache_key, data, source_file)
+  end
+
+  @doc "Method"
+  @spec genericcache_is_processing(map(), String.t()) :: {:ok, boolean()} | {:error, String.t()}
+  def genericcache_is_processing(obj, cache_key) do
+    Kreuzberg.Native.genericcache_is_processing(obj, cache_key)
+  end
+
+  @doc "Method"
+  @spec genericcache_mark_processing(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def genericcache_mark_processing(obj, cache_key) do
+    Kreuzberg.Native.genericcache_mark_processing(obj, cache_key)
+  end
+
+  @doc "Method"
+  @spec genericcache_mark_complete(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def genericcache_mark_complete(obj, cache_key) do
+    Kreuzberg.Native.genericcache_mark_complete(obj, cache_key)
+  end
+
+  @doc "Method"
+  @spec genericcache_clear(map()) :: {:ok, String.t()} | {:error, String.t()}
+  def genericcache_clear(obj) do
+    Kreuzberg.Native.genericcache_clear(obj)
+  end
+
+  @doc "Delete all cache entries under a namespace."
+  @spec genericcache_delete_namespace(map(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def genericcache_delete_namespace(obj, namespace) do
+    Kreuzberg.Native.genericcache_delete_namespace(obj, namespace)
+  end
+
+  @doc "Method"
+  @spec genericcache_get_stats(map()) :: {:ok, String.t()} | {:error, String.t()}
+  def genericcache_get_stats(obj) do
+    Kreuzberg.Native.genericcache_get_stats(obj)
+  end
+
+  @doc "Get cache stats, optionally filtered to a specific namespace."
+  @spec genericcache_get_stats_filtered(map(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def genericcache_get_stats_filtered(obj, namespace) do
+    Kreuzberg.Native.genericcache_get_stats_filtered(obj, namespace)
+  end
+
+  @doc "Method"
+  @spec genericcache_cache_dir(map()) :: String.t()
+  def genericcache_cache_dir(obj) do
+    Kreuzberg.Native.genericcache_cache_dir(obj)
+  end
+
+  @doc "Method"
+  @spec genericcache_cache_type(map()) :: String.t()
+  def genericcache_cache_type(obj) do
+    Kreuzberg.Native.genericcache_cache_type(obj)
+  end
+
+  @doc "Method"
+  @spec batchprocessorconfig_default() :: String.t() | nil
+  def batchprocessorconfig_default do
+    Kreuzberg.Native.batchprocessorconfig_default()
+  end
+
+  @doc "Create a new batch processor with custom pool configuration."
+  @spec batchprocessor_with_config(String.t() | nil) :: reference()
+  def batchprocessor_with_config(config) do
+    Kreuzberg.Native.batchprocessor_with_config(config)
+  end
+
+  @doc "Create a batch processor with pool sizes optimized for a specific document."
+  @spec batchprocessor_with_pool_hint(map()) :: reference()
+  def batchprocessor_with_pool_hint(hint) do
+    Kreuzberg.Native.batchprocessor_with_pool_hint(hint)
+  end
+
+  @doc "Get a reference to the string buffer pool."
+  @spec batchprocessor_string_pool(map()) :: reference()
+  def batchprocessor_string_pool(obj) do
+    Kreuzberg.Native.batchprocessor_string_pool(obj)
+  end
+
+  @doc "Get a reference to the byte buffer pool."
+  @spec batchprocessor_byte_pool(map()) :: reference()
+  def batchprocessor_byte_pool(obj) do
+    Kreuzberg.Native.batchprocessor_byte_pool(obj)
+  end
+
+  @doc "Get the current configuration."
+  @spec batchprocessor_config(map()) :: String.t() | nil
+  def batchprocessor_config(obj) do
+    Kreuzberg.Native.batchprocessor_config(obj)
+  end
+
+  @doc "Get the number of pooled string buffers currently available."
+  @spec batchprocessor_string_pool_size(map()) :: non_neg_integer()
+  def batchprocessor_string_pool_size(obj) do
+    Kreuzberg.Native.batchprocessor_string_pool_size(obj)
+  end
+
+  @doc "Get the number of pooled byte buffers currently available."
+  @spec batchprocessor_byte_pool_size(map()) :: non_neg_integer()
+  def batchprocessor_byte_pool_size(obj) do
+    Kreuzberg.Native.batchprocessor_byte_pool_size(obj)
+  end
+
+  @doc "Clear all pooled objects, forcing new allocations on next acquire."
+  @spec batchprocessor_clear_pools(map()) :: {:ok, nil} | {:error, String.t()}
+  def batchprocessor_clear_pools(obj) do
+    Kreuzberg.Native.batchprocessor_clear_pools(obj)
+  end
+
+  @doc "Method"
+  @spec batchprocessor_default() :: reference()
+  def batchprocessor_default do
+    Kreuzberg.Native.batchprocessor_default()
+  end
+
+  @doc "Method"
+  @spec contentfilterconfig_default() :: String.t() | nil
+  def contentfilterconfig_default do
+    Kreuzberg.Native.contentfilterconfig_default()
+  end
+
+  @doc "Method"
+  @spec extractionconfig_default() :: String.t() | nil
+  def extractionconfig_default do
+    Kreuzberg.Native.extractionconfig_default()
+  end
+
+  @doc "Create a new `ExtractionConfig` by applying per-file overrides from a"
+  @spec extractionconfig_with_file_overrides(map(), String.t() | nil) :: String.t() | nil
+  def extractionconfig_with_file_overrides(obj, overrides) do
+    Kreuzberg.Native.extractionconfig_with_file_overrides(obj, overrides)
+  end
+
+  @doc "Normalize configuration for implicit requirements."
+  @spec extractionconfig_normalized(map()) :: String.t() | nil
+  def extractionconfig_normalized(obj) do
+    Kreuzberg.Native.extractionconfig_normalized(obj)
+  end
+
+  @doc "Validate the configuration, returning an error if any settings are invalid."
+  @spec extractionconfig_validate(map()) :: {:ok, nil} | {:error, String.t()}
+  def extractionconfig_validate(obj) do
+    Kreuzberg.Native.extractionconfig_validate(obj)
+  end
+
+  @doc "Check if image processing is needed by examining OCR and image extraction settings."
+  @spec extractionconfig_needs_image_processing(map()) :: boolean()
+  def extractionconfig_needs_image_processing(obj) do
+    Kreuzberg.Native.extractionconfig_needs_image_processing(obj)
+  end
+
+  @doc "Method"
+  @spec htmloutputconfig_default() :: String.t() | nil
+  def htmloutputconfig_default do
+    Kreuzberg.Native.htmloutputconfig_default()
+  end
+
+  @doc "Method"
+  @spec layoutdetectionconfig_default() :: String.t() | nil
+  def layoutdetectionconfig_default do
+    Kreuzberg.Native.layoutdetectionconfig_default()
+  end
+
+  @doc "Method"
+  @spec ocrqualitythresholds_default() :: String.t() | nil
+  def ocrqualitythresholds_default do
+    Kreuzberg.Native.ocrqualitythresholds_default()
+  end
+
+  @doc "Method"
+  @spec ocrconfig_default() :: String.t() | nil
+  def ocrconfig_default do
+    Kreuzberg.Native.ocrconfig_default()
+  end
+
+  @doc "Validates that the configured backend is supported."
+  @spec ocrconfig_validate(map()) :: {:ok, nil} | {:error, String.t()}
+  def ocrconfig_validate(obj) do
+    Kreuzberg.Native.ocrconfig_validate(obj)
+  end
+
+  @doc "Returns the effective quality thresholds, using configured values or defaults."
+  @spec ocrconfig_effective_thresholds(map()) :: String.t() | nil
+  def ocrconfig_effective_thresholds(obj) do
+    Kreuzberg.Native.ocrconfig_effective_thresholds(obj)
+  end
+
+  @doc "Returns the effective pipeline config."
+  @spec ocrconfig_effective_pipeline(map()) :: map() | nil
+  def ocrconfig_effective_pipeline(obj) do
+    Kreuzberg.Native.ocrconfig_effective_pipeline(obj)
+  end
+
+  @doc "Method"
+  @spec pageconfig_default() :: String.t() | nil
+  def pageconfig_default do
+    Kreuzberg.Native.pageconfig_default()
+  end
+
+  @doc "Method"
+  @spec pdfconfig_default() :: String.t() | nil
+  def pdfconfig_default do
+    Kreuzberg.Native.pdfconfig_default()
+  end
+
+  @doc "Method"
+  @spec hierarchyconfig_default() :: String.t() | nil
+  def hierarchyconfig_default do
+    Kreuzberg.Native.hierarchyconfig_default()
+  end
+
+  @doc "Pre-compute HashSets for O(1) processor name lookups."
+  @spec postprocessorconfig_build_lookup_sets(map()) :: nil
+  def postprocessorconfig_build_lookup_sets(obj) do
+    Kreuzberg.Native.postprocessorconfig_build_lookup_sets(obj)
+  end
+
+  @doc "Method"
+  @spec postprocessorconfig_default() :: String.t() | nil
+  def postprocessorconfig_default do
+    Kreuzberg.Native.postprocessorconfig_default()
+  end
+
+  @doc "Set the chunker type."
+  @spec chunkingconfig_with_chunker_type(map(), map()) :: String.t() | nil
+  def chunkingconfig_with_chunker_type(obj, chunker_type) do
+    Kreuzberg.Native.chunkingconfig_with_chunker_type(obj, chunker_type)
+  end
+
+  @doc "Set the sizing strategy."
+  @spec chunkingconfig_with_sizing(map(), map()) :: String.t() | nil
+  def chunkingconfig_with_sizing(obj, sizing) do
+    Kreuzberg.Native.chunkingconfig_with_sizing(obj, sizing)
+  end
+
+  @doc "Enable or disable prepending heading context to chunk content."
+  @spec chunkingconfig_with_prepend_heading_context(map(), boolean()) :: String.t() | nil
+  def chunkingconfig_with_prepend_heading_context(obj, prepend) do
+    Kreuzberg.Native.chunkingconfig_with_prepend_heading_context(obj, prepend)
+  end
+
+  @doc "Method"
+  @spec chunkingconfig_default() :: String.t() | nil
+  def chunkingconfig_default do
+    Kreuzberg.Native.chunkingconfig_default()
+  end
+
+  @doc "Method"
+  @spec embeddingconfig_default() :: String.t() | nil
+  def embeddingconfig_default do
+    Kreuzberg.Native.embeddingconfig_default()
+  end
+
+  @doc "Method"
+  @spec treesitterconfig_default() :: String.t() | nil
+  def treesitterconfig_default do
+    Kreuzberg.Native.treesitterconfig_default()
+  end
+
+  @doc "Method"
+  @spec treesitterprocessconfig_default() :: String.t() | nil
+  def treesitterprocessconfig_default do
+    Kreuzberg.Native.treesitterprocessconfig_default()
+  end
+
+  @doc "Method"
+  @spec filebytes_deref(map()) :: binary()
+  def filebytes_deref(obj) do
+    Kreuzberg.Native.filebytes_deref(obj)
+  end
+
+  @doc "Method"
+  @spec filebytes_as_ref(map()) :: binary()
+  def filebytes_as_ref(obj) do
+    Kreuzberg.Native.filebytes_as_ref(obj)
+  end
+
+  @doc "Method"
+  @spec serverconfig_default() :: String.t() | nil
+  def serverconfig_default do
+    Kreuzberg.Native.serverconfig_default()
+  end
+
+  @doc "Get the server listen address (host:port)."
+  @spec serverconfig_listen_addr(map()) :: String.t()
+  def serverconfig_listen_addr(obj) do
+    Kreuzberg.Native.serverconfig_listen_addr(obj)
+  end
+
+  @doc "Check if CORS allows all origins."
+  @spec serverconfig_cors_allows_all(map()) :: boolean()
+  def serverconfig_cors_allows_all(obj) do
+    Kreuzberg.Native.serverconfig_cors_allows_all(obj)
+  end
+
+  @doc "Check if a given origin is allowed by CORS configuration."
+  @spec serverconfig_is_origin_allowed(map(), String.t()) :: boolean()
+  def serverconfig_is_origin_allowed(obj, origin) do
+    Kreuzberg.Native.serverconfig_is_origin_allowed(obj, origin)
+  end
+
+  @doc "Get maximum request body size in megabytes (rounded up)."
+  @spec serverconfig_max_request_body_mb(map()) :: non_neg_integer()
+  def serverconfig_max_request_body_mb(obj) do
+    Kreuzberg.Native.serverconfig_max_request_body_mb(obj)
+  end
+
+  @doc "Get maximum multipart field size in megabytes (rounded up)."
+  @spec serverconfig_max_multipart_field_mb(map()) :: non_neg_integer()
+  def serverconfig_max_multipart_field_mb(obj) do
+    Kreuzberg.Native.serverconfig_max_multipart_field_mb(obj)
+  end
+
+  @doc "Apply environment variable overrides to the configuration."
+  @spec serverconfig_apply_env_overrides(map()) :: {:ok, nil} | {:error, String.t()}
+  def serverconfig_apply_env_overrides(obj) do
+    Kreuzberg.Native.serverconfig_apply_env_overrides(obj)
+  end
+
+  @doc "Load server configuration from a file."
+  @spec serverconfig_from_file(String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def serverconfig_from_file(path) do
+    Kreuzberg.Native.serverconfig_from_file(path)
+  end
+
+  @doc "Load server configuration from a TOML file."
+  @spec serverconfig_from_toml_file(String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def serverconfig_from_toml_file(path) do
+    Kreuzberg.Native.serverconfig_from_toml_file(path)
+  end
+
+  @doc "Load server configuration from a YAML file."
+  @spec serverconfig_from_yaml_file(String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def serverconfig_from_yaml_file(path) do
+    Kreuzberg.Native.serverconfig_from_yaml_file(path)
+  end
+
+  @doc "Load server configuration from a JSON file."
+  @spec serverconfig_from_json_file(String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def serverconfig_from_json_file(path) do
+    Kreuzberg.Native.serverconfig_from_json_file(path)
+  end
+
+  @doc "Method"
+  @spec jsonextractionconfig_default() :: String.t() | nil
+  def jsonextractionconfig_default do
+    Kreuzberg.Native.jsonextractionconfig_default()
+  end
+
+  @doc "Concatenate the text of every paragraph in every section, separated by"
+  @spec hwpdocument_extract_text(map()) :: String.t()
+  def hwpdocument_extract_text(obj) do
+    Kreuzberg.Native.hwpdocument_extract_text(obj)
+  end
+
+  @doc "Decode a ParaText record from raw bytes."
+  @spec paratext_from_record(map()) :: {:ok, map()} | {:error, String.t()}
+  def paratext_from_record(record) do
+    Kreuzberg.Native.paratext_from_record(record)
+  end
+
+  @doc "Method"
+  @spec fileheader_parse(binary()) :: {:ok, map()} | {:error, String.t()}
+  def fileheader_parse(data) do
+    Kreuzberg.Native.fileheader_parse(data)
+  end
+
+  @doc "Whether section streams are zlib/deflate-compressed."
+  @spec fileheader_is_compressed(map()) :: boolean()
+  def fileheader_is_compressed(obj) do
+    Kreuzberg.Native.fileheader_is_compressed(obj)
+  end
+
+  @doc "Whether the document is password-encrypted."
+  @spec fileheader_is_encrypted(map()) :: boolean()
+  def fileheader_is_encrypted(obj) do
+    Kreuzberg.Native.fileheader_is_encrypted(obj)
+  end
+
+  @doc "Whether the document is a distribution document (text in ViewText/)."
+  @spec fileheader_is_distribute(map()) :: boolean()
+  def fileheader_is_distribute(obj) do
+    Kreuzberg.Native.fileheader_is_distribute(obj)
+  end
+
+  @doc "Method"
+  @spec record_parse(reference()) :: {:ok, map()} | {:error, String.t()}
+  def record_parse(reader) do
+    Kreuzberg.Native.record_parse(reader)
+  end
+
+  @doc "Return a fresh `StreamReader` over this record's data bytes."
+  @spec record_data_reader(map()) :: reference()
+  def record_data_reader(obj) do
+    Kreuzberg.Native.record_data_reader(obj)
+  end
+
+  @doc "Method"
+  @spec streamreader_read_u8(map()) :: {:ok, non_neg_integer()} | {:error, String.t()}
+  def streamreader_read_u8(obj) do
+    Kreuzberg.Native.streamreader_read_u8(obj)
+  end
+
+  @doc "Method"
+  @spec streamreader_read_u16(map()) :: {:ok, non_neg_integer()} | {:error, String.t()}
+  def streamreader_read_u16(obj) do
+    Kreuzberg.Native.streamreader_read_u16(obj)
+  end
+
+  @doc "Method"
+  @spec streamreader_read_u32(map()) :: {:ok, non_neg_integer()} | {:error, String.t()}
+  def streamreader_read_u32(obj) do
+    Kreuzberg.Native.streamreader_read_u32(obj)
+  end
+
+  @doc "Method"
+  @spec streamreader_read_bytes(map(), non_neg_integer()) :: {:ok, binary()} | {:error, String.t()}
+  def streamreader_read_bytes(obj, len) do
+    Kreuzberg.Native.streamreader_read_bytes(obj, len)
+  end
+
+  @doc "Current byte position within the stream."
+  @spec streamreader_position(map()) :: non_neg_integer()
+  def streamreader_position(obj) do
+    Kreuzberg.Native.streamreader_position(obj)
+  end
+
+  @doc "Number of bytes remaining from the current position to the end."
+  @spec streamreader_remaining(map()) :: non_neg_integer()
+  def streamreader_remaining(obj) do
+    Kreuzberg.Native.streamreader_remaining(obj)
+  end
+
+  @doc "Open a CFB compound file from raw bytes."
+  @spec cfbreader_from_bytes(binary()) :: {:ok, reference()} | {:error, String.t()}
+  def cfbreader_from_bytes(bytes) do
+    Kreuzberg.Native.cfbreader_from_bytes(bytes)
+  end
+
+  @doc "Convert width to inches."
+  @spec extent_width_inches(map()) :: float()
+  def extent_width_inches(obj) do
+    Kreuzberg.Native.extent_width_inches(obj)
+  end
+
+  @doc "Convert height to inches."
+  @spec extent_height_inches(map()) :: float()
+  def extent_height_inches(obj) do
+    Kreuzberg.Native.extent_height_inches(obj)
+  end
+
+  @doc "Resolve heading level for a paragraph style using the StyleCatalog."
+  @spec document_resolve_heading_level(map(), String.t()) :: non_neg_integer() | nil
+  def document_resolve_heading_level(obj, style_id) do
+    Kreuzberg.Native.document_resolve_heading_level(obj, style_id)
+  end
+
+  @doc "Method"
+  @spec document_extract_text(map()) :: String.t()
+  def document_extract_text(obj) do
+    Kreuzberg.Native.document_extract_text(obj)
+  end
+
+  @doc "Render the document as markdown."
+  @spec document_to_markdown(map(), boolean()) :: String.t()
+  def document_to_markdown(obj, inject_placeholders) do
+    Kreuzberg.Native.document_to_markdown(obj, inject_placeholders)
+  end
+
+  @doc "Render the document as plain text (no markdown formatting)."
+  @spec document_to_plain_text(map()) :: String.t()
+  def document_to_plain_text(obj) do
+    Kreuzberg.Native.document_to_plain_text(obj)
+  end
+
+  @doc "Convert all margins from twips to points."
+  @spec pagemargins_to_points(map()) :: String.t() | nil
+  def pagemargins_to_points(obj) do
+    Kreuzberg.Native.pagemargins_to_points(obj)
+  end
+
+  @doc "Convert page width from twips to points."
+  @spec sectionproperties_page_width_points(map()) :: float() | nil
+  def sectionproperties_page_width_points(obj) do
+    Kreuzberg.Native.sectionproperties_page_width_points(obj)
+  end
+
+  @doc "Convert page height from twips to points."
+  @spec sectionproperties_page_height_points(map()) :: float() | nil
+  def sectionproperties_page_height_points(obj) do
+    Kreuzberg.Native.sectionproperties_page_height_points(obj)
+  end
+
+  @doc "Resolve a style by walking its `basedOn` inheritance chain."
+  @spec stylecatalog_resolve_style(map(), String.t()) :: String.t() | nil
+  def stylecatalog_resolve_style(obj, style_id) do
+    Kreuzberg.Native.stylecatalog_resolve_style(obj, style_id)
+  end
+
+  @doc "Method"
+  @spec pptxextractionoptions_default() :: String.t() | nil
+  def pptxextractionoptions_default do
+    Kreuzberg.Native.pptxextractionoptions_default()
+  end
+
+  @doc "Extract content from a byte array synchronously."
+  @spec syncextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def syncextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.syncextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec codeextractor_default() :: reference()
+  def codeextractor_default do
+    Kreuzberg.Native.codeextractor_default()
+  end
+
+  @doc "Method"
+  @spec codeextractor_name(map()) :: String.t()
+  def codeextractor_name(obj) do
+    Kreuzberg.Native.codeextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec codeextractor_version(map()) :: String.t()
+  def codeextractor_version(obj) do
+    Kreuzberg.Native.codeextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec codeextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def codeextractor_initialize(obj) do
+    Kreuzberg.Native.codeextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec codeextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def codeextractor_shutdown(obj) do
+    Kreuzberg.Native.codeextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec codeextractor_description(map()) :: String.t()
+  def codeextractor_description(obj) do
+    Kreuzberg.Native.codeextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec codeextractor_author(map()) :: String.t()
+  def codeextractor_author(obj) do
+    Kreuzberg.Native.codeextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec codeextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def codeextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.codeextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec codeextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def codeextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.codeextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec codeextractor_supported_mime_types(map()) :: [String.t()]
+  def codeextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.codeextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec codeextractor_priority(map()) :: integer()
+  def codeextractor_priority(obj) do
+    Kreuzberg.Native.codeextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec codeextractor_as_sync_extractor(map()) :: reference() | nil
+  def codeextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.codeextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec codeextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def codeextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.codeextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec csvextractor_default() :: reference()
+  def csvextractor_default do
+    Kreuzberg.Native.csvextractor_default()
+  end
+
+  @doc "Method"
+  @spec csvextractor_name(map()) :: String.t()
+  def csvextractor_name(obj) do
+    Kreuzberg.Native.csvextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec csvextractor_version(map()) :: String.t()
+  def csvextractor_version(obj) do
+    Kreuzberg.Native.csvextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec csvextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def csvextractor_initialize(obj) do
+    Kreuzberg.Native.csvextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec csvextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def csvextractor_shutdown(obj) do
+    Kreuzberg.Native.csvextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec csvextractor_description(map()) :: String.t()
+  def csvextractor_description(obj) do
+    Kreuzberg.Native.csvextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec csvextractor_author(map()) :: String.t()
+  def csvextractor_author(obj) do
+    Kreuzberg.Native.csvextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec csvextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def csvextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.csvextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec csvextractor_supported_mime_types(map()) :: [String.t()]
+  def csvextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.csvextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec csvextractor_priority(map()) :: integer()
+  def csvextractor_priority(obj) do
+    Kreuzberg.Native.csvextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec structuredextractor_default() :: reference()
+  def structuredextractor_default do
+    Kreuzberg.Native.structuredextractor_default()
+  end
+
+  @doc "Method"
+  @spec structuredextractor_name(map()) :: String.t()
+  def structuredextractor_name(obj) do
+    Kreuzberg.Native.structuredextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec structuredextractor_version(map()) :: String.t()
+  def structuredextractor_version(obj) do
+    Kreuzberg.Native.structuredextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec structuredextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def structuredextractor_initialize(obj) do
+    Kreuzberg.Native.structuredextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec structuredextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def structuredextractor_shutdown(obj) do
+    Kreuzberg.Native.structuredextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec structuredextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def structuredextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.structuredextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec structuredextractor_supported_mime_types(map()) :: [String.t()]
+  def structuredextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.structuredextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec structuredextractor_priority(map()) :: integer()
+  def structuredextractor_priority(obj) do
+    Kreuzberg.Native.structuredextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_default() :: reference()
+  def plaintextextractor_default do
+    Kreuzberg.Native.plaintextextractor_default()
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_name(map()) :: String.t()
+  def plaintextextractor_name(obj) do
+    Kreuzberg.Native.plaintextextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_version(map()) :: String.t()
+  def plaintextextractor_version(obj) do
+    Kreuzberg.Native.plaintextextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def plaintextextractor_initialize(obj) do
+    Kreuzberg.Native.plaintextextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def plaintextextractor_shutdown(obj) do
+    Kreuzberg.Native.plaintextextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_description(map()) :: String.t()
+  def plaintextextractor_description(obj) do
+    Kreuzberg.Native.plaintextextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_author(map()) :: String.t()
+  def plaintextextractor_author(obj) do
+    Kreuzberg.Native.plaintextextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def plaintextextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.plaintextextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_supported_mime_types(map()) :: [String.t()]
+  def plaintextextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.plaintextextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec plaintextextractor_priority(map()) :: integer()
+  def plaintextextractor_priority(obj) do
+    Kreuzberg.Native.plaintextextractor_priority(obj)
+  end
+
+  @doc "Build an `InternalDocument` from jotdown events."
+  @spec djotextractor_build_internal_document([String.t()]) :: String.t()
+  def djotextractor_build_internal_document(events) do
+    Kreuzberg.Native.djotextractor_build_internal_document(events)
+  end
+
+  @doc "Method"
+  @spec djotextractor_default() :: reference()
+  def djotextractor_default do
+    Kreuzberg.Native.djotextractor_default()
+  end
+
+  @doc "Method"
+  @spec djotextractor_name(map()) :: String.t()
+  def djotextractor_name(obj) do
+    Kreuzberg.Native.djotextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec djotextractor_version(map()) :: String.t()
+  def djotextractor_version(obj) do
+    Kreuzberg.Native.djotextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec djotextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def djotextractor_initialize(obj) do
+    Kreuzberg.Native.djotextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec djotextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def djotextractor_shutdown(obj) do
+    Kreuzberg.Native.djotextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec djotextractor_description(map()) :: String.t()
+  def djotextractor_description(obj) do
+    Kreuzberg.Native.djotextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec djotextractor_author(map()) :: String.t()
+  def djotextractor_author(obj) do
+    Kreuzberg.Native.djotextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec djotextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def djotextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.djotextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec djotextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def djotextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.djotextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec djotextractor_supported_mime_types(map()) :: [String.t()]
+  def djotextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.djotextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec djotextractor_priority(map()) :: integer()
+  def djotextractor_priority(obj) do
+    Kreuzberg.Native.djotextractor_priority(obj)
+  end
+
+  @doc "Validate and update size after appending."
+  @spec stringgrowthvalidator_check_append(map(), non_neg_integer()) :: {:ok, nil} | {:error, String.t()}
+  def stringgrowthvalidator_check_append(obj, len) do
+    Kreuzberg.Native.stringgrowthvalidator_check_append(obj, len)
+  end
+
+  @doc "Get current size."
+  @spec stringgrowthvalidator_current_size(map()) :: non_neg_integer()
+  def stringgrowthvalidator_current_size(obj) do
+    Kreuzberg.Native.stringgrowthvalidator_current_size(obj)
+  end
+
+  @doc "Validate and increment iteration count."
+  @spec iterationvalidator_check_iteration(map()) :: {:ok, nil} | {:error, String.t()}
+  def iterationvalidator_check_iteration(obj) do
+    Kreuzberg.Native.iterationvalidator_check_iteration(obj)
+  end
+
+  @doc "Get current iteration count."
+  @spec iterationvalidator_current_count(map()) :: non_neg_integer()
+  def iterationvalidator_current_count(obj) do
+    Kreuzberg.Native.iterationvalidator_current_count(obj)
+  end
+
+  @doc "Push a level (increase depth)."
+  @spec depthvalidator_push(map()) :: {:ok, nil} | {:error, String.t()}
+  def depthvalidator_push(obj) do
+    Kreuzberg.Native.depthvalidator_push(obj)
+  end
+
+  @doc "Pop a level (decrease depth)."
+  @spec depthvalidator_pop(map()) :: nil
+  def depthvalidator_pop(obj) do
+    Kreuzberg.Native.depthvalidator_pop(obj)
+  end
+
+  @doc "Get current depth."
+  @spec depthvalidator_current_depth(map()) :: non_neg_integer()
+  def depthvalidator_current_depth(obj) do
+    Kreuzberg.Native.depthvalidator_current_depth(obj)
+  end
+
+  @doc "Validate entity length."
+  @spec entityvalidator_validate(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def entityvalidator_validate(obj, content) do
+    Kreuzberg.Native.entityvalidator_validate(obj, content)
+  end
+
+  @doc "Add cells to table and validate."
+  @spec tablevalidator_add_cells(map(), non_neg_integer()) :: {:ok, nil} | {:error, String.t()}
+  def tablevalidator_add_cells(obj, count) do
+    Kreuzberg.Native.tablevalidator_add_cells(obj, count)
+  end
+
+  @doc "Get current cell count."
+  @spec tablevalidator_current_cells(map()) :: non_neg_integer()
+  def tablevalidator_current_cells(obj) do
+    Kreuzberg.Native.tablevalidator_current_cells(obj)
+  end
+
+  @doc "Method"
+  @spec imageextractor_default() :: reference()
+  def imageextractor_default do
+    Kreuzberg.Native.imageextractor_default()
+  end
+
+  @doc "Method"
+  @spec imageextractor_name(map()) :: String.t()
+  def imageextractor_name(obj) do
+    Kreuzberg.Native.imageextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec imageextractor_version(map()) :: String.t()
+  def imageextractor_version(obj) do
+    Kreuzberg.Native.imageextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec imageextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def imageextractor_initialize(obj) do
+    Kreuzberg.Native.imageextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec imageextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def imageextractor_shutdown(obj) do
+    Kreuzberg.Native.imageextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec imageextractor_description(map()) :: String.t()
+  def imageextractor_description(obj) do
+    Kreuzberg.Native.imageextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec imageextractor_author(map()) :: String.t()
+  def imageextractor_author(obj) do
+    Kreuzberg.Native.imageextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec imageextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def imageextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.imageextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec imageextractor_supported_mime_types(map()) :: [String.t()]
+  def imageextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.imageextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec imageextractor_priority(map()) :: integer()
+  def imageextractor_priority(obj) do
+    Kreuzberg.Native.imageextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_default() :: reference()
+  def zipextractor_default do
+    Kreuzberg.Native.zipextractor_default()
+  end
+
+  @doc "Method"
+  @spec zipextractor_name(map()) :: String.t()
+  def zipextractor_name(obj) do
+    Kreuzberg.Native.zipextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_version(map()) :: String.t()
+  def zipextractor_version(obj) do
+    Kreuzberg.Native.zipextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def zipextractor_initialize(obj) do
+    Kreuzberg.Native.zipextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def zipextractor_shutdown(obj) do
+    Kreuzberg.Native.zipextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_description(map()) :: String.t()
+  def zipextractor_description(obj) do
+    Kreuzberg.Native.zipextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_author(map()) :: String.t()
+  def zipextractor_author(obj) do
+    Kreuzberg.Native.zipextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def zipextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.zipextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec zipextractor_supported_mime_types(map()) :: [String.t()]
+  def zipextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.zipextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_priority(map()) :: integer()
+  def zipextractor_priority(obj) do
+    Kreuzberg.Native.zipextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_as_sync_extractor(map()) :: reference() | nil
+  def zipextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.zipextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec zipextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def zipextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.zipextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec tarextractor_default() :: reference()
+  def tarextractor_default do
+    Kreuzberg.Native.tarextractor_default()
+  end
+
+  @doc "Method"
+  @spec tarextractor_name(map()) :: String.t()
+  def tarextractor_name(obj) do
+    Kreuzberg.Native.tarextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec tarextractor_version(map()) :: String.t()
+  def tarextractor_version(obj) do
+    Kreuzberg.Native.tarextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec tarextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def tarextractor_initialize(obj) do
+    Kreuzberg.Native.tarextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec tarextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def tarextractor_shutdown(obj) do
+    Kreuzberg.Native.tarextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec tarextractor_description(map()) :: String.t()
+  def tarextractor_description(obj) do
+    Kreuzberg.Native.tarextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec tarextractor_author(map()) :: String.t()
+  def tarextractor_author(obj) do
+    Kreuzberg.Native.tarextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec tarextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def tarextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.tarextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec tarextractor_supported_mime_types(map()) :: [String.t()]
+  def tarextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.tarextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec tarextractor_priority(map()) :: integer()
+  def tarextractor_priority(obj) do
+    Kreuzberg.Native.tarextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec tarextractor_as_sync_extractor(map()) :: reference() | nil
+  def tarextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.tarextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec tarextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def tarextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.tarextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_default() :: reference()
+  def sevenzextractor_default do
+    Kreuzberg.Native.sevenzextractor_default()
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_name(map()) :: String.t()
+  def sevenzextractor_name(obj) do
+    Kreuzberg.Native.sevenzextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_version(map()) :: String.t()
+  def sevenzextractor_version(obj) do
+    Kreuzberg.Native.sevenzextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def sevenzextractor_initialize(obj) do
+    Kreuzberg.Native.sevenzextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def sevenzextractor_shutdown(obj) do
+    Kreuzberg.Native.sevenzextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_description(map()) :: String.t()
+  def sevenzextractor_description(obj) do
+    Kreuzberg.Native.sevenzextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_author(map()) :: String.t()
+  def sevenzextractor_author(obj) do
+    Kreuzberg.Native.sevenzextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def sevenzextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.sevenzextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_supported_mime_types(map()) :: [String.t()]
+  def sevenzextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.sevenzextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_priority(map()) :: integer()
+  def sevenzextractor_priority(obj) do
+    Kreuzberg.Native.sevenzextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_as_sync_extractor(map()) :: reference() | nil
+  def sevenzextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.sevenzextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec sevenzextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def sevenzextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.sevenzextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_default() :: reference()
+  def gzipextractor_default do
+    Kreuzberg.Native.gzipextractor_default()
+  end
+
+  @doc "Method"
+  @spec gzipextractor_name(map()) :: String.t()
+  def gzipextractor_name(obj) do
+    Kreuzberg.Native.gzipextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_version(map()) :: String.t()
+  def gzipextractor_version(obj) do
+    Kreuzberg.Native.gzipextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def gzipextractor_initialize(obj) do
+    Kreuzberg.Native.gzipextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def gzipextractor_shutdown(obj) do
+    Kreuzberg.Native.gzipextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_description(map()) :: String.t()
+  def gzipextractor_description(obj) do
+    Kreuzberg.Native.gzipextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_author(map()) :: String.t()
+  def gzipextractor_author(obj) do
+    Kreuzberg.Native.gzipextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def gzipextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.gzipextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_supported_mime_types(map()) :: [String.t()]
+  def gzipextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.gzipextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_priority(map()) :: integer()
+  def gzipextractor_priority(obj) do
+    Kreuzberg.Native.gzipextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_as_sync_extractor(map()) :: reference() | nil
+  def gzipextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.gzipextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec gzipextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def gzipextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.gzipextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec emailextractor_default() :: reference()
+  def emailextractor_default do
+    Kreuzberg.Native.emailextractor_default()
+  end
+
+  @doc "Method"
+  @spec emailextractor_name(map()) :: String.t()
+  def emailextractor_name(obj) do
+    Kreuzberg.Native.emailextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec emailextractor_version(map()) :: String.t()
+  def emailextractor_version(obj) do
+    Kreuzberg.Native.emailextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec emailextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def emailextractor_initialize(obj) do
+    Kreuzberg.Native.emailextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec emailextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def emailextractor_shutdown(obj) do
+    Kreuzberg.Native.emailextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec emailextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def emailextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.emailextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec emailextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def emailextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.emailextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec emailextractor_supported_mime_types(map()) :: [String.t()]
+  def emailextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.emailextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec emailextractor_priority(map()) :: integer()
+  def emailextractor_priority(obj) do
+    Kreuzberg.Native.emailextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec emailextractor_as_sync_extractor(map()) :: reference() | nil
+  def emailextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.emailextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec pstextractor_default() :: reference()
+  def pstextractor_default do
+    Kreuzberg.Native.pstextractor_default()
+  end
+
+  @doc "Method"
+  @spec pstextractor_name(map()) :: String.t()
+  def pstextractor_name(obj) do
+    Kreuzberg.Native.pstextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec pstextractor_version(map()) :: String.t()
+  def pstextractor_version(obj) do
+    Kreuzberg.Native.pstextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec pstextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def pstextractor_initialize(obj) do
+    Kreuzberg.Native.pstextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec pstextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def pstextractor_shutdown(obj) do
+    Kreuzberg.Native.pstextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec pstextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def pstextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.pstextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec pstextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def pstextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.pstextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec pstextractor_supported_mime_types(map()) :: [String.t()]
+  def pstextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.pstextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec pstextractor_priority(map()) :: integer()
+  def pstextractor_priority(obj) do
+    Kreuzberg.Native.pstextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec pstextractor_as_sync_extractor(map()) :: reference() | nil
+  def pstextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.pstextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec excelextractor_default() :: reference()
+  def excelextractor_default do
+    Kreuzberg.Native.excelextractor_default()
+  end
+
+  @doc "Method"
+  @spec excelextractor_name(map()) :: String.t()
+  def excelextractor_name(obj) do
+    Kreuzberg.Native.excelextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec excelextractor_version(map()) :: String.t()
+  def excelextractor_version(obj) do
+    Kreuzberg.Native.excelextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec excelextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def excelextractor_initialize(obj) do
+    Kreuzberg.Native.excelextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec excelextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def excelextractor_shutdown(obj) do
+    Kreuzberg.Native.excelextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec excelextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def excelextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.excelextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec excelextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def excelextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.excelextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec excelextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def excelextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.excelextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec excelextractor_supported_mime_types(map()) :: [String.t()]
+  def excelextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.excelextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec excelextractor_priority(map()) :: integer()
+  def excelextractor_priority(obj) do
+    Kreuzberg.Native.excelextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec excelextractor_as_sync_extractor(map()) :: reference() | nil
+  def excelextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.excelextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec hwpextractor_default() :: reference()
+  def hwpextractor_default do
+    Kreuzberg.Native.hwpextractor_default()
+  end
+
+  @doc "Method"
+  @spec hwpextractor_name(map()) :: String.t()
+  def hwpextractor_name(obj) do
+    Kreuzberg.Native.hwpextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec hwpextractor_version(map()) :: String.t()
+  def hwpextractor_version(obj) do
+    Kreuzberg.Native.hwpextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec hwpextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def hwpextractor_initialize(obj) do
+    Kreuzberg.Native.hwpextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec hwpextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def hwpextractor_shutdown(obj) do
+    Kreuzberg.Native.hwpextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec hwpextractor_description(map()) :: String.t()
+  def hwpextractor_description(obj) do
+    Kreuzberg.Native.hwpextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec hwpextractor_author(map()) :: String.t()
+  def hwpextractor_author(obj) do
+    Kreuzberg.Native.hwpextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec hwpextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def hwpextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.hwpextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec hwpextractor_supported_mime_types(map()) :: [String.t()]
+  def hwpextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.hwpextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec hwpextractor_priority(map()) :: integer()
+  def hwpextractor_priority(obj) do
+    Kreuzberg.Native.hwpextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_default() :: reference()
+  def keynoteextractor_default do
+    Kreuzberg.Native.keynoteextractor_default()
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_name(map()) :: String.t()
+  def keynoteextractor_name(obj) do
+    Kreuzberg.Native.keynoteextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_version(map()) :: String.t()
+  def keynoteextractor_version(obj) do
+    Kreuzberg.Native.keynoteextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def keynoteextractor_initialize(obj) do
+    Kreuzberg.Native.keynoteextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def keynoteextractor_shutdown(obj) do
+    Kreuzberg.Native.keynoteextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_description(map()) :: String.t()
+  def keynoteextractor_description(obj) do
+    Kreuzberg.Native.keynoteextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_author(map()) :: String.t()
+  def keynoteextractor_author(obj) do
+    Kreuzberg.Native.keynoteextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def keynoteextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.keynoteextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_supported_mime_types(map()) :: [String.t()]
+  def keynoteextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.keynoteextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec keynoteextractor_priority(map()) :: integer()
+  def keynoteextractor_priority(obj) do
+    Kreuzberg.Native.keynoteextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec numbersextractor_default() :: reference()
+  def numbersextractor_default do
+    Kreuzberg.Native.numbersextractor_default()
+  end
+
+  @doc "Method"
+  @spec numbersextractor_name(map()) :: String.t()
+  def numbersextractor_name(obj) do
+    Kreuzberg.Native.numbersextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec numbersextractor_version(map()) :: String.t()
+  def numbersextractor_version(obj) do
+    Kreuzberg.Native.numbersextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec numbersextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def numbersextractor_initialize(obj) do
+    Kreuzberg.Native.numbersextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec numbersextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def numbersextractor_shutdown(obj) do
+    Kreuzberg.Native.numbersextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec numbersextractor_description(map()) :: String.t()
+  def numbersextractor_description(obj) do
+    Kreuzberg.Native.numbersextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec numbersextractor_author(map()) :: String.t()
+  def numbersextractor_author(obj) do
+    Kreuzberg.Native.numbersextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec numbersextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def numbersextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.numbersextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec numbersextractor_supported_mime_types(map()) :: [String.t()]
+  def numbersextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.numbersextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec numbersextractor_priority(map()) :: integer()
+  def numbersextractor_priority(obj) do
+    Kreuzberg.Native.numbersextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec pagesextractor_default() :: reference()
+  def pagesextractor_default do
+    Kreuzberg.Native.pagesextractor_default()
+  end
+
+  @doc "Method"
+  @spec pagesextractor_name(map()) :: String.t()
+  def pagesextractor_name(obj) do
+    Kreuzberg.Native.pagesextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec pagesextractor_version(map()) :: String.t()
+  def pagesextractor_version(obj) do
+    Kreuzberg.Native.pagesextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec pagesextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def pagesextractor_initialize(obj) do
+    Kreuzberg.Native.pagesextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec pagesextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def pagesextractor_shutdown(obj) do
+    Kreuzberg.Native.pagesextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec pagesextractor_description(map()) :: String.t()
+  def pagesextractor_description(obj) do
+    Kreuzberg.Native.pagesextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec pagesextractor_author(map()) :: String.t()
+  def pagesextractor_author(obj) do
+    Kreuzberg.Native.pagesextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec pagesextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def pagesextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.pagesextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec pagesextractor_supported_mime_types(map()) :: [String.t()]
+  def pagesextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.pagesextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec pagesextractor_priority(map()) :: integer()
+  def pagesextractor_priority(obj) do
+    Kreuzberg.Native.pagesextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec htmlextractor_default() :: reference()
+  def htmlextractor_default do
+    Kreuzberg.Native.htmlextractor_default()
+  end
+
+  @doc "Method"
+  @spec htmlextractor_name(map()) :: String.t()
+  def htmlextractor_name(obj) do
+    Kreuzberg.Native.htmlextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec htmlextractor_version(map()) :: String.t()
+  def htmlextractor_version(obj) do
+    Kreuzberg.Native.htmlextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec htmlextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def htmlextractor_initialize(obj) do
+    Kreuzberg.Native.htmlextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec htmlextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def htmlextractor_shutdown(obj) do
+    Kreuzberg.Native.htmlextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec htmlextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def htmlextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.htmlextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec htmlextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def htmlextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.htmlextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec htmlextractor_supported_mime_types(map()) :: [String.t()]
+  def htmlextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.htmlextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec htmlextractor_priority(map()) :: integer()
+  def htmlextractor_priority(obj) do
+    Kreuzberg.Native.htmlextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec htmlextractor_as_sync_extractor(map()) :: reference() | nil
+  def htmlextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.htmlextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_default() :: reference()
+  def bibtexextractor_default do
+    Kreuzberg.Native.bibtexextractor_default()
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_name(map()) :: String.t()
+  def bibtexextractor_name(obj) do
+    Kreuzberg.Native.bibtexextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_version(map()) :: String.t()
+  def bibtexextractor_version(obj) do
+    Kreuzberg.Native.bibtexextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def bibtexextractor_initialize(obj) do
+    Kreuzberg.Native.bibtexextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def bibtexextractor_shutdown(obj) do
+    Kreuzberg.Native.bibtexextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_description(map()) :: String.t()
+  def bibtexextractor_description(obj) do
+    Kreuzberg.Native.bibtexextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_author(map()) :: String.t()
+  def bibtexextractor_author(obj) do
+    Kreuzberg.Native.bibtexextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def bibtexextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.bibtexextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_supported_mime_types(map()) :: [String.t()]
+  def bibtexextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.bibtexextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec bibtexextractor_priority(map()) :: integer()
+  def bibtexextractor_priority(obj) do
+    Kreuzberg.Native.bibtexextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec citationextractor_default() :: reference()
+  def citationextractor_default do
+    Kreuzberg.Native.citationextractor_default()
+  end
+
+  @doc "Method"
+  @spec citationextractor_name(map()) :: String.t()
+  def citationextractor_name(obj) do
+    Kreuzberg.Native.citationextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec citationextractor_version(map()) :: String.t()
+  def citationextractor_version(obj) do
+    Kreuzberg.Native.citationextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec citationextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def citationextractor_initialize(obj) do
+    Kreuzberg.Native.citationextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec citationextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def citationextractor_shutdown(obj) do
+    Kreuzberg.Native.citationextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec citationextractor_description(map()) :: String.t()
+  def citationextractor_description(obj) do
+    Kreuzberg.Native.citationextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec citationextractor_author(map()) :: String.t()
+  def citationextractor_author(obj) do
+    Kreuzberg.Native.citationextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec citationextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def citationextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.citationextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec citationextractor_supported_mime_types(map()) :: [String.t()]
+  def citationextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.citationextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec citationextractor_priority(map()) :: integer()
+  def citationextractor_priority(obj) do
+    Kreuzberg.Native.citationextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec docextractor_default() :: reference()
+  def docextractor_default do
+    Kreuzberg.Native.docextractor_default()
+  end
+
+  @doc "Method"
+  @spec docextractor_name(map()) :: String.t()
+  def docextractor_name(obj) do
+    Kreuzberg.Native.docextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec docextractor_version(map()) :: String.t()
+  def docextractor_version(obj) do
+    Kreuzberg.Native.docextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec docextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def docextractor_initialize(obj) do
+    Kreuzberg.Native.docextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec docextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def docextractor_shutdown(obj) do
+    Kreuzberg.Native.docextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec docextractor_description(map()) :: String.t()
+  def docextractor_description(obj) do
+    Kreuzberg.Native.docextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec docextractor_author(map()) :: String.t()
+  def docextractor_author(obj) do
+    Kreuzberg.Native.docextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec docextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def docextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.docextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec docextractor_supported_mime_types(map()) :: [String.t()]
+  def docextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.docextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec docextractor_priority(map()) :: integer()
+  def docextractor_priority(obj) do
+    Kreuzberg.Native.docextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec dbfextractor_default() :: reference()
+  def dbfextractor_default do
+    Kreuzberg.Native.dbfextractor_default()
+  end
+
+  @doc "Method"
+  @spec dbfextractor_name(map()) :: String.t()
+  def dbfextractor_name(obj) do
+    Kreuzberg.Native.dbfextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec dbfextractor_version(map()) :: String.t()
+  def dbfextractor_version(obj) do
+    Kreuzberg.Native.dbfextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec dbfextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def dbfextractor_initialize(obj) do
+    Kreuzberg.Native.dbfextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec dbfextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def dbfextractor_shutdown(obj) do
+    Kreuzberg.Native.dbfextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec dbfextractor_description(map()) :: String.t()
+  def dbfextractor_description(obj) do
+    Kreuzberg.Native.dbfextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec dbfextractor_author(map()) :: String.t()
+  def dbfextractor_author(obj) do
+    Kreuzberg.Native.dbfextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec dbfextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def dbfextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.dbfextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec dbfextractor_supported_mime_types(map()) :: [String.t()]
+  def dbfextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.dbfextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec dbfextractor_priority(map()) :: integer()
+  def dbfextractor_priority(obj) do
+    Kreuzberg.Native.dbfextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec docxextractor_default() :: reference()
+  def docxextractor_default do
+    Kreuzberg.Native.docxextractor_default()
+  end
+
+  @doc "Method"
+  @spec docxextractor_name(map()) :: String.t()
+  def docxextractor_name(obj) do
+    Kreuzberg.Native.docxextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec docxextractor_version(map()) :: String.t()
+  def docxextractor_version(obj) do
+    Kreuzberg.Native.docxextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec docxextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def docxextractor_initialize(obj) do
+    Kreuzberg.Native.docxextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec docxextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def docxextractor_shutdown(obj) do
+    Kreuzberg.Native.docxextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec docxextractor_description(map()) :: String.t()
+  def docxextractor_description(obj) do
+    Kreuzberg.Native.docxextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec docxextractor_author(map()) :: String.t()
+  def docxextractor_author(obj) do
+    Kreuzberg.Native.docxextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec docxextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def docxextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.docxextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec docxextractor_supported_mime_types(map()) :: [String.t()]
+  def docxextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.docxextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec docxextractor_priority(map()) :: integer()
+  def docxextractor_priority(obj) do
+    Kreuzberg.Native.docxextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec epubextractor_default() :: reference()
+  def epubextractor_default do
+    Kreuzberg.Native.epubextractor_default()
+  end
+
+  @doc "Method"
+  @spec epubextractor_name(map()) :: String.t()
+  def epubextractor_name(obj) do
+    Kreuzberg.Native.epubextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec epubextractor_version(map()) :: String.t()
+  def epubextractor_version(obj) do
+    Kreuzberg.Native.epubextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec epubextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def epubextractor_initialize(obj) do
+    Kreuzberg.Native.epubextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec epubextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def epubextractor_shutdown(obj) do
+    Kreuzberg.Native.epubextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec epubextractor_description(map()) :: String.t()
+  def epubextractor_description(obj) do
+    Kreuzberg.Native.epubextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec epubextractor_author(map()) :: String.t()
+  def epubextractor_author(obj) do
+    Kreuzberg.Native.epubextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec epubextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def epubextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.epubextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec epubextractor_supported_mime_types(map()) :: [String.t()]
+  def epubextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.epubextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec epubextractor_priority(map()) :: integer()
+  def epubextractor_priority(obj) do
+    Kreuzberg.Native.epubextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_default() :: reference()
+  def fictionbookextractor_default do
+    Kreuzberg.Native.fictionbookextractor_default()
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_name(map()) :: String.t()
+  def fictionbookextractor_name(obj) do
+    Kreuzberg.Native.fictionbookextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_version(map()) :: String.t()
+  def fictionbookextractor_version(obj) do
+    Kreuzberg.Native.fictionbookextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def fictionbookextractor_initialize(obj) do
+    Kreuzberg.Native.fictionbookextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def fictionbookextractor_shutdown(obj) do
+    Kreuzberg.Native.fictionbookextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_description(map()) :: String.t()
+  def fictionbookextractor_description(obj) do
+    Kreuzberg.Native.fictionbookextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_author(map()) :: String.t()
+  def fictionbookextractor_author(obj) do
+    Kreuzberg.Native.fictionbookextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def fictionbookextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.fictionbookextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_supported_mime_types(map()) :: [String.t()]
+  def fictionbookextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.fictionbookextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec fictionbookextractor_priority(map()) :: integer()
+  def fictionbookextractor_priority(obj) do
+    Kreuzberg.Native.fictionbookextractor_priority(obj)
+  end
+
+  @doc "Build an `InternalDocument` from pulldown-cmark events and optional YAML frontmatter."
+  @spec markdownextractor_build_internal_document([String.t()], String.t() | nil) :: String.t()
+  def markdownextractor_build_internal_document(events, yaml) do
+    Kreuzberg.Native.markdownextractor_build_internal_document(events, yaml)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_default() :: reference()
+  def markdownextractor_default do
+    Kreuzberg.Native.markdownextractor_default()
+  end
+
+  @doc "Method"
+  @spec markdownextractor_name(map()) :: String.t()
+  def markdownextractor_name(obj) do
+    Kreuzberg.Native.markdownextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_version(map()) :: String.t()
+  def markdownextractor_version(obj) do
+    Kreuzberg.Native.markdownextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def markdownextractor_initialize(obj) do
+    Kreuzberg.Native.markdownextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def markdownextractor_shutdown(obj) do
+    Kreuzberg.Native.markdownextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_description(map()) :: String.t()
+  def markdownextractor_description(obj) do
+    Kreuzberg.Native.markdownextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_author(map()) :: String.t()
+  def markdownextractor_author(obj) do
+    Kreuzberg.Native.markdownextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def markdownextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.markdownextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def markdownextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.markdownextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_supported_mime_types(map()) :: [String.t()]
+  def markdownextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.markdownextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec markdownextractor_priority(map()) :: integer()
+  def markdownextractor_priority(obj) do
+    Kreuzberg.Native.markdownextractor_priority(obj)
+  end
+
+  @doc "Build an `InternalDocument` from pulldown-cmark events after JSX stripping."
+  @spec mdxextractor_build_internal_document([String.t()], String.t() | nil, [String.t()]) :: String.t()
+  def mdxextractor_build_internal_document(events, yaml, raw_jsx_blocks) do
+    Kreuzberg.Native.mdxextractor_build_internal_document(events, yaml, raw_jsx_blocks)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_default() :: reference()
+  def mdxextractor_default do
+    Kreuzberg.Native.mdxextractor_default()
+  end
+
+  @doc "Method"
+  @spec mdxextractor_name(map()) :: String.t()
+  def mdxextractor_name(obj) do
+    Kreuzberg.Native.mdxextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_version(map()) :: String.t()
+  def mdxextractor_version(obj) do
+    Kreuzberg.Native.mdxextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def mdxextractor_initialize(obj) do
+    Kreuzberg.Native.mdxextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def mdxextractor_shutdown(obj) do
+    Kreuzberg.Native.mdxextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_description(map()) :: String.t()
+  def mdxextractor_description(obj) do
+    Kreuzberg.Native.mdxextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_author(map()) :: String.t()
+  def mdxextractor_author(obj) do
+    Kreuzberg.Native.mdxextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def mdxextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.mdxextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def mdxextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.mdxextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_supported_mime_types(map()) :: [String.t()]
+  def mdxextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.mdxextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec mdxextractor_priority(map()) :: integer()
+  def mdxextractor_priority(obj) do
+    Kreuzberg.Native.mdxextractor_priority(obj)
+  end
+
+  @doc "Build an `InternalDocument` from RST content."
+  @spec rstextractor_build_internal_document(String.t(), boolean()) :: String.t()
+  def rstextractor_build_internal_document(content, inject_placeholders) do
+    Kreuzberg.Native.rstextractor_build_internal_document(content, inject_placeholders)
+  end
+
+  @doc "Method"
+  @spec rstextractor_default() :: reference()
+  def rstextractor_default do
+    Kreuzberg.Native.rstextractor_default()
+  end
+
+  @doc "Method"
+  @spec rstextractor_name(map()) :: String.t()
+  def rstextractor_name(obj) do
+    Kreuzberg.Native.rstextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec rstextractor_version(map()) :: String.t()
+  def rstextractor_version(obj) do
+    Kreuzberg.Native.rstextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec rstextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def rstextractor_initialize(obj) do
+    Kreuzberg.Native.rstextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec rstextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def rstextractor_shutdown(obj) do
+    Kreuzberg.Native.rstextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec rstextractor_description(map()) :: String.t()
+  def rstextractor_description(obj) do
+    Kreuzberg.Native.rstextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec rstextractor_author(map()) :: String.t()
+  def rstextractor_author(obj) do
+    Kreuzberg.Native.rstextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec rstextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def rstextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.rstextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec rstextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def rstextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.rstextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec rstextractor_supported_mime_types(map()) :: [String.t()]
+  def rstextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.rstextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec rstextractor_priority(map()) :: integer()
+  def rstextractor_priority(obj) do
+    Kreuzberg.Native.rstextractor_priority(obj)
+  end
+
+  @doc "Build an `InternalDocument` from LaTeX source."
+  @spec latexextractor_build_internal_document(String.t(), boolean()) :: String.t()
+  def latexextractor_build_internal_document(source, inject_placeholders) do
+    Kreuzberg.Native.latexextractor_build_internal_document(source, inject_placeholders)
+  end
+
+  @doc "Method"
+  @spec latexextractor_default() :: reference()
+  def latexextractor_default do
+    Kreuzberg.Native.latexextractor_default()
+  end
+
+  @doc "Method"
+  @spec latexextractor_name(map()) :: String.t()
+  def latexextractor_name(obj) do
+    Kreuzberg.Native.latexextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec latexextractor_version(map()) :: String.t()
+  def latexextractor_version(obj) do
+    Kreuzberg.Native.latexextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec latexextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def latexextractor_initialize(obj) do
+    Kreuzberg.Native.latexextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec latexextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def latexextractor_shutdown(obj) do
+    Kreuzberg.Native.latexextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec latexextractor_description(map()) :: String.t()
+  def latexextractor_description(obj) do
+    Kreuzberg.Native.latexextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec latexextractor_author(map()) :: String.t()
+  def latexextractor_author(obj) do
+    Kreuzberg.Native.latexextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec latexextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def latexextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.latexextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec latexextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def latexextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.latexextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec latexextractor_supported_mime_types(map()) :: [String.t()]
+  def latexextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.latexextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec latexextractor_priority(map()) :: integer()
+  def latexextractor_priority(obj) do
+    Kreuzberg.Native.latexextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_default() :: reference()
+  def jupyterextractor_default do
+    Kreuzberg.Native.jupyterextractor_default()
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_name(map()) :: String.t()
+  def jupyterextractor_name(obj) do
+    Kreuzberg.Native.jupyterextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_version(map()) :: String.t()
+  def jupyterextractor_version(obj) do
+    Kreuzberg.Native.jupyterextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def jupyterextractor_initialize(obj) do
+    Kreuzberg.Native.jupyterextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def jupyterextractor_shutdown(obj) do
+    Kreuzberg.Native.jupyterextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_description(map()) :: String.t()
+  def jupyterextractor_description(obj) do
+    Kreuzberg.Native.jupyterextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_author(map()) :: String.t()
+  def jupyterextractor_author(obj) do
+    Kreuzberg.Native.jupyterextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def jupyterextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.jupyterextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_supported_mime_types(map()) :: [String.t()]
+  def jupyterextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.jupyterextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec jupyterextractor_priority(map()) :: integer()
+  def jupyterextractor_priority(obj) do
+    Kreuzberg.Native.jupyterextractor_priority(obj)
+  end
+
+  @doc "Build an `InternalDocument` from Org Mode source text."
+  @spec orgmodeextractor_build_internal_document(String.t()) :: String.t()
+  def orgmodeextractor_build_internal_document(org_text) do
+    Kreuzberg.Native.orgmodeextractor_build_internal_document(org_text)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_default() :: reference()
+  def orgmodeextractor_default do
+    Kreuzberg.Native.orgmodeextractor_default()
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_name(map()) :: String.t()
+  def orgmodeextractor_name(obj) do
+    Kreuzberg.Native.orgmodeextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_version(map()) :: String.t()
+  def orgmodeextractor_version(obj) do
+    Kreuzberg.Native.orgmodeextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def orgmodeextractor_initialize(obj) do
+    Kreuzberg.Native.orgmodeextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def orgmodeextractor_shutdown(obj) do
+    Kreuzberg.Native.orgmodeextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_description(map()) :: String.t()
+  def orgmodeextractor_description(obj) do
+    Kreuzberg.Native.orgmodeextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_author(map()) :: String.t()
+  def orgmodeextractor_author(obj) do
+    Kreuzberg.Native.orgmodeextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def orgmodeextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.orgmodeextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def orgmodeextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.orgmodeextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_supported_mime_types(map()) :: [String.t()]
+  def orgmodeextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.orgmodeextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec orgmodeextractor_priority(map()) :: integer()
+  def orgmodeextractor_priority(obj) do
+    Kreuzberg.Native.orgmodeextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec odtextractor_default() :: reference()
+  def odtextractor_default do
+    Kreuzberg.Native.odtextractor_default()
+  end
+
+  @doc "Method"
+  @spec odtextractor_name(map()) :: String.t()
+  def odtextractor_name(obj) do
+    Kreuzberg.Native.odtextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec odtextractor_version(map()) :: String.t()
+  def odtextractor_version(obj) do
+    Kreuzberg.Native.odtextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec odtextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def odtextractor_initialize(obj) do
+    Kreuzberg.Native.odtextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec odtextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def odtextractor_shutdown(obj) do
+    Kreuzberg.Native.odtextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec odtextractor_description(map()) :: String.t()
+  def odtextractor_description(obj) do
+    Kreuzberg.Native.odtextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec odtextractor_author(map()) :: String.t()
+  def odtextractor_author(obj) do
+    Kreuzberg.Native.odtextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec odtextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def odtextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.odtextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec odtextractor_supported_mime_types(map()) :: [String.t()]
+  def odtextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.odtextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec odtextractor_priority(map()) :: integer()
+  def odtextractor_priority(obj) do
+    Kreuzberg.Native.odtextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec opmlextractor_default() :: reference()
+  def opmlextractor_default do
+    Kreuzberg.Native.opmlextractor_default()
+  end
+
+  @doc "Method"
+  @spec opmlextractor_name(map()) :: String.t()
+  def opmlextractor_name(obj) do
+    Kreuzberg.Native.opmlextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec opmlextractor_version(map()) :: String.t()
+  def opmlextractor_version(obj) do
+    Kreuzberg.Native.opmlextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec opmlextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def opmlextractor_initialize(obj) do
+    Kreuzberg.Native.opmlextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec opmlextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def opmlextractor_shutdown(obj) do
+    Kreuzberg.Native.opmlextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec opmlextractor_description(map()) :: String.t()
+  def opmlextractor_description(obj) do
+    Kreuzberg.Native.opmlextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec opmlextractor_author(map()) :: String.t()
+  def opmlextractor_author(obj) do
+    Kreuzberg.Native.opmlextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec opmlextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def opmlextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.opmlextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec opmlextractor_supported_mime_types(map()) :: [String.t()]
+  def opmlextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.opmlextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec opmlextractor_priority(map()) :: integer()
+  def opmlextractor_priority(obj) do
+    Kreuzberg.Native.opmlextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec typstextractor_default() :: reference()
+  def typstextractor_default do
+    Kreuzberg.Native.typstextractor_default()
+  end
+
+  @doc "Method"
+  @spec typstextractor_name(map()) :: String.t()
+  def typstextractor_name(obj) do
+    Kreuzberg.Native.typstextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec typstextractor_version(map()) :: String.t()
+  def typstextractor_version(obj) do
+    Kreuzberg.Native.typstextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec typstextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def typstextractor_initialize(obj) do
+    Kreuzberg.Native.typstextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec typstextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def typstextractor_shutdown(obj) do
+    Kreuzberg.Native.typstextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec typstextractor_description(map()) :: String.t()
+  def typstextractor_description(obj) do
+    Kreuzberg.Native.typstextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec typstextractor_author(map()) :: String.t()
+  def typstextractor_author(obj) do
+    Kreuzberg.Native.typstextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec typstextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def typstextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.typstextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec typstextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def typstextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.typstextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec typstextractor_supported_mime_types(map()) :: [String.t()]
+  def typstextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.typstextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec typstextractor_priority(map()) :: integer()
+  def typstextractor_priority(obj) do
+    Kreuzberg.Native.typstextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec jatsextractor_default() :: reference()
+  def jatsextractor_default do
+    Kreuzberg.Native.jatsextractor_default()
+  end
+
+  @doc "Method"
+  @spec jatsextractor_name(map()) :: String.t()
+  def jatsextractor_name(obj) do
+    Kreuzberg.Native.jatsextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec jatsextractor_version(map()) :: String.t()
+  def jatsextractor_version(obj) do
+    Kreuzberg.Native.jatsextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec jatsextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def jatsextractor_initialize(obj) do
+    Kreuzberg.Native.jatsextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec jatsextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def jatsextractor_shutdown(obj) do
+    Kreuzberg.Native.jatsextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec jatsextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def jatsextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.jatsextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec jatsextractor_supported_mime_types(map()) :: [String.t()]
+  def jatsextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.jatsextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec jatsextractor_priority(map()) :: integer()
+  def jatsextractor_priority(obj) do
+    Kreuzberg.Native.jatsextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec nativetextstats_compute(String.t(), String.t() | nil) :: map()
+  def nativetextstats_compute(text, thresholds) do
+    Kreuzberg.Native.nativetextstats_compute(text, thresholds)
+  end
+
+  @doc "Convenience method using default thresholds."
+  @spec nativetextstats_from(String.t()) :: map()
+  def nativetextstats_from(text) do
+    Kreuzberg.Native.nativetextstats_from(text)
+  end
+
+  @doc "Method"
+  @spec pdfextractor_default() :: reference()
+  def pdfextractor_default do
+    Kreuzberg.Native.pdfextractor_default()
+  end
+
+  @doc "Method"
+  @spec pdfextractor_name(map()) :: String.t()
+  def pdfextractor_name(obj) do
+    Kreuzberg.Native.pdfextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec pdfextractor_version(map()) :: String.t()
+  def pdfextractor_version(obj) do
+    Kreuzberg.Native.pdfextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec pdfextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def pdfextractor_initialize(obj) do
+    Kreuzberg.Native.pdfextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec pdfextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def pdfextractor_shutdown(obj) do
+    Kreuzberg.Native.pdfextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec pdfextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def pdfextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.pdfextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec pdfextractor_supported_mime_types(map()) :: [String.t()]
+  def pdfextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.pdfextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec pptextractor_default() :: reference()
+  def pptextractor_default do
+    Kreuzberg.Native.pptextractor_default()
+  end
+
+  @doc "Method"
+  @spec pptextractor_name(map()) :: String.t()
+  def pptextractor_name(obj) do
+    Kreuzberg.Native.pptextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec pptextractor_version(map()) :: String.t()
+  def pptextractor_version(obj) do
+    Kreuzberg.Native.pptextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec pptextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def pptextractor_initialize(obj) do
+    Kreuzberg.Native.pptextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec pptextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def pptextractor_shutdown(obj) do
+    Kreuzberg.Native.pptextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec pptextractor_description(map()) :: String.t()
+  def pptextractor_description(obj) do
+    Kreuzberg.Native.pptextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec pptextractor_author(map()) :: String.t()
+  def pptextractor_author(obj) do
+    Kreuzberg.Native.pptextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec pptextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def pptextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.pptextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec pptextractor_supported_mime_types(map()) :: [String.t()]
+  def pptextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.pptextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec pptextractor_priority(map()) :: integer()
+  def pptextractor_priority(obj) do
+    Kreuzberg.Native.pptextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec pptxextractor_default() :: reference()
+  def pptxextractor_default do
+    Kreuzberg.Native.pptxextractor_default()
+  end
+
+  @doc "Method"
+  @spec pptxextractor_name(map()) :: String.t()
+  def pptxextractor_name(obj) do
+    Kreuzberg.Native.pptxextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec pptxextractor_version(map()) :: String.t()
+  def pptxextractor_version(obj) do
+    Kreuzberg.Native.pptxextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec pptxextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def pptxextractor_initialize(obj) do
+    Kreuzberg.Native.pptxextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec pptxextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def pptxextractor_shutdown(obj) do
+    Kreuzberg.Native.pptxextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec pptxextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def pptxextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.pptxextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec pptxextractor_extract_file_async(map(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def pptxextractor_extract_file_async(obj, path, mime_type, config) do
+    Kreuzberg.Native.pptxextractor_extract_file_async(obj, path, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec pptxextractor_supported_mime_types(map()) :: [String.t()]
+  def pptxextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.pptxextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec pptxextractor_priority(map()) :: integer()
+  def pptxextractor_priority(obj) do
+    Kreuzberg.Native.pptxextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec rtfextractor_default() :: reference()
+  def rtfextractor_default do
+    Kreuzberg.Native.rtfextractor_default()
+  end
+
+  @doc "Method"
+  @spec rtfextractor_name(map()) :: String.t()
+  def rtfextractor_name(obj) do
+    Kreuzberg.Native.rtfextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec rtfextractor_version(map()) :: String.t()
+  def rtfextractor_version(obj) do
+    Kreuzberg.Native.rtfextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec rtfextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def rtfextractor_initialize(obj) do
+    Kreuzberg.Native.rtfextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec rtfextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def rtfextractor_shutdown(obj) do
+    Kreuzberg.Native.rtfextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec rtfextractor_description(map()) :: String.t()
+  def rtfextractor_description(obj) do
+    Kreuzberg.Native.rtfextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec rtfextractor_author(map()) :: String.t()
+  def rtfextractor_author(obj) do
+    Kreuzberg.Native.rtfextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec rtfextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def rtfextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.rtfextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec rtfextractor_supported_mime_types(map()) :: [String.t()]
+  def rtfextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.rtfextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec rtfextractor_priority(map()) :: integer()
+  def rtfextractor_priority(obj) do
+    Kreuzberg.Native.rtfextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_default() :: reference()
+  def xmlextractor_default do
+    Kreuzberg.Native.xmlextractor_default()
+  end
+
+  @doc "Method"
+  @spec xmlextractor_name(map()) :: String.t()
+  def xmlextractor_name(obj) do
+    Kreuzberg.Native.xmlextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_version(map()) :: String.t()
+  def xmlextractor_version(obj) do
+    Kreuzberg.Native.xmlextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def xmlextractor_initialize(obj) do
+    Kreuzberg.Native.xmlextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def xmlextractor_shutdown(obj) do
+    Kreuzberg.Native.xmlextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_description(map()) :: String.t()
+  def xmlextractor_description(obj) do
+    Kreuzberg.Native.xmlextractor_description(obj)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_author(map()) :: String.t()
+  def xmlextractor_author(obj) do
+    Kreuzberg.Native.xmlextractor_author(obj)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_extract_sync(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def xmlextractor_extract_sync(obj, content, mime_type, config) do
+    Kreuzberg.Native.xmlextractor_extract_sync(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def xmlextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.xmlextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_supported_mime_types(map()) :: [String.t()]
+  def xmlextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.xmlextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_priority(map()) :: integer()
+  def xmlextractor_priority(obj) do
+    Kreuzberg.Native.xmlextractor_priority(obj)
+  end
+
+  @doc "Method"
+  @spec xmlextractor_as_sync_extractor(map()) :: reference() | nil
+  def xmlextractor_as_sync_extractor(obj) do
+    Kreuzberg.Native.xmlextractor_as_sync_extractor(obj)
+  end
+
+  @doc "Method"
+  @spec docbookextractor_default() :: reference()
+  def docbookextractor_default do
+    Kreuzberg.Native.docbookextractor_default()
+  end
+
+  @doc "Method"
+  @spec docbookextractor_name(map()) :: String.t()
+  def docbookextractor_name(obj) do
+    Kreuzberg.Native.docbookextractor_name(obj)
+  end
+
+  @doc "Method"
+  @spec docbookextractor_version(map()) :: String.t()
+  def docbookextractor_version(obj) do
+    Kreuzberg.Native.docbookextractor_version(obj)
+  end
+
+  @doc "Method"
+  @spec docbookextractor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def docbookextractor_initialize(obj) do
+    Kreuzberg.Native.docbookextractor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec docbookextractor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def docbookextractor_shutdown(obj) do
+    Kreuzberg.Native.docbookextractor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec docbookextractor_extract_bytes_async(map(), binary(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
+  def docbookextractor_extract_bytes_async(obj, content, mime_type, config) do
+    Kreuzberg.Native.docbookextractor_extract_bytes_async(obj, content, mime_type, config)
+  end
+
+  @doc "Method"
+  @spec docbookextractor_supported_mime_types(map()) :: [String.t()]
+  def docbookextractor_supported_mime_types(obj) do
+    Kreuzberg.Native.docbookextractor_supported_mime_types(obj)
+  end
+
+  @doc "Method"
+  @spec docbookextractor_priority(map()) :: integer()
+  def docbookextractor_priority(obj) do
+    Kreuzberg.Native.docbookextractor_priority(obj)
+  end
+
+  @doc "Return a model to the cache for reuse."
+  @spec modelcache_put(map(), String.t()) :: nil
+  def modelcache_put(obj, model) do
+    Kreuzberg.Native.modelcache_put(obj, model)
+  end
+
+  @doc "Take the cached model if one exists, without creating a new one."
+  @spec modelcache_take(map()) :: String.t() | nil
+  def modelcache_take(obj) do
+    Kreuzberg.Native.modelcache_take(obj)
+  end
+
+  @doc "Formats the panic context as a human-readable string."
+  @spec paniccontext_format(map()) :: String.t()
+  def paniccontext_format(obj) do
+    Kreuzberg.Native.paniccontext_format(obj)
+  end
+
+  @doc "Process an image and extract text via OCR."
+  @spec ocrbackend_process_image_async(map(), binary(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def ocrbackend_process_image_async(obj, image_bytes, config) do
+    Kreuzberg.Native.ocrbackend_process_image_async(obj, image_bytes, config)
+  end
+
+  @doc "Process a file and extract text via OCR."
+  @spec ocrbackend_process_image_file_async(map(), String.t(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def ocrbackend_process_image_file_async(obj, path, config) do
+    Kreuzberg.Native.ocrbackend_process_image_file_async(obj, path, config)
+  end
+
+  @doc "Check if this backend supports a given language code."
+  @spec ocrbackend_supports_language(map(), String.t()) :: boolean()
+  def ocrbackend_supports_language(obj, lang) do
+    Kreuzberg.Native.ocrbackend_supports_language(obj, lang)
+  end
+
+  @doc "Get the backend type identifier."
+  @spec ocrbackend_backend_type(map()) :: map()
+  def ocrbackend_backend_type(obj) do
+    Kreuzberg.Native.ocrbackend_backend_type(obj)
+  end
+
+  @doc "Optional: Get a list of all supported languages."
+  @spec ocrbackend_supported_languages(map()) :: [String.t()]
+  def ocrbackend_supported_languages(obj) do
+    Kreuzberg.Native.ocrbackend_supported_languages(obj)
+  end
+
+  @doc "Optional: Check if the backend supports table detection."
+  @spec ocrbackend_supports_table_detection(map()) :: boolean()
+  def ocrbackend_supports_table_detection(obj) do
+    Kreuzberg.Native.ocrbackend_supports_table_detection(obj)
+  end
+
+  @doc "Check if the backend supports direct document-level processing (e.g. for PDFs)."
+  @spec ocrbackend_supports_document_processing(map()) :: boolean()
+  def ocrbackend_supports_document_processing(obj) do
+    Kreuzberg.Native.ocrbackend_supports_document_processing(obj)
+  end
+
+  @doc "Process a document file directly via OCR."
+  @spec ocrbackend_process_document_async(map(), String.t(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def ocrbackend_process_document_async(obj, path, config) do
+    Kreuzberg.Native.ocrbackend_process_document_async(obj, path, config)
+  end
+
+  @doc "Register a document extractor."
+  @spec documentextractorregistry_register(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def documentextractorregistry_register(obj, extractor) do
+    Kreuzberg.Native.documentextractorregistry_register(obj, extractor)
+  end
+
+  @doc "Get the highest priority extractor for a MIME type."
+  @spec documentextractorregistry_get(map(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def documentextractorregistry_get(obj, mime_type) do
+    Kreuzberg.Native.documentextractorregistry_get(obj, mime_type)
+  end
+
+  @doc "List all registered extractors."
+  @spec documentextractorregistry_list(map()) :: [String.t()]
+  def documentextractorregistry_list(obj) do
+    Kreuzberg.Native.documentextractorregistry_list(obj)
+  end
+
+  @doc "Remove an extractor from the registry."
+  @spec documentextractorregistry_remove(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def documentextractorregistry_remove(obj, name) do
+    Kreuzberg.Native.documentextractorregistry_remove(obj, name)
+  end
+
+  @doc "Shutdown all extractors and clear the registry."
+  @spec documentextractorregistry_shutdown_all(map()) :: {:ok, nil} | {:error, String.t()}
+  def documentextractorregistry_shutdown_all(obj) do
+    Kreuzberg.Native.documentextractorregistry_shutdown_all(obj)
+  end
+
+  @doc "Method"
+  @spec documentextractorregistry_default() :: reference()
+  def documentextractorregistry_default do
+    Kreuzberg.Native.documentextractorregistry_default()
+  end
+
+  @doc "Create a new empty OCR backend registry without default backends."
+  @spec ocrbackendregistry_new_empty() :: reference()
+  def ocrbackendregistry_new_empty do
+    Kreuzberg.Native.ocrbackendregistry_new_empty()
+  end
+
+  @doc "Register an OCR backend."
+  @spec ocrbackendregistry_register(map(), reference()) :: {:ok, nil} | {:error, String.t()}
+  def ocrbackendregistry_register(obj, backend) do
+    Kreuzberg.Native.ocrbackendregistry_register(obj, backend)
+  end
+
+  @doc "Get an OCR backend by name."
+  @spec ocrbackendregistry_get(map(), String.t()) :: {:ok, reference()} | {:error, String.t()}
+  def ocrbackendregistry_get(obj, name) do
+    Kreuzberg.Native.ocrbackendregistry_get(obj, name)
+  end
+
+  @doc "Get an OCR backend that supports a specific language."
+  @spec ocrbackendregistry_get_for_language(map(), String.t()) :: {:ok, reference()} | {:error, String.t()}
+  def ocrbackendregistry_get_for_language(obj, language) do
+    Kreuzberg.Native.ocrbackendregistry_get_for_language(obj, language)
+  end
+
+  @doc "List all registered backend names."
+  @spec ocrbackendregistry_list(map()) :: [String.t()]
+  def ocrbackendregistry_list(obj) do
+    Kreuzberg.Native.ocrbackendregistry_list(obj)
+  end
+
+  @doc "Remove a backend from the registry."
+  @spec ocrbackendregistry_remove(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def ocrbackendregistry_remove(obj, name) do
+    Kreuzberg.Native.ocrbackendregistry_remove(obj, name)
+  end
+
+  @doc "Shutdown all backends and clear the registry."
+  @spec ocrbackendregistry_shutdown_all(map()) :: {:ok, nil} | {:error, String.t()}
+  def ocrbackendregistry_shutdown_all(obj) do
+    Kreuzberg.Native.ocrbackendregistry_shutdown_all(obj)
+  end
+
+  @doc "Shutdown all backends and re-register the built-in defaults."
+  @spec ocrbackendregistry_reset_to_defaults(map()) :: {:ok, nil} | {:error, String.t()}
+  def ocrbackendregistry_reset_to_defaults(obj) do
+    Kreuzberg.Native.ocrbackendregistry_reset_to_defaults(obj)
+  end
+
+  @doc "Method"
+  @spec ocrbackendregistry_default() :: reference()
+  def ocrbackendregistry_default do
+    Kreuzberg.Native.ocrbackendregistry_default()
+  end
+
+  @doc "Register a post-processor."
+  @spec postprocessorregistry_register(map(), String.t(), integer()) :: {:ok, nil} | {:error, String.t()}
+  def postprocessorregistry_register(obj, processor, priority) do
+    Kreuzberg.Native.postprocessorregistry_register(obj, processor, priority)
+  end
+
+  @doc "Get all processors for a specific stage, in priority order."
+  @spec postprocessorregistry_get_for_stage(map(), String.t()) :: [String.t()]
+  def postprocessorregistry_get_for_stage(obj, stage) do
+    Kreuzberg.Native.postprocessorregistry_get_for_stage(obj, stage)
+  end
+
+  @doc "List all registered processor names."
+  @spec postprocessorregistry_list(map()) :: [String.t()]
+  def postprocessorregistry_list(obj) do
+    Kreuzberg.Native.postprocessorregistry_list(obj)
+  end
+
+  @doc "Remove a processor from the registry."
+  @spec postprocessorregistry_remove(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def postprocessorregistry_remove(obj, name) do
+    Kreuzberg.Native.postprocessorregistry_remove(obj, name)
+  end
+
+  @doc "Shutdown all processors and clear the registry."
+  @spec postprocessorregistry_shutdown_all(map()) :: {:ok, nil} | {:error, String.t()}
+  def postprocessorregistry_shutdown_all(obj) do
+    Kreuzberg.Native.postprocessorregistry_shutdown_all(obj)
+  end
+
+  @doc "Method"
+  @spec postprocessorregistry_default() :: reference()
+  def postprocessorregistry_default do
+    Kreuzberg.Native.postprocessorregistry_default()
+  end
+
+  @doc "Create a new empty renderer registry without built-in renderers."
+  @spec rendererregistry_new_empty() :: reference()
+  def rendererregistry_new_empty do
+    Kreuzberg.Native.rendererregistry_new_empty()
+  end
+
+  @doc "Register a renderer."
+  @spec rendererregistry_register(map(), reference()) :: {:ok, nil} | {:error, String.t()}
+  def rendererregistry_register(obj, renderer) do
+    Kreuzberg.Native.rendererregistry_register(obj, renderer)
+  end
+
+  @doc "Get a renderer by name."
+  @spec rendererregistry_get(map(), String.t()) :: {:ok, reference()} | {:error, String.t()}
+  def rendererregistry_get(obj, name) do
+    Kreuzberg.Native.rendererregistry_get(obj, name)
+  end
+
+  @doc "Render a document using the named renderer."
+  @spec rendererregistry_render(map(), String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def rendererregistry_render(obj, name, doc) do
+    Kreuzberg.Native.rendererregistry_render(obj, name, doc)
+  end
+
+  @doc "List all registered renderer names."
+  @spec rendererregistry_list(map()) :: [String.t()]
+  def rendererregistry_list(obj) do
+    Kreuzberg.Native.rendererregistry_list(obj)
+  end
+
+  @doc "Remove a renderer from the registry."
+  @spec rendererregistry_remove(map(), String.t()) :: nil
+  def rendererregistry_remove(obj, name) do
+    Kreuzberg.Native.rendererregistry_remove(obj, name)
+  end
+
+  @doc "Clear all renderers and re-register the built-in defaults."
+  @spec rendererregistry_reset_to_defaults(map()) :: {:ok, nil} | {:error, String.t()}
+  def rendererregistry_reset_to_defaults(obj) do
+    Kreuzberg.Native.rendererregistry_reset_to_defaults(obj)
+  end
+
+  @doc "Method"
+  @spec rendererregistry_default() :: reference()
+  def rendererregistry_default do
+    Kreuzberg.Native.rendererregistry_default()
+  end
+
+  @doc "Register a validator."
+  @spec validatorregistry_register(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validatorregistry_register(obj, validator) do
+    Kreuzberg.Native.validatorregistry_register(obj, validator)
+  end
+
+  @doc "Get all validators in priority order."
+  @spec validatorregistry_get_all(map()) :: [String.t()]
+  def validatorregistry_get_all(obj) do
+    Kreuzberg.Native.validatorregistry_get_all(obj)
+  end
+
+  @doc "List all registered validator names."
+  @spec validatorregistry_list(map()) :: [String.t()]
+  def validatorregistry_list(obj) do
+    Kreuzberg.Native.validatorregistry_list(obj)
+  end
+
+  @doc "Remove a validator from the registry."
+  @spec validatorregistry_remove(map(), String.t()) :: {:ok, nil} | {:error, String.t()}
+  def validatorregistry_remove(obj, name) do
+    Kreuzberg.Native.validatorregistry_remove(obj, name)
+  end
+
+  @doc "Shutdown all validators and clear the registry."
+  @spec validatorregistry_shutdown_all(map()) :: {:ok, nil} | {:error, String.t()}
+  def validatorregistry_shutdown_all(obj) do
+    Kreuzberg.Native.validatorregistry_shutdown_all(obj)
+  end
+
+  @doc "Method"
+  @spec validatorregistry_default() :: reference()
+  def validatorregistry_default do
+    Kreuzberg.Native.validatorregistry_default()
+  end
+
+  @doc "The format name (e.g., "markdown", "html", "djot", "plain")."
+  @spec renderer_name(map()) :: String.t()
+  def renderer_name(obj) do
+    Kreuzberg.Native.renderer_name(obj)
+  end
+
+  @doc "Render an [`InternalDocument`] to the output format."
+  @spec renderer_render(map(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def renderer_render(obj, doc) do
+    Kreuzberg.Native.renderer_render(obj, doc)
+  end
+
+  @doc "Returns the unique name/identifier for this plugin."
+  @spec plugin_name(map()) :: String.t()
+  def plugin_name(obj) do
+    Kreuzberg.Native.plugin_name(obj)
+  end
+
+  @doc "Returns the semantic version of this plugin."
+  @spec plugin_version(map()) :: String.t()
+  def plugin_version(obj) do
+    Kreuzberg.Native.plugin_version(obj)
+  end
+
+  @doc "Initialize the plugin."
+  @spec plugin_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def plugin_initialize(obj) do
+    Kreuzberg.Native.plugin_initialize(obj)
+  end
+
+  @doc "Shutdown the plugin."
+  @spec plugin_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def plugin_shutdown(obj) do
+    Kreuzberg.Native.plugin_shutdown(obj)
+  end
+
+  @doc "Optional plugin description for debugging and logging."
+  @spec plugin_description(map()) :: String.t()
+  def plugin_description(obj) do
+    Kreuzberg.Native.plugin_description(obj)
+  end
+
+  @doc "Optional plugin author information."
+  @spec plugin_author(map()) :: String.t()
+  def plugin_author(obj) do
+    Kreuzberg.Native.plugin_author(obj)
+  end
+
+  @doc "Method"
+  @spec tokenreducer_new(map(), String.t() | nil) :: {:ok, reference()} | {:error, String.t()}
+  def tokenreducer_new(config, language_hint) do
+    Kreuzberg.Native.tokenreducer_new(config, language_hint)
+  end
+
+  @doc "Get the language code being used for stopwords and semantic analysis."
+  @spec tokenreducer_language(map()) :: String.t()
+  def tokenreducer_language(obj) do
+    Kreuzberg.Native.tokenreducer_language(obj)
+  end
+
+  @doc "Method"
+  @spec tokenreducer_reduce(map(), String.t()) :: String.t()
+  def tokenreducer_reduce(obj, text) do
+    Kreuzberg.Native.tokenreducer_reduce(obj, text)
+  end
+
+  @doc "Method"
+  @spec tokenreducer_batch_reduce(map(), [String.t()]) :: [String.t()]
+  def tokenreducer_batch_reduce(obj, texts) do
+    Kreuzberg.Native.tokenreducer_batch_reduce(obj, texts)
+  end
+
+  @doc "Method"
+  @spec qualityprocessor_name(map()) :: String.t()
+  def qualityprocessor_name(obj) do
+    Kreuzberg.Native.qualityprocessor_name(obj)
+  end
+
+  @doc "Method"
+  @spec qualityprocessor_version(map()) :: String.t()
+  def qualityprocessor_version(obj) do
+    Kreuzberg.Native.qualityprocessor_version(obj)
+  end
+
+  @doc "Method"
+  @spec qualityprocessor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def qualityprocessor_initialize(obj) do
+    Kreuzberg.Native.qualityprocessor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec qualityprocessor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def qualityprocessor_shutdown(obj) do
+    Kreuzberg.Native.qualityprocessor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec qualityprocessor_process_async(map(), String.t() | nil, String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def qualityprocessor_process_async(obj, result, config) do
+    Kreuzberg.Native.qualityprocessor_process_async(obj, result, config)
+  end
+
+  @doc "Method"
+  @spec qualityprocessor_processing_stage(map()) :: String.t()
+  def qualityprocessor_processing_stage(obj) do
+    Kreuzberg.Native.qualityprocessor_processing_stage(obj)
+  end
+
+  @doc "Method"
+  @spec qualityprocessor_should_process(map(), String.t() | nil, String.t() | nil) :: boolean()
+  def qualityprocessor_should_process(obj, result, config) do
+    Kreuzberg.Native.qualityprocessor_should_process(obj, result, config)
+  end
+
+  @doc "Method"
+  @spec qualityprocessor_estimated_duration_ms(map(), String.t() | nil) :: non_neg_integer()
+  def qualityprocessor_estimated_duration_ms(obj, result) do
+    Kreuzberg.Native.qualityprocessor_estimated_duration_ms(obj, result)
+  end
+
+  @doc "Generate a deterministic `NodeId` from node content."
+  @spec nodeid_generate(String.t(), String.t(), non_neg_integer() | nil, non_neg_integer()) :: reference()
+  def nodeid_generate(node_type, text, page, index) do
+    Kreuzberg.Native.nodeid_generate(node_type, text, page, index)
+  end
+
+  @doc "Method"
+  @spec nodeid_as_ref(map()) :: String.t()
+  def nodeid_as_ref(obj) do
+    Kreuzberg.Native.nodeid_as_ref(obj)
+  end
+
+  @doc "Method"
+  @spec nodeid_fmt(map(), String.t()) :: String.t()
+  def nodeid_fmt(obj, f) do
+    Kreuzberg.Native.nodeid_fmt(obj, f)
+  end
+
+  @doc "Create a `DocumentStructure` with pre-allocated capacity."
+  @spec documentstructure_with_capacity(non_neg_integer()) :: String.t() | nil
+  def documentstructure_with_capacity(capacity) do
+    Kreuzberg.Native.documentstructure_with_capacity(capacity)
+  end
+
+  @doc "Push a node and return its `NodeIndex`."
+  @spec documentstructure_push_node(map(), map()) :: non_neg_integer()
+  def documentstructure_push_node(obj, node) do
+    Kreuzberg.Native.documentstructure_push_node(obj, node)
+  end
+
+  @doc "Add a child to an existing parent node."
+  @spec documentstructure_add_child(map(), non_neg_integer(), non_neg_integer()) :: nil
+  def documentstructure_add_child(obj, parent, child) do
+    Kreuzberg.Native.documentstructure_add_child(obj, parent, child)
+  end
+
+  @doc "Validate all node indices are in bounds and parent-child relationships"
+  @spec documentstructure_validate(map()) :: {:ok, nil} | {:error, String.t()}
+  def documentstructure_validate(obj) do
+    Kreuzberg.Native.documentstructure_validate(obj)
+  end
+
+  @doc "Iterate over root-level body nodes (content_layer == Body, parent == None)."
+  @spec documentstructure_body_roots(map()) :: String.t()
+  def documentstructure_body_roots(obj) do
+    Kreuzberg.Native.documentstructure_body_roots(obj)
+  end
+
+  @doc "Iterate over root-level furniture nodes (non-Body content_layer, parent == None)."
+  @spec documentstructure_furniture_roots(map()) :: String.t()
+  def documentstructure_furniture_roots(obj) do
+    Kreuzberg.Native.documentstructure_furniture_roots(obj)
+  end
+
+  @doc "Get a node by index."
+  @spec documentstructure_get(map(), non_neg_integer()) :: map() | nil
+  def documentstructure_get(obj, index) do
+    Kreuzberg.Native.documentstructure_get(obj, index)
+  end
+
+  @doc "Get the total number of nodes."
+  @spec documentstructure_len(map()) :: non_neg_integer()
+  def documentstructure_len(obj) do
+    Kreuzberg.Native.documentstructure_len(obj)
+  end
+
+  @doc "Check if the document structure is empty."
+  @spec documentstructure_is_empty(map()) :: boolean()
+  def documentstructure_is_empty(obj) do
+    Kreuzberg.Native.documentstructure_is_empty(obj)
+  end
+
+  @doc "Method"
+  @spec documentstructure_default() :: String.t() | nil
+  def documentstructure_default do
+    Kreuzberg.Native.documentstructure_default()
+  end
+
+  @doc "Create a new ElementId from a string."
+  @spec elementid_new(String.t()) :: {:ok, reference()} | {:error, String.t()}
+  def elementid_new(hex_str) do
+    Kreuzberg.Native.elementid_new(hex_str)
+  end
+
+  @doc "Method"
+  @spec elementid_as_ref(map()) :: String.t()
+  def elementid_as_ref(obj) do
+    Kreuzberg.Native.elementid_as_ref(obj)
+  end
+
+  @doc "Method"
+  @spec elementid_fmt(map(), String.t()) :: String.t()
+  def elementid_fmt(obj, f) do
+    Kreuzberg.Native.elementid_fmt(obj, f)
+  end
+
+  @doc "Method"
+  @spec imagepreprocessingconfig_default() :: String.t() | nil
+  def imagepreprocessingconfig_default do
+    Kreuzberg.Native.imagepreprocessingconfig_default()
+  end
+
+  @doc "Method"
+  @spec tesseractconfig_default() :: String.t() | nil
+  def tesseractconfig_default do
+    Kreuzberg.Native.tesseractconfig_default()
+  end
+
+  @doc "Check if metadata is empty (no meaningful content extracted)."
+  @spec htmlmetadata_is_empty(map()) :: boolean()
+  def htmlmetadata_is_empty(obj) do
+    Kreuzberg.Native.htmlmetadata_is_empty(obj)
+  end
+
+  @doc "Method"
+  @spec htmlmetadata_from(String.t() | nil) :: String.t() | nil
+  def htmlmetadata_from(metadata) do
+    Kreuzberg.Native.htmlmetadata_from(metadata)
+  end
+
+  @doc "Create confidence from Tesseract's single confidence value."
+  @spec ocrconfidence_from_tesseract(float()) :: map()
+  def ocrconfidence_from_tesseract(confidence) do
+    Kreuzberg.Native.ocrconfidence_from_tesseract(confidence)
+  end
+
+  @doc "Create confidence from PaddleOCR scores."
+  @spec ocrconfidence_from_paddle(float(), float()) :: map()
+  def ocrconfidence_from_paddle(box_score, text_score) do
+    Kreuzberg.Native.ocrconfidence_from_paddle(box_score, text_score)
+  end
+
+  @doc "Create rotation from PaddleOCR angle classification."
+  @spec ocrrotation_from_paddle(integer(), float()) :: {:ok, map()} | {:error, String.t()}
+  def ocrrotation_from_paddle(angle_index, angle_score) do
+    Kreuzberg.Native.ocrrotation_from_paddle(angle_index, angle_score)
+  end
+
+  @doc "Set the hierarchical level."
+  @spec ocrelement_with_level(map(), map()) :: map()
+  def ocrelement_with_level(obj, level) do
+    Kreuzberg.Native.ocrelement_with_level(obj, level)
+  end
+
+  @doc "Set rotation information."
+  @spec ocrelement_with_rotation(map(), map()) :: map()
+  def ocrelement_with_rotation(obj, rotation) do
+    Kreuzberg.Native.ocrelement_with_rotation(obj, rotation)
+  end
+
+  @doc "Set page number."
+  @spec ocrelement_with_page_number(map(), non_neg_integer()) :: map()
+  def ocrelement_with_page_number(obj, page_number) do
+    Kreuzberg.Native.ocrelement_with_page_number(obj, page_number)
+  end
+
+  @doc "Set parent element ID."
+  @spec ocrelement_with_parent_id(map(), String.t()) :: map()
+  def ocrelement_with_parent_id(obj, parent_id) do
+    Kreuzberg.Native.ocrelement_with_parent_id(obj, parent_id)
+  end
+
+  @doc "Add backend-specific metadata."
+  @spec ocrelement_with_metadata(map(), String.t(), String.t()) :: map()
+  def ocrelement_with_metadata(obj, key, value) do
+    Kreuzberg.Native.ocrelement_with_metadata(obj, key, value)
+  end
+
+  @doc "Method"
+  @spec ocrelement_with_rotation_opt(map(), map() | nil) :: map()
+  def ocrelement_with_rotation_opt(obj, rotation) do
+    Kreuzberg.Native.ocrelement_with_rotation_opt(obj, rotation)
+  end
+
+  @doc "Create a new hyperlink URI, auto-classifying `mailto:` as Email and `#` as Anchor."
+  @spec uri_hyperlink(String.t(), String.t() | nil) :: map()
+  def uri_hyperlink(url, label) do
+    Kreuzberg.Native.uri_hyperlink(url, label)
+  end
+
+  @doc "Create a new image URI."
+  @spec uri_image(String.t(), String.t() | nil) :: map()
+  def uri_image(url, label) do
+    Kreuzberg.Native.uri_image(url, label)
+  end
+
+  @doc "Create a new citation URI (for DOIs, academic references)."
+  @spec uri_citation(String.t(), String.t() | nil) :: map()
+  def uri_citation(url, label) do
+    Kreuzberg.Native.uri_citation(url, label)
+  end
+
+  @doc "Create a new anchor/cross-reference URI."
+  @spec uri_anchor(String.t(), String.t() | nil) :: map()
+  def uri_anchor(url, label) do
+    Kreuzberg.Native.uri_anchor(url, label)
+  end
+
+  @doc "Create a new email URI."
+  @spec uri_email(String.t(), String.t() | nil) :: map()
+  def uri_email(url, label) do
+    Kreuzberg.Native.uri_email(url, label)
+  end
+
+  @doc "Create a new reference URI."
+  @spec uri_reference(String.t(), String.t() | nil) :: map()
+  def uri_reference(url, label) do
+    Kreuzberg.Native.uri_reference(url, label)
+  end
+
+  @doc "Set the page number."
+  @spec uri_with_page(map(), non_neg_integer()) :: map()
+  def uri_with_page(obj, page) do
+    Kreuzberg.Native.uri_with_page(obj, page)
+  end
+
+  @doc "Calculate the cache hit rate as a percentage (0.0-100.0)."
+  @spec poolmetrics_hit_rate(map()) :: float()
+  def poolmetrics_hit_rate(obj) do
+    Kreuzberg.Native.poolmetrics_hit_rate(obj)
+  end
+
+  @doc "Get all metrics as a struct for reporting."
+  @spec poolmetrics_snapshot(map()) :: map()
+  def poolmetrics_snapshot(obj) do
+    Kreuzberg.Native.poolmetrics_snapshot(obj)
+  end
+
+  @doc "Reset all metrics to zero."
+  @spec poolmetrics_reset(map()) :: nil
+  def poolmetrics_reset(obj) do
+    Kreuzberg.Native.poolmetrics_reset(obj)
+  end
+
+  @doc "Method"
+  @spec poolmetrics_default() :: String.t() | nil
+  def poolmetrics_default do
+    Kreuzberg.Native.poolmetrics_default()
+  end
+
+  @doc "Reset the object to a reusable state."
+  @spec recyclable_reset(map()) :: nil
+  def recyclable_reset(obj) do
+    Kreuzberg.Native.recyclable_reset(obj)
+  end
+
+  @doc "Acquire an object from the pool or create a new one if empty."
+  @spec pool_acquire(map()) :: {:ok, String.t()} | {:error, String.t()}
+  def pool_acquire(obj) do
+    Kreuzberg.Native.pool_acquire(obj)
+  end
+
+  @doc "Get the current number of objects in the pool."
+  @spec pool_size(map()) :: non_neg_integer()
+  def pool_size(obj) do
+    Kreuzberg.Native.pool_size(obj)
+  end
+
+  @doc "Clear the pool, discarding all pooled objects."
+  @spec pool_clear(map()) :: {:ok, nil} | {:error, String.t()}
+  def pool_clear(obj) do
+    Kreuzberg.Native.pool_clear(obj)
+  end
+
+  @doc "Calculate the estimated string pool memory in bytes."
+  @spec poolsizehint_estimated_string_pool_memory(map()) :: non_neg_integer()
+  def poolsizehint_estimated_string_pool_memory(obj) do
+    Kreuzberg.Native.poolsizehint_estimated_string_pool_memory(obj)
+  end
+
+  @doc "Calculate the estimated byte pool memory in bytes."
+  @spec poolsizehint_estimated_byte_pool_memory(map()) :: non_neg_integer()
+  def poolsizehint_estimated_byte_pool_memory(obj) do
+    Kreuzberg.Native.poolsizehint_estimated_byte_pool_memory(obj)
+  end
+
+  @doc "Calculate the total estimated pool memory in bytes."
+  @spec poolsizehint_total_pool_memory(map()) :: non_neg_integer()
+  def poolsizehint_total_pool_memory(obj) do
+    Kreuzberg.Native.poolsizehint_total_pool_memory(obj)
+  end
+
+  @doc "Method"
+  @spec poolconfig_default() :: String.t() | nil
+  def poolconfig_default do
+    Kreuzberg.Native.poolconfig_default()
+  end
+
+  @doc "Get mutable access to the underlying string buffer."
+  @spec pooledstring_buffer_mut(map()) :: String.t()
+  def pooledstring_buffer_mut(obj) do
+    Kreuzberg.Native.pooledstring_buffer_mut(obj)
+  end
+
+  @doc "Get immutable access to the underlying string buffer."
+  @spec pooledstring_as_str(map()) :: String.t()
+  def pooledstring_as_str(obj) do
+    Kreuzberg.Native.pooledstring_as_str(obj)
+  end
+
+  @doc "Method"
+  @spec pooledstring_deref(map()) :: String.t()
+  def pooledstring_deref(obj) do
+    Kreuzberg.Native.pooledstring_deref(obj)
+  end
+
+  @doc "Method"
+  @spec pooledstring_deref_mut(map()) :: String.t()
+  def pooledstring_deref_mut(obj) do
+    Kreuzberg.Native.pooledstring_deref_mut(obj)
+  end
+
+  @doc "Method"
+  @spec pooledstring_drop(map()) :: nil
+  def pooledstring_drop(obj) do
+    Kreuzberg.Native.pooledstring_drop(obj)
+  end
+
+  @doc "Method"
+  @spec pooledstring_fmt(map(), String.t()) :: String.t()
+  def pooledstring_fmt(obj, f) do
+    Kreuzberg.Native.pooledstring_fmt(obj, f)
+  end
+
+  @doc "Get the string content."
+  @spec internedstring_as_str(map()) :: String.t()
+  def internedstring_as_str(obj) do
+    Kreuzberg.Native.internedstring_as_str(obj)
+  end
+
+  @doc "Method"
+  @spec internedstring_as_ref(map()) :: String.t()
+  def internedstring_as_ref(obj) do
+    Kreuzberg.Native.internedstring_as_ref(obj)
+  end
+
+  @doc "Method"
+  @spec internedstring_fmt(map(), String.t()) :: String.t()
+  def internedstring_fmt(obj, f) do
+    Kreuzberg.Native.internedstring_fmt(obj, f)
+  end
+
+  @doc "Method"
+  @spec internedstring_eq(map(), reference()) :: boolean()
+  def internedstring_eq(obj, other) do
+    Kreuzberg.Native.internedstring_eq(obj, other)
+  end
+
+  @doc "Method"
+  @spec internedstring_deref(map()) :: String.t()
+  def internedstring_deref(obj) do
+    Kreuzberg.Native.internedstring_deref(obj)
+  end
+
+  @doc "Capture the current instant."
+  @spec instant_now() :: reference()
+  def instant_now do
+    Kreuzberg.Native.instant_now()
+  end
+
+  @doc "Seconds elapsed since this instant was captured (as `f64`)."
+  @spec instant_elapsed_secs_f64(map()) :: float()
+  def instant_elapsed_secs_f64(obj) do
+    Kreuzberg.Native.instant_elapsed_secs_f64(obj)
+  end
+
+  @doc "Milliseconds elapsed since this instant was captured (as `f64`)."
+  @spec instant_elapsed_ms(map()) :: float()
+  def instant_elapsed_ms(obj) do
+    Kreuzberg.Native.instant_elapsed_ms(obj)
+  end
+
+  @doc "Milliseconds elapsed as `u128` (mirrors `Duration::as_millis`)."
+  @spec instant_elapsed_millis(map()) :: String.t()
+  def instant_elapsed_millis(obj) do
+    Kreuzberg.Native.instant_elapsed_millis(obj)
+  end
+
+  @doc "Get the right edge position."
+  @spec hocrword_right(map()) :: non_neg_integer()
+  def hocrword_right(obj) do
+    Kreuzberg.Native.hocrword_right(obj)
+  end
+
+  @doc "Get the bottom edge position."
+  @spec hocrword_bottom(map()) :: non_neg_integer()
+  def hocrword_bottom(obj) do
+    Kreuzberg.Native.hocrword_bottom(obj)
+  end
+
+  @doc "Get the vertical center position."
+  @spec hocrword_y_center(map()) :: float()
+  def hocrword_y_center(obj) do
+    Kreuzberg.Native.hocrword_y_center(obj)
+  end
+
+  @doc "Get the horizontal center position."
+  @spec hocrword_x_center(map()) :: float()
+  def hocrword_x_center(obj) do
+    Kreuzberg.Native.hocrword_x_center(obj)
+  end
+
+  @doc "Method"
+  @spec extractionservice_default() :: reference()
+  def extractionservice_default do
+    Kreuzberg.Native.extractionservice_default()
+  end
+
+  @doc "Method"
+  @spec extractionservice_poll_ready(map(), String.t()) :: String.t()
+  def extractionservice_poll_ready(obj, cx) do
+    Kreuzberg.Native.extractionservice_poll_ready(obj, cx)
+  end
+
+  @doc "Method"
+  @spec extractionservice_call(map(), map()) :: String.t()
+  def extractionservice_call(obj, req) do
+    Kreuzberg.Native.extractionservice_call(obj, req)
+  end
+
+  @doc "Method"
+  @spec tracinglayer_layer(map(), String.t()) :: String.t()
+  def tracinglayer_layer(obj, inner) do
+    Kreuzberg.Native.tracinglayer_layer(obj, inner)
+  end
+
+  @doc "Method"
+  @spec metricslayer_layer(map(), String.t()) :: String.t()
+  def metricslayer_layer(obj, inner) do
+    Kreuzberg.Native.metricslayer_layer(obj, inner)
+  end
+
+  @doc "Create a file-based extraction request."
+  @spec extractionrequest_file(String.t(), String.t() | nil) :: map()
+  def extractionrequest_file(path, config) do
+    Kreuzberg.Native.extractionrequest_file(path, config)
+  end
+
+  @doc "Create a file-based extraction request with a MIME type hint."
+  @spec extractionrequest_file_with_mime(String.t(), String.t(), String.t() | nil) :: map()
+  def extractionrequest_file_with_mime(path, mime_hint, config) do
+    Kreuzberg.Native.extractionrequest_file_with_mime(path, mime_hint, config)
+  end
+
+  @doc "Create a bytes-based extraction request."
+  @spec extractionrequest_bytes(binary(), String.t(), String.t() | nil) :: map()
+  def extractionrequest_bytes(data, mime_type, config) do
+    Kreuzberg.Native.extractionrequest_bytes(data, mime_type, config)
+  end
+
+  @doc "Set per-file overrides on this request."
+  @spec extractionrequest_with_overrides(map(), String.t() | nil) :: map()
+  def extractionrequest_with_overrides(obj, overrides) do
+    Kreuzberg.Native.extractionrequest_with_overrides(obj, overrides)
+  end
+
+  @doc "Method"
+  @spec extractionservicebuilder_default() :: reference()
+  def extractionservicebuilder_default do
+    Kreuzberg.Native.extractionservicebuilder_default()
+  end
+
+  @doc "Add a per-request timeout."
+  @spec extractionservicebuilder_with_timeout(map(), non_neg_integer()) :: reference()
+  def extractionservicebuilder_with_timeout(obj, duration) do
+    Kreuzberg.Native.extractionservicebuilder_with_timeout(obj, duration)
+  end
+
+  @doc "Limit concurrent in-flight extractions."
+  @spec extractionservicebuilder_with_concurrency_limit(map(), non_neg_integer()) :: reference()
+  def extractionservicebuilder_with_concurrency_limit(obj, max) do
+    Kreuzberg.Native.extractionservicebuilder_with_concurrency_limit(obj, max)
+  end
+
+  @doc "Add a tracing span to each extraction request."
+  @spec extractionservicebuilder_with_tracing(map()) :: reference()
+  def extractionservicebuilder_with_tracing(obj) do
+    Kreuzberg.Native.extractionservicebuilder_with_tracing(obj)
+  end
+
+  @doc "Add metrics recording to each extraction request."
+  @spec extractionservicebuilder_with_metrics(map()) :: reference()
+  def extractionservicebuilder_with_metrics(obj) do
+    Kreuzberg.Native.extractionservicebuilder_with_metrics(obj)
+  end
+
+  @doc "Build the service stack, returning a type-erased cloneable service."
+  @spec extractionservicebuilder_build(map()) :: String.t()
+  def extractionservicebuilder_build(obj) do
+    Kreuzberg.Native.extractionservicebuilder_build(obj)
+  end
+
+  @doc "Method"
+  @spec multipartapi_from_request_async(String.t(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  def multipartapi_from_request_async(req, state) do
+    Kreuzberg.Native.multipartapi_from_request_async(req, state)
+  end
+
+  @doc "Create a validation error (400)."
+  @spec apierror_validation(String.t()) :: map()
+  def apierror_validation(error) do
+    Kreuzberg.Native.apierror_validation(error)
+  end
+
+  @doc "Create an unprocessable entity error (422)."
+  @spec apierror_unprocessable(String.t()) :: map()
+  def apierror_unprocessable(error) do
+    Kreuzberg.Native.apierror_unprocessable(error)
+  end
+
+  @doc "Create an internal server error (500)."
+  @spec apierror_internal(String.t()) :: map()
+  def apierror_internal(error) do
+    Kreuzberg.Native.apierror_internal(error)
+  end
+
+  @doc "Create a bad gateway error (502)."
+  @spec apierror_bad_gateway(String.t()) :: map()
+  def apierror_bad_gateway(error) do
+    Kreuzberg.Native.apierror_bad_gateway(error)
+  end
+
+  @doc "Method"
+  @spec apierror_into_response(map()) :: String.t()
+  def apierror_into_response(obj) do
+    Kreuzberg.Native.apierror_into_response(obj)
+  end
+
+  @doc "Method"
+  @spec apierror_from(String.t()) :: map()
+  def apierror_from(error) do
+    Kreuzberg.Native.apierror_from(error)
+  end
+
+  @doc "Method"
+  @spec apisizelimits_default() :: String.t() | nil
+  def apisizelimits_default do
+    Kreuzberg.Native.apisizelimits_default()
+  end
+
+  @doc "Create size limits from MB values (convenience method)."
+  @spec apisizelimits_from_mb(non_neg_integer(), non_neg_integer()) :: String.t() | nil
+  def apisizelimits_from_mb(max_request_body_mb, max_multipart_field_mb) do
+    Kreuzberg.Native.apisizelimits_from_mb(max_request_body_mb, max_multipart_field_mb)
+  end
+
+  @doc "Method"
+  @spec kreuzbergmcp_clone(map()) :: reference()
+  def kreuzbergmcp_clone(obj) do
+    Kreuzberg.Native.kreuzbergmcp_clone(obj)
+  end
+
+  @doc "Create a new Kreuzberg MCP server instance with default config."
+  @spec kreuzbergmcp_new() :: {:ok, reference()} | {:error, String.t()}
+  def kreuzbergmcp_new do
+    Kreuzberg.Native.kreuzbergmcp_new()
+  end
+
+  @doc "Create a new Kreuzberg MCP server instance with explicit config."
+  @spec kreuzbergmcp_with_config(String.t() | nil) :: reference()
+  def kreuzbergmcp_with_config(config) do
+    Kreuzberg.Native.kreuzbergmcp_with_config(config)
+  end
+
+  @doc "Method"
+  @spec kreuzbergmcp_get_info(map()) :: String.t()
+  def kreuzbergmcp_get_info(obj) do
+    Kreuzberg.Native.kreuzbergmcp_get_info(obj)
+  end
+
+  @doc "Method"
+  @spec kreuzbergmcp_default() :: reference()
+  def kreuzbergmcp_default do
+    Kreuzberg.Native.kreuzbergmcp_default()
+  end
+
+  @doc "Method"
+  @spec chunkingprocessor_name(map()) :: String.t()
+  def chunkingprocessor_name(obj) do
+    Kreuzberg.Native.chunkingprocessor_name(obj)
+  end
+
+  @doc "Method"
+  @spec chunkingprocessor_version(map()) :: String.t()
+  def chunkingprocessor_version(obj) do
+    Kreuzberg.Native.chunkingprocessor_version(obj)
+  end
+
+  @doc "Method"
+  @spec chunkingprocessor_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def chunkingprocessor_initialize(obj) do
+    Kreuzberg.Native.chunkingprocessor_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec chunkingprocessor_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def chunkingprocessor_shutdown(obj) do
+    Kreuzberg.Native.chunkingprocessor_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec chunkingprocessor_process_async(map(), String.t() | nil, String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  def chunkingprocessor_process_async(obj, result, config) do
+    Kreuzberg.Native.chunkingprocessor_process_async(obj, result, config)
+  end
+
+  @doc "Method"
+  @spec chunkingprocessor_processing_stage(map()) :: String.t()
+  def chunkingprocessor_processing_stage(obj) do
+    Kreuzberg.Native.chunkingprocessor_processing_stage(obj)
+  end
+
+  @doc "Method"
+  @spec chunkingprocessor_should_process(map(), String.t() | nil, String.t() | nil) :: boolean()
+  def chunkingprocessor_should_process(obj, result, config) do
+    Kreuzberg.Native.chunkingprocessor_should_process(obj, result, config)
+  end
+
+  @doc "Method"
+  @spec chunkingprocessor_estimated_duration_ms(map(), String.t() | nil) :: non_neg_integer()
+  def chunkingprocessor_estimated_duration_ms(obj, result) do
+    Kreuzberg.Native.chunkingprocessor_estimated_duration_ms(obj, result)
+  end
+
+  @doc "Method"
+  @spec vlmocrbackend_name(map()) :: String.t()
+  def vlmocrbackend_name(obj) do
+    Kreuzberg.Native.vlmocrbackend_name(obj)
+  end
+
+  @doc "Method"
+  @spec vlmocrbackend_version(map()) :: String.t()
+  def vlmocrbackend_version(obj) do
+    Kreuzberg.Native.vlmocrbackend_version(obj)
+  end
+
+  @doc "Method"
+  @spec vlmocrbackend_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def vlmocrbackend_initialize(obj) do
+    Kreuzberg.Native.vlmocrbackend_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec vlmocrbackend_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def vlmocrbackend_shutdown(obj) do
+    Kreuzberg.Native.vlmocrbackend_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec vlmocrbackend_process_image_async(map(), binary(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def vlmocrbackend_process_image_async(obj, image_bytes, config) do
+    Kreuzberg.Native.vlmocrbackend_process_image_async(obj, image_bytes, config)
+  end
+
+  @doc "Method"
+  @spec vlmocrbackend_supports_language(map(), String.t()) :: boolean()
+  def vlmocrbackend_supports_language(obj, lang) do
+    Kreuzberg.Native.vlmocrbackend_supports_language(obj, lang)
+  end
+
+  @doc "Method"
+  @spec vlmocrbackend_backend_type(map()) :: map()
+  def vlmocrbackend_backend_type(obj) do
+    Kreuzberg.Native.vlmocrbackend_backend_type(obj)
+  end
+
+  @doc "Method"
+  @spec yakeparams_default() :: String.t() | nil
+  def yakeparams_default do
+    Kreuzberg.Native.yakeparams_default()
+  end
+
+  @doc "Method"
+  @spec rakeparams_default() :: String.t() | nil
+  def rakeparams_default do
+    Kreuzberg.Native.rakeparams_default()
+  end
+
+  @doc "Method"
+  @spec keywordconfig_default() :: String.t() | nil
+  def keywordconfig_default do
+    Kreuzberg.Native.keywordconfig_default()
+  end
+
+  @doc "Set maximum number of keywords to extract."
+  @spec keywordconfig_with_max_keywords(map(), non_neg_integer()) :: String.t() | nil
+  def keywordconfig_with_max_keywords(obj, max) do
+    Kreuzberg.Native.keywordconfig_with_max_keywords(obj, max)
+  end
+
+  @doc "Set minimum score threshold."
+  @spec keywordconfig_with_min_score(map(), float()) :: String.t() | nil
+  def keywordconfig_with_min_score(obj, score) do
+    Kreuzberg.Native.keywordconfig_with_min_score(obj, score)
+  end
+
+  @doc "Set n-gram range."
+  @spec keywordconfig_with_ngram_range(map(), non_neg_integer(), non_neg_integer()) :: String.t() | nil
+  def keywordconfig_with_ngram_range(obj, min, max) do
+    Kreuzberg.Native.keywordconfig_with_ngram_range(obj, min, max)
+  end
+
+  @doc "Set language for stopword filtering."
+  @spec keywordconfig_with_language(map(), String.t()) :: String.t() | nil
+  def keywordconfig_with_language(obj, lang) do
+    Kreuzberg.Native.keywordconfig_with_language(obj, lang)
+  end
+
+  @doc "Create a new keyword with positions."
+  @spec keyword_with_positions(String.t(), float(), map(), [non_neg_integer()]) :: map()
+  def keyword_with_positions(text, score, algorithm, positions) do
+    Kreuzberg.Native.keyword_with_positions(text, score, algorithm, positions)
+  end
+
+  @doc "Method"
+  @spec ocrcache_new(String.t() | nil) :: {:ok, reference()} | {:error, String.t()}
+  def ocrcache_new(cache_dir) do
+    Kreuzberg.Native.ocrcache_new(cache_dir)
+  end
+
+  @doc "Method"
+  @spec ocrcache_get_cached_result(map(), String.t(), String.t(), String.t()) :: {:ok, map() | nil} | {:error, String.t()}
+  def ocrcache_get_cached_result(obj, image_hash, backend, config) do
+    Kreuzberg.Native.ocrcache_get_cached_result(obj, image_hash, backend, config)
+  end
+
+  @doc "Method"
+  @spec ocrcache_set_cached_result(map(), String.t(), String.t(), String.t(), map()) :: {:ok, nil} | {:error, String.t()}
+  def ocrcache_set_cached_result(obj, image_hash, backend, config, result) do
+    Kreuzberg.Native.ocrcache_set_cached_result(obj, image_hash, backend, config, result)
+  end
+
+  @doc "Method"
+  @spec ocrcache_clear(map()) :: {:ok, nil} | {:error, String.t()}
+  def ocrcache_clear(obj) do
+    Kreuzberg.Native.ocrcache_clear(obj)
+  end
+
+  @doc "Method"
+  @spec ocrcache_get_stats(map()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def ocrcache_get_stats(obj) do
+    Kreuzberg.Native.ocrcache_get_stats(obj)
+  end
+
+  @doc "Get the default global registry instance."
+  @spec languageregistry_global() :: reference()
+  def languageregistry_global do
+    Kreuzberg.Native.languageregistry_global()
+  end
+
+  @doc "Get supported languages for a specific OCR backend."
+  @spec languageregistry_get_supported_languages(map(), String.t()) :: [String.t()] | nil
+  def languageregistry_get_supported_languages(obj, backend) do
+    Kreuzberg.Native.languageregistry_get_supported_languages(obj, backend)
+  end
+
+  @doc "Check if a language is supported by a specific backend."
+  @spec languageregistry_is_language_supported(map(), String.t(), String.t()) :: boolean()
+  def languageregistry_is_language_supported(obj, backend, language) do
+    Kreuzberg.Native.languageregistry_is_language_supported(obj, backend, language)
+  end
+
+  @doc "Get all registered backend names."
+  @spec languageregistry_get_backends(map()) :: [String.t()]
+  def languageregistry_get_backends(obj) do
+    Kreuzberg.Native.languageregistry_get_backends(obj)
+  end
+
+  @doc "Get language count for a specific backend."
+  @spec languageregistry_get_language_count(map(), String.t()) :: non_neg_integer()
+  def languageregistry_get_language_count(obj, backend) do
+    Kreuzberg.Native.languageregistry_get_language_count(obj, backend)
+  end
+
+  @doc "Method"
+  @spec languageregistry_default() :: reference()
+  def languageregistry_default do
+    Kreuzberg.Native.languageregistry_default()
+  end
+
+  @doc "Method"
+  @spec ocrprocessor_new(String.t() | nil) :: {:ok, reference()} | {:error, String.t()}
+  def ocrprocessor_new(cache_dir) do
+    Kreuzberg.Native.ocrprocessor_new(cache_dir)
+  end
+
+  @doc "Method"
+  @spec ocrprocessor_process_image(map(), binary(), String.t() | nil) :: {:ok, map()} | {:error, String.t()}
+  def ocrprocessor_process_image(obj, image_bytes, config) do
+    Kreuzberg.Native.ocrprocessor_process_image(obj, image_bytes, config)
+  end
+
+  @doc "Process an image with OCR and respect the output format from ExtractionConfig."
+  @spec ocrprocessor_process_image_with_format(map(), binary(), String.t() | nil, map()) :: {:ok, map()} | {:error, String.t()}
+  def ocrprocessor_process_image_with_format(obj, image_bytes, config, output_format) do
+    Kreuzberg.Native.ocrprocessor_process_image_with_format(obj, image_bytes, config, output_format)
+  end
+
+  @doc "Method"
+  @spec ocrprocessor_clear_cache(map()) :: {:ok, nil} | {:error, String.t()}
+  def ocrprocessor_clear_cache(obj) do
+    Kreuzberg.Native.ocrprocessor_clear_cache(obj)
+  end
+
+  @doc "Method"
+  @spec ocrprocessor_get_cache_stats(map()) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def ocrprocessor_get_cache_stats(obj) do
+    Kreuzberg.Native.ocrprocessor_get_cache_stats(obj)
+  end
+
+  @doc "Method"
+  @spec ocrprocessor_process_image_file(map(), String.t(), String.t() | nil) :: {:ok, map()} | {:error, String.t()}
+  def ocrprocessor_process_image_file(obj, file_path, config) do
+    Kreuzberg.Native.ocrprocessor_process_image_file(obj, file_path, config)
+  end
+
+  @doc "Process a file with OCR and respect the output format from ExtractionConfig."
+  @spec ocrprocessor_process_image_file_with_format(map(), String.t(), String.t() | nil, map()) :: {:ok, map()} | {:error, String.t()}
+  def ocrprocessor_process_image_file_with_format(obj, file_path, config, output_format) do
+    Kreuzberg.Native.ocrprocessor_process_image_file_with_format(obj, file_path, config, output_format)
+  end
+
+  @doc "Process multiple image files in parallel using Rayon."
+  @spec ocrprocessor_process_image_files_batch(map(), [String.t()], String.t() | nil) :: [String.t()]
+  def ocrprocessor_process_image_files_batch(obj, file_paths, config) do
+    Kreuzberg.Native.ocrprocessor_process_image_files_batch(obj, file_paths, config)
+  end
+
+  @doc "Get the cache directory path."
+  @spec tessdatamanager_cache_dir(map()) :: String.t()
+  def tessdatamanager_cache_dir(obj) do
+    Kreuzberg.Native.tessdatamanager_cache_dir(obj)
+  end
+
+  @doc "Check if a specific language traineddata file is cached."
+  @spec tessdatamanager_is_language_cached(map(), String.t()) :: boolean()
+  def tessdatamanager_is_language_cached(obj, lang) do
+    Kreuzberg.Native.tessdatamanager_is_language_cached(obj, lang)
+  end
+
+  @doc "Create a new Tesseract backend with default cache directory."
+  @spec tesseractbackend_new() :: {:ok, reference()} | {:error, String.t()}
+  def tesseractbackend_new do
+    Kreuzberg.Native.tesseractbackend_new()
+  end
+
+  @doc "Create a new Tesseract backend with custom cache directory."
+  @spec tesseractbackend_with_cache_dir(String.t()) :: {:ok, reference()} | {:error, String.t()}
+  def tesseractbackend_with_cache_dir(cache_dir) do
+    Kreuzberg.Native.tesseractbackend_with_cache_dir(cache_dir)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_default() :: reference()
+  def tesseractbackend_default do
+    Kreuzberg.Native.tesseractbackend_default()
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_name(map()) :: String.t()
+  def tesseractbackend_name(obj) do
+    Kreuzberg.Native.tesseractbackend_name(obj)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_version(map()) :: String.t()
+  def tesseractbackend_version(obj) do
+    Kreuzberg.Native.tesseractbackend_version(obj)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_initialize(map()) :: {:ok, nil} | {:error, String.t()}
+  def tesseractbackend_initialize(obj) do
+    Kreuzberg.Native.tesseractbackend_initialize(obj)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_shutdown(map()) :: {:ok, nil} | {:error, String.t()}
+  def tesseractbackend_shutdown(obj) do
+    Kreuzberg.Native.tesseractbackend_shutdown(obj)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_process_image_async(map(), binary(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def tesseractbackend_process_image_async(obj, image_bytes, config) do
+    Kreuzberg.Native.tesseractbackend_process_image_async(obj, image_bytes, config)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_process_image_file_async(map(), String.t(), String.t() | nil) :: {:ok, String.t() | nil} | {:error, String.t()}
+  def tesseractbackend_process_image_file_async(obj, path, config) do
+    Kreuzberg.Native.tesseractbackend_process_image_file_async(obj, path, config)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_supports_language(map(), String.t()) :: boolean()
+  def tesseractbackend_supports_language(obj, lang) do
+    Kreuzberg.Native.tesseractbackend_supports_language(obj, lang)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_backend_type(map()) :: map()
+  def tesseractbackend_backend_type(obj) do
+    Kreuzberg.Native.tesseractbackend_backend_type(obj)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_supported_languages(map()) :: [String.t()]
+  def tesseractbackend_supported_languages(obj) do
+    Kreuzberg.Native.tesseractbackend_supported_languages(obj)
+  end
+
+  @doc "Method"
+  @spec tesseractbackend_supports_table_detection(map()) :: boolean()
+  def tesseractbackend_supports_table_detection(obj) do
+    Kreuzberg.Native.tesseractbackend_supports_table_detection(obj)
+  end
+
+  @doc "Sets a custom cache directory for model files."
+  @spec paddleocrconfig_with_cache_dir(map(), String.t()) :: String.t() | nil
+  def paddleocrconfig_with_cache_dir(obj, path) do
+    Kreuzberg.Native.paddleocrconfig_with_cache_dir(obj, path)
+  end
+
+  @doc "Enables or disables table structure detection."
+  @spec paddleocrconfig_with_table_detection(map(), boolean()) :: String.t() | nil
+  def paddleocrconfig_with_table_detection(obj, enable) do
+    Kreuzberg.Native.paddleocrconfig_with_table_detection(obj, enable)
+  end
+
+  @doc "Enables or disables angle classification for rotated text."
+  @spec paddleocrconfig_with_angle_cls(map(), boolean()) :: String.t() | nil
+  def paddleocrconfig_with_angle_cls(obj, enable) do
+    Kreuzberg.Native.paddleocrconfig_with_angle_cls(obj, enable)
+  end
+
+  @doc "Sets the database threshold for text detection."
+  @spec paddleocrconfig_with_det_db_thresh(map(), float()) :: String.t() | nil
+  def paddleocrconfig_with_det_db_thresh(obj, threshold) do
+    Kreuzberg.Native.paddleocrconfig_with_det_db_thresh(obj, threshold)
+  end
+
+  @doc "Sets the box threshold for text bounding box refinement."
+  @spec paddleocrconfig_with_det_db_box_thresh(map(), float()) :: String.t() | nil
+  def paddleocrconfig_with_det_db_box_thresh(obj, threshold) do
+    Kreuzberg.Native.paddleocrconfig_with_det_db_box_thresh(obj, threshold)
+  end
+
+  @doc "Sets the unclip ratio for expanding text bounding boxes."
+  @spec paddleocrconfig_with_det_db_unclip_ratio(map(), float()) :: String.t() | nil
+  def paddleocrconfig_with_det_db_unclip_ratio(obj, ratio) do
+    Kreuzberg.Native.paddleocrconfig_with_det_db_unclip_ratio(obj, ratio)
+  end
+
+  @doc "Sets the maximum side length for detection images."
+  @spec paddleocrconfig_with_det_limit_side_len(map(), non_neg_integer()) :: String.t() | nil
+  def paddleocrconfig_with_det_limit_side_len(obj, length) do
+    Kreuzberg.Native.paddleocrconfig_with_det_limit_side_len(obj, length)
+  end
+
+  @doc "Sets the batch size for recognition inference."
+  @spec paddleocrconfig_with_rec_batch_num(map(), non_neg_integer()) :: String.t() | nil
+  def paddleocrconfig_with_rec_batch_num(obj, batch_size) do
+    Kreuzberg.Native.paddleocrconfig_with_rec_batch_num(obj, batch_size)
+  end
+
+  @doc "Sets the minimum recognition confidence threshold."
+  @spec paddleocrconfig_with_drop_score(map(), float()) :: String.t() | nil
+  def paddleocrconfig_with_drop_score(obj, score) do
+    Kreuzberg.Native.paddleocrconfig_with_drop_score(obj, score)
+  end
+
+  @doc "Sets padding in pixels added around images before detection."
+  @spec paddleocrconfig_with_padding(map(), non_neg_integer()) :: String.t() | nil
+  def paddleocrconfig_with_padding(obj, padding) do
+    Kreuzberg.Native.paddleocrconfig_with_padding(obj, padding)
+  end
+
+  @doc "Sets the model tier controlling detection/recognition model size."
+  @spec paddleocrconfig_with_model_tier(map(), String.t()) :: String.t() | nil
+  def paddleocrconfig_with_model_tier(obj, tier) do
+    Kreuzberg.Native.paddleocrconfig_with_model_tier(obj, tier)
+  end
+
+  @doc "Resolves the cache directory, checking in order:"
+  @spec paddleocrconfig_resolve_cache_dir(map()) :: String.t()
+  def paddleocrconfig_resolve_cache_dir(obj) do
+    Kreuzberg.Native.paddleocrconfig_resolve_cache_dir(obj)
+  end
+
+  @doc "Creates a default configuration with English language support."
+  @spec paddleocrconfig_default() :: String.t() | nil
+  def paddleocrconfig_default do
+    Kreuzberg.Native.paddleocrconfig_default()
+  end
+
+  @doc "Run layout detection on an image using the default confidence threshold."
+  @spec layoutmodel_detect(map(), String.t()) :: {:ok, [map()]} | {:error, String.t()}
+  def layoutmodel_detect(obj, img) do
+    Kreuzberg.Native.layoutmodel_detect(obj, img)
+  end
+
+  @doc "Run layout detection with a custom confidence threshold."
+  @spec layoutmodel_detect_with_threshold(map(), String.t(), float()) :: {:ok, [map()]} | {:error, String.t()}
+  def layoutmodel_detect_with_threshold(obj, img, threshold) do
+    Kreuzberg.Native.layoutmodel_detect_with_threshold(obj, img, threshold)
+  end
+
+  @doc "Run layout detection on a batch of images in a single model call."
+  @spec layoutmodel_detect_batch(map(), [String.t()], float() | nil) :: {:ok, [[map()]]} | {:error, String.t()}
+  def layoutmodel_detect_batch(obj, images, threshold) do
+    Kreuzberg.Native.layoutmodel_detect_batch(obj, images, threshold)
+  end
+
+  @doc "Human-readable model name."
+  @spec layoutmodel_name(map()) :: String.t()
+  def layoutmodel_name(obj) do
+    Kreuzberg.Native.layoutmodel_name(obj)
+  end
+
+  @doc "Method"
+  @spec bbox_width(map()) :: float()
+  def bbox_width(obj) do
+    Kreuzberg.Native.bbox_width(obj)
+  end
+
+  @doc "Method"
+  @spec bbox_height(map()) :: float()
+  def bbox_height(obj) do
+    Kreuzberg.Native.bbox_height(obj)
+  end
+
+  @doc "Method"
+  @spec bbox_area(map()) :: float()
+  def bbox_area(obj) do
+    Kreuzberg.Native.bbox_area(obj)
+  end
+
+  @doc "Method"
+  @spec bbox_center(map()) :: String.t()
+  def bbox_center(obj) do
+    Kreuzberg.Native.bbox_center(obj)
+  end
+
+  @doc "Area of intersection with another bounding box."
+  @spec bbox_intersection_area(map(), map()) :: float()
+  def bbox_intersection_area(obj, other) do
+    Kreuzberg.Native.bbox_intersection_area(obj, other)
+  end
+
+  @doc "Intersection over Union with another bounding box."
+  @spec bbox_iou(map(), map()) :: float()
+  def bbox_iou(obj, other) do
+    Kreuzberg.Native.bbox_iou(obj, other)
+  end
+
+  @doc "Fraction of `other` that is contained within `self`."
+  @spec bbox_containment_of(map(), map()) :: float()
+  def bbox_containment_of(obj, other) do
+    Kreuzberg.Native.bbox_containment_of(obj, other)
+  end
+
+  @doc "Fraction of page area this bbox covers."
+  @spec bbox_page_coverage(map(), float(), float()) :: float()
+  def bbox_page_coverage(obj, page_width, page_height) do
+    Kreuzberg.Native.bbox_page_coverage(obj, page_width, page_height)
+  end
+
+  @doc "Method"
+  @spec bbox_fmt(map(), String.t()) :: String.t()
+  def bbox_fmt(obj, f) do
+    Kreuzberg.Native.bbox_fmt(obj, f)
+  end
+
+  @doc "Sort detections by confidence in descending order."
+  @spec layoutdetection_sort_by_confidence_desc([map()]) :: nil
+  def layoutdetection_sort_by_confidence_desc(detections) do
+    Kreuzberg.Native.layoutdetection_sort_by_confidence_desc(detections)
+  end
+
+  @doc "Method"
+  @spec layoutdetection_fmt(map(), String.t()) :: String.t()
+  def layoutdetection_fmt(obj, f) do
+    Kreuzberg.Native.layoutdetection_fmt(obj, f)
+  end
+
+  @doc "Method"
+  @spec pdfimageextractor_new(binary()) :: {:ok, reference()} | {:error, String.t()}
+  def pdfimageextractor_new(pdf_bytes) do
+    Kreuzberg.Native.pdfimageextractor_new(pdf_bytes)
+  end
+
+  @doc "Method"
+  @spec pdfimageextractor_new_with_password(binary(), String.t() | nil) :: {:ok, reference()} | {:error, String.t()}
+  def pdfimageextractor_new_with_password(pdf_bytes, password) do
+    Kreuzberg.Native.pdfimageextractor_new_with_password(pdf_bytes, password)
+  end
+
+  @doc "Method"
+  @spec pdfimageextractor_extract_images(map()) :: {:ok, [map()]} | {:error, String.t()}
+  def pdfimageextractor_extract_images(obj) do
+    Kreuzberg.Native.pdfimageextractor_extract_images(obj)
+  end
+
+  @doc "Method"
+  @spec pdfimageextractor_extract_images_from_page(map(), non_neg_integer()) :: {:ok, [map()]} | {:error, String.t()}
+  def pdfimageextractor_extract_images_from_page(obj, page_number) do
+    Kreuzberg.Native.pdfimageextractor_extract_images_from_page(obj, page_number)
+  end
+
+  @doc "Method"
+  @spec pdfimageextractor_get_image_count(map()) :: {:ok, non_neg_integer()} | {:error, String.t()}
+  def pdfimageextractor_get_image_count(obj) do
+    Kreuzberg.Native.pdfimageextractor_get_image_count(obj)
+  end
+
+  @doc "Method"
+  @spec pdflayoutbbox_width(map()) :: float()
+  def pdflayoutbbox_width(obj) do
+    Kreuzberg.Native.pdflayoutbbox_width(obj)
+  end
+
+  @doc "Method"
+  @spec pdflayoutbbox_height(map()) :: float()
+  def pdflayoutbbox_height(obj) do
+    Kreuzberg.Native.pdflayoutbbox_height(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_avg_render_ms(map()) :: float()
+  def layouttimingreport_avg_render_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_avg_render_ms(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_avg_inference_ms(map()) :: float()
+  def layouttimingreport_avg_inference_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_avg_inference_ms(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_avg_preprocess_ms(map()) :: float()
+  def layouttimingreport_avg_preprocess_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_avg_preprocess_ms(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_avg_onnx_ms(map()) :: float()
+  def layouttimingreport_avg_onnx_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_avg_onnx_ms(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_avg_postprocess_ms(map()) :: float()
+  def layouttimingreport_avg_postprocess_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_avg_postprocess_ms(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_total_inference_ms(map()) :: float()
+  def layouttimingreport_total_inference_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_total_inference_ms(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_total_render_ms(map()) :: float()
+  def layouttimingreport_total_render_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_total_render_ms(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_total_preprocess_ms(map()) :: float()
+  def layouttimingreport_total_preprocess_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_total_preprocess_ms(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_total_onnx_ms(map()) :: float()
+  def layouttimingreport_total_onnx_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_total_onnx_ms(obj)
+  end
+
+  @doc "Method"
+  @spec layouttimingreport_total_postprocess_ms(map()) :: float()
+  def layouttimingreport_total_postprocess_ms(obj) do
+    Kreuzberg.Native.layouttimingreport_total_postprocess_ms(obj)
+  end
+
+  @doc "Method"
+  @spec pagerenderoptions_default() :: String.t() | nil
+  def pagerenderoptions_default do
+    Kreuzberg.Native.pagerenderoptions_default()
+  end
+
+  @doc "Create an iterator from raw PDF bytes."
+  @spec pdfpageiterator_new(binary(), integer() | nil, String.t() | nil) :: {:ok, reference()} | {:error, String.t()}
+  def pdfpageiterator_new(pdf_bytes, dpi, password) do
+    Kreuzberg.Native.pdfpageiterator_new(pdf_bytes, dpi, password)
+  end
+
+  @doc "Create an iterator from a file path."
+  @spec pdfpageiterator_from_file(String.t(), integer() | nil, String.t() | nil) :: {:ok, reference()} | {:error, String.t()}
+  def pdfpageiterator_from_file(path, dpi, password) do
+    Kreuzberg.Native.pdfpageiterator_from_file(path, dpi, password)
+  end
+
+  @doc "Number of pages in the PDF."
+  @spec pdfpageiterator_page_count(map()) :: non_neg_integer()
+  def pdfpageiterator_page_count(obj) do
+    Kreuzberg.Native.pdfpageiterator_page_count(obj)
+  end
+
+  @doc "Method"
+  @spec pdfpageiterator_next(map()) :: String.t() | nil
+  def pdfpageiterator_next(obj) do
+    Kreuzberg.Native.pdfpageiterator_next(obj)
+  end
+
+  @doc "Method"
+  @spec pdfpageiterator_size_hint(map()) :: String.t()
+  def pdfpageiterator_size_hint(obj) do
+    Kreuzberg.Native.pdfpageiterator_size_hint(obj)
+  end
+
+  @doc "Method"
+  @spec pdfrenderer_new() :: {:ok, reference()} | {:error, String.t()}
+  def pdfrenderer_new do
+    Kreuzberg.Native.pdfrenderer_new()
+  end
+
+  @doc "Method"
+  @spec pdftextextractor_new() :: {:ok, reference()} | {:error, String.t()}
+  def pdftextextractor_new do
+    Kreuzberg.Native.pdftextextractor_new()
   end
 end

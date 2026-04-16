@@ -9,6 +9,6 @@ defmodule Kreuzberg.TreeSitterProcessConfig do
             docstrings: false,
             symbols: false,
             diagnostics: false,
-            chunk_max_size: 0,
+            chunk_max_size: nil,
             content_mode: :chunks
 end

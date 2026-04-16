@@ -5,5 +5,5 @@ defmodule Kreuzberg.HierarchyConfig do
   defstruct enabled: true,
             k_clusters: 3,
             include_bbox: true,
-            ocr_coverage_threshold: 0.0
+            ocr_coverage_threshold: nil
 end

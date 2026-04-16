@@ -3,8 +3,8 @@ defmodule Kreuzberg.TreeSitterConfig do
   @moduledoc "Configuration for tree-sitter language pack integration."
 
   defstruct enabled: true,
-            cache_dir: "",
-            languages: [],
-            groups: [],
+            cache_dir: nil,
+            languages: nil,
+            groups: nil,
             process: nil
 end

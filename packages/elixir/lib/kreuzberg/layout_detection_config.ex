@@ -2,7 +2,7 @@
 defmodule Kreuzberg.LayoutDetectionConfig do
   @moduledoc "Layout detection configuration."
 
-  defstruct confidence_threshold: 0.0,
+  defstruct confidence_threshold: nil,
             apply_heuristics: true,
             table_model: :tatr
 end

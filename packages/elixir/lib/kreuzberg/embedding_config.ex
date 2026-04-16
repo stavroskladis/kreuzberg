@@ -6,5 +6,5 @@ defmodule Kreuzberg.EmbeddingConfig do
             normalize: true,
             batch_size: 32,
             show_download_progress: false,
-            cache_dir: ""
+            cache_dir: nil
 end

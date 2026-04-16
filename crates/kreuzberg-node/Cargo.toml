@@ -4,16 +4,6 @@ version = "4.8.5"
 edition = "2024"
 license = "Elastic-2.0"
 
-[package.metadata.cargo-machete]
-ignored = [
-    "serde_json",
-    "tokio",
-    "serde-wasm-bindgen",
-    "pyo3-async-runtimes",
-    "serde_magnus",
-    "wiremock",
-]
-
 [lib]
 crate-type = ["cdylib"]
 
@@ -21,7 +11,6 @@ crate-type = ["cdylib"]
 kreuzberg = { path = "../kreuzberg", features = ["full", "pdf", "ocr", "paddle-ocr", "layout-detection", "embeddings", "chunking", "keywords-yake", "keywords-rake", "language-detection", "html", "tree-sitter", "office", "email", "archives", "stopwords", "auto-rotate", "tokio-runtime", "api", "mcp", "liter-llm"] }
 napi = { version = "3", features = ["async"] }
 napi-derive = "3"
-serde_json = "1"
 
 [build-dependencies]
 napi-build = "2"

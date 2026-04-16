@@ -65,7 +65,7 @@ public sealed class ExtractionResult
     /// Unstructured-compatible element-based processing.
     /// </summary>
     [JsonPropertyName("elements")]
-    public List<string>? Elements { get; set; } = null;
+    public List<Element>? Elements { get; set; } = null;
 
     /// <summary>
     /// Rich Djot content structure (when extracting Djot documents).

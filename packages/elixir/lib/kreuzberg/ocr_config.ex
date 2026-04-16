@@ -5,12 +5,12 @@ defmodule Kreuzberg.OcrConfig do
   defstruct backend: "",
             language: "",
             tesseract_config: nil,
-            output_format: :plain,
-            paddle_ocr_config: "",
+            output_format: nil,
+            paddle_ocr_config: nil,
             element_config: nil,
             quality_thresholds: nil,
             pipeline: nil,
             auto_rotate: false,
             vlm_config: nil,
-            vlm_prompt: ""
+            vlm_prompt: nil
 end

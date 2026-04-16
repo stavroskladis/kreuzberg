@@ -14,7 +14,7 @@ public record ExtractionResult(
     Optional<List<Chunk>> chunks,
     Optional<List<ExtractedImage>> images,
     Optional<List<PageContent>> pages,
-    Optional<List<String>> elements,
+    Optional<List<Element>> elements,
     @JsonProperty("djot_content") Optional<DjotContent> djotContent,
     @JsonProperty("ocr_elements") Optional<List<OcrElement>> ocrElements,
     Optional<DocumentStructure> document,

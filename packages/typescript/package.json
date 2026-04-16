@@ -30,5 +30,16 @@
   },
   "devDependencies": {
     "@napi-rs/cli": "^3.0.0"
+  },
+  "optionalDependencies": {
+    "kreuzberg-darwin-arm64": "4.8.5",
+    "kreuzberg-darwin-x64": "4.8.5",
+    "kreuzberg-linux-arm64-gnu": "4.8.5",
+    "kreuzberg-linux-arm64-musl": "4.8.5",
+    "kreuzberg-linux-x64-gnu": "4.8.5",
+    "kreuzberg-linux-x64-musl": "4.8.5",
+    "kreuzberg-linux-arm-gnueabihf": "4.8.5",
+    "kreuzberg-win32-x64-msvc": "4.8.5",
+    "kreuzberg-win32-arm64-msvc": "4.8.5"
   }
 }

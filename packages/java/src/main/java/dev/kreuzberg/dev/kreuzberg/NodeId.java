@@ -5,7 +5,7 @@ import java.lang.foreign.MemorySegment;
 
 /**
  * Deterministic node identifier.
- *
+ * 
  * Generated from a hash of `node_type + text + page`. The same document
  * always produces the same IDs, making them useful for diffing, caching,
  * and external references.

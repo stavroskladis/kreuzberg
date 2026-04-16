@@ -2,8 +2,8 @@
 defmodule Kreuzberg.HtmlOutputConfig do
   @moduledoc "Configuration for styled HTML output."
 
-  defstruct css: "",
-            css_file: "",
+  defstruct css: nil,
+            css_file: nil,
             theme: :unstyled,
             class_prefix: "",
             embed_css: true

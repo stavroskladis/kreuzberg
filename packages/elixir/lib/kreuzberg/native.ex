@@ -6,10 +6,1622 @@ defmodule Kreuzberg.Native do
     otp_app: :kreuzberg,
     crate: "kreuzberg_nif"
 
+  def get_cache_metadata(_cache_dir), do: :erlang.nif_error(:nif_not_loaded)
+
+  def cleanup_cache(_cache_dir, _max_age_days, _max_size_mb, _target_size_ratio),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def smart_cleanup_cache(_cache_dir, _max_age_days, _max_size_mb, _min_free_space_mb),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def is_cache_valid(_cache_path, _max_age_days), do: :erlang.nif_error(:nif_not_loaded)
+  def clear_cache_directory(_cache_dir), do: :erlang.nif_error(:nif_not_loaded)
+
+  def batch_cleanup_caches(_cache_dirs, _max_age_days, _max_size_mb, _min_free_space_mb),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def generate_cache_key(_parts), do: :erlang.nif_error(:nif_not_loaded)
+  def blake3_hash_bytes(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def blake3_hash_file(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def get_available_disk_space(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def fast_hash(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_cache_key(_key), do: :erlang.nif_error(:nif_not_loaded)
+
+  def filter_old_cache_entries(_cache_times, _current_time, _max_age_seconds),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def sort_cache_by_access_time(_entries), do: :erlang.nif_error(:nif_not_loaded)
+  def sanitize_namespace(_namespace), do: :erlang.nif_error(:nif_not_loaded)
+  def is_batch_mode, do: :erlang.nif_error(:nif_not_loaded)
+  def resolve_thread_budget(_config), do: :erlang.nif_error(:nif_not_loaded)
+  def init_thread_pools(_budget), do: :erlang.nif_error(:nif_not_loaded)
+  def merge_config_json(_base, _override_json), do: :erlang.nif_error(:nif_not_loaded)
+  def build_config_from_json(_base, _override_json), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_port(_port), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_host(_host), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_cors_origin(_origin), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_upload_size(_size), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_binarization_method(_method), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_token_reduction_level(_level), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_ocr_backend(_backend), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_language_code(_code), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_tesseract_psm(_psm), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_tesseract_oem(_oem), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_output_format(_format), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_confidence(_confidence), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_dpi(_dpi), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_chunking_params(_max_chars, _max_overlap), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_llm_config_model(_model), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_vlm_backend_config(_backend, _vlm_config), do: :erlang.nif_error(:nif_not_loaded)
+
+  def validate_structured_extraction_schema(_schema, _llm_model),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_bytes_async(_content, _mime_type, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_file_async(_path, _mime_type, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def get_pool_sizing_hint(_file_size, _mime_type), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_file_sync(_path, _mime_type, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_bytes_sync(_content, _mime_type, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def batch_extract_file_sync(_items, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def batch_extract_bytes_sync(_items, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def batch_extract_file_async(_items, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def batch_extract_bytes_async(_items, _config), do: :erlang.nif_error(:nif_not_loaded)
   def is_valid_format_field(_field), do: :erlang.nif_error(:nif_not_loaded)
+  def open_file_bytes(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def read_file_async_async(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def read_file_sync(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def file_exists(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_file_exists(_path), do: :erlang.nif_error(:nif_not_loaded)
+
+  def find_files_by_extension(_dir, _extension, _recursive),
+    do: :erlang.nif_error(:nif_not_loaded)
+
   def detect_mime_type(_path, _check_exists), do: :erlang.nif_error(:nif_not_loaded)
   def validate_mime_type(_mime_type), do: :erlang.nif_error(:nif_not_loaded)
+  def detect_or_validate(_path, _mime_type), do: :erlang.nif_error(:nif_not_loaded)
   def detect_mime_type_from_bytes(_content), do: :erlang.nif_error(:nif_not_loaded)
   def get_extensions_for_mime(_mime_type), do: :erlang.nif_error(:nif_not_loaded)
   def list_supported_formats, do: :erlang.nif_error(:nif_not_loaded)
+  def clear_processor_cache, do: :erlang.nif_error(:nif_not_loaded)
+  def apply_output_format(_result, _output_format), do: :erlang.nif_error(:nif_not_loaded)
+  def run_pipeline_async(_doc, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def run_pipeline_sync(_doc, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def is_page_text_blank(_text), do: :erlang.nif_error(:nif_not_loaded)
+  def resolve_relationships(_doc), do: :erlang.nif_error(:nif_not_loaded)
+  def derive_document_structure(_doc), do: :erlang.nif_error(:nif_not_loaded)
+
+  def derive_extraction_result(_doc, _include_document_structure, _output_format),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def parse_json(_data, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_jsonl(_data, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_yaml(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_toml(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_text(_text_bytes, _is_markdown), do: :erlang.nif_error(:nif_not_loaded)
+  def transform_to_document_structure(_result), do: :erlang.nif_error(:nif_not_loaded)
+  def detect_list_items(_text), do: :erlang.nif_error(:nif_not_loaded)
+
+  def generate_element_id(_text, _element_type, _page_number),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def transform_extraction_result_to_elements(_result), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_body_text(_data, _is_compressed), do: :erlang.nif_error(:nif_not_loaded)
+  def decompress_stream(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_hwp_text(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def load_image_for_ocr(_image_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_image_metadata(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_text_from_image_with_ocr(_bytes, _mime_type, _ocr_result, _page_config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def estimate_content_capacity(_file_size, _format), do: :erlang.nif_error(:nif_not_loaded)
+  def estimate_html_markdown_capacity(_html_size), do: :erlang.nif_error(:nif_not_loaded)
+  def estimate_spreadsheet_capacity(_file_size), do: :erlang.nif_error(:nif_not_loaded)
+  def estimate_presentation_capacity(_file_size), do: :erlang.nif_error(:nif_not_loaded)
+
+  def estimate_table_markdown_capacity(_row_count, _col_count),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def decompress_gzip(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_gzip(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_gzip_metadata(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_gzip_text_content(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_gzip_with_bytes(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_7z_metadata(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_7z_text_content(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_7z_file_bytes(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_tar_metadata(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_tar_text_content(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_tar_file_bytes(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_zip_metadata(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_zip_text_content(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_zip_file_bytes(_bytes, _limits), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_eml_content(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_msg_content(_data, _fallback_codepage), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_email_content(_data, _mime_type, _fallback_codepage),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def build_email_text_output(_result), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_pst_messages(_pst_data), do: :erlang.nif_error(:nif_not_loaded)
+  def read_excel_file(_file_path), do: :erlang.nif_error(:nif_not_loaded)
+  def read_excel_bytes(_data, _file_extension), do: :erlang.nif_error(:nif_not_loaded)
+  def excel_to_text(_workbook), do: :erlang.nif_error(:nif_not_loaded)
+  def excel_to_markdown(_workbook), do: :erlang.nif_error(:nif_not_loaded)
+  def resolve_conversion_options(_options, _output_format), do: :erlang.nif_error(:nif_not_loaded)
+
+  def convert_html_to_markdown(_html, _options, _output_format),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def convert_html_to_markdown_with_metadata(_html, _options, _output_format),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def convert_html_to_markdown_with_tables(_html, _options, _output_format),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_html_inline_images(_html, _options), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_doc_text(_content), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_drawing(_reader), do: :erlang.nif_error(:nif_not_loaded)
+  def collect_and_convert_omath_para(_reader), do: :erlang.nif_error(:nif_not_loaded)
+  def collect_and_convert_omath(_reader), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_document(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_text_from_bytes(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_section_properties(_node), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_section_properties_streaming(_reader), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_styles_xml(_xml), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_table_properties(_reader), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_row_properties(_reader), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_cell_properties(_reader), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_table_grid(_reader), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_theme_xml(_xml), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_text(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_text_with_page_breaks(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def detect_page_breaks_from_docx(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_ooxml_embedded_objects_async(_zip_bytes, _embeddings_prefix, _source_label, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def detect_image_format(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def process_images_with_ocr_async(_images, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_ppt_text(_content), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_ppt_text_with_options(_content, _include_master_slides),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_pptx_from_path(_path, _options), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_pptx_from_bytes(_data, _options), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_xml_svg(_xml_bytes, _preserve_whitespace), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_xml(_xml_bytes, _preserve_whitespace), do: :erlang.nif_error(:nif_not_loaded)
+  def cells_to_text(_cells), do: :erlang.nif_error(:nif_not_loaded)
+  def cells_to_markdown(_cells), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_jotdown_attributes(_attrs), do: :erlang.nif_error(:nif_not_loaded)
+  def render_attributes(_attrs), do: :erlang.nif_error(:nif_not_loaded)
+  def djot_content_to_djot(_content), do: :erlang.nif_error(:nif_not_loaded)
+  def extraction_result_to_djot(_result), do: :erlang.nif_error(:nif_not_loaded)
+  def djot_to_html(_djot_source), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_complete_djot_content(_events, _metadata, _tables),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_tables_from_events(_events), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_text_from_events(_events), do: :erlang.nif_error(:nif_not_loaded)
+  def render_block_to_djot(_output, _block, _indent_level), do: :erlang.nif_error(:nif_not_loaded)
+  def render_list_item(_output, _item, _indent, _marker), do: :erlang.nif_error(:nif_not_loaded)
+  def render_inline_content(_output, _elements), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_frontmatter(_content), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_metadata_from_yaml(_yaml), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_title_from_content(_content), do: :erlang.nif_error(:nif_not_loaded)
+  def collect_iwa_paths(_content), do: :erlang.nif_error(:nif_not_loaded)
+  def read_iwa_file(_content, _path), do: :erlang.nif_error(:nif_not_loaded)
+  def decode_iwa_stream(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_text_from_proto(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_text_from_iwa_files(_content, _iwa_paths), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_metadata_from_zip(_content), do: :erlang.nif_error(:nif_not_loaded)
+  def dedup_text(_texts), do: :erlang.nif_error(:nif_not_loaded)
+
+  def evaluate_native_text_for_ocr(_native_text, _page_count, _thresholds),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def compute_quality_score(_text, _thresholds), do: :erlang.nif_error(:nif_not_loaded)
+
+  def evaluate_per_page_ocr(_native_text, _boundaries, _page_count, _thresholds),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def hex_digit_to_u8(_c), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_hex_byte(_h1, _h2), do: :erlang.nif_error(:nif_not_loaded)
+  def decode_windows_1252(_byte), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_rtf_control_word(_chars), do: :erlang.nif_error(:nif_not_loaded)
+  def normalize_whitespace_with_mapping(_s), do: :erlang.nif_error(:nif_not_loaded)
+  def map_offset(_mapping, _offset), do: :erlang.nif_error(:nif_not_loaded)
+  def normalize_whitespace(_s), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_pict_image(_chars), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_rtf_datetime(_segment), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_rtf_metadata(_rtf_content, _extracted_text), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_rtf_formatting(_content), do: :erlang.nif_error(:nif_not_loaded)
+
+  def spans_to_annotations(_para_start, _para_end, _formatting),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_text_from_rtf(_content, _plain), do: :erlang.nif_error(:nif_not_loaded)
+  def register_default_extractors, do: :erlang.nif_error(:nif_not_loaded)
+  def extract_panic_message(_panic_info), do: :erlang.nif_error(:nif_not_loaded)
+  def register_extractor(_extractor), do: :erlang.nif_error(:nif_not_loaded)
+  def unregister_extractor(_name), do: :erlang.nif_error(:nif_not_loaded)
+  def list_extractors, do: :erlang.nif_error(:nif_not_loaded)
+  def clear_extractors, do: :erlang.nif_error(:nif_not_loaded)
+  def register_ocr_backend(_backend), do: :erlang.nif_error(:nif_not_loaded)
+  def unregister_ocr_backend(_name), do: :erlang.nif_error(:nif_not_loaded)
+  def list_ocr_backends, do: :erlang.nif_error(:nif_not_loaded)
+  def clear_ocr_backends, do: :erlang.nif_error(:nif_not_loaded)
+  def list_post_processors, do: :erlang.nif_error(:nif_not_loaded)
+  def get_ocr_backend_registry, do: :erlang.nif_error(:nif_not_loaded)
+  def get_document_extractor_registry, do: :erlang.nif_error(:nif_not_loaded)
+  def get_post_processor_registry, do: :erlang.nif_error(:nif_not_loaded)
+  def get_validator_registry, do: :erlang.nif_error(:nif_not_loaded)
+  def get_renderer_registry, do: :erlang.nif_error(:nif_not_loaded)
+  def register_renderer(_renderer), do: :erlang.nif_error(:nif_not_loaded)
+  def unregister_renderer(_name), do: :erlang.nif_error(:nif_not_loaded)
+  def list_renderers, do: :erlang.nif_error(:nif_not_loaded)
+  def clear_renderers, do: :erlang.nif_error(:nif_not_loaded)
+  def validate_plugins_at_startup, do: :erlang.nif_error(:nif_not_loaded)
+  def register_validator(_validator), do: :erlang.nif_error(:nif_not_loaded)
+  def unregister_validator(_name), do: :erlang.nif_error(:nif_not_loaded)
+  def list_validators, do: :erlang.nif_error(:nif_not_loaded)
+  def clear_validators, do: :erlang.nif_error(:nif_not_loaded)
+  def render_djot(_doc), do: :erlang.nif_error(:nif_not_loaded)
+  def render_html(_doc), do: :erlang.nif_error(:nif_not_loaded)
+  def render_json(_doc), do: :erlang.nif_error(:nif_not_loaded)
+  def render_markdown(_doc), do: :erlang.nif_error(:nif_not_loaded)
+  def render_plain(_doc), do: :erlang.nif_error(:nif_not_loaded)
+  def sanitize_filename(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def get_metrics, do: :erlang.nif_error(:nif_not_loaded)
+  def record_error_on_current_span(_error), do: :erlang.nif_error(:nif_not_loaded)
+  def record_success_on_current_span, do: :erlang.nif_error(:nif_not_loaded)
+  def sanitize_path(_path), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extractor_span(_extractor_name, _mime_type, _size_bytes),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pipeline_stage_span(_stage), do: :erlang.nif_error(:nif_not_loaded)
+  def pipeline_processor_span(_stage, _processor_name), do: :erlang.nif_error(:nif_not_loaded)
+  def ocr_span(_backend, _language), do: :erlang.nif_error(:nif_not_loaded)
+  def model_inference_span(_model_name), do: :erlang.nif_error(:nif_not_loaded)
+  def from_utf8(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def string_from_utf8(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def is_valid_utf8(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def calculate_quality_score(_text, _metadata), do: :erlang.nif_error(:nif_not_loaded)
+  def clean_extracted_text(_text), do: :erlang.nif_error(:nif_not_loaded)
+  def normalize_spaces(_text), do: :erlang.nif_error(:nif_not_loaded)
+  def reduce_tokens(_text, _config, _language_hint), do: :erlang.nif_error(:nif_not_loaded)
+  def batch_reduce_tokens(_texts, _config, _language_hint), do: :erlang.nif_error(:nif_not_loaded)
+  def get_reduction_statistics(_original, _reduced), do: :erlang.nif_error(:nif_not_loaded)
+  def bold(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
+  def italic(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
+  def underline(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
+  def link(_start, _end, _url, _title), do: :erlang.nif_error(:nif_not_loaded)
+  def code(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
+  def strikethrough(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
+  def subscript(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
+  def superscript(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
+  def font_size(_start, _end, _value), do: :erlang.nif_error(:nif_not_loaded)
+  def color(_start, _end, _value), do: :erlang.nif_error(:nif_not_loaded)
+  def highlight(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
+  def classify_uri(_url), do: :erlang.nif_error(:nif_not_loaded)
+  def safe_decode(_byte_data, _encoding), do: :erlang.nif_error(:nif_not_loaded)
+  def calculate_text_confidence(_text), do: :erlang.nif_error(:nif_not_loaded)
+  def fix_mojibake(_text), do: :erlang.nif_error(:nif_not_loaded)
+  def snake_to_camel(_val), do: :erlang.nif_error(:nif_not_loaded)
+  def camel_to_snake(_val), do: :erlang.nif_error(:nif_not_loaded)
+
+  def create_string_buffer_pool(_pool_size, _buffer_capacity),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def create_byte_buffer_pool(_pool_size, _buffer_capacity),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def estimate_pool_size(_file_size, _mime_type), do: :erlang.nif_error(:nif_not_loaded)
+  def acquire_string_buffer, do: :erlang.nif_error(:nif_not_loaded)
+  def intern_language_code(_lang_code), do: :erlang.nif_error(:nif_not_loaded)
+  def intern_mime_type(_mime_type), do: :erlang.nif_error(:nif_not_loaded)
+  def xml_tag_name(_name), do: :erlang.nif_error(:nif_not_loaded)
+  def escape_html_entities(_text), do: :erlang.nif_error(:nif_not_loaded)
+  def detect_columns(_words, _column_threshold), do: :erlang.nif_error(:nif_not_loaded)
+  def detect_rows(_words, _row_threshold_ratio), do: :erlang.nif_error(:nif_not_loaded)
+
+  def reconstruct_table(_words, _column_threshold, _row_threshold_ratio),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def table_to_markdown(_table), do: :erlang.nif_error(:nif_not_loaded)
+  def load_server_config(_config_path), do: :erlang.nif_error(:nif_not_loaded)
+  def openapi_json, do: :erlang.nif_error(:nif_not_loaded)
+  def create_router(_config), do: :erlang.nif_error(:nif_not_loaded)
+  def create_router_with_limits(_config, _limits), do: :erlang.nif_error(:nif_not_loaded)
+
+  def create_router_with_limits_and_server_config(_config, _limits, _server_config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def serve_async(_host, _port), do: :erlang.nif_error(:nif_not_loaded)
+  def serve_with_config_async(_host, _port, _config), do: :erlang.nif_error(:nif_not_loaded)
+
+  def serve_with_config_and_limits_async(_host, _port, _config, _limits),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def serve_with_server_config_async(_extraction_config, _server_config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def serve_default_async, do: :erlang.nif_error(:nif_not_loaded)
+  def map_kreuzberg_error_to_mcp(_error), do: :erlang.nif_error(:nif_not_loaded)
+  def start_mcp_server_async, do: :erlang.nif_error(:nif_not_loaded)
+  def start_mcp_server_with_config_async(_config), do: :erlang.nif_error(:nif_not_loaded)
+  def start_mcp_server_http_async(_host, _port), do: :erlang.nif_error(:nif_not_loaded)
+
+  def start_mcp_server_http_with_config_async(_host, _port, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def validate_page_boundaries(_boundaries), do: :erlang.nif_error(:nif_not_loaded)
+
+  def calculate_page_range(_byte_start, _byte_end, _boundaries),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def classify_chunk(_content, _heading_context), do: :erlang.nif_error(:nif_not_loaded)
+  def chunk_text(_text, _config, _page_boundaries), do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunk_text_with_heading_source(_text, _config, _page_boundaries, _heading_source),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunk_text_with_type(_text, _max_characters, _overlap, _trim, _chunker_type),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunk_texts_batch(_texts, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def precompute_utf8_boundaries(_text), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_utf8_boundaries(_text, _boundaries), do: :erlang.nif_error(:nif_not_loaded)
+  def create_client(_config), do: :erlang.nif_error(:nif_not_loaded)
+  def render_template(_template, _context), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_structured_async(_content, _config), do: :erlang.nif_error(:nif_not_loaded)
+
+  def vlm_ocr_async(_image_bytes, _image_mime_type, _language, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def normalize(_v), do: :erlang.nif_error(:nif_not_loaded)
+  def get_preset(_name), do: :erlang.nif_error(:nif_not_loaded)
+  def list_presets, do: :erlang.nif_error(:nif_not_loaded)
+  def warm_model(_model_type, _cache_dir), do: :erlang.nif_error(:nif_not_loaded)
+  def download_model(_model_type, _cache_dir), do: :erlang.nif_error(:nif_not_loaded)
+  def generate_embeddings_for_chunks(_chunks, _config), do: :erlang.nif_error(:nif_not_loaded)
+
+  def calculate_smart_dpi(_page_width, _page_height, _target_dpi, _max_dimension, _max_memory_mb),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def calculate_optimal_dpi(_page_width, _page_height, _target_dpi, _max_dimension, _min_dpi, _max_dpi),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def normalize_image_dpi(_rgb_data, _width, _height, _config, _current_dpi),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def resize_image(_image, _new_width, _new_height, _scale_factor),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def detect_languages(_text, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def register_language_detection_processor, do: :erlang.nif_error(:nif_not_loaded)
+  def get_stopwords(_lang), do: :erlang.nif_error(:nif_not_loaded)
+  def get_stopwords_with_fallback(_language, _fallback), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_keywords(_text, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def text_block_to_element(_block, _page_number), do: :erlang.nif_error(:nif_not_loaded)
+  def tsv_row_to_element(_row), do: :erlang.nif_error(:nif_not_loaded)
+
+  def iterator_word_to_element(_word, _block_type, _para_info, _page_number),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def element_to_hocr_word(_element), do: :erlang.nif_error(:nif_not_loaded)
+  def elements_to_hocr_words(_elements, _min_confidence), do: :erlang.nif_error(:nif_not_loaded)
+  def parse_hocr_to_internal_document(_hocr_html), do: :erlang.nif_error(:nif_not_loaded)
+
+  def assemble_ocr_markdown(_elements, _detection, _img_width, _img_height, _recognized_tables),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def recognize_page_tables(_page_image, _detection, _elements, _tatr_model),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_words_from_tsv(_tsv_data, _min_confidence), do: :erlang.nif_error(:nif_not_loaded)
+  def compute_hash(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def validate_tesseract_version(_version), do: :erlang.nif_error(:nif_not_loaded)
+  def ensure_ort_available, do: :erlang.nif_error(:nif_not_loaded)
+  def is_language_supported(_lang), do: :erlang.nif_error(:nif_not_loaded)
+  def language_to_script_family(_paddle_lang), do: :erlang.nif_error(:nif_not_loaded)
+  def map_language_code(_kreuzberg_code), do: :erlang.nif_error(:nif_not_loaded)
+  def build_cell_grid(_result, _table_bbox), do: :erlang.nif_error(:nif_not_loaded)
+
+  def apply_heuristics(_detections, _page_width, _page_height),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def greedy_nms(_detections, _iou_threshold), do: :erlang.nif_error(:nif_not_loaded)
+  def preprocess_imagenet(_img, _target_size), do: :erlang.nif_error(:nif_not_loaded)
+  def preprocess_imagenet_letterbox(_img, _target_size), do: :erlang.nif_error(:nif_not_loaded)
+  def preprocess_rescale(_img, _target_size), do: :erlang.nif_error(:nif_not_loaded)
+
+  def preprocess_letterbox(_img, _target_width, _target_height),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def build_session(_path, _accel, _thread_budget), do: :erlang.nif_error(:nif_not_loaded)
+  def config_from_extraction(_layout_config), do: :erlang.nif_error(:nif_not_loaded)
+  def create_engine(_layout_config), do: :erlang.nif_error(:nif_not_loaded)
+  def take_or_create_engine(_layout_config), do: :erlang.nif_error(:nif_not_loaded)
+  def return_engine(_engine), do: :erlang.nif_error(:nif_not_loaded)
+  def take_or_create_tatr, do: :erlang.nif_error(:nif_not_loaded)
+  def return_tatr(_model), do: :erlang.nif_error(:nif_not_loaded)
+  def take_or_create_slanet(_variant), do: :erlang.nif_error(:nif_not_loaded)
+  def return_slanet(_variant, _model), do: :erlang.nif_error(:nif_not_loaded)
+  def take_or_create_table_classifier, do: :erlang.nif_error(:nif_not_loaded)
+  def return_table_classifier(_model), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_annotations_from_document(_document), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_bookmarks(_document), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_bundled_pdfium, do: :erlang.nif_error(:nif_not_loaded)
+  def extract_embedded_files(_document), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_and_process_embedded_files_async(_pdf_bytes, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def initialize_font_cache, do: :erlang.nif_error(:nif_not_loaded)
+  def get_font_descriptors, do: :erlang.nif_error(:nif_not_loaded)
+  def cached_font_count, do: :erlang.nif_error(:nif_not_loaded)
+  def clear_font_cache, do: :erlang.nif_error(:nif_not_loaded)
+  def cluster_font_sizes(_blocks, _k), do: :erlang.nif_error(:nif_not_loaded)
+
+  def assign_heading_levels_smart(_clusters, _min_heading_ratio, _min_heading_gap),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def assign_hierarchy_levels(_blocks, _kmeans_result), do: :erlang.nif_error(:nif_not_loaded)
+
+  def assign_hierarchy_levels_from_clusters(_blocks, _clusters),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_chars_with_fonts(_page), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_segments_from_page(_page), do: :erlang.nif_error(:nif_not_loaded)
+  def merge_chars_into_blocks(_chars), do: :erlang.nif_error(:nif_not_loaded)
+  def should_trigger_ocr(_page, _blocks, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_images_from_pdf(_pdf_bytes), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_images_from_pdf_with_password(_pdf_bytes, _password),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def reextract_raw_images_via_pdfium(_pdf_bytes, _images), do: :erlang.nif_error(:nif_not_loaded)
+  def detect_layout_for_document(_pdf_bytes, _engine), do: :erlang.nif_error(:nif_not_loaded)
+  def detect_layout_for_images(_images, _engine), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_metadata(_pdf_bytes), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_metadata_with_password(_pdf_bytes, _password),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_metadata_with_passwords(_pdf_bytes, _passwords),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_metadata_from_document(_document, _page_boundaries, _content),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_common_metadata_from_document(_document), do: :erlang.nif_error(:nif_not_loaded)
+
+  def render_page_to_image(_pdf_bytes, _page_index, _options),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def render_pdf_page_to_png(_pdf_bytes, _page_index, _dpi, _password),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_words_from_page(_page, _min_confidence), do: :erlang.nif_error(:nif_not_loaded)
+  def segment_to_hocr_word(_seg, _page_height), do: :erlang.nif_error(:nif_not_loaded)
+  def split_segment_to_words(_seg, _page_height), do: :erlang.nif_error(:nif_not_loaded)
+  def segments_to_words(_segments, _page_height), do: :erlang.nif_error(:nif_not_loaded)
+
+  def post_process_table(_table, _layout_guided, _allow_single_column),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def is_well_formed_table(_grid), do: :erlang.nif_error(:nif_not_loaded)
+  def extract_text_from_pdf(_pdf_bytes), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_text_from_pdf_with_password(_pdf_bytes, _password),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_text_from_pdf_with_passwords(_pdf_bytes, _passwords),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_text_and_metadata_from_pdf_document(_document, _extraction_config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extract_text_from_pdf_document(_document, _page_config, _extraction_config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def serialize_to_toon(_result), do: :erlang.nif_error(:nif_not_loaded)
+  def serialize_to_json(_result), do: :erlang.nif_error(:nif_not_loaded)
+
+  def genericcache_new(_cache_type, _cache_dir, _max_age_days, _max_cache_size_mb, _min_free_space_mb),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def genericcache_get(_obj, _cache_key, _source_file, _namespace, _ttl_override_secs),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def genericcache_get_default(_obj, _cache_key, _source_file),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def genericcache_set(_obj, _cache_key, _data, _source_file, _namespace, _ttl_secs),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def genericcache_set_default(_obj, _cache_key, _data, _source_file),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def genericcache_is_processing(_obj, _cache_key), do: :erlang.nif_error(:nif_not_loaded)
+  def genericcache_mark_processing(_obj, _cache_key), do: :erlang.nif_error(:nif_not_loaded)
+  def genericcache_mark_complete(_obj, _cache_key), do: :erlang.nif_error(:nif_not_loaded)
+  def genericcache_clear(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def genericcache_delete_namespace(_obj, _namespace), do: :erlang.nif_error(:nif_not_loaded)
+  def genericcache_get_stats(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def genericcache_get_stats_filtered(_obj, _namespace), do: :erlang.nif_error(:nif_not_loaded)
+  def genericcache_cache_dir(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def genericcache_cache_type(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessorconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessor_with_config(_config), do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessor_with_pool_hint(_hint), do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessor_string_pool(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessor_byte_pool(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessor_config(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessor_string_pool_size(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessor_byte_pool_size(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessor_clear_pools(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def batchprocessor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def contentfilterconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def extractionconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+
+  def extractionconfig_with_file_overrides(_obj, _overrides),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extractionconfig_normalized(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionconfig_validate(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionconfig_needs_image_processing(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def htmloutputconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def layoutdetectionconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def ocrqualitythresholds_default, do: :erlang.nif_error(:nif_not_loaded)
+  def ocrconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def ocrconfig_validate(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrconfig_effective_thresholds(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrconfig_effective_pipeline(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pageconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def pdfconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def hierarchyconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def postprocessorconfig_build_lookup_sets(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def postprocessorconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunkingconfig_with_chunker_type(_obj, _chunker_type),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunkingconfig_with_sizing(_obj, _sizing), do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunkingconfig_with_prepend_heading_context(_obj, _prepend),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunkingconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def embeddingconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def treesitterconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def treesitterprocessconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def filebytes_deref(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def filebytes_as_ref(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_listen_addr(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_cors_allows_all(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_is_origin_allowed(_obj, _origin), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_max_request_body_mb(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_max_multipart_field_mb(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_apply_env_overrides(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_from_file(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_from_toml_file(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_from_yaml_file(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def serverconfig_from_json_file(_path), do: :erlang.nif_error(:nif_not_loaded)
+  def jsonextractionconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def hwpdocument_extract_text(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def paratext_from_record(_record), do: :erlang.nif_error(:nif_not_loaded)
+  def fileheader_parse(_data), do: :erlang.nif_error(:nif_not_loaded)
+  def fileheader_is_compressed(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def fileheader_is_encrypted(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def fileheader_is_distribute(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def record_parse(_reader), do: :erlang.nif_error(:nif_not_loaded)
+  def record_data_reader(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def streamreader_read_u8(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def streamreader_read_u16(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def streamreader_read_u32(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def streamreader_read_bytes(_obj, _len), do: :erlang.nif_error(:nif_not_loaded)
+  def streamreader_position(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def streamreader_remaining(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def cfbreader_from_bytes(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def extent_width_inches(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def extent_height_inches(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def document_resolve_heading_level(_obj, _style_id), do: :erlang.nif_error(:nif_not_loaded)
+  def document_extract_text(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def document_to_markdown(_obj, _inject_placeholders), do: :erlang.nif_error(:nif_not_loaded)
+  def document_to_plain_text(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pagemargins_to_points(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def sectionproperties_page_width_points(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def sectionproperties_page_height_points(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def stylecatalog_resolve_style(_obj, _style_id), do: :erlang.nif_error(:nif_not_loaded)
+  def pptxextractionoptions_default, do: :erlang.nif_error(:nif_not_loaded)
+
+  def syncextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def codeextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def codeextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def codeextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def codeextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def codeextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def codeextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def codeextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def codeextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def codeextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def codeextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def codeextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def codeextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def codeextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def csvextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def csvextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def csvextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def csvextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def csvextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def csvextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def csvextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def csvextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def csvextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def csvextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def structuredextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def structuredextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def structuredextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def structuredextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def structuredextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def structuredextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def structuredextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def structuredextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plaintextextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def plaintextextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plaintextextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plaintextextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plaintextextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plaintextextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plaintextextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def plaintextextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def plaintextextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plaintextextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def djotextractor_build_internal_document(_events), do: :erlang.nif_error(:nif_not_loaded)
+  def djotextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def djotextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def djotextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def djotextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def djotextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def djotextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def djotextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def djotextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def djotextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def djotextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def djotextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def stringgrowthvalidator_check_append(_obj, _len), do: :erlang.nif_error(:nif_not_loaded)
+  def stringgrowthvalidator_current_size(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def iterationvalidator_check_iteration(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def iterationvalidator_current_count(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def depthvalidator_push(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def depthvalidator_pop(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def depthvalidator_current_depth(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def entityvalidator_validate(_obj, _content), do: :erlang.nif_error(:nif_not_loaded)
+  def tablevalidator_add_cells(_obj, _count), do: :erlang.nif_error(:nif_not_loaded)
+  def tablevalidator_current_cells(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def imageextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def imageextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def imageextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def imageextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def imageextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def imageextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def imageextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def imageextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def imageextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def imageextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def zipextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def zipextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def zipextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def zipextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def zipextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def zipextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def zipextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def zipextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def zipextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def zipextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def zipextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def zipextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def tarextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def tarextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tarextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tarextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tarextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tarextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tarextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def tarextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def tarextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tarextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tarextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def tarextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def sevenzextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def sevenzextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def sevenzextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def sevenzextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def sevenzextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def sevenzextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def sevenzextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def sevenzextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def sevenzextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def sevenzextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def sevenzextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def sevenzextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def gzipextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def gzipextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def gzipextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def gzipextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def gzipextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def gzipextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def gzipextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def gzipextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def gzipextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def gzipextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def gzipextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def gzipextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def emailextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def emailextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def emailextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def emailextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def emailextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def emailextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def emailextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def emailextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def emailextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def emailextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pstextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def pstextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pstextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pstextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pstextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def pstextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pstextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pstextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pstextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pstextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def excelextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def excelextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def excelextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def excelextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def excelextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def excelextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def excelextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def excelextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def excelextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def excelextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def excelextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hwpextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def hwpextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hwpextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hwpextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hwpextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hwpextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hwpextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def hwpextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def hwpextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hwpextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def keynoteextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def keynoteextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def keynoteextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def keynoteextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def keynoteextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def keynoteextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def keynoteextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def keynoteextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def keynoteextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def keynoteextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def numbersextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def numbersextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def numbersextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def numbersextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def numbersextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def numbersextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def numbersextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def numbersextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def numbersextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def numbersextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pagesextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def pagesextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pagesextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pagesextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pagesextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pagesextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pagesextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def pagesextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pagesextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pagesextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def htmlextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def htmlextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def htmlextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def htmlextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def htmlextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def htmlextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def htmlextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def htmlextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def htmlextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def htmlextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bibtexextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def bibtexextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bibtexextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bibtexextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bibtexextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bibtexextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bibtexextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def bibtexextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def bibtexextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bibtexextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def citationextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def citationextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def citationextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def citationextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def citationextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def citationextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def citationextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def citationextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def citationextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def citationextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def docextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def docextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def docextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def dbfextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def dbfextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def dbfextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def dbfextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def dbfextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def dbfextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def dbfextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def dbfextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def dbfextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def dbfextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docxextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def docxextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docxextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docxextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docxextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docxextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docxextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def docxextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def docxextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docxextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def epubextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def epubextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def epubextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def epubextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def epubextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def epubextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def epubextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def epubextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def epubextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def epubextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def fictionbookextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def fictionbookextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def fictionbookextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def fictionbookextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def fictionbookextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def fictionbookextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def fictionbookextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def fictionbookextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def fictionbookextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def fictionbookextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def markdownextractor_build_internal_document(_events, _yaml),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def markdownextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def markdownextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def markdownextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def markdownextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def markdownextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def markdownextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def markdownextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def markdownextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def markdownextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def markdownextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def markdownextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def mdxextractor_build_internal_document(_events, _yaml, _raw_jsx_blocks),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def mdxextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def mdxextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def mdxextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def mdxextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def mdxextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def mdxextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def mdxextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def mdxextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def mdxextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def mdxextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def mdxextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def rstextractor_build_internal_document(_content, _inject_placeholders),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def rstextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def rstextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rstextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rstextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rstextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rstextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rstextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def rstextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def rstextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def rstextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rstextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def latexextractor_build_internal_document(_source, _inject_placeholders),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def latexextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def latexextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def latexextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def latexextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def latexextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def latexextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def latexextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def latexextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def latexextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def latexextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def latexextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jupyterextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def jupyterextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jupyterextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jupyterextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jupyterextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jupyterextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jupyterextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def jupyterextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def jupyterextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jupyterextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def orgmodeextractor_build_internal_document(_org_text), do: :erlang.nif_error(:nif_not_loaded)
+  def orgmodeextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def orgmodeextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def orgmodeextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def orgmodeextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def orgmodeextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def orgmodeextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def orgmodeextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def orgmodeextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def orgmodeextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def orgmodeextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def orgmodeextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def odtextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def odtextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def odtextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def odtextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def odtextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def odtextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def odtextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def odtextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def odtextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def odtextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def opmlextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def opmlextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def opmlextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def opmlextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def opmlextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def opmlextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def opmlextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def opmlextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def opmlextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def opmlextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def typstextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def typstextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def typstextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def typstextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def typstextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def typstextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def typstextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def typstextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def typstextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def typstextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def typstextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jatsextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def jatsextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jatsextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jatsextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jatsextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def jatsextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def jatsextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def jatsextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def nativetextstats_compute(_text, _thresholds), do: :erlang.nif_error(:nif_not_loaded)
+  def nativetextstats_from(_text), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def pdfextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def pdfextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pdfextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def pptextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def pptextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pptextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptxextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def pptxextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptxextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptxextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptxextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def pptxextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pptxextractor_extract_file_async(_obj, _path, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pptxextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pptxextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rtfextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def rtfextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rtfextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rtfextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rtfextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rtfextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rtfextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def rtfextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def rtfextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rtfextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def xmlextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def xmlextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def xmlextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def xmlextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def xmlextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def xmlextractor_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def xmlextractor_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def xmlextractor_extract_sync(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def xmlextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def xmlextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def xmlextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def xmlextractor_as_sync_extractor(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docbookextractor_default, do: :erlang.nif_error(:nif_not_loaded)
+  def docbookextractor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docbookextractor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docbookextractor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docbookextractor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def docbookextractor_extract_bytes_async(_obj, _content, _mime_type, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def docbookextractor_supported_mime_types(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def docbookextractor_priority(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def modelcache_put(_obj, _model), do: :erlang.nif_error(:nif_not_loaded)
+  def modelcache_take(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def paniccontext_format(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrbackend_process_image_async(_obj, _image_bytes, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrbackend_process_image_file_async(_obj, _path, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrbackend_supports_language(_obj, _lang), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackend_backend_type(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackend_supported_languages(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackend_supports_table_detection(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackend_supports_document_processing(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrbackend_process_document_async(_obj, _path, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def documentextractorregistry_register(_obj, _extractor), do: :erlang.nif_error(:nif_not_loaded)
+  def documentextractorregistry_get(_obj, _mime_type), do: :erlang.nif_error(:nif_not_loaded)
+  def documentextractorregistry_list(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def documentextractorregistry_remove(_obj, _name), do: :erlang.nif_error(:nif_not_loaded)
+  def documentextractorregistry_shutdown_all(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def documentextractorregistry_default, do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackendregistry_new_empty, do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackendregistry_register(_obj, _backend), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackendregistry_get(_obj, _name), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackendregistry_get_for_language(_obj, _language), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackendregistry_list(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackendregistry_remove(_obj, _name), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackendregistry_shutdown_all(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackendregistry_reset_to_defaults(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrbackendregistry_default, do: :erlang.nif_error(:nif_not_loaded)
+
+  def postprocessorregistry_register(_obj, _processor, _priority),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def postprocessorregistry_get_for_stage(_obj, _stage), do: :erlang.nif_error(:nif_not_loaded)
+  def postprocessorregistry_list(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def postprocessorregistry_remove(_obj, _name), do: :erlang.nif_error(:nif_not_loaded)
+  def postprocessorregistry_shutdown_all(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def postprocessorregistry_default, do: :erlang.nif_error(:nif_not_loaded)
+  def rendererregistry_new_empty, do: :erlang.nif_error(:nif_not_loaded)
+  def rendererregistry_register(_obj, _renderer), do: :erlang.nif_error(:nif_not_loaded)
+  def rendererregistry_get(_obj, _name), do: :erlang.nif_error(:nif_not_loaded)
+  def rendererregistry_render(_obj, _name, _doc), do: :erlang.nif_error(:nif_not_loaded)
+  def rendererregistry_list(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rendererregistry_remove(_obj, _name), do: :erlang.nif_error(:nif_not_loaded)
+  def rendererregistry_reset_to_defaults(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def rendererregistry_default, do: :erlang.nif_error(:nif_not_loaded)
+  def validatorregistry_register(_obj, _validator), do: :erlang.nif_error(:nif_not_loaded)
+  def validatorregistry_get_all(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def validatorregistry_list(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def validatorregistry_remove(_obj, _name), do: :erlang.nif_error(:nif_not_loaded)
+  def validatorregistry_shutdown_all(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def validatorregistry_default, do: :erlang.nif_error(:nif_not_loaded)
+  def renderer_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def renderer_render(_obj, _doc), do: :erlang.nif_error(:nif_not_loaded)
+  def plugin_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plugin_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plugin_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plugin_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plugin_description(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def plugin_author(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tokenreducer_new(_config, _language_hint), do: :erlang.nif_error(:nif_not_loaded)
+  def tokenreducer_language(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tokenreducer_reduce(_obj, _text), do: :erlang.nif_error(:nif_not_loaded)
+  def tokenreducer_batch_reduce(_obj, _texts), do: :erlang.nif_error(:nif_not_loaded)
+  def qualityprocessor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def qualityprocessor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def qualityprocessor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def qualityprocessor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def qualityprocessor_process_async(_obj, _result, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def qualityprocessor_processing_stage(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def qualityprocessor_should_process(_obj, _result, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def qualityprocessor_estimated_duration_ms(_obj, _result),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def nodeid_generate(_node_type, _text, _page, _index), do: :erlang.nif_error(:nif_not_loaded)
+  def nodeid_as_ref(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def nodeid_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_with_capacity(_capacity), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_push_node(_obj, _node), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_add_child(_obj, _parent, _child), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_validate(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_body_roots(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_furniture_roots(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_get(_obj, _index), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_len(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_is_empty(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def documentstructure_default, do: :erlang.nif_error(:nif_not_loaded)
+  def elementid_new(_hex_str), do: :erlang.nif_error(:nif_not_loaded)
+  def elementid_as_ref(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def elementid_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
+  def imagepreprocessingconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def htmlmetadata_is_empty(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def htmlmetadata_from(_metadata), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrconfidence_from_tesseract(_confidence), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrconfidence_from_paddle(_box_score, _text_score), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrrotation_from_paddle(_angle_index, _angle_score), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrelement_with_level(_obj, _level), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrelement_with_rotation(_obj, _rotation), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrelement_with_page_number(_obj, _page_number), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrelement_with_parent_id(_obj, _parent_id), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrelement_with_metadata(_obj, _key, _value), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrelement_with_rotation_opt(_obj, _rotation), do: :erlang.nif_error(:nif_not_loaded)
+  def uri_hyperlink(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
+  def uri_image(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
+  def uri_citation(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
+  def uri_anchor(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
+  def uri_email(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
+  def uri_reference(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
+  def uri_with_page(_obj, _page), do: :erlang.nif_error(:nif_not_loaded)
+  def poolmetrics_hit_rate(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def poolmetrics_snapshot(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def poolmetrics_reset(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def poolmetrics_default, do: :erlang.nif_error(:nif_not_loaded)
+  def recyclable_reset(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pool_acquire(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pool_size(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pool_clear(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def poolsizehint_estimated_string_pool_memory(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def poolsizehint_estimated_byte_pool_memory(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def poolsizehint_total_pool_memory(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def poolconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def pooledstring_buffer_mut(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pooledstring_as_str(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pooledstring_deref(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pooledstring_deref_mut(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pooledstring_drop(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pooledstring_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
+  def internedstring_as_str(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def internedstring_as_ref(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def internedstring_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
+  def internedstring_eq(_obj, _other), do: :erlang.nif_error(:nif_not_loaded)
+  def internedstring_deref(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def instant_now, do: :erlang.nif_error(:nif_not_loaded)
+  def instant_elapsed_secs_f64(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def instant_elapsed_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def instant_elapsed_millis(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hocrword_right(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hocrword_bottom(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hocrword_y_center(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def hocrword_x_center(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionservice_default, do: :erlang.nif_error(:nif_not_loaded)
+  def extractionservice_poll_ready(_obj, _cx), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionservice_call(_obj, _req), do: :erlang.nif_error(:nif_not_loaded)
+  def tracinglayer_layer(_obj, _inner), do: :erlang.nif_error(:nif_not_loaded)
+  def metricslayer_layer(_obj, _inner), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionrequest_file(_path, _config), do: :erlang.nif_error(:nif_not_loaded)
+
+  def extractionrequest_file_with_mime(_path, _mime_hint, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extractionrequest_bytes(_data, _mime_type, _config), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionrequest_with_overrides(_obj, _overrides), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionservicebuilder_default, do: :erlang.nif_error(:nif_not_loaded)
+
+  def extractionservicebuilder_with_timeout(_obj, _duration),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extractionservicebuilder_with_concurrency_limit(_obj, _max),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def extractionservicebuilder_with_tracing(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionservicebuilder_with_metrics(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionservicebuilder_build(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def multipartapi_from_request_async(_req, _state), do: :erlang.nif_error(:nif_not_loaded)
+  def apierror_validation(_error), do: :erlang.nif_error(:nif_not_loaded)
+  def apierror_unprocessable(_error), do: :erlang.nif_error(:nif_not_loaded)
+  def apierror_internal(_error), do: :erlang.nif_error(:nif_not_loaded)
+  def apierror_bad_gateway(_error), do: :erlang.nif_error(:nif_not_loaded)
+  def apierror_into_response(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def apierror_from(_error), do: :erlang.nif_error(:nif_not_loaded)
+  def apisizelimits_default, do: :erlang.nif_error(:nif_not_loaded)
+
+  def apisizelimits_from_mb(_max_request_body_mb, _max_multipart_field_mb),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def kreuzbergmcp_clone(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def kreuzbergmcp_new, do: :erlang.nif_error(:nif_not_loaded)
+  def kreuzbergmcp_with_config(_config), do: :erlang.nif_error(:nif_not_loaded)
+  def kreuzbergmcp_get_info(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def kreuzbergmcp_default, do: :erlang.nif_error(:nif_not_loaded)
+  def chunkingprocessor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def chunkingprocessor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def chunkingprocessor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def chunkingprocessor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunkingprocessor_process_async(_obj, _result, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunkingprocessor_processing_stage(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunkingprocessor_should_process(_obj, _result, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def chunkingprocessor_estimated_duration_ms(_obj, _result),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def vlmocrbackend_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def vlmocrbackend_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def vlmocrbackend_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def vlmocrbackend_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def vlmocrbackend_process_image_async(_obj, _image_bytes, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def vlmocrbackend_supports_language(_obj, _lang), do: :erlang.nif_error(:nif_not_loaded)
+  def vlmocrbackend_backend_type(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def yakeparams_default, do: :erlang.nif_error(:nif_not_loaded)
+  def rakeparams_default, do: :erlang.nif_error(:nif_not_loaded)
+  def keywordconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def keywordconfig_with_max_keywords(_obj, _max), do: :erlang.nif_error(:nif_not_loaded)
+  def keywordconfig_with_min_score(_obj, _score), do: :erlang.nif_error(:nif_not_loaded)
+  def keywordconfig_with_ngram_range(_obj, _min, _max), do: :erlang.nif_error(:nif_not_loaded)
+  def keywordconfig_with_language(_obj, _lang), do: :erlang.nif_error(:nif_not_loaded)
+
+  def keyword_with_positions(_text, _score, _algorithm, _positions),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrcache_new(_cache_dir), do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrcache_get_cached_result(_obj, _image_hash, _backend, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrcache_set_cached_result(_obj, _image_hash, _backend, _config, _result),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrcache_clear(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrcache_get_stats(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def languageregistry_global, do: :erlang.nif_error(:nif_not_loaded)
+
+  def languageregistry_get_supported_languages(_obj, _backend),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def languageregistry_is_language_supported(_obj, _backend, _language),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def languageregistry_get_backends(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def languageregistry_get_language_count(_obj, _backend), do: :erlang.nif_error(:nif_not_loaded)
+  def languageregistry_default, do: :erlang.nif_error(:nif_not_loaded)
+  def ocrprocessor_new(_cache_dir), do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrprocessor_process_image(_obj, _image_bytes, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrprocessor_process_image_with_format(_obj, _image_bytes, _config, _output_format),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrprocessor_clear_cache(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def ocrprocessor_get_cache_stats(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrprocessor_process_image_file(_obj, _file_path, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrprocessor_process_image_file_with_format(_obj, _file_path, _config, _output_format),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def ocrprocessor_process_image_files_batch(_obj, _file_paths, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def tessdatamanager_cache_dir(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tessdatamanager_is_language_cached(_obj, _lang), do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_new, do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_with_cache_dir(_cache_dir), do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_default, do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def tesseractbackend_process_image_async(_obj, _image_bytes, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def tesseractbackend_process_image_file_async(_obj, _path, _config),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def tesseractbackend_supports_language(_obj, _lang), do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_backend_type(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_supported_languages(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def tesseractbackend_supports_table_detection(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def paddleocrconfig_with_cache_dir(_obj, _path), do: :erlang.nif_error(:nif_not_loaded)
+  def paddleocrconfig_with_table_detection(_obj, _enable), do: :erlang.nif_error(:nif_not_loaded)
+  def paddleocrconfig_with_angle_cls(_obj, _enable), do: :erlang.nif_error(:nif_not_loaded)
+  def paddleocrconfig_with_det_db_thresh(_obj, _threshold), do: :erlang.nif_error(:nif_not_loaded)
+
+  def paddleocrconfig_with_det_db_box_thresh(_obj, _threshold),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def paddleocrconfig_with_det_db_unclip_ratio(_obj, _ratio),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def paddleocrconfig_with_det_limit_side_len(_obj, _length),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def paddleocrconfig_with_rec_batch_num(_obj, _batch_size),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def paddleocrconfig_with_drop_score(_obj, _score), do: :erlang.nif_error(:nif_not_loaded)
+  def paddleocrconfig_with_padding(_obj, _padding), do: :erlang.nif_error(:nif_not_loaded)
+  def paddleocrconfig_with_model_tier(_obj, _tier), do: :erlang.nif_error(:nif_not_loaded)
+  def paddleocrconfig_resolve_cache_dir(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def paddleocrconfig_default, do: :erlang.nif_error(:nif_not_loaded)
+  def layoutmodel_detect(_obj, _img), do: :erlang.nif_error(:nif_not_loaded)
+
+  def layoutmodel_detect_with_threshold(_obj, _img, _threshold),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def layoutmodel_detect_batch(_obj, _images, _threshold), do: :erlang.nif_error(:nif_not_loaded)
+  def layoutmodel_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bbox_width(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bbox_height(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bbox_area(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bbox_center(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def bbox_intersection_area(_obj, _other), do: :erlang.nif_error(:nif_not_loaded)
+  def bbox_iou(_obj, _other), do: :erlang.nif_error(:nif_not_loaded)
+  def bbox_containment_of(_obj, _other), do: :erlang.nif_error(:nif_not_loaded)
+  def bbox_page_coverage(_obj, _page_width, _page_height), do: :erlang.nif_error(:nif_not_loaded)
+  def bbox_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
+  def layoutdetection_sort_by_confidence_desc(_detections), do: :erlang.nif_error(:nif_not_loaded)
+  def layoutdetection_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfimageextractor_new(_pdf_bytes), do: :erlang.nif_error(:nif_not_loaded)
+
+  def pdfimageextractor_new_with_password(_pdf_bytes, _password),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pdfimageextractor_extract_images(_obj), do: :erlang.nif_error(:nif_not_loaded)
+
+  def pdfimageextractor_extract_images_from_page(_obj, _page_number),
+    do: :erlang.nif_error(:nif_not_loaded)
+
+  def pdfimageextractor_get_image_count(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pdflayoutbbox_width(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pdflayoutbbox_height(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_avg_render_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_avg_inference_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_avg_preprocess_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_avg_onnx_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_avg_postprocess_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_total_inference_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_total_render_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_total_preprocess_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_total_onnx_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def layouttimingreport_total_postprocess_ms(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pagerenderoptions_default, do: :erlang.nif_error(:nif_not_loaded)
+  def pdfpageiterator_new(_pdf_bytes, _dpi, _password), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfpageiterator_from_file(_path, _dpi, _password), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfpageiterator_page_count(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfpageiterator_next(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfpageiterator_size_hint(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def pdfrenderer_new, do: :erlang.nif_error(:nif_not_loaded)
+  def pdftextextractor_new, do: :erlang.nif_error(:nif_not_loaded)
 end

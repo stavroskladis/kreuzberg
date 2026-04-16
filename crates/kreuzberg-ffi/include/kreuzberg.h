@@ -10,8 +10,384 @@
 #include <stdint.h>
 #include <stdlib.h>
 /* Opaque type forward declarations */
+typedef struct KREUZBERGAccelerationConfig KREUZBERGAccelerationConfig;
+typedef struct KREUZBERGAnchorProperties KREUZBERGAnchorProperties;
+typedef struct KREUZBERGAnnotationKind KREUZBERGAnnotationKind;
+typedef struct KREUZBERGApiDoc KREUZBERGApiDoc;
+typedef struct KREUZBERGApiError KREUZBERGApiError;
+typedef struct KREUZBERGApiSizeLimits KREUZBERGApiSizeLimits;
+typedef struct KREUZBERGApiState KREUZBERGApiState;
+typedef struct KREUZBERGArchiveEntry KREUZBERGArchiveEntry;
+typedef struct KREUZBERGArchiveMetadata KREUZBERGArchiveMetadata;
+typedef struct KREUZBERGAttributes KREUZBERGAttributes;
+typedef struct KREUZBERGBBox KREUZBERGBBox;
+typedef struct KREUZBERGBatchExtractFilesParams KREUZBERGBatchExtractFilesParams;
+typedef struct KREUZBERGBatchProcessor KREUZBERGBatchProcessor;
+typedef struct KREUZBERGBatchProcessorConfig KREUZBERGBatchProcessorConfig;
+typedef struct KREUZBERGBibtexExtractor KREUZBERGBibtexExtractor;
+typedef struct KREUZBERGBibtexMetadata KREUZBERGBibtexMetadata;
+typedef struct KREUZBERGBlockType KREUZBERGBlockType;
+typedef struct KREUZBERGBoundingBox KREUZBERGBoundingBox;
+typedef struct KREUZBERGByteBufferPool KREUZBERGByteBufferPool;
+typedef struct KREUZBERGCacheClearResponse KREUZBERGCacheClearResponse;
+typedef struct KREUZBERGCacheStatsResponse KREUZBERGCacheStatsResponse;
+typedef struct KREUZBERGCacheWarmParams KREUZBERGCacheWarmParams;
+typedef struct KREUZBERGCfbReader KREUZBERGCfbReader;
+typedef struct KREUZBERGCharData KREUZBERGCharData;
+typedef struct KREUZBERGChunk KREUZBERGChunk;
+typedef struct KREUZBERGChunkItem KREUZBERGChunkItem;
+typedef struct KREUZBERGChunkMetadata KREUZBERGChunkMetadata;
+typedef struct KREUZBERGChunkRequest KREUZBERGChunkRequest;
+typedef struct KREUZBERGChunkResponse KREUZBERGChunkResponse;
+typedef struct KREUZBERGChunkSizing KREUZBERGChunkSizing;
+typedef struct KREUZBERGChunkTextParams KREUZBERGChunkTextParams;
+typedef struct KREUZBERGChunkType KREUZBERGChunkType;
+typedef struct KREUZBERGChunkerType KREUZBERGChunkerType;
+typedef struct KREUZBERGChunkingConfig KREUZBERGChunkingConfig;
+typedef struct KREUZBERGChunkingConfigRequest KREUZBERGChunkingConfigRequest;
+typedef struct KREUZBERGChunkingConfigResponse KREUZBERGChunkingConfigResponse;
+typedef struct KREUZBERGChunkingProcessor KREUZBERGChunkingProcessor;
+typedef struct KREUZBERGChunkingResult KREUZBERGChunkingResult;
+typedef struct KREUZBERGCitationExtractor KREUZBERGCitationExtractor;
+typedef struct KREUZBERGCitationMetadata KREUZBERGCitationMetadata;
+typedef struct KREUZBERGCodeContentMode KREUZBERGCodeContentMode;
+typedef struct KREUZBERGCodeExtractor KREUZBERGCodeExtractor;
+typedef struct KREUZBERGColorScheme KREUZBERGColorScheme;
+typedef struct KREUZBERGColumnLayout KREUZBERGColumnLayout;
+typedef struct KREUZBERGCommonPdfMetadata KREUZBERGCommonPdfMetadata;
+typedef struct KREUZBERGContentFilterConfig KREUZBERGContentFilterConfig;
+typedef struct KREUZBERGContentLayer KREUZBERGContentLayer;
+typedef struct KREUZBERGContributorRole KREUZBERGContributorRole;
+typedef struct KREUZBERGCsvExtractor KREUZBERGCsvExtractor;
+typedef struct KREUZBERGCsvMetadata KREUZBERGCsvMetadata;
+typedef struct KREUZBERGCustomProperties KREUZBERGCustomProperties;
+typedef struct KREUZBERGDbfExtractor KREUZBERGDbfExtractor;
+typedef struct KREUZBERGDbfFieldInfo KREUZBERGDbfFieldInfo;
+typedef struct KREUZBERGDbfMetadata KREUZBERGDbfMetadata;
+typedef struct KREUZBERGDepthValidator KREUZBERGDepthValidator;
+typedef struct KREUZBERGDetectMimeTypeParams KREUZBERGDetectMimeTypeParams;
+typedef struct KREUZBERGDetectResponse KREUZBERGDetectResponse;
+typedef struct KREUZBERGDetectionResult KREUZBERGDetectionResult;
+typedef struct KREUZBERGDjotContent KREUZBERGDjotContent;
+typedef struct KREUZBERGDjotExtractor KREUZBERGDjotExtractor;
+typedef struct KREUZBERGDjotImage KREUZBERGDjotImage;
+typedef struct KREUZBERGDjotLink KREUZBERGDjotLink;
+typedef struct KREUZBERGDocExtractionResult KREUZBERGDocExtractionResult;
+typedef struct KREUZBERGDocExtractor KREUZBERGDocExtractor;
+typedef struct KREUZBERGDocMetadata KREUZBERGDocMetadata;
+typedef struct KREUZBERGDocProperties KREUZBERGDocProperties;
+typedef struct KREUZBERGDocbookExtractor KREUZBERGDocbookExtractor;
+typedef struct KREUZBERGDoclingCompatDocument KREUZBERGDoclingCompatDocument;
+typedef struct KREUZBERGDoclingCompatResponse KREUZBERGDoclingCompatResponse;
+typedef struct KREUZBERGDocument KREUZBERGDocument;
+typedef struct KREUZBERGDocumentElement KREUZBERGDocumentElement;
+typedef struct KREUZBERGDocumentExtractorRegistry KREUZBERGDocumentExtractorRegistry;
+typedef struct KREUZBERGDocumentNode KREUZBERGDocumentNode;
+typedef struct KREUZBERGDocumentRelationship KREUZBERGDocumentRelationship;
+typedef struct KREUZBERGDocumentStructure KREUZBERGDocumentStructure;
+typedef struct KREUZBERGDocxExtractor KREUZBERGDocxExtractor;
+typedef struct KREUZBERGDocxMetadata KREUZBERGDocxMetadata;
+typedef struct KREUZBERGDownloadGrammarsParams KREUZBERGDownloadGrammarsParams;
+typedef struct KREUZBERGDrawing KREUZBERGDrawing;
+typedef struct KREUZBERGDrawingType KREUZBERGDrawingType;
+typedef struct KREUZBERGElement KREUZBERGElement;
+typedef struct KREUZBERGElementId KREUZBERGElementId;
+typedef struct KREUZBERGElementMetadata KREUZBERGElementMetadata;
+typedef struct KREUZBERGElementType KREUZBERGElementType;
+typedef struct KREUZBERGEmailAttachment KREUZBERGEmailAttachment;
+typedef struct KREUZBERGEmailConfig KREUZBERGEmailConfig;
+typedef struct KREUZBERGEmailExtractionResult KREUZBERGEmailExtractionResult;
+typedef struct KREUZBERGEmailExtractor KREUZBERGEmailExtractor;
+typedef struct KREUZBERGEmailMetadata KREUZBERGEmailMetadata;
+typedef struct KREUZBERGEmbedRequest KREUZBERGEmbedRequest;
+typedef struct KREUZBERGEmbedResponse KREUZBERGEmbedResponse;
+typedef struct KREUZBERGEmbedTextParams KREUZBERGEmbedTextParams;
+typedef struct KREUZBERGEmbeddedFile KREUZBERGEmbeddedFile;
+typedef struct KREUZBERGEmbeddingConfig KREUZBERGEmbeddingConfig;
+typedef struct KREUZBERGEmbeddingModelType KREUZBERGEmbeddingModelType;
+typedef struct KREUZBERGEmptyParams KREUZBERGEmptyParams;
+typedef struct KREUZBERGEntityValidator KREUZBERGEntityValidator;
+typedef struct KREUZBERGEpubExtractor KREUZBERGEpubExtractor;
+typedef struct KREUZBERGEpubMetadata KREUZBERGEpubMetadata;
+typedef struct KREUZBERGErrorMetadata KREUZBERGErrorMetadata;
+typedef struct KREUZBERGErrorResponse KREUZBERGErrorResponse;
+typedef struct KREUZBERGExcelExtractor KREUZBERGExcelExtractor;
+typedef struct KREUZBERGExcelMetadata KREUZBERGExcelMetadata;
+typedef struct KREUZBERGExcelSheet KREUZBERGExcelSheet;
+typedef struct KREUZBERGExcelWorkbook KREUZBERGExcelWorkbook;
+typedef struct KREUZBERGExecutionProviderType KREUZBERGExecutionProviderType;
+typedef struct KREUZBERGExtent KREUZBERGExtent;
+typedef struct KREUZBERGExtractBytesParams KREUZBERGExtractBytesParams;
+typedef struct KREUZBERGExtractFileParams KREUZBERGExtractFileParams;
+typedef struct KREUZBERGExtractResponse KREUZBERGExtractResponse;
+typedef struct KREUZBERGExtractStructuredParams KREUZBERGExtractStructuredParams;
+typedef struct KREUZBERGExtractedImage KREUZBERGExtractedImage;
+typedef struct KREUZBERGExtractedInlineImage KREUZBERGExtractedInlineImage;
+typedef struct KREUZBERGExtractionConfig KREUZBERGExtractionConfig;
+typedef struct KREUZBERGExtractionMetrics KREUZBERGExtractionMetrics;
+typedef struct KREUZBERGExtractionRequest KREUZBERGExtractionRequest;
+typedef struct KREUZBERGExtractionResult KREUZBERGExtractionResult;
+typedef struct KREUZBERGExtractionService KREUZBERGExtractionService;
+typedef struct KREUZBERGExtractionServiceBuilder KREUZBERGExtractionServiceBuilder;
+typedef struct KREUZBERGExtractionSource KREUZBERGExtractionSource;
+typedef struct KREUZBERGFictionBookExtractor KREUZBERGFictionBookExtractor;
+typedef struct KREUZBERGFictionBookMetadata KREUZBERGFictionBookMetadata;
+typedef struct KREUZBERGFileBytes KREUZBERGFileBytes;
+typedef struct KREUZBERGFileExtractionConfig KREUZBERGFileExtractionConfig;
+typedef struct KREUZBERGFileHeader KREUZBERGFileHeader;
+typedef struct KREUZBERGFontScheme KREUZBERGFontScheme;
+typedef struct KREUZBERGFontSizeCluster KREUZBERGFontSizeCluster;
+typedef struct KREUZBERGFootnote KREUZBERGFootnote;
+typedef struct KREUZBERGFormatMetadata KREUZBERGFormatMetadata;
+typedef struct KREUZBERGFormattedBlock KREUZBERGFormattedBlock;
+typedef struct KREUZBERGFracType KREUZBERGFracType;
+typedef struct KREUZBERGGenericCache KREUZBERGGenericCache;
+typedef struct KREUZBERGGridCell KREUZBERGGridCell;
+typedef struct KREUZBERGGzipExtractor KREUZBERGGzipExtractor;
+typedef struct KREUZBERGHeaderFooter KREUZBERGHeaderFooter;
+typedef struct KREUZBERGHeaderFooterType KREUZBERGHeaderFooterType;
+typedef struct KREUZBERGHeaderMetadata KREUZBERGHeaderMetadata;
+typedef struct KREUZBERGHeadingContext KREUZBERGHeadingContext;
+typedef struct KREUZBERGHeadingLevel KREUZBERGHeadingLevel;
+typedef struct KREUZBERGHealthResponse KREUZBERGHealthResponse;
+typedef struct KREUZBERGHierarchicalBlock KREUZBERGHierarchicalBlock;
+typedef struct KREUZBERGHierarchyBlock KREUZBERGHierarchyBlock;
+typedef struct KREUZBERGHierarchyConfig KREUZBERGHierarchyConfig;
+typedef struct KREUZBERGHierarchyLevel KREUZBERGHierarchyLevel;
+typedef struct KREUZBERGHocrWord KREUZBERGHocrWord;
+typedef struct KREUZBERGHtmlExtractionResult KREUZBERGHtmlExtractionResult;
+typedef struct KREUZBERGHtmlExtractor KREUZBERGHtmlExtractor;
+typedef struct KREUZBERGHtmlMetadata KREUZBERGHtmlMetadata;
+typedef struct KREUZBERGHtmlOutputConfig KREUZBERGHtmlOutputConfig;
+typedef struct KREUZBERGHtmlTheme KREUZBERGHtmlTheme;
+typedef struct KREUZBERGHwpDocument KREUZBERGHwpDocument;
+typedef struct KREUZBERGHwpError KREUZBERGHwpError;
+typedef struct KREUZBERGHwpExtractor KREUZBERGHwpExtractor;
+typedef struct KREUZBERGImageExtractionConfig KREUZBERGImageExtractionConfig;
+typedef struct KREUZBERGImageExtractor KREUZBERGImageExtractor;
+typedef struct KREUZBERGImageMetadata KREUZBERGImageMetadata;
+typedef struct KREUZBERGImageMetadataType KREUZBERGImageMetadataType;
+typedef struct KREUZBERGImageOcrResult KREUZBERGImageOcrResult;
+typedef struct KREUZBERGImagePreprocessingConfig KREUZBERGImagePreprocessingConfig;
+typedef struct KREUZBERGImagePreprocessingMetadata KREUZBERGImagePreprocessingMetadata;
+typedef struct KREUZBERGImageType KREUZBERGImageType;
+typedef struct KREUZBERGInfoResponse KREUZBERGInfoResponse;
+typedef struct KREUZBERGInlineElement KREUZBERGInlineElement;
+typedef struct KREUZBERGInlineType KREUZBERGInlineType;
+typedef struct KREUZBERGInstant KREUZBERGInstant;
+typedef struct KREUZBERGInternedString KREUZBERGInternedString;
+typedef struct KREUZBERGIterationValidator KREUZBERGIterationValidator;
+typedef struct KREUZBERGJatsExtractor KREUZBERGJatsExtractor;
+typedef struct KREUZBERGJatsMetadata KREUZBERGJatsMetadata;
+typedef struct KREUZBERGJsonExtractionConfig KREUZBERGJsonExtractionConfig;
+typedef struct KREUZBERGJupyterExtractor KREUZBERGJupyterExtractor;
+typedef struct KREUZBERGKMeansResult KREUZBERGKMeansResult;
+typedef struct KREUZBERGKeynoteExtractor KREUZBERGKeynoteExtractor;
+typedef struct KREUZBERGKeyword KREUZBERGKeyword;
+typedef struct KREUZBERGKeywordAlgorithm KREUZBERGKeywordAlgorithm;
+typedef struct KREUZBERGKeywordConfig KREUZBERGKeywordConfig;
+typedef struct KREUZBERGKreuzbergMcp KREUZBERGKreuzbergMcp;
+typedef struct KREUZBERGLanguageDetectionConfig KREUZBERGLanguageDetectionConfig;
+typedef struct KREUZBERGLanguageRegistry KREUZBERGLanguageRegistry;
+typedef struct KREUZBERGLatexExtractor KREUZBERGLatexExtractor;
+typedef struct KREUZBERGLayoutClass KREUZBERGLayoutClass;
+typedef struct KREUZBERGLayoutDetection KREUZBERGLayoutDetection;
+typedef struct KREUZBERGLayoutDetectionConfig KREUZBERGLayoutDetectionConfig;
+typedef struct KREUZBERGLayoutModel KREUZBERGLayoutModel;
+typedef struct KREUZBERGLayoutTimingReport KREUZBERGLayoutTimingReport;
+typedef struct KREUZBERGLinkMetadata KREUZBERGLinkMetadata;
+typedef struct KREUZBERGLinkType KREUZBERGLinkType;
+typedef struct KREUZBERGListGrammarsParams KREUZBERGListGrammarsParams;
+typedef struct KREUZBERGListItemMetadata KREUZBERGListItemMetadata;
+typedef struct KREUZBERGListType KREUZBERGListType;
+typedef struct KREUZBERGLlmConfig KREUZBERGLlmConfig;
 typedef struct KREUZBERGLlmUsage KREUZBERGLlmUsage;
+typedef struct KREUZBERGManifestEntryResponse KREUZBERGManifestEntryResponse;
+typedef struct KREUZBERGManifestResponse KREUZBERGManifestResponse;
+typedef struct KREUZBERGMarkdownExtractor KREUZBERGMarkdownExtractor;
+typedef struct KREUZBERGMathNode KREUZBERGMathNode;
+typedef struct KREUZBERGMdxExtractor KREUZBERGMdxExtractor;
+typedef struct KREUZBERGMetadata KREUZBERGMetadata;
+typedef struct KREUZBERGMetricsLayer KREUZBERGMetricsLayer;
+typedef struct KREUZBERGModelCache KREUZBERGModelCache;
+typedef struct KREUZBERGModelPaths KREUZBERGModelPaths;
+typedef struct KREUZBERGMultipartApi KREUZBERGMultipartApi;
+typedef struct KREUZBERGNativeTextStats KREUZBERGNativeTextStats;
+typedef struct KREUZBERGNodeContent KREUZBERGNodeContent;
+typedef struct KREUZBERGNodeId KREUZBERGNodeId;
+typedef struct KREUZBERGNote KREUZBERGNote;
+typedef struct KREUZBERGNoteType KREUZBERGNoteType;
+typedef struct KREUZBERGNumbersExtractor KREUZBERGNumbersExtractor;
+typedef struct KREUZBERGOcrBackend KREUZBERGOcrBackend;
+typedef struct KREUZBERGOcrBackendRegistry KREUZBERGOcrBackendRegistry;
+typedef struct KREUZBERGOcrBackendType KREUZBERGOcrBackendType;
+typedef struct KREUZBERGOcrBoundingGeometry KREUZBERGOcrBoundingGeometry;
+typedef struct KREUZBERGOcrCache KREUZBERGOcrCache;
+typedef struct KREUZBERGOcrCacheStats KREUZBERGOcrCacheStats;
+typedef struct KREUZBERGOcrConfidence KREUZBERGOcrConfidence;
+typedef struct KREUZBERGOcrConfig KREUZBERGOcrConfig;
+typedef struct KREUZBERGOcrElement KREUZBERGOcrElement;
+typedef struct KREUZBERGOcrElementConfig KREUZBERGOcrElementConfig;
+typedef struct KREUZBERGOcrElementLevel KREUZBERGOcrElementLevel;
+typedef struct KREUZBERGOcrError KREUZBERGOcrError;
+typedef struct KREUZBERGOcrExtractionResult KREUZBERGOcrExtractionResult;
+typedef struct KREUZBERGOcrFallbackDecision KREUZBERGOcrFallbackDecision;
+typedef struct KREUZBERGOcrMetadata KREUZBERGOcrMetadata;
+typedef struct KREUZBERGOcrPipelineConfig KREUZBERGOcrPipelineConfig;
+typedef struct KREUZBERGOcrPipelineStage KREUZBERGOcrPipelineStage;
+typedef struct KREUZBERGOcrProcessor KREUZBERGOcrProcessor;
+typedef struct KREUZBERGOcrQualityThresholds KREUZBERGOcrQualityThresholds;
+typedef struct KREUZBERGOcrRotation KREUZBERGOcrRotation;
+typedef struct KREUZBERGOcrTable KREUZBERGOcrTable;
+typedef struct KREUZBERGOcrTableBoundingBox KREUZBERGOcrTableBoundingBox;
+typedef struct KREUZBERGOdtExtractor KREUZBERGOdtExtractor;
+typedef struct KREUZBERGOdtProperties KREUZBERGOdtProperties;
+typedef struct KREUZBERGOpenWebDocumentMetadata KREUZBERGOpenWebDocumentMetadata;
+typedef struct KREUZBERGOpenWebDocumentResponse KREUZBERGOpenWebDocumentResponse;
+typedef struct KREUZBERGOpmlExtractor KREUZBERGOpmlExtractor;
+typedef struct KREUZBERGOrgModeExtractor KREUZBERGOrgModeExtractor;
+typedef struct KREUZBERGOrientation KREUZBERGOrientation;
+typedef struct KREUZBERGOrientationResult KREUZBERGOrientationResult;
+typedef struct KREUZBERGOutputFormat KREUZBERGOutputFormat;
+typedef struct KREUZBERGPaddleLanguage KREUZBERGPaddleLanguage;
+typedef struct KREUZBERGPaddleOcrConfig KREUZBERGPaddleOcrConfig;
+typedef struct KREUZBERGPageBoundary KREUZBERGPageBoundary;
+typedef struct KREUZBERGPageConfig KREUZBERGPageConfig;
+typedef struct KREUZBERGPageContent KREUZBERGPageContent;
+typedef struct KREUZBERGPageHierarchy KREUZBERGPageHierarchy;
+typedef struct KREUZBERGPageInfo KREUZBERGPageInfo;
+typedef struct KREUZBERGPageLayoutRegion KREUZBERGPageLayoutRegion;
+typedef struct KREUZBERGPageLayoutResult KREUZBERGPageLayoutResult;
+typedef struct KREUZBERGPageMargins KREUZBERGPageMargins;
+typedef struct KREUZBERGPageMarginsPoints KREUZBERGPageMarginsPoints;
+typedef struct KREUZBERGPageRenderOptions KREUZBERGPageRenderOptions;
+typedef struct KREUZBERGPageStructure KREUZBERGPageStructure;
+typedef struct KREUZBERGPageTiming KREUZBERGPageTiming;
+typedef struct KREUZBERGPageUnitType KREUZBERGPageUnitType;
+typedef struct KREUZBERGPagesExtractor KREUZBERGPagesExtractor;
+typedef struct KREUZBERGPanicContext KREUZBERGPanicContext;
+typedef struct KREUZBERGParaText KREUZBERGParaText;
+typedef struct KREUZBERGPdfAnnotation KREUZBERGPdfAnnotation;
+typedef struct KREUZBERGPdfAnnotationType KREUZBERGPdfAnnotationType;
+typedef struct KREUZBERGPdfBackend KREUZBERGPdfBackend;
+typedef struct KREUZBERGPdfConfig KREUZBERGPdfConfig;
+typedef struct KREUZBERGPdfError KREUZBERGPdfError;
+typedef struct KREUZBERGPdfExtractionMetadata KREUZBERGPdfExtractionMetadata;
+typedef struct KREUZBERGPdfExtractor KREUZBERGPdfExtractor;
+typedef struct KREUZBERGPdfImage KREUZBERGPdfImage;
+typedef struct KREUZBERGPdfImageExtractor KREUZBERGPdfImageExtractor;
+typedef struct KREUZBERGPdfLayoutBBox KREUZBERGPdfLayoutBBox;
+typedef struct KREUZBERGPdfMetadata KREUZBERGPdfMetadata;
+typedef struct KREUZBERGPdfPageIterator KREUZBERGPdfPageIterator;
+typedef struct KREUZBERGPdfRenderer KREUZBERGPdfRenderer;
+typedef struct KREUZBERGPdfTextExtractor KREUZBERGPdfTextExtractor;
+typedef struct KREUZBERGPdfUnifiedExtractionResult KREUZBERGPdfUnifiedExtractionResult;
+typedef struct KREUZBERGPlainTextExtractor KREUZBERGPlainTextExtractor;
+typedef struct KREUZBERGPlugin KREUZBERGPlugin;
+typedef struct KREUZBERGPluginStatus KREUZBERGPluginStatus;
+typedef struct KREUZBERGPool KREUZBERGPool;
+typedef struct KREUZBERGPoolConfig KREUZBERGPoolConfig;
+typedef struct KREUZBERGPoolError KREUZBERGPoolError;
+typedef struct KREUZBERGPoolMetrics KREUZBERGPoolMetrics;
+typedef struct KREUZBERGPoolMetricsSnapshot KREUZBERGPoolMetricsSnapshot;
+typedef struct KREUZBERGPoolSizeHint KREUZBERGPoolSizeHint;
+typedef struct KREUZBERGPooledString KREUZBERGPooledString;
+typedef struct KREUZBERGPosition KREUZBERGPosition;
+typedef struct KREUZBERGPostProcessorConfig KREUZBERGPostProcessorConfig;
+typedef struct KREUZBERGPostProcessorRegistry KREUZBERGPostProcessorRegistry;
+typedef struct KREUZBERGPptExtractionResult KREUZBERGPptExtractionResult;
+typedef struct KREUZBERGPptExtractor KREUZBERGPptExtractor;
+typedef struct KREUZBERGPptMetadata KREUZBERGPptMetadata;
+typedef struct KREUZBERGPptxAppProperties KREUZBERGPptxAppProperties;
+typedef struct KREUZBERGPptxExtractionOptions KREUZBERGPptxExtractionOptions;
+typedef struct KREUZBERGPptxExtractionResult KREUZBERGPptxExtractionResult;
+typedef struct KREUZBERGPptxExtractor KREUZBERGPptxExtractor;
+typedef struct KREUZBERGPptxMetadata KREUZBERGPptxMetadata;
+typedef struct KREUZBERGProcessingWarning KREUZBERGProcessingWarning;
+typedef struct KREUZBERGPsmMode KREUZBERGPsmMode;
+typedef struct KREUZBERGPstExtractor KREUZBERGPstExtractor;
+typedef struct KREUZBERGPstMetadata KREUZBERGPstMetadata;
+typedef struct KREUZBERGQualityProcessor KREUZBERGQualityProcessor;
+typedef struct KREUZBERGRakeParams KREUZBERGRakeParams;
+typedef struct KREUZBERGRecognizedTable KREUZBERGRecognizedTable;
+typedef struct KREUZBERGRecord KREUZBERGRecord;
+typedef struct KREUZBERGRecyclable KREUZBERGRecyclable;
+typedef struct KREUZBERGReductionLevel KREUZBERGReductionLevel;
+typedef struct KREUZBERGRelationshipKind KREUZBERGRelationshipKind;
+typedef struct KREUZBERGRenderer KREUZBERGRenderer;
+typedef struct KREUZBERGRendererRegistry KREUZBERGRendererRegistry;
+typedef struct KREUZBERGResolvedStyle KREUZBERGResolvedStyle;
+typedef struct KREUZBERGRowProperties KREUZBERGRowProperties;
+typedef struct KREUZBERGRstExtractor KREUZBERGRstExtractor;
+typedef struct KREUZBERGRtfExtractor KREUZBERGRtfExtractor;
+typedef struct KREUZBERGRtfFormattingData KREUZBERGRtfFormattingData;
+typedef struct KREUZBERGRtfFormattingSpan KREUZBERGRtfFormattingSpan;
+typedef struct KREUZBERGRtfImage KREUZBERGRtfImage;
+typedef struct KREUZBERGRunProperties KREUZBERGRunProperties;
+typedef struct KREUZBERGSection KREUZBERGSection;
+typedef struct KREUZBERGSectionProperties KREUZBERGSectionProperties;
+typedef struct KREUZBERGSecurityError KREUZBERGSecurityError;
+typedef struct KREUZBERGSegmentData KREUZBERGSegmentData;
+typedef struct KREUZBERGServerConfig KREUZBERGServerConfig;
+typedef struct KREUZBERGSevenZExtractor KREUZBERGSevenZExtractor;
+typedef struct KREUZBERGStreamReader KREUZBERGStreamReader;
+typedef struct KREUZBERGStringBufferPool KREUZBERGStringBufferPool;
+typedef struct KREUZBERGStringBufferPoolMetrics KREUZBERGStringBufferPoolMetrics;
+typedef struct KREUZBERGStringGrowthValidator KREUZBERGStringGrowthValidator;
+typedef struct KREUZBERGStructuredData KREUZBERGStructuredData;
+typedef struct KREUZBERGStructuredDataResult KREUZBERGStructuredDataResult;
+typedef struct KREUZBERGStructuredDataType KREUZBERGStructuredDataType;
+typedef struct KREUZBERGStructuredExtractionConfig KREUZBERGStructuredExtractionConfig;
+typedef struct KREUZBERGStructuredExtractionResponse KREUZBERGStructuredExtractionResponse;
+typedef struct KREUZBERGStructuredExtractor KREUZBERGStructuredExtractor;
+typedef struct KREUZBERGStyleCatalog KREUZBERGStyleCatalog;
+typedef struct KREUZBERGStyleDefinition KREUZBERGStyleDefinition;
+typedef struct KREUZBERGStyleType KREUZBERGStyleType;
 typedef struct KREUZBERGSupportedFormat KREUZBERGSupportedFormat;
+typedef struct KREUZBERGSyncExtractor KREUZBERGSyncExtractor;
+typedef struct KREUZBERGTable KREUZBERGTable;
+typedef struct KREUZBERGTableBorders KREUZBERGTableBorders;
+typedef struct KREUZBERGTableCell KREUZBERGTableCell;
+typedef struct KREUZBERGTableGrid KREUZBERGTableGrid;
+typedef struct KREUZBERGTableLook KREUZBERGTableLook;
+typedef struct KREUZBERGTableModel KREUZBERGTableModel;
+typedef struct KREUZBERGTableProperties KREUZBERGTableProperties;
+typedef struct KREUZBERGTableRow KREUZBERGTableRow;
+typedef struct KREUZBERGTableValidator KREUZBERGTableValidator;
+typedef struct KREUZBERGTarExtractor KREUZBERGTarExtractor;
+typedef struct KREUZBERGTessdataManager KREUZBERGTessdataManager;
+typedef struct KREUZBERGTesseractBackend KREUZBERGTesseractBackend;
+typedef struct KREUZBERGTesseractConfig KREUZBERGTesseractConfig;
+typedef struct KREUZBERGTextAnnotation KREUZBERGTextAnnotation;
+typedef struct KREUZBERGTextBlock KREUZBERGTextBlock;
+typedef struct KREUZBERGTextDirection KREUZBERGTextDirection;
+typedef struct KREUZBERGTextExtractionResult KREUZBERGTextExtractionResult;
+typedef struct KREUZBERGTextMetadata KREUZBERGTextMetadata;
+typedef struct KREUZBERGTheme KREUZBERGTheme;
+typedef struct KREUZBERGThemeColor KREUZBERGThemeColor;
+typedef struct KREUZBERGTokenReducer KREUZBERGTokenReducer;
+typedef struct KREUZBERGTokenReductionConfig KREUZBERGTokenReductionConfig;
+typedef struct KREUZBERGTracingLayer KREUZBERGTracingLayer;
+typedef struct KREUZBERGTreeSitterConfig KREUZBERGTreeSitterConfig;
+typedef struct KREUZBERGTreeSitterProcessConfig KREUZBERGTreeSitterProcessConfig;
+typedef struct KREUZBERGTsvRow KREUZBERGTsvRow;
+typedef struct KREUZBERGTypstExtractor KREUZBERGTypstExtractor;
+typedef struct KREUZBERGUri KREUZBERGUri;
+typedef struct KREUZBERGUriKind KREUZBERGUriKind;
+typedef struct KREUZBERGValidatorRegistry KREUZBERGValidatorRegistry;
+typedef struct KREUZBERGVersionResponse KREUZBERGVersionResponse;
+typedef struct KREUZBERGVlmOcrBackend KREUZBERGVlmOcrBackend;
+typedef struct KREUZBERGWarmRequest KREUZBERGWarmRequest;
+typedef struct KREUZBERGWarmResponse KREUZBERGWarmResponse;
+typedef struct KREUZBERGWrapType KREUZBERGWrapType;
+typedef struct KREUZBERGXlsxAppProperties KREUZBERGXlsxAppProperties;
+typedef struct KREUZBERGXmlExtractionResult KREUZBERGXmlExtractionResult;
+typedef struct KREUZBERGXmlExtractor KREUZBERGXmlExtractor;
+typedef struct KREUZBERGXmlMetadata KREUZBERGXmlMetadata;
+typedef struct KREUZBERGYakeParams KREUZBERGYakeParams;
+typedef struct KREUZBERGYearRange KREUZBERGYearRange;
+typedef struct KREUZBERGZipBombValidator KREUZBERGZipBombValidator;
+typedef struct KREUZBERGZipExtractor KREUZBERGZipExtractor;
 
 
 /**
@@ -44,6 +420,2278 @@ void kreuzberg_free_string(char *ptr);
  * Returned pointers must be freed with the appropriate free function.
  */
 const char *kreuzberg_version(void);
+
+/**
+ * Free a `GenericCache` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_generic_cache_free(KREUZBERGGenericCache *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGGenericCache *kreuzberg_generic_cache_new(const char *cache_type,
+                                                   const char *cache_dir,
+                                                   double max_age_days,
+                                                   double max_cache_size_mb,
+                                                   double min_free_space_mb);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_generic_cache_get(const KREUZBERGGenericCache *this_,
+                                     const char *cache_key,
+                                     const char *source_file,
+                                     const char *namespace_,
+                                     uint64_t ttl_override_secs);
+
+/**
+ * Backward-compatible get without namespace/TTL.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_generic_cache_get_default(const KREUZBERGGenericCache *this_,
+                                             const char *cache_key,
+                                             const char *source_file);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_generic_cache_set(const KREUZBERGGenericCache *this_,
+                                    const char *cache_key,
+                                    const uint8_t *data,
+                                    uintptr_t data_len,
+                                    const char *source_file,
+                                    const char *namespace_,
+                                    uint64_t ttl_secs);
+
+/**
+ * Backward-compatible set without namespace/TTL.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_generic_cache_set_default(const KREUZBERGGenericCache *this_,
+                                            const char *cache_key,
+                                            const uint8_t *data,
+                                            uintptr_t data_len,
+                                            const char *source_file);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_generic_cache_is_processing(const KREUZBERGGenericCache *this_,
+                                              const char *cache_key);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_generic_cache_mark_processing(const KREUZBERGGenericCache *this_,
+                                                const char *cache_key);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_generic_cache_mark_complete(const KREUZBERGGenericCache *this_,
+                                              const char *cache_key);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_generic_cache_clear(const KREUZBERGGenericCache *_this);
+
+/**
+ * Delete all cache entries under a namespace.
+ *
+ * Removes the namespace subdirectory and all its contents.
+ * Returns (files_removed, mb_freed).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_generic_cache_delete_namespace(const KREUZBERGGenericCache *_this,
+                                               const char *_namespace);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_generic_cache_get_stats(const KREUZBERGGenericCache *_this);
+
+/**
+ * Get cache stats, optionally filtered to a specific namespace.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_generic_cache_get_stats_filtered(const KREUZBERGGenericCache *_this,
+                                                 const char *_namespace);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_generic_cache_cache_dir(const KREUZBERGGenericCache *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_generic_cache_cache_type(const KREUZBERGGenericCache *this_);
+
+/**
+ * Free a `BatchProcessorConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_batch_processor_config_free(KREUZBERGBatchProcessorConfig *ptr);
+
+/**
+ * Get the `string_pool_size` field from a `BatchProcessorConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_batch_processor_config_string_pool_size(const KREUZBERGBatchProcessorConfig *ptr);
+
+/**
+ * Get the `string_buffer_capacity` field from a `BatchProcessorConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_batch_processor_config_string_buffer_capacity(const KREUZBERGBatchProcessorConfig *ptr);
+
+/**
+ * Get the `byte_pool_size` field from a `BatchProcessorConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_batch_processor_config_byte_pool_size(const KREUZBERGBatchProcessorConfig *ptr);
+
+/**
+ * Get the `byte_buffer_capacity` field from a `BatchProcessorConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_batch_processor_config_byte_buffer_capacity(const KREUZBERGBatchProcessorConfig *ptr);
+
+/**
+ * Get the `max_concurrent` field from a `BatchProcessorConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_batch_processor_config_max_concurrent(const KREUZBERGBatchProcessorConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGBatchProcessorConfig *kreuzberg_batch_processor_config_default(void);
+
+/**
+ * Free a `BatchProcessor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_batch_processor_free(KREUZBERGBatchProcessor *ptr);
+
+/**
+ * Create a new batch processor with custom pool configuration.
+ *
+ * Pools are not created immediately but lazily on first access.
+ *
+ * # Arguments
+ *
+ * * `config` - Custom batch processor configuration
+ *
+ * # Returns
+ *
+ * A new `BatchProcessor` configured with the provided settings.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::batch_optimizations::{BatchProcessor, BatchProcessorConfig};
+ *
+ * let mut config = BatchProcessorConfig::default();
+ * config.string_pool_size = 20;
+ * config.string_buffer_capacity = 16384;
+ * let processor = BatchProcessor::with_config(config);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGBatchProcessor *kreuzberg_batch_processor_with_config(const KREUZBERGBatchProcessorConfig *config);
+
+/**
+ * Create a batch processor with pool sizes optimized for a specific document.
+ *
+ * This method uses a `PoolSizeHint` (derived from file size and MIME type)
+ * to create a batch processor with appropriately sized pools. This reduces
+ * memory waste by tailoring pool allocation to actual document complexity.
+ *
+ * # Arguments
+ *
+ * * `hint` - Pool sizing hint containing recommended buffer counts and capacities
+ *
+ * # Returns
+ *
+ * A new `BatchProcessor` configured with the hint-based pool sizes
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::batch_optimizations::BatchProcessor;
+ * use kreuzberg::utils::pool_sizing::estimate_pool_size;
+ *
+ * let hint = estimate_pool_size(5_000_000, "application/pdf");
+ * let processor = BatchProcessor::with_pool_hint(&hint);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGBatchProcessor *kreuzberg_batch_processor_with_pool_hint(const KREUZBERGPoolSizeHint *hint);
+
+/**
+ * Get a reference to the string buffer pool.
+ *
+ * Creates the pool lazily on first access.
+ * Useful for custom pooling implementations that need direct pool access.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGStringBufferPool *kreuzberg_batch_processor_string_pool(const KREUZBERGBatchProcessor *this_);
+
+/**
+ * Get a reference to the byte buffer pool.
+ *
+ * Creates the pool lazily on first access.
+ * Useful for custom pooling implementations that need direct pool access.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGByteBufferPool *kreuzberg_batch_processor_byte_pool(const KREUZBERGBatchProcessor *this_);
+
+/**
+ * Get the current configuration.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGBatchProcessorConfig *kreuzberg_batch_processor_config(const KREUZBERGBatchProcessor *this_);
+
+/**
+ * Get the number of pooled string buffers currently available.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_batch_processor_string_pool_size(const KREUZBERGBatchProcessor *this_);
+
+/**
+ * Get the number of pooled byte buffers currently available.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_batch_processor_byte_pool_size(const KREUZBERGBatchProcessor *this_);
+
+/**
+ * Clear all pooled objects, forcing new allocations on next acquire.
+ *
+ * Useful for memory-constrained environments or to reclaim memory
+ * after processing large batches.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_batch_processor_clear_pools(const KREUZBERGBatchProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGBatchProcessor *kreuzberg_batch_processor_default(void);
+
+/**
+ * Create a `AccelerationConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_acceleration_config_free`.
+ */
+KREUZBERGAccelerationConfig *kreuzberg_acceleration_config_from_json(const char *json);
+
+/**
+ * Serialize a `AccelerationConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_acceleration_config_to_json(const KREUZBERGAccelerationConfig *ptr);
+
+/**
+ * Free a `AccelerationConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_acceleration_config_free(KREUZBERGAccelerationConfig *ptr);
+
+/**
+ * Get the `provider` field from a `AccelerationConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGExecutionProviderType *kreuzberg_acceleration_config_provider(const KREUZBERGAccelerationConfig *ptr);
+
+/**
+ * Get the `device_id` field from a `AccelerationConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_acceleration_config_device_id(const KREUZBERGAccelerationConfig *ptr);
+
+/**
+ * Create a `ContentFilterConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_content_filter_config_free`.
+ */
+KREUZBERGContentFilterConfig *kreuzberg_content_filter_config_from_json(const char *json);
+
+/**
+ * Serialize a `ContentFilterConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_content_filter_config_to_json(const KREUZBERGContentFilterConfig *ptr);
+
+/**
+ * Free a `ContentFilterConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_content_filter_config_free(KREUZBERGContentFilterConfig *ptr);
+
+/**
+ * Get the `include_headers` field from a `ContentFilterConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_content_filter_config_include_headers(const KREUZBERGContentFilterConfig *ptr);
+
+/**
+ * Get the `include_footers` field from a `ContentFilterConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_content_filter_config_include_footers(const KREUZBERGContentFilterConfig *ptr);
+
+/**
+ * Get the `strip_repeating_text` field from a `ContentFilterConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_content_filter_config_strip_repeating_text(const KREUZBERGContentFilterConfig *ptr);
+
+/**
+ * Get the `include_watermarks` field from a `ContentFilterConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_content_filter_config_include_watermarks(const KREUZBERGContentFilterConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGContentFilterConfig *kreuzberg_content_filter_config_default(void);
+
+/**
+ * Create a `EmailConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_email_config_free`.
+ */
+KREUZBERGEmailConfig *kreuzberg_email_config_from_json(const char *json);
+
+/**
+ * Serialize a `EmailConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_email_config_to_json(const KREUZBERGEmailConfig *ptr);
+
+/**
+ * Free a `EmailConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_email_config_free(KREUZBERGEmailConfig *ptr);
+
+/**
+ * Get the `msg_fallback_codepage` field from a `EmailConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_email_config_msg_fallback_codepage(const KREUZBERGEmailConfig *ptr);
+
+/**
+ * Free a `ExtractionConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extraction_config_free(KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `use_cache` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_extraction_config_use_cache(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `enable_quality_processing` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_extraction_config_enable_quality_processing(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `ocr` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrConfig *kreuzberg_extraction_config_ocr(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `force_ocr` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_extraction_config_force_ocr(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `force_ocr_pages` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_config_force_ocr_pages(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `disable_ocr` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_extraction_config_disable_ocr(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `chunking` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGChunkingConfig *kreuzberg_extraction_config_chunking(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `content_filter` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGContentFilterConfig *kreuzberg_extraction_config_content_filter(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `images` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGImageExtractionConfig *kreuzberg_extraction_config_images(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `pdf_options` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPdfConfig *kreuzberg_extraction_config_pdf_options(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `token_reduction` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTokenReductionConfig *kreuzberg_extraction_config_token_reduction(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `language_detection` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLanguageDetectionConfig *kreuzberg_extraction_config_language_detection(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `pages` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPageConfig *kreuzberg_extraction_config_pages(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `postprocessor` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPostProcessorConfig *kreuzberg_extraction_config_postprocessor(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `html_output` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGHtmlOutputConfig *kreuzberg_extraction_config_html_output(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `extraction_timeout_secs` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint64_t kreuzberg_extraction_config_extraction_timeout_secs(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `max_concurrent_extractions` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_extraction_config_max_concurrent_extractions(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `result_format` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOutputFormat *kreuzberg_extraction_config_result_format(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `output_format` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOutputFormat *kreuzberg_extraction_config_output_format(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `layout` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLayoutDetectionConfig *kreuzberg_extraction_config_layout(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `include_document_structure` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_extraction_config_include_document_structure(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `acceleration` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGAccelerationConfig *kreuzberg_extraction_config_acceleration(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `cache_namespace` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_config_cache_namespace(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `cache_ttl_secs` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint64_t kreuzberg_extraction_config_cache_ttl_secs(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `email` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGEmailConfig *kreuzberg_extraction_config_email(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `max_archive_depth` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_extraction_config_max_archive_depth(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `tree_sitter` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTreeSitterConfig *kreuzberg_extraction_config_tree_sitter(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * Get the `structured_extraction` field from a `ExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGStructuredExtractionConfig *kreuzberg_extraction_config_structured_extraction(const KREUZBERGExtractionConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionConfig *kreuzberg_extraction_config_default(void);
+
+/**
+ * Create a new `ExtractionConfig` by applying per-file overrides from a
+ * [`FileExtractionConfig`]. Fields that are `Some` in the override replace the
+ * corresponding field in `self`; `None` fields keep the original value.
+ *
+ * Batch-level fields (`max_concurrent_extractions`, `use_cache`, `acceleration`,
+ * `security_limits`) are never affected by overrides.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::{ExtractionConfig, FileExtractionConfig};
+ *
+ * let base = ExtractionConfig::default();
+ * let override_config = FileExtractionConfig {
+ *     force_ocr: Some(true),
+ *     ..Default::default()
+ * };
+ * let resolved = base.with_file_overrides(&override_config);
+ * assert!(resolved.force_ocr);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionConfig *kreuzberg_extraction_config_with_file_overrides(const KREUZBERGExtractionConfig *this_,
+                                                                           const KREUZBERGFileExtractionConfig *overrides);
+
+/**
+ * Normalize configuration for implicit requirements.
+ *
+ * Currently handles:
+ * - Auto-enabling `extract_pages` when `result_format` is `ElementBased`, because
+ *   the element transformation requires per-page data to assign correct page numbers.
+ *   Without this, all elements would incorrectly get `page_number=1`.
+ * - Auto-enabling `extract_pages` when chunking is configured, because the chunker
+ *   needs page boundaries to assign correct page numbers to chunks.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionConfig *kreuzberg_extraction_config_normalized(const KREUZBERGExtractionConfig *this_);
+
+/**
+ * Validate the configuration, returning an error if any settings are invalid.
+ *
+ * Checks:
+ * - OCR backend name is supported (catches typos early)
+ * - VLM backend config is present when backend is "vlm"
+ * - Pipeline stage backends and VLM configs are valid
+ * - Structured extraction schema and LLM model are non-empty
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_extraction_config_validate(const KREUZBERGExtractionConfig *this_);
+
+/**
+ * Check if image processing is needed by examining OCR and image extraction settings.
+ *
+ * Returns `true` if either OCR is enabled or image extraction is configured,
+ * indicating that image decompression and processing should occur.
+ * Returns `false` if both are disabled, allowing optimization to skip unnecessary
+ * image decompression for text-only extraction workflows.
+ *
+ * # Optimization Impact
+ * For text-only extractions (no OCR, no image extraction), skipping image
+ * decompression can improve CPU utilization by 5-10% by avoiding wasteful
+ * image I/O and processing when results won't be used.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_extraction_config_needs_image_processing(const KREUZBERGExtractionConfig *this_);
+
+/**
+ * Free a `FileExtractionConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_file_extraction_config_free(KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `enable_quality_processing` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_file_extraction_config_enable_quality_processing(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `ocr` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrConfig *kreuzberg_file_extraction_config_ocr(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `force_ocr` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_file_extraction_config_force_ocr(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `force_ocr_pages` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_file_extraction_config_force_ocr_pages(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `disable_ocr` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_file_extraction_config_disable_ocr(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `chunking` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGChunkingConfig *kreuzberg_file_extraction_config_chunking(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `content_filter` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGContentFilterConfig *kreuzberg_file_extraction_config_content_filter(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `images` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGImageExtractionConfig *kreuzberg_file_extraction_config_images(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `pdf_options` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPdfConfig *kreuzberg_file_extraction_config_pdf_options(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `token_reduction` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTokenReductionConfig *kreuzberg_file_extraction_config_token_reduction(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `language_detection` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLanguageDetectionConfig *kreuzberg_file_extraction_config_language_detection(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `pages` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPageConfig *kreuzberg_file_extraction_config_pages(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `postprocessor` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPostProcessorConfig *kreuzberg_file_extraction_config_postprocessor(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `result_format` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOutputFormat *kreuzberg_file_extraction_config_result_format(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `output_format` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOutputFormat *kreuzberg_file_extraction_config_output_format(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `include_document_structure` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_file_extraction_config_include_document_structure(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `layout` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLayoutDetectionConfig *kreuzberg_file_extraction_config_layout(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `timeout_secs` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint64_t kreuzberg_file_extraction_config_timeout_secs(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `tree_sitter` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTreeSitterConfig *kreuzberg_file_extraction_config_tree_sitter(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Get the `structured_extraction` field from a `FileExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGStructuredExtractionConfig *kreuzberg_file_extraction_config_structured_extraction(const KREUZBERGFileExtractionConfig *ptr);
+
+/**
+ * Create a `ImageExtractionConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_image_extraction_config_free`.
+ */
+KREUZBERGImageExtractionConfig *kreuzberg_image_extraction_config_from_json(const char *json);
+
+/**
+ * Serialize a `ImageExtractionConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_image_extraction_config_to_json(const KREUZBERGImageExtractionConfig *ptr);
+
+/**
+ * Free a `ImageExtractionConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_image_extraction_config_free(KREUZBERGImageExtractionConfig *ptr);
+
+/**
+ * Get the `extract_images` field from a `ImageExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_extraction_config_extract_images(const KREUZBERGImageExtractionConfig *ptr);
+
+/**
+ * Get the `target_dpi` field from a `ImageExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_extraction_config_target_dpi(const KREUZBERGImageExtractionConfig *ptr);
+
+/**
+ * Get the `max_image_dimension` field from a `ImageExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_extraction_config_max_image_dimension(const KREUZBERGImageExtractionConfig *ptr);
+
+/**
+ * Get the `inject_placeholders` field from a `ImageExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_extraction_config_inject_placeholders(const KREUZBERGImageExtractionConfig *ptr);
+
+/**
+ * Get the `auto_adjust_dpi` field from a `ImageExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_extraction_config_auto_adjust_dpi(const KREUZBERGImageExtractionConfig *ptr);
+
+/**
+ * Get the `min_dpi` field from a `ImageExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_extraction_config_min_dpi(const KREUZBERGImageExtractionConfig *ptr);
+
+/**
+ * Get the `max_dpi` field from a `ImageExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_extraction_config_max_dpi(const KREUZBERGImageExtractionConfig *ptr);
+
+/**
+ * Create a `TokenReductionConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_token_reduction_config_free`.
+ */
+KREUZBERGTokenReductionConfig *kreuzberg_token_reduction_config_from_json(const char *json);
+
+/**
+ * Serialize a `TokenReductionConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_token_reduction_config_to_json(const KREUZBERGTokenReductionConfig *ptr);
+
+/**
+ * Free a `TokenReductionConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_token_reduction_config_free(KREUZBERGTokenReductionConfig *ptr);
+
+/**
+ * Get the `mode` field from a `TokenReductionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_token_reduction_config_mode(const KREUZBERGTokenReductionConfig *ptr);
+
+/**
+ * Get the `preserve_important_words` field from a `TokenReductionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_token_reduction_config_preserve_important_words(const KREUZBERGTokenReductionConfig *ptr);
+
+/**
+ * Create a `LanguageDetectionConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_language_detection_config_free`.
+ */
+KREUZBERGLanguageDetectionConfig *kreuzberg_language_detection_config_from_json(const char *json);
+
+/**
+ * Serialize a `LanguageDetectionConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_language_detection_config_to_json(const KREUZBERGLanguageDetectionConfig *ptr);
+
+/**
+ * Free a `LanguageDetectionConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_language_detection_config_free(KREUZBERGLanguageDetectionConfig *ptr);
+
+/**
+ * Get the `enabled` field from a `LanguageDetectionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_language_detection_config_enabled(const KREUZBERGLanguageDetectionConfig *ptr);
+
+/**
+ * Get the `min_confidence` field from a `LanguageDetectionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_language_detection_config_min_confidence(const KREUZBERGLanguageDetectionConfig *ptr);
+
+/**
+ * Get the `detect_multiple` field from a `LanguageDetectionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_language_detection_config_detect_multiple(const KREUZBERGLanguageDetectionConfig *ptr);
+
+/**
+ * Create a `HtmlOutputConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_html_output_config_free`.
+ */
+KREUZBERGHtmlOutputConfig *kreuzberg_html_output_config_from_json(const char *json);
+
+/**
+ * Serialize a `HtmlOutputConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_html_output_config_to_json(const KREUZBERGHtmlOutputConfig *ptr);
+
+/**
+ * Free a `HtmlOutputConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_html_output_config_free(KREUZBERGHtmlOutputConfig *ptr);
+
+/**
+ * Get the `css` field from a `HtmlOutputConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_output_config_css(const KREUZBERGHtmlOutputConfig *ptr);
+
+/**
+ * Get the `css_file` field from a `HtmlOutputConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_output_config_css_file(const KREUZBERGHtmlOutputConfig *ptr);
+
+/**
+ * Get the `theme` field from a `HtmlOutputConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGHtmlTheme *kreuzberg_html_output_config_theme(const KREUZBERGHtmlOutputConfig *ptr);
+
+/**
+ * Get the `class_prefix` field from a `HtmlOutputConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_output_config_class_prefix(const KREUZBERGHtmlOutputConfig *ptr);
+
+/**
+ * Get the `embed_css` field from a `HtmlOutputConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_html_output_config_embed_css(const KREUZBERGHtmlOutputConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGHtmlOutputConfig *kreuzberg_html_output_config_default(void);
+
+/**
+ * Create a `LayoutDetectionConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_layout_detection_config_free`.
+ */
+KREUZBERGLayoutDetectionConfig *kreuzberg_layout_detection_config_from_json(const char *json);
+
+/**
+ * Serialize a `LayoutDetectionConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_layout_detection_config_to_json(const KREUZBERGLayoutDetectionConfig *ptr);
+
+/**
+ * Free a `LayoutDetectionConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_layout_detection_config_free(KREUZBERGLayoutDetectionConfig *ptr);
+
+/**
+ * Get the `confidence_threshold` field from a `LayoutDetectionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_layout_detection_config_confidence_threshold(const KREUZBERGLayoutDetectionConfig *ptr);
+
+/**
+ * Get the `apply_heuristics` field from a `LayoutDetectionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_layout_detection_config_apply_heuristics(const KREUZBERGLayoutDetectionConfig *ptr);
+
+/**
+ * Get the `table_model` field from a `LayoutDetectionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTableModel *kreuzberg_layout_detection_config_table_model(const KREUZBERGLayoutDetectionConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGLayoutDetectionConfig *kreuzberg_layout_detection_config_default(void);
+
+/**
+ * Create a `LlmConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_llm_config_free`.
+ */
+KREUZBERGLlmConfig *kreuzberg_llm_config_from_json(const char *json);
+
+/**
+ * Serialize a `LlmConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_llm_config_to_json(const KREUZBERGLlmConfig *ptr);
+
+/**
+ * Free a `LlmConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_llm_config_free(KREUZBERGLlmConfig *ptr);
+
+/**
+ * Get the `model` field from a `LlmConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_llm_config_model(const KREUZBERGLlmConfig *ptr);
+
+/**
+ * Get the `api_key` field from a `LlmConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_llm_config_api_key(const KREUZBERGLlmConfig *ptr);
+
+/**
+ * Get the `base_url` field from a `LlmConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_llm_config_base_url(const KREUZBERGLlmConfig *ptr);
+
+/**
+ * Get the `timeout_secs` field from a `LlmConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint64_t kreuzberg_llm_config_timeout_secs(const KREUZBERGLlmConfig *ptr);
+
+/**
+ * Get the `max_retries` field from a `LlmConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_llm_config_max_retries(const KREUZBERGLlmConfig *ptr);
+
+/**
+ * Get the `temperature` field from a `LlmConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_llm_config_temperature(const KREUZBERGLlmConfig *ptr);
+
+/**
+ * Get the `max_tokens` field from a `LlmConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint64_t kreuzberg_llm_config_max_tokens(const KREUZBERGLlmConfig *ptr);
+
+/**
+ * Create a `StructuredExtractionConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_structured_extraction_config_free`.
+ */
+KREUZBERGStructuredExtractionConfig *kreuzberg_structured_extraction_config_from_json(const char *json);
+
+/**
+ * Serialize a `StructuredExtractionConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_structured_extraction_config_to_json(const KREUZBERGStructuredExtractionConfig *ptr);
+
+/**
+ * Free a `StructuredExtractionConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_structured_extraction_config_free(KREUZBERGStructuredExtractionConfig *ptr);
+
+/**
+ * Get the `schema` field from a `StructuredExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_extraction_config_schema(const KREUZBERGStructuredExtractionConfig *ptr);
+
+/**
+ * Get the `schema_name` field from a `StructuredExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_extraction_config_schema_name(const KREUZBERGStructuredExtractionConfig *ptr);
+
+/**
+ * Get the `schema_description` field from a `StructuredExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_extraction_config_schema_description(const KREUZBERGStructuredExtractionConfig *ptr);
+
+/**
+ * Get the `strict` field from a `StructuredExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_structured_extraction_config_strict(const KREUZBERGStructuredExtractionConfig *ptr);
+
+/**
+ * Get the `prompt` field from a `StructuredExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_extraction_config_prompt(const KREUZBERGStructuredExtractionConfig *ptr);
+
+/**
+ * Get the `llm` field from a `StructuredExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLlmConfig *kreuzberg_structured_extraction_config_llm(const KREUZBERGStructuredExtractionConfig *ptr);
+
+/**
+ * Create a `OcrQualityThresholds` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_quality_thresholds_free`.
+ */
+KREUZBERGOcrQualityThresholds *kreuzberg_ocr_quality_thresholds_from_json(const char *json);
+
+/**
+ * Serialize a `OcrQualityThresholds` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_quality_thresholds_to_json(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Free a `OcrQualityThresholds` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_quality_thresholds_free(KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_total_non_whitespace` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_quality_thresholds_min_total_non_whitespace(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_non_whitespace_per_page` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_quality_thresholds_min_non_whitespace_per_page(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_meaningful_word_len` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_quality_thresholds_min_meaningful_word_len(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_meaningful_words` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_quality_thresholds_min_meaningful_words(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_alnum_ratio` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_quality_thresholds_min_alnum_ratio(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_garbage_chars` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_quality_thresholds_min_garbage_chars(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `max_fragmented_word_ratio` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_quality_thresholds_max_fragmented_word_ratio(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `critical_fragmented_word_ratio` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_quality_thresholds_critical_fragmented_word_ratio(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_avg_word_length` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_quality_thresholds_min_avg_word_length(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_words_for_avg_length_check` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_quality_thresholds_min_words_for_avg_length_check(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_consecutive_repeat_ratio` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_quality_thresholds_min_consecutive_repeat_ratio(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `min_words_for_repeat_check` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_quality_thresholds_min_words_for_repeat_check(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `substantive_min_chars` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_quality_thresholds_substantive_min_chars(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `non_text_min_chars` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_quality_thresholds_non_text_min_chars(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `alnum_ws_ratio_threshold` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_quality_thresholds_alnum_ws_ratio_threshold(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * Get the `pipeline_min_quality` field from a `OcrQualityThresholds`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_quality_thresholds_pipeline_min_quality(const KREUZBERGOcrQualityThresholds *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrQualityThresholds *kreuzberg_ocr_quality_thresholds_default(void);
+
+/**
+ * Create a `OcrPipelineStage` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_pipeline_stage_free`.
+ */
+KREUZBERGOcrPipelineStage *kreuzberg_ocr_pipeline_stage_from_json(const char *json);
+
+/**
+ * Serialize a `OcrPipelineStage` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_pipeline_stage_to_json(const KREUZBERGOcrPipelineStage *ptr);
+
+/**
+ * Free a `OcrPipelineStage` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_pipeline_stage_free(KREUZBERGOcrPipelineStage *ptr);
+
+/**
+ * Get the `backend` field from a `OcrPipelineStage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_pipeline_stage_backend(const KREUZBERGOcrPipelineStage *ptr);
+
+/**
+ * Get the `priority` field from a `OcrPipelineStage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_ocr_pipeline_stage_priority(const KREUZBERGOcrPipelineStage *ptr);
+
+/**
+ * Get the `language` field from a `OcrPipelineStage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_pipeline_stage_language(const KREUZBERGOcrPipelineStage *ptr);
+
+/**
+ * Get the `tesseract_config` field from a `OcrPipelineStage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTesseractConfig *kreuzberg_ocr_pipeline_stage_tesseract_config(const KREUZBERGOcrPipelineStage *ptr);
+
+/**
+ * Get the `paddle_ocr_config` field from a `OcrPipelineStage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_pipeline_stage_paddle_ocr_config(const KREUZBERGOcrPipelineStage *ptr);
+
+/**
+ * Get the `vlm_config` field from a `OcrPipelineStage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLlmConfig *kreuzberg_ocr_pipeline_stage_vlm_config(const KREUZBERGOcrPipelineStage *ptr);
+
+/**
+ * Create a `OcrPipelineConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_pipeline_config_free`.
+ */
+KREUZBERGOcrPipelineConfig *kreuzberg_ocr_pipeline_config_from_json(const char *json);
+
+/**
+ * Serialize a `OcrPipelineConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_pipeline_config_to_json(const KREUZBERGOcrPipelineConfig *ptr);
+
+/**
+ * Free a `OcrPipelineConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_pipeline_config_free(KREUZBERGOcrPipelineConfig *ptr);
+
+/**
+ * Get the `stages` field from a `OcrPipelineConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_pipeline_config_stages(const KREUZBERGOcrPipelineConfig *ptr);
+
+/**
+ * Get the `quality_thresholds` field from a `OcrPipelineConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrQualityThresholds *kreuzberg_ocr_pipeline_config_quality_thresholds(const KREUZBERGOcrPipelineConfig *ptr);
+
+/**
+ * Create a `OcrConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_config_free`.
+ */
+KREUZBERGOcrConfig *kreuzberg_ocr_config_from_json(const char *json);
+
+/**
+ * Serialize a `OcrConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_config_to_json(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Free a `OcrConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_config_free(KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `backend` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_config_backend(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `language` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_config_language(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `tesseract_config` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTesseractConfig *kreuzberg_ocr_config_tesseract_config(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `output_format` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOutputFormat *kreuzberg_ocr_config_output_format(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `paddle_ocr_config` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_config_paddle_ocr_config(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `element_config` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrElementConfig *kreuzberg_ocr_config_element_config(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `quality_thresholds` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrQualityThresholds *kreuzberg_ocr_config_quality_thresholds(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `pipeline` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrPipelineConfig *kreuzberg_ocr_config_pipeline(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `auto_rotate` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_ocr_config_auto_rotate(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `vlm_config` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLlmConfig *kreuzberg_ocr_config_vlm_config(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `vlm_prompt` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_config_vlm_prompt(const KREUZBERGOcrConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrConfig *kreuzberg_ocr_config_default(void);
+
+/**
+ * Validates that the configured backend is supported.
+ *
+ * This method checks that the backend name is one of the supported OCR backends:
+ * - tesseract
+ * - easyocr
+ * - paddleocr
+ *
+ * Typos in backend names are caught at configuration validation time, not at runtime.
+ * Also validates pipeline stage backends when a pipeline is configured.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_config_validate(const KREUZBERGOcrConfig *this_);
+
+/**
+ * Returns the effective quality thresholds, using configured values or defaults.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrQualityThresholds *kreuzberg_ocr_config_effective_thresholds(const KREUZBERGOcrConfig *this_);
+
+/**
+ * Returns the effective pipeline config.
+ *
+ * - If `pipeline` is explicitly set, returns it.
+ * - If `paddle-ocr` feature is compiled in and no explicit pipeline is set,
+ *   auto-constructs a default pipeline: primary backend (priority 100) + paddleocr (priority 50).
+ * - Otherwise returns `None` (single-backend mode, same as today).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrPipelineConfig *kreuzberg_ocr_config_effective_pipeline(const KREUZBERGOcrConfig *this_);
+
+/**
+ * Create a `PageConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_page_config_free`.
+ */
+KREUZBERGPageConfig *kreuzberg_page_config_from_json(const char *json);
+
+/**
+ * Serialize a `PageConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_page_config_to_json(const KREUZBERGPageConfig *ptr);
+
+/**
+ * Free a `PageConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_config_free(KREUZBERGPageConfig *ptr);
+
+/**
+ * Get the `extract_pages` field from a `PageConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_config_extract_pages(const KREUZBERGPageConfig *ptr);
+
+/**
+ * Get the `insert_page_markers` field from a `PageConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_config_insert_page_markers(const KREUZBERGPageConfig *ptr);
+
+/**
+ * Get the `marker_format` field from a `PageConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_page_config_marker_format(const KREUZBERGPageConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPageConfig *kreuzberg_page_config_default(void);
+
+/**
+ * Create a `PdfConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_pdf_config_free`.
+ */
+KREUZBERGPdfConfig *kreuzberg_pdf_config_from_json(const char *json);
+
+/**
+ * Serialize a `PdfConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_pdf_config_to_json(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * Free a `PdfConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_config_free(KREUZBERGPdfConfig *ptr);
+
+/**
+ * Get the `backend` field from a `PdfConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPdfBackend *kreuzberg_pdf_config_backend(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * Get the `extract_images` field from a `PdfConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pdf_config_extract_images(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * Get the `passwords` field from a `PdfConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_config_passwords(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * Get the `extract_metadata` field from a `PdfConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pdf_config_extract_metadata(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * Get the `hierarchy` field from a `PdfConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGHierarchyConfig *kreuzberg_pdf_config_hierarchy(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * Get the `extract_annotations` field from a `PdfConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pdf_config_extract_annotations(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * Get the `top_margin_fraction` field from a `PdfConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_pdf_config_top_margin_fraction(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * Get the `bottom_margin_fraction` field from a `PdfConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_pdf_config_bottom_margin_fraction(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * Get the `allow_single_column_tables` field from a `PdfConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pdf_config_allow_single_column_tables(const KREUZBERGPdfConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfConfig *kreuzberg_pdf_config_default(void);
+
+/**
+ * Create a `HierarchyConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_hierarchy_config_free`.
+ */
+KREUZBERGHierarchyConfig *kreuzberg_hierarchy_config_from_json(const char *json);
+
+/**
+ * Serialize a `HierarchyConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_hierarchy_config_to_json(const KREUZBERGHierarchyConfig *ptr);
+
+/**
+ * Free a `HierarchyConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_hierarchy_config_free(KREUZBERGHierarchyConfig *ptr);
+
+/**
+ * Get the `enabled` field from a `HierarchyConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_hierarchy_config_enabled(const KREUZBERGHierarchyConfig *ptr);
+
+/**
+ * Get the `k_clusters` field from a `HierarchyConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_hierarchy_config_k_clusters(const KREUZBERGHierarchyConfig *ptr);
+
+/**
+ * Get the `include_bbox` field from a `HierarchyConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_hierarchy_config_include_bbox(const KREUZBERGHierarchyConfig *ptr);
+
+/**
+ * Get the `ocr_coverage_threshold` field from a `HierarchyConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_hierarchy_config_ocr_coverage_threshold(const KREUZBERGHierarchyConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGHierarchyConfig *kreuzberg_hierarchy_config_default(void);
+
+/**
+ * Free a `PostProcessorConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_post_processor_config_free(KREUZBERGPostProcessorConfig *ptr);
+
+/**
+ * Get the `enabled` field from a `PostProcessorConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_post_processor_config_enabled(const KREUZBERGPostProcessorConfig *ptr);
+
+/**
+ * Get the `enabled_processors` field from a `PostProcessorConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_post_processor_config_enabled_processors(const KREUZBERGPostProcessorConfig *ptr);
+
+/**
+ * Get the `disabled_processors` field from a `PostProcessorConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_post_processor_config_disabled_processors(const KREUZBERGPostProcessorConfig *ptr);
+
+/**
+ * Pre-compute HashSets for O(1) processor name lookups.
+ *
+ * This method converts the enabled/disabled processor Vec to HashSet
+ * for constant-time lookups in the pipeline.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_post_processor_config_build_lookup_sets(KREUZBERGPostProcessorConfig *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPostProcessorConfig *kreuzberg_post_processor_config_default(void);
+
+/**
+ * Create a `ChunkingConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_chunking_config_free`.
+ */
+KREUZBERGChunkingConfig *kreuzberg_chunking_config_from_json(const char *json);
+
+/**
+ * Serialize a `ChunkingConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_chunking_config_to_json(const KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Free a `ChunkingConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunking_config_free(KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Get the `max_characters` field from a `ChunkingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunking_config_max_characters(const KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Get the `overlap` field from a `ChunkingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunking_config_overlap(const KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Get the `trim` field from a `ChunkingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_chunking_config_trim(const KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Get the `chunker_type` field from a `ChunkingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGChunkerType *kreuzberg_chunking_config_chunker_type(const KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Get the `embedding` field from a `ChunkingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGEmbeddingConfig *kreuzberg_chunking_config_embedding(const KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Get the `preset` field from a `ChunkingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunking_config_preset(const KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Get the `sizing` field from a `ChunkingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGChunkSizing *kreuzberg_chunking_config_sizing(const KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Get the `prepend_heading_context` field from a `ChunkingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_chunking_config_prepend_heading_context(const KREUZBERGChunkingConfig *ptr);
+
+/**
+ * Set the chunker type.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGChunkingConfig *kreuzberg_chunking_config_with_chunker_type(KREUZBERGChunkingConfig *this_,
+                                                                     const KREUZBERGChunkerType *chunker_type);
+
+/**
+ * Set the sizing strategy.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGChunkingConfig *kreuzberg_chunking_config_with_sizing(KREUZBERGChunkingConfig *this_,
+                                                               const KREUZBERGChunkSizing *sizing);
+
+/**
+ * Enable or disable prepending heading context to chunk content.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGChunkingConfig *kreuzberg_chunking_config_with_prepend_heading_context(KREUZBERGChunkingConfig *this_,
+                                                                                int32_t prepend);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGChunkingConfig *kreuzberg_chunking_config_default(void);
+
+/**
+ * Create a `EmbeddingConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_embedding_config_free`.
+ */
+KREUZBERGEmbeddingConfig *kreuzberg_embedding_config_from_json(const char *json);
+
+/**
+ * Serialize a `EmbeddingConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_embedding_config_to_json(const KREUZBERGEmbeddingConfig *ptr);
+
+/**
+ * Free a `EmbeddingConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_embedding_config_free(KREUZBERGEmbeddingConfig *ptr);
+
+/**
+ * Get the `model` field from a `EmbeddingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGEmbeddingModelType *kreuzberg_embedding_config_model(const KREUZBERGEmbeddingConfig *ptr);
+
+/**
+ * Get the `normalize` field from a `EmbeddingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_embedding_config_normalize(const KREUZBERGEmbeddingConfig *ptr);
+
+/**
+ * Get the `batch_size` field from a `EmbeddingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_embedding_config_batch_size(const KREUZBERGEmbeddingConfig *ptr);
+
+/**
+ * Get the `show_download_progress` field from a `EmbeddingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_embedding_config_show_download_progress(const KREUZBERGEmbeddingConfig *ptr);
+
+/**
+ * Get the `cache_dir` field from a `EmbeddingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embedding_config_cache_dir(const KREUZBERGEmbeddingConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGEmbeddingConfig *kreuzberg_embedding_config_default(void);
+
+/**
+ * Create a `TreeSitterConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_tree_sitter_config_free`.
+ */
+KREUZBERGTreeSitterConfig *kreuzberg_tree_sitter_config_from_json(const char *json);
+
+/**
+ * Serialize a `TreeSitterConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_tree_sitter_config_to_json(const KREUZBERGTreeSitterConfig *ptr);
+
+/**
+ * Free a `TreeSitterConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_tree_sitter_config_free(KREUZBERGTreeSitterConfig *ptr);
+
+/**
+ * Get the `enabled` field from a `TreeSitterConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tree_sitter_config_enabled(const KREUZBERGTreeSitterConfig *ptr);
+
+/**
+ * Get the `cache_dir` field from a `TreeSitterConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_tree_sitter_config_cache_dir(const KREUZBERGTreeSitterConfig *ptr);
+
+/**
+ * Get the `languages` field from a `TreeSitterConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_tree_sitter_config_languages(const KREUZBERGTreeSitterConfig *ptr);
+
+/**
+ * Get the `groups` field from a `TreeSitterConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_tree_sitter_config_groups(const KREUZBERGTreeSitterConfig *ptr);
+
+/**
+ * Get the `process` field from a `TreeSitterConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTreeSitterProcessConfig *kreuzberg_tree_sitter_config_process(const KREUZBERGTreeSitterConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTreeSitterConfig *kreuzberg_tree_sitter_config_default(void);
+
+/**
+ * Create a `TreeSitterProcessConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_tree_sitter_process_config_free`.
+ */
+KREUZBERGTreeSitterProcessConfig *kreuzberg_tree_sitter_process_config_from_json(const char *json);
+
+/**
+ * Serialize a `TreeSitterProcessConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_tree_sitter_process_config_to_json(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Free a `TreeSitterProcessConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_tree_sitter_process_config_free(KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Get the `structure` field from a `TreeSitterProcessConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tree_sitter_process_config_structure(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Get the `imports` field from a `TreeSitterProcessConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tree_sitter_process_config_imports(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Get the `exports` field from a `TreeSitterProcessConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tree_sitter_process_config_exports(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Get the `comments` field from a `TreeSitterProcessConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tree_sitter_process_config_comments(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Get the `docstrings` field from a `TreeSitterProcessConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tree_sitter_process_config_docstrings(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Get the `symbols` field from a `TreeSitterProcessConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tree_sitter_process_config_symbols(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Get the `diagnostics` field from a `TreeSitterProcessConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tree_sitter_process_config_diagnostics(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Get the `chunk_max_size` field from a `TreeSitterProcessConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_tree_sitter_process_config_chunk_max_size(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * Get the `content_mode` field from a `TreeSitterProcessConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGCodeContentMode *kreuzberg_tree_sitter_process_config_content_mode(const KREUZBERGTreeSitterProcessConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTreeSitterProcessConfig *kreuzberg_tree_sitter_process_config_default(void);
+
+/**
+ * Free a `FileBytes` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_file_bytes_free(KREUZBERGFileBytes *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_file_bytes_deref(const KREUZBERGFileBytes *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_file_bytes_as_ref(const KREUZBERGFileBytes *this_);
 
 /**
  * Create a `SupportedFormat` from a JSON string. Returns null on failure.
@@ -81,6 +2729,8663 @@ char *kreuzberg_supported_format_extension(const KREUZBERGSupportedFormat *ptr);
  * Pointer must be a valid handle returned by this library.
  */
 char *kreuzberg_supported_format_mime_type(const KREUZBERGSupportedFormat *ptr);
+
+/**
+ * Create a `ServerConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_server_config_free`.
+ */
+KREUZBERGServerConfig *kreuzberg_server_config_from_json(const char *json);
+
+/**
+ * Serialize a `ServerConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_server_config_to_json(const KREUZBERGServerConfig *ptr);
+
+/**
+ * Free a `ServerConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_server_config_free(KREUZBERGServerConfig *ptr);
+
+/**
+ * Get the `host` field from a `ServerConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_server_config_host(const KREUZBERGServerConfig *ptr);
+
+/**
+ * Get the `port` field from a `ServerConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint16_t kreuzberg_server_config_port(const KREUZBERGServerConfig *ptr);
+
+/**
+ * Get the `cors_origins` field from a `ServerConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_server_config_cors_origins(const KREUZBERGServerConfig *ptr);
+
+/**
+ * Get the `max_request_body_bytes` field from a `ServerConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_server_config_max_request_body_bytes(const KREUZBERGServerConfig *ptr);
+
+/**
+ * Get the `max_multipart_field_bytes` field from a `ServerConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_server_config_max_multipart_field_bytes(const KREUZBERGServerConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGServerConfig *kreuzberg_server_config_default(void);
+
+/**
+ * Get the server listen address (host:port).
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::core::ServerConfig;
+ *
+ * let config = ServerConfig::default();
+ * assert_eq!(config.listen_addr(), "127.0.0.1:8000");
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_server_config_listen_addr(const KREUZBERGServerConfig *this_);
+
+/**
+ * Check if CORS allows all origins.
+ *
+ * Returns `true` if the `cors_origins` vector is empty, meaning all origins
+ * are allowed. Returns `false` if specific origins are configured.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::core::ServerConfig;
+ *
+ * let mut config = ServerConfig::default();
+ * assert!(config.cors_allows_all());
+ *
+ * config.cors_origins.push("https://example.com".to_string());
+ * assert!(!config.cors_allows_all());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_server_config_cors_allows_all(const KREUZBERGServerConfig *this_);
+
+/**
+ * Check if a given origin is allowed by CORS configuration.
+ *
+ * Returns `true` if:
+ * - CORS allows all origins (empty origins list), or
+ * - The given origin is in the allowed origins list
+ *
+ * # Arguments
+ *
+ * * `origin` - The origin to check (e.g., "https://example.com")
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::core::ServerConfig;
+ *
+ * let mut config = ServerConfig::default();
+ * assert!(config.is_origin_allowed("https://example.com"));
+ *
+ * config.cors_origins.push("https://allowed.com".to_string());
+ * assert!(config.is_origin_allowed("https://allowed.com"));
+ * assert!(!config.is_origin_allowed("https://denied.com"));
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_server_config_is_origin_allowed(const KREUZBERGServerConfig *this_,
+                                                  const char *origin);
+
+/**
+ * Get maximum request body size in megabytes (rounded up).
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::core::ServerConfig;
+ *
+ * let mut config = ServerConfig::default();
+ * assert_eq!(config.max_request_body_mb(), 100);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_server_config_max_request_body_mb(const KREUZBERGServerConfig *this_);
+
+/**
+ * Get maximum multipart field size in megabytes (rounded up).
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::core::ServerConfig;
+ *
+ * let mut config = ServerConfig::default();
+ * assert_eq!(config.max_multipart_field_mb(), 100);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_server_config_max_multipart_field_mb(const KREUZBERGServerConfig *this_);
+
+/**
+ * Apply environment variable overrides to the configuration.
+ *
+ * Reads the following environment variables and overrides config values if set:
+ *
+ * - `KREUZBERG_HOST` - Server host address
+ * - `KREUZBERG_PORT` - Server port number (parsed as u16)
+ * - `KREUZBERG_CORS_ORIGINS` - Comma-separated list of allowed origins
+ * - `KREUZBERG_MAX_REQUEST_BODY_BYTES` - Max request body size in bytes
+ * - `KREUZBERG_MAX_MULTIPART_FIELD_BYTES` - Max multipart field size in bytes
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Validation` if:
+ * - `KREUZBERG_PORT` cannot be parsed as u16
+ * - `KREUZBERG_MAX_REQUEST_BODY_BYTES` cannot be parsed as usize
+ * - `KREUZBERG_MAX_MULTIPART_FIELD_BYTES` cannot be parsed as usize
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::ServerConfig;
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * unsafe {
+ *     std::env::set_var("KREUZBERG_HOST", "0.0.0.0");
+ *     std::env::set_var("KREUZBERG_PORT", "3000");
+ * }
+ *
+ * let mut config = ServerConfig::default();
+ * config.apply_env_overrides()?;
+ *
+ * assert_eq!(config.host, "0.0.0.0");
+ * assert_eq!(config.port, 3000);
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_server_config_apply_env_overrides(KREUZBERGServerConfig *this_);
+
+/**
+ * Load server configuration from a file.
+ *
+ * Automatically detects the file format based on extension:
+ * - `.toml` - TOML format
+ * - `.yaml` or `.yml` - YAML format
+ * - `.json` - JSON format
+ *
+ * This function handles two config file formats:
+ * 1. Flat format: Server config at root level
+ * 2. Nested format: Server config under `[server]` section (combined with ExtractionConfig)
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the configuration file
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Validation` if:
+ * - File doesn't exist or cannot be read
+ * - File extension is not recognized
+ * - File content is invalid for the detected format
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::ServerConfig;
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * let config = ServerConfig::from_file("kreuzberg.toml")?;
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGServerConfig *kreuzberg_server_config_from_file(const char *_path);
+
+/**
+ * Load server configuration from a TOML file.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the TOML file
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Validation` if the file doesn't exist or is invalid TOML.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::ServerConfig;
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * let config = ServerConfig::from_toml_file("kreuzberg.toml")?;
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGServerConfig *kreuzberg_server_config_from_toml_file(const char *_path);
+
+/**
+ * Load server configuration from a YAML file.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the YAML file
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Validation` if the file doesn't exist or is invalid YAML.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGServerConfig *kreuzberg_server_config_from_yaml_file(const char *_path);
+
+/**
+ * Load server configuration from a JSON file.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the JSON file
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Validation` if the file doesn't exist or is invalid JSON.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGServerConfig *kreuzberg_server_config_from_json_file(const char *_path);
+
+/**
+ * Free a `StructuredDataResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_structured_data_result_free(KREUZBERGStructuredDataResult *ptr);
+
+/**
+ * Get the `content` field from a `StructuredDataResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_data_result_content(const KREUZBERGStructuredDataResult *ptr);
+
+/**
+ * Get the `metadata` field from a `StructuredDataResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_data_result_metadata(const KREUZBERGStructuredDataResult *ptr);
+
+/**
+ * Get the `text_fields` field from a `StructuredDataResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_data_result_text_fields(const KREUZBERGStructuredDataResult *ptr);
+
+/**
+ * Create a `JsonExtractionConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_json_extraction_config_free`.
+ */
+KREUZBERGJsonExtractionConfig *kreuzberg_json_extraction_config_from_json(const char *json);
+
+/**
+ * Serialize a `JsonExtractionConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_json_extraction_config_to_json(const KREUZBERGJsonExtractionConfig *ptr);
+
+/**
+ * Free a `JsonExtractionConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_json_extraction_config_free(KREUZBERGJsonExtractionConfig *ptr);
+
+/**
+ * Get the `extract_schema` field from a `JsonExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_json_extraction_config_extract_schema(const KREUZBERGJsonExtractionConfig *ptr);
+
+/**
+ * Get the `max_depth` field from a `JsonExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_json_extraction_config_max_depth(const KREUZBERGJsonExtractionConfig *ptr);
+
+/**
+ * Get the `array_item_limit` field from a `JsonExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_json_extraction_config_array_item_limit(const KREUZBERGJsonExtractionConfig *ptr);
+
+/**
+ * Get the `include_type_info` field from a `JsonExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_json_extraction_config_include_type_info(const KREUZBERGJsonExtractionConfig *ptr);
+
+/**
+ * Get the `flatten_nested_objects` field from a `JsonExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_json_extraction_config_flatten_nested_objects(const KREUZBERGJsonExtractionConfig *ptr);
+
+/**
+ * Get the `custom_text_field_patterns` field from a `JsonExtractionConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_json_extraction_config_custom_text_field_patterns(const KREUZBERGJsonExtractionConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGJsonExtractionConfig *kreuzberg_json_extraction_config_default(void);
+
+/**
+ * Free a `ListItemMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_list_item_metadata_free(KREUZBERGListItemMetadata *ptr);
+
+/**
+ * Get the `list_type` field from a `ListItemMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGListType *kreuzberg_list_item_metadata_list_type(const KREUZBERGListItemMetadata *ptr);
+
+/**
+ * Get the `byte_start` field from a `ListItemMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_list_item_metadata_byte_start(const KREUZBERGListItemMetadata *ptr);
+
+/**
+ * Get the `byte_end` field from a `ListItemMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_list_item_metadata_byte_end(const KREUZBERGListItemMetadata *ptr);
+
+/**
+ * Get the `indent_level` field from a `ListItemMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_list_item_metadata_indent_level(const KREUZBERGListItemMetadata *ptr);
+
+/**
+ * Free a `HwpDocument` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_hwp_document_free(KREUZBERGHwpDocument *ptr);
+
+/**
+ * Get the `sections` field from a `HwpDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_hwp_document_sections(const KREUZBERGHwpDocument *ptr);
+
+/**
+ * Concatenate the text of every paragraph in every section, separated by
+ * newlines.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_hwp_document_extract_text(const KREUZBERGHwpDocument *this_);
+
+/**
+ * Free a `Section` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_section_free(KREUZBERGSection *ptr);
+
+/**
+ * Free a `ParaText` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_para_text_free(KREUZBERGParaText *ptr);
+
+/**
+ * Get the `content` field from a `ParaText`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_para_text_content(const KREUZBERGParaText *ptr);
+
+/**
+ * Decode a ParaText record from raw bytes.
+ *
+ * The data field of a TAG_PARA_TEXT record is a sequence of UTF-16LE code
+ * units.  Control characters < 0x0020 are mapped to whitespace or skipped;
+ * characters in the private-use range 0xF020–0xF07F (HWP internal controls)
+ * are discarded.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGParaText *kreuzberg_para_text_from_record(const KREUZBERGRecord *record);
+
+/**
+ * Free a `FileHeader` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_file_header_free(KREUZBERGFileHeader *ptr);
+
+/**
+ * Get the `flags` field from a `FileHeader`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_file_header_flags(const KREUZBERGFileHeader *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGFileHeader *kreuzberg_file_header_parse(const uint8_t *data,
+                                                 uintptr_t data_len);
+
+/**
+ * Whether section streams are zlib/deflate-compressed.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_file_header_is_compressed(const KREUZBERGFileHeader *this_);
+
+/**
+ * Whether the document is password-encrypted.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_file_header_is_encrypted(const KREUZBERGFileHeader *this_);
+
+/**
+ * Whether the document is a distribution document (text in ViewText/).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_file_header_is_distribute(const KREUZBERGFileHeader *this_);
+
+/**
+ * Free a `Record` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_record_free(KREUZBERGRecord *ptr);
+
+/**
+ * Get the `tag_id` field from a `Record`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint16_t kreuzberg_record_tag_id(const KREUZBERGRecord *ptr);
+
+/**
+ * Get the `data` field from a `Record`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kreuzberg_record_data(const KREUZBERGRecord *ptr,
+                               uintptr_t *out_len);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGRecord *kreuzberg_record_parse(const KREUZBERGStreamReader *reader);
+
+/**
+ * Return a fresh `StreamReader` over this record's data bytes.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGStreamReader *kreuzberg_record_data_reader(const KREUZBERGRecord *this_);
+
+/**
+ * Free a `StreamReader` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_stream_reader_free(KREUZBERGStreamReader *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t kreuzberg_stream_reader_read_u8(KREUZBERGStreamReader *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint16_t kreuzberg_stream_reader_read_u16(KREUZBERGStreamReader *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint32_t kreuzberg_stream_reader_read_u32(KREUZBERGStreamReader *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_stream_reader_read_bytes(KREUZBERGStreamReader *this_,
+                                            uintptr_t len);
+
+/**
+ * Current byte position within the stream.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint64_t kreuzberg_stream_reader_position(const KREUZBERGStreamReader *this_);
+
+/**
+ * Number of bytes remaining from the current position to the end.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_stream_reader_remaining(const KREUZBERGStreamReader *this_);
+
+/**
+ * Free a `CfbReader` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_cfb_reader_free(KREUZBERGCfbReader *ptr);
+
+/**
+ * Open a CFB compound file from raw bytes.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGCfbReader *kreuzberg_cfb_reader_from_bytes(const uint8_t *bytes,
+                                                    uintptr_t bytes_len);
+
+/**
+ * Free a `ImageOcrResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_image_ocr_result_free(KREUZBERGImageOcrResult *ptr);
+
+/**
+ * Get the `content` field from a `ImageOcrResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_ocr_result_content(const KREUZBERGImageOcrResult *ptr);
+
+/**
+ * Get the `boundaries` field from a `ImageOcrResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_ocr_result_boundaries(const KREUZBERGImageOcrResult *ptr);
+
+/**
+ * Get the `page_contents` field from a `ImageOcrResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_ocr_result_page_contents(const KREUZBERGImageOcrResult *ptr);
+
+/**
+ * Create a `HtmlExtractionResult` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_html_extraction_result_free`.
+ */
+KREUZBERGHtmlExtractionResult *kreuzberg_html_extraction_result_from_json(const char *json);
+
+/**
+ * Serialize a `HtmlExtractionResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_html_extraction_result_to_json(const KREUZBERGHtmlExtractionResult *ptr);
+
+/**
+ * Free a `HtmlExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_html_extraction_result_free(KREUZBERGHtmlExtractionResult *ptr);
+
+/**
+ * Get the `markdown` field from a `HtmlExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_extraction_result_markdown(const KREUZBERGHtmlExtractionResult *ptr);
+
+/**
+ * Get the `images` field from a `HtmlExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_extraction_result_images(const KREUZBERGHtmlExtractionResult *ptr);
+
+/**
+ * Get the `warnings` field from a `HtmlExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_extraction_result_warnings(const KREUZBERGHtmlExtractionResult *ptr);
+
+/**
+ * Free a `ExtractedInlineImage` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extracted_inline_image_free(KREUZBERGExtractedInlineImage *ptr);
+
+/**
+ * Get the `data` field from a `ExtractedInlineImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kreuzberg_extracted_inline_image_data(const KREUZBERGExtractedInlineImage *ptr,
+                                               uintptr_t *out_len);
+
+/**
+ * Get the `format` field from a `ExtractedInlineImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extracted_inline_image_format(const KREUZBERGExtractedInlineImage *ptr);
+
+/**
+ * Get the `filename` field from a `ExtractedInlineImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extracted_inline_image_filename(const KREUZBERGExtractedInlineImage *ptr);
+
+/**
+ * Get the `description` field from a `ExtractedInlineImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extracted_inline_image_description(const KREUZBERGExtractedInlineImage *ptr);
+
+/**
+ * Free a `DocExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_doc_extraction_result_free(KREUZBERGDocExtractionResult *ptr);
+
+/**
+ * Get the `text` field from a `DocExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_extraction_result_text(const KREUZBERGDocExtractionResult *ptr);
+
+/**
+ * Get the `metadata` field from a `DocExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGDocMetadata *kreuzberg_doc_extraction_result_metadata(const KREUZBERGDocExtractionResult *ptr);
+
+/**
+ * Free a `DocMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_doc_metadata_free(KREUZBERGDocMetadata *ptr);
+
+/**
+ * Get the `title` field from a `DocMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_metadata_title(const KREUZBERGDocMetadata *ptr);
+
+/**
+ * Get the `subject` field from a `DocMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_metadata_subject(const KREUZBERGDocMetadata *ptr);
+
+/**
+ * Get the `author` field from a `DocMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_metadata_author(const KREUZBERGDocMetadata *ptr);
+
+/**
+ * Get the `last_author` field from a `DocMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_metadata_last_author(const KREUZBERGDocMetadata *ptr);
+
+/**
+ * Get the `created` field from a `DocMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_metadata_created(const KREUZBERGDocMetadata *ptr);
+
+/**
+ * Get the `modified` field from a `DocMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_metadata_modified(const KREUZBERGDocMetadata *ptr);
+
+/**
+ * Get the `revision_number` field from a `DocMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_metadata_revision_number(const KREUZBERGDocMetadata *ptr);
+
+/**
+ * Create a `Drawing` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_drawing_free`.
+ */
+KREUZBERGDrawing *kreuzberg_drawing_from_json(const char *json);
+
+/**
+ * Serialize a `Drawing` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_drawing_to_json(const KREUZBERGDrawing *ptr);
+
+/**
+ * Free a `Drawing` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_drawing_free(KREUZBERGDrawing *ptr);
+
+/**
+ * Get the `drawing_type` field from a `Drawing`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGDrawingType *kreuzberg_drawing_drawing_type(const KREUZBERGDrawing *ptr);
+
+/**
+ * Get the `extent` field from a `Drawing`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGExtent *kreuzberg_drawing_extent(const KREUZBERGDrawing *ptr);
+
+/**
+ * Get the `doc_properties` field from a `Drawing`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGDocProperties *kreuzberg_drawing_doc_properties(const KREUZBERGDrawing *ptr);
+
+/**
+ * Get the `image_ref` field from a `Drawing`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_drawing_image_ref(const KREUZBERGDrawing *ptr);
+
+/**
+ * Create a `Extent` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_extent_free`.
+ */
+KREUZBERGExtent *kreuzberg_extent_from_json(const char *json);
+
+/**
+ * Serialize a `Extent` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_extent_to_json(const KREUZBERGExtent *ptr);
+
+/**
+ * Free a `Extent` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extent_free(KREUZBERGExtent *ptr);
+
+/**
+ * Get the `cx` field from a `Extent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int64_t kreuzberg_extent_cx(const KREUZBERGExtent *ptr);
+
+/**
+ * Get the `cy` field from a `Extent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int64_t kreuzberg_extent_cy(const KREUZBERGExtent *ptr);
+
+/**
+ * Convert width to inches.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_extent_width_inches(const KREUZBERGExtent *this_);
+
+/**
+ * Convert height to inches.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_extent_height_inches(const KREUZBERGExtent *this_);
+
+/**
+ * Create a `DocProperties` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_doc_properties_free`.
+ */
+KREUZBERGDocProperties *kreuzberg_doc_properties_from_json(const char *json);
+
+/**
+ * Serialize a `DocProperties` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_doc_properties_to_json(const KREUZBERGDocProperties *ptr);
+
+/**
+ * Free a `DocProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_doc_properties_free(KREUZBERGDocProperties *ptr);
+
+/**
+ * Get the `id` field from a `DocProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_properties_id(const KREUZBERGDocProperties *ptr);
+
+/**
+ * Get the `name` field from a `DocProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_properties_name(const KREUZBERGDocProperties *ptr);
+
+/**
+ * Get the `description` field from a `DocProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_doc_properties_description(const KREUZBERGDocProperties *ptr);
+
+/**
+ * Create a `AnchorProperties` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_anchor_properties_free`.
+ */
+KREUZBERGAnchorProperties *kreuzberg_anchor_properties_from_json(const char *json);
+
+/**
+ * Serialize a `AnchorProperties` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_anchor_properties_to_json(const KREUZBERGAnchorProperties *ptr);
+
+/**
+ * Free a `AnchorProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_anchor_properties_free(KREUZBERGAnchorProperties *ptr);
+
+/**
+ * Get the `behind_doc` field from a `AnchorProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_anchor_properties_behind_doc(const KREUZBERGAnchorProperties *ptr);
+
+/**
+ * Get the `layout_in_cell` field from a `AnchorProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_anchor_properties_layout_in_cell(const KREUZBERGAnchorProperties *ptr);
+
+/**
+ * Get the `relative_height` field from a `AnchorProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int64_t kreuzberg_anchor_properties_relative_height(const KREUZBERGAnchorProperties *ptr);
+
+/**
+ * Get the `position_h` field from a `AnchorProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPosition *kreuzberg_anchor_properties_position_h(const KREUZBERGAnchorProperties *ptr);
+
+/**
+ * Get the `position_v` field from a `AnchorProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPosition *kreuzberg_anchor_properties_position_v(const KREUZBERGAnchorProperties *ptr);
+
+/**
+ * Get the `wrap_type` field from a `AnchorProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGWrapType *kreuzberg_anchor_properties_wrap_type(const KREUZBERGAnchorProperties *ptr);
+
+/**
+ * Create a `Position` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_position_free`.
+ */
+KREUZBERGPosition *kreuzberg_position_from_json(const char *json);
+
+/**
+ * Serialize a `Position` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_position_to_json(const KREUZBERGPosition *ptr);
+
+/**
+ * Free a `Position` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_position_free(KREUZBERGPosition *ptr);
+
+/**
+ * Get the `relative_from` field from a `Position`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_position_relative_from(const KREUZBERGPosition *ptr);
+
+/**
+ * Get the `offset` field from a `Position`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int64_t kreuzberg_position_offset(const KREUZBERGPosition *ptr);
+
+/**
+ * Free a `Document` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_document_free(KREUZBERGDocument *ptr);
+
+/**
+ * Get the `tables` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_tables(const KREUZBERGDocument *ptr);
+
+/**
+ * Get the `headers` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_headers(const KREUZBERGDocument *ptr);
+
+/**
+ * Get the `footers` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_footers(const KREUZBERGDocument *ptr);
+
+/**
+ * Get the `footnotes` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_footnotes(const KREUZBERGDocument *ptr);
+
+/**
+ * Get the `endnotes` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_endnotes(const KREUZBERGDocument *ptr);
+
+/**
+ * Get the `elements` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_elements(const KREUZBERGDocument *ptr);
+
+/**
+ * Get the `style_catalog` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGStyleCatalog *kreuzberg_document_style_catalog(const KREUZBERGDocument *ptr);
+
+/**
+ * Get the `theme` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTheme *kreuzberg_document_theme(const KREUZBERGDocument *ptr);
+
+/**
+ * Get the `sections` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_sections(const KREUZBERGDocument *ptr);
+
+/**
+ * Get the `drawings` field from a `Document`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_drawings(const KREUZBERGDocument *ptr);
+
+/**
+ * Resolve heading level for a paragraph style using the StyleCatalog.
+ *
+ * Walks the style inheritance chain to find `outline_level`.
+ * Falls back to string-matching on style name/ID if no StyleCatalog is available.
+ * Returns 1-6 (markdown heading levels).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t kreuzberg_document_resolve_heading_level(const KREUZBERGDocument *this_,
+                                                 const char *style_id);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_document_extract_text(const KREUZBERGDocument *this_);
+
+/**
+ * Render the document as markdown.
+ *
+ * When `inject_placeholders` is `true`, drawings that reference an image
+ * emit `![alt](image)` placeholders. When `false` they are silently
+ * skipped, which is useful when the caller only wants text.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_document_to_markdown(const KREUZBERGDocument *this_,
+                                     int32_t inject_placeholders);
+
+/**
+ * Render the document as plain text (no markdown formatting).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_document_to_plain_text(const KREUZBERGDocument *this_);
+
+/**
+ * Free a `TableRow` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_table_row_free(KREUZBERGTableRow *ptr);
+
+/**
+ * Get the `cells` field from a `TableRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_table_row_cells(const KREUZBERGTableRow *ptr);
+
+/**
+ * Get the `properties` field from a `TableRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGRowProperties *kreuzberg_table_row_properties(const KREUZBERGTableRow *ptr);
+
+/**
+ * Free a `HeaderFooter` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_header_footer_free(KREUZBERGHeaderFooter *ptr);
+
+/**
+ * Get the `tables` field from a `HeaderFooter`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_header_footer_tables(const KREUZBERGHeaderFooter *ptr);
+
+/**
+ * Get the `header_type` field from a `HeaderFooter`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGHeaderFooterType *kreuzberg_header_footer_header_type(const KREUZBERGHeaderFooter *ptr);
+
+/**
+ * Free a `Note` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_note_free(KREUZBERGNote *ptr);
+
+/**
+ * Get the `id` field from a `Note`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_note_id(const KREUZBERGNote *ptr);
+
+/**
+ * Get the `note_type` field from a `Note`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGNoteType *kreuzberg_note_note_type(const KREUZBERGNote *ptr);
+
+/**
+ * Free a `PageMargins` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_margins_free(KREUZBERGPageMargins *ptr);
+
+/**
+ * Get the `top` field from a `PageMargins`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_margins_top(const KREUZBERGPageMargins *ptr);
+
+/**
+ * Get the `right` field from a `PageMargins`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_margins_right(const KREUZBERGPageMargins *ptr);
+
+/**
+ * Get the `bottom` field from a `PageMargins`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_margins_bottom(const KREUZBERGPageMargins *ptr);
+
+/**
+ * Get the `left` field from a `PageMargins`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_margins_left(const KREUZBERGPageMargins *ptr);
+
+/**
+ * Get the `header` field from a `PageMargins`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_margins_header(const KREUZBERGPageMargins *ptr);
+
+/**
+ * Get the `footer` field from a `PageMargins`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_margins_footer(const KREUZBERGPageMargins *ptr);
+
+/**
+ * Get the `gutter` field from a `PageMargins`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_margins_gutter(const KREUZBERGPageMargins *ptr);
+
+/**
+ * Convert all margins from twips to points.
+ *
+ * Conversion factor: 1 twip = 1/20 point, or equivalently divide by 20.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPageMarginsPoints *kreuzberg_page_margins_to_points(const KREUZBERGPageMargins *this_);
+
+/**
+ * Free a `PageMarginsPoints` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_margins_points_free(KREUZBERGPageMarginsPoints *ptr);
+
+/**
+ * Get the `top` field from a `PageMarginsPoints`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_margins_points_top(const KREUZBERGPageMarginsPoints *ptr);
+
+/**
+ * Get the `right` field from a `PageMarginsPoints`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_margins_points_right(const KREUZBERGPageMarginsPoints *ptr);
+
+/**
+ * Get the `bottom` field from a `PageMarginsPoints`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_margins_points_bottom(const KREUZBERGPageMarginsPoints *ptr);
+
+/**
+ * Get the `left` field from a `PageMarginsPoints`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_margins_points_left(const KREUZBERGPageMarginsPoints *ptr);
+
+/**
+ * Get the `header` field from a `PageMarginsPoints`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_margins_points_header(const KREUZBERGPageMarginsPoints *ptr);
+
+/**
+ * Get the `footer` field from a `PageMarginsPoints`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_margins_points_footer(const KREUZBERGPageMarginsPoints *ptr);
+
+/**
+ * Get the `gutter` field from a `PageMarginsPoints`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_margins_points_gutter(const KREUZBERGPageMarginsPoints *ptr);
+
+/**
+ * Free a `ColumnLayout` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_column_layout_free(KREUZBERGColumnLayout *ptr);
+
+/**
+ * Get the `count` field from a `ColumnLayout`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_column_layout_count(const KREUZBERGColumnLayout *ptr);
+
+/**
+ * Get the `space_twips` field from a `ColumnLayout`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_column_layout_space_twips(const KREUZBERGColumnLayout *ptr);
+
+/**
+ * Get the `equal_width` field from a `ColumnLayout`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_column_layout_equal_width(const KREUZBERGColumnLayout *ptr);
+
+/**
+ * Free a `SectionProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_section_properties_free(KREUZBERGSectionProperties *ptr);
+
+/**
+ * Get the `page_width_twips` field from a `SectionProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_section_properties_page_width_twips(const KREUZBERGSectionProperties *ptr);
+
+/**
+ * Get the `page_height_twips` field from a `SectionProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_section_properties_page_height_twips(const KREUZBERGSectionProperties *ptr);
+
+/**
+ * Get the `orientation` field from a `SectionProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOrientation *kreuzberg_section_properties_orientation(const KREUZBERGSectionProperties *ptr);
+
+/**
+ * Get the `margins` field from a `SectionProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPageMargins *kreuzberg_section_properties_margins(const KREUZBERGSectionProperties *ptr);
+
+/**
+ * Get the `columns` field from a `SectionProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGColumnLayout *kreuzberg_section_properties_columns(const KREUZBERGSectionProperties *ptr);
+
+/**
+ * Get the `doc_grid_line_pitch` field from a `SectionProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_section_properties_doc_grid_line_pitch(const KREUZBERGSectionProperties *ptr);
+
+/**
+ * Convert page width from twips to points.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_section_properties_page_width_points(const KREUZBERGSectionProperties *this_);
+
+/**
+ * Convert page height from twips to points.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_section_properties_page_height_points(const KREUZBERGSectionProperties *this_);
+
+/**
+ * Free a `RunProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_run_properties_free(KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `bold` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_bold(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `italic` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_italic(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `underline` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_underline(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `strikethrough` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_strikethrough(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `color` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_color(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `font_size_half_points` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_font_size_half_points(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `font_ascii` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_font_ascii(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `font_ascii_theme` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_font_ascii_theme(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `vert_align` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_vert_align(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `font_h_ansi` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_font_h_ansi(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `font_cs` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_font_cs(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `font_east_asia` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_font_east_asia(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `highlight` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_highlight(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `caps` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_caps(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `small_caps` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_small_caps(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `shadow` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_shadow(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `outline` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_outline(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `emboss` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_emboss(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `imprint` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_imprint(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `char_spacing` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_char_spacing(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `position` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_position(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `kern` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_run_properties_kern(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `theme_color` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_theme_color(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `theme_tint` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_theme_tint(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Get the `theme_shade` field from a `RunProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_run_properties_theme_shade(const KREUZBERGRunProperties *ptr);
+
+/**
+ * Free a `StyleDefinition` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_style_definition_free(KREUZBERGStyleDefinition *ptr);
+
+/**
+ * Get the `id` field from a `StyleDefinition`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_style_definition_id(const KREUZBERGStyleDefinition *ptr);
+
+/**
+ * Get the `name` field from a `StyleDefinition`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_style_definition_name(const KREUZBERGStyleDefinition *ptr);
+
+/**
+ * Get the `style_type` field from a `StyleDefinition`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGStyleType *kreuzberg_style_definition_style_type(const KREUZBERGStyleDefinition *ptr);
+
+/**
+ * Get the `based_on` field from a `StyleDefinition`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_style_definition_based_on(const KREUZBERGStyleDefinition *ptr);
+
+/**
+ * Get the `next_style` field from a `StyleDefinition`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_style_definition_next_style(const KREUZBERGStyleDefinition *ptr);
+
+/**
+ * Get the `is_default` field from a `StyleDefinition`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_style_definition_is_default(const KREUZBERGStyleDefinition *ptr);
+
+/**
+ * Get the `run_properties` field from a `StyleDefinition`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGRunProperties *kreuzberg_style_definition_run_properties(const KREUZBERGStyleDefinition *ptr);
+
+/**
+ * Free a `ResolvedStyle` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_resolved_style_free(KREUZBERGResolvedStyle *ptr);
+
+/**
+ * Get the `run_properties` field from a `ResolvedStyle`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGRunProperties *kreuzberg_resolved_style_run_properties(const KREUZBERGResolvedStyle *ptr);
+
+/**
+ * Free a `StyleCatalog` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_style_catalog_free(KREUZBERGStyleCatalog *ptr);
+
+/**
+ * Get the `default_run_properties` field from a `StyleCatalog`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGRunProperties *kreuzberg_style_catalog_default_run_properties(const KREUZBERGStyleCatalog *ptr);
+
+/**
+ * Resolve a style by walking its `basedOn` inheritance chain.
+ *
+ * The resolution order is:
+ * 1. Document defaults (`<w:docDefaults>`)
+ * 2. Base style chain (walking `basedOn` from root to leaf)
+ * 3. The style itself
+ *
+ * For `Option` fields, a child value of `Some(x)` overrides the parent.
+ * A value of `None` inherits from the parent. For boolean toggle properties,
+ * `Some(false)` explicitly disables the property.
+ *
+ * The chain depth is limited to 20 to prevent infinite loops from circular references.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGResolvedStyle *kreuzberg_style_catalog_resolve_style(const KREUZBERGStyleCatalog *this_,
+                                                              const char *style_id);
+
+/**
+ * Free a `TableProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_table_properties_free(KREUZBERGTableProperties *ptr);
+
+/**
+ * Get the `style_id` field from a `TableProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_table_properties_style_id(const KREUZBERGTableProperties *ptr);
+
+/**
+ * Get the `alignment` field from a `TableProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_table_properties_alignment(const KREUZBERGTableProperties *ptr);
+
+/**
+ * Get the `layout` field from a `TableProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_table_properties_layout(const KREUZBERGTableProperties *ptr);
+
+/**
+ * Get the `look` field from a `TableProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTableLook *kreuzberg_table_properties_look(const KREUZBERGTableProperties *ptr);
+
+/**
+ * Get the `borders` field from a `TableProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTableBorders *kreuzberg_table_properties_borders(const KREUZBERGTableProperties *ptr);
+
+/**
+ * Get the `caption` field from a `TableProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_table_properties_caption(const KREUZBERGTableProperties *ptr);
+
+/**
+ * Create a `TableLook` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_table_look_free`.
+ */
+KREUZBERGTableLook *kreuzberg_table_look_from_json(const char *json);
+
+/**
+ * Serialize a `TableLook` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_table_look_to_json(const KREUZBERGTableLook *ptr);
+
+/**
+ * Free a `TableLook` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_table_look_free(KREUZBERGTableLook *ptr);
+
+/**
+ * Get the `first_row` field from a `TableLook`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_table_look_first_row(const KREUZBERGTableLook *ptr);
+
+/**
+ * Get the `last_row` field from a `TableLook`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_table_look_last_row(const KREUZBERGTableLook *ptr);
+
+/**
+ * Get the `first_column` field from a `TableLook`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_table_look_first_column(const KREUZBERGTableLook *ptr);
+
+/**
+ * Get the `last_column` field from a `TableLook`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_table_look_last_column(const KREUZBERGTableLook *ptr);
+
+/**
+ * Get the `no_h_band` field from a `TableLook`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_table_look_no_h_band(const KREUZBERGTableLook *ptr);
+
+/**
+ * Get the `no_v_band` field from a `TableLook`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_table_look_no_v_band(const KREUZBERGTableLook *ptr);
+
+/**
+ * Free a `TableBorders` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_table_borders_free(KREUZBERGTableBorders *ptr);
+
+/**
+ * Create a `RowProperties` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_row_properties_free`.
+ */
+KREUZBERGRowProperties *kreuzberg_row_properties_from_json(const char *json);
+
+/**
+ * Serialize a `RowProperties` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_row_properties_to_json(const KREUZBERGRowProperties *ptr);
+
+/**
+ * Free a `RowProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_row_properties_free(KREUZBERGRowProperties *ptr);
+
+/**
+ * Get the `height` field from a `RowProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_row_properties_height(const KREUZBERGRowProperties *ptr);
+
+/**
+ * Get the `height_rule` field from a `RowProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_row_properties_height_rule(const KREUZBERGRowProperties *ptr);
+
+/**
+ * Get the `is_header` field from a `RowProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_row_properties_is_header(const KREUZBERGRowProperties *ptr);
+
+/**
+ * Get the `cant_split` field from a `RowProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_row_properties_cant_split(const KREUZBERGRowProperties *ptr);
+
+/**
+ * Free a `ColorScheme` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_color_scheme_free(KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `name` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_color_scheme_name(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `dk1` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_dk1(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `lt1` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_lt1(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `dk2` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_dk2(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `lt2` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_lt2(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `accent1` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_accent1(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `accent2` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_accent2(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `accent3` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_accent3(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `accent4` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_accent4(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `accent5` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_accent5(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `accent6` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_accent6(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `hlink` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_hlink(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Get the `fol_hlink` field from a `ColorScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGThemeColor *kreuzberg_color_scheme_fol_hlink(const KREUZBERGColorScheme *ptr);
+
+/**
+ * Free a `FontScheme` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_font_scheme_free(KREUZBERGFontScheme *ptr);
+
+/**
+ * Get the `name` field from a `FontScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_font_scheme_name(const KREUZBERGFontScheme *ptr);
+
+/**
+ * Get the `major_latin` field from a `FontScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_font_scheme_major_latin(const KREUZBERGFontScheme *ptr);
+
+/**
+ * Get the `major_east_asian` field from a `FontScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_font_scheme_major_east_asian(const KREUZBERGFontScheme *ptr);
+
+/**
+ * Get the `major_complex_script` field from a `FontScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_font_scheme_major_complex_script(const KREUZBERGFontScheme *ptr);
+
+/**
+ * Get the `minor_latin` field from a `FontScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_font_scheme_minor_latin(const KREUZBERGFontScheme *ptr);
+
+/**
+ * Get the `minor_east_asian` field from a `FontScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_font_scheme_minor_east_asian(const KREUZBERGFontScheme *ptr);
+
+/**
+ * Get the `minor_complex_script` field from a `FontScheme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_font_scheme_minor_complex_script(const KREUZBERGFontScheme *ptr);
+
+/**
+ * Free a `Theme` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_theme_free(KREUZBERGTheme *ptr);
+
+/**
+ * Get the `name` field from a `Theme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_theme_name(const KREUZBERGTheme *ptr);
+
+/**
+ * Get the `color_scheme` field from a `Theme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGColorScheme *kreuzberg_theme_color_scheme(const KREUZBERGTheme *ptr);
+
+/**
+ * Get the `font_scheme` field from a `Theme`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGFontScheme *kreuzberg_theme_font_scheme(const KREUZBERGTheme *ptr);
+
+/**
+ * Free a `XlsxAppProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_xlsx_app_properties_free(KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Get the `application` field from a `XlsxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_xlsx_app_properties_application(const KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Get the `app_version` field from a `XlsxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_xlsx_app_properties_app_version(const KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Get the `doc_security` field from a `XlsxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_xlsx_app_properties_doc_security(const KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Get the `scale_crop` field from a `XlsxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_xlsx_app_properties_scale_crop(const KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Get the `links_up_to_date` field from a `XlsxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_xlsx_app_properties_links_up_to_date(const KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Get the `shared_doc` field from a `XlsxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_xlsx_app_properties_shared_doc(const KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Get the `hyperlinks_changed` field from a `XlsxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_xlsx_app_properties_hyperlinks_changed(const KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Get the `company` field from a `XlsxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_xlsx_app_properties_company(const KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Get the `worksheet_names` field from a `XlsxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_xlsx_app_properties_worksheet_names(const KREUZBERGXlsxAppProperties *ptr);
+
+/**
+ * Free a `PptxAppProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pptx_app_properties_free(KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `application` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_app_properties_application(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `app_version` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_app_properties_app_version(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `total_time` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_total_time(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `company` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_app_properties_company(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `doc_security` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_doc_security(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `scale_crop` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_scale_crop(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `links_up_to_date` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_links_up_to_date(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `shared_doc` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_shared_doc(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `hyperlinks_changed` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_hyperlinks_changed(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `slides` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_slides(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `notes` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_notes(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `hidden_slides` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_hidden_slides(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `multimedia_clips` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_app_properties_multimedia_clips(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `presentation_format` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_app_properties_presentation_format(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Get the `slide_titles` field from a `PptxAppProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_app_properties_slide_titles(const KREUZBERGPptxAppProperties *ptr);
+
+/**
+ * Free a `CustomProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_custom_properties_free(KREUZBERGCustomProperties *ptr);
+
+/**
+ * Free a `OdtProperties` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_odt_properties_free(KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `title` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_title(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `subject` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_subject(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `creator` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_creator(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `initial_creator` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_initial_creator(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `keywords` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_keywords(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `description` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_description(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `date` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_date(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `creation_date` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_creation_date(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `language` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_language(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `generator` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_generator(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `editing_duration` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_editing_duration(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `editing_cycles` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_odt_properties_editing_cycles(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `page_count` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_odt_properties_page_count(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `word_count` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_odt_properties_word_count(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `character_count` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_odt_properties_character_count(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `paragraph_count` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_odt_properties_paragraph_count(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `table_count` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_odt_properties_table_count(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Get the `image_count` field from a `OdtProperties`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_odt_properties_image_count(const KREUZBERGOdtProperties *ptr);
+
+/**
+ * Free a `PptExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ppt_extraction_result_free(KREUZBERGPptExtractionResult *ptr);
+
+/**
+ * Get the `text` field from a `PptExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ppt_extraction_result_text(const KREUZBERGPptExtractionResult *ptr);
+
+/**
+ * Get the `slide_count` field from a `PptExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ppt_extraction_result_slide_count(const KREUZBERGPptExtractionResult *ptr);
+
+/**
+ * Get the `metadata` field from a `PptExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPptMetadata *kreuzberg_ppt_extraction_result_metadata(const KREUZBERGPptExtractionResult *ptr);
+
+/**
+ * Get the `speaker_notes` field from a `PptExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ppt_extraction_result_speaker_notes(const KREUZBERGPptExtractionResult *ptr);
+
+/**
+ * Free a `PptMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ppt_metadata_free(KREUZBERGPptMetadata *ptr);
+
+/**
+ * Get the `title` field from a `PptMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ppt_metadata_title(const KREUZBERGPptMetadata *ptr);
+
+/**
+ * Get the `subject` field from a `PptMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ppt_metadata_subject(const KREUZBERGPptMetadata *ptr);
+
+/**
+ * Get the `author` field from a `PptMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ppt_metadata_author(const KREUZBERGPptMetadata *ptr);
+
+/**
+ * Get the `last_author` field from a `PptMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ppt_metadata_last_author(const KREUZBERGPptMetadata *ptr);
+
+/**
+ * Free a `PptxExtractionOptions` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pptx_extraction_options_free(KREUZBERGPptxExtractionOptions *ptr);
+
+/**
+ * Get the `extract_images` field from a `PptxExtractionOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_extraction_options_extract_images(const KREUZBERGPptxExtractionOptions *ptr);
+
+/**
+ * Get the `page_config` field from a `PptxExtractionOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPageConfig *kreuzberg_pptx_extraction_options_page_config(const KREUZBERGPptxExtractionOptions *ptr);
+
+/**
+ * Get the `plain` field from a `PptxExtractionOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_extraction_options_plain(const KREUZBERGPptxExtractionOptions *ptr);
+
+/**
+ * Get the `include_structure` field from a `PptxExtractionOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_extraction_options_include_structure(const KREUZBERGPptxExtractionOptions *ptr);
+
+/**
+ * Get the `inject_placeholders` field from a `PptxExtractionOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pptx_extraction_options_inject_placeholders(const KREUZBERGPptxExtractionOptions *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPptxExtractionOptions *kreuzberg_pptx_extraction_options_default(void);
+
+/**
+ * Free a `SyncExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_sync_extractor_free(KREUZBERGSyncExtractor *ptr);
+
+/**
+ * Extract content from a byte array synchronously.
+ *
+ * This method performs extraction without requiring an async runtime.
+ * It is called by `extract_bytes_sync()` when the `tokio-runtime` feature is disabled.
+ *
+ * # Arguments
+ *
+ * * `content` - Raw document bytes
+ * * `mime_type` - MIME type of the document (already validated)
+ * * `config` - Extraction configuration
+ *
+ * # Returns
+ *
+ * An `InternalDocument` containing the extracted elements, metadata, and tables.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_sync_extractor_extract_sync(const KREUZBERGSyncExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Free a `CodeExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_code_extractor_free(KREUZBERGCodeExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGCodeExtractor *kreuzberg_code_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_code_extractor_name(const KREUZBERGCodeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_code_extractor_version(const KREUZBERGCodeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_code_extractor_initialize(const KREUZBERGCodeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_code_extractor_shutdown(const KREUZBERGCodeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_code_extractor_description(const KREUZBERGCodeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_code_extractor_author(const KREUZBERGCodeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_code_extractor_extract_bytes(const KREUZBERGCodeExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *__mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_code_extractor_extract_file(const KREUZBERGCodeExtractor *_this,
+                                            const char *_path,
+                                            const char *__mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_code_extractor_supported_mime_types(const KREUZBERGCodeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_code_extractor_priority(const KREUZBERGCodeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_code_extractor_as_sync_extractor(const KREUZBERGCodeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_code_extractor_extract_sync(const KREUZBERGCodeExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *__mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Free a `CsvExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_csv_extractor_free(KREUZBERGCsvExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGCsvExtractor *kreuzberg_csv_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_csv_extractor_name(const KREUZBERGCsvExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_csv_extractor_version(const KREUZBERGCsvExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_csv_extractor_initialize(const KREUZBERGCsvExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_csv_extractor_shutdown(const KREUZBERGCsvExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_csv_extractor_description(const KREUZBERGCsvExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_csv_extractor_author(const KREUZBERGCsvExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_csv_extractor_extract_bytes(const KREUZBERGCsvExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_csv_extractor_supported_mime_types(const KREUZBERGCsvExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_csv_extractor_priority(const KREUZBERGCsvExtractor *this_);
+
+/**
+ * Free a `StructuredExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_structured_extractor_free(KREUZBERGStructuredExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGStructuredExtractor *kreuzberg_structured_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_structured_extractor_name(const KREUZBERGStructuredExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_structured_extractor_version(const KREUZBERGStructuredExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_structured_extractor_initialize(const KREUZBERGStructuredExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_structured_extractor_shutdown(const KREUZBERGStructuredExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_structured_extractor_extract_bytes(const KREUZBERGStructuredExtractor *_this,
+                                                   const uint8_t *_content,
+                                                   uintptr_t _content_len,
+                                                   const char *_mime_type,
+                                                   const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_structured_extractor_supported_mime_types(const KREUZBERGStructuredExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_structured_extractor_priority(const KREUZBERGStructuredExtractor *this_);
+
+/**
+ * Free a `PlainTextExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_plain_text_extractor_free(KREUZBERGPlainTextExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPlainTextExtractor *kreuzberg_plain_text_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plain_text_extractor_name(const KREUZBERGPlainTextExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plain_text_extractor_version(const KREUZBERGPlainTextExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_plain_text_extractor_initialize(const KREUZBERGPlainTextExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_plain_text_extractor_shutdown(const KREUZBERGPlainTextExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plain_text_extractor_description(const KREUZBERGPlainTextExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plain_text_extractor_author(const KREUZBERGPlainTextExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plain_text_extractor_extract_bytes(const KREUZBERGPlainTextExtractor *_this,
+                                                   const uint8_t *_content,
+                                                   uintptr_t _content_len,
+                                                   const char *_mime_type,
+                                                   const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plain_text_extractor_supported_mime_types(const KREUZBERGPlainTextExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_plain_text_extractor_priority(const KREUZBERGPlainTextExtractor *this_);
+
+/**
+ * Free a `DjotExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_djot_extractor_free(KREUZBERGDjotExtractor *ptr);
+
+/**
+ * Build an `InternalDocument` from jotdown events.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_extractor_build_internal_document(const char *_events);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDjotExtractor *kreuzberg_djot_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_extractor_name(const KREUZBERGDjotExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_extractor_version(const KREUZBERGDjotExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_djot_extractor_initialize(const KREUZBERGDjotExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_djot_extractor_shutdown(const KREUZBERGDjotExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_extractor_description(const KREUZBERGDjotExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_extractor_author(const KREUZBERGDjotExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_extractor_extract_bytes(const KREUZBERGDjotExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_extractor_extract_file(const KREUZBERGDjotExtractor *_this,
+                                            const char *_path,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_extractor_supported_mime_types(const KREUZBERGDjotExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_djot_extractor_priority(const KREUZBERGDjotExtractor *this_);
+
+/**
+ * Free a `ZipBombValidator` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_zip_bomb_validator_free(KREUZBERGZipBombValidator *ptr);
+
+/**
+ * Free a `StringGrowthValidator` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_string_growth_validator_free(KREUZBERGStringGrowthValidator *ptr);
+
+/**
+ * Validate and update size after appending.
+ *
+ * # Returns
+ * * `Ok(())` if size is within limits
+ * * `Err(SecurityError)` if size exceeds limit
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_string_growth_validator_check_append(KREUZBERGStringGrowthValidator *this_,
+                                                       uintptr_t len);
+
+/**
+ * Get current size.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_string_growth_validator_current_size(const KREUZBERGStringGrowthValidator *this_);
+
+/**
+ * Free a `IterationValidator` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_iteration_validator_free(KREUZBERGIterationValidator *ptr);
+
+/**
+ * Validate and increment iteration count.
+ *
+ * # Returns
+ * * `Ok(())` if count is within limits
+ * * `Err(SecurityError)` if count exceeds limit
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_iteration_validator_check_iteration(KREUZBERGIterationValidator *this_);
+
+/**
+ * Get current iteration count.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_iteration_validator_current_count(const KREUZBERGIterationValidator *this_);
+
+/**
+ * Free a `DepthValidator` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_depth_validator_free(KREUZBERGDepthValidator *ptr);
+
+/**
+ * Push a level (increase depth).
+ *
+ * # Returns
+ * * `Ok(())` if depth is within limits
+ * * `Err(SecurityError)` if depth exceeds limit
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_depth_validator_push(KREUZBERGDepthValidator *this_);
+
+/**
+ * Pop a level (decrease depth).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_depth_validator_pop(KREUZBERGDepthValidator *this_);
+
+/**
+ * Get current depth.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_depth_validator_current_depth(const KREUZBERGDepthValidator *this_);
+
+/**
+ * Free a `EntityValidator` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_entity_validator_free(KREUZBERGEntityValidator *ptr);
+
+/**
+ * Validate entity length.
+ *
+ * # Returns
+ * * `Ok(())` if length is within limits
+ * * `Err(SecurityError)` if length exceeds limit
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_entity_validator_validate(const KREUZBERGEntityValidator *this_,
+                                            const char *content);
+
+/**
+ * Free a `TableValidator` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_table_validator_free(KREUZBERGTableValidator *ptr);
+
+/**
+ * Add cells to table and validate.
+ *
+ * # Returns
+ * * `Ok(())` if cell count is within limits
+ * * `Err(SecurityError)` if cell count exceeds limit
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_table_validator_add_cells(KREUZBERGTableValidator *this_,
+                                            uintptr_t count);
+
+/**
+ * Get current cell count.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_table_validator_current_cells(const KREUZBERGTableValidator *this_);
+
+/**
+ * Free a `ImageExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_image_extractor_free(KREUZBERGImageExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGImageExtractor *kreuzberg_image_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_image_extractor_name(const KREUZBERGImageExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_image_extractor_version(const KREUZBERGImageExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_image_extractor_initialize(const KREUZBERGImageExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_image_extractor_shutdown(const KREUZBERGImageExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_image_extractor_description(const KREUZBERGImageExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_image_extractor_author(const KREUZBERGImageExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_image_extractor_extract_bytes(const KREUZBERGImageExtractor *_this,
+                                              const uint8_t *_content,
+                                              uintptr_t _content_len,
+                                              const char *_mime_type,
+                                              const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_image_extractor_supported_mime_types(const KREUZBERGImageExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_image_extractor_priority(const KREUZBERGImageExtractor *this_);
+
+/**
+ * Free a `ZipExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_zip_extractor_free(KREUZBERGZipExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGZipExtractor *kreuzberg_zip_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_zip_extractor_name(const KREUZBERGZipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_zip_extractor_version(const KREUZBERGZipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_zip_extractor_initialize(const KREUZBERGZipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_zip_extractor_shutdown(const KREUZBERGZipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_zip_extractor_description(const KREUZBERGZipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_zip_extractor_author(const KREUZBERGZipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_zip_extractor_extract_bytes(const KREUZBERGZipExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_zip_extractor_supported_mime_types(const KREUZBERGZipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_zip_extractor_priority(const KREUZBERGZipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_zip_extractor_as_sync_extractor(const KREUZBERGZipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_zip_extractor_extract_sync(const KREUZBERGZipExtractor *_this,
+                                           const uint8_t *_content,
+                                           uintptr_t _content_len,
+                                           const char *_mime_type,
+                                           const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Free a `TarExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_tar_extractor_free(KREUZBERGTarExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTarExtractor *kreuzberg_tar_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tar_extractor_name(const KREUZBERGTarExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tar_extractor_version(const KREUZBERGTarExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_tar_extractor_initialize(const KREUZBERGTarExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_tar_extractor_shutdown(const KREUZBERGTarExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tar_extractor_description(const KREUZBERGTarExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tar_extractor_author(const KREUZBERGTarExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tar_extractor_extract_bytes(const KREUZBERGTarExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tar_extractor_supported_mime_types(const KREUZBERGTarExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_tar_extractor_priority(const KREUZBERGTarExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_tar_extractor_as_sync_extractor(const KREUZBERGTarExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tar_extractor_extract_sync(const KREUZBERGTarExtractor *_this,
+                                           const uint8_t *_content,
+                                           uintptr_t _content_len,
+                                           const char *_mime_type,
+                                           const KREUZBERGExtractionConfig *__config);
+
+/**
+ * Free a `SevenZExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_seven_z_extractor_free(KREUZBERGSevenZExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSevenZExtractor *kreuzberg_seven_z_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_seven_z_extractor_name(const KREUZBERGSevenZExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_seven_z_extractor_version(const KREUZBERGSevenZExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_seven_z_extractor_initialize(const KREUZBERGSevenZExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_seven_z_extractor_shutdown(const KREUZBERGSevenZExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_seven_z_extractor_description(const KREUZBERGSevenZExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_seven_z_extractor_author(const KREUZBERGSevenZExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_seven_z_extractor_extract_bytes(const KREUZBERGSevenZExtractor *_this,
+                                                const uint8_t *_content,
+                                                uintptr_t _content_len,
+                                                const char *_mime_type,
+                                                const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_seven_z_extractor_supported_mime_types(const KREUZBERGSevenZExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_seven_z_extractor_priority(const KREUZBERGSevenZExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_seven_z_extractor_as_sync_extractor(const KREUZBERGSevenZExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_seven_z_extractor_extract_sync(const KREUZBERGSevenZExtractor *_this,
+                                               const uint8_t *_content,
+                                               uintptr_t _content_len,
+                                               const char *_mime_type,
+                                               const KREUZBERGExtractionConfig *__config);
+
+/**
+ * Free a `GzipExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_gzip_extractor_free(KREUZBERGGzipExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGGzipExtractor *kreuzberg_gzip_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_gzip_extractor_name(const KREUZBERGGzipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_gzip_extractor_version(const KREUZBERGGzipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_gzip_extractor_initialize(const KREUZBERGGzipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_gzip_extractor_shutdown(const KREUZBERGGzipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_gzip_extractor_description(const KREUZBERGGzipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_gzip_extractor_author(const KREUZBERGGzipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_gzip_extractor_extract_bytes(const KREUZBERGGzipExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_gzip_extractor_supported_mime_types(const KREUZBERGGzipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_gzip_extractor_priority(const KREUZBERGGzipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_gzip_extractor_as_sync_extractor(const KREUZBERGGzipExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_gzip_extractor_extract_sync(const KREUZBERGGzipExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *__config);
+
+/**
+ * Free a `EmailExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_email_extractor_free(KREUZBERGEmailExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGEmailExtractor *kreuzberg_email_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_email_extractor_name(const KREUZBERGEmailExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_email_extractor_version(const KREUZBERGEmailExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_email_extractor_initialize(const KREUZBERGEmailExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_email_extractor_shutdown(const KREUZBERGEmailExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_email_extractor_extract_sync(const KREUZBERGEmailExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_email_extractor_extract_bytes(const KREUZBERGEmailExtractor *_this,
+                                              const uint8_t *_content,
+                                              uintptr_t _content_len,
+                                              const char *_mime_type,
+                                              const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_email_extractor_supported_mime_types(const KREUZBERGEmailExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_email_extractor_priority(const KREUZBERGEmailExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_email_extractor_as_sync_extractor(const KREUZBERGEmailExtractor *this_);
+
+/**
+ * Free a `PstExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pst_extractor_free(KREUZBERGPstExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPstExtractor *kreuzberg_pst_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pst_extractor_name(const KREUZBERGPstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pst_extractor_version(const KREUZBERGPstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pst_extractor_initialize(const KREUZBERGPstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pst_extractor_shutdown(const KREUZBERGPstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pst_extractor_extract_sync(const KREUZBERGPstExtractor *_this,
+                                           const uint8_t *_content,
+                                           uintptr_t _content_len,
+                                           const char *_mime_type,
+                                           const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pst_extractor_extract_bytes(const KREUZBERGPstExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pst_extractor_supported_mime_types(const KREUZBERGPstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pst_extractor_priority(const KREUZBERGPstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_pst_extractor_as_sync_extractor(const KREUZBERGPstExtractor *this_);
+
+/**
+ * Free a `ExcelExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_excel_extractor_free(KREUZBERGExcelExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExcelExtractor *kreuzberg_excel_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_excel_extractor_name(const KREUZBERGExcelExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_excel_extractor_version(const KREUZBERGExcelExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_excel_extractor_initialize(const KREUZBERGExcelExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_excel_extractor_shutdown(const KREUZBERGExcelExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_excel_extractor_extract_sync(const KREUZBERGExcelExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_excel_extractor_extract_bytes(const KREUZBERGExcelExtractor *_this,
+                                              const uint8_t *_content,
+                                              uintptr_t _content_len,
+                                              const char *_mime_type,
+                                              const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_excel_extractor_extract_file(const KREUZBERGExcelExtractor *_this,
+                                             const char *_path,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_excel_extractor_supported_mime_types(const KREUZBERGExcelExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_excel_extractor_priority(const KREUZBERGExcelExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_excel_extractor_as_sync_extractor(const KREUZBERGExcelExtractor *this_);
+
+/**
+ * Free a `HwpExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_hwp_extractor_free(KREUZBERGHwpExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGHwpExtractor *kreuzberg_hwp_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_hwp_extractor_name(const KREUZBERGHwpExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_hwp_extractor_version(const KREUZBERGHwpExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_hwp_extractor_initialize(const KREUZBERGHwpExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_hwp_extractor_shutdown(const KREUZBERGHwpExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_hwp_extractor_description(const KREUZBERGHwpExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_hwp_extractor_author(const KREUZBERGHwpExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_hwp_extractor_extract_bytes(const KREUZBERGHwpExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_hwp_extractor_supported_mime_types(const KREUZBERGHwpExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_hwp_extractor_priority(const KREUZBERGHwpExtractor *this_);
+
+/**
+ * Free a `KeynoteExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_keynote_extractor_free(KREUZBERGKeynoteExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKeynoteExtractor *kreuzberg_keynote_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_keynote_extractor_name(const KREUZBERGKeynoteExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_keynote_extractor_version(const KREUZBERGKeynoteExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_keynote_extractor_initialize(const KREUZBERGKeynoteExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_keynote_extractor_shutdown(const KREUZBERGKeynoteExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_keynote_extractor_description(const KREUZBERGKeynoteExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_keynote_extractor_author(const KREUZBERGKeynoteExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_keynote_extractor_extract_bytes(const KREUZBERGKeynoteExtractor *_this,
+                                                const uint8_t *_content,
+                                                uintptr_t _content_len,
+                                                const char *_mime_type,
+                                                const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_keynote_extractor_supported_mime_types(const KREUZBERGKeynoteExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_keynote_extractor_priority(const KREUZBERGKeynoteExtractor *this_);
+
+/**
+ * Free a `NumbersExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_numbers_extractor_free(KREUZBERGNumbersExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGNumbersExtractor *kreuzberg_numbers_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_numbers_extractor_name(const KREUZBERGNumbersExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_numbers_extractor_version(const KREUZBERGNumbersExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_numbers_extractor_initialize(const KREUZBERGNumbersExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_numbers_extractor_shutdown(const KREUZBERGNumbersExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_numbers_extractor_description(const KREUZBERGNumbersExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_numbers_extractor_author(const KREUZBERGNumbersExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_numbers_extractor_extract_bytes(const KREUZBERGNumbersExtractor *_this,
+                                                const uint8_t *_content,
+                                                uintptr_t _content_len,
+                                                const char *_mime_type,
+                                                const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_numbers_extractor_supported_mime_types(const KREUZBERGNumbersExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_numbers_extractor_priority(const KREUZBERGNumbersExtractor *this_);
+
+/**
+ * Free a `PagesExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pages_extractor_free(KREUZBERGPagesExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPagesExtractor *kreuzberg_pages_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pages_extractor_name(const KREUZBERGPagesExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pages_extractor_version(const KREUZBERGPagesExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pages_extractor_initialize(const KREUZBERGPagesExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pages_extractor_shutdown(const KREUZBERGPagesExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pages_extractor_description(const KREUZBERGPagesExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pages_extractor_author(const KREUZBERGPagesExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pages_extractor_extract_bytes(const KREUZBERGPagesExtractor *_this,
+                                              const uint8_t *_content,
+                                              uintptr_t _content_len,
+                                              const char *_mime_type,
+                                              const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pages_extractor_supported_mime_types(const KREUZBERGPagesExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pages_extractor_priority(const KREUZBERGPagesExtractor *this_);
+
+/**
+ * Free a `HtmlExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_html_extractor_free(KREUZBERGHtmlExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGHtmlExtractor *kreuzberg_html_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_html_extractor_name(const KREUZBERGHtmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_html_extractor_version(const KREUZBERGHtmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_html_extractor_initialize(const KREUZBERGHtmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_html_extractor_shutdown(const KREUZBERGHtmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_html_extractor_extract_sync(const KREUZBERGHtmlExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_html_extractor_extract_bytes(const KREUZBERGHtmlExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_html_extractor_supported_mime_types(const KREUZBERGHtmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_html_extractor_priority(const KREUZBERGHtmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_html_extractor_as_sync_extractor(const KREUZBERGHtmlExtractor *this_);
+
+/**
+ * Free a `BibtexExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_bibtex_extractor_free(KREUZBERGBibtexExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGBibtexExtractor *kreuzberg_bibtex_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_bibtex_extractor_name(const KREUZBERGBibtexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_bibtex_extractor_version(const KREUZBERGBibtexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_bibtex_extractor_initialize(const KREUZBERGBibtexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_bibtex_extractor_shutdown(const KREUZBERGBibtexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_bibtex_extractor_description(const KREUZBERGBibtexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_bibtex_extractor_author(const KREUZBERGBibtexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_bibtex_extractor_extract_bytes(const KREUZBERGBibtexExtractor *_this,
+                                               const uint8_t *_content,
+                                               uintptr_t _content_len,
+                                               const char *_mime_type,
+                                               const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_bibtex_extractor_supported_mime_types(const KREUZBERGBibtexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_bibtex_extractor_priority(const KREUZBERGBibtexExtractor *this_);
+
+/**
+ * Free a `CitationExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_citation_extractor_free(KREUZBERGCitationExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGCitationExtractor *kreuzberg_citation_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_citation_extractor_name(const KREUZBERGCitationExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_citation_extractor_version(const KREUZBERGCitationExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_citation_extractor_initialize(const KREUZBERGCitationExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_citation_extractor_shutdown(const KREUZBERGCitationExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_citation_extractor_description(const KREUZBERGCitationExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_citation_extractor_author(const KREUZBERGCitationExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_citation_extractor_extract_bytes(const KREUZBERGCitationExtractor *_this,
+                                                 const uint8_t *_content,
+                                                 uintptr_t _content_len,
+                                                 const char *_mime_type,
+                                                 const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_citation_extractor_supported_mime_types(const KREUZBERGCitationExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_citation_extractor_priority(const KREUZBERGCitationExtractor *this_);
+
+/**
+ * Free a `DocExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_doc_extractor_free(KREUZBERGDocExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocExtractor *kreuzberg_doc_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_doc_extractor_name(const KREUZBERGDocExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_doc_extractor_version(const KREUZBERGDocExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_doc_extractor_initialize(const KREUZBERGDocExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_doc_extractor_shutdown(const KREUZBERGDocExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_doc_extractor_description(const KREUZBERGDocExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_doc_extractor_author(const KREUZBERGDocExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_doc_extractor_extract_bytes(const KREUZBERGDocExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_doc_extractor_supported_mime_types(const KREUZBERGDocExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_doc_extractor_priority(const KREUZBERGDocExtractor *this_);
+
+/**
+ * Free a `DbfExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_dbf_extractor_free(KREUZBERGDbfExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDbfExtractor *kreuzberg_dbf_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_dbf_extractor_name(const KREUZBERGDbfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_dbf_extractor_version(const KREUZBERGDbfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_dbf_extractor_initialize(const KREUZBERGDbfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_dbf_extractor_shutdown(const KREUZBERGDbfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_dbf_extractor_description(const KREUZBERGDbfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_dbf_extractor_author(const KREUZBERGDbfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_dbf_extractor_extract_bytes(const KREUZBERGDbfExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_dbf_extractor_supported_mime_types(const KREUZBERGDbfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_dbf_extractor_priority(const KREUZBERGDbfExtractor *this_);
+
+/**
+ * Free a `DocxExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_docx_extractor_free(KREUZBERGDocxExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocxExtractor *kreuzberg_docx_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docx_extractor_name(const KREUZBERGDocxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docx_extractor_version(const KREUZBERGDocxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_docx_extractor_initialize(const KREUZBERGDocxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_docx_extractor_shutdown(const KREUZBERGDocxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docx_extractor_description(const KREUZBERGDocxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docx_extractor_author(const KREUZBERGDocxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docx_extractor_extract_bytes(const KREUZBERGDocxExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docx_extractor_supported_mime_types(const KREUZBERGDocxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_docx_extractor_priority(const KREUZBERGDocxExtractor *this_);
+
+/**
+ * Free a `EpubExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_epub_extractor_free(KREUZBERGEpubExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGEpubExtractor *kreuzberg_epub_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_epub_extractor_name(const KREUZBERGEpubExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_epub_extractor_version(const KREUZBERGEpubExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_epub_extractor_initialize(const KREUZBERGEpubExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_epub_extractor_shutdown(const KREUZBERGEpubExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_epub_extractor_description(const KREUZBERGEpubExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_epub_extractor_author(const KREUZBERGEpubExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_epub_extractor_extract_bytes(const KREUZBERGEpubExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_epub_extractor_supported_mime_types(const KREUZBERGEpubExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_epub_extractor_priority(const KREUZBERGEpubExtractor *this_);
+
+/**
+ * Free a `FictionBookExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_fiction_book_extractor_free(KREUZBERGFictionBookExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGFictionBookExtractor *kreuzberg_fiction_book_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_fiction_book_extractor_name(const KREUZBERGFictionBookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_fiction_book_extractor_version(const KREUZBERGFictionBookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_fiction_book_extractor_initialize(const KREUZBERGFictionBookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_fiction_book_extractor_shutdown(const KREUZBERGFictionBookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_fiction_book_extractor_description(const KREUZBERGFictionBookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_fiction_book_extractor_author(const KREUZBERGFictionBookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_fiction_book_extractor_extract_bytes(const KREUZBERGFictionBookExtractor *_this,
+                                                     const uint8_t *_content,
+                                                     uintptr_t _content_len,
+                                                     const char *_mime_type,
+                                                     const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_fiction_book_extractor_supported_mime_types(const KREUZBERGFictionBookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_fiction_book_extractor_priority(const KREUZBERGFictionBookExtractor *this_);
+
+/**
+ * Free a `MarkdownExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_markdown_extractor_free(KREUZBERGMarkdownExtractor *ptr);
+
+/**
+ * Build an `InternalDocument` from pulldown-cmark events and optional YAML frontmatter.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_markdown_extractor_build_internal_document(const char *_events,
+                                                           const char *_yaml);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGMarkdownExtractor *kreuzberg_markdown_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_markdown_extractor_name(const KREUZBERGMarkdownExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_markdown_extractor_version(const KREUZBERGMarkdownExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_markdown_extractor_initialize(const KREUZBERGMarkdownExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_markdown_extractor_shutdown(const KREUZBERGMarkdownExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_markdown_extractor_description(const KREUZBERGMarkdownExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_markdown_extractor_author(const KREUZBERGMarkdownExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_markdown_extractor_extract_bytes(const KREUZBERGMarkdownExtractor *_this,
+                                                 const uint8_t *_content,
+                                                 uintptr_t _content_len,
+                                                 const char *_mime_type,
+                                                 const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_markdown_extractor_extract_file(const KREUZBERGMarkdownExtractor *_this,
+                                                const char *_path,
+                                                const char *_mime_type,
+                                                const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_markdown_extractor_supported_mime_types(const KREUZBERGMarkdownExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_markdown_extractor_priority(const KREUZBERGMarkdownExtractor *this_);
+
+/**
+ * Free a `MdxExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_mdx_extractor_free(KREUZBERGMdxExtractor *ptr);
+
+/**
+ * Build an `InternalDocument` from pulldown-cmark events after JSX stripping.
+ *
+ * JSX blocks that were stripped are recorded as raw blocks in the internal document.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_mdx_extractor_build_internal_document(const char *_events,
+                                                      const char *_yaml,
+                                                      const char *_raw_jsx_blocks);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGMdxExtractor *kreuzberg_mdx_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_mdx_extractor_name(const KREUZBERGMdxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_mdx_extractor_version(const KREUZBERGMdxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_mdx_extractor_initialize(const KREUZBERGMdxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_mdx_extractor_shutdown(const KREUZBERGMdxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_mdx_extractor_description(const KREUZBERGMdxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_mdx_extractor_author(const KREUZBERGMdxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_mdx_extractor_extract_bytes(const KREUZBERGMdxExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_mdx_extractor_extract_file(const KREUZBERGMdxExtractor *_this,
+                                           const char *_path,
+                                           const char *_mime_type,
+                                           const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_mdx_extractor_supported_mime_types(const KREUZBERGMdxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_mdx_extractor_priority(const KREUZBERGMdxExtractor *this_);
+
+/**
+ * Free a `RstExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_rst_extractor_free(KREUZBERGRstExtractor *ptr);
+
+/**
+ * Build an `InternalDocument` from RST content.
+ *
+ * Handles sections, paragraphs, code blocks, tables, footnotes, citations,
+ * and cross-references.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rst_extractor_build_internal_document(const char *_content,
+                                                      int32_t _inject_placeholders);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGRstExtractor *kreuzberg_rst_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rst_extractor_name(const KREUZBERGRstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rst_extractor_version(const KREUZBERGRstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_rst_extractor_initialize(const KREUZBERGRstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_rst_extractor_shutdown(const KREUZBERGRstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rst_extractor_description(const KREUZBERGRstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rst_extractor_author(const KREUZBERGRstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rst_extractor_extract_bytes(const KREUZBERGRstExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rst_extractor_extract_file(const KREUZBERGRstExtractor *_this,
+                                           const char *_path,
+                                           const char *_mime_type,
+                                           const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rst_extractor_supported_mime_types(const KREUZBERGRstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_rst_extractor_priority(const KREUZBERGRstExtractor *this_);
+
+/**
+ * Free a `LatexExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_latex_extractor_free(KREUZBERGLatexExtractor *ptr);
+
+/**
+ * Build an `InternalDocument` from LaTeX source.
+ *
+ * Captures `\label{}` as anchors, `\ref{}` as CrossReference relationships,
+ * `\cite{}` as CitationReference relationships, and footnotes.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_latex_extractor_build_internal_document(const char *_source,
+                                                        int32_t _inject_placeholders);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGLatexExtractor *kreuzberg_latex_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_latex_extractor_name(const KREUZBERGLatexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_latex_extractor_version(const KREUZBERGLatexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_latex_extractor_initialize(const KREUZBERGLatexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_latex_extractor_shutdown(const KREUZBERGLatexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_latex_extractor_description(const KREUZBERGLatexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_latex_extractor_author(const KREUZBERGLatexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_latex_extractor_extract_bytes(const KREUZBERGLatexExtractor *_this,
+                                              const uint8_t *_content,
+                                              uintptr_t _content_len,
+                                              const char *_mime_type,
+                                              const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_latex_extractor_extract_file(const KREUZBERGLatexExtractor *_this,
+                                             const char *_path,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_latex_extractor_supported_mime_types(const KREUZBERGLatexExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_latex_extractor_priority(const KREUZBERGLatexExtractor *this_);
+
+/**
+ * Free a `JupyterExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_jupyter_extractor_free(KREUZBERGJupyterExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGJupyterExtractor *kreuzberg_jupyter_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jupyter_extractor_name(const KREUZBERGJupyterExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jupyter_extractor_version(const KREUZBERGJupyterExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_jupyter_extractor_initialize(const KREUZBERGJupyterExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_jupyter_extractor_shutdown(const KREUZBERGJupyterExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jupyter_extractor_description(const KREUZBERGJupyterExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jupyter_extractor_author(const KREUZBERGJupyterExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jupyter_extractor_extract_bytes(const KREUZBERGJupyterExtractor *_this,
+                                                const uint8_t *_content,
+                                                uintptr_t _content_len,
+                                                const char *_mime_type,
+                                                const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jupyter_extractor_supported_mime_types(const KREUZBERGJupyterExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_jupyter_extractor_priority(const KREUZBERGJupyterExtractor *this_);
+
+/**
+ * Free a `OrgModeExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_org_mode_extractor_free(KREUZBERGOrgModeExtractor *ptr);
+
+/**
+ * Build an `InternalDocument` from Org Mode source text.
+ *
+ * Handles headings, paragraphs, lists, code blocks, tables, inline links,
+ * and footnote references.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_org_mode_extractor_build_internal_document(const char *_org_text);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOrgModeExtractor *kreuzberg_org_mode_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_org_mode_extractor_name(const KREUZBERGOrgModeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_org_mode_extractor_version(const KREUZBERGOrgModeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_org_mode_extractor_initialize(const KREUZBERGOrgModeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_org_mode_extractor_shutdown(const KREUZBERGOrgModeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_org_mode_extractor_description(const KREUZBERGOrgModeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_org_mode_extractor_author(const KREUZBERGOrgModeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_org_mode_extractor_extract_bytes(const KREUZBERGOrgModeExtractor *_this,
+                                                 const uint8_t *_content,
+                                                 uintptr_t _content_len,
+                                                 const char *_mime_type,
+                                                 const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_org_mode_extractor_extract_file(const KREUZBERGOrgModeExtractor *_this,
+                                                const char *_path,
+                                                const char *_mime_type,
+                                                const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_org_mode_extractor_supported_mime_types(const KREUZBERGOrgModeExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_org_mode_extractor_priority(const KREUZBERGOrgModeExtractor *this_);
+
+/**
+ * Free a `OdtExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_odt_extractor_free(KREUZBERGOdtExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOdtExtractor *kreuzberg_odt_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_odt_extractor_name(const KREUZBERGOdtExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_odt_extractor_version(const KREUZBERGOdtExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_odt_extractor_initialize(const KREUZBERGOdtExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_odt_extractor_shutdown(const KREUZBERGOdtExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_odt_extractor_description(const KREUZBERGOdtExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_odt_extractor_author(const KREUZBERGOdtExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_odt_extractor_extract_bytes(const KREUZBERGOdtExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_odt_extractor_supported_mime_types(const KREUZBERGOdtExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_odt_extractor_priority(const KREUZBERGOdtExtractor *this_);
+
+/**
+ * Free a `OpmlExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_opml_extractor_free(KREUZBERGOpmlExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOpmlExtractor *kreuzberg_opml_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_opml_extractor_name(const KREUZBERGOpmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_opml_extractor_version(const KREUZBERGOpmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_opml_extractor_initialize(const KREUZBERGOpmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_opml_extractor_shutdown(const KREUZBERGOpmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_opml_extractor_description(const KREUZBERGOpmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_opml_extractor_author(const KREUZBERGOpmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_opml_extractor_extract_bytes(const KREUZBERGOpmlExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_opml_extractor_supported_mime_types(const KREUZBERGOpmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_opml_extractor_priority(const KREUZBERGOpmlExtractor *this_);
+
+/**
+ * Free a `TypstExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_typst_extractor_free(KREUZBERGTypstExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTypstExtractor *kreuzberg_typst_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_typst_extractor_name(const KREUZBERGTypstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_typst_extractor_version(const KREUZBERGTypstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_typst_extractor_initialize(const KREUZBERGTypstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_typst_extractor_shutdown(const KREUZBERGTypstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_typst_extractor_description(const KREUZBERGTypstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_typst_extractor_author(const KREUZBERGTypstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_typst_extractor_extract_bytes(const KREUZBERGTypstExtractor *_this,
+                                              const uint8_t *_content,
+                                              uintptr_t _content_len,
+                                              const char *_mime_type,
+                                              const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_typst_extractor_extract_file(const KREUZBERGTypstExtractor *_this,
+                                             const char *_path,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_typst_extractor_supported_mime_types(const KREUZBERGTypstExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_typst_extractor_priority(const KREUZBERGTypstExtractor *this_);
+
+/**
+ * Free a `JatsExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_jats_extractor_free(KREUZBERGJatsExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGJatsExtractor *kreuzberg_jats_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jats_extractor_name(const KREUZBERGJatsExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jats_extractor_version(const KREUZBERGJatsExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_jats_extractor_initialize(const KREUZBERGJatsExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_jats_extractor_shutdown(const KREUZBERGJatsExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jats_extractor_extract_bytes(const KREUZBERGJatsExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_jats_extractor_supported_mime_types(const KREUZBERGJatsExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_jats_extractor_priority(const KREUZBERGJatsExtractor *this_);
+
+/**
+ * Free a `NativeTextStats` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_native_text_stats_free(KREUZBERGNativeTextStats *ptr);
+
+/**
+ * Get the `non_whitespace` field from a `NativeTextStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_native_text_stats_non_whitespace(const KREUZBERGNativeTextStats *ptr);
+
+/**
+ * Get the `alnum` field from a `NativeTextStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_native_text_stats_alnum(const KREUZBERGNativeTextStats *ptr);
+
+/**
+ * Get the `meaningful_words` field from a `NativeTextStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_native_text_stats_meaningful_words(const KREUZBERGNativeTextStats *ptr);
+
+/**
+ * Get the `alnum_ratio` field from a `NativeTextStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_native_text_stats_alnum_ratio(const KREUZBERGNativeTextStats *ptr);
+
+/**
+ * Get the `garbage_char_count` field from a `NativeTextStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_native_text_stats_garbage_char_count(const KREUZBERGNativeTextStats *ptr);
+
+/**
+ * Get the `fragmented_word_ratio` field from a `NativeTextStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_native_text_stats_fragmented_word_ratio(const KREUZBERGNativeTextStats *ptr);
+
+/**
+ * Get the `consecutive_repeat_ratio` field from a `NativeTextStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_native_text_stats_consecutive_repeat_ratio(const KREUZBERGNativeTextStats *ptr);
+
+/**
+ * Get the `avg_word_length` field from a `NativeTextStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_native_text_stats_avg_word_length(const KREUZBERGNativeTextStats *ptr);
+
+/**
+ * Get the `word_count` field from a `NativeTextStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_native_text_stats_word_count(const KREUZBERGNativeTextStats *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGNativeTextStats *kreuzberg_native_text_stats_compute(const char *text,
+                                                              const KREUZBERGOcrQualityThresholds *thresholds);
+
+/**
+ * Convenience method using default thresholds.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGNativeTextStats *kreuzberg_native_text_stats_from(const char *text);
+
+/**
+ * Free a `OcrFallbackDecision` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_fallback_decision_free(KREUZBERGOcrFallbackDecision *ptr);
+
+/**
+ * Get the `stats` field from a `OcrFallbackDecision`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGNativeTextStats *kreuzberg_ocr_fallback_decision_stats(const KREUZBERGOcrFallbackDecision *ptr);
+
+/**
+ * Get the `avg_non_whitespace` field from a `OcrFallbackDecision`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_fallback_decision_avg_non_whitespace(const KREUZBERGOcrFallbackDecision *ptr);
+
+/**
+ * Get the `avg_alnum` field from a `OcrFallbackDecision`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_fallback_decision_avg_alnum(const KREUZBERGOcrFallbackDecision *ptr);
+
+/**
+ * Get the `fallback` field from a `OcrFallbackDecision`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_ocr_fallback_decision_fallback(const KREUZBERGOcrFallbackDecision *ptr);
+
+/**
+ * Free a `PdfExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_extractor_free(KREUZBERGPdfExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfExtractor *kreuzberg_pdf_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pdf_extractor_name(const KREUZBERGPdfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pdf_extractor_version(const KREUZBERGPdfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pdf_extractor_initialize(const KREUZBERGPdfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pdf_extractor_shutdown(const KREUZBERGPdfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pdf_extractor_extract_bytes(const KREUZBERGPdfExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pdf_extractor_supported_mime_types(const KREUZBERGPdfExtractor *this_);
+
+/**
+ * Free a `PptExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ppt_extractor_free(KREUZBERGPptExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPptExtractor *kreuzberg_ppt_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ppt_extractor_name(const KREUZBERGPptExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ppt_extractor_version(const KREUZBERGPptExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ppt_extractor_initialize(const KREUZBERGPptExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ppt_extractor_shutdown(const KREUZBERGPptExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ppt_extractor_description(const KREUZBERGPptExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ppt_extractor_author(const KREUZBERGPptExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ppt_extractor_extract_bytes(const KREUZBERGPptExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ppt_extractor_supported_mime_types(const KREUZBERGPptExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ppt_extractor_priority(const KREUZBERGPptExtractor *this_);
+
+/**
+ * Free a `PptxExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pptx_extractor_free(KREUZBERGPptxExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPptxExtractor *kreuzberg_pptx_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pptx_extractor_name(const KREUZBERGPptxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pptx_extractor_version(const KREUZBERGPptxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pptx_extractor_initialize(const KREUZBERGPptxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pptx_extractor_shutdown(const KREUZBERGPptxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pptx_extractor_extract_bytes(const KREUZBERGPptxExtractor *_this,
+                                             const uint8_t *_content,
+                                             uintptr_t _content_len,
+                                             const char *_mime_type,
+                                             const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pptx_extractor_extract_file(const KREUZBERGPptxExtractor *_this,
+                                            const char *_path,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pptx_extractor_supported_mime_types(const KREUZBERGPptxExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pptx_extractor_priority(const KREUZBERGPptxExtractor *this_);
+
+/**
+ * Free a `RtfImage` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_rtf_image_free(KREUZBERGRtfImage *ptr);
+
+/**
+ * Get the `format` field from a `RtfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_rtf_image_format(const KREUZBERGRtfImage *ptr);
+
+/**
+ * Get the `width_goal` field from a `RtfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_rtf_image_width_goal(const KREUZBERGRtfImage *ptr);
+
+/**
+ * Get the `height_goal` field from a `RtfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_rtf_image_height_goal(const KREUZBERGRtfImage *ptr);
+
+/**
+ * Get the `data` field from a `RtfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kreuzberg_rtf_image_data(const KREUZBERGRtfImage *ptr,
+                                  uintptr_t *out_len);
+
+/**
+ * Free a `RtfFormattingSpan` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_rtf_formatting_span_free(KREUZBERGRtfFormattingSpan *ptr);
+
+/**
+ * Get the `start` field from a `RtfFormattingSpan`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_rtf_formatting_span_start(const KREUZBERGRtfFormattingSpan *ptr);
+
+/**
+ * Get the `end` field from a `RtfFormattingSpan`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_rtf_formatting_span_end(const KREUZBERGRtfFormattingSpan *ptr);
+
+/**
+ * Get the `bold` field from a `RtfFormattingSpan`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_rtf_formatting_span_bold(const KREUZBERGRtfFormattingSpan *ptr);
+
+/**
+ * Get the `italic` field from a `RtfFormattingSpan`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_rtf_formatting_span_italic(const KREUZBERGRtfFormattingSpan *ptr);
+
+/**
+ * Get the `underline` field from a `RtfFormattingSpan`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_rtf_formatting_span_underline(const KREUZBERGRtfFormattingSpan *ptr);
+
+/**
+ * Get the `strikethrough` field from a `RtfFormattingSpan`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_rtf_formatting_span_strikethrough(const KREUZBERGRtfFormattingSpan *ptr);
+
+/**
+ * Get the `color_index` field from a `RtfFormattingSpan`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint16_t kreuzberg_rtf_formatting_span_color_index(const KREUZBERGRtfFormattingSpan *ptr);
+
+/**
+ * Free a `RtfFormattingData` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_rtf_formatting_data_free(KREUZBERGRtfFormattingData *ptr);
+
+/**
+ * Get the `spans` field from a `RtfFormattingData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_rtf_formatting_data_spans(const KREUZBERGRtfFormattingData *ptr);
+
+/**
+ * Get the `color_table` field from a `RtfFormattingData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_rtf_formatting_data_color_table(const KREUZBERGRtfFormattingData *ptr);
+
+/**
+ * Get the `header_text` field from a `RtfFormattingData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_rtf_formatting_data_header_text(const KREUZBERGRtfFormattingData *ptr);
+
+/**
+ * Get the `footer_text` field from a `RtfFormattingData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_rtf_formatting_data_footer_text(const KREUZBERGRtfFormattingData *ptr);
+
+/**
+ * Free a `RtfExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_rtf_extractor_free(KREUZBERGRtfExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGRtfExtractor *kreuzberg_rtf_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rtf_extractor_name(const KREUZBERGRtfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rtf_extractor_version(const KREUZBERGRtfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_rtf_extractor_initialize(const KREUZBERGRtfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_rtf_extractor_shutdown(const KREUZBERGRtfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rtf_extractor_description(const KREUZBERGRtfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rtf_extractor_author(const KREUZBERGRtfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rtf_extractor_extract_bytes(const KREUZBERGRtfExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_rtf_extractor_supported_mime_types(const KREUZBERGRtfExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_rtf_extractor_priority(const KREUZBERGRtfExtractor *this_);
+
+/**
+ * Free a `XmlExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_xml_extractor_free(KREUZBERGXmlExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGXmlExtractor *kreuzberg_xml_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_xml_extractor_name(const KREUZBERGXmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_xml_extractor_version(const KREUZBERGXmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_xml_extractor_initialize(const KREUZBERGXmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_xml_extractor_shutdown(const KREUZBERGXmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_xml_extractor_description(const KREUZBERGXmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_xml_extractor_author(const KREUZBERGXmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_xml_extractor_extract_sync(const KREUZBERGXmlExtractor *_this,
+                                           const uint8_t *_content,
+                                           uintptr_t _content_len,
+                                           const char *_mime_type,
+                                           const KREUZBERGExtractionConfig *__config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_xml_extractor_extract_bytes(const KREUZBERGXmlExtractor *_this,
+                                            const uint8_t *_content,
+                                            uintptr_t _content_len,
+                                            const char *_mime_type,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_xml_extractor_supported_mime_types(const KREUZBERGXmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_xml_extractor_priority(const KREUZBERGXmlExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSyncExtractor *kreuzberg_xml_extractor_as_sync_extractor(const KREUZBERGXmlExtractor *this_);
+
+/**
+ * Free a `DocbookExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_docbook_extractor_free(KREUZBERGDocbookExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocbookExtractor *kreuzberg_docbook_extractor_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docbook_extractor_name(const KREUZBERGDocbookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docbook_extractor_version(const KREUZBERGDocbookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_docbook_extractor_initialize(const KREUZBERGDocbookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_docbook_extractor_shutdown(const KREUZBERGDocbookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docbook_extractor_extract_bytes(const KREUZBERGDocbookExtractor *_this,
+                                                const uint8_t *_content,
+                                                uintptr_t _content_len,
+                                                const char *_mime_type,
+                                                const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_docbook_extractor_supported_mime_types(const KREUZBERGDocbookExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_docbook_extractor_priority(const KREUZBERGDocbookExtractor *this_);
+
+/**
+ * Free a `ModelCache` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_model_cache_free(KREUZBERGModelCache *ptr);
+
+/**
+ * Return a model to the cache for reuse.
+ *
+ * If the cache already holds a model (e.g. from a concurrent caller),
+ * the returned model is silently dropped.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_model_cache_put(const KREUZBERGModelCache *_this,
+                               const char *_model);
+
+/**
+ * Take the cached model if one exists, without creating a new one.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_model_cache_take(const KREUZBERGModelCache *_this);
+
+/**
+ * Free a `PanicContext` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_panic_context_free(KREUZBERGPanicContext *ptr);
+
+/**
+ * Get the `file` field from a `PanicContext`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_panic_context_file(const KREUZBERGPanicContext *ptr);
+
+/**
+ * Get the `line` field from a `PanicContext`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_panic_context_line(const KREUZBERGPanicContext *ptr);
+
+/**
+ * Get the `function` field from a `PanicContext`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_panic_context_function(const KREUZBERGPanicContext *ptr);
+
+/**
+ * Get the `message` field from a `PanicContext`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_panic_context_message(const KREUZBERGPanicContext *ptr);
+
+/**
+ * Formats the panic context as a human-readable string.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_panic_context_format(const KREUZBERGPanicContext *this_);
+
+/**
+ * Free a `OcrBackend` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_backend_free(KREUZBERGOcrBackend *ptr);
+
+/**
+ * Process an image and extract text via OCR.
+ *
+ * # Arguments
+ *
+ * * `image_bytes` - Raw image data (JPEG, PNG, TIFF, etc.)
+ * * `config` - OCR configuration (language, PSM mode, etc.)
+ *
+ * # Returns
+ *
+ * An `ExtractionResult` containing the extracted text and metadata.
+ *
+ * # Errors
+ *
+ * - `KreuzbergError::Ocr` - OCR processing failed
+ * - `KreuzbergError::Validation` - Invalid image format or configuration
+ * - `KreuzbergError::Io` - I/O errors (these always bubble up)
+ *
+ * # Example
+ *
+ * ```rust
+ * # use kreuzberg::plugins::{Plugin, OcrBackend};
+ * # use kreuzberg::{Result, OcrConfig};
+ * # use async_trait::async_trait;
+ * # use std::borrow::Cow;
+ * # use std::path::Path;
+ * # use kreuzberg::types::{ExtractionResult, Metadata};
+ * # struct MyOcr;
+ * # impl Plugin for MyOcr {
+ * #     fn name(&self) -> &str { "my-ocr" }
+ * #     fn version(&self) -> String { "1.0.0".to_string() }
+ * #     fn initialize(&self) -> Result<()> { Ok(()) }
+ * #     fn shutdown(&self) -> Result<()> { Ok(()) }
+ * # }
+ * # use kreuzberg::plugins::OcrBackendType;
+ * # #[async_trait]
+ * # impl OcrBackend for MyOcr {
+ * #     fn supports_language(&self, _: &str) -> bool { true }
+ * #     fn backend_type(&self) -> OcrBackendType { OcrBackendType::Custom }
+ * #     async fn process_image_file(&self, _: &Path, _: &OcrConfig) -> Result<ExtractionResult> { todo!() }
+ * async fn process_image(&self, image_bytes: &[u8], config: &OcrConfig) -> Result<ExtractionResult> {
+ *     // Validate image format
+ *     if image_bytes.is_empty() {
+ *         return Err(kreuzberg::KreuzbergError::Validation {
+ *             message: "Empty image data".to_string(),
+ *             source: None,
+ *         });
+ *     }
+ *
+ *     // Perform OCR processing
+ *     let text = format!("Extracted text in language: {}", config.language);
+ *
+ *     Ok(ExtractionResult {
+ *         content: text,
+ *         mime_type: Cow::Borrowed("text/plain"),
+ *         ..Default::default()
+ *     })
+ * }
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_ocr_backend_process_image(const KREUZBERGOcrBackend *this_,
+                                                               const uint8_t *image_bytes,
+                                                               uintptr_t image_bytes_len,
+                                                               const KREUZBERGOcrConfig *config);
+
+/**
+ * Process a file and extract text via OCR.
+ *
+ * Default implementation reads the file and calls `process_image`.
+ * Override for custom file handling or optimizations.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the image file
+ * * `config` - OCR configuration
+ *
+ * # Errors
+ *
+ * Same as `process_image`, plus file I/O errors.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_ocr_backend_process_image_file(const KREUZBERGOcrBackend *this_,
+                                                                    const char *path,
+                                                                    const KREUZBERGOcrConfig *config);
+
+/**
+ * Check if this backend supports a given language code.
+ *
+ * # Arguments
+ *
+ * * `lang` - ISO 639-2/3 language code (e.g., "eng", "deu", "fra")
+ *
+ * # Returns
+ *
+ * `true` if the language is supported, `false` otherwise.
+ *
+ * # Example
+ *
+ * ```rust
+ * # use kreuzberg::plugins::{Plugin, OcrBackend};
+ * # use kreuzberg::Result;
+ * # use async_trait::async_trait;
+ * # use std::path::Path;
+ * # struct MyOcr { languages: Vec<String> }
+ * # impl Plugin for MyOcr {
+ * #     fn name(&self) -> &str { "my-ocr" }
+ * #     fn version(&self) -> String { "1.0.0".to_string() }
+ * #     fn initialize(&self) -> Result<()> { Ok(()) }
+ * #     fn shutdown(&self) -> Result<()> { Ok(()) }
+ * # }
+ * # use kreuzberg::plugins::OcrBackendType;
+ * # use kreuzberg::{ExtractionResult, OcrConfig};
+ * # #[async_trait]
+ * # impl OcrBackend for MyOcr {
+ * #     fn backend_type(&self) -> OcrBackendType { OcrBackendType::Custom }
+ * #     async fn process_image(&self, _: &[u8], _: &OcrConfig) -> Result<ExtractionResult> { todo!() }
+ * #     async fn process_image_file(&self, _: &Path, _: &OcrConfig) -> Result<ExtractionResult> { todo!() }
+ * fn supports_language(&self, lang: &str) -> bool {
+ *     self.languages.contains(&lang.to_string())
+ * }
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_backend_supports_language(const KREUZBERGOcrBackend *this_,
+                                                const char *lang);
+
+/**
+ * Get the backend type identifier.
+ *
+ * # Returns
+ *
+ * The backend type enum value.
+ *
+ * # Example
+ *
+ * ```rust
+ * # use kreuzberg::plugins::{Plugin, OcrBackend, OcrBackendType};
+ * # use kreuzberg::Result;
+ * # use async_trait::async_trait;
+ * # use std::path::Path;
+ * # struct TesseractBackend;
+ * # impl Plugin for TesseractBackend {
+ * #     fn name(&self) -> &str { "tesseract" }
+ * #     fn version(&self) -> String { "1.0.0".to_string() }
+ * #     fn initialize(&self) -> Result<()> { Ok(()) }
+ * #     fn shutdown(&self) -> Result<()> { Ok(()) }
+ * # }
+ * # use kreuzberg::{ExtractionResult, OcrConfig};
+ * # #[async_trait]
+ * # impl OcrBackend for TesseractBackend {
+ * #     fn supports_language(&self, _: &str) -> bool { true }
+ * #     async fn process_image(&self, _: &[u8], _: &OcrConfig) -> Result<ExtractionResult> { todo!() }
+ * #     async fn process_image_file(&self, _: &Path, _: &OcrConfig) -> Result<ExtractionResult> { todo!() }
+ * fn backend_type(&self) -> OcrBackendType {
+ *     OcrBackendType::Tesseract
+ * }
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrBackendType *kreuzberg_ocr_backend_backend_type(const KREUZBERGOcrBackend *this_);
+
+/**
+ * Optional: Get a list of all supported languages.
+ *
+ * Defaults to empty list. Override to provide comprehensive language support info.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ocr_backend_supported_languages(const KREUZBERGOcrBackend *this_);
+
+/**
+ * Optional: Check if the backend supports table detection.
+ *
+ * Defaults to `false`. Override if your backend can detect and extract tables.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_backend_supports_table_detection(const KREUZBERGOcrBackend *this_);
+
+/**
+ * Check if the backend supports direct document-level processing (e.g. for PDFs).
+ *
+ * Defaults to `false`. Override if the backend has optimized document processing.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_backend_supports_document_processing(const KREUZBERGOcrBackend *this_);
+
+/**
+ * Process a document file directly via OCR.
+ *
+ * Only called if `supports_document_processing` returns `true`.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the document file (e.g. .pdf)
+ * * `config` - OCR configuration
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_ocr_backend_process_document(const KREUZBERGOcrBackend *this_,
+                                                                  const char *_path,
+                                                                  const KREUZBERGOcrConfig *_config);
+
+/**
+ * Free a `DocumentExtractorRegistry` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_document_extractor_registry_free(KREUZBERGDocumentExtractorRegistry *ptr);
+
+/**
+ * Register a document extractor.
+ *
+ * The extractor is registered for all MIME types it supports.
+ *
+ * # Arguments
+ *
+ * * `extractor` - The extractor to register
+ *
+ * # Returns
+ *
+ * - `Ok(())` if registration succeeded
+ * - `Err(...)` if initialization failed
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_document_extractor_registry_register(KREUZBERGDocumentExtractorRegistry *_this,
+                                                       const char *_extractor);
+
+/**
+ * Get the highest priority extractor for a MIME type.
+ *
+ * # Arguments
+ *
+ * * `mime_type` - MIME type to look up
+ *
+ * # Returns
+ *
+ * The highest priority extractor, or an error if none found.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_document_extractor_registry_get(const KREUZBERGDocumentExtractorRegistry *_this,
+                                                const char *_mime_type);
+
+/**
+ * List all registered extractors.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_document_extractor_registry_list(const KREUZBERGDocumentExtractorRegistry *this_);
+
+/**
+ * Remove an extractor from the registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_document_extractor_registry_remove(KREUZBERGDocumentExtractorRegistry *this_,
+                                                     const char *name);
+
+/**
+ * Shutdown all extractors and clear the registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_document_extractor_registry_shutdown_all(KREUZBERGDocumentExtractorRegistry *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocumentExtractorRegistry *kreuzberg_document_extractor_registry_default(void);
+
+/**
+ * Free a `OcrBackendRegistry` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_backend_registry_free(KREUZBERGOcrBackendRegistry *ptr);
+
+/**
+ * Create a new empty OCR backend registry without default backends.
+ *
+ * This is useful for testing or when you want full control over backend registration.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrBackendRegistry *kreuzberg_ocr_backend_registry_new_empty(void);
+
+/**
+ * Register an OCR backend.
+ *
+ * # Arguments
+ *
+ * * `backend` - The OCR backend to register
+ *
+ * # Returns
+ *
+ * - `Ok(())` if registration succeeded
+ * - `Err(...)` if initialization failed
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * # use kreuzberg::plugins::registry::OcrBackendRegistry;
+ * # use std::sync::Arc;
+ * let mut registry = OcrBackendRegistry::new();
+ * // let backend = Arc::new(MyOcrBackend::new());
+ * // registry.register(backend)?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_backend_registry_register(KREUZBERGOcrBackendRegistry *this_,
+                                                const KREUZBERGOcrBackend *backend);
+
+/**
+ * Get an OCR backend by name.
+ *
+ * # Arguments
+ *
+ * * `name` - Backend name
+ *
+ * # Returns
+ *
+ * The backend if found, or an error if not registered.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrBackend *kreuzberg_ocr_backend_registry_get(const KREUZBERGOcrBackendRegistry *this_,
+                                                        const char *name);
+
+/**
+ * Get an OCR backend that supports a specific language.
+ *
+ * Returns the first backend that supports the language.
+ *
+ * # Arguments
+ *
+ * * `language` - Language code (e.g., "eng", "deu")
+ *
+ * # Returns
+ *
+ * The first backend supporting the language, or an error if none found.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrBackend *kreuzberg_ocr_backend_registry_get_for_language(const KREUZBERGOcrBackendRegistry *this_,
+                                                                     const char *language);
+
+/**
+ * List all registered backend names.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ocr_backend_registry_list(const KREUZBERGOcrBackendRegistry *this_);
+
+/**
+ * Remove a backend from the registry.
+ *
+ * Calls `shutdown()` on the backend before removing.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_backend_registry_remove(KREUZBERGOcrBackendRegistry *this_,
+                                              const char *name);
+
+/**
+ * Shutdown all backends and clear the registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_backend_registry_shutdown_all(KREUZBERGOcrBackendRegistry *this_);
+
+/**
+ * Shutdown all backends and re-register the built-in defaults.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_backend_registry_reset_to_defaults(KREUZBERGOcrBackendRegistry *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrBackendRegistry *kreuzberg_ocr_backend_registry_default(void);
+
+/**
+ * Free a `PostProcessorRegistry` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_post_processor_registry_free(KREUZBERGPostProcessorRegistry *ptr);
+
+/**
+ * Register a post-processor.
+ *
+ * # Arguments
+ *
+ * * `processor` - The post-processor to register
+ * * `priority` - Execution priority (higher = runs first within stage)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_post_processor_registry_register(KREUZBERGPostProcessorRegistry *_this,
+                                                   const char *_processor,
+                                                   int32_t _priority);
+
+/**
+ * Get all processors for a specific stage, in priority order.
+ *
+ * # Arguments
+ *
+ * * `stage` - The processing stage
+ *
+ * # Returns
+ *
+ * Vector of processors in priority order (highest first).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_post_processor_registry_get_for_stage(const KREUZBERGPostProcessorRegistry *_this,
+                                                      const char *_stage);
+
+/**
+ * List all registered processor names.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_post_processor_registry_list(const KREUZBERGPostProcessorRegistry *this_);
+
+/**
+ * Remove a processor from the registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_post_processor_registry_remove(KREUZBERGPostProcessorRegistry *this_,
+                                                 const char *name);
+
+/**
+ * Shutdown all processors and clear the registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_post_processor_registry_shutdown_all(KREUZBERGPostProcessorRegistry *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPostProcessorRegistry *kreuzberg_post_processor_registry_default(void);
+
+/**
+ * Free a `RendererRegistry` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_renderer_registry_free(KREUZBERGRendererRegistry *ptr);
+
+/**
+ * Create a new empty renderer registry without built-in renderers.
+ *
+ * Useful for testing or when you want full control over renderer registration.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGRendererRegistry *kreuzberg_renderer_registry_new_empty(void);
+
+/**
+ * Register a renderer.
+ *
+ * # Arguments
+ *
+ * * `renderer` - The renderer to register
+ *
+ * # Returns
+ *
+ * - `Ok(())` if registration succeeded
+ * - `Err(...)` if the renderer name is invalid
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * # use kreuzberg::plugins::registry::RendererRegistry;
+ * # use std::sync::Arc;
+ * let mut registry = RendererRegistry::new();
+ * // let renderer = Arc::new(MyRenderer);
+ * // registry.register(renderer)?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_renderer_registry_register(KREUZBERGRendererRegistry *this_,
+                                             const KREUZBERGRenderer *renderer);
+
+/**
+ * Get a renderer by name.
+ *
+ * # Arguments
+ *
+ * * `name` - Renderer name (e.g., "markdown", "html")
+ *
+ * # Returns
+ *
+ * The renderer if found, or an error if not registered.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGRenderer *kreuzberg_renderer_registry_get(const KREUZBERGRendererRegistry *this_,
+                                                   const char *name);
+
+/**
+ * Render a document using the named renderer.
+ *
+ * Convenience method that looks up the renderer by name and renders the document.
+ *
+ * # Arguments
+ *
+ * * `name` - Renderer name (e.g., "markdown", "html")
+ * * `doc` - The internal document to render
+ *
+ * # Returns
+ *
+ * The rendered output string, or an error if the renderer is not found or rendering fails.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_renderer_registry_render(const KREUZBERGRendererRegistry *_this,
+                                         const char *_name,
+                                         const char *_doc);
+
+/**
+ * List all registered renderer names.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_renderer_registry_list(const KREUZBERGRendererRegistry *this_);
+
+/**
+ * Remove a renderer from the registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_renderer_registry_remove(KREUZBERGRendererRegistry *this_,
+                                        const char *name);
+
+/**
+ * Clear all renderers and re-register the built-in defaults.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_renderer_registry_reset_to_defaults(KREUZBERGRendererRegistry *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGRendererRegistry *kreuzberg_renderer_registry_default(void);
+
+/**
+ * Free a `ValidatorRegistry` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_validator_registry_free(KREUZBERGValidatorRegistry *ptr);
+
+/**
+ * Register a validator.
+ *
+ * # Arguments
+ *
+ * * `validator` - The validator to register
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validator_registry_register(KREUZBERGValidatorRegistry *_this,
+                                              const char *_validator);
+
+/**
+ * Get all validators in priority order.
+ *
+ * # Returns
+ *
+ * Vector of validators in priority order (highest first).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_validator_registry_get_all(const KREUZBERGValidatorRegistry *_this);
+
+/**
+ * List all registered validator names.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_validator_registry_list(const KREUZBERGValidatorRegistry *this_);
+
+/**
+ * Remove a validator from the registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validator_registry_remove(KREUZBERGValidatorRegistry *this_,
+                                            const char *name);
+
+/**
+ * Shutdown all validators and clear the registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validator_registry_shutdown_all(KREUZBERGValidatorRegistry *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGValidatorRegistry *kreuzberg_validator_registry_default(void);
+
+/**
+ * Free a `Renderer` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_renderer_free(KREUZBERGRenderer *ptr);
+
+/**
+ * The format name (e.g., "markdown", "html", "djot", "plain").
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_renderer_name(const KREUZBERGRenderer *this_);
+
+/**
+ * Render an [`InternalDocument`] to the output format.
+ *
+ * # Arguments
+ *
+ * * `doc` - The internal document to render
+ *
+ * # Returns
+ *
+ * The rendered output as a string.
+ *
+ * # Errors
+ *
+ * Returns an error if rendering fails.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_renderer_render(const KREUZBERGRenderer *_this,
+                                const char *_doc);
+
+/**
+ * Free a `Plugin` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_plugin_free(KREUZBERGPlugin *ptr);
+
+/**
+ * Returns the unique name/identifier for this plugin.
+ *
+ * The name should be:
+ * - Unique across all plugins
+ * - Lowercase with hyphens (e.g., "my-custom-plugin")
+ * - URL-safe characters only
+ *
+ * # Example
+ *
+ * ```rust
+ * # use kreuzberg::plugins::Plugin;
+ * # use kreuzberg::Result;
+ * # struct MyPlugin;
+ * # impl Plugin for MyPlugin {
+ * #     fn version(&self) -> String { "1.0.0".to_string() }
+ * #     fn initialize(&self) -> Result<()> { Ok(()) }
+ * #     fn shutdown(&self) -> Result<()> { Ok(()) }
+ * fn name(&self) -> &str {
+ *     "pdf-extractor"
+ * }
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plugin_name(const KREUZBERGPlugin *this_);
+
+/**
+ * Returns the semantic version of this plugin.
+ *
+ * Should follow semver format: `MAJOR.MINOR.PATCH`
+ *
+ * # Example
+ *
+ * ```rust
+ * # use kreuzberg::plugins::Plugin;
+ * # use kreuzberg::Result;
+ * # struct MyPlugin;
+ * # impl Plugin for MyPlugin {
+ * #     fn name(&self) -> &str { "my-plugin" }
+ * #     fn initialize(&self) -> Result<()> { Ok(()) }
+ * #     fn shutdown(&self) -> Result<()> { Ok(()) }
+ * fn version(&self) -> String {
+ *     "1.2.3".to_string()
+ * }
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plugin_version(const KREUZBERGPlugin *this_);
+
+/**
+ * Initialize the plugin.
+ *
+ * Called once when the plugin is registered. Use this to:
+ * - Load configuration
+ * - Initialize resources (connections, caches, etc.)
+ * - Validate dependencies
+ *
+ * # Thread Safety
+ *
+ * This method takes `&self` instead of `&mut self` to work with `Arc<dyn Plugin>`.
+ * Plugins needing mutable state during initialization should use interior mutability
+ * patterns (Mutex, RwLock, OnceCell, etc.).
+ *
+ * # Errors
+ *
+ * Should return an error if initialization fails. The plugin will not be
+ * registered if this method returns an error.
+ *
+ * # Example
+ *
+ * ```rust
+ * # use kreuzberg::plugins::Plugin;
+ * # use kreuzberg::Result;
+ * # use std::sync::Mutex;
+ * # struct MyPlugin { config: Mutex<Option<String>> }
+ * # impl Plugin for MyPlugin {
+ * #     fn name(&self) -> &str { "my-plugin" }
+ * #     fn version(&self) -> String { "1.0.0".to_string() }
+ * #     fn shutdown(&self) -> Result<()> { Ok(()) }
+ * fn initialize(&self) -> Result<()> {
+ *     // Load configuration using interior mutability
+ *     let mut config = self.config.lock().unwrap();
+ *     *config = Some("loaded".to_string());
+ *
+ *     // Perform any initialization work
+ *     println!("Plugin initialized successfully");
+ *
+ *     Ok(())
+ * }
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_plugin_initialize(const KREUZBERGPlugin *this_);
+
+/**
+ * Shutdown the plugin.
+ *
+ * Called when the plugin is being unregistered or the application is shutting down.
+ * Use this to:
+ * - Close connections
+ * - Flush caches
+ * - Release resources
+ *
+ * # Thread Safety
+ *
+ * This method takes `&self` instead of `&mut self` to work with `Arc<dyn Plugin>`.
+ * Plugins needing mutable state during shutdown should use interior mutability
+ * patterns (Mutex, RwLock, etc.).
+ *
+ * # Errors
+ *
+ * Errors during shutdown are logged but don't prevent the shutdown process.
+ *
+ * # Example
+ *
+ * ```rust
+ * # use kreuzberg::plugins::Plugin;
+ * # use kreuzberg::Result;
+ * # use std::sync::Mutex;
+ * # struct MyPlugin { cache: Mutex<Option<Vec<String>>> }
+ * # impl Plugin for MyPlugin {
+ * #     fn name(&self) -> &str { "my-plugin" }
+ * #     fn version(&self) -> String { "1.0.0".to_string() }
+ * #     fn initialize(&self) -> Result<()> { Ok(()) }
+ * fn shutdown(&self) -> Result<()> {
+ *     // Flush caches using interior mutability
+ *     let mut cache = self.cache.lock().unwrap();
+ *     if let Some(data) = cache.take() {
+ *         // Persist cache to disk
+ *     }
+ *
+ *     Ok(())
+ * }
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_plugin_shutdown(const KREUZBERGPlugin *this_);
+
+/**
+ * Optional plugin description for debugging and logging.
+ *
+ * Defaults to empty string if not overridden.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plugin_description(const KREUZBERGPlugin *this_);
+
+/**
+ * Optional plugin author information.
+ *
+ * Defaults to empty string if not overridden.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_plugin_author(const KREUZBERGPlugin *this_);
+
+/**
+ * Free a `ExtractionMetrics` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extraction_metrics_free(KREUZBERGExtractionMetrics *ptr);
+
+/**
+ * Free a `TokenReducer` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_token_reducer_free(KREUZBERGTokenReducer *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTokenReducer *kreuzberg_token_reducer_new(const KREUZBERGTokenReductionConfig *config,
+                                                   const char *language_hint);
+
+/**
+ * Get the language code being used for stopwords and semantic analysis.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_token_reducer_language(const KREUZBERGTokenReducer *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_token_reducer_reduce(const KREUZBERGTokenReducer *this_,
+                                     const char *text);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_token_reducer_batch_reduce(const KREUZBERGTokenReducer *this_,
+                                           const char *texts);
+
+/**
+ * Free a `QualityProcessor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_quality_processor_free(KREUZBERGQualityProcessor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_quality_processor_name(const KREUZBERGQualityProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_quality_processor_version(const KREUZBERGQualityProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_quality_processor_initialize(const KREUZBERGQualityProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_quality_processor_shutdown(const KREUZBERGQualityProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_quality_processor_process(const KREUZBERGQualityProcessor *this_,
+                                            const KREUZBERGExtractionResult *result,
+                                            const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_quality_processor_processing_stage(const KREUZBERGQualityProcessor *_this);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_quality_processor_should_process(const KREUZBERGQualityProcessor *this_,
+                                                   const KREUZBERGExtractionResult *_result,
+                                                   const KREUZBERGExtractionConfig *config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint64_t kreuzberg_quality_processor_estimated_duration_ms(const KREUZBERGQualityProcessor *this_,
+                                                           const KREUZBERGExtractionResult *result);
+
+/**
+ * Create a `PdfAnnotation` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_pdf_annotation_free`.
+ */
+KREUZBERGPdfAnnotation *kreuzberg_pdf_annotation_from_json(const char *json);
+
+/**
+ * Serialize a `PdfAnnotation` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_pdf_annotation_to_json(const KREUZBERGPdfAnnotation *ptr);
+
+/**
+ * Free a `PdfAnnotation` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_annotation_free(KREUZBERGPdfAnnotation *ptr);
+
+/**
+ * Get the `annotation_type` field from a `PdfAnnotation`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPdfAnnotationType *kreuzberg_pdf_annotation_annotation_type(const KREUZBERGPdfAnnotation *ptr);
+
+/**
+ * Get the `content` field from a `PdfAnnotation`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_annotation_content(const KREUZBERGPdfAnnotation *ptr);
+
+/**
+ * Get the `page_number` field from a `PdfAnnotation`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pdf_annotation_page_number(const KREUZBERGPdfAnnotation *ptr);
+
+/**
+ * Get the `bounding_box` field from a `PdfAnnotation`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBoundingBox *kreuzberg_pdf_annotation_bounding_box(const KREUZBERGPdfAnnotation *ptr);
+
+/**
+ * Free a `DjotContent` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_djot_content_free(KREUZBERGDjotContent *ptr);
+
+/**
+ * Get the `plain_text` field from a `DjotContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_content_plain_text(const KREUZBERGDjotContent *ptr);
+
+/**
+ * Get the `blocks` field from a `DjotContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_content_blocks(const KREUZBERGDjotContent *ptr);
+
+/**
+ * Get the `metadata` field from a `DjotContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGMetadata *kreuzberg_djot_content_metadata(const KREUZBERGDjotContent *ptr);
+
+/**
+ * Get the `tables` field from a `DjotContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_content_tables(const KREUZBERGDjotContent *ptr);
+
+/**
+ * Get the `images` field from a `DjotContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_content_images(const KREUZBERGDjotContent *ptr);
+
+/**
+ * Get the `links` field from a `DjotContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_content_links(const KREUZBERGDjotContent *ptr);
+
+/**
+ * Get the `footnotes` field from a `DjotContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_content_footnotes(const KREUZBERGDjotContent *ptr);
+
+/**
+ * Create a `FormattedBlock` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_formatted_block_free`.
+ */
+KREUZBERGFormattedBlock *kreuzberg_formatted_block_from_json(const char *json);
+
+/**
+ * Serialize a `FormattedBlock` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_formatted_block_to_json(const KREUZBERGFormattedBlock *ptr);
+
+/**
+ * Free a `FormattedBlock` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_formatted_block_free(KREUZBERGFormattedBlock *ptr);
+
+/**
+ * Get the `block_type` field from a `FormattedBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBlockType *kreuzberg_formatted_block_block_type(const KREUZBERGFormattedBlock *ptr);
+
+/**
+ * Get the `level` field from a `FormattedBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_formatted_block_level(const KREUZBERGFormattedBlock *ptr);
+
+/**
+ * Get the `inline_content` field from a `FormattedBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_formatted_block_inline_content(const KREUZBERGFormattedBlock *ptr);
+
+/**
+ * Get the `attributes` field from a `FormattedBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGAttributes *kreuzberg_formatted_block_attributes(const KREUZBERGFormattedBlock *ptr);
+
+/**
+ * Get the `language` field from a `FormattedBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_formatted_block_language(const KREUZBERGFormattedBlock *ptr);
+
+/**
+ * Get the `code` field from a `FormattedBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_formatted_block_code(const KREUZBERGFormattedBlock *ptr);
+
+/**
+ * Get the `children` field from a `FormattedBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_formatted_block_children(const KREUZBERGFormattedBlock *ptr);
+
+/**
+ * Create a `InlineElement` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_inline_element_free`.
+ */
+KREUZBERGInlineElement *kreuzberg_inline_element_from_json(const char *json);
+
+/**
+ * Serialize a `InlineElement` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_inline_element_to_json(const KREUZBERGInlineElement *ptr);
+
+/**
+ * Free a `InlineElement` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_inline_element_free(KREUZBERGInlineElement *ptr);
+
+/**
+ * Get the `element_type` field from a `InlineElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGInlineType *kreuzberg_inline_element_element_type(const KREUZBERGInlineElement *ptr);
+
+/**
+ * Get the `content` field from a `InlineElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_inline_element_content(const KREUZBERGInlineElement *ptr);
+
+/**
+ * Get the `attributes` field from a `InlineElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGAttributes *kreuzberg_inline_element_attributes(const KREUZBERGInlineElement *ptr);
+
+/**
+ * Get the `metadata` field from a `InlineElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_inline_element_metadata(const KREUZBERGInlineElement *ptr);
+
+/**
+ * Free a `Attributes` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_attributes_free(KREUZBERGAttributes *ptr);
+
+/**
+ * Get the `id` field from a `Attributes`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_attributes_id(const KREUZBERGAttributes *ptr);
+
+/**
+ * Get the `classes` field from a `Attributes`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_attributes_classes(const KREUZBERGAttributes *ptr);
+
+/**
+ * Create a `DjotImage` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_djot_image_free`.
+ */
+KREUZBERGDjotImage *kreuzberg_djot_image_from_json(const char *json);
+
+/**
+ * Serialize a `DjotImage` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_djot_image_to_json(const KREUZBERGDjotImage *ptr);
+
+/**
+ * Free a `DjotImage` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_djot_image_free(KREUZBERGDjotImage *ptr);
+
+/**
+ * Get the `src` field from a `DjotImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_image_src(const KREUZBERGDjotImage *ptr);
+
+/**
+ * Get the `alt` field from a `DjotImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_image_alt(const KREUZBERGDjotImage *ptr);
+
+/**
+ * Get the `title` field from a `DjotImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_image_title(const KREUZBERGDjotImage *ptr);
+
+/**
+ * Get the `attributes` field from a `DjotImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGAttributes *kreuzberg_djot_image_attributes(const KREUZBERGDjotImage *ptr);
+
+/**
+ * Create a `DjotLink` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_djot_link_free`.
+ */
+KREUZBERGDjotLink *kreuzberg_djot_link_from_json(const char *json);
+
+/**
+ * Serialize a `DjotLink` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_djot_link_to_json(const KREUZBERGDjotLink *ptr);
+
+/**
+ * Free a `DjotLink` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_djot_link_free(KREUZBERGDjotLink *ptr);
+
+/**
+ * Get the `url` field from a `DjotLink`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_link_url(const KREUZBERGDjotLink *ptr);
+
+/**
+ * Get the `text` field from a `DjotLink`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_link_text(const KREUZBERGDjotLink *ptr);
+
+/**
+ * Get the `title` field from a `DjotLink`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_djot_link_title(const KREUZBERGDjotLink *ptr);
+
+/**
+ * Get the `attributes` field from a `DjotLink`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGAttributes *kreuzberg_djot_link_attributes(const KREUZBERGDjotLink *ptr);
+
+/**
+ * Create a `Footnote` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_footnote_free`.
+ */
+KREUZBERGFootnote *kreuzberg_footnote_from_json(const char *json);
+
+/**
+ * Serialize a `Footnote` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_footnote_to_json(const KREUZBERGFootnote *ptr);
+
+/**
+ * Free a `Footnote` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_footnote_free(KREUZBERGFootnote *ptr);
+
+/**
+ * Get the `label` field from a `Footnote`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_footnote_label(const KREUZBERGFootnote *ptr);
+
+/**
+ * Get the `content` field from a `Footnote`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_footnote_content(const KREUZBERGFootnote *ptr);
+
+/**
+ * Free a `NodeId` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_node_id_free(KREUZBERGNodeId *ptr);
+
+/**
+ * Generate a deterministic `NodeId` from node content.
+ *
+ * Uses wrapping multiplication hashing on the node type discriminant,
+ * text content, page number, and node index to produce a stable hex identifier.
+ * The index parameter ensures uniqueness for duplicate content on the same page.
+ *
+ * # Parameters
+ *
+ * - `node_type`: The node type discriminant (e.g., "paragraph", "heading")
+ * - `text`: The text content of the node
+ * - `page`: The page number (None becomes u64::MAX for hashing)
+ * - `index`: The position of this node in the document's nodes array
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGNodeId *kreuzberg_node_id_generate(const char *node_type,
+                                            const char *text,
+                                            uint32_t page,
+                                            uint32_t index);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_node_id_as_ref(const KREUZBERGNodeId *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_node_id_fmt(const KREUZBERGNodeId *_this,
+                            const char *_f);
+
+/**
+ * Create a `DocumentStructure` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_document_structure_free`.
+ */
+KREUZBERGDocumentStructure *kreuzberg_document_structure_from_json(const char *json);
+
+/**
+ * Serialize a `DocumentStructure` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_document_structure_to_json(const KREUZBERGDocumentStructure *ptr);
+
+/**
+ * Free a `DocumentStructure` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_document_structure_free(KREUZBERGDocumentStructure *ptr);
+
+/**
+ * Get the `nodes` field from a `DocumentStructure`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_structure_nodes(const KREUZBERGDocumentStructure *ptr);
+
+/**
+ * Get the `source_format` field from a `DocumentStructure`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_structure_source_format(const KREUZBERGDocumentStructure *ptr);
+
+/**
+ * Get the `relationships` field from a `DocumentStructure`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_structure_relationships(const KREUZBERGDocumentStructure *ptr);
+
+/**
+ * Create a `DocumentStructure` with pre-allocated capacity.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocumentStructure *kreuzberg_document_structure_with_capacity(uintptr_t capacity);
+
+/**
+ * Push a node and return its `NodeIndex`.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint32_t kreuzberg_document_structure_push_node(KREUZBERGDocumentStructure *this_,
+                                                const KREUZBERGDocumentNode *node);
+
+/**
+ * Add a child to an existing parent node.
+ *
+ * Updates both the parent's `children` list and the child's `parent` field.
+ *
+ * # Panics
+ *
+ * Panics if either index is out of bounds.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_document_structure_add_child(KREUZBERGDocumentStructure *this_,
+                                            uint32_t parent,
+                                            uint32_t child);
+
+/**
+ * Validate all node indices are in bounds and parent-child relationships
+ * are bidirectionally consistent.
+ *
+ * # Errors
+ *
+ * Returns a descriptive error string if validation fails.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_document_structure_validate(const KREUZBERGDocumentStructure *this_);
+
+/**
+ * Iterate over root-level body nodes (content_layer == Body, parent == None).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_document_structure_body_roots(const KREUZBERGDocumentStructure *_this);
+
+/**
+ * Iterate over root-level furniture nodes (non-Body content_layer, parent == None).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_document_structure_furniture_roots(const KREUZBERGDocumentStructure *_this);
+
+/**
+ * Get a node by index.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocumentNode *kreuzberg_document_structure_get(const KREUZBERGDocumentStructure *this_,
+                                                        uint32_t index);
+
+/**
+ * Get the total number of nodes.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_document_structure_len(const KREUZBERGDocumentStructure *this_);
+
+/**
+ * Check if the document structure is empty.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_document_structure_is_empty(const KREUZBERGDocumentStructure *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocumentStructure *kreuzberg_document_structure_default(void);
+
+/**
+ * Create a `DocumentRelationship` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_document_relationship_free`.
+ */
+KREUZBERGDocumentRelationship *kreuzberg_document_relationship_from_json(const char *json);
+
+/**
+ * Serialize a `DocumentRelationship` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_document_relationship_to_json(const KREUZBERGDocumentRelationship *ptr);
+
+/**
+ * Free a `DocumentRelationship` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_document_relationship_free(KREUZBERGDocumentRelationship *ptr);
+
+/**
+ * Get the `source` field from a `DocumentRelationship`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_document_relationship_source(const KREUZBERGDocumentRelationship *ptr);
+
+/**
+ * Get the `target` field from a `DocumentRelationship`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_document_relationship_target(const KREUZBERGDocumentRelationship *ptr);
+
+/**
+ * Get the `kind` field from a `DocumentRelationship`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGRelationshipKind *kreuzberg_document_relationship_kind(const KREUZBERGDocumentRelationship *ptr);
+
+/**
+ * Create a `DocumentNode` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_document_node_free`.
+ */
+KREUZBERGDocumentNode *kreuzberg_document_node_from_json(const char *json);
+
+/**
+ * Serialize a `DocumentNode` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_document_node_to_json(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Free a `DocumentNode` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_document_node_free(KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `id` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGNodeId *kreuzberg_document_node_id(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `content` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGNodeContent *kreuzberg_document_node_content(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `parent` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_document_node_parent(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `children` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_node_children(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `content_layer` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGContentLayer *kreuzberg_document_node_content_layer(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `page` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_document_node_page(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `page_end` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_document_node_page_end(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `bbox` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBoundingBox *kreuzberg_document_node_bbox(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `annotations` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_node_annotations(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Get the `attributes` field from a `DocumentNode`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_document_node_attributes(const KREUZBERGDocumentNode *ptr);
+
+/**
+ * Create a `TableGrid` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_table_grid_free`.
+ */
+KREUZBERGTableGrid *kreuzberg_table_grid_from_json(const char *json);
+
+/**
+ * Serialize a `TableGrid` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_table_grid_to_json(const KREUZBERGTableGrid *ptr);
+
+/**
+ * Free a `TableGrid` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_table_grid_free(KREUZBERGTableGrid *ptr);
+
+/**
+ * Get the `rows` field from a `TableGrid`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_table_grid_rows(const KREUZBERGTableGrid *ptr);
+
+/**
+ * Get the `cols` field from a `TableGrid`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_table_grid_cols(const KREUZBERGTableGrid *ptr);
+
+/**
+ * Get the `cells` field from a `TableGrid`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_table_grid_cells(const KREUZBERGTableGrid *ptr);
+
+/**
+ * Create a `GridCell` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_grid_cell_free`.
+ */
+KREUZBERGGridCell *kreuzberg_grid_cell_from_json(const char *json);
+
+/**
+ * Serialize a `GridCell` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_grid_cell_to_json(const KREUZBERGGridCell *ptr);
+
+/**
+ * Free a `GridCell` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_grid_cell_free(KREUZBERGGridCell *ptr);
+
+/**
+ * Get the `content` field from a `GridCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_grid_cell_content(const KREUZBERGGridCell *ptr);
+
+/**
+ * Get the `row` field from a `GridCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_grid_cell_row(const KREUZBERGGridCell *ptr);
+
+/**
+ * Get the `col` field from a `GridCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_grid_cell_col(const KREUZBERGGridCell *ptr);
+
+/**
+ * Get the `row_span` field from a `GridCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_grid_cell_row_span(const KREUZBERGGridCell *ptr);
+
+/**
+ * Get the `col_span` field from a `GridCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_grid_cell_col_span(const KREUZBERGGridCell *ptr);
+
+/**
+ * Get the `is_header` field from a `GridCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_grid_cell_is_header(const KREUZBERGGridCell *ptr);
+
+/**
+ * Get the `bbox` field from a `GridCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBoundingBox *kreuzberg_grid_cell_bbox(const KREUZBERGGridCell *ptr);
+
+/**
+ * Create a `TextAnnotation` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_text_annotation_free`.
+ */
+KREUZBERGTextAnnotation *kreuzberg_text_annotation_from_json(const char *json);
+
+/**
+ * Serialize a `TextAnnotation` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_text_annotation_to_json(const KREUZBERGTextAnnotation *ptr);
+
+/**
+ * Free a `TextAnnotation` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_text_annotation_free(KREUZBERGTextAnnotation *ptr);
+
+/**
+ * Get the `start` field from a `TextAnnotation`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_text_annotation_start(const KREUZBERGTextAnnotation *ptr);
+
+/**
+ * Get the `end` field from a `TextAnnotation`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_text_annotation_end(const KREUZBERGTextAnnotation *ptr);
+
+/**
+ * Get the `kind` field from a `TextAnnotation`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGAnnotationKind *kreuzberg_text_annotation_kind(const KREUZBERGTextAnnotation *ptr);
+
+/**
+ * Free a `ExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extraction_result_free(KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `content` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_content(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `metadata` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGMetadata *kreuzberg_extraction_result_metadata(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `tables` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_tables(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `detected_languages` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_detected_languages(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `chunks` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_chunks(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `images` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_images(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `pages` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_pages(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `elements` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_elements(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `djot_content` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGDjotContent *kreuzberg_extraction_result_djot_content(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `ocr_elements` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_ocr_elements(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `document` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGDocumentStructure *kreuzberg_extraction_result_document(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `quality_score` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_extraction_result_quality_score(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `processing_warnings` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_processing_warnings(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `annotations` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_annotations(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `children` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_children(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `uris` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_uris(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `structured_output` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_structured_output(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `llm_usage` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_llm_usage(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Get the `formatted_content` field from a `ExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extraction_result_formatted_content(const KREUZBERGExtractionResult *ptr);
+
+/**
+ * Create a `ArchiveEntry` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_archive_entry_free`.
+ */
+KREUZBERGArchiveEntry *kreuzberg_archive_entry_from_json(const char *json);
+
+/**
+ * Serialize a `ArchiveEntry` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_archive_entry_to_json(const KREUZBERGArchiveEntry *ptr);
+
+/**
+ * Free a `ArchiveEntry` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_archive_entry_free(KREUZBERGArchiveEntry *ptr);
+
+/**
+ * Get the `path` field from a `ArchiveEntry`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_archive_entry_path(const KREUZBERGArchiveEntry *ptr);
+
+/**
+ * Get the `mime_type` field from a `ArchiveEntry`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_archive_entry_mime_type(const KREUZBERGArchiveEntry *ptr);
+
+/**
+ * Get the `result` field from a `ArchiveEntry`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGExtractionResult *kreuzberg_archive_entry_result(const KREUZBERGArchiveEntry *ptr);
+
+/**
+ * Free a `ProcessingWarning` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_processing_warning_free(KREUZBERGProcessingWarning *ptr);
 
 /**
  * Create a `LlmUsage` from a JSON string. Returns null on failure.
@@ -155,6 +11460,10444 @@ double kreuzberg_llm_usage_estimated_cost(const KREUZBERGLlmUsage *ptr);
 char *kreuzberg_llm_usage_finish_reason(const KREUZBERGLlmUsage *ptr);
 
 /**
+ * Create a `Chunk` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_chunk_free`.
+ */
+KREUZBERGChunk *kreuzberg_chunk_from_json(const char *json);
+
+/**
+ * Serialize a `Chunk` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_chunk_to_json(const KREUZBERGChunk *ptr);
+
+/**
+ * Free a `Chunk` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunk_free(KREUZBERGChunk *ptr);
+
+/**
+ * Get the `content` field from a `Chunk`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunk_content(const KREUZBERGChunk *ptr);
+
+/**
+ * Get the `chunk_type` field from a `Chunk`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGChunkType *kreuzberg_chunk_chunk_type(const KREUZBERGChunk *ptr);
+
+/**
+ * Get the `embedding` field from a `Chunk`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunk_embedding(const KREUZBERGChunk *ptr);
+
+/**
+ * Get the `metadata` field from a `Chunk`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGChunkMetadata *kreuzberg_chunk_metadata(const KREUZBERGChunk *ptr);
+
+/**
+ * Create a `HeadingContext` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_heading_context_free`.
+ */
+KREUZBERGHeadingContext *kreuzberg_heading_context_from_json(const char *json);
+
+/**
+ * Serialize a `HeadingContext` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_heading_context_to_json(const KREUZBERGHeadingContext *ptr);
+
+/**
+ * Free a `HeadingContext` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_heading_context_free(KREUZBERGHeadingContext *ptr);
+
+/**
+ * Get the `headings` field from a `HeadingContext`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_heading_context_headings(const KREUZBERGHeadingContext *ptr);
+
+/**
+ * Create a `HeadingLevel` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_heading_level_free`.
+ */
+KREUZBERGHeadingLevel *kreuzberg_heading_level_from_json(const char *json);
+
+/**
+ * Serialize a `HeadingLevel` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_heading_level_to_json(const KREUZBERGHeadingLevel *ptr);
+
+/**
+ * Free a `HeadingLevel` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_heading_level_free(KREUZBERGHeadingLevel *ptr);
+
+/**
+ * Get the `level` field from a `HeadingLevel`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t kreuzberg_heading_level_level(const KREUZBERGHeadingLevel *ptr);
+
+/**
+ * Get the `text` field from a `HeadingLevel`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_heading_level_text(const KREUZBERGHeadingLevel *ptr);
+
+/**
+ * Create a `ChunkMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_chunk_metadata_free`.
+ */
+KREUZBERGChunkMetadata *kreuzberg_chunk_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `ChunkMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_chunk_metadata_to_json(const KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Free a `ChunkMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunk_metadata_free(KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Get the `byte_start` field from a `ChunkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_metadata_byte_start(const KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Get the `byte_end` field from a `ChunkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_metadata_byte_end(const KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Get the `token_count` field from a `ChunkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_metadata_token_count(const KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Get the `chunk_index` field from a `ChunkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_metadata_chunk_index(const KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Get the `total_chunks` field from a `ChunkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_metadata_total_chunks(const KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Get the `first_page` field from a `ChunkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_metadata_first_page(const KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Get the `last_page` field from a `ChunkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_metadata_last_page(const KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Get the `heading_context` field from a `ChunkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGHeadingContext *kreuzberg_chunk_metadata_heading_context(const KREUZBERGChunkMetadata *ptr);
+
+/**
+ * Free a `ExtractedImage` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extracted_image_free(KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `data` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kreuzberg_extracted_image_data(const KREUZBERGExtractedImage *ptr,
+                                        uintptr_t *out_len);
+
+/**
+ * Get the `image_index` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_extracted_image_image_index(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `page_number` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_extracted_image_page_number(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `width` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_extracted_image_width(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `height` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_extracted_image_height(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `colorspace` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extracted_image_colorspace(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `bits_per_component` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_extracted_image_bits_per_component(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `is_mask` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_extracted_image_is_mask(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `description` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extracted_image_description(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `ocr_result` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGExtractionResult *kreuzberg_extracted_image_ocr_result(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `bounding_box` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBoundingBox *kreuzberg_extracted_image_bounding_box(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Get the `source_path` field from a `ExtractedImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extracted_image_source_path(const KREUZBERGExtractedImage *ptr);
+
+/**
+ * Free a `ElementId` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_element_id_free(KREUZBERGElementId *ptr);
+
+/**
+ * Create a new ElementId from a string.
+ *
+ * # Errors
+ *
+ * Returns error if the string is not valid.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGElementId *kreuzberg_element_id_new(const char *hex_str);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_element_id_as_ref(const KREUZBERGElementId *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_element_id_fmt(const KREUZBERGElementId *_this,
+                               const char *_f);
+
+/**
+ * Create a `BoundingBox` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_bounding_box_free`.
+ */
+KREUZBERGBoundingBox *kreuzberg_bounding_box_from_json(const char *json);
+
+/**
+ * Serialize a `BoundingBox` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_bounding_box_to_json(const KREUZBERGBoundingBox *ptr);
+
+/**
+ * Free a `BoundingBox` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_bounding_box_free(KREUZBERGBoundingBox *ptr);
+
+/**
+ * Get the `x0` field from a `BoundingBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_bounding_box_x0(const KREUZBERGBoundingBox *ptr);
+
+/**
+ * Get the `y0` field from a `BoundingBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_bounding_box_y0(const KREUZBERGBoundingBox *ptr);
+
+/**
+ * Get the `x1` field from a `BoundingBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_bounding_box_x1(const KREUZBERGBoundingBox *ptr);
+
+/**
+ * Get the `y1` field from a `BoundingBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_bounding_box_y1(const KREUZBERGBoundingBox *ptr);
+
+/**
+ * Create a `ElementMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_element_metadata_free`.
+ */
+KREUZBERGElementMetadata *kreuzberg_element_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `ElementMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_element_metadata_to_json(const KREUZBERGElementMetadata *ptr);
+
+/**
+ * Free a `ElementMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_element_metadata_free(KREUZBERGElementMetadata *ptr);
+
+/**
+ * Get the `page_number` field from a `ElementMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_element_metadata_page_number(const KREUZBERGElementMetadata *ptr);
+
+/**
+ * Get the `filename` field from a `ElementMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_element_metadata_filename(const KREUZBERGElementMetadata *ptr);
+
+/**
+ * Get the `coordinates` field from a `ElementMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBoundingBox *kreuzberg_element_metadata_coordinates(const KREUZBERGElementMetadata *ptr);
+
+/**
+ * Get the `element_index` field from a `ElementMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_element_metadata_element_index(const KREUZBERGElementMetadata *ptr);
+
+/**
+ * Get the `additional` field from a `ElementMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_element_metadata_additional(const KREUZBERGElementMetadata *ptr);
+
+/**
+ * Create a `Element` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_element_free`.
+ */
+KREUZBERGElement *kreuzberg_element_from_json(const char *json);
+
+/**
+ * Serialize a `Element` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_element_to_json(const KREUZBERGElement *ptr);
+
+/**
+ * Free a `Element` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_element_free(KREUZBERGElement *ptr);
+
+/**
+ * Get the `element_id` field from a `Element`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGElementId *kreuzberg_element_element_id(const KREUZBERGElement *ptr);
+
+/**
+ * Get the `element_type` field from a `Element`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGElementType *kreuzberg_element_element_type(const KREUZBERGElement *ptr);
+
+/**
+ * Get the `text` field from a `Element`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_element_text(const KREUZBERGElement *ptr);
+
+/**
+ * Get the `metadata` field from a `Element`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGElementMetadata *kreuzberg_element_metadata(const KREUZBERGElement *ptr);
+
+/**
+ * Create a `ExcelWorkbook` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_excel_workbook_free`.
+ */
+KREUZBERGExcelWorkbook *kreuzberg_excel_workbook_from_json(const char *json);
+
+/**
+ * Serialize a `ExcelWorkbook` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_excel_workbook_to_json(const KREUZBERGExcelWorkbook *ptr);
+
+/**
+ * Free a `ExcelWorkbook` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_excel_workbook_free(KREUZBERGExcelWorkbook *ptr);
+
+/**
+ * Get the `sheets` field from a `ExcelWorkbook`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_excel_workbook_sheets(const KREUZBERGExcelWorkbook *ptr);
+
+/**
+ * Get the `metadata` field from a `ExcelWorkbook`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_excel_workbook_metadata(const KREUZBERGExcelWorkbook *ptr);
+
+/**
+ * Create a `ExcelSheet` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_excel_sheet_free`.
+ */
+KREUZBERGExcelSheet *kreuzberg_excel_sheet_from_json(const char *json);
+
+/**
+ * Serialize a `ExcelSheet` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_excel_sheet_to_json(const KREUZBERGExcelSheet *ptr);
+
+/**
+ * Free a `ExcelSheet` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_excel_sheet_free(KREUZBERGExcelSheet *ptr);
+
+/**
+ * Get the `name` field from a `ExcelSheet`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_excel_sheet_name(const KREUZBERGExcelSheet *ptr);
+
+/**
+ * Get the `markdown` field from a `ExcelSheet`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_excel_sheet_markdown(const KREUZBERGExcelSheet *ptr);
+
+/**
+ * Get the `row_count` field from a `ExcelSheet`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_excel_sheet_row_count(const KREUZBERGExcelSheet *ptr);
+
+/**
+ * Get the `col_count` field from a `ExcelSheet`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_excel_sheet_col_count(const KREUZBERGExcelSheet *ptr);
+
+/**
+ * Get the `cell_count` field from a `ExcelSheet`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_excel_sheet_cell_count(const KREUZBERGExcelSheet *ptr);
+
+/**
+ * Get the `table_cells` field from a `ExcelSheet`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_excel_sheet_table_cells(const KREUZBERGExcelSheet *ptr);
+
+/**
+ * Create a `XmlExtractionResult` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_xml_extraction_result_free`.
+ */
+KREUZBERGXmlExtractionResult *kreuzberg_xml_extraction_result_from_json(const char *json);
+
+/**
+ * Serialize a `XmlExtractionResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_xml_extraction_result_to_json(const KREUZBERGXmlExtractionResult *ptr);
+
+/**
+ * Free a `XmlExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_xml_extraction_result_free(KREUZBERGXmlExtractionResult *ptr);
+
+/**
+ * Get the `content` field from a `XmlExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_xml_extraction_result_content(const KREUZBERGXmlExtractionResult *ptr);
+
+/**
+ * Get the `element_count` field from a `XmlExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_xml_extraction_result_element_count(const KREUZBERGXmlExtractionResult *ptr);
+
+/**
+ * Get the `unique_elements` field from a `XmlExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_xml_extraction_result_unique_elements(const KREUZBERGXmlExtractionResult *ptr);
+
+/**
+ * Free a `TextExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_text_extraction_result_free(KREUZBERGTextExtractionResult *ptr);
+
+/**
+ * Get the `content` field from a `TextExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_text_extraction_result_content(const KREUZBERGTextExtractionResult *ptr);
+
+/**
+ * Get the `line_count` field from a `TextExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_text_extraction_result_line_count(const KREUZBERGTextExtractionResult *ptr);
+
+/**
+ * Get the `word_count` field from a `TextExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_text_extraction_result_word_count(const KREUZBERGTextExtractionResult *ptr);
+
+/**
+ * Get the `character_count` field from a `TextExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_text_extraction_result_character_count(const KREUZBERGTextExtractionResult *ptr);
+
+/**
+ * Get the `headers` field from a `TextExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_text_extraction_result_headers(const KREUZBERGTextExtractionResult *ptr);
+
+/**
+ * Free a `PptxExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pptx_extraction_result_free(KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `content` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_extraction_result_content(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `metadata` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPptxMetadata *kreuzberg_pptx_extraction_result_metadata(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `slide_count` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pptx_extraction_result_slide_count(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `image_count` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pptx_extraction_result_image_count(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `table_count` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pptx_extraction_result_table_count(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `images` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_extraction_result_images(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `page_structure` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPageStructure *kreuzberg_pptx_extraction_result_page_structure(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `page_contents` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_extraction_result_page_contents(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `document` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGDocumentStructure *kreuzberg_pptx_extraction_result_document(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Get the `office_metadata` field from a `PptxExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_extraction_result_office_metadata(const KREUZBERGPptxExtractionResult *ptr);
+
+/**
+ * Create a `EmailExtractionResult` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_email_extraction_result_free`.
+ */
+KREUZBERGEmailExtractionResult *kreuzberg_email_extraction_result_from_json(const char *json);
+
+/**
+ * Serialize a `EmailExtractionResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_email_extraction_result_to_json(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Free a `EmailExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_email_extraction_result_free(KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `subject` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_subject(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `from_email` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_from_email(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `to_emails` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_to_emails(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `cc_emails` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_cc_emails(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `bcc_emails` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_bcc_emails(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `date` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_date(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `message_id` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_message_id(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `plain_text` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_plain_text(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `html_content` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_html_content(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `cleaned_text` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_cleaned_text(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `attachments` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_attachments(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Get the `metadata` field from a `EmailExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_extraction_result_metadata(const KREUZBERGEmailExtractionResult *ptr);
+
+/**
+ * Create a `EmailAttachment` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_email_attachment_free`.
+ */
+KREUZBERGEmailAttachment *kreuzberg_email_attachment_from_json(const char *json);
+
+/**
+ * Serialize a `EmailAttachment` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_email_attachment_to_json(const KREUZBERGEmailAttachment *ptr);
+
+/**
+ * Free a `EmailAttachment` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_email_attachment_free(KREUZBERGEmailAttachment *ptr);
+
+/**
+ * Get the `name` field from a `EmailAttachment`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_attachment_name(const KREUZBERGEmailAttachment *ptr);
+
+/**
+ * Get the `filename` field from a `EmailAttachment`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_attachment_filename(const KREUZBERGEmailAttachment *ptr);
+
+/**
+ * Get the `mime_type` field from a `EmailAttachment`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_attachment_mime_type(const KREUZBERGEmailAttachment *ptr);
+
+/**
+ * Get the `size` field from a `EmailAttachment`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_email_attachment_size(const KREUZBERGEmailAttachment *ptr);
+
+/**
+ * Get the `is_image` field from a `EmailAttachment`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_email_attachment_is_image(const KREUZBERGEmailAttachment *ptr);
+
+/**
+ * Get the `data` field from a `EmailAttachment`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kreuzberg_email_attachment_data(const KREUZBERGEmailAttachment *ptr);
+
+/**
+ * Free a `OcrExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_extraction_result_free(KREUZBERGOcrExtractionResult *ptr);
+
+/**
+ * Get the `content` field from a `OcrExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_extraction_result_content(const KREUZBERGOcrExtractionResult *ptr);
+
+/**
+ * Get the `mime_type` field from a `OcrExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_extraction_result_mime_type(const KREUZBERGOcrExtractionResult *ptr);
+
+/**
+ * Get the `metadata` field from a `OcrExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_extraction_result_metadata(const KREUZBERGOcrExtractionResult *ptr);
+
+/**
+ * Get the `tables` field from a `OcrExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_extraction_result_tables(const KREUZBERGOcrExtractionResult *ptr);
+
+/**
+ * Get the `ocr_elements` field from a `OcrExtractionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_extraction_result_ocr_elements(const KREUZBERGOcrExtractionResult *ptr);
+
+/**
+ * Create a `OcrTable` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_table_free`.
+ */
+KREUZBERGOcrTable *kreuzberg_ocr_table_from_json(const char *json);
+
+/**
+ * Serialize a `OcrTable` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_table_to_json(const KREUZBERGOcrTable *ptr);
+
+/**
+ * Free a `OcrTable` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_table_free(KREUZBERGOcrTable *ptr);
+
+/**
+ * Get the `cells` field from a `OcrTable`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_table_cells(const KREUZBERGOcrTable *ptr);
+
+/**
+ * Get the `markdown` field from a `OcrTable`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_table_markdown(const KREUZBERGOcrTable *ptr);
+
+/**
+ * Get the `page_number` field from a `OcrTable`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_table_page_number(const KREUZBERGOcrTable *ptr);
+
+/**
+ * Get the `bounding_box` field from a `OcrTable`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrTableBoundingBox *kreuzberg_ocr_table_bounding_box(const KREUZBERGOcrTable *ptr);
+
+/**
+ * Create a `OcrTableBoundingBox` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_table_bounding_box_free`.
+ */
+KREUZBERGOcrTableBoundingBox *kreuzberg_ocr_table_bounding_box_from_json(const char *json);
+
+/**
+ * Serialize a `OcrTableBoundingBox` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_table_bounding_box_to_json(const KREUZBERGOcrTableBoundingBox *ptr);
+
+/**
+ * Free a `OcrTableBoundingBox` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_table_bounding_box_free(KREUZBERGOcrTableBoundingBox *ptr);
+
+/**
+ * Get the `left` field from a `OcrTableBoundingBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_ocr_table_bounding_box_left(const KREUZBERGOcrTableBoundingBox *ptr);
+
+/**
+ * Get the `top` field from a `OcrTableBoundingBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_ocr_table_bounding_box_top(const KREUZBERGOcrTableBoundingBox *ptr);
+
+/**
+ * Get the `right` field from a `OcrTableBoundingBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_ocr_table_bounding_box_right(const KREUZBERGOcrTableBoundingBox *ptr);
+
+/**
+ * Get the `bottom` field from a `OcrTableBoundingBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_ocr_table_bounding_box_bottom(const KREUZBERGOcrTableBoundingBox *ptr);
+
+/**
+ * Create a `ImagePreprocessingConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_image_preprocessing_config_free`.
+ */
+KREUZBERGImagePreprocessingConfig *kreuzberg_image_preprocessing_config_from_json(const char *json);
+
+/**
+ * Serialize a `ImagePreprocessingConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_image_preprocessing_config_to_json(const KREUZBERGImagePreprocessingConfig *ptr);
+
+/**
+ * Free a `ImagePreprocessingConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_image_preprocessing_config_free(KREUZBERGImagePreprocessingConfig *ptr);
+
+/**
+ * Get the `target_dpi` field from a `ImagePreprocessingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_config_target_dpi(const KREUZBERGImagePreprocessingConfig *ptr);
+
+/**
+ * Get the `auto_rotate` field from a `ImagePreprocessingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_config_auto_rotate(const KREUZBERGImagePreprocessingConfig *ptr);
+
+/**
+ * Get the `deskew` field from a `ImagePreprocessingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_config_deskew(const KREUZBERGImagePreprocessingConfig *ptr);
+
+/**
+ * Get the `denoise` field from a `ImagePreprocessingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_config_denoise(const KREUZBERGImagePreprocessingConfig *ptr);
+
+/**
+ * Get the `contrast_enhance` field from a `ImagePreprocessingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_config_contrast_enhance(const KREUZBERGImagePreprocessingConfig *ptr);
+
+/**
+ * Get the `binarization_method` field from a `ImagePreprocessingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_preprocessing_config_binarization_method(const KREUZBERGImagePreprocessingConfig *ptr);
+
+/**
+ * Get the `invert_colors` field from a `ImagePreprocessingConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_config_invert_colors(const KREUZBERGImagePreprocessingConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGImagePreprocessingConfig *kreuzberg_image_preprocessing_config_default(void);
+
+/**
+ * Create a `TesseractConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_tesseract_config_free`.
+ */
+KREUZBERGTesseractConfig *kreuzberg_tesseract_config_from_json(const char *json);
+
+/**
+ * Serialize a `TesseractConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_tesseract_config_to_json(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Free a `TesseractConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_tesseract_config_free(KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `language` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_tesseract_config_language(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `psm` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_psm(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `output_format` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_tesseract_config_output_format(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `oem` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_oem(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `min_confidence` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_tesseract_config_min_confidence(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `preprocessing` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGImagePreprocessingConfig *kreuzberg_tesseract_config_preprocessing(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `enable_table_detection` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_enable_table_detection(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `table_min_confidence` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_tesseract_config_table_min_confidence(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `table_column_threshold` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_table_column_threshold(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `table_row_threshold_ratio` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_tesseract_config_table_row_threshold_ratio(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `use_cache` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_use_cache(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `classify_use_pre_adapted_templates` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_classify_use_pre_adapted_templates(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `language_model_ngram_on` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_language_model_ngram_on(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `tessedit_dont_blkrej_good_wds` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_tessedit_dont_blkrej_good_wds(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `tessedit_dont_rowrej_good_wds` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_tessedit_dont_rowrej_good_wds(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `tessedit_enable_dict_correction` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_tessedit_enable_dict_correction(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `tessedit_char_whitelist` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_tesseract_config_tessedit_char_whitelist(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `tessedit_char_blacklist` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_tesseract_config_tessedit_char_blacklist(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `tessedit_use_primary_params_model` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_tessedit_use_primary_params_model(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `textord_space_size_is_variable` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_textord_space_size_is_variable(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * Get the `thresholding_method` field from a `TesseractConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tesseract_config_thresholding_method(const KREUZBERGTesseractConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTesseractConfig *kreuzberg_tesseract_config_default(void);
+
+/**
+ * Free a `ImagePreprocessingMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_image_preprocessing_metadata_free(KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Get the `target_dpi` field from a `ImagePreprocessingMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_metadata_target_dpi(const KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Get the `scale_factor` field from a `ImagePreprocessingMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_image_preprocessing_metadata_scale_factor(const KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Get the `auto_adjusted` field from a `ImagePreprocessingMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_metadata_auto_adjusted(const KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Get the `final_dpi` field from a `ImagePreprocessingMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_metadata_final_dpi(const KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Get the `resample_method` field from a `ImagePreprocessingMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_preprocessing_metadata_resample_method(const KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Get the `dimension_clamped` field from a `ImagePreprocessingMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_metadata_dimension_clamped(const KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Get the `calculated_dpi` field from a `ImagePreprocessingMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_metadata_calculated_dpi(const KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Get the `skipped_resize` field from a `ImagePreprocessingMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_image_preprocessing_metadata_skipped_resize(const KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Get the `resize_error` field from a `ImagePreprocessingMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_preprocessing_metadata_resize_error(const KREUZBERGImagePreprocessingMetadata *ptr);
+
+/**
+ * Free a `Metadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_metadata_free(KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `title` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_title(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `subject` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_subject(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `authors` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_authors(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `keywords` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_keywords(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `language` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_language(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `created_at` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_created_at(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `modified_at` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_modified_at(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `created_by` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_created_by(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `modified_by` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_modified_by(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `pages` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPageStructure *kreuzberg_metadata_pages(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `format` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGFormatMetadata *kreuzberg_metadata_format(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `image_preprocessing` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGImagePreprocessingMetadata *kreuzberg_metadata_image_preprocessing(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `json_schema` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_json_schema(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `error` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGErrorMetadata *kreuzberg_metadata_error(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `extraction_duration_ms` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint64_t kreuzberg_metadata_extraction_duration_ms(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `category` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_category(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `tags` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_tags(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `document_version` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_document_version(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `abstract_text` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_abstract_text(const KREUZBERGMetadata *ptr);
+
+/**
+ * Get the `output_format` field from a `Metadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_metadata_output_format(const KREUZBERGMetadata *ptr);
+
+/**
+ * Create a `ExcelMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_excel_metadata_free`.
+ */
+KREUZBERGExcelMetadata *kreuzberg_excel_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `ExcelMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_excel_metadata_to_json(const KREUZBERGExcelMetadata *ptr);
+
+/**
+ * Free a `ExcelMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_excel_metadata_free(KREUZBERGExcelMetadata *ptr);
+
+/**
+ * Get the `sheet_count` field from a `ExcelMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_excel_metadata_sheet_count(const KREUZBERGExcelMetadata *ptr);
+
+/**
+ * Get the `sheet_names` field from a `ExcelMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_excel_metadata_sheet_names(const KREUZBERGExcelMetadata *ptr);
+
+/**
+ * Create a `EmailMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_email_metadata_free`.
+ */
+KREUZBERGEmailMetadata *kreuzberg_email_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `EmailMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_email_metadata_to_json(const KREUZBERGEmailMetadata *ptr);
+
+/**
+ * Free a `EmailMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_email_metadata_free(KREUZBERGEmailMetadata *ptr);
+
+/**
+ * Get the `from_email` field from a `EmailMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_metadata_from_email(const KREUZBERGEmailMetadata *ptr);
+
+/**
+ * Get the `from_name` field from a `EmailMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_metadata_from_name(const KREUZBERGEmailMetadata *ptr);
+
+/**
+ * Get the `to_emails` field from a `EmailMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_metadata_to_emails(const KREUZBERGEmailMetadata *ptr);
+
+/**
+ * Get the `cc_emails` field from a `EmailMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_metadata_cc_emails(const KREUZBERGEmailMetadata *ptr);
+
+/**
+ * Get the `bcc_emails` field from a `EmailMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_metadata_bcc_emails(const KREUZBERGEmailMetadata *ptr);
+
+/**
+ * Get the `message_id` field from a `EmailMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_metadata_message_id(const KREUZBERGEmailMetadata *ptr);
+
+/**
+ * Get the `attachments` field from a `EmailMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_email_metadata_attachments(const KREUZBERGEmailMetadata *ptr);
+
+/**
+ * Free a `ArchiveMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_archive_metadata_free(KREUZBERGArchiveMetadata *ptr);
+
+/**
+ * Get the `file_count` field from a `ArchiveMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_archive_metadata_file_count(const KREUZBERGArchiveMetadata *ptr);
+
+/**
+ * Get the `file_list` field from a `ArchiveMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_archive_metadata_file_list(const KREUZBERGArchiveMetadata *ptr);
+
+/**
+ * Get the `total_size` field from a `ArchiveMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_archive_metadata_total_size(const KREUZBERGArchiveMetadata *ptr);
+
+/**
+ * Get the `compressed_size` field from a `ArchiveMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_archive_metadata_compressed_size(const KREUZBERGArchiveMetadata *ptr);
+
+/**
+ * Create a `ImageMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_image_metadata_free`.
+ */
+KREUZBERGImageMetadata *kreuzberg_image_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `ImageMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_image_metadata_to_json(const KREUZBERGImageMetadata *ptr);
+
+/**
+ * Free a `ImageMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_image_metadata_free(KREUZBERGImageMetadata *ptr);
+
+/**
+ * Get the `width` field from a `ImageMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_image_metadata_width(const KREUZBERGImageMetadata *ptr);
+
+/**
+ * Get the `height` field from a `ImageMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_image_metadata_height(const KREUZBERGImageMetadata *ptr);
+
+/**
+ * Get the `format` field from a `ImageMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_metadata_format(const KREUZBERGImageMetadata *ptr);
+
+/**
+ * Get the `exif` field from a `ImageMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_metadata_exif(const KREUZBERGImageMetadata *ptr);
+
+/**
+ * Create a `XmlMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_xml_metadata_free`.
+ */
+KREUZBERGXmlMetadata *kreuzberg_xml_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `XmlMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_xml_metadata_to_json(const KREUZBERGXmlMetadata *ptr);
+
+/**
+ * Free a `XmlMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_xml_metadata_free(KREUZBERGXmlMetadata *ptr);
+
+/**
+ * Get the `element_count` field from a `XmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_xml_metadata_element_count(const KREUZBERGXmlMetadata *ptr);
+
+/**
+ * Get the `unique_elements` field from a `XmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_xml_metadata_unique_elements(const KREUZBERGXmlMetadata *ptr);
+
+/**
+ * Free a `TextMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_text_metadata_free(KREUZBERGTextMetadata *ptr);
+
+/**
+ * Get the `line_count` field from a `TextMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_text_metadata_line_count(const KREUZBERGTextMetadata *ptr);
+
+/**
+ * Get the `word_count` field from a `TextMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_text_metadata_word_count(const KREUZBERGTextMetadata *ptr);
+
+/**
+ * Get the `character_count` field from a `TextMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_text_metadata_character_count(const KREUZBERGTextMetadata *ptr);
+
+/**
+ * Get the `headers` field from a `TextMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_text_metadata_headers(const KREUZBERGTextMetadata *ptr);
+
+/**
+ * Create a `HeaderMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_header_metadata_free`.
+ */
+KREUZBERGHeaderMetadata *kreuzberg_header_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `HeaderMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_header_metadata_to_json(const KREUZBERGHeaderMetadata *ptr);
+
+/**
+ * Free a `HeaderMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_header_metadata_free(KREUZBERGHeaderMetadata *ptr);
+
+/**
+ * Get the `level` field from a `HeaderMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t kreuzberg_header_metadata_level(const KREUZBERGHeaderMetadata *ptr);
+
+/**
+ * Get the `text` field from a `HeaderMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_header_metadata_text(const KREUZBERGHeaderMetadata *ptr);
+
+/**
+ * Get the `id` field from a `HeaderMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_header_metadata_id(const KREUZBERGHeaderMetadata *ptr);
+
+/**
+ * Get the `depth` field from a `HeaderMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_header_metadata_depth(const KREUZBERGHeaderMetadata *ptr);
+
+/**
+ * Get the `html_offset` field from a `HeaderMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_header_metadata_html_offset(const KREUZBERGHeaderMetadata *ptr);
+
+/**
+ * Free a `LinkMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_link_metadata_free(KREUZBERGLinkMetadata *ptr);
+
+/**
+ * Get the `href` field from a `LinkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_link_metadata_href(const KREUZBERGLinkMetadata *ptr);
+
+/**
+ * Get the `text` field from a `LinkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_link_metadata_text(const KREUZBERGLinkMetadata *ptr);
+
+/**
+ * Get the `title` field from a `LinkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_link_metadata_title(const KREUZBERGLinkMetadata *ptr);
+
+/**
+ * Get the `link_type` field from a `LinkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLinkType *kreuzberg_link_metadata_link_type(const KREUZBERGLinkMetadata *ptr);
+
+/**
+ * Get the `rel` field from a `LinkMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_link_metadata_rel(const KREUZBERGLinkMetadata *ptr);
+
+/**
+ * Free a `ImageMetadataType` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_image_metadata_type_free(KREUZBERGImageMetadataType *ptr);
+
+/**
+ * Get the `src` field from a `ImageMetadataType`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_metadata_type_src(const KREUZBERGImageMetadataType *ptr);
+
+/**
+ * Get the `alt` field from a `ImageMetadataType`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_metadata_type_alt(const KREUZBERGImageMetadataType *ptr);
+
+/**
+ * Get the `title` field from a `ImageMetadataType`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_image_metadata_type_title(const KREUZBERGImageMetadataType *ptr);
+
+/**
+ * Get the `image_type` field from a `ImageMetadataType`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGImageType *kreuzberg_image_metadata_type_image_type(const KREUZBERGImageMetadataType *ptr);
+
+/**
+ * Create a `StructuredData` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_structured_data_free`.
+ */
+KREUZBERGStructuredData *kreuzberg_structured_data_from_json(const char *json);
+
+/**
+ * Serialize a `StructuredData` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_structured_data_to_json(const KREUZBERGStructuredData *ptr);
+
+/**
+ * Free a `StructuredData` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_structured_data_free(KREUZBERGStructuredData *ptr);
+
+/**
+ * Get the `data_type` field from a `StructuredData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGStructuredDataType *kreuzberg_structured_data_data_type(const KREUZBERGStructuredData *ptr);
+
+/**
+ * Get the `raw_json` field from a `StructuredData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_data_raw_json(const KREUZBERGStructuredData *ptr);
+
+/**
+ * Get the `schema_type` field from a `StructuredData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_data_schema_type(const KREUZBERGStructuredData *ptr);
+
+/**
+ * Create a `HtmlMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_html_metadata_free`.
+ */
+KREUZBERGHtmlMetadata *kreuzberg_html_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `HtmlMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_html_metadata_to_json(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Free a `HtmlMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_html_metadata_free(KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `title` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_title(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `description` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_description(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `keywords` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_keywords(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `author` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_author(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `canonical_url` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_canonical_url(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `base_href` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_base_href(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `language` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_language(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `text_direction` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGTextDirection *kreuzberg_html_metadata_text_direction(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `open_graph` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_open_graph(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `twitter_card` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_twitter_card(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `meta_tags` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_meta_tags(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `headers` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_headers(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `links` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_links(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `images` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_images(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Get the `structured_data` field from a `HtmlMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_html_metadata_structured_data(const KREUZBERGHtmlMetadata *ptr);
+
+/**
+ * Check if metadata is empty (no meaningful content extracted).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_html_metadata_is_empty(const KREUZBERGHtmlMetadata *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGHtmlMetadata *kreuzberg_html_metadata_from(const KREUZBERGHtmlMetadata *metadata);
+
+/**
+ * Create a `OcrMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_metadata_free`.
+ */
+KREUZBERGOcrMetadata *kreuzberg_ocr_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `OcrMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_metadata_to_json(const KREUZBERGOcrMetadata *ptr);
+
+/**
+ * Free a `OcrMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_metadata_free(KREUZBERGOcrMetadata *ptr);
+
+/**
+ * Get the `language` field from a `OcrMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_metadata_language(const KREUZBERGOcrMetadata *ptr);
+
+/**
+ * Get the `psm` field from a `OcrMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_ocr_metadata_psm(const KREUZBERGOcrMetadata *ptr);
+
+/**
+ * Get the `output_format` field from a `OcrMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_metadata_output_format(const KREUZBERGOcrMetadata *ptr);
+
+/**
+ * Get the `table_count` field from a `OcrMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_metadata_table_count(const KREUZBERGOcrMetadata *ptr);
+
+/**
+ * Get the `table_rows` field from a `OcrMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_metadata_table_rows(const KREUZBERGOcrMetadata *ptr);
+
+/**
+ * Get the `table_cols` field from a `OcrMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_metadata_table_cols(const KREUZBERGOcrMetadata *ptr);
+
+/**
+ * Create a `ErrorMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_error_metadata_free`.
+ */
+KREUZBERGErrorMetadata *kreuzberg_error_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `ErrorMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_error_metadata_to_json(const KREUZBERGErrorMetadata *ptr);
+
+/**
+ * Free a `ErrorMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_error_metadata_free(KREUZBERGErrorMetadata *ptr);
+
+/**
+ * Get the `error_type` field from a `ErrorMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_error_metadata_error_type(const KREUZBERGErrorMetadata *ptr);
+
+/**
+ * Get the `message` field from a `ErrorMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_error_metadata_message(const KREUZBERGErrorMetadata *ptr);
+
+/**
+ * Create a `PptxMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_pptx_metadata_free`.
+ */
+KREUZBERGPptxMetadata *kreuzberg_pptx_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `PptxMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_pptx_metadata_to_json(const KREUZBERGPptxMetadata *ptr);
+
+/**
+ * Free a `PptxMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pptx_metadata_free(KREUZBERGPptxMetadata *ptr);
+
+/**
+ * Get the `slide_count` field from a `PptxMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pptx_metadata_slide_count(const KREUZBERGPptxMetadata *ptr);
+
+/**
+ * Get the `slide_names` field from a `PptxMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pptx_metadata_slide_names(const KREUZBERGPptxMetadata *ptr);
+
+/**
+ * Get the `image_count` field from a `PptxMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pptx_metadata_image_count(const KREUZBERGPptxMetadata *ptr);
+
+/**
+ * Get the `table_count` field from a `PptxMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pptx_metadata_table_count(const KREUZBERGPptxMetadata *ptr);
+
+/**
+ * Free a `DocxMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_docx_metadata_free(KREUZBERGDocxMetadata *ptr);
+
+/**
+ * Get the `custom_properties` field from a `DocxMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_docx_metadata_custom_properties(const KREUZBERGDocxMetadata *ptr);
+
+/**
+ * Create a `CsvMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_csv_metadata_free`.
+ */
+KREUZBERGCsvMetadata *kreuzberg_csv_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `CsvMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_csv_metadata_to_json(const KREUZBERGCsvMetadata *ptr);
+
+/**
+ * Free a `CsvMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_csv_metadata_free(KREUZBERGCsvMetadata *ptr);
+
+/**
+ * Get the `row_count` field from a `CsvMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_csv_metadata_row_count(const KREUZBERGCsvMetadata *ptr);
+
+/**
+ * Get the `column_count` field from a `CsvMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_csv_metadata_column_count(const KREUZBERGCsvMetadata *ptr);
+
+/**
+ * Get the `delimiter` field from a `CsvMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_csv_metadata_delimiter(const KREUZBERGCsvMetadata *ptr);
+
+/**
+ * Get the `has_header` field from a `CsvMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_csv_metadata_has_header(const KREUZBERGCsvMetadata *ptr);
+
+/**
+ * Get the `column_types` field from a `CsvMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_csv_metadata_column_types(const KREUZBERGCsvMetadata *ptr);
+
+/**
+ * Create a `BibtexMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_bibtex_metadata_free`.
+ */
+KREUZBERGBibtexMetadata *kreuzberg_bibtex_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `BibtexMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_bibtex_metadata_to_json(const KREUZBERGBibtexMetadata *ptr);
+
+/**
+ * Free a `BibtexMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_bibtex_metadata_free(KREUZBERGBibtexMetadata *ptr);
+
+/**
+ * Get the `entry_count` field from a `BibtexMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_bibtex_metadata_entry_count(const KREUZBERGBibtexMetadata *ptr);
+
+/**
+ * Get the `citation_keys` field from a `BibtexMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_bibtex_metadata_citation_keys(const KREUZBERGBibtexMetadata *ptr);
+
+/**
+ * Get the `authors` field from a `BibtexMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_bibtex_metadata_authors(const KREUZBERGBibtexMetadata *ptr);
+
+/**
+ * Get the `year_range` field from a `BibtexMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGYearRange *kreuzberg_bibtex_metadata_year_range(const KREUZBERGBibtexMetadata *ptr);
+
+/**
+ * Get the `entry_types` field from a `BibtexMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_bibtex_metadata_entry_types(const KREUZBERGBibtexMetadata *ptr);
+
+/**
+ * Create a `CitationMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_citation_metadata_free`.
+ */
+KREUZBERGCitationMetadata *kreuzberg_citation_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `CitationMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_citation_metadata_to_json(const KREUZBERGCitationMetadata *ptr);
+
+/**
+ * Free a `CitationMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_citation_metadata_free(KREUZBERGCitationMetadata *ptr);
+
+/**
+ * Get the `citation_count` field from a `CitationMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_citation_metadata_citation_count(const KREUZBERGCitationMetadata *ptr);
+
+/**
+ * Get the `format` field from a `CitationMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_citation_metadata_format(const KREUZBERGCitationMetadata *ptr);
+
+/**
+ * Get the `authors` field from a `CitationMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_citation_metadata_authors(const KREUZBERGCitationMetadata *ptr);
+
+/**
+ * Get the `year_range` field from a `CitationMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGYearRange *kreuzberg_citation_metadata_year_range(const KREUZBERGCitationMetadata *ptr);
+
+/**
+ * Get the `dois` field from a `CitationMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_citation_metadata_dois(const KREUZBERGCitationMetadata *ptr);
+
+/**
+ * Get the `keywords` field from a `CitationMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_citation_metadata_keywords(const KREUZBERGCitationMetadata *ptr);
+
+/**
+ * Create a `YearRange` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_year_range_free`.
+ */
+KREUZBERGYearRange *kreuzberg_year_range_from_json(const char *json);
+
+/**
+ * Serialize a `YearRange` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_year_range_to_json(const KREUZBERGYearRange *ptr);
+
+/**
+ * Free a `YearRange` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_year_range_free(KREUZBERGYearRange *ptr);
+
+/**
+ * Get the `min` field from a `YearRange`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_year_range_min(const KREUZBERGYearRange *ptr);
+
+/**
+ * Get the `max` field from a `YearRange`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_year_range_max(const KREUZBERGYearRange *ptr);
+
+/**
+ * Get the `years` field from a `YearRange`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_year_range_years(const KREUZBERGYearRange *ptr);
+
+/**
+ * Create a `FictionBookMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_fiction_book_metadata_free`.
+ */
+KREUZBERGFictionBookMetadata *kreuzberg_fiction_book_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `FictionBookMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_fiction_book_metadata_to_json(const KREUZBERGFictionBookMetadata *ptr);
+
+/**
+ * Free a `FictionBookMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_fiction_book_metadata_free(KREUZBERGFictionBookMetadata *ptr);
+
+/**
+ * Get the `genres` field from a `FictionBookMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_fiction_book_metadata_genres(const KREUZBERGFictionBookMetadata *ptr);
+
+/**
+ * Get the `sequences` field from a `FictionBookMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_fiction_book_metadata_sequences(const KREUZBERGFictionBookMetadata *ptr);
+
+/**
+ * Get the `annotation` field from a `FictionBookMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_fiction_book_metadata_annotation(const KREUZBERGFictionBookMetadata *ptr);
+
+/**
+ * Create a `DbfMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_dbf_metadata_free`.
+ */
+KREUZBERGDbfMetadata *kreuzberg_dbf_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `DbfMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_dbf_metadata_to_json(const KREUZBERGDbfMetadata *ptr);
+
+/**
+ * Free a `DbfMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_dbf_metadata_free(KREUZBERGDbfMetadata *ptr);
+
+/**
+ * Get the `record_count` field from a `DbfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_dbf_metadata_record_count(const KREUZBERGDbfMetadata *ptr);
+
+/**
+ * Get the `field_count` field from a `DbfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_dbf_metadata_field_count(const KREUZBERGDbfMetadata *ptr);
+
+/**
+ * Get the `fields` field from a `DbfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_dbf_metadata_fields(const KREUZBERGDbfMetadata *ptr);
+
+/**
+ * Create a `DbfFieldInfo` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_dbf_field_info_free`.
+ */
+KREUZBERGDbfFieldInfo *kreuzberg_dbf_field_info_from_json(const char *json);
+
+/**
+ * Serialize a `DbfFieldInfo` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_dbf_field_info_to_json(const KREUZBERGDbfFieldInfo *ptr);
+
+/**
+ * Free a `DbfFieldInfo` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_dbf_field_info_free(KREUZBERGDbfFieldInfo *ptr);
+
+/**
+ * Get the `name` field from a `DbfFieldInfo`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_dbf_field_info_name(const KREUZBERGDbfFieldInfo *ptr);
+
+/**
+ * Get the `field_type` field from a `DbfFieldInfo`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_dbf_field_info_field_type(const KREUZBERGDbfFieldInfo *ptr);
+
+/**
+ * Create a `JatsMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_jats_metadata_free`.
+ */
+KREUZBERGJatsMetadata *kreuzberg_jats_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `JatsMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_jats_metadata_to_json(const KREUZBERGJatsMetadata *ptr);
+
+/**
+ * Free a `JatsMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_jats_metadata_free(KREUZBERGJatsMetadata *ptr);
+
+/**
+ * Get the `copyright` field from a `JatsMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_jats_metadata_copyright(const KREUZBERGJatsMetadata *ptr);
+
+/**
+ * Get the `license` field from a `JatsMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_jats_metadata_license(const KREUZBERGJatsMetadata *ptr);
+
+/**
+ * Get the `history_dates` field from a `JatsMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_jats_metadata_history_dates(const KREUZBERGJatsMetadata *ptr);
+
+/**
+ * Get the `contributor_roles` field from a `JatsMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_jats_metadata_contributor_roles(const KREUZBERGJatsMetadata *ptr);
+
+/**
+ * Create a `ContributorRole` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_contributor_role_free`.
+ */
+KREUZBERGContributorRole *kreuzberg_contributor_role_from_json(const char *json);
+
+/**
+ * Serialize a `ContributorRole` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_contributor_role_to_json(const KREUZBERGContributorRole *ptr);
+
+/**
+ * Free a `ContributorRole` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_contributor_role_free(KREUZBERGContributorRole *ptr);
+
+/**
+ * Get the `name` field from a `ContributorRole`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_contributor_role_name(const KREUZBERGContributorRole *ptr);
+
+/**
+ * Get the `role` field from a `ContributorRole`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_contributor_role_role(const KREUZBERGContributorRole *ptr);
+
+/**
+ * Create a `EpubMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_epub_metadata_free`.
+ */
+KREUZBERGEpubMetadata *kreuzberg_epub_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `EpubMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_epub_metadata_to_json(const KREUZBERGEpubMetadata *ptr);
+
+/**
+ * Free a `EpubMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_epub_metadata_free(KREUZBERGEpubMetadata *ptr);
+
+/**
+ * Get the `coverage` field from a `EpubMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_epub_metadata_coverage(const KREUZBERGEpubMetadata *ptr);
+
+/**
+ * Get the `dc_format` field from a `EpubMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_epub_metadata_dc_format(const KREUZBERGEpubMetadata *ptr);
+
+/**
+ * Get the `relation` field from a `EpubMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_epub_metadata_relation(const KREUZBERGEpubMetadata *ptr);
+
+/**
+ * Get the `source` field from a `EpubMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_epub_metadata_source(const KREUZBERGEpubMetadata *ptr);
+
+/**
+ * Get the `dc_type` field from a `EpubMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_epub_metadata_dc_type(const KREUZBERGEpubMetadata *ptr);
+
+/**
+ * Get the `cover_image` field from a `EpubMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_epub_metadata_cover_image(const KREUZBERGEpubMetadata *ptr);
+
+/**
+ * Create a `PstMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_pst_metadata_free`.
+ */
+KREUZBERGPstMetadata *kreuzberg_pst_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `PstMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_pst_metadata_to_json(const KREUZBERGPstMetadata *ptr);
+
+/**
+ * Free a `PstMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pst_metadata_free(KREUZBERGPstMetadata *ptr);
+
+/**
+ * Get the `message_count` field from a `PstMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pst_metadata_message_count(const KREUZBERGPstMetadata *ptr);
+
+/**
+ * Create a `OcrConfidence` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_confidence_free`.
+ */
+KREUZBERGOcrConfidence *kreuzberg_ocr_confidence_from_json(const char *json);
+
+/**
+ * Serialize a `OcrConfidence` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_confidence_to_json(const KREUZBERGOcrConfidence *ptr);
+
+/**
+ * Free a `OcrConfidence` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_confidence_free(KREUZBERGOcrConfidence *ptr);
+
+/**
+ * Get the `detection` field from a `OcrConfidence`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_confidence_detection(const KREUZBERGOcrConfidence *ptr);
+
+/**
+ * Get the `recognition` field from a `OcrConfidence`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_confidence_recognition(const KREUZBERGOcrConfidence *ptr);
+
+/**
+ * Create confidence from Tesseract's single confidence value.
+ *
+ * Tesseract provides confidence as 0-100, which we normalize to 0.0-1.0.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrConfidence *kreuzberg_ocr_confidence_from_tesseract(double confidence);
+
+/**
+ * Create confidence from PaddleOCR scores.
+ *
+ * Both scores should be in 0.0-1.0 range, but PaddleOCR may occasionally return
+ * values slightly above 1.0 due to model calibration. This method clamps both
+ * values to ensure they stay within the valid 0.0-1.0 range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrConfidence *kreuzberg_ocr_confidence_from_paddle(float box_score,
+                                                             float text_score);
+
+/**
+ * Create a `OcrRotation` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_rotation_free`.
+ */
+KREUZBERGOcrRotation *kreuzberg_ocr_rotation_from_json(const char *json);
+
+/**
+ * Serialize a `OcrRotation` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_rotation_to_json(const KREUZBERGOcrRotation *ptr);
+
+/**
+ * Free a `OcrRotation` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_rotation_free(KREUZBERGOcrRotation *ptr);
+
+/**
+ * Get the `angle_degrees` field from a `OcrRotation`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_rotation_angle_degrees(const KREUZBERGOcrRotation *ptr);
+
+/**
+ * Get the `confidence` field from a `OcrRotation`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_rotation_confidence(const KREUZBERGOcrRotation *ptr);
+
+/**
+ * Create rotation from PaddleOCR angle classification.
+ *
+ * PaddleOCR uses angle_index (0-3) representing 0, 90, 180, 270 degrees.
+ *
+ * # Arguments
+ *
+ * * `angle_index` - Must be in range 0..=3; invalid values return an error
+ * * `angle_score` - Confidence score for rotation detection
+ *
+ * # Errors
+ *
+ * Returns an error if `angle_index` is not in the valid range (0-3).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrRotation *kreuzberg_ocr_rotation_from_paddle(int32_t angle_index,
+                                                         float angle_score);
+
+/**
+ * Create a `OcrElement` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_element_free`.
+ */
+KREUZBERGOcrElement *kreuzberg_ocr_element_from_json(const char *json);
+
+/**
+ * Serialize a `OcrElement` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_element_to_json(const KREUZBERGOcrElement *ptr);
+
+/**
+ * Free a `OcrElement` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_element_free(KREUZBERGOcrElement *ptr);
+
+/**
+ * Get the `text` field from a `OcrElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_element_text(const KREUZBERGOcrElement *ptr);
+
+/**
+ * Get the `geometry` field from a `OcrElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrBoundingGeometry *kreuzberg_ocr_element_geometry(const KREUZBERGOcrElement *ptr);
+
+/**
+ * Get the `confidence` field from a `OcrElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrConfidence *kreuzberg_ocr_element_confidence(const KREUZBERGOcrElement *ptr);
+
+/**
+ * Get the `level` field from a `OcrElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrElementLevel *kreuzberg_ocr_element_level(const KREUZBERGOcrElement *ptr);
+
+/**
+ * Get the `rotation` field from a `OcrElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrRotation *kreuzberg_ocr_element_rotation(const KREUZBERGOcrElement *ptr);
+
+/**
+ * Get the `page_number` field from a `OcrElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_element_page_number(const KREUZBERGOcrElement *ptr);
+
+/**
+ * Get the `parent_id` field from a `OcrElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_element_parent_id(const KREUZBERGOcrElement *ptr);
+
+/**
+ * Get the `backend_metadata` field from a `OcrElement`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_ocr_element_backend_metadata(const KREUZBERGOcrElement *ptr);
+
+/**
+ * Set the hierarchical level.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrElement *kreuzberg_ocr_element_with_level(KREUZBERGOcrElement *this_,
+                                                      const KREUZBERGOcrElementLevel *level);
+
+/**
+ * Set rotation information.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrElement *kreuzberg_ocr_element_with_rotation(KREUZBERGOcrElement *this_,
+                                                         const KREUZBERGOcrRotation *rotation);
+
+/**
+ * Set page number.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrElement *kreuzberg_ocr_element_with_page_number(KREUZBERGOcrElement *this_,
+                                                            uintptr_t page_number);
+
+/**
+ * Set parent element ID.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrElement *kreuzberg_ocr_element_with_parent_id(KREUZBERGOcrElement *this_,
+                                                          const char *parent_id);
+
+/**
+ * Add backend-specific metadata.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrElement *kreuzberg_ocr_element_with_metadata(KREUZBERGOcrElement *this_,
+                                                         const char *key,
+                                                         const char *value);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrElement *kreuzberg_ocr_element_with_rotation_opt(KREUZBERGOcrElement *this_,
+                                                             const KREUZBERGOcrRotation *rotation);
+
+/**
+ * Create a `OcrElementConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_ocr_element_config_free`.
+ */
+KREUZBERGOcrElementConfig *kreuzberg_ocr_element_config_from_json(const char *json);
+
+/**
+ * Serialize a `OcrElementConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_ocr_element_config_to_json(const KREUZBERGOcrElementConfig *ptr);
+
+/**
+ * Free a `OcrElementConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_element_config_free(KREUZBERGOcrElementConfig *ptr);
+
+/**
+ * Get the `include_elements` field from a `OcrElementConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_ocr_element_config_include_elements(const KREUZBERGOcrElementConfig *ptr);
+
+/**
+ * Get the `min_level` field from a `OcrElementConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOcrElementLevel *kreuzberg_ocr_element_config_min_level(const KREUZBERGOcrElementConfig *ptr);
+
+/**
+ * Get the `min_confidence` field from a `OcrElementConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_element_config_min_confidence(const KREUZBERGOcrElementConfig *ptr);
+
+/**
+ * Get the `build_hierarchy` field from a `OcrElementConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_ocr_element_config_build_hierarchy(const KREUZBERGOcrElementConfig *ptr);
+
+/**
+ * Create a `PageStructure` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_page_structure_free`.
+ */
+KREUZBERGPageStructure *kreuzberg_page_structure_from_json(const char *json);
+
+/**
+ * Serialize a `PageStructure` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_page_structure_to_json(const KREUZBERGPageStructure *ptr);
+
+/**
+ * Free a `PageStructure` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_structure_free(KREUZBERGPageStructure *ptr);
+
+/**
+ * Get the `total_count` field from a `PageStructure`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_structure_total_count(const KREUZBERGPageStructure *ptr);
+
+/**
+ * Get the `unit_type` field from a `PageStructure`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPageUnitType *kreuzberg_page_structure_unit_type(const KREUZBERGPageStructure *ptr);
+
+/**
+ * Get the `boundaries` field from a `PageStructure`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_page_structure_boundaries(const KREUZBERGPageStructure *ptr);
+
+/**
+ * Get the `pages` field from a `PageStructure`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_page_structure_pages(const KREUZBERGPageStructure *ptr);
+
+/**
+ * Create a `PageBoundary` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_page_boundary_free`.
+ */
+KREUZBERGPageBoundary *kreuzberg_page_boundary_from_json(const char *json);
+
+/**
+ * Serialize a `PageBoundary` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_page_boundary_to_json(const KREUZBERGPageBoundary *ptr);
+
+/**
+ * Free a `PageBoundary` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_boundary_free(KREUZBERGPageBoundary *ptr);
+
+/**
+ * Get the `byte_start` field from a `PageBoundary`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_boundary_byte_start(const KREUZBERGPageBoundary *ptr);
+
+/**
+ * Get the `byte_end` field from a `PageBoundary`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_boundary_byte_end(const KREUZBERGPageBoundary *ptr);
+
+/**
+ * Get the `page_number` field from a `PageBoundary`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_boundary_page_number(const KREUZBERGPageBoundary *ptr);
+
+/**
+ * Free a `PageInfo` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_info_free(KREUZBERGPageInfo *ptr);
+
+/**
+ * Get the `number` field from a `PageInfo`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_info_number(const KREUZBERGPageInfo *ptr);
+
+/**
+ * Get the `title` field from a `PageInfo`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_page_info_title(const KREUZBERGPageInfo *ptr);
+
+/**
+ * Get the `image_count` field from a `PageInfo`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_info_image_count(const KREUZBERGPageInfo *ptr);
+
+/**
+ * Get the `table_count` field from a `PageInfo`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_info_table_count(const KREUZBERGPageInfo *ptr);
+
+/**
+ * Get the `hidden` field from a `PageInfo`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_info_hidden(const KREUZBERGPageInfo *ptr);
+
+/**
+ * Get the `is_blank` field from a `PageInfo`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_info_is_blank(const KREUZBERGPageInfo *ptr);
+
+/**
+ * Create a `PageContent` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_page_content_free`.
+ */
+KREUZBERGPageContent *kreuzberg_page_content_from_json(const char *json);
+
+/**
+ * Serialize a `PageContent` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_page_content_to_json(const KREUZBERGPageContent *ptr);
+
+/**
+ * Free a `PageContent` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_content_free(KREUZBERGPageContent *ptr);
+
+/**
+ * Get the `page_number` field from a `PageContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_content_page_number(const KREUZBERGPageContent *ptr);
+
+/**
+ * Get the `content` field from a `PageContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_page_content_content(const KREUZBERGPageContent *ptr);
+
+/**
+ * Get the `tables` field from a `PageContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_page_content_tables(const KREUZBERGPageContent *ptr);
+
+/**
+ * Get the `images` field from a `PageContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_page_content_images(const KREUZBERGPageContent *ptr);
+
+/**
+ * Get the `hierarchy` field from a `PageContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPageHierarchy *kreuzberg_page_content_hierarchy(const KREUZBERGPageContent *ptr);
+
+/**
+ * Get the `is_blank` field from a `PageContent`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_content_is_blank(const KREUZBERGPageContent *ptr);
+
+/**
+ * Create a `PageHierarchy` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_page_hierarchy_free`.
+ */
+KREUZBERGPageHierarchy *kreuzberg_page_hierarchy_from_json(const char *json);
+
+/**
+ * Serialize a `PageHierarchy` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_page_hierarchy_to_json(const KREUZBERGPageHierarchy *ptr);
+
+/**
+ * Free a `PageHierarchy` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_hierarchy_free(KREUZBERGPageHierarchy *ptr);
+
+/**
+ * Get the `block_count` field from a `PageHierarchy`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_hierarchy_block_count(const KREUZBERGPageHierarchy *ptr);
+
+/**
+ * Get the `blocks` field from a `PageHierarchy`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_page_hierarchy_blocks(const KREUZBERGPageHierarchy *ptr);
+
+/**
+ * Free a `HierarchicalBlock` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_hierarchical_block_free(KREUZBERGHierarchicalBlock *ptr);
+
+/**
+ * Get the `text` field from a `HierarchicalBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_hierarchical_block_text(const KREUZBERGHierarchicalBlock *ptr);
+
+/**
+ * Get the `font_size` field from a `HierarchicalBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_hierarchical_block_font_size(const KREUZBERGHierarchicalBlock *ptr);
+
+/**
+ * Get the `level` field from a `HierarchicalBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_hierarchical_block_level(const KREUZBERGHierarchicalBlock *ptr);
+
+/**
+ * Create a `Table` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_table_free`.
+ */
+KREUZBERGTable *kreuzberg_table_from_json(const char *json);
+
+/**
+ * Serialize a `Table` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_table_to_json(const KREUZBERGTable *ptr);
+
+/**
+ * Free a `Table` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_table_free(KREUZBERGTable *ptr);
+
+/**
+ * Get the `cells` field from a `Table`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_table_cells(const KREUZBERGTable *ptr);
+
+/**
+ * Get the `markdown` field from a `Table`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_table_markdown(const KREUZBERGTable *ptr);
+
+/**
+ * Get the `page_number` field from a `Table`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_table_page_number(const KREUZBERGTable *ptr);
+
+/**
+ * Get the `bounding_box` field from a `Table`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBoundingBox *kreuzberg_table_bounding_box(const KREUZBERGTable *ptr);
+
+/**
+ * Create a `TableCell` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_table_cell_free`.
+ */
+KREUZBERGTableCell *kreuzberg_table_cell_from_json(const char *json);
+
+/**
+ * Serialize a `TableCell` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_table_cell_to_json(const KREUZBERGTableCell *ptr);
+
+/**
+ * Free a `TableCell` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_table_cell_free(KREUZBERGTableCell *ptr);
+
+/**
+ * Get the `content` field from a `TableCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_table_cell_content(const KREUZBERGTableCell *ptr);
+
+/**
+ * Get the `row_span` field from a `TableCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_table_cell_row_span(const KREUZBERGTableCell *ptr);
+
+/**
+ * Get the `col_span` field from a `TableCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_table_cell_col_span(const KREUZBERGTableCell *ptr);
+
+/**
+ * Get the `is_header` field from a `TableCell`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_table_cell_is_header(const KREUZBERGTableCell *ptr);
+
+/**
+ * Create a `Uri` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_uri_free`.
+ */
+KREUZBERGUri *kreuzberg_uri_from_json(const char *json);
+
+/**
+ * Serialize a `Uri` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_uri_to_json(const KREUZBERGUri *ptr);
+
+/**
+ * Free a `Uri` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_uri_free(KREUZBERGUri *ptr);
+
+/**
+ * Get the `url` field from a `Uri`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_uri_url(const KREUZBERGUri *ptr);
+
+/**
+ * Get the `label` field from a `Uri`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_uri_label(const KREUZBERGUri *ptr);
+
+/**
+ * Get the `page` field from a `Uri`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_uri_page(const KREUZBERGUri *ptr);
+
+/**
+ * Get the `kind` field from a `Uri`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGUriKind *kreuzberg_uri_kind(const KREUZBERGUri *ptr);
+
+/**
+ * Create a new hyperlink URI, auto-classifying `mailto:` as Email and `#` as Anchor.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGUri *kreuzberg_uri_hyperlink(const char *url,
+                                      const char *label);
+
+/**
+ * Create a new image URI.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGUri *kreuzberg_uri_image(const char *url,
+                                  const char *label);
+
+/**
+ * Create a new citation URI (for DOIs, academic references).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGUri *kreuzberg_uri_citation(const char *url,
+                                     const char *label);
+
+/**
+ * Create a new anchor/cross-reference URI.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGUri *kreuzberg_uri_anchor(const char *url,
+                                   const char *label);
+
+/**
+ * Create a new email URI.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGUri *kreuzberg_uri_email(const char *url,
+                                  const char *label);
+
+/**
+ * Create a new reference URI.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGUri *kreuzberg_uri_reference(const char *url,
+                                      const char *label);
+
+/**
+ * Set the page number.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGUri *kreuzberg_uri_with_page(KREUZBERGUri *this_,
+                                      uint32_t page);
+
+/**
+ * Free a `PoolMetrics` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pool_metrics_free(KREUZBERGPoolMetrics *ptr);
+
+/**
+ * Calculate the cache hit rate as a percentage (0.0-100.0).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_pool_metrics_hit_rate(const KREUZBERGPoolMetrics *this_);
+
+/**
+ * Get all metrics as a struct for reporting.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPoolMetricsSnapshot *kreuzberg_pool_metrics_snapshot(const KREUZBERGPoolMetrics *this_);
+
+/**
+ * Reset all metrics to zero.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_pool_metrics_reset(const KREUZBERGPoolMetrics *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPoolMetrics *kreuzberg_pool_metrics_default(void);
+
+/**
+ * Free a `PoolMetricsSnapshot` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pool_metrics_snapshot_free(KREUZBERGPoolMetricsSnapshot *ptr);
+
+/**
+ * Get the `total_acquires` field from a `PoolMetricsSnapshot`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_metrics_snapshot_total_acquires(const KREUZBERGPoolMetricsSnapshot *ptr);
+
+/**
+ * Get the `total_cache_hits` field from a `PoolMetricsSnapshot`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_metrics_snapshot_total_cache_hits(const KREUZBERGPoolMetricsSnapshot *ptr);
+
+/**
+ * Get the `peak_items_stored` field from a `PoolMetricsSnapshot`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_metrics_snapshot_peak_items_stored(const KREUZBERGPoolMetricsSnapshot *ptr);
+
+/**
+ * Get the `total_creations` field from a `PoolMetricsSnapshot`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_metrics_snapshot_total_creations(const KREUZBERGPoolMetricsSnapshot *ptr);
+
+/**
+ * Free a `Recyclable` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_recyclable_free(KREUZBERGRecyclable *ptr);
+
+/**
+ * Reset the object to a reusable state.
+ *
+ * This is called when returning an object to the pool.
+ * Should clear any internal data while preserving capacity.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_recyclable_reset(KREUZBERGRecyclable *this_);
+
+/**
+ * Free a `StringBufferPool` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_string_buffer_pool_free(KREUZBERGStringBufferPool *ptr);
+
+/**
+ * Free a `ByteBufferPool` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_byte_buffer_pool_free(KREUZBERGByteBufferPool *ptr);
+
+/**
+ * Free a `Pool` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pool_free(KREUZBERGPool *ptr);
+
+/**
+ * Acquire an object from the pool or create a new one if empty.
+ *
+ * # Returns
+ *
+ * A `PoolGuard<T>` that will return the object to the pool when dropped.
+ *
+ * # Panics
+ *
+ * Panics if the mutex is already locked by the current thread (deadlock).
+ * This is a safety mechanism provided by parking_lot to prevent subtle bugs.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pool_acquire(const KREUZBERGPool *_this);
+
+/**
+ * Get the current number of objects in the pool.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_pool_size(const KREUZBERGPool *this_);
+
+/**
+ * Clear the pool, discarding all pooled objects.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pool_clear(const KREUZBERGPool *this_);
+
+/**
+ * Free a `PoolSizeHint` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pool_size_hint_free(KREUZBERGPoolSizeHint *ptr);
+
+/**
+ * Get the `estimated_total_size` field from a `PoolSizeHint`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_size_hint_estimated_total_size(const KREUZBERGPoolSizeHint *ptr);
+
+/**
+ * Get the `string_buffer_count` field from a `PoolSizeHint`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_size_hint_string_buffer_count(const KREUZBERGPoolSizeHint *ptr);
+
+/**
+ * Get the `string_buffer_capacity` field from a `PoolSizeHint`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_size_hint_string_buffer_capacity(const KREUZBERGPoolSizeHint *ptr);
+
+/**
+ * Get the `byte_buffer_count` field from a `PoolSizeHint`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_size_hint_byte_buffer_count(const KREUZBERGPoolSizeHint *ptr);
+
+/**
+ * Get the `byte_buffer_capacity` field from a `PoolSizeHint`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_size_hint_byte_buffer_capacity(const KREUZBERGPoolSizeHint *ptr);
+
+/**
+ * Calculate the estimated string pool memory in bytes.
+ *
+ * This is the total estimated memory for all string buffers.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_pool_size_hint_estimated_string_pool_memory(const KREUZBERGPoolSizeHint *this_);
+
+/**
+ * Calculate the estimated byte pool memory in bytes.
+ *
+ * This is the total estimated memory for all byte buffers.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_pool_size_hint_estimated_byte_pool_memory(const KREUZBERGPoolSizeHint *this_);
+
+/**
+ * Calculate the total estimated pool memory in bytes.
+ *
+ * This includes both string and byte buffer pools.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_pool_size_hint_total_pool_memory(const KREUZBERGPoolSizeHint *this_);
+
+/**
+ * Free a `PoolConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pool_config_free(KREUZBERGPoolConfig *ptr);
+
+/**
+ * Get the `max_buffers_per_size` field from a `PoolConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_config_max_buffers_per_size(const KREUZBERGPoolConfig *ptr);
+
+/**
+ * Get the `initial_capacity` field from a `PoolConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_config_initial_capacity(const KREUZBERGPoolConfig *ptr);
+
+/**
+ * Get the `max_capacity_before_discard` field from a `PoolConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pool_config_max_capacity_before_discard(const KREUZBERGPoolConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPoolConfig *kreuzberg_pool_config_default(void);
+
+/**
+ * Free a `StringBufferPoolMetrics` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_string_buffer_pool_metrics_free(KREUZBERGStringBufferPoolMetrics *ptr);
+
+/**
+ * Get the `total_acquires` field from a `StringBufferPoolMetrics`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_string_buffer_pool_metrics_total_acquires(const KREUZBERGStringBufferPoolMetrics *ptr);
+
+/**
+ * Get the `total_reuses` field from a `StringBufferPoolMetrics`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_string_buffer_pool_metrics_total_reuses(const KREUZBERGStringBufferPoolMetrics *ptr);
+
+/**
+ * Get the `hit_rate` field from a `StringBufferPoolMetrics`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_string_buffer_pool_metrics_hit_rate(const KREUZBERGStringBufferPoolMetrics *ptr);
+
+/**
+ * Free a `PooledString` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pooled_string_free(KREUZBERGPooledString *ptr);
+
+/**
+ * Get mutable access to the underlying string buffer.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pooled_string_buffer_mut(KREUZBERGPooledString *this_);
+
+/**
+ * Get immutable access to the underlying string buffer.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pooled_string_as_str(const KREUZBERGPooledString *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pooled_string_deref(const KREUZBERGPooledString *_this);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pooled_string_deref_mut(KREUZBERGPooledString *_this);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_pooled_string_drop(KREUZBERGPooledString *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pooled_string_fmt(const KREUZBERGPooledString *_this,
+                                  const char *_f);
+
+/**
+ * Free a `InternedString` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_interned_string_free(KREUZBERGInternedString *ptr);
+
+/**
+ * Get the string content.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_interned_string_as_str(const KREUZBERGInternedString *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_interned_string_as_ref(const KREUZBERGInternedString *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_interned_string_fmt(const KREUZBERGInternedString *_this,
+                                    const char *_f);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_interned_string_eq(const KREUZBERGInternedString *this_,
+                                     const KREUZBERGInternedString *other);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_interned_string_deref(const KREUZBERGInternedString *_this);
+
+/**
+ * Free a `Instant` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_instant_free(KREUZBERGInstant *ptr);
+
+/**
+ * Capture the current instant.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGInstant *kreuzberg_instant_now(void);
+
+/**
+ * Seconds elapsed since this instant was captured (as `f64`).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_instant_elapsed_secs_f64(const KREUZBERGInstant *this_);
+
+/**
+ * Milliseconds elapsed since this instant was captured (as `f64`).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_instant_elapsed_ms(const KREUZBERGInstant *this_);
+
+/**
+ * Milliseconds elapsed as `u128` (mirrors `Duration::as_millis`).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_instant_elapsed_millis(const KREUZBERGInstant *_this);
+
+/**
+ * Free a `HocrWord` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_hocr_word_free(KREUZBERGHocrWord *ptr);
+
+/**
+ * Get the `text` field from a `HocrWord`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_hocr_word_text(const KREUZBERGHocrWord *ptr);
+
+/**
+ * Get the `left` field from a `HocrWord`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_hocr_word_left(const KREUZBERGHocrWord *ptr);
+
+/**
+ * Get the `top` field from a `HocrWord`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_hocr_word_top(const KREUZBERGHocrWord *ptr);
+
+/**
+ * Get the `width` field from a `HocrWord`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_hocr_word_width(const KREUZBERGHocrWord *ptr);
+
+/**
+ * Get the `height` field from a `HocrWord`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_hocr_word_height(const KREUZBERGHocrWord *ptr);
+
+/**
+ * Get the `confidence` field from a `HocrWord`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_hocr_word_confidence(const KREUZBERGHocrWord *ptr);
+
+/**
+ * Get the right edge position.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint32_t kreuzberg_hocr_word_right(const KREUZBERGHocrWord *this_);
+
+/**
+ * Get the bottom edge position.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint32_t kreuzberg_hocr_word_bottom(const KREUZBERGHocrWord *this_);
+
+/**
+ * Get the vertical center position.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_hocr_word_y_center(const KREUZBERGHocrWord *this_);
+
+/**
+ * Get the horizontal center position.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_hocr_word_x_center(const KREUZBERGHocrWord *this_);
+
+/**
+ * Free a `ExtractionService` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extraction_service_free(KREUZBERGExtractionService *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionService *kreuzberg_extraction_service_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extraction_service_poll_ready(KREUZBERGExtractionService *_this,
+                                              const char *__cx);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extraction_service_call(KREUZBERGExtractionService *_this,
+                                        const KREUZBERGExtractionRequest *_req);
+
+/**
+ * Free a `TracingLayer` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_tracing_layer_free(KREUZBERGTracingLayer *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tracing_layer_layer(const KREUZBERGTracingLayer *_this,
+                                    const char *_inner);
+
+/**
+ * Free a `MetricsLayer` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_metrics_layer_free(KREUZBERGMetricsLayer *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_metrics_layer_layer(const KREUZBERGMetricsLayer *_this,
+                                    const char *_inner);
+
+/**
+ * Free a `ExtractionRequest` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extraction_request_free(KREUZBERGExtractionRequest *ptr);
+
+/**
+ * Get the `source` field from a `ExtractionRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGExtractionSource *kreuzberg_extraction_request_source(const KREUZBERGExtractionRequest *ptr);
+
+/**
+ * Get the `config` field from a `ExtractionRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGExtractionConfig *kreuzberg_extraction_request_config(const KREUZBERGExtractionRequest *ptr);
+
+/**
+ * Get the `file_overrides` field from a `ExtractionRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGFileExtractionConfig *kreuzberg_extraction_request_file_overrides(const KREUZBERGExtractionRequest *ptr);
+
+/**
+ * Create a file-based extraction request.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionRequest *kreuzberg_extraction_request_file(const char *path,
+                                                              const KREUZBERGExtractionConfig *config);
+
+/**
+ * Create a file-based extraction request with a MIME type hint.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionRequest *kreuzberg_extraction_request_file_with_mime(const char *path,
+                                                                        const char *mime_hint,
+                                                                        const KREUZBERGExtractionConfig *config);
+
+/**
+ * Create a bytes-based extraction request.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionRequest *kreuzberg_extraction_request_bytes(const uint8_t *data,
+                                                               uintptr_t data_len,
+                                                               const char *mime_type,
+                                                               const KREUZBERGExtractionConfig *config);
+
+/**
+ * Set per-file overrides on this request.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionRequest *kreuzberg_extraction_request_with_overrides(KREUZBERGExtractionRequest *this_,
+                                                                        const KREUZBERGFileExtractionConfig *overrides);
+
+/**
+ * Free a `ExtractionServiceBuilder` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extraction_service_builder_free(KREUZBERGExtractionServiceBuilder *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionServiceBuilder *kreuzberg_extraction_service_builder_default(void);
+
+/**
+ * Add a per-request timeout.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionServiceBuilder *kreuzberg_extraction_service_builder_with_timeout(KREUZBERGExtractionServiceBuilder *this_,
+                                                                                     uint64_t duration);
+
+/**
+ * Limit concurrent in-flight extractions.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionServiceBuilder *kreuzberg_extraction_service_builder_with_concurrency_limit(KREUZBERGExtractionServiceBuilder *this_,
+                                                                                               uintptr_t max);
+
+/**
+ * Add a tracing span to each extraction request.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionServiceBuilder *kreuzberg_extraction_service_builder_with_tracing(KREUZBERGExtractionServiceBuilder *this_);
+
+/**
+ * Add metrics recording to each extraction request.
+ *
+ * Requires the `otel` feature. This is a no-op when `otel` is not enabled.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionServiceBuilder *kreuzberg_extraction_service_builder_with_metrics(KREUZBERGExtractionServiceBuilder *this_);
+
+/**
+ * Build the service stack, returning a type-erased cloneable service.
+ *
+ * Layer order (outermost to innermost):
+ * `Tracing → Metrics → Timeout → ConcurrencyLimit → ExtractionService`
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extraction_service_builder_build(KREUZBERGExtractionServiceBuilder *_this);
+
+/**
+ * Free a `MultipartApi` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_multipart_api_free(KREUZBERGMultipartApi *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGMultipartApi *kreuzberg_multipart_api_from_request(const char *_req,
+                                                            const char *_state);
+
+/**
+ * Free a `ApiError` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_api_error_free(KREUZBERGApiError *ptr);
+
+/**
+ * Get the `body` field from a `ApiError`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGErrorResponse *kreuzberg_api_error_body(const KREUZBERGApiError *ptr);
+
+/**
+ * Create a validation error (400).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGApiError *kreuzberg_api_error_validation(const char *_error);
+
+/**
+ * Create an unprocessable entity error (422).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGApiError *kreuzberg_api_error_unprocessable(const char *_error);
+
+/**
+ * Create an internal server error (500).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGApiError *kreuzberg_api_error_internal(const char *_error);
+
+/**
+ * Create a bad gateway error (502).
+ *
+ * Use when an upstream service (e.g., model download from HuggingFace) fails.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGApiError *kreuzberg_api_error_bad_gateway(const char *_error);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_api_error_into_response(KREUZBERGApiError *_this);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGApiError *kreuzberg_api_error_from(const char *_error);
+
+/**
+ * Free a `ApiDoc` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_api_doc_free(KREUZBERGApiDoc *ptr);
+
+/**
+ * Free a `ApiSizeLimits` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_api_size_limits_free(KREUZBERGApiSizeLimits *ptr);
+
+/**
+ * Get the `max_request_body_bytes` field from a `ApiSizeLimits`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_api_size_limits_max_request_body_bytes(const KREUZBERGApiSizeLimits *ptr);
+
+/**
+ * Get the `max_multipart_field_bytes` field from a `ApiSizeLimits`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_api_size_limits_max_multipart_field_bytes(const KREUZBERGApiSizeLimits *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGApiSizeLimits *kreuzberg_api_size_limits_default(void);
+
+/**
+ * Create size limits from MB values (convenience method).
+ *
+ * # Arguments
+ *
+ * * `max_request_body_mb` - Maximum total request size in megabytes
+ * * `max_multipart_field_mb` - Maximum individual file size in megabytes
+ *
+ * # Examples
+ *
+ * ```
+ * use kreuzberg::api::ApiSizeLimits;
+ *
+ * // 50 MB limits
+ * let limits = ApiSizeLimits::from_mb(50, 50);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGApiSizeLimits *kreuzberg_api_size_limits_from_mb(uintptr_t max_request_body_mb,
+                                                          uintptr_t max_multipart_field_mb);
+
+/**
+ * Create a `PluginStatus` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_plugin_status_free`.
+ */
+KREUZBERGPluginStatus *kreuzberg_plugin_status_from_json(const char *json);
+
+/**
+ * Serialize a `PluginStatus` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_plugin_status_to_json(const KREUZBERGPluginStatus *ptr);
+
+/**
+ * Free a `PluginStatus` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_plugin_status_free(KREUZBERGPluginStatus *ptr);
+
+/**
+ * Get the `ocr_backends_count` field from a `PluginStatus`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_plugin_status_ocr_backends_count(const KREUZBERGPluginStatus *ptr);
+
+/**
+ * Get the `ocr_backends` field from a `PluginStatus`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_plugin_status_ocr_backends(const KREUZBERGPluginStatus *ptr);
+
+/**
+ * Get the `extractors_count` field from a `PluginStatus`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_plugin_status_extractors_count(const KREUZBERGPluginStatus *ptr);
+
+/**
+ * Get the `post_processors_count` field from a `PluginStatus`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_plugin_status_post_processors_count(const KREUZBERGPluginStatus *ptr);
+
+/**
+ * Create a `HealthResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_health_response_free`.
+ */
+KREUZBERGHealthResponse *kreuzberg_health_response_from_json(const char *json);
+
+/**
+ * Serialize a `HealthResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_health_response_to_json(const KREUZBERGHealthResponse *ptr);
+
+/**
+ * Free a `HealthResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_health_response_free(KREUZBERGHealthResponse *ptr);
+
+/**
+ * Get the `status` field from a `HealthResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_health_response_status(const KREUZBERGHealthResponse *ptr);
+
+/**
+ * Get the `version` field from a `HealthResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_health_response_version(const KREUZBERGHealthResponse *ptr);
+
+/**
+ * Get the `plugins` field from a `HealthResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPluginStatus *kreuzberg_health_response_plugins(const KREUZBERGHealthResponse *ptr);
+
+/**
+ * Create a `InfoResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_info_response_free`.
+ */
+KREUZBERGInfoResponse *kreuzberg_info_response_from_json(const char *json);
+
+/**
+ * Serialize a `InfoResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_info_response_to_json(const KREUZBERGInfoResponse *ptr);
+
+/**
+ * Free a `InfoResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_info_response_free(KREUZBERGInfoResponse *ptr);
+
+/**
+ * Get the `version` field from a `InfoResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_info_response_version(const KREUZBERGInfoResponse *ptr);
+
+/**
+ * Get the `rust_backend` field from a `InfoResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_info_response_rust_backend(const KREUZBERGInfoResponse *ptr);
+
+/**
+ * Free a `ExtractResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extract_response_free(KREUZBERGExtractResponse *ptr);
+
+/**
+ * Create a `ErrorResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_error_response_free`.
+ */
+KREUZBERGErrorResponse *kreuzberg_error_response_from_json(const char *json);
+
+/**
+ * Serialize a `ErrorResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_error_response_to_json(const KREUZBERGErrorResponse *ptr);
+
+/**
+ * Free a `ErrorResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_error_response_free(KREUZBERGErrorResponse *ptr);
+
+/**
+ * Get the `error_type` field from a `ErrorResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_error_response_error_type(const KREUZBERGErrorResponse *ptr);
+
+/**
+ * Get the `message` field from a `ErrorResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_error_response_message(const KREUZBERGErrorResponse *ptr);
+
+/**
+ * Get the `traceback` field from a `ErrorResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_error_response_traceback(const KREUZBERGErrorResponse *ptr);
+
+/**
+ * Get the `status_code` field from a `ErrorResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint16_t kreuzberg_error_response_status_code(const KREUZBERGErrorResponse *ptr);
+
+/**
+ * Free a `ApiState` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_api_state_free(KREUZBERGApiState *ptr);
+
+/**
+ * Get the `default_config` field from a `ApiState`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGExtractionConfig *kreuzberg_api_state_default_config(const KREUZBERGApiState *ptr);
+
+/**
+ * Create a `CacheStatsResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_cache_stats_response_free`.
+ */
+KREUZBERGCacheStatsResponse *kreuzberg_cache_stats_response_from_json(const char *json);
+
+/**
+ * Serialize a `CacheStatsResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_cache_stats_response_to_json(const KREUZBERGCacheStatsResponse *ptr);
+
+/**
+ * Free a `CacheStatsResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_cache_stats_response_free(KREUZBERGCacheStatsResponse *ptr);
+
+/**
+ * Get the `directory` field from a `CacheStatsResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_cache_stats_response_directory(const KREUZBERGCacheStatsResponse *ptr);
+
+/**
+ * Get the `total_files` field from a `CacheStatsResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_cache_stats_response_total_files(const KREUZBERGCacheStatsResponse *ptr);
+
+/**
+ * Get the `total_size_mb` field from a `CacheStatsResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_cache_stats_response_total_size_mb(const KREUZBERGCacheStatsResponse *ptr);
+
+/**
+ * Get the `available_space_mb` field from a `CacheStatsResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_cache_stats_response_available_space_mb(const KREUZBERGCacheStatsResponse *ptr);
+
+/**
+ * Get the `oldest_file_age_days` field from a `CacheStatsResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_cache_stats_response_oldest_file_age_days(const KREUZBERGCacheStatsResponse *ptr);
+
+/**
+ * Get the `newest_file_age_days` field from a `CacheStatsResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_cache_stats_response_newest_file_age_days(const KREUZBERGCacheStatsResponse *ptr);
+
+/**
+ * Create a `CacheClearResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_cache_clear_response_free`.
+ */
+KREUZBERGCacheClearResponse *kreuzberg_cache_clear_response_from_json(const char *json);
+
+/**
+ * Serialize a `CacheClearResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_cache_clear_response_to_json(const KREUZBERGCacheClearResponse *ptr);
+
+/**
+ * Free a `CacheClearResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_cache_clear_response_free(KREUZBERGCacheClearResponse *ptr);
+
+/**
+ * Get the `directory` field from a `CacheClearResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_cache_clear_response_directory(const KREUZBERGCacheClearResponse *ptr);
+
+/**
+ * Get the `removed_files` field from a `CacheClearResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_cache_clear_response_removed_files(const KREUZBERGCacheClearResponse *ptr);
+
+/**
+ * Get the `freed_mb` field from a `CacheClearResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_cache_clear_response_freed_mb(const KREUZBERGCacheClearResponse *ptr);
+
+/**
+ * Create a `EmbedRequest` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_embed_request_free`.
+ */
+KREUZBERGEmbedRequest *kreuzberg_embed_request_from_json(const char *json);
+
+/**
+ * Serialize a `EmbedRequest` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_embed_request_to_json(const KREUZBERGEmbedRequest *ptr);
+
+/**
+ * Free a `EmbedRequest` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_embed_request_free(KREUZBERGEmbedRequest *ptr);
+
+/**
+ * Get the `texts` field from a `EmbedRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embed_request_texts(const KREUZBERGEmbedRequest *ptr);
+
+/**
+ * Get the `config` field from a `EmbedRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGEmbeddingConfig *kreuzberg_embed_request_config(const KREUZBERGEmbedRequest *ptr);
+
+/**
+ * Create a `EmbedResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_embed_response_free`.
+ */
+KREUZBERGEmbedResponse *kreuzberg_embed_response_from_json(const char *json);
+
+/**
+ * Serialize a `EmbedResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_embed_response_to_json(const KREUZBERGEmbedResponse *ptr);
+
+/**
+ * Free a `EmbedResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_embed_response_free(KREUZBERGEmbedResponse *ptr);
+
+/**
+ * Get the `embeddings` field from a `EmbedResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embed_response_embeddings(const KREUZBERGEmbedResponse *ptr);
+
+/**
+ * Get the `model` field from a `EmbedResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embed_response_model(const KREUZBERGEmbedResponse *ptr);
+
+/**
+ * Get the `dimensions` field from a `EmbedResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_embed_response_dimensions(const KREUZBERGEmbedResponse *ptr);
+
+/**
+ * Get the `count` field from a `EmbedResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_embed_response_count(const KREUZBERGEmbedResponse *ptr);
+
+/**
+ * Create a `ChunkRequest` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_chunk_request_free`.
+ */
+KREUZBERGChunkRequest *kreuzberg_chunk_request_from_json(const char *json);
+
+/**
+ * Serialize a `ChunkRequest` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_chunk_request_to_json(const KREUZBERGChunkRequest *ptr);
+
+/**
+ * Free a `ChunkRequest` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunk_request_free(KREUZBERGChunkRequest *ptr);
+
+/**
+ * Get the `text` field from a `ChunkRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunk_request_text(const KREUZBERGChunkRequest *ptr);
+
+/**
+ * Get the `config` field from a `ChunkRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGChunkingConfigRequest *kreuzberg_chunk_request_config(const KREUZBERGChunkRequest *ptr);
+
+/**
+ * Get the `chunker_type` field from a `ChunkRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunk_request_chunker_type(const KREUZBERGChunkRequest *ptr);
+
+/**
+ * Create a `ChunkingConfigRequest` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_chunking_config_request_free`.
+ */
+KREUZBERGChunkingConfigRequest *kreuzberg_chunking_config_request_from_json(const char *json);
+
+/**
+ * Serialize a `ChunkingConfigRequest` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_chunking_config_request_to_json(const KREUZBERGChunkingConfigRequest *ptr);
+
+/**
+ * Free a `ChunkingConfigRequest` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunking_config_request_free(KREUZBERGChunkingConfigRequest *ptr);
+
+/**
+ * Get the `max_characters` field from a `ChunkingConfigRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunking_config_request_max_characters(const KREUZBERGChunkingConfigRequest *ptr);
+
+/**
+ * Get the `overlap` field from a `ChunkingConfigRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunking_config_request_overlap(const KREUZBERGChunkingConfigRequest *ptr);
+
+/**
+ * Get the `trim` field from a `ChunkingConfigRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_chunking_config_request_trim(const KREUZBERGChunkingConfigRequest *ptr);
+
+/**
+ * Create a `ChunkResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_chunk_response_free`.
+ */
+KREUZBERGChunkResponse *kreuzberg_chunk_response_from_json(const char *json);
+
+/**
+ * Serialize a `ChunkResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_chunk_response_to_json(const KREUZBERGChunkResponse *ptr);
+
+/**
+ * Free a `ChunkResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunk_response_free(KREUZBERGChunkResponse *ptr);
+
+/**
+ * Get the `chunks` field from a `ChunkResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunk_response_chunks(const KREUZBERGChunkResponse *ptr);
+
+/**
+ * Get the `chunk_count` field from a `ChunkResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_response_chunk_count(const KREUZBERGChunkResponse *ptr);
+
+/**
+ * Get the `config` field from a `ChunkResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGChunkingConfigResponse *kreuzberg_chunk_response_config(const KREUZBERGChunkResponse *ptr);
+
+/**
+ * Get the `input_size_bytes` field from a `ChunkResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_response_input_size_bytes(const KREUZBERGChunkResponse *ptr);
+
+/**
+ * Get the `chunker_type` field from a `ChunkResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunk_response_chunker_type(const KREUZBERGChunkResponse *ptr);
+
+/**
+ * Create a `ChunkItem` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_chunk_item_free`.
+ */
+KREUZBERGChunkItem *kreuzberg_chunk_item_from_json(const char *json);
+
+/**
+ * Serialize a `ChunkItem` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_chunk_item_to_json(const KREUZBERGChunkItem *ptr);
+
+/**
+ * Free a `ChunkItem` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunk_item_free(KREUZBERGChunkItem *ptr);
+
+/**
+ * Get the `content` field from a `ChunkItem`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunk_item_content(const KREUZBERGChunkItem *ptr);
+
+/**
+ * Get the `byte_start` field from a `ChunkItem`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_item_byte_start(const KREUZBERGChunkItem *ptr);
+
+/**
+ * Get the `byte_end` field from a `ChunkItem`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_item_byte_end(const KREUZBERGChunkItem *ptr);
+
+/**
+ * Get the `chunk_index` field from a `ChunkItem`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_item_chunk_index(const KREUZBERGChunkItem *ptr);
+
+/**
+ * Get the `total_chunks` field from a `ChunkItem`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_item_total_chunks(const KREUZBERGChunkItem *ptr);
+
+/**
+ * Get the `first_page` field from a `ChunkItem`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_item_first_page(const KREUZBERGChunkItem *ptr);
+
+/**
+ * Get the `last_page` field from a `ChunkItem`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_item_last_page(const KREUZBERGChunkItem *ptr);
+
+/**
+ * Create a `VersionResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_version_response_free`.
+ */
+KREUZBERGVersionResponse *kreuzberg_version_response_from_json(const char *json);
+
+/**
+ * Serialize a `VersionResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_version_response_to_json(const KREUZBERGVersionResponse *ptr);
+
+/**
+ * Free a `VersionResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_version_response_free(KREUZBERGVersionResponse *ptr);
+
+/**
+ * Get the `version` field from a `VersionResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_version_response_version(const KREUZBERGVersionResponse *ptr);
+
+/**
+ * Create a `DetectResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_detect_response_free`.
+ */
+KREUZBERGDetectResponse *kreuzberg_detect_response_from_json(const char *json);
+
+/**
+ * Serialize a `DetectResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_detect_response_to_json(const KREUZBERGDetectResponse *ptr);
+
+/**
+ * Free a `DetectResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_detect_response_free(KREUZBERGDetectResponse *ptr);
+
+/**
+ * Get the `mime_type` field from a `DetectResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_detect_response_mime_type(const KREUZBERGDetectResponse *ptr);
+
+/**
+ * Get the `filename` field from a `DetectResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_detect_response_filename(const KREUZBERGDetectResponse *ptr);
+
+/**
+ * Create a `ManifestEntryResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_manifest_entry_response_free`.
+ */
+KREUZBERGManifestEntryResponse *kreuzberg_manifest_entry_response_from_json(const char *json);
+
+/**
+ * Serialize a `ManifestEntryResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_manifest_entry_response_to_json(const KREUZBERGManifestEntryResponse *ptr);
+
+/**
+ * Free a `ManifestEntryResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_manifest_entry_response_free(KREUZBERGManifestEntryResponse *ptr);
+
+/**
+ * Get the `relative_path` field from a `ManifestEntryResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_manifest_entry_response_relative_path(const KREUZBERGManifestEntryResponse *ptr);
+
+/**
+ * Get the `sha256` field from a `ManifestEntryResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_manifest_entry_response_sha256(const KREUZBERGManifestEntryResponse *ptr);
+
+/**
+ * Get the `size_bytes` field from a `ManifestEntryResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint64_t kreuzberg_manifest_entry_response_size_bytes(const KREUZBERGManifestEntryResponse *ptr);
+
+/**
+ * Get the `source_url` field from a `ManifestEntryResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_manifest_entry_response_source_url(const KREUZBERGManifestEntryResponse *ptr);
+
+/**
+ * Create a `ManifestResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_manifest_response_free`.
+ */
+KREUZBERGManifestResponse *kreuzberg_manifest_response_from_json(const char *json);
+
+/**
+ * Serialize a `ManifestResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_manifest_response_to_json(const KREUZBERGManifestResponse *ptr);
+
+/**
+ * Free a `ManifestResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_manifest_response_free(KREUZBERGManifestResponse *ptr);
+
+/**
+ * Get the `kreuzberg_version` field from a `ManifestResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_manifest_response_kreuzberg_version(const KREUZBERGManifestResponse *ptr);
+
+/**
+ * Get the `total_size_bytes` field from a `ManifestResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint64_t kreuzberg_manifest_response_total_size_bytes(const KREUZBERGManifestResponse *ptr);
+
+/**
+ * Get the `model_count` field from a `ManifestResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_manifest_response_model_count(const KREUZBERGManifestResponse *ptr);
+
+/**
+ * Get the `models` field from a `ManifestResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_manifest_response_models(const KREUZBERGManifestResponse *ptr);
+
+/**
+ * Create a `WarmRequest` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_warm_request_free`.
+ */
+KREUZBERGWarmRequest *kreuzberg_warm_request_from_json(const char *json);
+
+/**
+ * Serialize a `WarmRequest` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_warm_request_to_json(const KREUZBERGWarmRequest *ptr);
+
+/**
+ * Free a `WarmRequest` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_warm_request_free(KREUZBERGWarmRequest *ptr);
+
+/**
+ * Get the `all_embeddings` field from a `WarmRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_warm_request_all_embeddings(const KREUZBERGWarmRequest *ptr);
+
+/**
+ * Get the `embedding_model` field from a `WarmRequest`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_warm_request_embedding_model(const KREUZBERGWarmRequest *ptr);
+
+/**
+ * Create a `WarmResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_warm_response_free`.
+ */
+KREUZBERGWarmResponse *kreuzberg_warm_response_from_json(const char *json);
+
+/**
+ * Serialize a `WarmResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_warm_response_to_json(const KREUZBERGWarmResponse *ptr);
+
+/**
+ * Free a `WarmResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_warm_response_free(KREUZBERGWarmResponse *ptr);
+
+/**
+ * Get the `cache_dir` field from a `WarmResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_warm_response_cache_dir(const KREUZBERGWarmResponse *ptr);
+
+/**
+ * Get the `downloaded` field from a `WarmResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_warm_response_downloaded(const KREUZBERGWarmResponse *ptr);
+
+/**
+ * Get the `already_cached` field from a `WarmResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_warm_response_already_cached(const KREUZBERGWarmResponse *ptr);
+
+/**
+ * Create a `StructuredExtractionResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_structured_extraction_response_free`.
+ */
+KREUZBERGStructuredExtractionResponse *kreuzberg_structured_extraction_response_from_json(const char *json);
+
+/**
+ * Serialize a `StructuredExtractionResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_structured_extraction_response_to_json(const KREUZBERGStructuredExtractionResponse *ptr);
+
+/**
+ * Free a `StructuredExtractionResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_structured_extraction_response_free(KREUZBERGStructuredExtractionResponse *ptr);
+
+/**
+ * Get the `structured_output` field from a `StructuredExtractionResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_extraction_response_structured_output(const KREUZBERGStructuredExtractionResponse *ptr);
+
+/**
+ * Get the `content` field from a `StructuredExtractionResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_extraction_response_content(const KREUZBERGStructuredExtractionResponse *ptr);
+
+/**
+ * Get the `mime_type` field from a `StructuredExtractionResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_structured_extraction_response_mime_type(const KREUZBERGStructuredExtractionResponse *ptr);
+
+/**
+ * Create a `OpenWebDocumentResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_open_web_document_response_free`.
+ */
+KREUZBERGOpenWebDocumentResponse *kreuzberg_open_web_document_response_from_json(const char *json);
+
+/**
+ * Serialize a `OpenWebDocumentResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_open_web_document_response_to_json(const KREUZBERGOpenWebDocumentResponse *ptr);
+
+/**
+ * Free a `OpenWebDocumentResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_open_web_document_response_free(KREUZBERGOpenWebDocumentResponse *ptr);
+
+/**
+ * Get the `page_content` field from a `OpenWebDocumentResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_open_web_document_response_page_content(const KREUZBERGOpenWebDocumentResponse *ptr);
+
+/**
+ * Get the `metadata` field from a `OpenWebDocumentResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGOpenWebDocumentMetadata *kreuzberg_open_web_document_response_metadata(const KREUZBERGOpenWebDocumentResponse *ptr);
+
+/**
+ * Create a `OpenWebDocumentMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_open_web_document_metadata_free`.
+ */
+KREUZBERGOpenWebDocumentMetadata *kreuzberg_open_web_document_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `OpenWebDocumentMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_open_web_document_metadata_to_json(const KREUZBERGOpenWebDocumentMetadata *ptr);
+
+/**
+ * Free a `OpenWebDocumentMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_open_web_document_metadata_free(KREUZBERGOpenWebDocumentMetadata *ptr);
+
+/**
+ * Get the `source` field from a `OpenWebDocumentMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_open_web_document_metadata_source(const KREUZBERGOpenWebDocumentMetadata *ptr);
+
+/**
+ * Create a `DoclingCompatResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_docling_compat_response_free`.
+ */
+KREUZBERGDoclingCompatResponse *kreuzberg_docling_compat_response_from_json(const char *json);
+
+/**
+ * Serialize a `DoclingCompatResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_docling_compat_response_to_json(const KREUZBERGDoclingCompatResponse *ptr);
+
+/**
+ * Free a `DoclingCompatResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_docling_compat_response_free(KREUZBERGDoclingCompatResponse *ptr);
+
+/**
+ * Get the `document` field from a `DoclingCompatResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGDoclingCompatDocument *kreuzberg_docling_compat_response_document(const KREUZBERGDoclingCompatResponse *ptr);
+
+/**
+ * Get the `status` field from a `DoclingCompatResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_docling_compat_response_status(const KREUZBERGDoclingCompatResponse *ptr);
+
+/**
+ * Create a `DoclingCompatDocument` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_docling_compat_document_free`.
+ */
+KREUZBERGDoclingCompatDocument *kreuzberg_docling_compat_document_from_json(const char *json);
+
+/**
+ * Serialize a `DoclingCompatDocument` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_docling_compat_document_to_json(const KREUZBERGDoclingCompatDocument *ptr);
+
+/**
+ * Free a `DoclingCompatDocument` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_docling_compat_document_free(KREUZBERGDoclingCompatDocument *ptr);
+
+/**
+ * Get the `md_content` field from a `DoclingCompatDocument`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_docling_compat_document_md_content(const KREUZBERGDoclingCompatDocument *ptr);
+
+/**
+ * Create a `ChunkingConfigResponse` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_chunking_config_response_free`.
+ */
+KREUZBERGChunkingConfigResponse *kreuzberg_chunking_config_response_from_json(const char *json);
+
+/**
+ * Serialize a `ChunkingConfigResponse` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_chunking_config_response_to_json(const KREUZBERGChunkingConfigResponse *ptr);
+
+/**
+ * Free a `ChunkingConfigResponse` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunking_config_response_free(KREUZBERGChunkingConfigResponse *ptr);
+
+/**
+ * Get the `max_characters` field from a `ChunkingConfigResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunking_config_response_max_characters(const KREUZBERGChunkingConfigResponse *ptr);
+
+/**
+ * Get the `overlap` field from a `ChunkingConfigResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunking_config_response_overlap(const KREUZBERGChunkingConfigResponse *ptr);
+
+/**
+ * Get the `trim` field from a `ChunkingConfigResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_chunking_config_response_trim(const KREUZBERGChunkingConfigResponse *ptr);
+
+/**
+ * Get the `chunker_type` field from a `ChunkingConfigResponse`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunking_config_response_chunker_type(const KREUZBERGChunkingConfigResponse *ptr);
+
+/**
+ * Free a `ExtractFileParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extract_file_params_free(KREUZBERGExtractFileParams *ptr);
+
+/**
+ * Get the `path` field from a `ExtractFileParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_file_params_path(const KREUZBERGExtractFileParams *ptr);
+
+/**
+ * Get the `mime_type` field from a `ExtractFileParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_file_params_mime_type(const KREUZBERGExtractFileParams *ptr);
+
+/**
+ * Get the `config` field from a `ExtractFileParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_file_params_config(const KREUZBERGExtractFileParams *ptr);
+
+/**
+ * Get the `pdf_password` field from a `ExtractFileParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_file_params_pdf_password(const KREUZBERGExtractFileParams *ptr);
+
+/**
+ * Get the `response_format` field from a `ExtractFileParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_file_params_response_format(const KREUZBERGExtractFileParams *ptr);
+
+/**
+ * Free a `ExtractBytesParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extract_bytes_params_free(KREUZBERGExtractBytesParams *ptr);
+
+/**
+ * Get the `data` field from a `ExtractBytesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_bytes_params_data(const KREUZBERGExtractBytesParams *ptr);
+
+/**
+ * Get the `mime_type` field from a `ExtractBytesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_bytes_params_mime_type(const KREUZBERGExtractBytesParams *ptr);
+
+/**
+ * Get the `config` field from a `ExtractBytesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_bytes_params_config(const KREUZBERGExtractBytesParams *ptr);
+
+/**
+ * Get the `pdf_password` field from a `ExtractBytesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_bytes_params_pdf_password(const KREUZBERGExtractBytesParams *ptr);
+
+/**
+ * Get the `response_format` field from a `ExtractBytesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_bytes_params_response_format(const KREUZBERGExtractBytesParams *ptr);
+
+/**
+ * Free a `BatchExtractFilesParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_batch_extract_files_params_free(KREUZBERGBatchExtractFilesParams *ptr);
+
+/**
+ * Get the `paths` field from a `BatchExtractFilesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_batch_extract_files_params_paths(const KREUZBERGBatchExtractFilesParams *ptr);
+
+/**
+ * Get the `config` field from a `BatchExtractFilesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_batch_extract_files_params_config(const KREUZBERGBatchExtractFilesParams *ptr);
+
+/**
+ * Get the `pdf_password` field from a `BatchExtractFilesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_batch_extract_files_params_pdf_password(const KREUZBERGBatchExtractFilesParams *ptr);
+
+/**
+ * Get the `file_configs` field from a `BatchExtractFilesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_batch_extract_files_params_file_configs(const KREUZBERGBatchExtractFilesParams *ptr);
+
+/**
+ * Get the `response_format` field from a `BatchExtractFilesParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_batch_extract_files_params_response_format(const KREUZBERGBatchExtractFilesParams *ptr);
+
+/**
+ * Free a `DetectMimeTypeParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_detect_mime_type_params_free(KREUZBERGDetectMimeTypeParams *ptr);
+
+/**
+ * Get the `path` field from a `DetectMimeTypeParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_detect_mime_type_params_path(const KREUZBERGDetectMimeTypeParams *ptr);
+
+/**
+ * Get the `use_content` field from a `DetectMimeTypeParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_detect_mime_type_params_use_content(const KREUZBERGDetectMimeTypeParams *ptr);
+
+/**
+ * Free a `EmptyParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_empty_params_free(KREUZBERGEmptyParams *ptr);
+
+/**
+ * Free a `CacheWarmParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_cache_warm_params_free(KREUZBERGCacheWarmParams *ptr);
+
+/**
+ * Get the `all_embeddings` field from a `CacheWarmParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_cache_warm_params_all_embeddings(const KREUZBERGCacheWarmParams *ptr);
+
+/**
+ * Get the `embedding_model` field from a `CacheWarmParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_cache_warm_params_embedding_model(const KREUZBERGCacheWarmParams *ptr);
+
+/**
+ * Free a `EmbedTextParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_embed_text_params_free(KREUZBERGEmbedTextParams *ptr);
+
+/**
+ * Get the `texts` field from a `EmbedTextParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embed_text_params_texts(const KREUZBERGEmbedTextParams *ptr);
+
+/**
+ * Get the `preset` field from a `EmbedTextParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embed_text_params_preset(const KREUZBERGEmbedTextParams *ptr);
+
+/**
+ * Get the `model` field from a `EmbedTextParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embed_text_params_model(const KREUZBERGEmbedTextParams *ptr);
+
+/**
+ * Get the `api_key` field from a `EmbedTextParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embed_text_params_api_key(const KREUZBERGEmbedTextParams *ptr);
+
+/**
+ * Free a `ExtractStructuredParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_extract_structured_params_free(KREUZBERGExtractStructuredParams *ptr);
+
+/**
+ * Get the `path` field from a `ExtractStructuredParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_structured_params_path(const KREUZBERGExtractStructuredParams *ptr);
+
+/**
+ * Get the `schema` field from a `ExtractStructuredParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_structured_params_schema(const KREUZBERGExtractStructuredParams *ptr);
+
+/**
+ * Get the `model` field from a `ExtractStructuredParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_structured_params_model(const KREUZBERGExtractStructuredParams *ptr);
+
+/**
+ * Get the `schema_name` field from a `ExtractStructuredParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_structured_params_schema_name(const KREUZBERGExtractStructuredParams *ptr);
+
+/**
+ * Get the `schema_description` field from a `ExtractStructuredParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_structured_params_schema_description(const KREUZBERGExtractStructuredParams *ptr);
+
+/**
+ * Get the `prompt` field from a `ExtractStructuredParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_structured_params_prompt(const KREUZBERGExtractStructuredParams *ptr);
+
+/**
+ * Get the `api_key` field from a `ExtractStructuredParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_extract_structured_params_api_key(const KREUZBERGExtractStructuredParams *ptr);
+
+/**
+ * Get the `strict` field from a `ExtractStructuredParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_extract_structured_params_strict(const KREUZBERGExtractStructuredParams *ptr);
+
+/**
+ * Free a `ChunkTextParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunk_text_params_free(KREUZBERGChunkTextParams *ptr);
+
+/**
+ * Get the `text` field from a `ChunkTextParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunk_text_params_text(const KREUZBERGChunkTextParams *ptr);
+
+/**
+ * Get the `max_characters` field from a `ChunkTextParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_text_params_max_characters(const KREUZBERGChunkTextParams *ptr);
+
+/**
+ * Get the `overlap` field from a `ChunkTextParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunk_text_params_overlap(const KREUZBERGChunkTextParams *ptr);
+
+/**
+ * Get the `chunker_type` field from a `ChunkTextParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunk_text_params_chunker_type(const KREUZBERGChunkTextParams *ptr);
+
+/**
+ * Free a `DownloadGrammarsParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_download_grammars_params_free(KREUZBERGDownloadGrammarsParams *ptr);
+
+/**
+ * Get the `languages` field from a `DownloadGrammarsParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_download_grammars_params_languages(const KREUZBERGDownloadGrammarsParams *ptr);
+
+/**
+ * Get the `groups` field from a `DownloadGrammarsParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_download_grammars_params_groups(const KREUZBERGDownloadGrammarsParams *ptr);
+
+/**
+ * Get the `all` field from a `DownloadGrammarsParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_download_grammars_params_all(const KREUZBERGDownloadGrammarsParams *ptr);
+
+/**
+ * Free a `ListGrammarsParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_list_grammars_params_free(KREUZBERGListGrammarsParams *ptr);
+
+/**
+ * Get the `downloaded_only` field from a `ListGrammarsParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_list_grammars_params_downloaded_only(const KREUZBERGListGrammarsParams *ptr);
+
+/**
+ * Get the `filter` field from a `ListGrammarsParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_list_grammars_params_filter(const KREUZBERGListGrammarsParams *ptr);
+
+/**
+ * Free a `KreuzbergMcp` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_kreuzberg_mcp_free(KREUZBERGKreuzbergMcp *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKreuzbergMcp *kreuzberg_kreuzberg_mcp_clone(const KREUZBERGKreuzbergMcp *this_);
+
+/**
+ * Create a new Kreuzberg MCP server instance with default config.
+ *
+ * Uses `ExtractionConfig::discover()` to search for kreuzberg.toml/yaml/json
+ * in current and parent directories. Falls back to default configuration if
+ * no config file is found.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKreuzbergMcp *kreuzberg_kreuzberg_mcp_new(void);
+
+/**
+ * Create a new Kreuzberg MCP server instance with explicit config.
+ *
+ * # Arguments
+ *
+ * * `config` - Default extraction configuration for all tool calls
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKreuzbergMcp *kreuzberg_kreuzberg_mcp_with_config(const KREUZBERGExtractionConfig *config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_kreuzberg_mcp_get_info(const KREUZBERGKreuzbergMcp *_this);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKreuzbergMcp *kreuzberg_kreuzberg_mcp_default(void);
+
+/**
+ * Create a `ChunkingResult` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_chunking_result_free`.
+ */
+KREUZBERGChunkingResult *kreuzberg_chunking_result_from_json(const char *json);
+
+/**
+ * Serialize a `ChunkingResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_chunking_result_to_json(const KREUZBERGChunkingResult *ptr);
+
+/**
+ * Free a `ChunkingResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunking_result_free(KREUZBERGChunkingResult *ptr);
+
+/**
+ * Get the `chunks` field from a `ChunkingResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_chunking_result_chunks(const KREUZBERGChunkingResult *ptr);
+
+/**
+ * Get the `chunk_count` field from a `ChunkingResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_chunking_result_chunk_count(const KREUZBERGChunkingResult *ptr);
+
+/**
+ * Free a `ChunkingProcessor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_chunking_processor_free(KREUZBERGChunkingProcessor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_chunking_processor_name(const KREUZBERGChunkingProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_chunking_processor_version(const KREUZBERGChunkingProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_chunking_processor_initialize(const KREUZBERGChunkingProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_chunking_processor_shutdown(const KREUZBERGChunkingProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_chunking_processor_process(const KREUZBERGChunkingProcessor *this_,
+                                             const KREUZBERGExtractionResult *result,
+                                             const KREUZBERGExtractionConfig *config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_chunking_processor_processing_stage(const KREUZBERGChunkingProcessor *_this);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_chunking_processor_should_process(const KREUZBERGChunkingProcessor *this_,
+                                                    const KREUZBERGExtractionResult *_result,
+                                                    const KREUZBERGExtractionConfig *config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint64_t kreuzberg_chunking_processor_estimated_duration_ms(const KREUZBERGChunkingProcessor *this_,
+                                                            const KREUZBERGExtractionResult *result);
+
+/**
+ * Free a `VlmOcrBackend` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_vlm_ocr_backend_free(KREUZBERGVlmOcrBackend *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_vlm_ocr_backend_name(const KREUZBERGVlmOcrBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_vlm_ocr_backend_version(const KREUZBERGVlmOcrBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_vlm_ocr_backend_initialize(const KREUZBERGVlmOcrBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_vlm_ocr_backend_shutdown(const KREUZBERGVlmOcrBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_vlm_ocr_backend_process_image(const KREUZBERGVlmOcrBackend *this_,
+                                                                   const uint8_t *image_bytes,
+                                                                   uintptr_t image_bytes_len,
+                                                                   const KREUZBERGOcrConfig *config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_vlm_ocr_backend_supports_language(const KREUZBERGVlmOcrBackend *this_,
+                                                    const char *_lang);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrBackendType *kreuzberg_vlm_ocr_backend_backend_type(const KREUZBERGVlmOcrBackend *this_);
+
+/**
+ * Create a `YakeParams` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_yake_params_free`.
+ */
+KREUZBERGYakeParams *kreuzberg_yake_params_from_json(const char *json);
+
+/**
+ * Serialize a `YakeParams` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_yake_params_to_json(const KREUZBERGYakeParams *ptr);
+
+/**
+ * Free a `YakeParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_yake_params_free(KREUZBERGYakeParams *ptr);
+
+/**
+ * Get the `window_size` field from a `YakeParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_yake_params_window_size(const KREUZBERGYakeParams *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGYakeParams *kreuzberg_yake_params_default(void);
+
+/**
+ * Create a `RakeParams` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_rake_params_free`.
+ */
+KREUZBERGRakeParams *kreuzberg_rake_params_from_json(const char *json);
+
+/**
+ * Serialize a `RakeParams` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_rake_params_to_json(const KREUZBERGRakeParams *ptr);
+
+/**
+ * Free a `RakeParams` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_rake_params_free(KREUZBERGRakeParams *ptr);
+
+/**
+ * Get the `min_word_length` field from a `RakeParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_rake_params_min_word_length(const KREUZBERGRakeParams *ptr);
+
+/**
+ * Get the `max_words_per_phrase` field from a `RakeParams`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_rake_params_max_words_per_phrase(const KREUZBERGRakeParams *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGRakeParams *kreuzberg_rake_params_default(void);
+
+/**
+ * Free a `KeywordConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_keyword_config_free(KREUZBERGKeywordConfig *ptr);
+
+/**
+ * Get the `algorithm` field from a `KeywordConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGKeywordAlgorithm *kreuzberg_keyword_config_algorithm(const KREUZBERGKeywordConfig *ptr);
+
+/**
+ * Get the `max_keywords` field from a `KeywordConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_keyword_config_max_keywords(const KREUZBERGKeywordConfig *ptr);
+
+/**
+ * Get the `min_score` field from a `KeywordConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_keyword_config_min_score(const KREUZBERGKeywordConfig *ptr);
+
+/**
+ * Get the `language` field from a `KeywordConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_keyword_config_language(const KREUZBERGKeywordConfig *ptr);
+
+/**
+ * Get the `yake_params` field from a `KeywordConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGYakeParams *kreuzberg_keyword_config_yake_params(const KREUZBERGKeywordConfig *ptr);
+
+/**
+ * Get the `rake_params` field from a `KeywordConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGRakeParams *kreuzberg_keyword_config_rake_params(const KREUZBERGKeywordConfig *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKeywordConfig *kreuzberg_keyword_config_default(void);
+
+/**
+ * Set maximum number of keywords to extract.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKeywordConfig *kreuzberg_keyword_config_with_max_keywords(KREUZBERGKeywordConfig *this_,
+                                                                   uintptr_t max);
+
+/**
+ * Set minimum score threshold.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKeywordConfig *kreuzberg_keyword_config_with_min_score(KREUZBERGKeywordConfig *this_,
+                                                                float score);
+
+/**
+ * Set n-gram range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKeywordConfig *kreuzberg_keyword_config_with_ngram_range(KREUZBERGKeywordConfig *this_,
+                                                                  uintptr_t min,
+                                                                  uintptr_t max);
+
+/**
+ * Set language for stopword filtering.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKeywordConfig *kreuzberg_keyword_config_with_language(KREUZBERGKeywordConfig *this_,
+                                                               const char *lang);
+
+/**
+ * Create a `Keyword` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_keyword_free`.
+ */
+KREUZBERGKeyword *kreuzberg_keyword_from_json(const char *json);
+
+/**
+ * Serialize a `Keyword` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_keyword_to_json(const KREUZBERGKeyword *ptr);
+
+/**
+ * Free a `Keyword` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_keyword_free(KREUZBERGKeyword *ptr);
+
+/**
+ * Get the `text` field from a `Keyword`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_keyword_text(const KREUZBERGKeyword *ptr);
+
+/**
+ * Get the `score` field from a `Keyword`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_keyword_score(const KREUZBERGKeyword *ptr);
+
+/**
+ * Get the `algorithm` field from a `Keyword`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGKeywordAlgorithm *kreuzberg_keyword_algorithm(const KREUZBERGKeyword *ptr);
+
+/**
+ * Get the `positions` field from a `Keyword`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_keyword_positions(const KREUZBERGKeyword *ptr);
+
+/**
+ * Create a new keyword with positions.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGKeyword *kreuzberg_keyword_with_positions(const char *text,
+                                                   float score,
+                                                   const KREUZBERGKeywordAlgorithm *algorithm,
+                                                   const char *positions);
+
+/**
+ * Free a `OcrCache` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_cache_free(KREUZBERGOcrCache *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrCache *kreuzberg_ocr_cache_new(const char *cache_dir);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrExtractionResult *kreuzberg_ocr_cache_get_cached_result(const KREUZBERGOcrCache *this_,
+                                                                    const char *image_hash,
+                                                                    const char *backend,
+                                                                    const char *config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_cache_set_cached_result(const KREUZBERGOcrCache *this_,
+                                              const char *image_hash,
+                                              const char *backend,
+                                              const char *config,
+                                              const KREUZBERGOcrExtractionResult *result);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_cache_clear(const KREUZBERGOcrCache *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrCacheStats *kreuzberg_ocr_cache_get_stats(const KREUZBERGOcrCache *this_);
+
+/**
+ * Free a `OcrCacheStats` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_cache_stats_free(KREUZBERGOcrCacheStats *ptr);
+
+/**
+ * Get the `total_files` field from a `OcrCacheStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_ocr_cache_stats_total_files(const KREUZBERGOcrCacheStats *ptr);
+
+/**
+ * Get the `total_size_mb` field from a `OcrCacheStats`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_ocr_cache_stats_total_size_mb(const KREUZBERGOcrCacheStats *ptr);
+
+/**
+ * Free a `TsvRow` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_tsv_row_free(KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `level` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tsv_row_level(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `page_num` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tsv_row_page_num(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `block_num` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tsv_row_block_num(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `par_num` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tsv_row_par_num(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `line_num` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tsv_row_line_num(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `word_num` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_tsv_row_word_num(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `left` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_tsv_row_left(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `top` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_tsv_row_top(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `width` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_tsv_row_width(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `height` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_tsv_row_height(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `conf` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_tsv_row_conf(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Get the `text` field from a `TsvRow`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_tsv_row_text(const KREUZBERGTsvRow *ptr);
+
+/**
+ * Free a `LanguageRegistry` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_language_registry_free(KREUZBERGLanguageRegistry *ptr);
+
+/**
+ * Get the default global registry instance.
+ *
+ * The registry is created on first access and reused for all subsequent calls.
+ *
+ * # Returns
+ *
+ * A reference to the global `LanguageRegistry` instance.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGLanguageRegistry *kreuzberg_language_registry_global(void);
+
+/**
+ * Get supported languages for a specific OCR backend.
+ *
+ * # Arguments
+ *
+ * * `backend` - Backend name (e.g., "easyocr", "paddleocr", "tesseract")
+ *
+ * # Returns
+ *
+ * `Some(&[String])` if the backend is registered, `None` otherwise.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::ocr::LanguageRegistry;
+ *
+ * let registry = LanguageRegistry::new();
+ * if let Some(languages) = registry.get_supported_languages("easyocr") {
+ *     assert!(languages.contains(&"en".to_string()));
+ * }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_language_registry_get_supported_languages(const KREUZBERGLanguageRegistry *this_,
+                                                          const char *backend);
+
+/**
+ * Check if a language is supported by a specific backend.
+ *
+ * # Arguments
+ *
+ * * `backend` - Backend name
+ * * `language` - Language code to check
+ *
+ * # Returns
+ *
+ * `true` if the language is supported, `false` otherwise.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_language_registry_is_language_supported(const KREUZBERGLanguageRegistry *this_,
+                                                          const char *backend,
+                                                          const char *language);
+
+/**
+ * Get all registered backend names.
+ *
+ * # Returns
+ *
+ * A vector of backend names in the registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_language_registry_get_backends(const KREUZBERGLanguageRegistry *this_);
+
+/**
+ * Get language count for a specific backend.
+ *
+ * # Arguments
+ *
+ * * `backend` - Backend name
+ *
+ * # Returns
+ *
+ * Number of supported languages for the backend, or 0 if backend not found.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_language_registry_get_language_count(const KREUZBERGLanguageRegistry *this_,
+                                                         const char *backend);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGLanguageRegistry *kreuzberg_language_registry_default(void);
+
+/**
+ * Free a `RecognizedTable` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_recognized_table_free(KREUZBERGRecognizedTable *ptr);
+
+/**
+ * Get the `detection_bbox` field from a `RecognizedTable`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBBox *kreuzberg_recognized_table_detection_bbox(const KREUZBERGRecognizedTable *ptr);
+
+/**
+ * Get the `cells` field from a `RecognizedTable`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_recognized_table_cells(const KREUZBERGRecognizedTable *ptr);
+
+/**
+ * Get the `markdown` field from a `RecognizedTable`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_recognized_table_markdown(const KREUZBERGRecognizedTable *ptr);
+
+/**
+ * Free a `OcrProcessor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_ocr_processor_free(KREUZBERGOcrProcessor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrProcessor *kreuzberg_ocr_processor_new(const char *cache_dir);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrExtractionResult *kreuzberg_ocr_processor_process_image(const KREUZBERGOcrProcessor *this_,
+                                                                    const uint8_t *image_bytes,
+                                                                    uintptr_t image_bytes_len,
+                                                                    const KREUZBERGTesseractConfig *config);
+
+/**
+ * Process an image with OCR and respect the output format from ExtractionConfig.
+ *
+ * This variant allows specifying an output format (Plain, Markdown, Djot) which
+ * affects how the OCR result's mime_type is set when markdown output is requested.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrExtractionResult *kreuzberg_ocr_processor_process_image_with_format(const KREUZBERGOcrProcessor *this_,
+                                                                                const uint8_t *image_bytes,
+                                                                                uintptr_t image_bytes_len,
+                                                                                const KREUZBERGTesseractConfig *config,
+                                                                                const KREUZBERGOutputFormat *output_format);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_processor_clear_cache(const KREUZBERGOcrProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrCacheStats *kreuzberg_ocr_processor_get_cache_stats(const KREUZBERGOcrProcessor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrExtractionResult *kreuzberg_ocr_processor_process_image_file(const KREUZBERGOcrProcessor *this_,
+                                                                         const char *file_path,
+                                                                         const KREUZBERGTesseractConfig *config);
+
+/**
+ * Process a file with OCR and respect the output format from ExtractionConfig.
+ *
+ * This variant allows specifying an output format (Plain, Markdown, Djot) which
+ * affects how the OCR result's mime_type is set when markdown output is requested.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrExtractionResult *kreuzberg_ocr_processor_process_image_file_with_format(const KREUZBERGOcrProcessor *this_,
+                                                                                     const char *file_path,
+                                                                                     const KREUZBERGTesseractConfig *config,
+                                                                                     const KREUZBERGOutputFormat *output_format);
+
+/**
+ * Process multiple image files in parallel using Rayon.
+ *
+ * This method processes OCR operations in parallel across CPU cores for improved throughput.
+ * Results are returned in the same order as the input file paths.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ocr_processor_process_image_files_batch(const KREUZBERGOcrProcessor *_this,
+                                                        const char *_file_paths,
+                                                        const KREUZBERGTesseractConfig *_config);
+
+/**
+ * Free a `TessdataManager` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_tessdata_manager_free(KREUZBERGTessdataManager *ptr);
+
+/**
+ * Get the cache directory path.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tessdata_manager_cache_dir(const KREUZBERGTessdataManager *this_);
+
+/**
+ * Check if a specific language traineddata file is cached.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_tessdata_manager_is_language_cached(const KREUZBERGTessdataManager *this_,
+                                                      const char *lang);
+
+/**
+ * Free a `TesseractBackend` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_tesseract_backend_free(KREUZBERGTesseractBackend *ptr);
+
+/**
+ * Create a new Tesseract backend with default cache directory.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTesseractBackend *kreuzberg_tesseract_backend_new(void);
+
+/**
+ * Create a new Tesseract backend with custom cache directory.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTesseractBackend *kreuzberg_tesseract_backend_with_cache_dir(const char *cache_dir);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTesseractBackend *kreuzberg_tesseract_backend_default(void);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tesseract_backend_name(const KREUZBERGTesseractBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tesseract_backend_version(const KREUZBERGTesseractBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_tesseract_backend_initialize(const KREUZBERGTesseractBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_tesseract_backend_shutdown(const KREUZBERGTesseractBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_tesseract_backend_process_image(const KREUZBERGTesseractBackend *this_,
+                                                                     const uint8_t *image_bytes,
+                                                                     uintptr_t image_bytes_len,
+                                                                     const KREUZBERGOcrConfig *config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_tesseract_backend_process_image_file(const KREUZBERGTesseractBackend *this_,
+                                                                          const char *path,
+                                                                          const KREUZBERGOcrConfig *config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_tesseract_backend_supports_language(const KREUZBERGTesseractBackend *this_,
+                                                      const char *lang);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrBackendType *kreuzberg_tesseract_backend_backend_type(const KREUZBERGTesseractBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_tesseract_backend_supported_languages(const KREUZBERGTesseractBackend *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_tesseract_backend_supports_table_detection(const KREUZBERGTesseractBackend *this_);
+
+/**
+ * Create a `PaddleOcrConfig` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_paddle_ocr_config_free`.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_from_json(const char *json);
+
+/**
+ * Serialize a `PaddleOcrConfig` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_paddle_ocr_config_to_json(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Free a `PaddleOcrConfig` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_paddle_ocr_config_free(KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `language` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_paddle_ocr_config_language(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `cache_dir` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_paddle_ocr_config_cache_dir(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `use_angle_cls` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_paddle_ocr_config_use_angle_cls(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `enable_table_detection` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_paddle_ocr_config_enable_table_detection(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `det_db_thresh` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_paddle_ocr_config_det_db_thresh(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `det_db_box_thresh` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_paddle_ocr_config_det_db_box_thresh(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `det_db_unclip_ratio` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_paddle_ocr_config_det_db_unclip_ratio(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `det_limit_side_len` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_paddle_ocr_config_det_limit_side_len(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `rec_batch_num` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_paddle_ocr_config_rec_batch_num(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `padding` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_paddle_ocr_config_padding(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `drop_score` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_paddle_ocr_config_drop_score(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Get the `model_tier` field from a `PaddleOcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_paddle_ocr_config_model_tier(const KREUZBERGPaddleOcrConfig *ptr);
+
+/**
+ * Sets a custom cache directory for model files.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to cache directory
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::PaddleOcrConfig;
+ * use std::path::PathBuf;
+ *
+ * let config = PaddleOcrConfig::new("en")
+ *     .with_cache_dir(PathBuf::from("/tmp/paddle-cache"));
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_cache_dir(KREUZBERGPaddleOcrConfig *this_,
+                                                                     const char *path);
+
+/**
+ * Enables or disables table structure detection.
+ *
+ * # Arguments
+ *
+ * * `enable` - Whether to enable table detection
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::PaddleOcrConfig;
+ *
+ * let config = PaddleOcrConfig::new("en")
+ *     .with_table_detection(true);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_table_detection(KREUZBERGPaddleOcrConfig *this_,
+                                                                           int32_t enable);
+
+/**
+ * Enables or disables angle classification for rotated text.
+ *
+ * # Arguments
+ *
+ * * `enable` - Whether to enable angle classification
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_angle_cls(KREUZBERGPaddleOcrConfig *this_,
+                                                                     int32_t enable);
+
+/**
+ * Sets the database threshold for text detection.
+ *
+ * # Arguments
+ *
+ * * `threshold` - Detection threshold (0.0-1.0)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_det_db_thresh(KREUZBERGPaddleOcrConfig *this_,
+                                                                         float threshold);
+
+/**
+ * Sets the box threshold for text bounding box refinement.
+ *
+ * # Arguments
+ *
+ * * `threshold` - Box threshold (0.0-1.0)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_det_db_box_thresh(KREUZBERGPaddleOcrConfig *this_,
+                                                                             float threshold);
+
+/**
+ * Sets the unclip ratio for expanding text bounding boxes.
+ *
+ * # Arguments
+ *
+ * * `ratio` - Unclip ratio (typically 1.5-2.0)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_det_db_unclip_ratio(KREUZBERGPaddleOcrConfig *this_,
+                                                                               float ratio);
+
+/**
+ * Sets the maximum side length for detection images.
+ *
+ * # Arguments
+ *
+ * * `length` - Maximum side length in pixels
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_det_limit_side_len(KREUZBERGPaddleOcrConfig *this_,
+                                                                              uint32_t length);
+
+/**
+ * Sets the batch size for recognition inference.
+ *
+ * # Arguments
+ *
+ * * `batch_size` - Number of text regions to process simultaneously
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_rec_batch_num(KREUZBERGPaddleOcrConfig *this_,
+                                                                         uint32_t batch_size);
+
+/**
+ * Sets the minimum recognition confidence threshold.
+ *
+ * # Arguments
+ *
+ * * `score` - Minimum confidence (0.0-1.0), text below this is dropped
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_drop_score(KREUZBERGPaddleOcrConfig *this_,
+                                                                      float score);
+
+/**
+ * Sets padding in pixels added around images before detection.
+ *
+ * # Arguments
+ *
+ * * `padding` - Padding in pixels (0-100)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_padding(KREUZBERGPaddleOcrConfig *this_,
+                                                                   uint32_t padding);
+
+/**
+ * Sets the model tier controlling detection/recognition model size.
+ *
+ * # Arguments
+ *
+ * * `tier` - `"mobile"` (default, lightweight, faster) or `"server"` (high accuracy, GPU/complex documents)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_model_tier(KREUZBERGPaddleOcrConfig *this_,
+                                                                      const char *tier);
+
+/**
+ * Resolves the cache directory, checking in order:
+ * 1. Configured `cache_dir` if set
+ * 2. `KREUZBERG_CACHE_DIR` environment variable + `/paddle-ocr`
+ * 3. Default: `.kreuzberg/paddle-ocr/` (consistent with other cache types)
+ *
+ * # Returns
+ *
+ * The resolved cache directory path
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::PaddleOcrConfig;
+ *
+ * let config = PaddleOcrConfig::new("en");
+ * let cache_dir = config.resolve_cache_dir();
+ * println!("Cache directory: {:?}", cache_dir);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_paddle_ocr_config_resolve_cache_dir(const KREUZBERGPaddleOcrConfig *this_);
+
+/**
+ * Creates a default configuration with English language support.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_default(void);
+
+/**
+ * Free a `ModelPaths` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_model_paths_free(KREUZBERGModelPaths *ptr);
+
+/**
+ * Get the `det_model` field from a `ModelPaths`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_model_paths_det_model(const KREUZBERGModelPaths *ptr);
+
+/**
+ * Get the `cls_model` field from a `ModelPaths`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_model_paths_cls_model(const KREUZBERGModelPaths *ptr);
+
+/**
+ * Get the `rec_model` field from a `ModelPaths`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_model_paths_rec_model(const KREUZBERGModelPaths *ptr);
+
+/**
+ * Get the `dict_file` field from a `ModelPaths`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_model_paths_dict_file(const KREUZBERGModelPaths *ptr);
+
+/**
+ * Free a `OrientationResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_orientation_result_free(KREUZBERGOrientationResult *ptr);
+
+/**
+ * Get the `degrees` field from a `OrientationResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_orientation_result_degrees(const KREUZBERGOrientationResult *ptr);
+
+/**
+ * Get the `confidence` field from a `OrientationResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_orientation_result_confidence(const KREUZBERGOrientationResult *ptr);
+
+/**
+ * Free a `LayoutModel` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_layout_model_free(KREUZBERGLayoutModel *ptr);
+
+/**
+ * Run layout detection on an image using the default confidence threshold.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_layout_model_detect(KREUZBERGLayoutModel *_this,
+                                    const char *_img);
+
+/**
+ * Run layout detection with a custom confidence threshold.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_layout_model_detect_with_threshold(KREUZBERGLayoutModel *_this,
+                                                   const char *_img,
+                                                   float _threshold);
+
+/**
+ * Run layout detection on a batch of images in a single model call.
+ *
+ * Returns one `Vec<LayoutDetection>` per input image (same order).
+ * `threshold` overrides the model's default confidence cutoff when `Some`.
+ *
+ * The default implementation is a sequential fallback: models that support
+ * true batched inference (e.g. [`rtdetr::RtDetrModel`]) override this.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_layout_model_detect_batch(KREUZBERGLayoutModel *_this,
+                                          const char *_images,
+                                          float _threshold);
+
+/**
+ * Human-readable model name.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_layout_model_name(const KREUZBERGLayoutModel *this_);
+
+/**
+ * Create a `BBox` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_b_box_free`.
+ */
+KREUZBERGBBox *kreuzberg_b_box_from_json(const char *json);
+
+/**
+ * Serialize a `BBox` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_b_box_to_json(const KREUZBERGBBox *ptr);
+
+/**
+ * Free a `BBox` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_b_box_free(KREUZBERGBBox *ptr);
+
+/**
+ * Get the `x1` field from a `BBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_b_box_x1(const KREUZBERGBBox *ptr);
+
+/**
+ * Get the `y1` field from a `BBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_b_box_y1(const KREUZBERGBBox *ptr);
+
+/**
+ * Get the `x2` field from a `BBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_b_box_x2(const KREUZBERGBBox *ptr);
+
+/**
+ * Get the `y2` field from a `BBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_b_box_y2(const KREUZBERGBBox *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+float kreuzberg_b_box_width(const KREUZBERGBBox *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+float kreuzberg_b_box_height(const KREUZBERGBBox *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+float kreuzberg_b_box_area(const KREUZBERGBBox *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_b_box_center(const KREUZBERGBBox *_this);
+
+/**
+ * Area of intersection with another bounding box.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+float kreuzberg_b_box_intersection_area(const KREUZBERGBBox *this_,
+                                        const KREUZBERGBBox *other);
+
+/**
+ * Intersection over Union with another bounding box.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+float kreuzberg_b_box_iou(const KREUZBERGBBox *this_,
+                          const KREUZBERGBBox *other);
+
+/**
+ * Fraction of `other` that is contained within `self`.
+ * Returns 0.0..=1.0 where 1.0 means `other` is fully inside `self`.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+float kreuzberg_b_box_containment_of(const KREUZBERGBBox *this_,
+                                     const KREUZBERGBBox *other);
+
+/**
+ * Fraction of page area this bbox covers.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+float kreuzberg_b_box_page_coverage(const KREUZBERGBBox *this_,
+                                    float page_width,
+                                    float page_height);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_b_box_fmt(const KREUZBERGBBox *_this,
+                          const char *_f);
+
+/**
+ * Create a `LayoutDetection` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_layout_detection_free`.
+ */
+KREUZBERGLayoutDetection *kreuzberg_layout_detection_from_json(const char *json);
+
+/**
+ * Serialize a `LayoutDetection` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_layout_detection_to_json(const KREUZBERGLayoutDetection *ptr);
+
+/**
+ * Free a `LayoutDetection` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_layout_detection_free(KREUZBERGLayoutDetection *ptr);
+
+/**
+ * Get the `class` field from a `LayoutDetection`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLayoutClass *kreuzberg_layout_detection_class(const KREUZBERGLayoutDetection *ptr);
+
+/**
+ * Get the `confidence` field from a `LayoutDetection`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_layout_detection_confidence(const KREUZBERGLayoutDetection *ptr);
+
+/**
+ * Get the `bbox` field from a `LayoutDetection`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBBox *kreuzberg_layout_detection_bbox(const KREUZBERGLayoutDetection *ptr);
+
+/**
+ * Sort detections by confidence in descending order.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_layout_detection_sort_by_confidence_desc(const char *detections);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_layout_detection_fmt(const KREUZBERGLayoutDetection *_this,
+                                     const char *_f);
+
+/**
+ * Create a `DetectionResult` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_detection_result_free`.
+ */
+KREUZBERGDetectionResult *kreuzberg_detection_result_from_json(const char *json);
+
+/**
+ * Serialize a `DetectionResult` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_detection_result_to_json(const KREUZBERGDetectionResult *ptr);
+
+/**
+ * Free a `DetectionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_detection_result_free(KREUZBERGDetectionResult *ptr);
+
+/**
+ * Get the `page_width` field from a `DetectionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_detection_result_page_width(const KREUZBERGDetectionResult *ptr);
+
+/**
+ * Get the `page_height` field from a `DetectionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_detection_result_page_height(const KREUZBERGDetectionResult *ptr);
+
+/**
+ * Get the `detections` field from a `DetectionResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_detection_result_detections(const KREUZBERGDetectionResult *ptr);
+
+/**
+ * Free a `EmbeddedFile` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_embedded_file_free(KREUZBERGEmbeddedFile *ptr);
+
+/**
+ * Get the `name` field from a `EmbeddedFile`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embedded_file_name(const KREUZBERGEmbeddedFile *ptr);
+
+/**
+ * Get the `data` field from a `EmbeddedFile`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kreuzberg_embedded_file_data(const KREUZBERGEmbeddedFile *ptr,
+                                      uintptr_t *out_len);
+
+/**
+ * Get the `mime_type` field from a `EmbeddedFile`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_embedded_file_mime_type(const KREUZBERGEmbeddedFile *ptr);
+
+/**
+ * Free a `FontSizeCluster` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_font_size_cluster_free(KREUZBERGFontSizeCluster *ptr);
+
+/**
+ * Get the `centroid` field from a `FontSizeCluster`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_font_size_cluster_centroid(const KREUZBERGFontSizeCluster *ptr);
+
+/**
+ * Get the `members` field from a `FontSizeCluster`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_font_size_cluster_members(const KREUZBERGFontSizeCluster *ptr);
+
+/**
+ * Free a `CharData` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_char_data_free(KREUZBERGCharData *ptr);
+
+/**
+ * Get the `text` field from a `CharData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_char_data_text(const KREUZBERGCharData *ptr);
+
+/**
+ * Get the `x` field from a `CharData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_char_data_x(const KREUZBERGCharData *ptr);
+
+/**
+ * Get the `y` field from a `CharData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_char_data_y(const KREUZBERGCharData *ptr);
+
+/**
+ * Get the `font_size` field from a `CharData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_char_data_font_size(const KREUZBERGCharData *ptr);
+
+/**
+ * Get the `width` field from a `CharData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_char_data_width(const KREUZBERGCharData *ptr);
+
+/**
+ * Get the `height` field from a `CharData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_char_data_height(const KREUZBERGCharData *ptr);
+
+/**
+ * Get the `is_bold` field from a `CharData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_char_data_is_bold(const KREUZBERGCharData *ptr);
+
+/**
+ * Get the `is_italic` field from a `CharData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_char_data_is_italic(const KREUZBERGCharData *ptr);
+
+/**
+ * Get the `baseline_y` field from a `CharData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_char_data_baseline_y(const KREUZBERGCharData *ptr);
+
+/**
+ * Free a `TextBlock` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_text_block_free(KREUZBERGTextBlock *ptr);
+
+/**
+ * Get the `text` field from a `TextBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_text_block_text(const KREUZBERGTextBlock *ptr);
+
+/**
+ * Get the `bbox` field from a `TextBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBoundingBox *kreuzberg_text_block_bbox(const KREUZBERGTextBlock *ptr);
+
+/**
+ * Get the `font_size` field from a `TextBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_text_block_font_size(const KREUZBERGTextBlock *ptr);
+
+/**
+ * Free a `KMeansResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_k_means_result_free(KREUZBERGKMeansResult *ptr);
+
+/**
+ * Get the `labels` field from a `KMeansResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_k_means_result_labels(const KREUZBERGKMeansResult *ptr);
+
+/**
+ * Free a `HierarchyBlock` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_hierarchy_block_free(KREUZBERGHierarchyBlock *ptr);
+
+/**
+ * Get the `text` field from a `HierarchyBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_hierarchy_block_text(const KREUZBERGHierarchyBlock *ptr);
+
+/**
+ * Get the `bbox` field from a `HierarchyBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGBoundingBox *kreuzberg_hierarchy_block_bbox(const KREUZBERGHierarchyBlock *ptr);
+
+/**
+ * Get the `font_size` field from a `HierarchyBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_hierarchy_block_font_size(const KREUZBERGHierarchyBlock *ptr);
+
+/**
+ * Get the `hierarchy_level` field from a `HierarchyBlock`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGHierarchyLevel *kreuzberg_hierarchy_block_hierarchy_level(const KREUZBERGHierarchyBlock *ptr);
+
+/**
+ * Free a `SegmentData` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_segment_data_free(KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `text` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_segment_data_text(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `x` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_segment_data_x(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `y` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_segment_data_y(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `width` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_segment_data_width(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `height` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_segment_data_height(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `font_size` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_segment_data_font_size(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `is_bold` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_segment_data_is_bold(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `is_italic` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_segment_data_is_italic(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `is_monospace` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_segment_data_is_monospace(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `baseline_y` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_segment_data_baseline_y(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Get the `assigned_role` field from a `SegmentData`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t kreuzberg_segment_data_assigned_role(const KREUZBERGSegmentData *ptr);
+
+/**
+ * Create a `PdfImage` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_pdf_image_free`.
+ */
+KREUZBERGPdfImage *kreuzberg_pdf_image_from_json(const char *json);
+
+/**
+ * Serialize a `PdfImage` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_pdf_image_to_json(const KREUZBERGPdfImage *ptr);
+
+/**
+ * Free a `PdfImage` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_image_free(KREUZBERGPdfImage *ptr);
+
+/**
+ * Get the `page_number` field from a `PdfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pdf_image_page_number(const KREUZBERGPdfImage *ptr);
+
+/**
+ * Get the `image_index` field from a `PdfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pdf_image_image_index(const KREUZBERGPdfImage *ptr);
+
+/**
+ * Get the `width` field from a `PdfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int64_t kreuzberg_pdf_image_width(const KREUZBERGPdfImage *ptr);
+
+/**
+ * Get the `height` field from a `PdfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int64_t kreuzberg_pdf_image_height(const KREUZBERGPdfImage *ptr);
+
+/**
+ * Get the `color_space` field from a `PdfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_image_color_space(const KREUZBERGPdfImage *ptr);
+
+/**
+ * Get the `bits_per_component` field from a `PdfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int64_t kreuzberg_pdf_image_bits_per_component(const KREUZBERGPdfImage *ptr);
+
+/**
+ * Get the `filters` field from a `PdfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_image_filters(const KREUZBERGPdfImage *ptr);
+
+/**
+ * Get the `data` field from a `PdfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint8_t *kreuzberg_pdf_image_data(const KREUZBERGPdfImage *ptr,
+                                  uintptr_t *out_len);
+
+/**
+ * Get the `decoded_format` field from a `PdfImage`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_image_decoded_format(const KREUZBERGPdfImage *ptr);
+
+/**
+ * Free a `PdfImageExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_image_extractor_free(KREUZBERGPdfImageExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfImageExtractor *kreuzberg_pdf_image_extractor_new(const uint8_t *pdf_bytes,
+                                                              uintptr_t pdf_bytes_len);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfImageExtractor *kreuzberg_pdf_image_extractor_new_with_password(const uint8_t *pdf_bytes,
+                                                                            uintptr_t pdf_bytes_len,
+                                                                            const char *password);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pdf_image_extractor_extract_images(const KREUZBERGPdfImageExtractor *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pdf_image_extractor_extract_images_from_page(const KREUZBERGPdfImageExtractor *this_,
+                                                             uint32_t page_number);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_pdf_image_extractor_get_image_count(const KREUZBERGPdfImageExtractor *this_);
+
+/**
+ * Free a `PdfLayoutBBox` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_layout_b_box_free(KREUZBERGPdfLayoutBBox *ptr);
+
+/**
+ * Get the `left` field from a `PdfLayoutBBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_pdf_layout_b_box_left(const KREUZBERGPdfLayoutBBox *ptr);
+
+/**
+ * Get the `bottom` field from a `PdfLayoutBBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_pdf_layout_b_box_bottom(const KREUZBERGPdfLayoutBBox *ptr);
+
+/**
+ * Get the `right` field from a `PdfLayoutBBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_pdf_layout_b_box_right(const KREUZBERGPdfLayoutBBox *ptr);
+
+/**
+ * Get the `top` field from a `PdfLayoutBBox`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_pdf_layout_b_box_top(const KREUZBERGPdfLayoutBBox *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+float kreuzberg_pdf_layout_b_box_width(const KREUZBERGPdfLayoutBBox *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+float kreuzberg_pdf_layout_b_box_height(const KREUZBERGPdfLayoutBBox *this_);
+
+/**
+ * Free a `PageLayoutRegion` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_layout_region_free(KREUZBERGPageLayoutRegion *ptr);
+
+/**
+ * Get the `class` field from a `PageLayoutRegion`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGLayoutClass *kreuzberg_page_layout_region_class(const KREUZBERGPageLayoutRegion *ptr);
+
+/**
+ * Get the `confidence` field from a `PageLayoutRegion`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_page_layout_region_confidence(const KREUZBERGPageLayoutRegion *ptr);
+
+/**
+ * Get the `bbox` field from a `PageLayoutRegion`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPdfLayoutBBox *kreuzberg_page_layout_region_bbox(const KREUZBERGPageLayoutRegion *ptr);
+
+/**
+ * Free a `PageLayoutResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_layout_result_free(KREUZBERGPageLayoutResult *ptr);
+
+/**
+ * Get the `page_index` field from a `PageLayoutResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_page_layout_result_page_index(const KREUZBERGPageLayoutResult *ptr);
+
+/**
+ * Get the `regions` field from a `PageLayoutResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_page_layout_result_regions(const KREUZBERGPageLayoutResult *ptr);
+
+/**
+ * Get the `page_width_pts` field from a `PageLayoutResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_page_layout_result_page_width_pts(const KREUZBERGPageLayoutResult *ptr);
+
+/**
+ * Get the `page_height_pts` field from a `PageLayoutResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+float kreuzberg_page_layout_result_page_height_pts(const KREUZBERGPageLayoutResult *ptr);
+
+/**
+ * Get the `render_width_px` field from a `PageLayoutResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_page_layout_result_render_width_px(const KREUZBERGPageLayoutResult *ptr);
+
+/**
+ * Get the `render_height_px` field from a `PageLayoutResult`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uint32_t kreuzberg_page_layout_result_render_height_px(const KREUZBERGPageLayoutResult *ptr);
+
+/**
+ * Free a `PageTiming` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_timing_free(KREUZBERGPageTiming *ptr);
+
+/**
+ * Get the `render_ms` field from a `PageTiming`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_timing_render_ms(const KREUZBERGPageTiming *ptr);
+
+/**
+ * Get the `preprocess_ms` field from a `PageTiming`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_timing_preprocess_ms(const KREUZBERGPageTiming *ptr);
+
+/**
+ * Get the `onnx_ms` field from a `PageTiming`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_timing_onnx_ms(const KREUZBERGPageTiming *ptr);
+
+/**
+ * Get the `inference_ms` field from a `PageTiming`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_timing_inference_ms(const KREUZBERGPageTiming *ptr);
+
+/**
+ * Get the `postprocess_ms` field from a `PageTiming`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_timing_postprocess_ms(const KREUZBERGPageTiming *ptr);
+
+/**
+ * Get the `mapping_ms` field from a `PageTiming`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_page_timing_mapping_ms(const KREUZBERGPageTiming *ptr);
+
+/**
+ * Free a `LayoutTimingReport` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_layout_timing_report_free(KREUZBERGLayoutTimingReport *ptr);
+
+/**
+ * Get the `total_ms` field from a `LayoutTimingReport`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+double kreuzberg_layout_timing_report_total_ms(const KREUZBERGLayoutTimingReport *ptr);
+
+/**
+ * Get the `per_page` field from a `LayoutTimingReport`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_layout_timing_report_per_page(const KREUZBERGLayoutTimingReport *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_avg_render_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_avg_inference_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_avg_preprocess_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_avg_onnx_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_avg_postprocess_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_total_inference_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_total_render_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_total_preprocess_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_total_onnx_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_layout_timing_report_total_postprocess_ms(const KREUZBERGLayoutTimingReport *this_);
+
+/**
+ * Create a `PdfMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_pdf_metadata_free`.
+ */
+KREUZBERGPdfMetadata *kreuzberg_pdf_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `PdfMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_pdf_metadata_to_json(const KREUZBERGPdfMetadata *ptr);
+
+/**
+ * Free a `PdfMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_metadata_free(KREUZBERGPdfMetadata *ptr);
+
+/**
+ * Get the `pdf_version` field from a `PdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_metadata_pdf_version(const KREUZBERGPdfMetadata *ptr);
+
+/**
+ * Get the `producer` field from a `PdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_metadata_producer(const KREUZBERGPdfMetadata *ptr);
+
+/**
+ * Get the `is_encrypted` field from a `PdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_pdf_metadata_is_encrypted(const KREUZBERGPdfMetadata *ptr);
+
+/**
+ * Get the `width` field from a `PdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int64_t kreuzberg_pdf_metadata_width(const KREUZBERGPdfMetadata *ptr);
+
+/**
+ * Get the `height` field from a `PdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int64_t kreuzberg_pdf_metadata_height(const KREUZBERGPdfMetadata *ptr);
+
+/**
+ * Get the `page_count` field from a `PdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+uintptr_t kreuzberg_pdf_metadata_page_count(const KREUZBERGPdfMetadata *ptr);
+
+/**
+ * Create a `PdfExtractionMetadata` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_pdf_extraction_metadata_free`.
+ */
+KREUZBERGPdfExtractionMetadata *kreuzberg_pdf_extraction_metadata_from_json(const char *json);
+
+/**
+ * Serialize a `PdfExtractionMetadata` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_pdf_extraction_metadata_to_json(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Free a `PdfExtractionMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_extraction_metadata_free(KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Get the `title` field from a `PdfExtractionMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_extraction_metadata_title(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Get the `subject` field from a `PdfExtractionMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_extraction_metadata_subject(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Get the `authors` field from a `PdfExtractionMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_extraction_metadata_authors(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Get the `keywords` field from a `PdfExtractionMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_extraction_metadata_keywords(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Get the `created_at` field from a `PdfExtractionMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_extraction_metadata_created_at(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Get the `modified_at` field from a `PdfExtractionMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_extraction_metadata_modified_at(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Get the `created_by` field from a `PdfExtractionMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_pdf_extraction_metadata_created_by(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Get the `pdf_specific` field from a `PdfExtractionMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPdfMetadata *kreuzberg_pdf_extraction_metadata_pdf_specific(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Get the `page_structure` field from a `PdfExtractionMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+KREUZBERGPageStructure *kreuzberg_pdf_extraction_metadata_page_structure(const KREUZBERGPdfExtractionMetadata *ptr);
+
+/**
+ * Free a `CommonPdfMetadata` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_common_pdf_metadata_free(KREUZBERGCommonPdfMetadata *ptr);
+
+/**
+ * Get the `title` field from a `CommonPdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_common_pdf_metadata_title(const KREUZBERGCommonPdfMetadata *ptr);
+
+/**
+ * Get the `subject` field from a `CommonPdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_common_pdf_metadata_subject(const KREUZBERGCommonPdfMetadata *ptr);
+
+/**
+ * Get the `authors` field from a `CommonPdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_common_pdf_metadata_authors(const KREUZBERGCommonPdfMetadata *ptr);
+
+/**
+ * Get the `keywords` field from a `CommonPdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_common_pdf_metadata_keywords(const KREUZBERGCommonPdfMetadata *ptr);
+
+/**
+ * Get the `created_at` field from a `CommonPdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_common_pdf_metadata_created_at(const KREUZBERGCommonPdfMetadata *ptr);
+
+/**
+ * Get the `modified_at` field from a `CommonPdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_common_pdf_metadata_modified_at(const KREUZBERGCommonPdfMetadata *ptr);
+
+/**
+ * Get the `created_by` field from a `CommonPdfMetadata`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+char *kreuzberg_common_pdf_metadata_created_by(const KREUZBERGCommonPdfMetadata *ptr);
+
+/**
+ * Create a `PageRenderOptions` from a JSON string. Returns null on failure.
+ * # Safety
+ * JSON string must be valid UTF-8 and null-terminated.
+ * Returned handle must be freed with `kreuzberg_page_render_options_free`.
+ */
+KREUZBERGPageRenderOptions *kreuzberg_page_render_options_from_json(const char *json);
+
+/**
+ * Serialize a `PageRenderOptions` to a JSON string. Returns null on failure.
+ * # Safety
+ * `ptr` must be a valid, non-null pointer returned by a `kreuzberg` function.
+ * The returned string must be freed with `kreuzberg_free_string`.
+ */
+char *kreuzberg_page_render_options_to_json(const KREUZBERGPageRenderOptions *ptr);
+
+/**
+ * Free a `PageRenderOptions` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_page_render_options_free(KREUZBERGPageRenderOptions *ptr);
+
+/**
+ * Get the `target_dpi` field from a `PageRenderOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_render_options_target_dpi(const KREUZBERGPageRenderOptions *ptr);
+
+/**
+ * Get the `max_image_dimension` field from a `PageRenderOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_render_options_max_image_dimension(const KREUZBERGPageRenderOptions *ptr);
+
+/**
+ * Get the `auto_adjust_dpi` field from a `PageRenderOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_render_options_auto_adjust_dpi(const KREUZBERGPageRenderOptions *ptr);
+
+/**
+ * Get the `min_dpi` field from a `PageRenderOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_render_options_min_dpi(const KREUZBERGPageRenderOptions *ptr);
+
+/**
+ * Get the `max_dpi` field from a `PageRenderOptions`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_render_options_max_dpi(const KREUZBERGPageRenderOptions *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPageRenderOptions *kreuzberg_page_render_options_default(void);
+
+/**
+ * Free a `PdfPageIterator` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_page_iterator_free(KREUZBERGPdfPageIterator *ptr);
+
+/**
+ * Create an iterator from raw PDF bytes.
+ *
+ * Validates the PDF and determines the page count. The PDF bytes are
+ * owned by the iterator — the file is not re-read from disk.
+ *
+ * # Errors
+ *
+ * Returns an error if the PDF is invalid or password-protected without
+ * the correct password.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfPageIterator *kreuzberg_pdf_page_iterator_new(const uint8_t *pdf_bytes,
+                                                          uintptr_t pdf_bytes_len,
+                                                          int32_t dpi,
+                                                          const char *password);
+
+/**
+ * Create an iterator from a file path.
+ *
+ * Reads the file into memory once. Subsequent iterations render from
+ * the owned bytes without re-reading the file.
+ *
+ * # Errors
+ *
+ * Returns an error if the file cannot be read or the PDF is invalid.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfPageIterator *kreuzberg_pdf_page_iterator_from_file(const char *_path,
+                                                                int32_t _dpi,
+                                                                const char *_password);
+
+/**
+ * Number of pages in the PDF.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_pdf_page_iterator_page_count(const KREUZBERGPdfPageIterator *this_);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pdf_page_iterator_next(KREUZBERGPdfPageIterator *_this);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pdf_page_iterator_size_hint(const KREUZBERGPdfPageIterator *_this);
+
+/**
+ * Free a `PdfRenderer` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_renderer_free(KREUZBERGPdfRenderer *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfRenderer *kreuzberg_pdf_renderer_new(void);
+
+/**
+ * Free a `PdfUnifiedExtractionResult` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_unified_extraction_result_free(KREUZBERGPdfUnifiedExtractionResult *ptr);
+
+/**
+ * Free a `PdfTextExtractor` handle.
+ * # Safety
+ * Pointer must have been returned by this library, or be null.
+ */
+void kreuzberg_pdf_text_extractor_free(KREUZBERGPdfTextExtractor *ptr);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfTextExtractor *kreuzberg_pdf_text_extractor_new(void);
+
+/**
+ * Convert an integer to a `ExecutionProviderType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_execution_provider_type_from_i32(int32_t value);
+
+/**
+ * Convert a `ExecutionProviderType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_execution_provider_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `OutputFormat` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_output_format_from_i32(int32_t value);
+
+/**
+ * Convert a `OutputFormat` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_output_format_from_str(const char *name);
+
+/**
+ * Convert an integer to a `HtmlTheme` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_html_theme_from_i32(int32_t value);
+
+/**
+ * Convert a `HtmlTheme` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_html_theme_from_str(const char *name);
+
+/**
+ * Convert an integer to a `TableModel` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_table_model_from_i32(int32_t value);
+
+/**
+ * Convert a `TableModel` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_table_model_from_str(const char *name);
+
+/**
+ * Convert an integer to a `PdfBackend` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pdf_backend_from_i32(int32_t value);
+
+/**
+ * Convert a `PdfBackend` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_pdf_backend_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ChunkerType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_chunker_type_from_i32(int32_t value);
+
+/**
+ * Convert a `ChunkerType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_chunker_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ChunkSizing` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_chunk_sizing_from_i32(int32_t value);
+
+/**
+ * Convert a `ChunkSizing` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_chunk_sizing_from_str(const char *name);
+
+/**
+ * Convert an integer to a `EmbeddingModelType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_embedding_model_type_from_i32(int32_t value);
+
+/**
+ * Convert a `EmbeddingModelType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_embedding_model_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `CodeContentMode` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_code_content_mode_from_i32(int32_t value);
+
+/**
+ * Convert a `CodeContentMode` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_code_content_mode_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ListType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_list_type_from_i32(int32_t value);
+
+/**
+ * Convert a `ListType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_list_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `HwpError` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_hwp_error_from_i32(int32_t value);
+
+/**
+ * Convert a `HwpError` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_hwp_error_from_str(const char *name);
+
+/**
+ * Convert an integer to a `DrawingType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_drawing_type_from_i32(int32_t value);
+
+/**
+ * Convert a `DrawingType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_drawing_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `WrapType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_wrap_type_from_i32(int32_t value);
+
+/**
+ * Convert a `WrapType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_wrap_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `FracType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_frac_type_from_i32(int32_t value);
+
+/**
+ * Convert a `FracType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_frac_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `MathNode` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_math_node_from_i32(int32_t value);
+
+/**
+ * Convert a `MathNode` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_math_node_from_str(const char *name);
+
+/**
+ * Convert an integer to a `DocumentElement` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_document_element_from_i32(int32_t value);
+
+/**
+ * Convert a `DocumentElement` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_document_element_from_str(const char *name);
+
+/**
+ * Convert an integer to a `HeaderFooterType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_header_footer_type_from_i32(int32_t value);
+
+/**
+ * Convert a `HeaderFooterType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_header_footer_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `NoteType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_note_type_from_i32(int32_t value);
+
+/**
+ * Convert a `NoteType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_note_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `Orientation` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_orientation_from_i32(int32_t value);
+
+/**
+ * Convert a `Orientation` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_orientation_from_str(const char *name);
+
+/**
+ * Convert an integer to a `StyleType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_style_type_from_i32(int32_t value);
+
+/**
+ * Convert a `StyleType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_style_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ThemeColor` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_theme_color_from_i32(int32_t value);
+
+/**
+ * Convert a `ThemeColor` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_theme_color_from_str(const char *name);
+
+/**
+ * Convert an integer to a `SecurityError` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_security_error_from_i32(int32_t value);
+
+/**
+ * Convert a `SecurityError` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_security_error_from_str(const char *name);
+
+/**
+ * Convert an integer to a `OcrBackendType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_backend_type_from_i32(int32_t value);
+
+/**
+ * Convert a `OcrBackendType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_ocr_backend_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ReductionLevel` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_reduction_level_from_i32(int32_t value);
+
+/**
+ * Convert a `ReductionLevel` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_reduction_level_from_str(const char *name);
+
+/**
+ * Convert an integer to a `PdfAnnotationType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pdf_annotation_type_from_i32(int32_t value);
+
+/**
+ * Convert a `PdfAnnotationType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_pdf_annotation_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `BlockType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_block_type_from_i32(int32_t value);
+
+/**
+ * Convert a `BlockType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_block_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `InlineType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_inline_type_from_i32(int32_t value);
+
+/**
+ * Convert a `InlineType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_inline_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `RelationshipKind` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_relationship_kind_from_i32(int32_t value);
+
+/**
+ * Convert a `RelationshipKind` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_relationship_kind_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ContentLayer` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_content_layer_from_i32(int32_t value);
+
+/**
+ * Convert a `ContentLayer` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_content_layer_from_str(const char *name);
+
+/**
+ * Convert an integer to a `NodeContent` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_node_content_from_i32(int32_t value);
+
+/**
+ * Convert a `NodeContent` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_node_content_from_str(const char *name);
+
+/**
+ * Convert an integer to a `AnnotationKind` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_annotation_kind_from_i32(int32_t value);
+
+/**
+ * Convert a `AnnotationKind` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_annotation_kind_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ChunkType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_chunk_type_from_i32(int32_t value);
+
+/**
+ * Convert a `ChunkType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_chunk_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ElementType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_element_type_from_i32(int32_t value);
+
+/**
+ * Convert a `ElementType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_element_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `FormatMetadata` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_format_metadata_from_i32(int32_t value);
+
+/**
+ * Convert a `FormatMetadata` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_format_metadata_from_str(const char *name);
+
+/**
+ * Convert an integer to a `TextDirection` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_text_direction_from_i32(int32_t value);
+
+/**
+ * Convert a `TextDirection` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_text_direction_from_str(const char *name);
+
+/**
+ * Convert an integer to a `LinkType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_link_type_from_i32(int32_t value);
+
+/**
+ * Convert a `LinkType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_link_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ImageType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_image_type_from_i32(int32_t value);
+
+/**
+ * Convert a `ImageType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_image_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `StructuredDataType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_structured_data_type_from_i32(int32_t value);
+
+/**
+ * Convert a `StructuredDataType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_structured_data_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `OcrBoundingGeometry` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_bounding_geometry_from_i32(int32_t value);
+
+/**
+ * Convert a `OcrBoundingGeometry` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_ocr_bounding_geometry_from_str(const char *name);
+
+/**
+ * Convert an integer to a `OcrElementLevel` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_element_level_from_i32(int32_t value);
+
+/**
+ * Convert a `OcrElementLevel` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_ocr_element_level_from_str(const char *name);
+
+/**
+ * Convert an integer to a `PageUnitType` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_page_unit_type_from_i32(int32_t value);
+
+/**
+ * Convert a `PageUnitType` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_page_unit_type_from_str(const char *name);
+
+/**
+ * Convert an integer to a `UriKind` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_uri_kind_from_i32(int32_t value);
+
+/**
+ * Convert a `UriKind` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_uri_kind_from_str(const char *name);
+
+/**
+ * Convert an integer to a `PoolError` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pool_error_from_i32(int32_t value);
+
+/**
+ * Convert a `PoolError` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_pool_error_from_str(const char *name);
+
+/**
+ * Convert an integer to a `ExtractionSource` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_extraction_source_from_i32(int32_t value);
+
+/**
+ * Convert a `ExtractionSource` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_extraction_source_from_str(const char *name);
+
+/**
+ * Convert an integer to a `KeywordAlgorithm` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_keyword_algorithm_from_i32(int32_t value);
+
+/**
+ * Convert a `KeywordAlgorithm` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_keyword_algorithm_from_str(const char *name);
+
+/**
+ * Convert an integer to a `OcrError` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_ocr_error_from_i32(int32_t value);
+
+/**
+ * Convert a `OcrError` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_ocr_error_from_str(const char *name);
+
+/**
+ * Convert an integer to a `PSMMode` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_psm_mode_from_i32(int32_t value);
+
+/**
+ * Convert a `PSMMode` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_psm_mode_from_str(const char *name);
+
+/**
+ * Convert an integer to a `PaddleLanguage` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_paddle_language_from_i32(int32_t value);
+
+/**
+ * Convert a `PaddleLanguage` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_paddle_language_from_str(const char *name);
+
+/**
+ * Convert an integer to a `LayoutClass` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_layout_class_from_i32(int32_t value);
+
+/**
+ * Convert a `LayoutClass` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_layout_class_from_str(const char *name);
+
+/**
+ * Convert an integer to a `PdfError` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_pdf_error_from_i32(int32_t value);
+
+/**
+ * Convert a `PdfError` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_pdf_error_from_str(const char *name);
+
+/**
+ * Convert an integer to a `HierarchyLevel` variant. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_hierarchy_level_from_i32(int32_t value);
+
+/**
+ * Convert a `HierarchyLevel` variant name (C string) to its integer value. Returns -1 on invalid input.
+ * # Safety
+ * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
+ */
+int32_t kreuzberg_hierarchy_level_from_str(const char *name);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_cache_metadata(const char *_cache_dir);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_cleanup_cache(const char *_cache_dir,
+                              double _max_age_days,
+                              double _max_size_mb,
+                              double _target_size_ratio);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_smart_cleanup_cache(const char *_cache_dir,
+                                    double _max_age_days,
+                                    double _max_size_mb,
+                                    double _min_free_space_mb);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_is_cache_valid(const char *cache_path,
+                                 double max_age_days);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_clear_cache_directory(const char *_cache_dir);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_batch_cleanup_caches(const char *_cache_dirs,
+                                     double _max_age_days,
+                                     double _max_size_mb,
+                                     double _min_free_space_mb);
+
+/**
+ * Generate a deterministic cache key from configuration parameters.
+ *
+ * # Algorithm
+ *
+ * Uses blake3 (cryptographic, SIMD-accelerated) for collision-resistant cache keys.
+ * Cache keys are generated by:
+ * 1. Sorting key-value pairs by key (for determinism)
+ * 2. Concatenating as "key1=val1&key2=val2&..."
+ * 3. Hashing with blake3 and formatting as 32-character hex (first 128 bits)
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::cache::generate_cache_key;
+ *
+ * let parts = [("format", "pdf"), ("ocr", "true"), ("lang", "en")];
+ * let key = generate_cache_key(&parts);
+ * assert_eq!(key.len(), 32);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_generate_cache_key(const char *_parts);
+
+/**
+ * Hash arbitrary bytes with blake3, returning a 32-char hex string.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_blake3_hash_bytes(const uint8_t *data,
+                                  uintptr_t data_len);
+
+/**
+ * Hash a file's content with blake3 using streaming 64 KiB reads.
+ *
+ * Returns a 32-char hex string (128 bits of blake3 output).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_blake3_hash_file(const char *path);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_get_available_disk_space(const char *path);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint64_t kreuzberg_fast_hash(const uint8_t *data,
+                             uintptr_t data_len);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_cache_key(const char *key);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_filter_old_cache_entries(const char *cache_times,
+                                         double current_time,
+                                         double max_age_seconds);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_sort_cache_by_access_time(const char *_entries);
+
+/**
+ * Validate and sanitize a cache namespace string.
+ *
+ * Namespace must be alphanumeric, hyphens, or underscores only, max 64 chars.
+ * Returns `None` if the input is invalid.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_sanitize_namespace(const char *namespace_);
+
+/**
+ * Check if we're currently in batch processing mode.
+ *
+ * Returns `false` if the task-local is not set (single-file mode).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_is_batch_mode(void);
+
+/**
+ * Resolve the effective thread budget from config or auto-detection.
+ *
+ * User-set `max_threads` takes priority. Otherwise auto-detects from `num_cpus`,
+ * capped at 8 for sane defaults in serverless environments.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::core::config::ConcurrencyConfig;
+ * use kreuzberg::core::config::concurrency::resolve_thread_budget;
+ *
+ * let config = ConcurrencyConfig { max_threads: Some(4) };
+ * assert_eq!(resolve_thread_budget(Some(&config)), 4);
+ * assert!(resolve_thread_budget(None) >= 1);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_resolve_thread_budget(const char *_config);
+
+/**
+ * Initialize the global Rayon thread pool with the given budget.
+ *
+ * Safe to call multiple times — only the first call takes effect (subsequent
+ * calls are silently ignored).
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::core::config::concurrency::init_thread_pools;
+ *
+ * init_thread_pools(4);
+ * init_thread_pools(2); // no-op: pool already initialized
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_init_thread_pools(uintptr_t budget);
+
+/**
+ * Merge extraction configuration using JSON-level field override.
+ *
+ * Serializes the base config to JSON, merges each field from the override JSON
+ * (top-level only), and deserializes back. This correctly handles boolean fields
+ * explicitly set to their default values — the override always wins for any field
+ * present in `override_json`.
+ *
+ * Fields **not** present in `override_json` are preserved from `base`.
+ *
+ * # Errors
+ *
+ * Returns `Err` if the base config cannot be serialized, or if the merged JSON
+ * cannot be deserialized back into `ExtractionConfig` (e.g., wrong field types).
+ *
+ * # Examples
+ *
+ * ```rust,ignore
+ * use kreuzberg::ExtractionConfig;
+ * use serde_json::json;
+ *
+ * let mut base = ExtractionConfig::default();
+ * base.use_cache = true;
+ *
+ * let overrides = json!({"force_ocr": true});
+ * let merged = kreuzberg::core::config::merge::merge_config_json(&base, overrides).unwrap();
+ * assert!(merged.use_cache);   // preserved from base
+ * assert!(merged.force_ocr);   // applied from override
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionConfig *kreuzberg_merge_config_json(const KREUZBERGExtractionConfig *base,
+                                                       const char *override_json);
+
+/**
+ * Build extraction config by optionally merging JSON overrides into a base config.
+ *
+ * If `override_json` is `None`, returns a clone of `base`. Otherwise delegates
+ * to [`merge_config_json`].
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionConfig *kreuzberg_build_config_from_json(const KREUZBERGExtractionConfig *base,
+                                                            const char *override_json);
+
+/**
+ * Validate a port number for server configuration.
+ *
+ * Port must be in the range 1-65535. While ports 1-1023 are privileged and may require
+ * special permissions on some systems, they are still valid port numbers.
+ *
+ * # Arguments
+ *
+ * * `port` - The port number to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the port is valid, or a `ValidationError` with details about valid ranges.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_port;
+ *
+ * assert!(validate_port(8000).is_ok());
+ * assert!(validate_port(80).is_ok());
+ * assert!(validate_port(1).is_ok());
+ * assert!(validate_port(65535).is_ok());
+ * assert!(validate_port(0).is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_port(uint16_t port);
+
+/**
+ * Validate a host/IP address string for server configuration.
+ *
+ * Accepts valid IPv4 addresses (e.g., "127.0.0.1", "0.0.0.0"), valid IPv6 addresses
+ * (e.g., "::1", "::"), and hostnames (e.g., "localhost", "example.com").
+ *
+ * # Arguments
+ *
+ * * `host` - The host/IP address string to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the host is valid, or a `ValidationError` with details about valid formats.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_host;
+ *
+ * assert!(validate_host("127.0.0.1").is_ok());
+ * assert!(validate_host("0.0.0.0").is_ok());
+ * assert!(validate_host("::1").is_ok());
+ * assert!(validate_host("::").is_ok());
+ * assert!(validate_host("localhost").is_ok());
+ * assert!(validate_host("example.com").is_ok());
+ * assert!(validate_host("").is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_host(const char *host);
+
+/**
+ * Validate a CORS (Cross-Origin Resource Sharing) origin URL.
+ *
+ * Accepts valid HTTP/HTTPS URLs (e.g., "https://example.com") or the wildcard "*"
+ * to allow all origins. URLs must start with "http://" or "https://", or be exactly "*".
+ *
+ * # Arguments
+ *
+ * * `origin` - The CORS origin URL to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the origin is valid, or a `ValidationError` with details about valid formats.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_cors_origin;
+ *
+ * assert!(validate_cors_origin("https://example.com").is_ok());
+ * assert!(validate_cors_origin("http://localhost:3000").is_ok());
+ * assert!(validate_cors_origin("*").is_ok());
+ * assert!(validate_cors_origin("not-a-url").is_err());
+ * assert!(validate_cors_origin("ftp://example.com").is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_cors_origin(const char *origin);
+
+/**
+ * Validate an upload size limit for server configuration.
+ *
+ * Upload size must be greater than 0 (measured in bytes).
+ *
+ * # Arguments
+ *
+ * * `size` - The maximum upload size in bytes to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the size is valid, or a `ValidationError` with details about constraints.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_upload_size;
+ *
+ * assert!(validate_upload_size(1024).is_ok());
+ * assert!(validate_upload_size(1_000_000).is_ok());
+ * assert!(validate_upload_size(0).is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_upload_size(uintptr_t size);
+
+/**
+ * Validate a binarization method string.
+ *
+ * # Arguments
+ *
+ * * `method` - The binarization method to validate (e.g., "otsu", "adaptive", "sauvola")
+ *
+ * # Returns
+ *
+ * `Ok(())` if the method is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_binarization_method;
+ *
+ * assert!(validate_binarization_method("otsu").is_ok());
+ * assert!(validate_binarization_method("adaptive").is_ok());
+ * assert!(validate_binarization_method("invalid").is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_binarization_method(const char *method);
+
+/**
+ * Validate a token reduction level string.
+ *
+ * # Arguments
+ *
+ * * `level` - The token reduction level to validate (e.g., "off", "light", "moderate")
+ *
+ * # Returns
+ *
+ * `Ok(())` if the level is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_token_reduction_level;
+ *
+ * assert!(validate_token_reduction_level("off").is_ok());
+ * assert!(validate_token_reduction_level("moderate").is_ok());
+ * assert!(validate_token_reduction_level("extreme").is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_token_reduction_level(const char *level);
+
+/**
+ * Validate an OCR backend string.
+ *
+ * # Arguments
+ *
+ * * `backend` - The OCR backend to validate (e.g., "tesseract", "easyocr", "paddleocr")
+ *
+ * # Returns
+ *
+ * `Ok(())` if the backend is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_ocr_backend;
+ *
+ * assert!(validate_ocr_backend("tesseract").is_ok());
+ * assert!(validate_ocr_backend("easyocr").is_ok());
+ * assert!(validate_ocr_backend("invalid").is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_ocr_backend(const char *backend);
+
+/**
+ * Validate a language code (ISO 639-1 or 639-3 format).
+ *
+ * Accepts both 2-letter ISO 639-1 codes (e.g., "en", "de") and
+ * 3-letter ISO 639-3 codes (e.g., "eng", "deu") for broader compatibility.
+ *
+ * # Arguments
+ *
+ * * `code` - The language code to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the code is valid, or a `ValidationError` indicating an invalid language code.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_language_code;
+ *
+ * assert!(validate_language_code("en").is_ok());
+ * assert!(validate_language_code("eng").is_ok());
+ * assert!(validate_language_code("de").is_ok());
+ * assert!(validate_language_code("deu").is_ok());
+ * assert!(validate_language_code("invalid").is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_language_code(const char *code);
+
+/**
+ * Validate a tesseract Page Segmentation Mode (PSM).
+ *
+ * # Arguments
+ *
+ * * `psm` - The PSM value to validate (0-13)
+ *
+ * # Returns
+ *
+ * `Ok(())` if the PSM is valid, or a `ValidationError` with details about valid ranges.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_tesseract_psm;
+ *
+ * assert!(validate_tesseract_psm(3).is_ok());  // Fully automatic
+ * assert!(validate_tesseract_psm(6).is_ok());  // Single block of text
+ * assert!(validate_tesseract_psm(14).is_err()); // Out of range
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_tesseract_psm(int32_t psm);
+
+/**
+ * Validate a tesseract OCR Engine Mode (OEM).
+ *
+ * # Arguments
+ *
+ * * `oem` - The OEM value to validate (0-3)
+ *
+ * # Returns
+ *
+ * `Ok(())` if the OEM is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_tesseract_oem;
+ *
+ * assert!(validate_tesseract_oem(1).is_ok());  // Neural nets (LSTM)
+ * assert!(validate_tesseract_oem(2).is_ok());  // Legacy + LSTM
+ * assert!(validate_tesseract_oem(4).is_err()); // Out of range
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_tesseract_oem(int32_t oem);
+
+/**
+ * Validate a document extraction output format.
+ *
+ * Accepts the following formats and aliases:
+ * - "plain" or "text" for plain text output
+ * - "markdown" or "md" for Markdown output
+ * - "djot" for Djot markup format
+ * - "html" for HTML output
+ *
+ * # Arguments
+ *
+ * * `format` - The output format to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the format is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_output_format;
+ *
+ * assert!(validate_output_format("text").is_ok());
+ * assert!(validate_output_format("plain").is_ok());
+ * assert!(validate_output_format("markdown").is_ok());
+ * assert!(validate_output_format("md").is_ok());
+ * assert!(validate_output_format("djot").is_ok());
+ * assert!(validate_output_format("html").is_ok());
+ * assert!(validate_output_format("json").is_ok());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_output_format(const char *format);
+
+/**
+ * Validate a confidence threshold value.
+ *
+ * Confidence thresholds should be between 0.0 and 1.0 inclusive.
+ *
+ * # Arguments
+ *
+ * * `confidence` - The confidence threshold to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the confidence is valid, or a `ValidationError` with details about valid ranges.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_confidence;
+ *
+ * assert!(validate_confidence(0.5).is_ok());
+ * assert!(validate_confidence(0.0).is_ok());
+ * assert!(validate_confidence(1.0).is_ok());
+ * assert!(validate_confidence(1.5).is_err());
+ * assert!(validate_confidence(-0.1).is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_confidence(double confidence);
+
+/**
+ * Validate a DPI (dots per inch) value.
+ *
+ * DPI should be a positive integer, typically 72-600.
+ *
+ * # Arguments
+ *
+ * * `dpi` - The DPI value to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the DPI is valid, or a `ValidationError` with details about valid ranges.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_dpi;
+ *
+ * assert!(validate_dpi(96).is_ok());
+ * assert!(validate_dpi(300).is_ok());
+ * assert!(validate_dpi(0).is_err());
+ * assert!(validate_dpi(-1).is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_dpi(int32_t dpi);
+
+/**
+ * Validate chunk size parameters.
+ *
+ * Checks that max_chars > 0 and max_overlap < max_chars.
+ *
+ * # Arguments
+ *
+ * * `max_chars` - The maximum characters per chunk
+ * * `max_overlap` - The maximum overlap between chunks
+ *
+ * # Returns
+ *
+ * `Ok(())` if the parameters are valid, or a `ValidationError` with details about constraints.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_chunking_params;
+ *
+ * assert!(validate_chunking_params(1000, 200).is_ok());
+ * assert!(validate_chunking_params(500, 50).is_ok());
+ * assert!(validate_chunking_params(0, 100).is_err()); // max_chars must be > 0
+ * assert!(validate_chunking_params(100, 150).is_err()); // overlap >= max_chars
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_chunking_params(uintptr_t max_chars,
+                                           uintptr_t max_overlap);
+
+/**
+ * Validate that an [`LlmConfig`](crate::core::config::LlmConfig) has a non-empty model string.
+ *
+ * # Arguments
+ *
+ * * `model` - The model string to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the model is non-empty, or a `ValidationError` otherwise.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_llm_config_model;
+ *
+ * assert!(validate_llm_config_model("openai/gpt-4o").is_ok());
+ * assert!(validate_llm_config_model("").is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_llm_config_model(const char *model);
+
+/**
+ * Validate that a VLM OCR backend has the required `vlm_config`.
+ *
+ * When the OCR backend is set to `"vlm"`, the `vlm_config` field must be present
+ * to provide the model endpoint configuration, and the model string must be non-empty.
+ *
+ * # Arguments
+ *
+ * * `backend` - The OCR backend name
+ * * `vlm_config` - The optional VLM config to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the backend is not `"vlm"` or `vlm_config` is present with a valid model,
+ * or a `ValidationError` if `"vlm"` backend is used without `vlm_config` or with an empty model.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_vlm_backend_config;
+ * use kreuzberg::core::config::LlmConfig;
+ *
+ * assert!(validate_vlm_backend_config("tesseract", None).is_ok());
+ * let config = LlmConfig {
+ *     model: "openai/gpt-4o".to_string(),
+ *     api_key: None,
+ *     base_url: None,
+ *     timeout_secs: None,
+ *     max_retries: None,
+ *     temperature: None,
+ *     max_tokens: None,
+ * };
+ * assert!(validate_vlm_backend_config("vlm", Some(&config)).is_ok());
+ * assert!(validate_vlm_backend_config("vlm", None).is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_vlm_backend_config(const char *backend,
+                                              const KREUZBERGLlmConfig *vlm_config);
+
+/**
+ * Validate structured extraction configuration.
+ *
+ * When structured extraction is enabled, the JSON schema must not be null or empty,
+ * and the LLM config must have a non-empty model string.
+ *
+ * # Arguments
+ *
+ * * `schema` - The JSON schema value to validate
+ * * `llm_model` - The LLM model string from the nested `LlmConfig`
+ *
+ * # Returns
+ *
+ * `Ok(())` if the schema is a non-empty object or array and the model is valid,
+ * or a `ValidationError` if the schema is null/empty or the model is empty.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_structured_extraction_schema;
+ *
+ * let valid = serde_json::json!({"type": "object", "properties": {}});
+ * assert!(validate_structured_extraction_schema(&valid, "openai/gpt-4o").is_ok());
+ *
+ * let empty = serde_json::Value::Object(Default::default());
+ * assert!(validate_structured_extraction_schema(&empty, "openai/gpt-4o").is_err());
+ *
+ * let null = serde_json::Value::Null;
+ * assert!(validate_structured_extraction_schema(&null, "openai/gpt-4o").is_err());
+ *
+ * let valid = serde_json::json!({"type": "object", "properties": {}});
+ * assert!(validate_structured_extraction_schema(&valid, "").is_err());
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_structured_extraction_schema(const char *schema,
+                                                        const char *llm_model);
+
+/**
+ * Extract content from a byte array.
+ *
+ * This is the main entry point for in-memory extraction. It performs the following steps:
+ * 1. Validate MIME type
+ * 2. Handle legacy format conversion if needed
+ * 3. Select appropriate extractor from registry
+ * 4. Extract content
+ * 5. Run post-processing pipeline
+ *
+ * # Arguments
+ *
+ * * `content` - The byte array to extract
+ * * `mime_type` - MIME type of the content
+ * * `config` - Extraction configuration
+ *
+ * # Returns
+ *
+ * An `ExtractionResult` containing the extracted content and metadata.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Validation` if MIME type is invalid.
+ * Returns `KreuzbergError::UnsupportedFormat` if MIME type is not supported.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::extract_bytes;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let bytes = b"Hello, world!";
+ * let result = extract_bytes(bytes, "text/plain", &config).await?;
+ * println!("Content: {}", result.content);
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_extract_bytes(const uint8_t *content,
+                                                   uintptr_t content_len,
+                                                   const char *mime_type,
+                                                   const KREUZBERGExtractionConfig *config);
+
+/**
+ * Extract content from a file.
+ *
+ * This is the main entry point for file-based extraction. It performs the following steps:
+ * 1. Check cache for existing result (if caching enabled)
+ * 2. Detect or validate MIME type
+ * 3. Select appropriate extractor from registry
+ * 4. Extract content
+ * 5. Run post-processing pipeline
+ * 6. Store result in cache (if caching enabled)
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the file to extract
+ * * `mime_type` - Optional MIME type override. If None, will be auto-detected
+ * * `config` - Extraction configuration
+ *
+ * # Returns
+ *
+ * An `ExtractionResult` containing the extracted content and metadata.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Io` if the file doesn't exist (NotFound) or for other file I/O errors.
+ * Returns `KreuzbergError::UnsupportedFormat` if MIME type is not supported.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::extract_file;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let result = extract_file("document.pdf", None, &config).await?;
+ * println!("Content: {}", result.content);
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_extract_file(const char *_path,
+                                                  const char *_mime_type,
+                                                  const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPoolSizeHint *kreuzberg_get_pool_sizing_hint(uint64_t file_size,
+                                                      const char *mime_type);
+
+/**
+ * Synchronous wrapper for `extract_file`.
+ *
+ * This is a convenience function that blocks the current thread until extraction completes.
+ * For async code, use `extract_file` directly.
+ *
+ * Uses the global Tokio runtime for 100x+ performance improvement over creating
+ * a new runtime per call. Always uses the global runtime to avoid nested runtime issues.
+ *
+ * This function is only available with the `tokio-runtime` feature. For WASM targets,
+ * use a truly synchronous extraction approach instead.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::extract_file_sync;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * let config = ExtractionConfig::default();
+ * let result = extract_file_sync("document.pdf", None, &config)?;
+ * println!("Content: {}", result.content);
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_extract_file_sync(const char *_path,
+                                                       const char *_mime_type,
+                                                       const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Synchronous wrapper for `extract_bytes`.
+ *
+ * Uses the global Tokio runtime for 100x+ performance improvement over creating
+ * a new runtime per call.
+ *
+ * With the `tokio-runtime` feature, this blocks the current thread using the global
+ * Tokio runtime. Without it (WASM), this calls a truly synchronous implementation.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::extract_bytes_sync;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * let config = ExtractionConfig::default();
+ * let bytes = b"Hello, world!";
+ * let result = extract_bytes_sync(bytes, "text/plain", &config)?;
+ * println!("Content: {}", result.content);
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_extract_bytes_sync(const uint8_t *content,
+                                                        uintptr_t content_len,
+                                                        const char *mime_type,
+                                                        const KREUZBERGExtractionConfig *config);
+
+/**
+ * Synchronous wrapper for `batch_extract_file`.
+ *
+ * Uses the global Tokio runtime for optimal performance.
+ * Only available with `tokio-runtime` (WASM has no filesystem).
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_file_sync;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use kreuzberg::FileExtractionConfig;
+ * use std::path::PathBuf;
+ *
+ * let config = ExtractionConfig::default();
+ * let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
+ *     ("doc1.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
+ *     ("doc2.pdf".into(), None),
+ * ];
+ * let results = batch_extract_file_sync(items, &config)?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_batch_extract_file_sync(const char *_items,
+                                        const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Synchronous wrapper for `batch_extract_bytes`.
+ *
+ * Uses the global Tokio runtime for optimal performance.
+ * With the `tokio-runtime` feature, this blocks the current thread using the global
+ * Tokio runtime. Without it (WASM), this calls a truly synchronous implementation
+ * that iterates through items and calls `extract_bytes_sync()`.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_bytes_sync;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use kreuzberg::FileExtractionConfig;
+ *
+ * let config = ExtractionConfig::default();
+ * let items = vec![
+ *     (b"content".to_vec(), "text/plain".to_string(), None),
+ *     (b"other".to_vec(), "text/plain".to_string(),
+ *      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
+ * ];
+ * let results = batch_extract_bytes_sync(items, &config)?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_batch_extract_bytes_sync(const char *_items,
+                                         const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Extract content from multiple files concurrently.
+ *
+ * This function processes multiple files in parallel, automatically managing
+ * concurrency to prevent resource exhaustion. The concurrency limit can be
+ * configured via `ExtractionConfig::max_concurrent_extractions` or defaults
+ * to `(num_cpus * 1.5).ceil()`.
+ *
+ * Each file can optionally specify a [`FileExtractionConfig`] that overrides specific
+ * fields from the batch-level `config`. Pass `None` for a file to use the batch defaults.
+ * Batch-level settings like `max_concurrent_extractions` and `use_cache` are always
+ * taken from the batch-level `config`.
+ *
+ * # Arguments
+ *
+ * * `items` - Vector of `(path, optional_file_config)` tuples. Pass `None` as the
+ *   config to use the batch-level defaults for that file.
+ * * `config` - Batch-level extraction configuration (provides defaults and batch settings)
+ *
+ * # Returns
+ *
+ * A vector of `ExtractionResult` in the same order as the input items.
+ *
+ * # Errors
+ *
+ * Individual file errors are captured in the result metadata. System errors
+ * (IO, RuntimeError equivalents) will bubble up and fail the entire batch.
+ *
+ * # Examples
+ *
+ * Simple usage with no per-file overrides:
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_file;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use std::path::PathBuf;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let items: Vec<(PathBuf, Option<kreuzberg::FileExtractionConfig>)> = vec![
+ *     ("doc1.pdf".into(), None),
+ *     ("doc2.pdf".into(), None),
+ * ];
+ * let results = batch_extract_file(items, &config).await?;
+ * println!("Processed {} files", results.len());
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * Per-file configuration overrides:
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_file;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use kreuzberg::FileExtractionConfig;
+ * use std::path::PathBuf;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
+ *     ("scan.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
+ *     ("notes.txt".into(), None),
+ * ];
+ * let results = batch_extract_file(items, &config).await?;
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_batch_extract_file(const char *_items,
+                                   const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Extract content from multiple byte arrays concurrently.
+ *
+ * This function processes multiple byte arrays in parallel, automatically managing
+ * concurrency to prevent resource exhaustion. The concurrency limit can be
+ * configured via `ExtractionConfig::max_concurrent_extractions` or defaults
+ * to `(num_cpus * 1.5).ceil()`.
+ *
+ * Each item can optionally specify a [`FileExtractionConfig`] that overrides specific
+ * fields from the batch-level `config`. Pass `None` as the config to use
+ * the batch-level defaults for that item.
+ *
+ * # Arguments
+ *
+ * * `items` - Vector of `(bytes, mime_type, optional_file_config)` tuples
+ * * `config` - Batch-level extraction configuration
+ *
+ * # Returns
+ *
+ * A vector of `ExtractionResult` in the same order as the input items.
+ *
+ * # Examples
+ *
+ * Simple usage with no per-item overrides:
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_bytes;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let items = vec![
+ *     (b"content 1".to_vec(), "text/plain".to_string(), None),
+ *     (b"content 2".to_vec(), "text/plain".to_string(), None),
+ * ];
+ * let results = batch_extract_bytes(items, &config).await?;
+ * println!("Processed {} items", results.len());
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * Per-item configuration overrides:
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_bytes;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use kreuzberg::FileExtractionConfig;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let items = vec![
+ *     (b"content".to_vec(), "text/plain".to_string(), None),
+ *     (b"<html>test</html>".to_vec(), "text/html".to_string(),
+ *      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
+ * ];
+ * let results = batch_extract_bytes(items, &config).await?;
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_batch_extract_bytes(const char *_items,
+                                    const KREUZBERGExtractionConfig *_config);
+
+/**
  * Validates whether a field name is in the known formats registry.
  *
  * This uses a pre-built hash set for O(1) lookups instead of linear search,
@@ -182,6 +21925,121 @@ char *kreuzberg_llm_usage_finish_reason(const KREUZBERGLlmUsage *ptr);
  * Returned pointers must be freed with the appropriate free function.
  */
 int32_t kreuzberg_is_valid_format_field(const char *field);
+
+/**
+ * Open a file and return its bytes with zero-copy for large files.
+ *
+ * On non-WASM targets, files larger than [`MMAP_THRESHOLD_BYTES`] are
+ * memory-mapped so that the file contents are never copied to the heap.
+ * The mapping is read-only; the file must not be modified while the returned
+ * [`FileBytes`] is alive, which is safe for document extraction.
+ *
+ * On WASM or for small files, falls back to a plain `std::fs::read`.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Io` for any I/O failure.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGFileBytes *kreuzberg_open_file_bytes(const char *path);
+
+/**
+ * Read a file asynchronously.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the file to read
+ *
+ * # Returns
+ *
+ * The file contents as bytes.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Io` for I/O errors (these always bubble up).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_read_file_async(const char *_path);
+
+/**
+ * Read a file synchronously.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the file to read
+ *
+ * # Returns
+ *
+ * The file contents as bytes.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Io` for I/O errors (these always bubble up).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_read_file_sync(const char *_path);
+
+/**
+ * Check if a file exists.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to check
+ *
+ * # Returns
+ *
+ * `true` if the file exists, `false` otherwise.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_file_exists(const char *_path);
+
+/**
+ * Validate that a file exists.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to validate
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Io` if file doesn't exist.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_file_exists(const char *_path);
+
+/**
+ * Get all files in a directory with a specific extension.
+ *
+ * # Arguments
+ *
+ * * `dir` - Directory to search
+ * * `extension` - File extension to match (without the dot)
+ * * `recursive` - Whether to recursively search subdirectories
+ *
+ * # Returns
+ *
+ * Vector of file paths with the specified extension.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Io` for I/O errors.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_find_files_by_extension(const char *_dir,
+                                        const char *_extension,
+                                        int32_t _recursive);
 
 /**
  * Detect MIME type from a file path.
@@ -228,6 +22086,26 @@ char *kreuzberg_detect_mime_type(const char *_path,
  * Returned pointers must be freed with the appropriate free function.
  */
 char *kreuzberg_validate_mime_type(const char *mime_type);
+
+/**
+ * Detect or validate MIME type.
+ *
+ * If `mime_type` is provided, validates it. Otherwise, detects from `path`.
+ *
+ * # Arguments
+ *
+ * * `path` - Optional path to detect MIME type from
+ * * `mime_type` - Optional explicit MIME type to validate
+ *
+ * # Returns
+ *
+ * The validated MIME type string.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_or_validate(const char *path,
+                                   const char *mime_type);
 
 /**
  * Detect MIME type from raw file bytes.
@@ -308,5 +22186,6053 @@ char *kreuzberg_get_extensions_for_mime(const char *mime_type);
  * Returned pointers must be freed with the appropriate free function.
  */
 char *kreuzberg_list_supported_formats(void);
+
+/**
+ * Clear the processor cache (primarily for testing when registry changes).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_clear_processor_cache(void);
+
+/**
+ * Apply output format conversion to the extraction result.
+ *
+ * Records the output format in metadata and swaps in pre-rendered content
+ * (produced during `derive_extraction_result`) if available.
+ *
+ * This runs as the final pipeline step, after post-processors have operated
+ * on the plain-text `content` field.
+ *
+ * # Arguments
+ *
+ * * `result` - The extraction result to modify
+ * * `output_format` - The desired output format
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_apply_output_format(const KREUZBERGExtractionResult *result,
+                                   const KREUZBERGOutputFormat *output_format);
+
+/**
+ * Run the post-processing pipeline on an `InternalDocument`.
+ *
+ * Derives `ExtractionResult` from `InternalDocument` via the derivation pipeline,
+ * then executes post-processing in the following order:
+ * 1. Post-Processors - Execute by stage (Early, Middle, Late) to modify/enhance the result
+ * 2. Quality Processing - Text cleaning and quality scoring
+ * 3. Chunking - Text splitting if enabled
+ * 4. Validators - Run validation hooks on the processed result (can fail fast)
+ *
+ * # Arguments
+ *
+ * * `doc` - The internal document produced by the extractor
+ * * `config` - Extraction configuration
+ *
+ * # Returns
+ *
+ * The processed extraction result.
+ *
+ * # Errors
+ *
+ * - Validator errors bubble up immediately
+ * - Post-processor errors are caught and recorded in metadata
+ * - System errors (IO, RuntimeError equivalents) always bubble up
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_run_pipeline(const char *_doc,
+                                                  const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Run the post-processing pipeline synchronously (WASM-compatible version).
+ *
+ * This is a synchronous implementation for WASM and non-async contexts.
+ * It performs a subset of the full async pipeline, excluding async post-processors
+ * and validators.
+ *
+ * # Arguments
+ *
+ * * `doc` - The internal document produced by the extractor
+ * * `config` - Extraction configuration
+ *
+ * # Returns
+ *
+ * The processed extraction result.
+ *
+ * # Notes
+ *
+ * This function is only available when the `tokio-runtime` feature is disabled.
+ * It handles:
+ * - Quality processing (if enabled)
+ * - Chunking (if enabled)
+ * - Language detection (if enabled)
+ *
+ * It does NOT handle:
+ * - Async post-processors
+ * - Async validators
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_run_pipeline_sync(const char *_doc,
+                                                       const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Determine if a page's text content indicates a blank page.
+ *
+ * A page is blank if it has fewer than [`MIN_NON_WHITESPACE_CHARS`] non-whitespace characters.
+ *
+ * # Arguments
+ *
+ * * `text` - The extracted text content of the page
+ *
+ * # Returns
+ *
+ * `true` if the page is considered blank, `false` otherwise
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_is_page_text_blank(const char *text);
+
+/**
+ * Resolve `RelationshipTarget::Key` entries to `RelationshipTarget::Index`.
+ *
+ * Builds an anchor index from elements with non-`None` anchors, then resolves
+ * each key-based relationship target. Unresolvable keys are logged and skipped
+ * (the relationship is left as `Key` — it will be excluded from the final
+ * `DocumentStructure` relationships).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_resolve_relationships(const char *_doc);
+
+/**
+ * Derive a hierarchical `DocumentStructure` from the flat internal document.
+ *
+ * Calls `resolve_relationships` first to resolve any key-based relationship targets,
+ * then builds the tree.
+ *
+ * # Algorithm
+ *
+ * 1. Walk elements in reading order, maintaining a stack of `(depth, NodeIndex)`.
+ * 2. Container start markers (`ListStart`, `QuoteStart`, `GroupStart`) push
+ *    onto the stack; their matching end markers pop.
+ * 3. Headings pop the stack to a shallower depth, then create a `Group` node
+ *    with a `Heading` child and push the group.
+ * 4. All other elements are parented under the current stack top.
+ * 5. Resolved relationships are mapped from element indices to node indices.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocumentStructure *kreuzberg_derive_document_structure(const char *_doc);
+
+/**
+ * Derive a complete `ExtractionResult` from an `InternalDocument`.
+ *
+ * This is the main entry point for the derivation pipeline. It:
+ * 1. Resolves relationships (needed by renderers for footnotes)
+ * 2. Renders plain-text content (for post-processors)
+ * 3. Pre-renders formatted content if output_format != Plain
+ * 4. Groups elements by page into `PageContent`
+ * 5. Extracts OCR elements for backward compatibility
+ * 6. Optionally derives `DocumentStructure` (assumes relationships resolved)
+ * 7. Assembles the final `ExtractionResult`
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionResult *kreuzberg_derive_extraction_result(const char *_doc,
+                                                              int32_t _include_document_structure,
+                                                              const KREUZBERGOutputFormat *_output_format);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGStructuredDataResult *kreuzberg_parse_json(const uint8_t *data,
+                                                    uintptr_t data_len,
+                                                    const KREUZBERGJsonExtractionConfig *config);
+
+/**
+ * Parse JSONL (newline-delimited JSON) into a structured data result.
+ *
+ * Each non-empty line is parsed as an independent JSON value. Blank lines
+ * and whitespace-only lines are skipped. The output is a pretty-printed
+ * JSON array of all parsed objects.
+ *
+ * # Errors
+ *
+ * Returns an error if any line contains invalid JSON (with 1-based line number)
+ * or if the input is not valid UTF-8.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::extraction::structured::parse_jsonl;
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * let jsonl = b"{\"name\": \"Alice\"}\n{\"name\": \"Bob\"}";
+ * let result = parse_jsonl(jsonl, None)?;
+ * assert!(result.content.contains("Alice"));
+ * assert!(result.content.contains("Bob"));
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGStructuredDataResult *kreuzberg_parse_jsonl(const uint8_t *data,
+                                                     uintptr_t data_len,
+                                                     const KREUZBERGJsonExtractionConfig *config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGStructuredDataResult *kreuzberg_parse_yaml(const uint8_t *data,
+                                                    uintptr_t data_len);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGStructuredDataResult *kreuzberg_parse_toml(const uint8_t *data,
+                                                    uintptr_t data_len);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextExtractionResult *kreuzberg_parse_text(const uint8_t *text_bytes,
+                                                    uintptr_t text_bytes_len,
+                                                    int32_t is_markdown);
+
+/**
+ * Transform an `ExtractionResult` into a `DocumentStructure`.
+ *
+ * Processes pages (if available) or unified content to build a hierarchical tree:
+ * - Heading-driven section nesting via `Group` nodes
+ * - Table conversion from `Vec<Vec<String>>` to `TableGrid`
+ * - List detection and grouping into `List` containers
+ * - Image and page break nodes
+ * - Body/furniture content layer classification
+ *
+ * The resulting structure is validated before returning.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocumentStructure *kreuzberg_transform_to_document_structure(const KREUZBERGExtractionResult *result);
+
+/**
+ * Detect list items in text with support for multiple formats.
+ *
+ * Identifies bullet points, numbered items, and indented items.
+ * Supports formats like:
+ * - `- bullet item`
+ * - `* bullet item`
+ * - `• bullet item`
+ * - `1. numbered item`
+ * - `a. lettered item`
+ * - Indented items with leading whitespace
+ *
+ * # Arguments
+ *
+ * * `text` - The text to search for list items
+ *
+ * # Returns
+ *
+ * A vector of ListItemMetadata structs describing detected list items
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_list_items(const char *text);
+
+/**
+ * Generate a unique element ID for semantic content.
+ *
+ * Creates a deterministic hash-based ID from the element type, text content,
+ * and page number. Uses a simple wrapping multiplication algorithm for
+ * consistent ID generation without external dependencies.
+ *
+ * # Arguments
+ *
+ * * `text` - The element text content
+ * * `element_type` - The semantic element type
+ * * `page_number` - Optional page number for multi-page documents
+ *
+ * # Returns
+ *
+ * An ElementId suitable for referencing this semantic element
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGElementId *kreuzberg_generate_element_id(const char *text,
+                                                  const KREUZBERGElementType *element_type,
+                                                  uintptr_t page_number);
+
+/**
+ * Transform an extraction result into semantic elements.
+ *
+ * This function takes a reference to an ExtractionResult and generates
+ * a vector of Element structs representing semantic blocks in the document.
+ * It detects content sections, list items, page breaks, and other structural
+ * elements to create an Unstructured-compatible element-based output.
+ *
+ * Handles:
+ * - PDF hierarchy → Title/Heading elements
+ * - Multi-page documents with correct page numbers
+ * - Table and Image extraction
+ * - PageBreak interleaving
+ * - Bounding box coordinates
+ * - Paragraph detection for NarrativeText
+ *
+ * # Arguments
+ *
+ * * `result` - Reference to the ExtractionResult to transform
+ *
+ * # Returns
+ *
+ * A vector of Elements with proper semantic types and metadata.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_transform_extraction_result_to_elements(const KREUZBERGExtractionResult *result);
+
+/**
+ * Parse a raw (possibly compressed) BodyText/SectionN stream.
+ *
+ * Returns the list of sections found. Each section contains zero or more
+ * paragraphs that carry the plain-text content.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_parse_body_text(const uint8_t *data,
+                                uintptr_t data_len,
+                                int32_t is_compressed);
+
+/**
+ * Decompress a raw-deflate stream from an HWP section.
+ *
+ * HWP 5.0 compresses sections with raw deflate (no zlib header). Falls back
+ * to zlib if raw deflate fails, and returns the data as-is if both fail.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_decompress_stream(const uint8_t *data,
+                                     uintptr_t data_len);
+
+/**
+ * Extract all plain text from an HWP 5.0 document given its raw bytes.
+ *
+ * # Errors
+ *
+ * Returns `HwpError` if the bytes do not form a valid HWP 5.0 compound file,
+ * if the document is password-encrypted, or if a critical parsing step fails.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_hwp_text(const uint8_t *bytes,
+                                 uintptr_t bytes_len);
+
+/**
+ * Load image bytes for OCR, with JPEG 2000 and JBIG2 fallback support.
+ *
+ * The standard `image` crate does not support JPEG 2000 or JBIG2 formats.
+ * This function detects these formats by magic bytes and uses `hayro-jpeg2000`
+ * / `hayro-jbig2` for decoding, falling back to the standard `image` crate
+ * for all other formats.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_load_image_for_ocr(const uint8_t *_image_bytes,
+                                   uintptr_t _image_bytes_len);
+
+/**
+ * Extract metadata from image bytes.
+ *
+ * Extracts dimensions, format, and EXIF data from the image.
+ * Attempts to decode using the standard image crate first, then falls back to
+ * pure Rust JP2 box parsing for JPEG 2000 formats if the standard decoder fails.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGImageMetadata *kreuzberg_extract_image_metadata(const uint8_t *bytes,
+                                                         uintptr_t bytes_len);
+
+/**
+ * Extract text from image bytes using OCR with optional page tracking for multi-frame TIFFs.
+ *
+ * This function:
+ * - Detects if the image is a multi-frame TIFF
+ * - For multi-frame TIFFs with PageConfig enabled, iterates frames and tracks boundaries
+ * - For single-frame images or when page tracking is disabled, runs OCR on the whole image
+ * - Returns (content, boundaries, page_contents) tuple
+ *
+ * # Arguments
+ * * `bytes` - Image file bytes
+ * * `mime_type` - MIME type (e.g., "image/tiff")
+ * * `ocr_result` - OCR backend result containing the text
+ * * `page_config` - Optional page configuration for boundary tracking
+ *
+ * # Returns
+ * ImageOcrResult with content and optional boundaries for pagination
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGImageOcrResult *kreuzberg_extract_text_from_image_with_ocr(const uint8_t *bytes,
+                                                                    uintptr_t bytes_len,
+                                                                    const char *mime_type,
+                                                                    const char *ocr_result,
+                                                                    const KREUZBERGPageConfig *page_config);
+
+/**
+ * Estimate the capacity needed for content extracted from a file.
+ *
+ * Returns an estimated byte capacity for a string buffer that will accumulate
+ * extracted content. The estimation is based on:
+ * - The original file size
+ * - The content type/format
+ * - Empirical ratios of final content size to original file size
+ *
+ * # Arguments
+ *
+ * * `file_size` - The size of the original file in bytes
+ * * `format` - The file format/extension (e.g., "txt", "html", "docx", "xlsx", "pptx")
+ *
+ * # Returns
+ *
+ * An estimated capacity in bytes suitable for `String::with_capacity()`
+ *
+ * # Minimum Capacity
+ *
+ * All estimates have a minimum of 64 bytes to prevent over-optimization for very
+ * small files where the overhead of capacity estimation outweighs benefits.
+ *
+ * # Example
+ *
+ * ```
+ * use kreuzberg::extraction::capacity::estimate_content_capacity;
+ *
+ * // 1MB text file → expect ~950KB of extracted content
+ * let txt_cap = estimate_content_capacity(1_000_000, "txt");
+ * assert_eq!(txt_cap, 950_000);
+ *
+ * // 1MB HTML → expect ~650KB of extracted markdown
+ * let html_cap = estimate_content_capacity(1_000_000, "html");
+ * assert_eq!(html_cap, 650_000);
+ *
+ * // 1MB DOCX → expect ~450KB of extracted text
+ * let docx_cap = estimate_content_capacity(1_000_000, "docx");
+ * assert_eq!(docx_cap, 450_000);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_estimate_content_capacity(uint64_t file_size,
+                                              const char *format);
+
+/**
+ * Estimate capacity for HTML to Markdown conversion.
+ *
+ * HTML documents typically convert to Markdown with 60-70% of the original size.
+ * This function estimates capacity specifically for HTML→Markdown conversion.
+ *
+ * # Arguments
+ *
+ * * `html_size` - The size of the HTML file in bytes
+ *
+ * # Returns
+ *
+ * An estimated capacity for the Markdown output
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_estimate_html_markdown_capacity(uint64_t html_size);
+
+/**
+ * Estimate capacity for cell extraction from spreadsheets.
+ *
+ * When extracting cell data from Excel/ODS files, the extracted cells are typically
+ * 40% of the compressed file size (since the file is ZIP-compressed).
+ *
+ * # Arguments
+ *
+ * * `file_size` - Size of the spreadsheet file (XLSX, ODS, etc.)
+ *
+ * # Returns
+ *
+ * An estimated capacity for cell value accumulation
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_estimate_spreadsheet_capacity(uint64_t file_size);
+
+/**
+ * Estimate capacity for slide content extraction from presentations.
+ *
+ * PPTX files when extracted have slide content at approximately 35% of the file size.
+ * This accounts for XML overhead, compression, and embedded assets.
+ *
+ * # Arguments
+ *
+ * * `file_size` - Size of the PPTX file in bytes
+ *
+ * # Returns
+ *
+ * An estimated capacity for slide content accumulation
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_estimate_presentation_capacity(uint64_t file_size);
+
+/**
+ * Estimate capacity for markdown table generation.
+ *
+ * Markdown tables have predictable size: ~12 bytes per cell on average
+ * (accounting for separators, pipes, padding, and cell content).
+ *
+ * # Arguments
+ *
+ * * `row_count` - Number of rows in the table
+ * * `col_count` - Number of columns in the table
+ *
+ * # Returns
+ *
+ * An estimated capacity for the markdown table output
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_estimate_table_markdown_capacity(uintptr_t row_count,
+                                                     uintptr_t col_count);
+
+/**
+ * Decompress gzip bytes, returning the raw decompressed data.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_decompress_gzip(const uint8_t *_bytes,
+                                   uintptr_t _bytes_len,
+                                   const char *_limits);
+
+/**
+ * Extract both metadata and text content from gzip in a single decompression pass.
+ *
+ * This avoids the overhead of decompressing the data multiple times when both
+ * metadata and text content are needed.
+ *
+ * If the decompressed data is a TAR archive, delegates to TAR extraction functions.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_gzip(const uint8_t *_bytes,
+                             uintptr_t _bytes_len,
+                             const char *_limits);
+
+/**
+ * Extract metadata from a gzip-compressed file.
+ *
+ * Gzip wraps a single stream, so the metadata contains one entry
+ * with the original filename (from gzip header) and decompressed size.
+ *
+ * If the decompressed data is a TAR archive, delegates to TAR extraction.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGArchiveMetadata *kreuzberg_extract_gzip_metadata(const uint8_t *_bytes,
+                                                          uintptr_t _bytes_len,
+                                                          const char *_limits);
+
+/**
+ * Extract text content from a gzip-compressed file.
+ *
+ * Decompresses and attempts to read the result as UTF-8 text.
+ *
+ * If the decompressed data is a TAR archive, delegates to TAR extraction.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_gzip_text_content(const uint8_t *_bytes,
+                                          uintptr_t _bytes_len,
+                                          const char *_limits);
+
+/**
+ * Extract metadata, text content, and raw file bytes from gzip in a single pass.
+ *
+ * Similar to `extract_gzip` but also returns the raw file bytes for recursive extraction.
+ * For TAR-within-GZIP, delegates to TAR file bytes extraction.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_gzip_with_bytes(const uint8_t *_bytes,
+                                        uintptr_t _bytes_len,
+                                        const char *_limits);
+
+/**
+ * Extract metadata from a 7z archive.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The 7z archive bytes
+ * * `limits` - Security limits for archive extraction
+ *
+ * # Returns
+ *
+ * Returns `ArchiveMetadata` containing:
+ * - Format: "7Z"
+ * - File list with paths, sizes, and directory flags
+ * - Total file count
+ * - Total uncompressed size
+ *
+ * # Errors
+ *
+ * Returns an error if the 7z archive cannot be read or parsed,
+ * or if security limits are exceeded.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGArchiveMetadata *kreuzberg_extract_7z_metadata(const uint8_t *_bytes,
+                                                        uintptr_t _bytes_len,
+                                                        const char *_limits);
+
+/**
+ * Extract text content from files within a 7z archive.
+ *
+ * Only extracts files with common text extensions: .txt, .md, .json, .xml, .html, .csv, .log, .yaml, .toml
+ *
+ * # Arguments
+ *
+ * * `bytes` - The 7z archive bytes
+ *
+ * # Returns
+ *
+ * Returns a `HashMap` mapping file paths to their text content.
+ * Binary files and files with non-text extensions are excluded.
+ *
+ * # Errors
+ *
+ * Returns an error if the 7z archive cannot be read or parsed.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_7z_text_content(const uint8_t *_bytes,
+                                        uintptr_t _bytes_len,
+                                        const char *_limits);
+
+/**
+ * Extract raw file bytes for all non-directory entries in a 7z archive.
+ *
+ * Returns a `HashMap` mapping file paths to their raw byte content.
+ * Respects security limits for file count and total archive size.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The 7z archive bytes
+ * * `limits` - Security limits for archive extraction
+ *
+ * # Errors
+ *
+ * Returns an error if the 7z archive cannot be read or if security limits are exceeded.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_7z_file_bytes(const uint8_t *_bytes,
+                                      uintptr_t _bytes_len,
+                                      const char *_limits);
+
+/**
+ * Extract metadata from a TAR archive.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The TAR archive bytes (can be compressed with gzip or bzip2)
+ * * `limits` - Security limits for archive extraction
+ *
+ * # Returns
+ *
+ * Returns `ArchiveMetadata` containing:
+ * - Format: "TAR"
+ * - File list with paths, sizes, and directory flags
+ * - Total file count
+ * - Total uncompressed size
+ *
+ * # Errors
+ *
+ * Returns an error if the TAR archive cannot be read or parsed,
+ * or if security limits are exceeded.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGArchiveMetadata *kreuzberg_extract_tar_metadata(const uint8_t *_bytes,
+                                                         uintptr_t _bytes_len,
+                                                         const char *_limits);
+
+/**
+ * Extract text content from files within a TAR archive.
+ *
+ * Only extracts files with common text extensions: .txt, .md, .json, .xml, .html, .csv, .log, .yaml, .toml
+ *
+ * # Arguments
+ *
+ * * `bytes` - The TAR archive bytes (can be compressed with gzip or bzip2)
+ *
+ * # Returns
+ *
+ * Returns a `HashMap` mapping file paths to their text content.
+ * Binary files and files with non-text extensions are excluded.
+ *
+ * # Errors
+ *
+ * Returns an error if the TAR archive cannot be read or parsed.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_tar_text_content(const uint8_t *_bytes,
+                                         uintptr_t _bytes_len,
+                                         const char *_limits);
+
+/**
+ * Extract raw file bytes for all non-directory entries in a TAR archive.
+ *
+ * Returns a `HashMap` mapping file paths to their raw byte content.
+ * Respects security limits for file count and total archive size.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The TAR archive bytes
+ * * `limits` - Security limits for archive extraction
+ *
+ * # Errors
+ *
+ * Returns an error if the TAR archive cannot be read or if security limits are exceeded.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_tar_file_bytes(const uint8_t *_bytes,
+                                       uintptr_t _bytes_len,
+                                       const char *_limits);
+
+/**
+ * Extract metadata from a ZIP archive.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The ZIP archive bytes
+ * * `limits` - Security limits for archive extraction
+ *
+ * # Returns
+ *
+ * Returns `ArchiveMetadata` containing:
+ * - Format: "ZIP"
+ * - File list with paths, sizes, and directory flags
+ * - Total file count
+ * - Total uncompressed size
+ *
+ * # Errors
+ *
+ * Returns an error if the ZIP archive cannot be read or parsed,
+ * or if security limits are exceeded.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGArchiveMetadata *kreuzberg_extract_zip_metadata(const uint8_t *_bytes,
+                                                         uintptr_t _bytes_len,
+                                                         const char *_limits);
+
+/**
+ * Extract text content from files within a ZIP archive.
+ *
+ * Only extracts files with common text extensions: .txt, .md, .json, .xml, .html, .csv, .log, .yaml, .toml
+ *
+ * # Arguments
+ *
+ * * `bytes` - The ZIP archive bytes
+ *
+ * # Returns
+ *
+ * Returns a `HashMap` mapping file paths to their text content.
+ * Binary files and files with non-text extensions are excluded.
+ *
+ * # Errors
+ *
+ * Returns an error if the ZIP archive cannot be read or parsed.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_zip_text_content(const uint8_t *_bytes,
+                                         uintptr_t _bytes_len,
+                                         const char *_limits);
+
+/**
+ * Extract raw file bytes for all non-directory entries in a ZIP archive.
+ *
+ * Returns a `HashMap` mapping file paths to their raw byte content.
+ * Respects security limits for file count and total archive size.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The ZIP archive bytes
+ * * `limits` - Security limits for archive extraction
+ *
+ * # Errors
+ *
+ * Returns an error if the ZIP archive cannot be read or if security limits are exceeded.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_zip_file_bytes(const uint8_t *_bytes,
+                                       uintptr_t _bytes_len,
+                                       const char *_limits);
+
+/**
+ * Parse .eml file content (RFC822 format)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGEmailExtractionResult *kreuzberg_parse_eml_content(const uint8_t *data,
+                                                            uintptr_t data_len);
+
+/**
+ * Parse .msg file content (Outlook format).
+ *
+ * Reads MSG files directly via the CFB (OLE Compound Document) format,
+ * extracting text properties and attachment metadata without the overhead
+ * of hex-encoding attachment binary data (which caused hangs on large files
+ * with the previous `msg_parser` dependency).
+ *
+ * Some MSG files have FAT headers declaring more sectors than the file
+ * actually contains.  The strict `cfb` crate rejects these.  When that
+ * happens we pad the data with zero bytes so the sector count matches
+ * the FAT and retry – the real streams are still within the original
+ * data range and parse correctly.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGEmailExtractionResult *kreuzberg_parse_msg_content(const uint8_t *data,
+                                                            uintptr_t data_len,
+                                                            uint32_t fallback_codepage);
+
+/**
+ * Extract email content from either .eml or .msg format
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGEmailExtractionResult *kreuzberg_extract_email_content(const uint8_t *data,
+                                                                uintptr_t data_len,
+                                                                const char *mime_type,
+                                                                uint32_t fallback_codepage);
+
+/**
+ * Build text output from email extraction result
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_build_email_text_output(const KREUZBERGEmailExtractionResult *result);
+
+/**
+ * Extract all email messages from a PST file.
+ *
+ * Opens the PST file and traverses the full folder hierarchy, extracting
+ * every message including subject, sender, recipients, and body text.
+ *
+ * # Arguments
+ *
+ * * `pst_data` - Raw bytes of the PST file
+ *
+ * # Returns
+ *
+ * A vector of `EmailExtractionResult`, one per message found.
+ *
+ * # Errors
+ *
+ * Returns an error if the PST data cannot be written to a temporary file,
+ * or if the PST format is invalid.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_pst_messages(const uint8_t *_pst_data,
+                                     uintptr_t _pst_data_len);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExcelWorkbook *kreuzberg_read_excel_file(const char *file_path);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExcelWorkbook *kreuzberg_read_excel_bytes(const uint8_t *data,
+                                                   uintptr_t data_len,
+                                                   const char *file_extension);
+
+/**
+ * Convert an Excel workbook to plain text (space-separated cells, one row per line).
+ *
+ * Each sheet is separated by a blank line. Sheet names are included as headers.
+ * This produces text suitable for quality scoring against ground truth.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_excel_to_text(const KREUZBERGExcelWorkbook *workbook);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_excel_to_markdown(const KREUZBERGExcelWorkbook *workbook);
+
+/**
+ * Resolve conversion options with sensible defaults.
+ *
+ * If no options are provided, creates defaults with:
+ * - `extract_metadata = true` (parse YAML frontmatter)
+ * - `include_document_structure = true` (populate document tree)
+ * - `preprocessing.enabled = false` (disable HTML preprocessing)
+ *
+ * Sets output format based on the provided format parameter.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_resolve_conversion_options(const char *_options,
+                                           const char *_output_format);
+
+/**
+ * Convert HTML with optional configuration and output format.
+ *
+ * Uses sensible defaults if no configuration is provided:
+ * - `extract_metadata = true` (parse YAML frontmatter)
+ * - `include_document_structure = true` (populate document tree)
+ * - `preprocessing.enabled = false` (disable HTML preprocessing)
+ *
+ * Supports both markdown and djot output based on the output_format parameter.
+ * Defaults to Markdown for backward compatibility.
+ *
+ * # WASM Limitations
+ *
+ * In WASM builds, HTML files larger than 2MB will be rejected with an error
+ * to prevent stack overflow. For larger files, use the native library.
+ *
+ * # Arguments
+ *
+ * * `html` - The HTML string to convert
+ * * `options` - Optional conversion options; defaults will be used if None
+ * * `output_format` - Optional output format; defaults to Markdown if None
+ *
+ * # Returns
+ *
+ * A markdown or djot string, or an error if conversion fails
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_convert_html_to_markdown(const char *_html,
+                                         const char *_options,
+                                         const char *_output_format);
+
+/**
+ * Convert HTML with direct metadata extraction and output format support.
+ *
+ * Extracts metadata directly from HTML using the metadata extraction
+ * capabilities of the `html-to-markdown-rs` library, without relying
+ * on YAML frontmatter in the converted markdown.
+ *
+ * Supports both markdown and djot output based on the output_format parameter.
+ * Defaults to Markdown for backward compatibility.
+ *
+ * # WASM Limitations
+ *
+ * In WASM builds, HTML files larger than 2MB will be rejected with an error
+ * to prevent stack overflow. For larger files, use the native library.
+ *
+ * # Arguments
+ *
+ * * `html` - The HTML string to convert
+ * * `options` - Optional conversion options; defaults will be used if None
+ * * `output_format` - Optional output format; defaults to Markdown if None
+ *
+ * # Returns
+ *
+ * A tuple of (markdown/djot content, optional metadata), or an error if conversion fails
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_convert_html_to_markdown_with_metadata(const char *_html,
+                                                       const char *_options,
+                                                       const char *_output_format);
+
+/**
+ * Convert HTML to markdown/djot/plain with metadata, structured tables, and document structure.
+ *
+ * Performs a single unified `convert()` call with `include_document_structure: true`,
+ * `extract_metadata: true`, and `extract_images: true` to capture content, metadata,
+ * structured table data, and the full semantic document tree in one pass.
+ *
+ * Returns `(content, optional_metadata, tables, optional_document_structure)`.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_convert_html_to_markdown_with_tables(const char *_html,
+                                                     const char *_options,
+                                                     const char *_output_format);
+
+/**
+ * Extract inline images (data URIs and SVGs) from HTML.
+ *
+ * Uses a single `convert()` call with `extract_images = true` to collect
+ * inline images embedded in the HTML document. Uses plain text output format
+ * for minimal conversion overhead since only images are needed.
+ * Returns an empty vector when no images are found.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_html_inline_images(const char *_html,
+                                           const char *_options);
+
+/**
+ * Extract text from DOC bytes.
+ *
+ * Parses the OLE/CFB compound document, reads the FIB (File Information Block),
+ * and extracts text from the piece table.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocExtractionResult *kreuzberg_extract_doc_text(const uint8_t *content,
+                                                         uintptr_t content_len);
+
+/**
+ * Parse a drawing object starting after the `<w:drawing>` Start event.
+ *
+ * This function reads events until it encounters the closing `</w:drawing>` tag,
+ * parsing the drawing type (inline or anchored), extent, properties, and image references.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDrawing *kreuzberg_parse_drawing(const char *_reader);
+
+/**
+ * Collect an `m:oMathPara` subtree and convert to LaTeX (display math).
+ * The reader should be positioned right after the `<m:oMathPara>` start tag.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_collect_and_convert_omath_para(const char *_reader);
+
+/**
+ * Collect an `m:oMath` subtree and convert to LaTeX (inline math).
+ * The reader should be positioned right after the `<m:oMath>` start tag.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_collect_and_convert_omath(const char *_reader);
+
+/**
+ * Parse a DOCX document from bytes and return the structured document.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDocument *kreuzberg_parse_document(const uint8_t *bytes,
+                                            uintptr_t bytes_len);
+
+/**
+ * Extract text from DOCX bytes.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_from_bytes(const uint8_t *bytes,
+                                        uintptr_t bytes_len);
+
+/**
+ * Parse a `w:sectPr` XML element (roxmltree node) into `SectionProperties`.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSectionProperties *kreuzberg_parse_section_properties(const char *_node);
+
+/**
+ * Parse section properties from a quick_xml event stream.
+ *
+ * Reads events from the reader until `</w:sectPr>` is encountered,
+ * extracting the same properties as the roxmltree parser.
+ *
+ * **Important:** This function advances the reader past the closing `</w:sectPr>` tag.
+ * The caller must not attempt to process the `w:sectPr` end event again.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGSectionProperties *kreuzberg_parse_section_properties_streaming(const char *_reader);
+
+/**
+ * Parse `word/styles.xml` content into a `StyleCatalog`.
+ *
+ * Uses `roxmltree` for tree-based XML parsing, consistent with the
+ * office metadata parsing approach used elsewhere in the codebase.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGStyleCatalog *kreuzberg_parse_styles_xml(const char *xml);
+
+/**
+ * Parse table-level properties from streaming XML reader.
+ *
+ * Expects the reader to be positioned just after the `<w:tblPr>` start tag.
+ * Reads all child elements until the matching `</w:tblPr>` end tag.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTableProperties *kreuzberg_parse_table_properties(const char *_reader);
+
+/**
+ * Parse row-level properties from streaming XML reader.
+ *
+ * Expects the reader to be positioned just after the `<w:trPr>` start tag.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGRowProperties *kreuzberg_parse_row_properties(const char *_reader);
+
+/**
+ * Parse cell-level properties from streaming XML reader.
+ *
+ * Expects the reader to be positioned just after the `<w:tcPr>` start tag.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_parse_cell_properties(const char *_reader);
+
+/**
+ * Parse table grid (column widths) from streaming XML reader.
+ *
+ * Expects the reader to be positioned just after the `<w:tblGrid>` start tag.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTableGrid *kreuzberg_parse_table_grid(const char *_reader);
+
+/**
+ * Parse `word/theme/theme1.xml` content into a `Theme`.
+ *
+ * Uses `roxmltree` for tree-based XML parsing of DrawingML theme elements.
+ *
+ * # Arguments
+ * * `xml` - The theme XML content as a string
+ *
+ * # Returns
+ * * `Ok(Theme)` - The parsed theme
+ * * `Err(KreuzbergError)` - If parsing fails
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTheme *kreuzberg_parse_theme_xml(const char *xml);
+
+/**
+ * Extract text from DOCX bytes.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text(const uint8_t *bytes,
+                             uintptr_t bytes_len);
+
+/**
+ * Extract text and page boundaries from DOCX bytes.
+ *
+ * Detects explicit page breaks (`<w:br w:type="page"/>`) in the document XML and maps them to
+ * character offsets in the extracted text. This is a best-effort approach that only detects
+ * explicit page breaks, not automatic pagination.
+ *
+ * # Arguments
+ * * `bytes` - The DOCX file contents as bytes
+ *
+ * # Returns
+ * * `Ok((String, Option<Vec<PageBoundary>>))` - Extracted text and optional page boundaries
+ * * `Err(KreuzbergError)` - If extraction fails
+ *
+ * # Limitations
+ * - Only detects explicit page breaks, not reflowed content
+ * - Page numbers are estimates, not guaranteed accurate
+ * - Word's pagination may differ from detected breaks
+ * - No page dimensions available (would require layout engine)
+ *
+ * # Performance
+ * Performs two passes: one with docx-lite for text extraction and one for page break detection.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_with_page_breaks(const uint8_t *_bytes,
+                                              uintptr_t _bytes_len);
+
+/**
+ * Detect explicit page break positions in document.xml and extract full text with page boundaries.
+ *
+ * This is a convenience function for the extractor that combines text extraction with page
+ * break detection. It returns the extracted text along with page boundaries.
+ *
+ * # Arguments
+ * * `bytes` - The DOCX file contents (ZIP archive)
+ *
+ * # Returns
+ * * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
+ * * `Err(KreuzbergError)` - If extraction fails
+ *
+ * # Limitations
+ * - Only detects explicit page breaks, not reflowed content
+ * - Page numbers are estimates based on detected breaks
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_page_breaks_from_docx(const uint8_t *bytes,
+                                             uintptr_t bytes_len);
+
+/**
+ * Extract embedded objects from an OOXML ZIP archive and recursively process them.
+ *
+ * Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
+ * `ppt/embeddings/`) inside the ZIP archive for embedded files. Known formats
+ * (.xlsx, .pdf, .docx, .pptx, etc.) are recursively extracted. OLE compound
+ * files (oleObject*.bin) are skipped with a warning unless their format can be
+ * identified.
+ *
+ * Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_ooxml_embedded_objects(const uint8_t *_zip_bytes,
+                                               uintptr_t _zip_bytes_len,
+                                               const char *_embeddings_prefix,
+                                               const char *_source_label,
+                                               const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Detect image format from raw bytes using magic byte signatures.
+ *
+ * Returns a format string like "jpeg", "png", etc. Used by both DOCX and PPTX extractors.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_image_format(const uint8_t *_data,
+                                    uintptr_t _data_len);
+
+/**
+ * Process extracted images with OCR if configured.
+ *
+ * For each image, spawns a blocking OCR task and stores the result
+ * in `image.ocr_result`. If OCR is not configured or fails for an
+ * individual image, that image's `ocr_result` remains `None`.
+ *
+ * This function is the single shared implementation used by all
+ * document extractors (DOCX, PPTX, Jupyter, Markdown, etc.).
+ *
+ * # Recursion Safety
+ *
+ * The produced `ExtractionResult` for each image explicitly sets
+ * `images: None`, preventing further image extraction cycles when
+ * OCR results are consumed by archive or recursive extraction paths.
+ *
+ * # Concurrency
+ *
+ * Concurrency is bounded by the configured thread budget
+ * using a semaphore to prevent resource exhaustion.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_process_images_with_ocr(const char *images,
+                                        const KREUZBERGExtractionConfig *config);
+
+/**
+ * Extract text from PPT bytes.
+ *
+ * Parses the OLE/CFB compound document, reads the "PowerPoint Document" stream,
+ * and extracts text from TextCharsAtom and TextBytesAtom records.
+ *
+ * When `include_master_slides` is `true`, master slide content (placeholder text
+ * like "Click to edit Master title style") is included instead of being skipped.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPptExtractionResult *kreuzberg_extract_ppt_text(const uint8_t *content,
+                                                         uintptr_t content_len);
+
+/**
+ * Extract text from PPT bytes with configurable master slide inclusion.
+ *
+ * When `include_master_slides` is `true`, `RT_MAIN_MASTER` containers are not
+ * skipped, so master slide placeholder text is included in the output.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPptExtractionResult *kreuzberg_extract_ppt_text_with_options(const uint8_t *content,
+                                                                      uintptr_t content_len,
+                                                                      int32_t include_master_slides);
+
+/**
+ * Extract PPTX content from a file path.
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the PPTX file
+ * * `options` - Extraction options controlling image extraction, formatting, etc.
+ *
+ * # Returns
+ *
+ * A `PptxExtractionResult` containing extracted content, metadata, and images.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPptxExtractionResult *kreuzberg_extract_pptx_from_path(const char *path,
+                                                                const KREUZBERGPptxExtractionOptions *options);
+
+/**
+ * Extract PPTX content from a byte buffer.
+ *
+ * # Arguments
+ *
+ * * `data` - Raw PPTX file bytes
+ * * `options` - Extraction options controlling image extraction, formatting, etc.
+ *
+ * # Returns
+ *
+ * A `PptxExtractionResult` containing extracted content, metadata, and images.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPptxExtractionResult *kreuzberg_extract_pptx_from_bytes(const uint8_t *data,
+                                                                 uintptr_t data_len,
+                                                                 const KREUZBERGPptxExtractionOptions *options);
+
+/**
+ * Parse XML with optional SVG mode.
+ *
+ * In SVG mode, only text from SVG text-bearing elements (`<text>`, `<tspan>`,
+ * `<title>`, `<desc>`, `<textPath>`) is extracted, without element name prefixes.
+ * Attribute values are also omitted in SVG mode.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGXmlExtractionResult *kreuzberg_parse_xml_svg(const uint8_t *xml_bytes,
+                                                      uintptr_t xml_bytes_len,
+                                                      int32_t preserve_whitespace);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGXmlExtractionResult *kreuzberg_parse_xml(const uint8_t *xml_bytes,
+                                                  uintptr_t xml_bytes_len,
+                                                  int32_t preserve_whitespace);
+
+/**
+ * Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table.
+ *
+ * # Behavior
+ *
+ * - The first row is treated as the header row
+ * - A separator row is inserted after the header
+ * - Pipe characters (`|`) in cell content are automatically escaped with backslash
+ * - Irregular tables (rows with varying column counts) are padded with empty cells to match the header
+ * - Returns an empty string for empty input
+ *
+ * # Arguments
+ *
+ * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+ *
+ * # Returns
+ *
+ * A `String` containing the GFM markdown table representation
+ *
+ * # Examples
+ *
+ * ```
+ * # use kreuzberg::extraction::cells_to_markdown;
+ * let cells = vec![
+ *     vec!["Name".to_string(), "Age".to_string()],
+ *     vec!["Alice".to_string(), "30".to_string()],
+ *     vec!["Bob".to_string(), "25".to_string()],
+ * ];
+ *
+ * let markdown = cells_to_markdown(&cells);
+ * assert!(markdown.contains("| Name | Age |"));
+ * assert!(markdown.contains("|------|------|"));
+ * ```
+ *
+ * Converts a 2D vector of cell strings into plain text with tab-separated columns.
+ *
+ * # Behavior
+ *
+ * - Rows are separated by newlines
+ * - Cells within a row are separated by tab characters
+ * - No pipe delimiters or separator rows (unlike markdown tables)
+ * - Returns an empty string for empty input
+ *
+ * # Arguments
+ *
+ * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+ *
+ * # Returns
+ *
+ * A `String` containing the plain text table representation
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_cells_to_text(const char *cells);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_cells_to_markdown(const char *cells);
+
+/**
+ * Parse jotdown attributes into our Attributes representation.
+ *
+ * Converts jotdown's internal attribute representation to Kreuzberg's
+ * standardized Attributes struct, handling IDs, classes, and key-value pairs.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGAttributes *kreuzberg_parse_jotdown_attributes(const KREUZBERGAttributes *attrs);
+
+/**
+ * Render attributes to djot attribute syntax.
+ *
+ * Converts Kreuzberg's Attributes struct back to djot attribute syntax:
+ * {.class #id key="value"}
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_render_attributes(const KREUZBERGAttributes *attrs);
+
+/**
+ * Convert DjotContent back to djot markup.
+ *
+ * This function takes a `DjotContent` structure and generates valid djot markup
+ * from it, preserving:
+ * - Block structure (headings, code blocks, lists, blockquotes, etc.)
+ * - Inline formatting (strong, emphasis, highlight, subscript, superscript, etc.)
+ * - Attributes where present ({.class #id key="value"})
+ *
+ * # Arguments
+ *
+ * * `content` - The DjotContent to convert
+ *
+ * # Returns
+ *
+ * A String containing valid djot markup
+ *
+ * # Example
+ *
+ * ```ignore
+ * let djot_content = // ... extract from some source
+ * let markup = djot_content_to_djot(&djot_content);
+ * println!("{}", markup);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_content_to_djot(const KREUZBERGDjotContent *content);
+
+/**
+ * Convert any ExtractionResult to djot format.
+ *
+ * This function converts an `ExtractionResult` to djot markup:
+ * - If `djot_content` is `Some`, uses `djot_content_to_djot` for full fidelity conversion
+ * - Otherwise, wraps the plain text content in paragraphs
+ *
+ * # Arguments
+ *
+ * * `result` - The ExtractionResult to convert
+ *
+ * # Returns
+ *
+ * A `Result` containing the djot markup string
+ *
+ * # Example
+ *
+ * ```ignore
+ * let result = extractor.extract_bytes(bytes, "text/plain", &config).await?;
+ * let djot_markup = extraction_result_to_djot(&result)?;
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extraction_result_to_djot(const KREUZBERGExtractionResult *result);
+
+/**
+ * Render djot content to HTML.
+ *
+ * This function takes djot source text and renders it to HTML using jotdown's
+ * built-in HTML renderer.
+ *
+ * # Arguments
+ *
+ * * `djot_source` - The djot markup text to render
+ *
+ * # Returns
+ *
+ * A `Result` containing the rendered HTML string
+ *
+ * # Example
+ *
+ * ```ignore
+ * let djot = "# Hello\n\nThis is *bold* and _italic_.";
+ * let html = djot_to_html(djot)?;
+ * assert!(html.contains("<h1>"));
+ * assert!(html.contains("<strong>"));
+ * assert!(html.contains("<em>"));
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_djot_to_html(const char *djot_source);
+
+/**
+ * Extract complete djot content with 100% feature extraction.
+ *
+ * Processes ALL djot events to build a rich DjotContent structure including:
+ * - Block structure (headings, lists, blockquotes, divs, sections, code blocks)
+ * - Inline formatting (strong, emphasis, highlight, subscript, superscript, insert, delete)
+ * - Attributes (classes, IDs, key-value pairs)
+ * - Links and images with full metadata (href, src, alt, title)
+ * - Math blocks (inline & display)
+ * - Definition lists (term/description pairs)
+ * - Task lists with checked state
+ * - Raw blocks (HTML/LaTeX)
+ * - Footnotes (references and definitions)
+ * - Captions
+ * - Smart punctuation
+ * - All other djot features
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGDjotContent *kreuzberg_extract_complete_djot_content(const char *_events,
+                                                              const KREUZBERGMetadata *_metadata,
+                                                              const char *_tables);
+
+/**
+ * Extract tables from Djot events.
+ *
+ * Parses table events and extracts table data as a Vec<Vec<String>>,
+ * converting each table to markdown representation for storage.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_tables_from_events(const char *_events);
+
+/**
+ * Extract plain text from Djot events.
+ *
+ * Processes djot events and extracts plain text content, handling:
+ * - Text content
+ * - Line breaks (soft, hard, blank)
+ * - Smart punctuation (quotes, dashes, ellipsis)
+ * - Special symbols and footnote references
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_from_events(const char *_events);
+
+/**
+ * Render a single block to djot markup.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_render_block_to_djot(const char *output,
+                                    const KREUZBERGFormattedBlock *block,
+                                    uintptr_t indent_level);
+
+/**
+ * Render a list item with the given marker.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_render_list_item(const char *output,
+                                const KREUZBERGFormattedBlock *item,
+                                const char *indent,
+                                const char *marker);
+
+/**
+ * Render inline content to djot markup.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_render_inline_content(const char *output,
+                                     const char *elements);
+
+/**
+ * Extract YAML frontmatter from document content.
+ *
+ * Frontmatter is expected to be delimited by `---` or `...` at the start of the document.
+ * This implementation properly handles edge cases:
+ * - `---` appearing within YAML strings or arrays
+ * - Both `---` and `...` as end delimiters (YAML spec compliant)
+ * - Multiline YAML values containing dashes
+ *
+ * Returns a tuple of (parsed YAML value, remaining content after frontmatter).
+ *
+ * # Examples
+ *
+ * ```rust,ignore
+ * let content = "---\ntitle: Test\n---\n\n# Content";
+ * let (yaml, remaining) = extract_frontmatter(content);
+ * assert!(yaml.is_some());
+ * assert!(remaining.contains("# Content"));
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_frontmatter(const char *_content);
+
+/**
+ * Extract metadata from YAML frontmatter.
+ *
+ * Extracts the following YAML fields into Kreuzberg metadata:
+ * - **Standard fields**: title, author, date, description (as subject)
+ * - **Extended fields**: abstract, subject, category, tags, language, version
+ * - **Array fields** (keywords, tags): stored as `Vec<String>` in typed fields
+ *
+ * # Arguments
+ *
+ * * `yaml` - The parsed YAML value from frontmatter
+ *
+ * # Returns
+ *
+ * A `Metadata` struct populated with extracted fields
+ *
+ * # Examples
+ *
+ * ```rust,ignore
+ * let yaml = serde_yaml_ng::from_str("title: Test\nauthor: John").unwrap();
+ * let metadata = extract_metadata_from_yaml(&yaml);
+ * assert_eq!(metadata.title.as_deref(), Some("Test"));
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGMetadata *kreuzberg_extract_metadata_from_yaml(const char *_yaml);
+
+/**
+ * Extract first heading as title from content.
+ *
+ * Searches for the first level-1 heading (# Title) in the content
+ * and returns it as a potential title if no title was found in frontmatter.
+ *
+ * # Arguments
+ *
+ * * `content` - The document content to search
+ *
+ * # Returns
+ *
+ * Some(title) if a heading is found, None otherwise
+ *
+ * # Examples
+ *
+ * ```rust,ignore
+ * let content = "# My Document\n\nContent here";
+ * assert_eq!(extract_title_from_content(content), Some("My Document".to_string()));
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_title_from_content(const char *content);
+
+/**
+ * Collects all .iwa file paths from a ZIP archive.
+ *
+ * Opens the ZIP from `content`, iterates every entry, and returns the names of
+ * all entries whose path ends with `.iwa`. Entries that cannot be read are
+ * silently skipped (consistent with the per-extractor `filter_map` pattern).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_collect_iwa_paths(const uint8_t *content,
+                                  uintptr_t content_len);
+
+/**
+ * Read and Snappy-decompress a single `.iwa` file from the ZIP archive.
+ *
+ * Apple IWA files use a custom framing format:
+ * Each block in the file is: `[type: u8][length: u24 LE][payload: length bytes]`
+ * - type `0x00`: Snappy-compressed block → decompress payload with raw Snappy
+ * - type `0x01`: Uncompressed block → use payload as-is
+ *
+ * Multiple blocks are concatenated to form the decompressed IWA stream.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_read_iwa_file(const uint8_t *content,
+                                 uintptr_t content_len,
+                                 const char *path);
+
+/**
+ * Decode an Apple IWA byte stream into the raw protobuf payload.
+ *
+ * IWA framing: each block = 1 byte type + 3 bytes LE length + N bytes payload
+ * - type 0x00 → Snappy-compressed, decompress with `snap::raw::Decoder`
+ * - type 0x01 → Uncompressed, use as-is
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_decode_iwa_stream(const uint8_t *data,
+                                     uintptr_t data_len);
+
+/**
+ * Extract all UTF-8 text strings from a raw protobuf byte slice.
+ *
+ * This uses a simple wire-format scanner without a full schema:
+ * - Field type 2 (length-delimited) with a valid UTF-8 payload of ≥3 bytes is
+ *   treated as a text string candidate.
+ * - We skip binary blobs (non-UTF-8) and very short noise strings.
+ *
+ * This approach avoids the need for `prost-build` and generated proto code while
+ * still extracting human-readable text reliably from iWork documents.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_from_proto(const uint8_t *data,
+                                        uintptr_t data_len);
+
+/**
+ * Extract all text from an iWork ZIP archive by reading specified IWA entries.
+ *
+ * `iwa_paths` should list the IWA file paths to read (e.g. `["Index/Document.iwa"]`).
+ * Returns a flat joined string of all text found across all IWA files.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_from_iwa_files(const uint8_t *content,
+                                            uintptr_t content_len,
+                                            const char *iwa_paths);
+
+/**
+ * Extract metadata from an iWork ZIP archive.
+ *
+ * Attempts to read `Metadata/Properties.plist` and
+ * `Metadata/BuildVersionHistory.plist` from the ZIP. These files are XML plists
+ * containing authorship and creation information. If the files cannot be read
+ * or parsed, an empty `Metadata` is returned.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGMetadata *kreuzberg_extract_metadata_from_zip(const uint8_t *content,
+                                                       uintptr_t content_len);
+
+/**
+ * Deduplicate a list of text strings while preserving order.
+ * Adjacent duplicates and near-duplicates are removed.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_dedup_text(const char *texts);
+
+/**
+ * Evaluates native PDF text quality to determine if OCR fallback is needed.
+ *
+ * Uses the provided quality thresholds (or defaults) to make the decision.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrFallbackDecision *kreuzberg_evaluate_native_text_for_ocr(const char *native_text,
+                                                                     uintptr_t page_count,
+                                                                     const KREUZBERGOcrQualityThresholds *thresholds);
+
+/**
+ * Compute a quality score (0.0-1.0) for OCR output text.
+ *
+ * Used by the pipeline to decide whether to accept a result or try the next backend.
+ * Higher is better. Combines multiple signal dimensions into a single score.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_compute_quality_score(const char *text,
+                                       const KREUZBERGOcrQualityThresholds *thresholds);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrFallbackDecision *kreuzberg_evaluate_per_page_ocr(const char *native_text,
+                                                              const char *boundaries,
+                                                              uintptr_t page_count,
+                                                              const KREUZBERGOcrQualityThresholds *thresholds);
+
+/**
+ * Convert a hex digit character to its numeric value.
+ *
+ * Returns None if the character is not a valid hex digit.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t kreuzberg_hex_digit_to_u8(const char *c);
+
+/**
+ * Parse a hex-encoded byte from two characters.
+ *
+ * Returns the decoded byte if both characters are valid hex digits.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t kreuzberg_parse_hex_byte(const char *h1,
+                                 const char *h2);
+
+/**
+ * Decode a byte using Windows-1252 encoding for the 0x80-0x9F range.
+ *
+ * This function maps Windows-1252 bytes in the 0x80-0x9F range to their
+ * corresponding Unicode characters. For other values, it returns the byte
+ * as a character directly.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_decode_windows_1252(uint8_t byte);
+
+/**
+ * Parse an RTF control word and extract its value.
+ *
+ * Returns a tuple of (control_word, optional_numeric_value).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_parse_rtf_control_word(const char *_chars);
+
+/**
+ * Normalize whitespace in a string, also producing a byte-offset mapping from
+ * input positions to output positions. The mapping is a sorted list of
+ * `(old_offset, new_offset)` pairs that covers every byte boundary in the
+ * input. Callers can use [`map_offset`] to translate an arbitrary input byte
+ * offset to the corresponding output byte offset.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_normalize_whitespace_with_mapping(const char *_s);
+
+/**
+ * Map a byte offset from the pre-normalized string to the post-normalized string.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_map_offset(const char *_mapping,
+                               uintptr_t _offset);
+
+/**
+ * Normalize whitespace in a string.
+ *
+ * - Collapses multiple consecutive spaces/tabs into a single space
+ * - Preserves single newlines (paragraph breaks from \par)
+ * - Collapses multiple consecutive newlines into a double newline
+ * - Trims leading/trailing whitespace from each line
+ * - Trims leading/trailing blank lines
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_normalize_whitespace(const char *s);
+
+/**
+ * Extract image metadata and binary data from within a `\pict` group.
+ *
+ * Parses the image type (`\jpegblip`, `\pngblip`, etc.), dimensions, and
+ * collects the hex-encoded image data that follows the control words.
+ * Returns the parsed image and a metadata string for text representation.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_pict_image(const char *_chars);
+
+/**
+ * Parse a `{\\creatim ...}` or `{\\revtim ...}` RTF info block into ISO 8601 format.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_parse_rtf_datetime(const char *segment);
+
+/**
+ * Extract metadata from the RTF `\\info` block and augment with computed statistics.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_rtf_metadata(const char *_rtf_content,
+                                     const char *_extracted_text);
+
+/**
+ * Extract formatting metadata from RTF content.
+ *
+ * This performs a lightweight pass over the RTF to extract:
+ * - Bold/italic/underline formatting state changes
+ * - Color table and color references
+ * - Header/footer text
+ * - Hyperlink field instructions
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGRtfFormattingData *kreuzberg_extract_rtf_formatting(const char *content);
+
+/**
+ * Convert RTF formatting spans into `TextAnnotation` vectors for a paragraph.
+ *
+ * Given the byte range of a paragraph within the full extracted text,
+ * produces annotations from the formatting spans that overlap.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_spans_to_annotations(uintptr_t para_start,
+                                     uintptr_t para_end,
+                                     const KREUZBERGRtfFormattingData *formatting);
+
+/**
+ * Extract text and image metadata from RTF document.
+ *
+ * This function extracts plain text from an RTF document by:
+ * 1. Tracking group nesting depth with a state stack
+ * 2. Skipping known destination groups (fonttbl, stylesheet, info, etc.)
+ * 3. Skipping `{\*\...}` ignorable destination groups
+ * 4. Converting encoded characters to Unicode
+ * 5. Extracting text while skipping formatting groups
+ * 6. Detecting and extracting image metadata (\pict sections)
+ * 7. Normalizing whitespace
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_from_rtf(const char *_content,
+                                      int32_t _plain);
+
+/**
+ * Register all built-in extractors with the global registry.
+ *
+ * This function should be called once at application startup to register
+ * the default extractors (PlainText, Markdown, XML, etc.).
+ *
+ * **Note:** This is called automatically on first extraction operation.
+ * Explicit calling is optional.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::extractors::register_default_extractors;
+ *
+ * # fn main() -> kreuzberg::Result<()> {
+ * register_default_extractors()?;
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_register_default_extractors(void);
+
+/**
+ * Extracts a human-readable message from a panic payload.
+ *
+ * Attempts to downcast the panic payload to common types (String, &str)
+ * to extract a meaningful error message.
+ *
+ * Message is truncated to 4KB to prevent DoS attacks via extremely large panic messages.
+ *
+ * # Arguments
+ *
+ * * `panic_info` - The panic payload from catch_unwind
+ *
+ * # Returns
+ *
+ * A string representation of the panic message (truncated if necessary)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_panic_message(const char *_panic_info);
+
+/**
+ * Register a document extractor with the global registry.
+ *
+ * The extractor will be registered for all MIME types it supports and will be
+ * available for document extraction. The extractor's `name()` method is used as
+ * the registration name.
+ *
+ * # Arguments
+ *
+ * * `extractor` - The extractor implementation wrapped in Arc
+ *
+ * # Returns
+ *
+ * - `Ok(())` if registration succeeded
+ * - `Err(...)` if validation failed or initialization failed
+ *
+ * # Errors
+ *
+ * - `KreuzbergError::Validation` - Invalid extractor name (empty or contains whitespace)
+ * - Any error from the extractor's `initialize()` method
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::{Plugin, DocumentExtractor, register_extractor};
+ * use kreuzberg::{Result, ExtractionConfig};
+ * use kreuzberg::types::{ExtractionResult, Metadata};
+ * use async_trait::async_trait;
+ * use std::sync::Arc;
+ * use std::path::Path;
+ *
+ * struct CustomExtractor;
+ *
+ * impl Plugin for CustomExtractor {
+ *     fn name(&self) -> &str { "custom-extractor" }
+ *     fn version(&self) -> String { "1.0.0".to_string() }
+ *     fn initialize(&self) -> Result<()> { Ok(()) }
+ *     fn shutdown(&self) -> Result<()> { Ok(()) }
+ * }
+ *
+ * #[async_trait]
+ * impl DocumentExtractor for CustomExtractor {
+ *     async fn extract_bytes(&self, content: &[u8], mime_type: &str, _: &ExtractionConfig)
+ *         -> Result<ExtractionResult> {
+ *         Ok(ExtractionResult {
+ *             content: String::from_utf8_lossy(content).to_string(),
+ *             mime_type: mime_type.to_string().into(),
+ *             ..Default::default()
+ *         })
+ *     }
+ *
+ *     fn supported_mime_types(&self) -> &[&str] {
+ *         &["text/custom"]
+ *     }
+ * }
+ *
+ * # tokio_test::block_on(async {
+ * let extractor = Arc::new(CustomExtractor);
+ * register_extractor(extractor)?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_register_extractor(const char *_extractor);
+
+/**
+ * Unregister a document extractor by name.
+ *
+ * Removes the extractor from the global registry and calls its `shutdown()` method.
+ *
+ * # Arguments
+ *
+ * * `name` - Name of the extractor to unregister
+ *
+ * # Returns
+ *
+ * - `Ok(())` if the extractor was unregistered or didn't exist
+ * - `Err(...)` if the shutdown method failed
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::unregister_extractor;
+ *
+ * # tokio_test::block_on(async {
+ * unregister_extractor("custom-extractor")?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_unregister_extractor(const char *name);
+
+/**
+ * List all registered extractors.
+ *
+ * Returns the names of all extractors currently registered in the global registry.
+ *
+ * # Returns
+ *
+ * A vector of extractor names.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::list_extractors;
+ *
+ * # tokio_test::block_on(async {
+ * let extractors = list_extractors()?;
+ * for name in extractors {
+ *     println!("Registered extractor: {}", name);
+ * }
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_list_extractors(void);
+
+/**
+ * Clear all extractors from the global registry.
+ *
+ * Removes all extractors and calls their `shutdown()` methods.
+ *
+ * # Returns
+ *
+ * - `Ok(())` if all extractors were cleared successfully
+ * - `Err(...)` if any shutdown method failed
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::clear_extractors;
+ *
+ * # tokio_test::block_on(async {
+ * clear_extractors()?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_clear_extractors(void);
+
+/**
+ * Register an OCR backend with the global registry.
+ *
+ * The OCR backend will be registered with its name from the `name()` method
+ * and can be used for OCR processing via the extraction pipeline.
+ *
+ * # Arguments
+ *
+ * * `backend` - The OCR backend implementation wrapped in Arc
+ *
+ * # Returns
+ *
+ * - `Ok(())` if registration succeeded
+ * - `Err(...)` if validation failed or initialization failed
+ *
+ * # Errors
+ *
+ * - `KreuzbergError::Validation` - Invalid backend name (empty or contains whitespace)
+ * - Any error from the backend's `initialize()` method
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::{Plugin, OcrBackend, register_ocr_backend, OcrBackendType};
+ * use kreuzberg::{Result, OcrConfig};
+ * use kreuzberg::types::{ExtractionResult, Metadata};
+ * use async_trait::async_trait;
+ * use std::borrow::Cow;
+ * use std::sync::Arc;
+ * use std::path::Path;
+ *
+ * struct CustomOcr;
+ *
+ * impl Plugin for CustomOcr {
+ *     fn name(&self) -> &str { "custom-ocr" }
+ *     fn version(&self) -> String { "1.0.0".to_string() }
+ *     fn initialize(&self) -> Result<()> { Ok(()) }
+ *     fn shutdown(&self) -> Result<()> { Ok(()) }
+ * }
+ *
+ * #[async_trait]
+ * impl OcrBackend for CustomOcr {
+ *     async fn process_image(&self, _: &[u8], _: &OcrConfig) -> Result<ExtractionResult> {
+ *         Ok(ExtractionResult {
+ *             content: "text".to_string(),
+ *             mime_type: Cow::Borrowed("text/plain"),
+ *             ..Default::default()
+ *         })
+ *     }
+ *     fn supports_language(&self, _: &str) -> bool { true }
+ *     fn backend_type(&self) -> OcrBackendType { OcrBackendType::Custom }
+ * }
+ *
+ * # tokio_test::block_on(async {
+ * let backend = Arc::new(CustomOcr);
+ * register_ocr_backend(backend)?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_register_ocr_backend(const KREUZBERGOcrBackend *backend);
+
+/**
+ * Unregister an OCR backend by name.
+ *
+ * Removes the OCR backend from the global registry and calls its `shutdown()` method.
+ *
+ * # Arguments
+ *
+ * * `name` - Name of the OCR backend to unregister
+ *
+ * # Returns
+ *
+ * - `Ok(())` if the backend was unregistered or didn't exist
+ * - `Err(...)` if the shutdown method failed
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::unregister_ocr_backend;
+ *
+ * # tokio_test::block_on(async {
+ * unregister_ocr_backend("custom-ocr")?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_unregister_ocr_backend(const char *name);
+
+/**
+ * List all registered OCR backends.
+ *
+ * Returns the names of all OCR backends currently registered in the global registry.
+ *
+ * # Returns
+ *
+ * A vector of OCR backend names.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::list_ocr_backends;
+ *
+ * # tokio_test::block_on(async {
+ * let backends = list_ocr_backends()?;
+ * for name in backends {
+ *     println!("Registered OCR backend: {}", name);
+ * }
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_list_ocr_backends(void);
+
+/**
+ * Clear all OCR backends from the global registry.
+ *
+ * Removes all OCR backends and calls their `shutdown()` methods.
+ *
+ * # Returns
+ *
+ * - `Ok(())` if all backends were cleared successfully
+ * - `Err(...)` if any shutdown method failed
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::clear_ocr_backends;
+ *
+ * # tokio_test::block_on(async {
+ * clear_ocr_backends()?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_clear_ocr_backends(void);
+
+/**
+ * List all registered post-processor names.
+ *
+ * Returns a vector of all post-processor names currently registered in the
+ * global registry.
+ *
+ * # Returns
+ *
+ * - `Ok(Vec<String>)` - Vector of post-processor names
+ * - `Err(...)` if the registry lock is poisoned
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::list_post_processors;
+ *
+ * # tokio_test::block_on(async {
+ * let processors = list_post_processors()?;
+ * for name in processors {
+ *     println!("Registered post-processor: {}", name);
+ * }
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_list_post_processors(void);
+
+/**
+ * Get the global OCR backend registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_ocr_backend_registry(void);
+
+/**
+ * Get the global document extractor registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_document_extractor_registry(void);
+
+/**
+ * Get the global post-processor registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_post_processor_registry(void);
+
+/**
+ * Get the global validator registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_validator_registry(void);
+
+/**
+ * Get the global renderer registry.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_renderer_registry(void);
+
+/**
+ * Register a renderer with the global registry.
+ *
+ * # Arguments
+ *
+ * * `renderer` - The renderer implementation wrapped in Arc
+ *
+ * # Returns
+ *
+ * - `Ok(())` if registration succeeded
+ * - `Err(...)` if validation failed
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::{Renderer, register_renderer};
+ * use kreuzberg::types::internal::InternalDocument;
+ * use kreuzberg::Result;
+ * use std::sync::Arc;
+ *
+ * struct MyRenderer;
+ * impl Renderer for MyRenderer {
+ *     fn name(&self) -> &str { "my-format" }
+ *     fn render(&self, _doc: &InternalDocument) -> Result<String> {
+ *         Ok("rendered".to_string())
+ *     }
+ * }
+ *
+ * register_renderer(Arc::new(MyRenderer)).unwrap();
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_register_renderer(const KREUZBERGRenderer *renderer);
+
+/**
+ * Unregister a renderer by name.
+ *
+ * Removes the renderer from the global registry.
+ *
+ * # Arguments
+ *
+ * * `name` - Name of the renderer to unregister
+ *
+ * # Returns
+ *
+ * - `Ok(())` if the renderer was unregistered or didn't exist
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_unregister_renderer(const char *name);
+
+/**
+ * List all registered renderers.
+ *
+ * Returns the names of all renderers currently registered in the global registry.
+ *
+ * # Returns
+ *
+ * A vector of renderer names.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::list_renderers;
+ *
+ * let renderers = list_renderers();
+ * for name in renderers {
+ *     println!("Registered renderer: {}", name);
+ * }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_list_renderers(void);
+
+/**
+ * Clear all renderers from the global registry and re-register built-in defaults.
+ *
+ * # Returns
+ *
+ * - `Ok(())` if all renderers were cleared and defaults re-registered
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_clear_renderers(void);
+
+/**
+ * Validate plugin registries at startup and emit diagnostic logs.
+ *
+ * This function is designed to be called when the API server starts
+ * to help diagnose configuration issues early. It checks:
+ *
+ * - Whether OCR backends are registered (warns if none)
+ * - Whether document extractors are registered (warns if none)
+ * - Environment variables that might affect plugin initialization
+ * - File permission issues in containerized environments
+ *
+ * For Kubernetes deployments, this logs information that helps with
+ * troubleshooting in the container logs.
+ *
+ * # Returns
+ *
+ * - `Ok(PluginHealthStatus)` with diagnostic information
+ * - `Err(KreuzbergError)` if critical issues are detected (currently always succeeds)
+ *
+ * # Example
+ *
+ * ```no_run
+ * use kreuzberg::plugins::startup_validation::validate_plugins_at_startup;
+ *
+ * #[tokio::main]
+ * async fn main() -> kreuzberg::Result<()> {
+ *     let status = validate_plugins_at_startup()?;
+ *     println!("Plugins ready: {} backends registered", status.ocr_backends_count);
+ *     Ok(())
+ * }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_validate_plugins_at_startup(void);
+
+/**
+ * Register a validator with the global registry.
+ *
+ * The validator will be registered with its default priority and will be called
+ * during extraction validation. The validator's `name()` method is used as the
+ * registration name.
+ *
+ * # Arguments
+ *
+ * * `validator` - The validator implementation wrapped in Arc
+ *
+ * # Returns
+ *
+ * - `Ok(())` if registration succeeded
+ * - `Err(...)` if validation failed or initialization failed
+ *
+ * # Errors
+ *
+ * - `KreuzbergError::Validation` - Invalid validator name (empty or contains whitespace)
+ * - Any error from the validator's `initialize()` method
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::{Plugin, Validator, register_validator};
+ * use kreuzberg::{Result, ExtractionResult, ExtractionConfig, KreuzbergError};
+ * use async_trait::async_trait;
+ * use std::sync::Arc;
+ *
+ * struct MinLengthValidator { min_length: usize }
+ *
+ * impl Plugin for MinLengthValidator {
+ *     fn name(&self) -> &str { "min-length" }
+ *     fn version(&self) -> String { "1.0.0".to_string() }
+ *     fn initialize(&self) -> Result<()> { Ok(()) }
+ *     fn shutdown(&self) -> Result<()> { Ok(()) }
+ * }
+ *
+ * #[async_trait]
+ * impl Validator for MinLengthValidator {
+ *     async fn validate(&self, result: &ExtractionResult, _: &ExtractionConfig) -> Result<()> {
+ *         if result.content.len() < self.min_length {
+ *             return Err(KreuzbergError::validation(
+ *                 format!("Content too short: {} < {}", result.content.len(), self.min_length)
+ *             ));
+ *         }
+ *         Ok(())
+ *     }
+ * }
+ *
+ * # tokio_test::block_on(async {
+ * let validator = Arc::new(MinLengthValidator { min_length: 10 });
+ * register_validator(validator)?;
+ * # Ok::<(), KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_register_validator(const char *_validator);
+
+/**
+ * Unregister a validator by name.
+ *
+ * Removes the validator from the global registry and calls its `shutdown()` method.
+ *
+ * # Arguments
+ *
+ * * `name` - Name of the validator to unregister
+ *
+ * # Returns
+ *
+ * - `Ok(())` if the validator was unregistered or didn't exist
+ * - `Err(...)` if the shutdown method failed
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::unregister_validator;
+ *
+ * # tokio_test::block_on(async {
+ * unregister_validator("min-length")?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_unregister_validator(const char *name);
+
+/**
+ * List all registered validators.
+ *
+ * Returns the names of all validators currently registered in the global registry.
+ *
+ * # Returns
+ *
+ * A vector of validator names.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::list_validators;
+ *
+ * # tokio_test::block_on(async {
+ * let validators = list_validators()?;
+ * for name in validators {
+ *     println!("Registered validator: {}", name);
+ * }
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_list_validators(void);
+
+/**
+ * Clear all validators from the global registry.
+ *
+ * Removes all validators and calls their `shutdown()` methods.
+ *
+ * # Returns
+ *
+ * - `Ok(())` if all validators were cleared successfully
+ * - `Err(...)` if any shutdown method failed
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::clear_validators;
+ *
+ * # tokio_test::block_on(async {
+ * clear_validators()?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_clear_validators(void);
+
+/**
+ * Render an `InternalDocument` to Djot markup.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_render_djot(const char *_doc);
+
+/**
+ * Render an `InternalDocument` to HTML5.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_render_html(const char *_doc);
+
+/**
+ * Render an `InternalDocument` as a JSON tree string.
+ *
+ * Walks the flat element list and builds a heading-driven section tree.
+ * Returns a JSON string (always valid JSON).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_render_json(const char *_doc);
+
+/**
+ * Render an `InternalDocument` to GFM Markdown.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_render_markdown(const char *_doc);
+
+/**
+ * Render an `InternalDocument` to plain text.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_render_plain(const char *_doc);
+
+/**
+ * Sanitize a file path to return only the filename (no directory).
+ *
+ * Prevents PII from appearing in traces.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_sanitize_filename(const char *path);
+
+/**
+ * Get the global extraction metrics, initialising on first call.
+ *
+ * Uses the global [`opentelemetry::global::meter`] to create instruments.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGExtractionMetrics *kreuzberg_get_metrics(void);
+
+/**
+ * Record an error on the current span using semantic conventions.
+ *
+ * Sets `otel.status_code = "ERROR"`, `kreuzberg.error.type`, and `error.message`.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_record_error_on_current_span(const char *_error);
+
+/**
+ * Record extraction success on the current span.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_record_success_on_current_span(void);
+
+/**
+ * Sanitize a file path to return only the filename.
+ *
+ * Prevents PII (personally identifiable information) from appearing in
+ * traces by only recording filenames instead of full paths.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_sanitize_path(const char *path);
+
+/**
+ * Create an extractor-level span with semantic convention fields.
+ *
+ * Returns a `tracing::Span` with all `kreuzberg.extractor.*` and
+ * `kreuzberg.document.*` fields pre-allocated (set to `Empty` for
+ * lazy recording).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extractor_span(const char *_extractor_name,
+                               const char *_mime_type,
+                               uintptr_t _size_bytes);
+
+/**
+ * Create a pipeline stage span.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pipeline_stage_span(const char *_stage);
+
+/**
+ * Create a pipeline processor span.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_pipeline_processor_span(const char *_stage,
+                                        const char *_processor_name);
+
+/**
+ * Create an OCR operation span.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_ocr_span(const char *_backend,
+                         const char *_language);
+
+/**
+ * Create a model inference span.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_model_inference_span(const char *_model_name);
+
+/**
+ * Validates and converts bytes to string using SIMD when available.
+ *
+ * This function attempts to use SIMD UTF-8 validation if the `simd-utf8` feature
+ * is enabled and the platform supports it. Otherwise, it falls back to the standard
+ * `std::str::from_utf8()` validation.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The byte slice to validate and convert
+ *
+ * # Returns
+ *
+ * `Ok(&str)` if the bytes are valid UTF-8, `Err(std::str::Utf8Error)` otherwise.
+ *
+ * # Safety
+ *
+ * This function is safe and does not use any unsafe code directly. The underlying
+ * SIMD validation (when enabled) is contained within the simdutf8 crate and is safe.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_from_utf8(const uint8_t *bytes,
+                          uintptr_t bytes_len);
+
+/**
+ * Validates and converts owned bytes to String using SIMD when available.
+ *
+ * This function converts bytes to an owned String, validating UTF-8 using SIMD
+ * when available. The caller's bytes are consumed to create the String.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The byte vector to validate and convert
+ *
+ * # Returns
+ *
+ * `Ok(String)` if the bytes are valid UTF-8, `Err(std::string::FromUtf8Error)` otherwise.
+ *
+ * # Performance
+ *
+ * When enabled, SIMD validation significantly reduces the time spent on validation,
+ * especially for large text documents.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_string_from_utf8(const uint8_t *bytes,
+                                 uintptr_t bytes_len);
+
+/**
+ * Validates bytes as UTF-8 without conversion to string slice.
+ *
+ * Returns `true` if the bytes represent valid UTF-8, `false` otherwise.
+ * This is useful when you only need to check validity without constructing a string.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The byte slice to validate
+ *
+ * # Returns
+ *
+ * `true` if valid UTF-8, `false` otherwise.
+ *
+ * # Performance
+ *
+ * This function is optimized for early exit on invalid sequences.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_is_valid_utf8(const uint8_t *bytes,
+                                uintptr_t bytes_len);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_calculate_quality_score(const char *_text,
+                                         const char *_metadata);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_clean_extracted_text(const char *text);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_normalize_spaces(const char *text);
+
+/**
+ * Reduces token count in text while preserving meaning and structure.
+ *
+ * This function removes stopwords, redundancy, and applies compression techniques
+ * based on the specified reduction level. Supports 64 languages with automatic
+ * stopword removal and optional semantic clustering.
+ *
+ * # Arguments
+ *
+ * * `text` - The input text to reduce
+ * * `config` - Configuration specifying reduction level and options
+ * * `language_hint` - Optional ISO 639-3 language code (e.g., "eng", "spa")
+ *
+ * # Returns
+ *
+ * Returns the reduced text with preserved structure (markdown, code blocks).
+ *
+ * # Errors
+ *
+ * Returns an error if the language hint is invalid or stopwords cannot be loaded.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::text::token_reduction::{reduce_tokens, TokenReductionConfig, ReductionLevel};
+ *
+ * let text = "This is a simple example text with some stopwords.";
+ * let config = TokenReductionConfig::default();
+ * let reduced = reduce_tokens(text, &config, Some("eng"))?;
+ * println!("Reduced: {}", reduced);
+ * # Ok::<(), kreuzberg::error::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_reduce_tokens(const char *text,
+                              const KREUZBERGTokenReductionConfig *config,
+                              const char *language_hint);
+
+/**
+ * Reduces token count for multiple texts efficiently using parallel processing.
+ *
+ * This function processes multiple texts in parallel using Rayon, providing
+ * significant performance improvements for batch operations. All texts use the
+ * same configuration and language hint for consistency.
+ *
+ * # Arguments
+ *
+ * * `texts` - Slice of text references to reduce
+ * * `config` - Configuration specifying reduction level and options
+ * * `language_hint` - Optional ISO 639-3 language code (e.g., "eng", "spa")
+ *
+ * # Returns
+ *
+ * Returns a vector of reduced texts in the same order as the input.
+ *
+ * # Errors
+ *
+ * Returns an error if the language hint is invalid or stopwords cannot be loaded.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::text::token_reduction::{batch_reduce_tokens, TokenReductionConfig, ReductionLevel};
+ *
+ * let texts = vec![
+ *     "This is the first document with some text.",
+ *     "Here is another document with different content.",
+ *     "And finally, a third document to process.",
+ * ];
+ * let config = TokenReductionConfig::default();
+ * let reduced = batch_reduce_tokens(&texts, &config, Some("eng"))?;
+ * assert_eq!(reduced.len(), 3);
+ * # Ok::<(), kreuzberg::error::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_batch_reduce_tokens(const char *texts,
+                                    const KREUZBERGTokenReductionConfig *config,
+                                    const char *language_hint);
+
+/**
+ * Calculates detailed statistics comparing original and reduced text.
+ *
+ * Provides comprehensive metrics including reduction percentages and absolute
+ * counts for both characters and tokens. Useful for analyzing the effectiveness
+ * of token reduction and monitoring compression ratios.
+ *
+ * # Arguments
+ *
+ * * `original` - The original text before reduction
+ * * `reduced` - The reduced text after applying token reduction
+ *
+ * # Returns
+ *
+ * Returns a tuple with the following statistics (in order):
+ * 1. `char_reduction` (f64) - Character reduction ratio (0.0 to 1.0)
+ * 2. `token_reduction` (f64) - Token reduction ratio (0.0 to 1.0)
+ * 3. `original_chars` (usize) - Original character count
+ * 4. `reduced_chars` (usize) - Reduced character count
+ * 5. `original_tokens` (usize) - Original token count (whitespace-delimited)
+ * 6. `reduced_tokens` (usize) - Reduced token count (whitespace-delimited)
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::text::token_reduction::{reduce_tokens, get_reduction_statistics, TokenReductionConfig, ReductionLevel};
+ *
+ * let original = "This is a simple example text with some stopwords and redundancy.";
+ * let config = TokenReductionConfig::default();
+ * let reduced = reduce_tokens(original, &config, Some("eng"))?;
+ *
+ * let (char_ratio, token_ratio, orig_chars, red_chars, orig_tokens, red_tokens) =
+ *     get_reduction_statistics(original, &reduced);
+ *
+ * println!("Reduced {:.1}% of characters ({} -> {})", char_ratio * 100.0, orig_chars, red_chars);
+ * println!("Reduced {:.1}% of tokens ({} -> {})", token_ratio * 100.0, orig_tokens, red_tokens);
+ * # Ok::<(), kreuzberg::error::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_reduction_statistics(const char *_original,
+                                         const char *_reduced);
+
+/**
+ * Create a bold annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_bold(uint32_t start,
+                                        uint32_t end);
+
+/**
+ * Create an italic annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_italic(uint32_t start,
+                                          uint32_t end);
+
+/**
+ * Create an underline annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_underline(uint32_t start,
+                                             uint32_t end);
+
+/**
+ * Create a link annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_link(uint32_t start,
+                                        uint32_t end,
+                                        const char *url,
+                                        const char *title);
+
+/**
+ * Create a code (inline) annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_code(uint32_t start,
+                                        uint32_t end);
+
+/**
+ * Create a strikethrough annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_strikethrough(uint32_t start,
+                                                 uint32_t end);
+
+/**
+ * Create a subscript annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_subscript(uint32_t start,
+                                             uint32_t end);
+
+/**
+ * Create a superscript annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_superscript(uint32_t start,
+                                               uint32_t end);
+
+/**
+ * Create a font size annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_font_size(uint32_t start,
+                                             uint32_t end,
+                                             const char *value);
+
+/**
+ * Create a color annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_color(uint32_t start,
+                                         uint32_t end,
+                                         const char *value);
+
+/**
+ * Create a highlight annotation for the given byte range.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGTextAnnotation *kreuzberg_highlight(uint32_t start,
+                                             uint32_t end);
+
+/**
+ * Classify a URL string into the appropriate `UriKind`.
+ *
+ * - `mailto:` → `Email`
+ * - `#` prefix → `Anchor`
+ * - everything else → `Hyperlink`
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGUriKind *kreuzberg_classify_uri(const char *url);
+
+/**
+ * Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary.
+ *
+ * The function prefers an explicit `encoding`, falls back to the cached guess, probes
+ * an encoding detector, and finally tries a small curated list before returning a
+ * mojibake-cleaned string.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_safe_decode(const uint8_t *byte_data,
+                            uintptr_t byte_data_len,
+                            const char *encoding);
+
+/**
+ * Estimate how trustworthy a decoded string is on a 0.0–1.0 scale.
+ *
+ * Scores close to 1.0 indicate mostly printable characters, whereas lower scores
+ * point to mojibake, control characters, or suspicious character mixes.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+double kreuzberg_calculate_text_confidence(const char *text);
+
+/**
+ * Strip control characters and replacement glyphs that typically arise from mojibake.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_fix_mojibake(const char *_text);
+
+/**
+ * Recursively convert snake_case keys in a JSON Value to camelCase.
+ *
+ * This is used by language bindings (Node.js, Go, Java, C#, etc.) to provide
+ * a consistent camelCase API for consumers even though the Rust core uses snake_case.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_snake_to_camel(const char *_val);
+
+/**
+ * Recursively convert camelCase keys in a JSON Value to snake_case.
+ *
+ * This is the inverse of `snake_to_camel`. Used by WASM bindings to accept
+ * camelCase config from JavaScript while the Rust core expects snake_case.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_camel_to_snake(const char *_val);
+
+/**
+ * Create a pre-configured string buffer pool for batch processing.
+ *
+ * # Arguments
+ *
+ * * `pool_size` - Maximum number of buffers to keep in the pool
+ * * `buffer_capacity` - Initial capacity for each buffer in bytes
+ *
+ * # Returns
+ *
+ * A pool configured for text accumulation with reasonable defaults.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::utils::pool::create_string_buffer_pool;
+ *
+ * let pool = create_string_buffer_pool(10, 8192);
+ * let mut buffer = pool.acquire().unwrap();
+ * buffer.push_str("content");
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGStringBufferPool *kreuzberg_create_string_buffer_pool(uintptr_t pool_size,
+                                                               uintptr_t buffer_capacity);
+
+/**
+ * Create a pre-configured byte buffer pool for batch processing.
+ *
+ * # Arguments
+ *
+ * * `pool_size` - Maximum number of buffers to keep in the pool
+ * * `buffer_capacity` - Initial capacity for each buffer in bytes
+ *
+ * # Returns
+ *
+ * A pool configured for binary data handling with reasonable defaults.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::utils::pool::create_byte_buffer_pool;
+ *
+ * let pool = create_byte_buffer_pool(10, 65536);
+ * let mut buffer = pool.acquire().unwrap();
+ * buffer.extend_from_slice(b"binary data");
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGByteBufferPool *kreuzberg_create_byte_buffer_pool(uintptr_t pool_size,
+                                                           uintptr_t buffer_capacity);
+
+/**
+ * Estimate optimal pool sizing based on file size and document type.
+ *
+ * This function uses the file size and MIME type to estimate how many
+ * buffers and what capacity they should have. The estimates are conservative
+ * to avoid starving large document processing.
+ *
+ * # Arguments
+ *
+ * * `file_size` - Size of the file in bytes
+ * * `mime_type` - MIME type of the document (e.g., "application/pdf")
+ *
+ * # Returns
+ *
+ * A `PoolSizeHint` with recommended pool configuration
+ *
+ * # Example
+ *
+ * ```rust,ignore
+ * use kreuzberg::utils::pool_sizing::estimate_pool_size;
+ *
+ * let hint = estimate_pool_size(5_000_000, "application/pdf");
+ * // PDF at 5MB gets 10 string buffers (base 6 + 4 for size)
+ * // of 65KB each (for 1-10MB files)
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPoolSizeHint *kreuzberg_estimate_pool_size(uint64_t file_size,
+                                                    const char *mime_type);
+
+/**
+ * Acquire a string buffer from the global pool.
+ *
+ * The returned buffer is automatically returned to the pool when dropped.
+ *
+ * # Example
+ *
+ * ```rust,ignore
+ * let mut buffer = acquire_string_buffer();
+ * buffer.push_str("content");
+ * // Automatically returned to pool when buffer goes out of scope
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPooledString *kreuzberg_acquire_string_buffer(void);
+
+/**
+ * Get or intern a language code string.
+ *
+ * Returns an `InternedString` that is guaranteed to be deduplicated with any other
+ * intern call for the same language code.
+ *
+ * # Arguments
+ *
+ * * `lang_code` - The language code to intern (e.g., "en", "es", "fr")
+ *
+ * # Returns
+ *
+ * An `InternedString` pointing to the deduplicated string
+ *
+ * # Example
+ *
+ * ```rust,ignore
+ * let en1 = intern_language_code("en");
+ * let en2 = intern_language_code("en");
+ * assert_eq!(en1, en2); // Same pointer
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGInternedString *kreuzberg_intern_language_code(const char *lang_code);
+
+/**
+ * Get or intern a MIME type string.
+ *
+ * Returns an `InternedString` that is guaranteed to be deduplicated with any other
+ * intern call for the same MIME type. This reduces memory usage and allows
+ * fast pointer-based comparisons.
+ *
+ * # Arguments
+ *
+ * * `mime_type` - The MIME type string to intern
+ *
+ * # Returns
+ *
+ * An `InternedString` pointing to the deduplicated string
+ *
+ * # Example
+ *
+ * ```rust,ignore
+ * let pdf1 = intern_mime_type("application/pdf");
+ * let pdf2 = intern_mime_type("application/pdf");
+ * assert_eq!(pdf1, pdf2); // Same pointer
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGInternedString *kreuzberg_intern_mime_type(const char *mime_type);
+
+/**
+ * Converts XML tag name bytes to a string, avoiding allocation when possible.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_xml_tag_name(const uint8_t *_name,
+                             uintptr_t _name_len);
+
+/**
+ * Escape `&`, `<`, and `>` in text destined for markdown/HTML output.
+ *
+ * Underscores are intentionally **not** escaped. In extracted PDF text they are
+ * literal content (e.g. identifiers like `CTC_ARP_01`), not markdown italic
+ * delimiters.
+ *
+ * Uses a single-pass scan: if no special characters are found, returns a
+ * borrowed `Cow` with no allocation.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_escape_html_entities(const char *_text);
+
+/**
+ * Detect column positions from word x-coordinates.
+ *
+ * Groups words by approximate x-position (within `column_threshold` pixels)
+ * and returns the median x-position for each detected column, sorted left to right.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_columns(const char *words,
+                               uint32_t column_threshold);
+
+/**
+ * Detect row positions from word y-coordinates.
+ *
+ * Groups words by their vertical center position and returns the median
+ * y-position for each detected row. The `row_threshold_ratio` is multiplied
+ * by the median word height to determine the grouping threshold.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_rows(const char *words,
+                            double row_threshold_ratio);
+
+/**
+ * Reconstruct a table grid from words with bounding box positions.
+ *
+ * Takes detected words and reconstructs a 2D table by:
+ * 1. Detecting column positions (grouping by x-coordinate within `column_threshold`)
+ * 2. Detecting row positions (grouping by y-center within `row_threshold_ratio` * median height)
+ * 3. Assigning words to cells based on closest row/column
+ * 4. Combining words within the same cell
+ *
+ * Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_reconstruct_table(const char *words,
+                                  uint32_t column_threshold,
+                                  double row_threshold_ratio);
+
+/**
+ * Convert a table grid to markdown format.
+ *
+ * The first row is treated as the header row, with a separator line added after it.
+ * Pipe characters in cell content are escaped.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_table_to_markdown(const char *table);
+
+/**
+ * Load ServerConfig with proper precedence order.
+ *
+ * This function implements the configuration hierarchy:
+ * 1. File (if provided)
+ * 2. Environment variables (via apply_env_overrides)
+ * 3. Defaults
+ *
+ * The config file can be in flat format (server settings at root) or nested format
+ * (server settings under [server] section alongside other configs like [ocr]).
+ *
+ * # Arguments
+ *
+ * * `config_path` - Optional path to a ServerConfig file (TOML, YAML, or JSON)
+ *
+ * # Returns
+ *
+ * A configured ServerConfig with proper precedence applied.
+ *
+ * # Errors
+ *
+ * Returns an error if:
+ * - The config file path is provided but cannot be read
+ * - The config file contains invalid server configuration
+ * - Environment variable overrides contain invalid values
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::api::load_server_config;
+ * use std::path::Path;
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * // Load from file with env overrides
+ * let config = load_server_config(Some(Path::new("server.toml")))?;
+ *
+ * // Or use defaults with env overrides
+ * let config = load_server_config(None)?;
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGServerConfig *kreuzberg_load_server_config(const char *config_path);
+
+/**
+ * Generate OpenAPI JSON schema.
+ *
+ * Returns the complete OpenAPI 3.1 specification as a JSON string.
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::api::openapi::openapi_json;
+ *
+ * let schema = openapi_json();
+ * println!("{}", schema);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_openapi_json(void);
+
+/**
+ * Create the API router with all routes configured.
+ *
+ * This is public to allow users to embed the router in their own applications.
+ *
+ * # Arguments
+ *
+ * * `config` - Default extraction configuration. Per-request configs override these defaults.
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::{ExtractionConfig, api::create_router};
+ *
+ * # #[tokio::main]
+ * # async fn main() {
+ * // Create router with default config and size limits
+ * let config = ExtractionConfig::default();
+ * let router = create_router(config);
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_create_router(const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Create the API router with custom size limits.
+ *
+ * This allows fine-grained control over request body and multipart field size limits.
+ *
+ * # Arguments
+ *
+ * * `config` - Default extraction configuration. Per-request configs override these defaults.
+ * * `limits` - Size limits for request bodies and multipart uploads.
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::{ExtractionConfig, api::{create_router_with_limits, ApiSizeLimits}};
+ *
+ * # #[tokio::main]
+ * # async fn main() {
+ * // Create router with 50 MB limits
+ * let config = ExtractionConfig::default();
+ * let limits = ApiSizeLimits::from_mb(50, 50);
+ * let router = create_router_with_limits(config, limits);
+ * # }
+ * ```
+ *
+ * ```no_run
+ * use kreuzberg::{ExtractionConfig, api::{create_router_with_limits, ApiSizeLimits}};
+ * use tower_http::limit::RequestBodyLimitLayer;
+ *
+ * # #[tokio::main]
+ * # async fn main() {
+ * // Custom limits for very large documents (500 MB)
+ * let config = ExtractionConfig::default();
+ * let limits = ApiSizeLimits::from_mb(500, 500);
+ * let router = create_router_with_limits(config, limits);
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_create_router_with_limits(const KREUZBERGExtractionConfig *_config,
+                                          const KREUZBERGApiSizeLimits *_limits);
+
+/**
+ * Create the API router with custom size limits and server configuration.
+ *
+ * This function provides full control over request limits, CORS, and server settings via ServerConfig.
+ *
+ * # Arguments
+ *
+ * * `config` - Default extraction configuration. Per-request configs override these defaults.
+ * * `limits` - Size limits for request bodies and multipart uploads.
+ * * `server_config` - Server configuration including host, port, and CORS settings.
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::{ExtractionConfig, api::{create_router_with_limits_and_server_config, ApiSizeLimits}, core::ServerConfig};
+ *
+ * # #[tokio::main]
+ * # async fn main() -> kreuzberg::Result<()> {
+ * let extraction_config = ExtractionConfig::default();
+ * let mut server_config = ServerConfig::default();
+ * server_config.cors_origins = vec!["https://example.com".to_string()];
+ * let router = create_router_with_limits_and_server_config(
+ *     extraction_config,
+ *     ApiSizeLimits::default(),
+ *     server_config
+ * );
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_create_router_with_limits_and_server_config(const KREUZBERGExtractionConfig *_config,
+                                                            const KREUZBERGApiSizeLimits *_limits,
+                                                            const KREUZBERGServerConfig *_server_config);
+
+/**
+ * Start the API server with config file discovery.
+ *
+ * Searches for kreuzberg.toml/yaml/json in current and parent directories.
+ * If no config file is found, uses default configuration.
+ *
+ * # Arguments
+ *
+ * * `host` - IP address to bind to (e.g., "127.0.0.1" or "0.0.0.0")
+ * * `port` - Port number to bind to (e.g., 8000)
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::api::serve;
+ *
+ * #[tokio::main]
+ * async fn main() -> kreuzberg::Result<()> {
+ *     // Local development
+ *     serve("127.0.0.1", 8000).await?;
+ *     Ok(())
+ * }
+ * ```
+ *
+ * ```no_run
+ * use kreuzberg::api::serve;
+ *
+ * #[tokio::main]
+ * async fn main() -> kreuzberg::Result<()> {
+ *     // Docker/production (listen on all interfaces)
+ *     serve("0.0.0.0", 8000).await?;
+ *     Ok(())
+ * }
+ * ```
+ *
+ * # Environment Variables
+ *
+ * ```bash
+ * # Python/Docker usage
+ * export KREUZBERG_HOST=0.0.0.0
+ * export KREUZBERG_PORT=8000
+ *
+ * # CORS configuration (IMPORTANT for production security)
+ * # Default: allows all origins (permits CSRF attacks)
+ * # Production: set to comma-separated list of allowed origins
+ * export KREUZBERG_CORS_ORIGINS="https://app.example.com,https://api.example.com"
+ *
+ * # Upload size limits (default: 100 MB)
+ * # Modern approach (in bytes):
+ * export KREUZBERG_MAX_REQUEST_BODY_BYTES=104857600       # 100 MB
+ * export KREUZBERG_MAX_MULTIPART_FIELD_BYTES=104857600    # 100 MB per file
+ *
+ * python -m kreuzberg.api
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_serve(const char *_host,
+                        uint16_t _port);
+
+/**
+ * Start the API server with explicit config.
+ *
+ * Uses default size limits (100 MB). For custom limits, use `serve_with_config_and_limits`.
+ *
+ * # Arguments
+ *
+ * * `host` - IP address to bind to (e.g., "127.0.0.1" or "0.0.0.0")
+ * * `port` - Port number to bind to (e.g., 8000)
+ * * `config` - Default extraction configuration for all requests
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::{ExtractionConfig, api::serve_with_config};
+ *
+ * #[tokio::main]
+ * async fn main() -> kreuzberg::Result<()> {
+ *     let config = ExtractionConfig::from_toml_file("config/kreuzberg.toml")?;
+ *     serve_with_config("127.0.0.1", 8000, config).await?;
+ *     Ok(())
+ * }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_serve_with_config(const char *_host,
+                                    uint16_t _port,
+                                    const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Start the API server with explicit config and size limits.
+ *
+ * # Arguments
+ *
+ * * `host` - IP address to bind to (e.g., "127.0.0.1" or "0.0.0.0")
+ * * `port` - Port number to bind to (e.g., 8000)
+ * * `config` - Default extraction configuration for all requests
+ * * `limits` - Size limits for request bodies and multipart uploads
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::{ExtractionConfig, api::{serve_with_config_and_limits, ApiSizeLimits}};
+ *
+ * #[tokio::main]
+ * async fn main() -> kreuzberg::Result<()> {
+ *     let config = ExtractionConfig::from_toml_file("config/kreuzberg.toml")?;
+ *     let limits = ApiSizeLimits::from_mb(200, 200);
+ *     serve_with_config_and_limits("127.0.0.1", 8000, config, limits).await?;
+ *     Ok(())
+ * }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_serve_with_config_and_limits(const char *_host,
+                                               uint16_t _port,
+                                               const KREUZBERGExtractionConfig *_config,
+                                               const KREUZBERGApiSizeLimits *_limits);
+
+/**
+ * Start the API server with explicit extraction config and server config.
+ *
+ * This function accepts a fully-configured ServerConfig, including CORS origins,
+ * size limits, host, and port. It respects all ServerConfig fields without
+ * re-parsing environment variables, making it ideal for CLI usage where
+ * configuration precedence has already been applied.
+ *
+ * # Arguments
+ *
+ * * `extraction_config` - Default extraction configuration for all requests
+ * * `server_config` - Server configuration including host, port, CORS, and size limits
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::{ExtractionConfig, api::serve_with_server_config, core::ServerConfig};
+ *
+ * #[tokio::main]
+ * async fn main() -> kreuzberg::Result<()> {
+ *     let extraction_config = ExtractionConfig::default();
+ *     let mut server_config = ServerConfig::default();
+ *     server_config.host = "0.0.0.0".to_string();
+ *     server_config.port = 3000;
+ *     server_config.cors_origins = vec!["https://example.com".to_string()];
+ *
+ *     serve_with_server_config(extraction_config, server_config).await?;
+ *     Ok(())
+ * }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_serve_with_server_config(const KREUZBERGExtractionConfig *extraction_config,
+                                           const KREUZBERGServerConfig *server_config);
+
+/**
+ * Start the API server with default host and port.
+ *
+ * Defaults: host = "127.0.0.1", port = 8000
+ *
+ * Uses config file discovery (searches current/parent directories for kreuzberg.toml/yaml/json).
+ * Validates plugins at startup to help diagnose configuration issues.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_serve_default(void);
+
+/**
+ * Map Kreuzberg errors to MCP error responses with appropriate error codes.
+ *
+ * This function ensures different error types are properly differentiated in MCP responses:
+ * - `Validation` errors → `INVALID_PARAMS` (-32602)
+ * - `UnsupportedFormat` errors → `INVALID_PARAMS` (-32602)
+ * - `Parsing` errors → `PARSE_ERROR` (-32700)
+ * - `Io` errors → `INTERNAL_ERROR` (-32603) with context preserved
+ * - All other errors → `INTERNAL_ERROR` (-32603)
+ *
+ * The error message and source chain are preserved to aid debugging.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_map_kreuzberg_error_to_mcp(const char *_error);
+
+/**
+ * Start the Kreuzberg MCP server.
+ *
+ * This function initializes and runs the MCP server using stdio transport.
+ * It will block until the server is shut down.
+ *
+ * # Errors
+ *
+ * Returns an error if the server fails to start or encounters a fatal error.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::mcp::start_mcp_server;
+ *
+ * #[tokio::main]
+ * async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+ *     start_mcp_server().await?;
+ *     Ok(())
+ * }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_start_mcp_server(void);
+
+/**
+ * Start MCP server with custom extraction config.
+ *
+ * This variant allows specifying a custom extraction configuration
+ * (e.g., loaded from a file) instead of using defaults.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_start_mcp_server_with_config(const KREUZBERGExtractionConfig *config);
+
+/**
+ * Start MCP server with HTTP Stream transport.
+ *
+ * Uses rmcp's built-in StreamableHttpService for HTTP/SSE support per MCP spec.
+ *
+ * # Arguments
+ *
+ * * `host` - Host to bind to (e.g., "127.0.0.1" or "0.0.0.0")
+ * * `port` - Port number (e.g., 8001)
+ *
+ * # Example
+ *
+ * ```no_run
+ * use kreuzberg::mcp::start_mcp_server_http;
+ *
+ * #[tokio::main]
+ * async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+ *     start_mcp_server_http("127.0.0.1", 8001).await?;
+ *     Ok(())
+ * }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_start_mcp_server_http(const char *_host,
+                                        uint16_t _port);
+
+/**
+ * Start MCP HTTP server with custom extraction config.
+ *
+ * This variant allows specifying a custom extraction configuration
+ * while using HTTP Stream transport.
+ *
+ * # Arguments
+ *
+ * * `host` - Host to bind to (e.g., "127.0.0.1" or "0.0.0.0")
+ * * `port` - Port number (e.g., 8001)
+ * * `config` - Custom extraction configuration
+ *
+ * # Example
+ *
+ * ```no_run
+ * use kreuzberg::mcp::start_mcp_server_http_with_config;
+ * use kreuzberg::ExtractionConfig;
+ *
+ * #[tokio::main]
+ * async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+ *     let config = ExtractionConfig::default();
+ *     start_mcp_server_http_with_config("127.0.0.1", 8001, config).await?;
+ *     Ok(())
+ * }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_start_mcp_server_http_with_config(const char *_host,
+                                                    uint16_t _port,
+                                                    const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Validates the consistency and correctness of page boundaries.
+ *
+ * # Validation Rules
+ *
+ * 1. Boundaries must be sorted by byte_start (monotonically increasing)
+ * 2. Boundaries must not overlap (byte_end[i] <= byte_start[i+1])
+ * 3. Each boundary must have byte_start < byte_end
+ *
+ * # Arguments
+ *
+ * * `boundaries` - Page boundary markers to validate
+ *
+ * # Returns
+ *
+ * Returns `Ok(())` if all boundaries are valid.
+ * Returns `KreuzbergError::Validation` if any boundary is invalid.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_page_boundaries(const char *boundaries);
+
+/**
+ * Calculate which pages a byte range spans.
+ *
+ * # Arguments
+ *
+ * * `byte_start` - Starting byte offset of the chunk
+ * * `byte_end` - Ending byte offset of the chunk
+ * * `boundaries` - Page boundary markers from the document
+ *
+ * # Returns
+ *
+ * A tuple of (first_page, last_page) where page numbers are 1-indexed.
+ * Returns (None, None) if boundaries are empty or chunk doesn't overlap any page.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Validation` if boundaries are invalid.
+ *
+ * # Examples
+ *
+ * ```rust,ignore
+ * use kreuzberg::chunking::boundaries::calculate_page_range;
+ * use kreuzberg::types::PageBoundary;
+ *
+ * let boundaries = vec![
+ *     PageBoundary { byte_start: 0, byte_end: 100, page_number: 1 },
+ *     PageBoundary { byte_start: 100, byte_end: 200, page_number: 2 },
+ * ];
+ *
+ * let (first, last) = calculate_page_range(50, 150, &boundaries)?;
+ * assert_eq!(first, Some(1));
+ * assert_eq!(last, Some(2));
+ * # Ok::<(), kreuzberg::Result<()>>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_calculate_page_range(uintptr_t _byte_start,
+                                     uintptr_t _byte_end,
+                                     const char *_boundaries);
+
+/**
+ * Classify a single chunk based on its content and optional heading context.
+ *
+ * Rules are evaluated in priority order. The first matching rule determines
+ * the returned [`ChunkType`]. When no rule matches, [`ChunkType::Unknown`]
+ * is returned.
+ *
+ * # Arguments
+ *
+ * * `content` - The text content of the chunk (may be trimmed or raw).
+ * * `heading_context` - Optional heading hierarchy this chunk falls under
+ *   (only available when using `ChunkerType::Markdown`).
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::chunking::classifier::classify_chunk;
+ * use kreuzberg::types::ChunkType;
+ *
+ * assert_eq!(classify_chunk("# Introduction", None), ChunkType::Heading);
+ * assert_eq!(
+ *     classify_chunk("The Investor shall subscribe for the Shares and agrees to pay the subscription price. The Company shall deliver the Share certificates upon receipt.", None),
+ *     ChunkType::OperativeClause,
+ * );
+ * assert_eq!(classify_chunk("Some unrecognized text.", None), ChunkType::Unknown);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGChunkType *kreuzberg_classify_chunk(const char *content,
+                                             const KREUZBERGHeadingContext *heading_context);
+
+/**
+ * Split text into chunks with optional page boundary tracking.
+ *
+ * This is the primary API function for chunking text. It supports both plain text
+ * and Markdown with configurable chunk size, overlap, and page boundary mapping.
+ *
+ * # Arguments
+ *
+ * * `text` - The text to split into chunks
+ * * `config` - Chunking configuration (max size, overlap, type)
+ * * `page_boundaries` - Optional page boundary markers for mapping chunks to pages
+ *
+ * # Returns
+ *
+ * A ChunkingResult containing all chunks and their metadata.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::chunking::{chunk_text, ChunkingConfig, ChunkerType};
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * let config = ChunkingConfig {
+ *     max_characters: 500,
+ *     overlap: 50,
+ *     trim: true,
+ *     chunker_type: ChunkerType::Text,
+ *     ..Default::default()
+ * };
+ * let result = chunk_text("Long text...", &config, None)?;
+ * assert!(!result.chunks.is_empty());
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGChunkingResult *kreuzberg_chunk_text(const char *text,
+                                              const KREUZBERGChunkingConfig *config,
+                                              const char *page_boundaries);
+
+/**
+ * Chunk text with an optional separate markdown source for heading context resolution.
+ *
+ * When `heading_source` is provided, it is used instead of `text` for building the
+ * heading map. This is needed when `text` is plain text (no markdown headings) but
+ * the original document had headings that were stripped during rendering.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGChunkingResult *kreuzberg_chunk_text_with_heading_source(const char *text,
+                                                                  const KREUZBERGChunkingConfig *config,
+                                                                  const char *page_boundaries,
+                                                                  const char *heading_source);
+
+/**
+ * Chunk text with explicit type specification.
+ *
+ * This is a convenience function that constructs a ChunkingConfig from individual
+ * parameters and calls `chunk_text`.
+ *
+ * # Arguments
+ *
+ * * `text` - The text to split into chunks
+ * * `max_characters` - Maximum characters per chunk
+ * * `overlap` - Character overlap between consecutive chunks
+ * * `trim` - Whether to trim whitespace from boundaries
+ * * `chunker_type` - Type of chunker to use (Text or Markdown)
+ *
+ * # Returns
+ *
+ * A ChunkingResult containing all chunks and their metadata.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::chunking::{chunk_text_with_type, ChunkerType};
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * let result = chunk_text_with_type("Some text", 500, 50, true, ChunkerType::Text)?;
+ * assert!(!result.chunks.is_empty());
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGChunkingResult *kreuzberg_chunk_text_with_type(const char *text,
+                                                        uintptr_t max_characters,
+                                                        uintptr_t overlap,
+                                                        int32_t trim,
+                                                        const KREUZBERGChunkerType *chunker_type);
+
+/**
+ * Batch process multiple texts with the same configuration.
+ *
+ * This convenience function applies the same chunking configuration to multiple
+ * texts in sequence.
+ *
+ * # Arguments
+ *
+ * * `texts` - Slice of text strings to chunk
+ * * `config` - Chunking configuration to apply to all texts
+ *
+ * # Returns
+ *
+ * A vector of ChunkingResult objects, one per input text.
+ *
+ * # Errors
+ *
+ * Returns an error if chunking any individual text fails.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::chunking::{chunk_texts_batch, ChunkingConfig};
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * let config = ChunkingConfig::default();
+ * let texts = vec!["First text", "Second text"];
+ * let results = chunk_texts_batch(&texts, &config)?;
+ * assert_eq!(results.len(), 2);
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_chunk_texts_batch(const char *texts,
+                                  const KREUZBERGChunkingConfig *config);
+
+/**
+ * Pre-computes valid UTF-8 character boundaries for a text string.
+ *
+ * This function performs a single O(n) pass through the text to identify all valid
+ * UTF-8 character boundaries, storing them in a BitVec for O(1) lookups.
+ *
+ * # Arguments
+ *
+ * * `text` - The text to analyze
+ *
+ * # Returns
+ *
+ * A BitVec where each bit represents whether a byte offset is a valid UTF-8 character boundary.
+ * The BitVec has length `text.len() + 1` (includes the end position).
+ *
+ * # Examples
+ *
+ * ```ignore
+ * let text = "Hello 👋";
+ * let boundaries = precompute_utf8_boundaries(text);
+ * assert!(boundaries[0]);      // Start is always valid
+ * assert!(boundaries[6]);      // 'H' + "ello " = 6 bytes
+ * assert!(!boundaries[7]);     // Middle of emoji (first byte of 4-byte sequence)
+ * assert!(boundaries[10]);     // After emoji (valid boundary)
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_precompute_utf8_boundaries(const char *_text);
+
+/**
+ * Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries.
+ *
+ * This function ensures that all page boundary positions are at valid UTF-8 character
+ * boundaries within the text. This is CRITICAL to prevent text corruption when boundaries
+ * are created from language bindings or external sources, particularly with multibyte
+ * UTF-8 characters (emoji, CJK characters, combining marks, etc.).
+ *
+ * **Performance Strategy**: Uses adaptive validation to optimize for different boundary counts:
+ * - **Small sets (≤10 boundaries)**: O(k) approach using Rust's native `is_char_boundary()` for each position
+ * - **Large sets (>10 boundaries)**: O(n) precomputation with O(1) lookups via BitVec
+ *
+ * For typical PDF documents with 1-10 page boundaries, the fast path provides 30-50% faster
+ * validation than always precomputing. For documents with 100+ boundaries, batch precomputation
+ * is 2-4% faster overall due to amortized costs. This gives ~2-4% improvement across all scenarios.
+ *
+ * # Arguments
+ *
+ * * `text` - The text being chunked
+ * * `boundaries` - Page boundary markers to validate
+ *
+ * # Returns
+ *
+ * Returns `Ok(())` if all boundaries are at valid UTF-8 character boundaries.
+ * Returns `KreuzbergError::Validation` if any boundary is at an invalid position.
+ *
+ * # UTF-8 Boundary Safety
+ *
+ * Rust strings use UTF-8 encoding where characters can be 1-4 bytes. For example:
+ * - ASCII letters: 1 byte each
+ * - Emoji (🌍): 4 bytes but 1 character
+ * - CJK characters (中): 3 bytes but 1 character
+ *
+ * This function checks that all byte_start and byte_end values are at character boundaries
+ * using an adaptive strategy: direct calls for small boundary sets, or precomputed BitVec
+ * for large sets.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_utf8_boundaries(const char *text,
+                                           const char *boundaries);
+
+/**
+ * Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`].
+ *
+ * The `model` field from the config is passed as a model hint so that
+ * liter-llm can resolve the correct provider automatically.
+ *
+ * When `api_key` is `None`, liter-llm falls back to the provider's standard
+ * environment variable (e.g., `OPENAI_API_KEY`).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_create_client(const KREUZBERGLlmConfig *_config);
+
+/**
+ * Render a Jinja2 template with the given context variables.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_render_template(const char *_template,
+                                const char *_context);
+
+/**
+ * Extract structured data from document content using an LLM with JSON schema.
+ *
+ * Sends the document content to the configured LLM with a JSON schema constraint,
+ * returning structured data that conforms to the schema.
+ *
+ * # Arguments
+ *
+ * * `content` - The extracted document text to send to the LLM.
+ * * `config` - Structured extraction configuration including schema and LLM settings.
+ *
+ * # Returns
+ *
+ * A `serde_json::Value` conforming to the provided JSON schema.
+ *
+ * # Errors
+ *
+ * Returns an error if:
+ * - The LLM client cannot be created (invalid provider/credentials).
+ * - The LLM request fails (network, rate-limit, etc.).
+ * - The LLM response cannot be parsed as valid JSON.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_structured(const char *_content,
+                                   const KREUZBERGStructuredExtractionConfig *_config);
+
+/**
+ * Perform OCR on an image using a vision language model.
+ *
+ * Sends the image to a VLM (e.g., GPT-4o, Claude) which extracts text.
+ * The language hint is included in the prompt when the document language
+ * is not English.
+ *
+ * # Arguments
+ *
+ * * `image_bytes` - Raw image data (JPEG, PNG, WebP, etc.)
+ * * `image_mime_type` - MIME type of the image (e.g., `"image/png"`)
+ * * `language` - ISO 639 language code or Tesseract language name
+ *   (e.g., `"eng"`, `"de"`, `"fra"`)
+ * * `config` - LLM provider/model configuration
+ *
+ * # Returns
+ *
+ * Extracted text from the image, or an error if the VLM call fails.
+ *
+ * # Errors
+ *
+ * - `KreuzbergError::Ocr` if the VLM returns no content or the API call fails
+ * - `KreuzbergError::MissingDependency` if the liter-llm client cannot be created
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_vlm_ocr(const uint8_t *_image_bytes,
+                        uintptr_t _image_bytes_len,
+                        const char *_image_mime_type,
+                        const char *_language,
+                        const KREUZBERGLlmConfig *_config);
+
+/**
+ * L2-normalize a vector.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_normalize(const char *v);
+
+/**
+ * Get a preset by name.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_preset(const char *_name);
+
+/**
+ * List all available preset names.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_list_presets(void);
+
+/**
+ * Eagerly download and cache an embedding model without returning the handle.
+ *
+ * This triggers the same download and initialization as `get_or_init_engine`
+ * but discards the result, making it suitable for cache-warming scenarios
+ * where the caller doesn't need to use the model immediately.
+ *
+ * **Note**: This function downloads AND initializes the ONNX model, which
+ * requires ONNX Runtime and uses significant memory. For download-only
+ * scenarios (e.g., init containers), use [`download_model`] instead.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_warm_model(const KREUZBERGEmbeddingModelType *model_type,
+                             const char *cache_dir);
+
+/**
+ * Download an embedding model's files without initializing ONNX Runtime.
+ *
+ * Downloads the model files (ONNX model, tokenizer, config) from HuggingFace
+ * to the cache directory. Subsequent calls to `warm_model` or
+ * `get_or_init_engine` will find the files cached and skip the download step.
+ *
+ * This is ideal for init containers or CI environments where you want to
+ * pre-populate the cache without loading models into memory.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_download_model(const KREUZBERGEmbeddingModelType *model_type,
+                                 const char *cache_dir);
+
+/**
+ * Generate embeddings for text chunks using the specified configuration.
+ *
+ * This function modifies chunks in-place, populating their `embedding` field
+ * with generated embedding vectors. It uses batch processing for efficiency.
+ *
+ * # Arguments
+ *
+ * * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+ * * `config` - Embedding configuration specifying model and parameters
+ *
+ * # Returns
+ *
+ * Returns `Ok(())` if embeddings were generated successfully, or an error if
+ * model initialization or embedding generation fails.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_generate_embeddings_for_chunks(const char *chunks,
+                                                 const KREUZBERGEmbeddingConfig *config);
+
+/**
+ * Calculate smart DPI based on page dimensions, memory constraints, and target DPI
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_calculate_smart_dpi(double page_width,
+                                      double page_height,
+                                      int32_t target_dpi,
+                                      int32_t max_dimension,
+                                      double max_memory_mb);
+
+/**
+ * Calculate optimal DPI with min/max constraints
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_calculate_optimal_dpi(double page_width,
+                                        double page_height,
+                                        int32_t target_dpi,
+                                        int32_t max_dimension,
+                                        int32_t min_dpi,
+                                        int32_t max_dpi);
+
+/**
+ * Normalize image DPI based on extraction configuration
+ *
+ * # Arguments
+ * * `rgb_data` - RGB image data as a flat `Vec<u8>` (height * width * 3 bytes, row-major)
+ * * `width` - Image width in pixels
+ * * `height` - Image height in pixels
+ * * `config` - Extraction configuration containing DPI settings
+ * * `current_dpi` - Optional current DPI of the image (defaults to 72 if None)
+ *
+ * # Returns
+ * * `NormalizeResult` containing processed image data and metadata
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_normalize_image_dpi(const uint8_t *_rgb_data,
+                                    uintptr_t _rgb_data_len,
+                                    uintptr_t _width,
+                                    uintptr_t _height,
+                                    const KREUZBERGExtractionConfig *_config,
+                                    double _current_dpi);
+
+/**
+ * Resize an image using fast_image_resize with appropriate algorithm based on scale factor
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_resize_image(const char *_image,
+                             uint32_t _new_width,
+                             uint32_t _new_height,
+                             double _scale_factor);
+
+/**
+ * Detect languages in text using whatlang.
+ *
+ * Returns a list of detected language codes (ISO 639-3 format).
+ * Returns `None` if no languages could be detected with sufficient confidence.
+ *
+ * # Arguments
+ *
+ * * `text` - The text to analyze for language detection
+ * * `config` - Optional configuration for language detection
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::language_detection::detect_languages;
+ * use kreuzberg::core::config::LanguageDetectionConfig;
+ *
+ * let text = "Hello world! This is English text.";
+ * let config = LanguageDetectionConfig {
+ *     enabled: true,
+ *     min_confidence: 0.8,
+ *     detect_multiple: false,
+ * };
+ * let languages = detect_languages(text, &config).expect("language detection succeeded");
+ * println!("Detected languages: {:?}", languages);
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_languages(const char *text,
+                                 const KREUZBERGLanguageDetectionConfig *config);
+
+/**
+ * Register the language detection processor with the global registry.
+ *
+ * This function should be called once at application startup to register
+ * the language detection post-processor.
+ *
+ * **Note:** This is called automatically on first use.
+ * Explicit calling is optional.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_register_language_detection_processor(void);
+
+/**
+ * Get stopwords for a language with normalization.
+ *
+ * This function provides a user-friendly interface to the stopwords registry with:
+ * - **Case-insensitive lookup**: "EN", "en", "En" all work
+ * - **Locale normalization**: "en-US", "en_GB", "es-ES" extract to "en", "es"
+ * - **Consistent behavior**: Returns `None` for unsupported languages
+ *
+ * # Language Code Format
+ *
+ * Accepts multiple formats:
+ * - ISO 639-1 two-letter codes: `"en"`, `"es"`, `"de"`, etc.
+ * - Uppercase variants: `"EN"`, `"ES"`, `"DE"`
+ * - Locale codes with hyphen: `"en-US"`, `"es-ES"`, `"pt-BR"`
+ * - Locale codes with underscore: `"en_US"`, `"es_ES"`, `"pt_BR"`
+ *
+ * All formats are normalized to lowercase two-letter ISO 639-1 codes.
+ *
+ * # Returns
+ *
+ * - `Some(&HashSet<String>)` if the language is supported (64 languages available)
+ * - `None` if the language is not supported
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::stopwords::get_stopwords;
+ *
+ * // Simple language codes
+ * if let Some(en) = get_stopwords("en") {
+ *     assert!(en.contains("the"));
+ * }
+ *
+ * // Case-insensitive
+ * assert!(get_stopwords("EN").is_some());
+ * assert!(get_stopwords("En").is_some());
+ * assert!(get_stopwords("eN").is_some());
+ *
+ * // Locale codes normalized to language code
+ * if let (Some(en_us), Some(en_gb), Some(en_lowercase)) =
+ *     (get_stopwords("en-US"), get_stopwords("en_GB"), get_stopwords("en"))
+ * {
+ *     // All point to the same stopwords set
+ *     assert_eq!(en_us.len(), en_gb.len());
+ *     assert_eq!(en_us.len(), en_lowercase.len());
+ * }
+ *
+ * // Spanish with various formats
+ * assert!(get_stopwords("es").is_some());
+ * assert!(get_stopwords("ES").is_some());
+ * assert!(get_stopwords("es-ES").is_some());
+ * assert!(get_stopwords("es_MX").is_some());
+ *
+ * // Unsupported language returns None
+ * assert!(get_stopwords("xx").is_none());
+ * assert!(get_stopwords("zzzz").is_none());
+ * ```
+ *
+ * # Performance
+ *
+ * This function performs two operations:
+ * 1. String normalization (lowercase + truncate) - O(1) for typical language codes
+ * 2. HashMap lookup in STOPWORDS - O(1) average case
+ *
+ * Total overhead is negligible (~10-50ns on modern CPUs).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_stopwords(const char *_lang);
+
+/**
+ * Get stopwords for a language with fallback support.
+ *
+ * This function attempts to retrieve stopwords for the primary language,
+ * and if not available, falls back to a secondary language. This is useful
+ * for handling scenarios where:
+ * - A detected language isn't supported
+ * - You want to use English as a fallback for unknown languages
+ * - You need graceful degradation for multilingual content
+ *
+ * Both language codes support the same normalization as [`get_stopwords()`]:
+ * - Case-insensitive lookup (EN, en, En all work)
+ * - Locale codes normalized (en-US, en_GB extract to "en")
+ *
+ * # Arguments
+ *
+ * * `language` - Primary language code to try first
+ * * `fallback` - Fallback language code to use if primary not available
+ *
+ * # Returns
+ *
+ * - `Some(&HashSet<String>)` if either language is supported
+ * - `None` if neither language is supported
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::stopwords::get_stopwords_with_fallback;
+ *
+ * // Detected language is Esperanto, fallback to English
+ * if let Some(stopwords) = get_stopwords_with_fallback("eo", "en") {
+ *     // Will use Esperanto stopwords (supported)
+ *     assert!(stopwords.contains("la"));
+ * }
+ *
+ * // Unsupported language, fallback to English
+ * if let Some(stopwords) = get_stopwords_with_fallback("xx", "en") {
+ *     // Will use English stopwords (fallback)
+ *     assert!(stopwords.contains("the"));
+ * }
+ *
+ * // Case-insensitive and locale-aware
+ * let result = get_stopwords_with_fallback("es-MX", "EN-US");
+ * assert!(result.is_some());
+ *
+ * // Both unsupported returns None
+ * assert!(get_stopwords_with_fallback("xx", "zz").is_none());
+ * ```
+ *
+ * # Common Patterns
+ *
+ * ```rust
+ * use kreuzberg::stopwords::get_stopwords_with_fallback;
+ *
+ * // English fallback for unknown languages
+ * let detected_lang = "xyz"; // Unknown language
+ * let stopwords = get_stopwords_with_fallback(detected_lang, "en")
+ *     .expect("English fallback should always be available");
+ *
+ * // Multi-language content with English fallback
+ * for lang in ["de", "fr", "unknown", "es"] {
+ *     if let Some(stopwords) = get_stopwords_with_fallback(lang, "en") {
+ *         println!("Using stopwords for: {}", lang);
+ *     }
+ * }
+ * ```
+ *
+ * # Performance
+ *
+ * This function performs at most two HashMap lookups:
+ * 1. Try primary language (O(1) average case)
+ * 2. If None, try fallback language (O(1) average case)
+ *
+ * Total overhead is negligible (~10-100ns on modern CPUs).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_stopwords_with_fallback(const char *_language,
+                                            const char *_fallback);
+
+/**
+ * Extract keywords from text using the specified algorithm.
+ *
+ * This is the unified entry point for keyword extraction. The algorithm
+ * used is determined by `config.algorithm`.
+ *
+ * # Arguments
+ *
+ * * `text` - The text to extract keywords from
+ * * `config` - Keyword extraction configuration
+ *
+ * # Returns
+ *
+ * A vector of keywords sorted by relevance (highest score first).
+ *
+ * # Errors
+ *
+ * Returns an error if:
+ * - The specified algorithm feature is not enabled
+ * - Keyword extraction fails
+ *
+ * # Examples
+ *
+ * ```rust,no_run
+ * # use kreuzberg::keywords::{extract_keywords, KeywordConfig};
+ * let text = "Document intelligence with Rust provides memory safety.";
+ * let config = KeywordConfig::default()
+ *     .with_max_keywords(10)
+ *     .with_language("en");
+ *
+ * let keywords = extract_keywords(text, &config)?;
+ *
+ * for keyword in keywords {
+ *     println!("{}: {:.3}", keyword.text, keyword.score);
+ * }
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_keywords(const char *text,
+                                 const KREUZBERGKeywordConfig *config);
+
+/**
+ * Convert a PaddleOCR TextBlock to a unified OcrElement.
+ *
+ * Preserves all spatial information including:
+ * - 4-point quadrilateral bounding box
+ * - Detection and recognition confidence scores
+ * - Rotation angle and confidence
+ *
+ * # Arguments
+ *
+ * * `block` - PaddleOCR TextBlock containing OCR results
+ * * `page_number` - 1-indexed page number
+ *
+ * # Returns
+ *
+ * A fully populated `OcrElement` with all available metadata.
+ *
+ * # Errors
+ *
+ * Returns an error if:
+ * - `box_points` has fewer than 4 points (malformed detection)
+ * - `angle_index` is outside the valid range (0-3)
+ *
+ * Returns `Ok(None)` if the detection is filtered out due to low `box_score`.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrElement *kreuzberg_text_block_to_element(const KREUZBERGTextBlock *block,
+                                                     uintptr_t page_number);
+
+/**
+ * Convert a Tesseract TSV row to a unified OcrElement.
+ *
+ * Preserves:
+ * - Axis-aligned bounding box
+ * - Recognition confidence (Tesseract doesn't have separate detection confidence)
+ * - Hierarchical level information
+ *
+ * # Arguments
+ *
+ * * `row` - Parsed TSV row from Tesseract output
+ *
+ * # Returns
+ *
+ * An `OcrElement` with rectangle geometry and Tesseract metadata.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrElement *kreuzberg_tsv_row_to_element(const KREUZBERGTsvRow *row);
+
+/**
+ * Convert a Tesseract iterator WordData to a unified OcrElement with rich metadata.
+ *
+ * Unlike `tsv_row_to_element` which only has text, bbox, and confidence,
+ * this populates font attributes (bold, italic, monospace, pointsize) and
+ * block/paragraph context from the Tesseract layout analysis.
+ *
+ * # Arguments
+ *
+ * * `word` - WordData from the Tesseract result iterator
+ * * `block_type` - Optional block type from Tesseract layout analysis
+ * * `para_info` - Optional paragraph metadata (justification, list item flag)
+ * * `page_number` - 1-indexed page number
+ *
+ * # Returns
+ *
+ * An `OcrElement` at `Word` level with all available font and layout metadata.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGOcrElement *kreuzberg_iterator_word_to_element(const char *_word,
+                                                        const char *_block_type,
+                                                        const char *_para_info,
+                                                        uintptr_t _page_number);
+
+/**
+ * Convert an OcrElement to an HocrWord for table reconstruction.
+ *
+ * This enables reuse of the existing table detection algorithms from
+ * html-to-markdown-rs with PaddleOCR results.
+ *
+ * # Arguments
+ *
+ * * `element` - Unified OCR element with geometry and text
+ *
+ * # Returns
+ *
+ * An `HocrWord` suitable for table reconstruction algorithms.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGHocrWord *kreuzberg_element_to_hocr_word(const KREUZBERGOcrElement *element);
+
+/**
+ * Convert a vector of OcrElements to HocrWords for batch table processing.
+ *
+ * Filters to word-level elements only, as table reconstruction
+ * works best with word-level granularity.
+ *
+ * # Arguments
+ *
+ * * `elements` - Slice of OCR elements to convert
+ * * `min_confidence` - Minimum recognition confidence threshold (0.0-1.0)
+ *
+ * # Returns
+ *
+ * A vector of HocrWords filtered by confidence and element level.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_elements_to_hocr_words(const char *elements,
+                                       double min_confidence);
+
+/**
+ * Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata.
+ *
+ * This is the primary entry point. It replaces the older `convert_hocr_to_markdown` path
+ * by producing structured [`InternalElement`]s directly, preserving OCR geometry and
+ * confidence that the markdown conversion discards.
+ *
+ * # Arguments
+ *
+ * * `hocr_html` — raw hOCR output from Tesseract (or compatible engine).
+ *
+ * # Output mapping
+ *
+ * | hOCR element   | kreuzberg element                             |
+ * |---------------|-----------------------------------------------|
+ * | `ocr_page`    | `PageBreak` between consecutive pages         |
+ * | `ocr_par`     | `OcrText { level: Block }` with union bbox    |
+ * | `ocr_line`    | newline separator within a paragraph          |
+ * | `ocrx_word`   | word text, bbox, `x_wconf` → `OcrConfidence` |
+ *
+ * Page numbers come from the `ppageno` title property (converted to 1-indexed).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_parse_hocr_to_internal_document(const char *_hocr_html);
+
+/**
+ * Assemble structured markdown from OCR elements using layout detection results.
+ *
+ * Both inputs must be in the same pixel coordinate space (from the same
+ * rendered page image). Returns plain text join when `detection` is `None`.
+ *
+ * `recognized_tables` provides pre-computed markdown for Table regions
+ * (from TATR or other table structure recognizer). When empty, Table
+ * regions fall back to heuristic grid reconstruction from OCR elements.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_assemble_ocr_markdown(const char *elements,
+                                      const KREUZBERGDetectionResult *detection,
+                                      uint32_t img_width,
+                                      uint32_t img_height,
+                                      const char *recognized_tables);
+
+/**
+ * Run TATR table recognition for all Table regions in a page.
+ *
+ * For each Table detection, crops the page image, runs TATR inference,
+ * matches OCR elements to cells, and produces markdown tables.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_recognize_page_tables(const char *_page_image,
+                                      const KREUZBERGDetectionResult *_detection,
+                                      const char *_elements,
+                                      const char *_tatr_model);
+
+/**
+ * Extract words from Tesseract TSV output and convert to HocrWord format.
+ *
+ * This parses Tesseract's TSV format (level, page_num, block_num, ...) and
+ * converts it to the HocrWord format used for table reconstruction.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_words_from_tsv(const char *tsv_data,
+                                       double min_confidence);
+
+/**
+ * Compute a blake3 hash string from input data.
+ *
+ * Returns a 32-character hex string (128 bits of blake3 output).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_compute_hash(const char *data);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_validate_tesseract_version(uint32_t version);
+
+/**
+ * Ensure ONNX Runtime is discoverable. Safe to call multiple times (no-op after first).
+ *
+ * When the `ort-bundled` feature is enabled the ORT binaries are embedded via the
+ * official Microsoft release and no system library search is needed.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_ensure_ort_available(void);
+
+/**
+ * Check if a language code is supported by PaddleOCR.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_is_language_supported(const char *lang);
+
+/**
+ * Map a PaddleOCR language code to its script family.
+ *
+ * Script families group languages that share a single recognition model.
+ * For example, French, German, and Spanish all use the `latin` rec model.
+ * Chinese simplified, traditional, and Japanese share the `chinese` rec model.
+ *
+ * # Script Families (11, all PP-OCRv5)
+ *
+ * | Family | Languages |
+ * |---|---|
+ * | `english` | English |
+ * | `chinese` | Chinese (simplified+traditional), Japanese |
+ * | `latin` | French, German, Spanish, Italian, 40+ more |
+ * | `korean` | Korean |
+ * | `eslav` | Russian, Ukrainian, Belarusian |
+ * | `thai` | Thai |
+ * | `greek` | Greek |
+ * | `arabic` | Arabic, Persian, Urdu |
+ * | `devanagari` | Hindi, Marathi, Sanskrit, Nepali |
+ * | `tamil` | Tamil |
+ * | `telugu` | Telugu |
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_language_to_script_family(const char *paddle_lang);
+
+/**
+ * Map Kreuzberg language codes to PaddleOCR language codes.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_map_language_code(const char *kreuzberg_code);
+
+/**
+ * Build a 2D cell grid from TATR detections.
+ *
+ * The grid is `[num_rows][num_cols]` where each cell is the intersection
+ * of a row bounding box and a column bounding box.
+ *
+ * Processing steps:
+ * 1. Widen all rows to span the full table width (min x1 to max x2 across rows)
+ * 2. Apply NMS using IoB: sort by confidence descending, remove detections
+ *    whose IoB with any higher-confidence detection exceeds [`NMS_IOB_THRESHOLD`]
+ * 3. For each (row, column) pair, compute the intersection rectangle
+ *
+ * If `table_bbox` is provided, it is used to clip the row widening bounds.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_build_cell_grid(const char *_result,
+                                const char *_table_bbox);
+
+/**
+ * Apply Docling-style postprocessing heuristics to raw detections.
+ *
+ * This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
+ * 1. Per-class confidence thresholds
+ * 2. Full-page picture removal (>90% page area)
+ * 3. Overlap resolution (IoU > 0.8 or containment > 0.8)
+ * 4. Cross-type overlap handling (KVR vs Table)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_apply_heuristics(const char *detections,
+                                float page_width,
+                                float page_height);
+
+/**
+ * Standard greedy Non-Maximum Suppression.
+ *
+ * Sorts detections by confidence (descending), then iteratively removes
+ * detections that have IoU > `iou_threshold` with any higher-confidence detection.
+ *
+ * This is required for YOLO models. RT-DETR is NMS-free.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_greedy_nms(const char *detections,
+                          float iou_threshold);
+
+/**
+ * Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
+ *
+ * Pipeline: resize to target_size x target_size (bilinear) -> rescale /255 -> ImageNet normalize -> NCHW f32.
+ *
+ * Uses a single vectorized pass over contiguous pixel data for maximum throughput.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_preprocess_imagenet(const char *_img,
+                                    uint32_t _target_size);
+
+/**
+ * Preprocess with aspect-preserving letterbox and ImageNet normalization.
+ *
+ * Pipeline: letterbox-resize to target_size × target_size (Lanczos3, aspect-preserving)
+ *           → rescale /255 → ImageNet normalize → NCHW f32.
+ *
+ * Unlike `preprocess_imagenet` which squashes the image to a square (distorting
+ * aspect ratio), this preserves the original proportions and pads with the ImageNet
+ * mean color. This produces more accurate detection coordinates because the model
+ * sees undistorted geometry.
+ *
+ * Returns `(tensor, scale, pad_x, pad_y)`:
+ * - `scale`: resize factor applied (for mapping detections back)
+ * - `pad_x`, `pad_y`: top-left offset of the resized image within the padded square
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_preprocess_imagenet_letterbox(const char *_img,
+                                              uint32_t _target_size);
+
+/**
+ * Preprocess with rescale only (no ImageNet normalization).
+ *
+ * Pipeline: resize to target_size x target_size -> rescale /255 -> NCHW f32.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_preprocess_rescale(const char *_img,
+                                   uint32_t _target_size);
+
+/**
+ * Letterbox preprocessing for YOLOX-style models.
+ *
+ * Resizes the image to fit within (target_width x target_height) while maintaining
+ * aspect ratio, padding the remaining area with value 114.0 (raw pixel value).
+ * No normalization — values are 0-255 as YOLOX expects.
+ *
+ * Returns the NCHW tensor and the scale ratio (for rescaling detections back).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_preprocess_letterbox(const char *_img,
+                                     uint32_t _target_width,
+                                     uint32_t _target_height);
+
+/**
+ * Build an optimized ORT session from an ONNX model file.
+ *
+ * `thread_budget` controls the number of intra-op threads for this session.
+ * Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
+ * to respect the user's `ConcurrencyConfig`.
+ *
+ * When `accel` is `None` or `Auto`, uses platform defaults:
+ * - macOS: CoreML (Neural Engine / GPU)
+ * - Linux: CUDA (GPU)
+ * - Others: CPU only
+ *
+ * ORT silently falls back to CPU if the requested EP is unavailable.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_build_session(const char *_path,
+                              const KREUZBERGAccelerationConfig *_accel,
+                              uintptr_t _thread_budget);
+
+/**
+ * Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_config_from_extraction(const KREUZBERGLayoutDetectionConfig *_layout_config);
+
+/**
+ * Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
+ *
+ * Ensures ORT is available, then creates the engine with model download.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_create_engine(const KREUZBERGLayoutDetectionConfig *_layout_config);
+
+/**
+ * Take the cached layout engine, or create a new one if the cache is empty.
+ *
+ * The caller owns the engine for the duration of its work and should
+ * return it via [`return_engine`] when done. This avoids holding the
+ * global mutex during inference.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_take_or_create_engine(const KREUZBERGLayoutDetectionConfig *_layout_config);
+
+/**
+ * Return a layout engine to the global cache for reuse by future extractions.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_return_engine(const char *_engine);
+
+/**
+ * Take the cached TATR model, or create a new one if the cache is empty.
+ *
+ * Returns `None` if the model cannot be loaded. Once a load attempt fails,
+ * subsequent calls return `None` immediately without retrying, avoiding
+ * repeated download attempts and redundant warning logs.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_take_or_create_tatr(void);
+
+/**
+ * Return a TATR model to the global cache for reuse.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_return_tatr(const char *_model);
+
+/**
+ * Take a cached SLANeXT model for the given variant, or create a new one.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_take_or_create_slanet(const char *_variant);
+
+/**
+ * Return a SLANeXT model to the global cache for reuse.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_return_slanet(const char *_variant,
+                             const char *_model);
+
+/**
+ * Take a cached table classifier, or create a new one.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_take_or_create_table_classifier(void);
+
+/**
+ * Return a table classifier to the global cache for reuse.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_return_table_classifier(const char *_model);
+
+/**
+ * Extract annotations from all pages of a PDF document.
+ *
+ * Iterates over every page and every annotation on each page, mapping
+ * pdfium annotation subtypes to [`PdfAnnotationType`] and collecting
+ * content text and bounding boxes where available.
+ *
+ * Annotations that cannot be read are silently skipped.
+ *
+ * # Arguments
+ *
+ * * `document` - A reference to the loaded pdfium `PdfDocument`.
+ *
+ * # Returns
+ *
+ * A `Vec<PdfAnnotation>` containing all successfully extracted annotations.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_annotations_from_document(const char *_document);
+
+/**
+ * Extract bookmarks (outlines) from a PDF document loaded via lopdf.
+ *
+ * Walks the `/Outlines` tree in the document catalog, collecting each bookmark's
+ * title and destination. Returns an empty `Vec` if the document has no outlines.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_bookmarks(const KREUZBERGDocument *document);
+
+/**
+ * Extract bundled PDFium library to temporary directory.
+ *
+ * # Behavior
+ *
+ * - Embeds PDFium library using `include_bytes!`
+ * - Extracts to `$TMPDIR/kreuzberg-pdfium/` (non-WASM only)
+ * - Reuses extracted library if size matches
+ * - Sets permissions to 0755 on Unix
+ * - Returns path to extracted library
+ * - **Thread-safe**: Synchronized with a global `Mutex` to prevent concurrent writes
+ *
+ * # Concurrency
+ *
+ * This function is fully thread-safe. When multiple threads call it simultaneously,
+ * only the first thread performs the actual extraction while others wait. This prevents
+ * the "file too short" error that occurs when one thread reads a partially-written file.
+ *
+ * # WASM Handling
+ *
+ * On WASM targets (wasm32-*), this function returns an error with a helpful
+ * message directing users to use WASM-specific initialization. WASM PDFium
+ * is initialized through the runtime, not via file extraction.
+ *
+ * # Errors
+ *
+ * Returns `std::io::Error` if:
+ * - Cannot create extraction directory
+ * - Cannot write library file
+ * - Cannot set file permissions (Unix only)
+ * - Target is WASM (filesystem access not available)
+ *
+ * # Platform-Specific Library Names
+ *
+ * - Linux: `libpdfium.so`
+ * - macOS: `libpdfium.dylib`
+ * - Windows: `pdfium.dll`
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_bundled_pdfium(void);
+
+/**
+ * Extract embedded file descriptors from a PDF document loaded via lopdf.
+ *
+ * Walks the `/Names` → `/EmbeddedFiles` name tree in the catalog.
+ * Returns an empty `Vec` if the document has no embedded files.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_embedded_files(const KREUZBERGDocument *document);
+
+/**
+ * Extract embedded files from PDF bytes and recursively process them.
+ *
+ * Returns `(children, warnings)`. The children are `ArchiveEntry` values
+ * suitable for attaching to `InternalDocument.children`.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_and_process_embedded_files(const uint8_t *_pdf_bytes,
+                                                   uintptr_t _pdf_bytes_len,
+                                                   const KREUZBERGExtractionConfig *_config);
+
+/**
+ * Initialize the global font cache.
+ *
+ * On first call, discovers and loads all system fonts. Subsequent calls are no-ops.
+ * Caching is thread-safe via RwLock; concurrent reads during PDF processing are efficient.
+ *
+ * # Returns
+ *
+ * Ok if initialization succeeds or cache is already initialized, or PdfError if font discovery fails.
+ *
+ * # Performance
+ *
+ * - First call: 50-100ms (system font discovery + loading)
+ * - Subsequent calls: < 1μs (no-op, just checks initialized flag)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_initialize_font_cache(void);
+
+/**
+ * Get cached font descriptors for Pdfium configuration.
+ *
+ * Ensures the font cache is initialized, then returns font descriptors
+ * derived from the cached fonts. This call is fast after the first invocation.
+ *
+ * # Returns
+ *
+ * A Vec of FontDescriptor objects suitable for `PdfiumConfig::set_font_provider()`.
+ *
+ * # Performance
+ *
+ * - First call: ~50-100ms (includes font discovery)
+ * - Subsequent calls: < 1ms (reads from cache)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_get_font_descriptors(void);
+
+/**
+ * Get the number of cached fonts.
+ *
+ * Useful for diagnostics and testing.
+ *
+ * # Returns
+ *
+ * Number of fonts in the cache, or 0 if not initialized.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uintptr_t kreuzberg_cached_font_count(void);
+
+/**
+ * Clear the font cache (for testing purposes).
+ *
+ * # Panics
+ *
+ * Panics if the cache lock is poisoned, which should only happen in test scenarios
+ * with deliberate panic injection.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+void kreuzberg_clear_font_cache(void);
+
+/**
+ * Cluster text blocks by font size using k-means algorithm.
+ *
+ * Uses k-means clustering to group text blocks by their font size, which helps
+ * identify document hierarchy levels (H1, H2, Body, etc.). The algorithm:
+ * 1. Extracts font sizes from text blocks
+ * 2. Applies k-means clustering to group similar font sizes
+ * 3. Sorts clusters by centroid size in descending order (largest = H1)
+ * 4. Returns clusters with their member blocks
+ *
+ * # Arguments
+ *
+ * * `blocks` - Slice of TextBlock objects to cluster
+ * * `k` - Number of clusters to create
+ *
+ * # Returns
+ *
+ * Result with vector of FontSizeCluster ordered by size (descending),
+ * or an error if clustering fails
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * # #[cfg(feature = "pdf")]
+ * # {
+ * use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, cluster_font_sizes};
+ *
+ * let blocks = vec![
+ *     TextBlock {
+ *         text: "Title".to_string(),
+ *         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
+ *         font_size: 24.0,
+ *     },
+ *     TextBlock {
+ *         text: "Body".to_string(),
+ *         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
+ *         font_size: 12.0,
+ *     },
+ * ];
+ *
+ * let clusters = cluster_font_sizes(&blocks, 2).unwrap();
+ * assert_eq!(clusters.len(), 2);
+ * assert_eq!(clusters[0].centroid, 24.0); // Largest is first
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_cluster_font_sizes(const char *blocks,
+                                   uintptr_t k);
+
+/**
+ * Assign heading levels using the "most frequent cluster = Body" rule.
+ *
+ * Instead of naively mapping the largest font size to H1, this function
+ * identifies the cluster with the most members as body text. Only clusters
+ * with fewer members AND sufficiently larger font size than body become headings.
+ *
+ * # Arguments
+ *
+ * * `clusters` - Slice of FontSizeCluster objects (sorted by centroid descending)
+ * * `min_heading_ratio` - Minimum ratio of heading centroid to body centroid (e.g. 1.15)
+ * * `min_heading_gap` - Minimum absolute font-size difference in points (e.g. 1.5)
+ *
+ * # Returns
+ *
+ * Vector of tuples `(centroid, heading_level)` where `None` means body text
+ * and `Some(1..=6)` means H1-H6. Sorted by centroid descending.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_assign_heading_levels_smart(const char *_clusters,
+                                            float _min_heading_ratio,
+                                            float _min_heading_gap);
+
+/**
+ * Assign hierarchy levels to text blocks based on KMeans clustering results.
+ *
+ * Maps cluster indices to HTML heading levels (H1-H6) and body text:
+ * - Cluster 0 → H1 (top-level heading)
+ * - Cluster 1 → H2 (secondary heading)
+ * - Cluster 2 → H3 (tertiary heading)
+ * - Cluster 3 → H4 (quaternary heading)
+ * - Cluster 4 → H5 (quinary heading)
+ * - Cluster 5 → H6 (senary heading)
+ * - Cluster 6+ → Body (body text)
+ *
+ * # Arguments
+ *
+ * * `blocks` - Slice of TextBlock objects to assign hierarchy levels to
+ * * `kmeans_result` - KMeansResult containing cluster labels for each block
+ *
+ * # Returns
+ *
+ * Vector of tuples containing (original block info, hierarchy level)
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * # #[cfg(feature = "pdf")]
+ * # {
+ * use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, HierarchyLevel, assign_hierarchy_levels, KMeansResult};
+ *
+ * let blocks = vec![
+ *     TextBlock {
+ *         text: "Title".to_string(),
+ *         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
+ *         font_size: 24.0,
+ *     },
+ *     TextBlock {
+ *         text: "Body".to_string(),
+ *         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
+ *         font_size: 12.0,
+ *     },
+ * ];
+ *
+ * let kmeans_result = KMeansResult {
+ *     labels: vec![0, 6],
+ * };
+ *
+ * let results = assign_hierarchy_levels(&blocks, &kmeans_result);
+ * assert_eq!(results[0].hierarchy_level, HierarchyLevel::H1);
+ * assert_eq!(results[1].hierarchy_level, HierarchyLevel::Body);
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_assign_hierarchy_levels(const char *blocks,
+                                        const KREUZBERGKMeansResult *kmeans_result);
+
+/**
+ * Assign hierarchy levels to text blocks based on font size clusters.
+ *
+ * Maps font size clusters to heading levels (H1-H6) and body text.
+ * Larger font sizes are assigned higher hierarchy levels.
+ *
+ * # Arguments
+ *
+ * * `blocks` - Vector of TextBlock objects to assign levels to
+ * * `clusters` - Vector of FontSizeCluster objects from clustering
+ *
+ * # Returns
+ *
+ * Vector of tuples containing (TextBlock, HierarchyLevel).
+ * If blocks is empty or clusters is empty, returns empty vector.
+ * All blocks get Body level if only one cluster exists.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_assign_hierarchy_levels_from_clusters(const char *_blocks,
+                                                      const char *_clusters);
+
+/**
+ * Extract characters with fonts from a PDF page.
+ *
+ * Iterates through all characters on a page, extracting text, position,
+ * and font size information. Characters are returned in page order.
+ *
+ * # Arguments
+ *
+ * * `page` - PDF page to extract characters from
+ *
+ * # Returns
+ *
+ * Vector of CharData objects containing text and positioning information.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * # #[cfg(feature = "pdf")]
+ * # {
+ * use kreuzberg::pdf::hierarchy::extract_chars_with_fonts;
+ * use pdfium_render::prelude::*;
+ *
+ * # fn main() -> Result<(), Box<dyn std::error::Error>> {
+ * let pdfium = Pdfium::default();
+ * let document = pdfium.load_pdf_from_file("example.pdf", None)?;
+ * let page = document.pages().get(0)?;
+ * let chars = extract_chars_with_fonts(&page)?;
+ * # Ok(())
+ * # }
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_chars_with_fonts(const char *_page);
+
+/**
+ * Extract text segments from a PDF page using pdfium's segment merging.
+ *
+ * Instead of extracting individual characters and reconstructing words from gap heuristics,
+ * this function uses pdfium's `PdfPageTextSegments` which automatically merge characters
+ * sharing the same baseline and font settings into contiguous text runs.
+ *
+ * Font metadata (bold, italic, font size) is sampled from the first character of each segment.
+ *
+ * # Performance
+ *
+ * Typically 10-50x fewer items than character-level extraction, with far fewer FFI calls
+ * per item (one segment.text() + one segment.chars() sample vs N chars with 4+ FFI calls each).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_segments_from_page(const char *_page);
+
+/**
+ * Merge characters into text blocks using a greedy clustering algorithm.
+ *
+ * Groups characters based on spatial proximity using weighted distance and
+ * intersection ratio metrics. Characters are merged greedily based on their
+ * proximity and overlap.
+ *
+ * # Arguments
+ *
+ * * `chars` - Vector of CharData to merge into blocks
+ *
+ * # Returns
+ *
+ * Vector of TextBlock objects containing merged characters
+ *
+ * # Algorithm
+ *
+ * The function uses a greedy approach:
+ * 1. Create bounding boxes for each character
+ * 2. Use weighted_distance (5.0 * dx + 1.0 * dy) with maximum threshold of ~2.5x font size
+ * 3. Use intersection_ratio to detect overlapping or very close characters
+ * 4. Merge characters into blocks based on proximity thresholds
+ * 5. Return sorted blocks by position (top to bottom, left to right)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_merge_chars_into_blocks(const char *chars);
+
+/**
+ * Determine whether OCR should be triggered based on text block coverage.
+ *
+ * Analyzes the coverage of text blocks on a PDF page and decides if OCR
+ * should be run. OCR is triggered when the text blocks cover less than a
+ * certain percentage (default 50%) of the page area.
+ *
+ * # Arguments
+ *
+ * * `page` - The PDF page to analyze
+ * * `blocks` - Slice of TextBlock objects present on the page
+ * * `config` - Extraction configuration containing OCR and PDF settings
+ *
+ * # Returns
+ *
+ * `true` if OCR should be triggered (coverage below threshold), `false` otherwise.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_should_trigger_ocr(const char *_page,
+                                     const char *_blocks,
+                                     const KREUZBERGExtractionConfig *_config);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_images_from_pdf(const uint8_t *pdf_bytes,
+                                        uintptr_t pdf_bytes_len);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_images_from_pdf_with_password(const uint8_t *pdf_bytes,
+                                                      uintptr_t pdf_bytes_len,
+                                                      const char *password);
+
+/**
+ * Re-extract images that have unusable formats (`"raw"`, `"ccitt"`, `"jbig2"`) by
+ * rendering them through pdfium's bitmap pipeline, which handles all PDF filter
+ * chains internally.
+ *
+ * Returns the number of images successfully re-extracted.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint32_t kreuzberg_reextract_raw_images_via_pdfium(const uint8_t *pdf_bytes,
+                                                   uintptr_t pdf_bytes_len,
+                                                   const char *images);
+
+/**
+ * Run layout detection on all pages of a PDF document.
+ *
+ * Under the hood, this uses batched layout detection to prevent holding too many
+ * full-resolution page images in memory simultaneously before detection.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_layout_for_document(const uint8_t *_pdf_bytes,
+                                           uintptr_t _pdf_bytes_len,
+                                           const char *_engine);
+
+/**
+ * Run layout detection on pre-rendered images.
+ *
+ * Returns pixel-space [`DetectionResult`]s — no PDF coordinate conversion.
+ * Use this when images are already available (e.g., from the OCR rendering
+ * path) to avoid redundant PDF re-rendering.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_layout_for_images(const char *_images,
+                                         const char *_engine);
+
+/**
+ * Extract PDF-specific metadata from raw bytes.
+ *
+ * Returns only PDF-specific metadata (version, producer, encryption status, dimensions).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfMetadata *kreuzberg_extract_metadata(const uint8_t *pdf_bytes,
+                                                 uintptr_t pdf_bytes_len);
+
+/**
+ * Extract PDF-specific metadata from raw bytes with optional password.
+ *
+ * Returns only PDF-specific metadata (version, producer, encryption status, dimensions).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfMetadata *kreuzberg_extract_metadata_with_password(const uint8_t *pdf_bytes,
+                                                               uintptr_t pdf_bytes_len,
+                                                               const char *password);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfMetadata *kreuzberg_extract_metadata_with_passwords(const uint8_t *pdf_bytes,
+                                                                uintptr_t pdf_bytes_len,
+                                                                const char *passwords);
+
+/**
+ * Extract complete PDF metadata from a document.
+ *
+ * Extracts common fields (title, subject, authors, keywords, dates, creator),
+ * PDF-specific metadata, and optionally builds a PageStructure with boundaries.
+ *
+ * # Arguments
+ *
+ * * `document` - The PDF document to extract metadata from
+ * * `page_boundaries` - Optional vector of PageBoundary entries for building PageStructure.
+ *   If provided, a PageStructure will be built with these boundaries.
+ * * `content` - Optional extracted text content, used for blank page detection.
+ *   If provided, `PageInfo.is_blank` will be populated based on text content analysis.
+ *   If `None`, `is_blank` will be `None` for all pages.
+ *
+ * # Returns
+ *
+ * Returns a `PdfExtractionMetadata` struct containing all extracted metadata,
+ * including page structure if boundaries were provided.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfExtractionMetadata *kreuzberg_extract_metadata_from_document(const char *_document,
+                                                                         const char *_page_boundaries,
+                                                                         const char *_content);
+
+/**
+ * Extract common metadata from a PDF document.
+ *
+ * Returns common fields (title, authors, keywords, dates) that are now stored
+ * in the base `Metadata` struct instead of format-specific metadata.
+ *
+ * This function uses batch fetching with caching to optimize metadata extraction
+ * by reducing repeated dictionary lookups. All metadata tags are fetched once and
+ * cached in a single pass.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGCommonPdfMetadata *kreuzberg_extract_common_metadata_from_document(const char *_document);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_render_page_to_image(const uint8_t *_pdf_bytes,
+                                     uintptr_t _pdf_bytes_len,
+                                     uintptr_t _page_index,
+                                     const KREUZBERGPageRenderOptions *_options);
+
+/**
+ * Render a single PDF page to a PNG-encoded byte buffer.
+ *
+ * # Errors
+ *
+ * Returns an error if the PDF is invalid, the page index is out of bounds,
+ * or if the page fails to render.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::pdf::render_pdf_page_to_png;
+ *
+ * # fn example() -> kreuzberg::pdf::error::Result<()> {
+ * let pdf_bytes = std::fs::read("document.pdf")?;
+ * let png = render_pdf_page_to_png(&pdf_bytes, 0, Some(150), None)?;
+ * std::fs::write("page_0.png", png)?;
+ * # Ok(())
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+uint8_t *kreuzberg_render_pdf_page_to_png(const uint8_t *pdf_bytes,
+                                          uintptr_t pdf_bytes_len,
+                                          uintptr_t page_index,
+                                          int32_t dpi,
+                                          const char *password);
+
+/**
+ * Extract words with positions from PDF page for table detection.
+ *
+ * Groups adjacent characters into words based on spacing heuristics,
+ * then converts to HocrWord format for table reconstruction.
+ *
+ * # Arguments
+ *
+ * * `page` - PDF page to extract words from
+ * * `min_confidence` - Minimum confidence threshold (0.0-100.0). PDF text has high confidence (95.0).
+ *
+ * # Returns
+ *
+ * Vector of HocrWord objects with text and bounding box information.
+ *
+ * # Note
+ * This function requires the "ocr" feature to be enabled. Without it, returns an error.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * # #[cfg(feature = "ocr")]
+ * # {
+ * use kreuzberg::pdf::table::extract_words_from_page;
+ * use pdfium_render::prelude::*;
+ *
+ * # fn main() -> Result<(), Box<dyn std::error::Error>> {
+ * let pdfium = Pdfium::default();
+ * let document = pdfium.load_pdf_from_file("example.pdf", None)?;
+ * let page = document.pages().get(0)?;
+ * let words = extract_words_from_page(&page, 90.0)?;
+ * # Ok(())
+ * # }
+ * # }
+ * ```
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_words_from_page(const char *_page,
+                                        double _min_confidence);
+
+/**
+ * Convert a PDF `SegmentData` to an `HocrWord` for table reconstruction.
+ *
+ * `SegmentData` uses PDF coordinates (y=0 at bottom, increases upward).
+ * `HocrWord` uses image coordinates (y=0 at top, increases downward).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGHocrWord *kreuzberg_segment_to_hocr_word(const KREUZBERGSegmentData *seg,
+                                                  float page_height);
+
+/**
+ * Split a `SegmentData` into word-level `HocrWord`s for table reconstruction.
+ *
+ * Pdfium segments can contain multiple whitespace-separated words (merged by
+ * shared baseline + font). For table cell matching, each word needs its own
+ * bounding box so it can be assigned to the correct column/cell.
+ *
+ * Single-word segments use `segment_to_hocr_word` directly (fast path).
+ * Multi-word segments get proportional bbox estimation per word based on
+ * byte offset within the segment text.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_split_segment_to_words(const KREUZBERGSegmentData *seg,
+                                       float page_height);
+
+/**
+ * Convert a page's segments to word-level `HocrWord`s for table extraction.
+ *
+ * Splits multi-word segments into individual words with proportional bounding
+ * boxes, ensuring each word can be independently matched to table cells.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_segments_to_words(const char *segments,
+                                  float page_height);
+
+/**
+ * Post-process a raw table grid to validate structure and clean up.
+ *
+ * Returns `None` if the table fails structural validation.
+ *
+ * When `layout_guided` is true, the layout model already confirmed this is
+ * a table, so validation thresholds are relaxed:
+ * - Minimum columns: 3 → 2
+ * - Column sparsity: 75% → 95%
+ * - Overall density: 40% → 15%
+ * - Prose detection: reject if >70% cells >100 chars (vs >50% >60 chars)
+ * - Prose detection: reject if avg cell >80 chars (vs >50 chars)
+ * - Single-word cell: reject if >85% single-word (vs >70%)
+ * - Content asymmetry: reject if one col >92% of text (vs >85%)
+ * - Column-text-flow: applied equally (reject if >60% rows flow through)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_post_process_table(const char *table,
+                                   int32_t layout_guided,
+                                   int32_t allow_single_column);
+
+/**
+ * Validate whether a reconstructed table grid represents a well-formed table
+ * rather than multi-column prose or a repeated page element.
+ *
+ * Returns `true` if the grid looks like a real table, `false` if it should be
+ * rejected and its content emitted as paragraph text instead.
+ *
+ * The checks catch cases the layout model misidentifies as tables:
+ * - Multi-column prose split into a grid (detected via row coherence and column uniformity)
+ * - Repeated page elements (headers/footers detected as tables on every page)
+ * - Low-vocabulary repetitive content (same few words in every row)
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_is_well_formed_table(const char *grid);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_from_pdf(const uint8_t *pdf_bytes,
+                                      uintptr_t pdf_bytes_len);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_from_pdf_with_password(const uint8_t *pdf_bytes,
+                                                    uintptr_t pdf_bytes_len,
+                                                    const char *password);
+
+/**
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_from_pdf_with_passwords(const uint8_t *pdf_bytes,
+                                                     uintptr_t pdf_bytes_len,
+                                                     const char *passwords);
+
+/**
+ * Extract text and metadata from PDF document in a single pass.
+ *
+ * This is an optimized function that extracts both text and metadata in one pass
+ * through the document, avoiding redundant document parsing. It combines the
+ * functionality of `extract_text_from_pdf_document` and
+ * `extract_metadata_from_document` into a single unified operation.
+ *
+ * # Arguments
+ *
+ * * `document` - The PDF document to extract from
+ * * `extraction_config` - Optional extraction configuration for hierarchy and page tracking
+ *
+ * # Returns
+ *
+ * A tuple containing:
+ * - The extracted text content (String)
+ * - Optional page boundaries when page tracking is enabled (Vec<PageBoundary>)
+ * - Optional per-page content when extract_pages is enabled (Vec<PageContent>)
+ * - Complete extraction metadata (PdfExtractionMetadata)
+ *
+ * # Performance
+ *
+ * This function is optimized for single-pass extraction. It performs all document
+ * scanning in one iteration, avoiding redundant pdfium operations compared to
+ * calling text and metadata extraction separately.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+KREUZBERGPdfUnifiedExtractionResult *kreuzberg_extract_text_and_metadata_from_pdf_document(const char *_document,
+                                                                                           const KREUZBERGExtractionConfig *_extraction_config);
+
+/**
+ * Extract text from PDF document with optional page boundary tracking.
+ *
+ * # Arguments
+ *
+ * * `document` - The PDF document to extract text from
+ * * `page_config` - Optional page configuration for boundary tracking and page markers
+ * * `extraction_config` - Optional extraction configuration for hierarchy detection
+ *
+ * # Returns
+ *
+ * A tuple containing:
+ * - The extracted text content (String)
+ * - Optional page boundaries when page tracking is enabled (Vec<PageBoundary>)
+ * - Optional per-page content when extract_pages is enabled (Vec<PageContent>)
+ *
+ * # Implementation Details
+ *
+ * Uses lazy page-by-page iteration to reduce memory footprint. Pages are processed
+ * one at a time and released after extraction, rather than accumulating all pages
+ * in memory. This approach saves 40-50MB for large documents while improving
+ * performance by 15-25% through reduced upfront work.
+ *
+ * When page_config is None, uses fast path with minimal overhead.
+ * When page_config is Some, tracks byte offsets using .len() for O(1) performance (UTF-8 valid boundaries).
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_extract_text_from_pdf_document(const char *_document,
+                                               const KREUZBERGPageConfig *_page_config,
+                                               const KREUZBERGExtractionConfig *_extraction_config);
+
+/**
+ * Serialize an [`ExtractionResult`] to TOON (Token-Oriented Object Notation).
+ *
+ * TOON is a token-efficient alternative to JSON for LLM prompts.
+ * Losslessly convertible to/from JSON but uses fewer tokens.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_serialize_to_toon(const KREUZBERGExtractionResult *result);
+
+/**
+ * Serialize an [`ExtractionResult`] to pretty-printed JSON.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_serialize_to_json(const KREUZBERGExtractionResult *result);
 
 #endif  /* KREUZBERG_H */

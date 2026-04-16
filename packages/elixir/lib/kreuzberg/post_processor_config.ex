@@ -3,8 +3,8 @@ defmodule Kreuzberg.PostProcessorConfig do
   @moduledoc "Post-processor configuration."
 
   defstruct enabled: true,
-            enabled_processors: [],
-            disabled_processors: [],
-            enabled_set: "",
-            disabled_set: ""
+            enabled_processors: nil,
+            disabled_processors: nil,
+            enabled_set: nil,
+            disabled_set: nil
 end

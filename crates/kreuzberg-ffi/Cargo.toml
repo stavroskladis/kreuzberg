@@ -6,16 +6,6 @@ license = "Elastic-2.0"
 description = "High-performance document intelligence library"
 repository = "https://github.com/kreuzberg-dev/kreuzberg"
 
-[package.metadata.cargo-machete]
-ignored = [
-    "serde_json",
-    "tokio",
-    "serde-wasm-bindgen",
-    "pyo3-async-runtimes",
-    "serde_magnus",
-    "wiremock",
-]
-
 [lib]
 crate-type = ["cdylib", "staticlib"]
 
