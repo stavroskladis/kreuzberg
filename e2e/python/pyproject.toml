@@ -10,7 +10,7 @@ requires-python = ">=3.10"
 dependencies = ["kreuzberg", "pytest>=7.4", "pytest-asyncio>=0.23", "pytest-timeout>=2.1"]
 
 [tool.uv.sources]
-kreuzberg = { path = "../../packages/python", editable = true }
+kreuzberg = { workspace = true }
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
