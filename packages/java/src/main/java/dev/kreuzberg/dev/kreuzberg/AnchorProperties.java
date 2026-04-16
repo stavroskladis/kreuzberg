@@ -8,9 +8,9 @@ public record AnchorProperties(
     @JsonProperty("behind_doc") boolean behindDoc,
     @JsonProperty("layout_in_cell") boolean layoutInCell,
     @JsonProperty("relative_height") Optional<Long> relativeHeight,
-    @JsonProperty("position_h") Optional<Position> positionH,
-    @JsonProperty("position_v") Optional<Position> positionV,
-    @JsonProperty("wrap_type") WrapType wrapType
+    @JsonProperty("position_h") Optional<String> positionH,
+    @JsonProperty("position_v") Optional<String> positionV,
+    @JsonProperty("wrap_type") String wrapType
 ) {
     public static AnchorPropertiesBuilder builder() {
         return new AnchorPropertiesBuilder();

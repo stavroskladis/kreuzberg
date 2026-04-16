@@ -9,8 +9,8 @@ public record TableProperties(
     Optional<String> width,
     Optional<String> alignment,
     Optional<String> layout,
-    Optional<TableLook> look,
-    Optional<TableBorders> borders,
+    Optional<String> look,
+    Optional<String> borders,
     @JsonProperty("cell_margins") Optional<String> cellMargins,
     Optional<String> indent,
     Optional<String> caption

@@ -27,7 +27,7 @@ public sealed class StyleDefinition
     /// Style type: paragraph, character, table, or numbering.
     /// </summary>
     [JsonPropertyName("style_type")]
-    public StyleType StyleType { get; set; } = default!;
+    public string StyleType { get; set; } = "";
 
     /// <summary>
     /// ID of the parent style (`<w:basedOn w:val="..."/>`).
@@ -57,6 +57,6 @@ public sealed class StyleDefinition
     /// Run properties defined directly on this style.
     /// </summary>
     [JsonPropertyName("run_properties")]
-    public RunProperties RunProperties { get; set; } = default!;
+    public string RunProperties { get; set; } = "";
 
 }

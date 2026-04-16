@@ -9,8 +9,8 @@ public class TablePropertiesBuilder {
     private Optional<String> width = Optional.empty();
     private Optional<String> alignment = Optional.empty();
     private Optional<String> layout = Optional.empty();
-    private Optional<TableLook> look = Optional.empty();
-    private Optional<TableBorders> borders = Optional.empty();
+    private Optional<String> look = Optional.empty();
+    private Optional<String> borders = Optional.empty();
     private Optional<String> cellMargins = Optional.empty();
     private Optional<String> indent = Optional.empty();
     private Optional<String> caption = Optional.empty();
@@ -35,12 +35,12 @@ public class TablePropertiesBuilder {
         return this;
     }
 
-    public TablePropertiesBuilder withLook(Optional<TableLook> value) {
+    public TablePropertiesBuilder withLook(Optional<String> value) {
         this.look = value;
         return this;
     }
 
-    public TablePropertiesBuilder withBorders(Optional<TableBorders> value) {
+    public TablePropertiesBuilder withBorders(Optional<String> value) {
         this.borders = value;
         return this;
     }

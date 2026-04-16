@@ -3,5 +3,5 @@ defmodule Kreuzberg.TableRow do
   @moduledoc false
 
   defstruct cells: [],
-            properties: nil
+            properties: ""
 end

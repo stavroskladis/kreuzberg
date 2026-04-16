@@ -15,6 +15,6 @@ public sealed class HeaderFooter
     public List<Table> Tables { get; set; } = [];
 
     [JsonPropertyName("header_type")]
-    public HeaderFooterType HeaderType { get; set; } = default;
+    public string HeaderType { get; set; } = "";
 
 }

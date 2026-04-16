@@ -21,6 +21,6 @@ public sealed class DocExtractionResult
     /// Document metadata.
     /// </summary>
     [JsonPropertyName("metadata")]
-    public DocMetadata Metadata { get; set; } = default!;
+    public string Metadata { get; set; } = "";
 
 }

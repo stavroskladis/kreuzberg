@@ -15,7 +15,7 @@ namespace Kreuzberg;
 public abstract record FormatMetadata
 {
     public sealed record Pdf(
-        [property: JsonPropertyName("0")] PdfMetadata 0
+        [property: JsonPropertyName("0")] string 0
     ) : FormatMetadata;
 
     public sealed record Docx(

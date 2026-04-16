@@ -21,6 +21,6 @@ public sealed class FontSizeCluster
     /// The text blocks that belong to this cluster
     /// </summary>
     [JsonPropertyName("members")]
-    public List<TextBlock> Members { get; set; } = [];
+    public List<string> Members { get; set; } = [];
 
 }

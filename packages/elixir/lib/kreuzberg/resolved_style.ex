@@ -3,5 +3,5 @@ defmodule Kreuzberg.ResolvedStyle do
   @moduledoc "Fully resolved (flattened) style after walking the inheritance chain."
 
   defstruct paragraph_properties: "",
-            run_properties: nil
+            run_properties: ""
 end

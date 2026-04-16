@@ -8,9 +8,9 @@ public class AnchorPropertiesBuilder {
     private boolean behindDoc = false;
     private boolean layoutInCell = false;
     private Optional<Long> relativeHeight = Optional.empty();
-    private Optional<Position> positionH = Optional.empty();
-    private Optional<Position> positionV = Optional.empty();
-    private WrapType wrapType = null;
+    private Optional<String> positionH = Optional.empty();
+    private Optional<String> positionV = Optional.empty();
+    private String wrapType = "";
 
     public AnchorPropertiesBuilder withBehindDoc(boolean value) {
         this.behindDoc = value;
@@ -27,17 +27,17 @@ public class AnchorPropertiesBuilder {
         return this;
     }
 
-    public AnchorPropertiesBuilder withPositionH(Optional<Position> value) {
+    public AnchorPropertiesBuilder withPositionH(Optional<String> value) {
         this.positionH = value;
         return this;
     }
 
-    public AnchorPropertiesBuilder withPositionV(Optional<Position> value) {
+    public AnchorPropertiesBuilder withPositionV(Optional<String> value) {
         this.positionV = value;
         return this;
     }
 
-    public AnchorPropertiesBuilder withWrapType(WrapType value) {
+    public AnchorPropertiesBuilder withWrapType(String value) {
         this.wrapType = value;
         return this;
     }

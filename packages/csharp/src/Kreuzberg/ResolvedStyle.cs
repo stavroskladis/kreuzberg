@@ -15,6 +15,6 @@ public sealed class ResolvedStyle
     public string ParagraphProperties { get; set; } = "";
 
     [JsonPropertyName("run_properties")]
-    public RunProperties RunProperties { get; set; } = default!;
+    public string RunProperties { get; set; } = "";
 
 }

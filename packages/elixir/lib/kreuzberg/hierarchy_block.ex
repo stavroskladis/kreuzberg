@@ -5,5 +5,5 @@ defmodule Kreuzberg.HierarchyBlock do
   defstruct text: "",
             bbox: nil,
             font_size: 0.0,
-            hierarchy_level: :h1
+            hierarchy_level: ""
 end

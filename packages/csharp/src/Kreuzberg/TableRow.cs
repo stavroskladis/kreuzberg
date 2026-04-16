@@ -12,6 +12,6 @@ public sealed class TableRow
     public List<TableCell> Cells { get; set; } = [];
 
     [JsonPropertyName("properties")]
-    public RowProperties? Properties { get; set; } = null;
+    public string? Properties { get; set; } = null;
 
 }

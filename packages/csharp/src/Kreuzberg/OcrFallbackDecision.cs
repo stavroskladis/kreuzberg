@@ -9,7 +9,7 @@ namespace Kreuzberg;
 public sealed class OcrFallbackDecision
 {
     [JsonPropertyName("stats")]
-    public NativeTextStats Stats { get; set; } = default!;
+    public string Stats { get; set; } = "";
 
     [JsonPropertyName("avg_non_whitespace")]
     public double AvgNonWhitespace { get; set; } = 0.0;

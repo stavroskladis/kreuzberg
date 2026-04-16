@@ -9,303 +9,14 @@
     clippy::cast_sign_loss
 )]
 
-use kreuzberg::extractors::SyncExtractor;
 use kreuzberg::plugins::OcrBackend;
 use kreuzberg::plugins::Plugin;
-use kreuzberg::plugins::Renderer;
-use kreuzberg::utils::Recyclable;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use std::collections::HashMap;
 use std::ops::Deref;
 use std::ops::DerefMut;
 use std::sync::Arc;
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct GenericCache {
-    inner: Arc<kreuzberg::cache::GenericCache>,
-}
-
-#[pymethods]
-impl GenericCache {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (cache_key, source_file=None, namespace=None, ttl_override_secs=None))]
-    pub fn get(
-        &self,
-        cache_key: String,
-        source_file: Option<String>,
-        namespace: Option<String>,
-        ttl_override_secs: Option<u64>,
-    ) -> PyResult<Option<Vec<u8>>> {
-        let result = self
-            .inner
-            .get(
-                &cache_key,
-                source_file.as_deref(),
-                namespace.as_deref(),
-                ttl_override_secs,
-            )
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (cache_key, source_file=None))]
-    pub fn get_default(&self, cache_key: String, source_file: Option<String>) -> PyResult<Option<Vec<u8>>> {
-        let result = self
-            .inner
-            .get_default(&cache_key, source_file.as_deref())
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (cache_key, data, source_file=None, namespace=None, ttl_secs=None))]
-    pub fn set(
-        &self,
-        cache_key: String,
-        data: Vec<u8>,
-        source_file: Option<String>,
-        namespace: Option<String>,
-        ttl_secs: Option<u64>,
-    ) -> PyResult<()> {
-        self.inner
-            .set(
-                &cache_key,
-                &data,
-                source_file.as_deref(),
-                namespace.as_deref(),
-                ttl_secs,
-            )
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (cache_key, data, source_file=None))]
-    pub fn set_default(&self, cache_key: String, data: Vec<u8>, source_file: Option<String>) -> PyResult<()> {
-        self.inner
-            .set_default(&cache_key, &data, source_file.as_deref())
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (cache_key))]
-    pub fn is_processing(&self, cache_key: String) -> PyResult<bool> {
-        let result = self
-            .inner
-            .is_processing(&cache_key)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (cache_key))]
-    pub fn mark_processing(&self, cache_key: String) -> PyResult<()> {
-        self.inner
-            .mark_processing(cache_key)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (cache_key))]
-    pub fn mark_complete(&self, cache_key: String) -> PyResult<()> {
-        self.inner
-            .mark_complete(&cache_key)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn clear(&self) -> PyResult<String> {
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: GenericCache.clear",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (namespace))]
-    pub fn delete_namespace(&self, namespace: String) -> PyResult<String> {
-        let _ = namespace;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: GenericCache.delete_namespace",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn get_stats(&self) -> PyResult<String> {
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: GenericCache.get_stats",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (namespace=None))]
-    pub fn get_stats_filtered(&self, namespace: Option<String>) -> PyResult<String> {
-        let _ = namespace;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: GenericCache.get_stats_filtered",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn cache_dir(&self) -> String {
-        self.inner.cache_dir().to_string_lossy().to_string()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn cache_type(&self) -> String {
-        self.inner.cache_type().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (cache_type, cache_dir=None, max_age_days=None, max_cache_size_mb=None, min_free_space_mb=None))]
-    pub fn new(
-        cache_type: String,
-        cache_dir: Option<String>,
-        max_age_days: f64,
-        max_cache_size_mb: f64,
-        min_free_space_mb: f64,
-    ) -> PyResult<GenericCache> {
-        kreuzberg::cache::GenericCache::new(
-            cache_type,
-            cache_dir,
-            max_age_days.expect("'max_age_days' is required"),
-            max_cache_size_mb.expect("'max_cache_size_mb' is required"),
-            min_free_space_mb.expect("'min_free_space_mb' is required"),
-        )
-        .map(|val| Self { inner: Arc::new(val) })
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct BatchProcessorConfig {
-    /// Maximum number of string buffers to maintain in the pool
-    #[pyo3(get)]
-    pub string_pool_size: usize,
-    /// Initial capacity for pooled string buffers in bytes
-    #[pyo3(get)]
-    pub string_buffer_capacity: usize,
-    /// Maximum number of byte buffers to maintain in the pool
-    #[pyo3(get)]
-    pub byte_pool_size: usize,
-    /// Initial capacity for pooled byte buffers in bytes
-    #[pyo3(get)]
-    pub byte_buffer_capacity: usize,
-    /// Maximum concurrent extractions (for concurrency control)
-    #[pyo3(get)]
-    pub max_concurrent: Option<usize>,
-}
-
-#[pymethods]
-impl BatchProcessorConfig {
-    #[must_use]
-    #[pyo3(signature = (string_pool_size=None, string_buffer_capacity=None, byte_pool_size=None, byte_buffer_capacity=None, max_concurrent=None))]
-    #[new]
-    pub fn new(
-        string_pool_size: Option<usize>,
-        string_buffer_capacity: Option<usize>,
-        byte_pool_size: Option<usize>,
-        byte_buffer_capacity: Option<usize>,
-        max_concurrent: Option<usize>,
-    ) -> Self {
-        Self {
-            string_pool_size: string_pool_size.unwrap_or(10),
-            string_buffer_capacity: string_buffer_capacity.unwrap_or(8192),
-            byte_pool_size: byte_pool_size.unwrap_or(10),
-            byte_buffer_capacity: byte_buffer_capacity.unwrap_or(65536),
-            max_concurrent,
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> BatchProcessorConfig {
-        kreuzberg::core::BatchProcessorConfig::default().into()
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct BatchProcessor {
-    inner: Arc<kreuzberg::core::BatchProcessor>,
-}
-
-#[pymethods]
-impl BatchProcessor {
-    #[pyo3(signature = ())]
-    pub fn string_pool(&self) -> StringBufferPool {
-        StringBufferPool {
-            inner: Arc::new(self.inner.string_pool()),
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn byte_pool(&self) -> ByteBufferPool {
-        ByteBufferPool {
-            inner: Arc::new(self.inner.byte_pool()),
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn config(&self) -> BatchProcessorConfig {
-        self.inner.config().clone().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn string_pool_size(&self) -> usize {
-        self.inner.string_pool_size()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn byte_pool_size(&self) -> usize {
-        self.inner.byte_pool_size()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn clear_pools(&self) -> PyResult<()> {
-        self.inner
-            .clear_pools()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (config))]
-    pub fn with_config(config: BatchProcessorConfig) -> BatchProcessor {
-        Self {
-            inner: Arc::new(kreuzberg::core::BatchProcessor::with_config(config.into())),
-        }
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (hint))]
-    pub fn with_pool_hint(hint: PoolSizeHint) -> BatchProcessor {
-        let hint_core = hint.into();
-        Self {
-            inner: Arc::new(kreuzberg::core::BatchProcessor::with_pool_hint(&hint_core)),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> BatchProcessor {
-        Self {
-            inner: Arc::new(kreuzberg::core::BatchProcessor::default()),
-        }
-    }
-}
 
 #[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
@@ -2445,60 +2156,12 @@ impl StructuredDataResult {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct JsonExtractionConfig {
-    #[pyo3(get)]
-    pub extract_schema: bool,
-    #[pyo3(get)]
-    pub max_depth: usize,
-    #[pyo3(get)]
-    pub array_item_limit: usize,
-    #[pyo3(get)]
-    pub include_type_info: bool,
-    #[pyo3(get)]
-    pub flatten_nested_objects: bool,
-    #[pyo3(get)]
-    pub custom_text_field_patterns: Vec<String>,
-}
-
-#[pymethods]
-impl JsonExtractionConfig {
-    #[must_use]
-    #[pyo3(signature = (extract_schema=None, max_depth=None, array_item_limit=None, include_type_info=None, flatten_nested_objects=None, custom_text_field_patterns=None))]
-    #[new]
-    pub fn new(
-        extract_schema: Option<bool>,
-        max_depth: Option<usize>,
-        array_item_limit: Option<usize>,
-        include_type_info: Option<bool>,
-        flatten_nested_objects: Option<bool>,
-        custom_text_field_patterns: Option<Vec<String>>,
-    ) -> Self {
-        Self {
-            extract_schema: extract_schema.unwrap_or(false),
-            max_depth: max_depth.unwrap_or(20),
-            array_item_limit: array_item_limit.unwrap_or(500),
-            include_type_info: include_type_info.unwrap_or(false),
-            flatten_nested_objects: flatten_nested_objects.unwrap_or(true),
-            custom_text_field_patterns: custom_text_field_patterns.unwrap_or_default(),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> JsonExtractionConfig {
-        kreuzberg::extraction::JsonExtractionConfig::default().into()
-    }
-}
-
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ListItemMetadata {
     /// Type of list (Bullet, Numbered, etc.)
     #[pyo3(get)]
-    pub list_type: ListType,
+    pub list_type: String,
     /// Starting byte offset in the content string
     #[pyo3(get)]
     pub byte_start: usize,
@@ -2515,41 +2178,13 @@ impl ListItemMetadata {
     #[must_use]
     #[pyo3(signature = (list_type, byte_start, byte_end, indent_level))]
     #[new]
-    pub fn new(list_type: ListType, byte_start: usize, byte_end: usize, indent_level: u32) -> Self {
+    pub fn new(list_type: String, byte_start: usize, byte_end: usize, indent_level: u32) -> Self {
         Self {
             list_type,
             byte_start,
             byte_end,
             indent_level,
         }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct HwpDocument {
-    /// All sections from all BodyText/SectionN streams.
-    #[pyo3(get)]
-    pub sections: Vec<Section>,
-}
-
-#[pymethods]
-impl HwpDocument {
-    #[must_use]
-    #[pyo3(signature = (sections=None))]
-    #[new]
-    pub fn new(sections: Option<Vec<Section>>) -> Self {
-        Self {
-            sections: sections.unwrap_or_default(),
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn extract_text(&self) -> String {
-        let core_self = kreuzberg::extraction::hwp::model::HwpDocument {
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.extract_text().into()
     }
 }
 
@@ -2569,114 +2204,6 @@ impl Section {
         Self {
             paragraphs: paragraphs.unwrap_or_default(),
         }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct ParaText {
-    #[pyo3(get)]
-    pub content: String,
-}
-
-#[pymethods]
-impl ParaText {
-    #[must_use]
-    #[pyo3(signature = (content))]
-    #[new]
-    pub fn new(content: String) -> Self {
-        Self { content }
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (record))]
-    pub fn from_record(record: Record) -> PyResult<ParaText> {
-        let record_core = record.into();
-        kreuzberg::extraction::hwp::model::ParaText::from_record(&record_core)
-            .map(|val| val.into())
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct FileHeader {
-    #[pyo3(get)]
-    pub flags: u32,
-}
-
-#[pymethods]
-impl FileHeader {
-    #[must_use]
-    #[pyo3(signature = (flags))]
-    #[new]
-    pub fn new(flags: u32) -> Self {
-        Self { flags }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn is_compressed(&self) -> bool {
-        let core_self = kreuzberg::extraction::hwp::parser::FileHeader { flags: self.flags };
-        core_self.is_compressed()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn is_encrypted(&self) -> bool {
-        let core_self = kreuzberg::extraction::hwp::parser::FileHeader { flags: self.flags };
-        core_self.is_encrypted()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn is_distribute(&self) -> bool {
-        let core_self = kreuzberg::extraction::hwp::parser::FileHeader { flags: self.flags };
-        core_self.is_distribute()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (data))]
-    pub fn parse(data: Vec<u8>) -> PyResult<FileHeader> {
-        kreuzberg::extraction::hwp::parser::FileHeader::parse(&data)
-            .map(|val| val.into())
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct Record {
-    #[pyo3(get)]
-    pub tag_id: u16,
-    #[pyo3(get)]
-    pub data: Vec<u8>,
-}
-
-#[pymethods]
-impl Record {
-    #[must_use]
-    #[pyo3(signature = (tag_id, data))]
-    #[new]
-    pub fn new(tag_id: u16, data: Vec<u8>) -> Self {
-        Self { tag_id, data }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn data_reader(&self) -> StreamReader {
-        let core_self = kreuzberg::extraction::hwp::parser::Record {
-            tag_id: self.tag_id,
-            data: self.data.clone(),
-        };
-        core_self.data_reader().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (reader))]
-    pub fn parse(reader: StreamReader) -> PyResult<Record> {
-        kreuzberg::extraction::hwp::parser::Record::parse(&reader.inner)
-            .map(|val| val.into())
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
     }
 }
 
@@ -2729,24 +2256,6 @@ impl StreamReader {
     #[pyo3(signature = ())]
     pub fn remaining(&self) -> usize {
         self.inner.remaining()
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct CfbReader {
-    inner: Arc<kreuzberg::extraction::hwp::reader::CfbReader>,
-}
-
-#[pymethods]
-impl CfbReader {
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (bytes))]
-    pub fn from_bytes(bytes: Vec<u8>) -> PyResult<CfbReader> {
-        kreuzberg::extraction::hwp::reader::CfbReader::from_bytes(&bytes)
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
     }
 }
 
@@ -2857,7 +2366,7 @@ pub struct DocExtractionResult {
     pub text: String,
     /// Document metadata.
     #[pyo3(get)]
-    pub metadata: DocMetadata,
+    pub metadata: String,
 }
 
 #[pymethods]
@@ -2865,53 +2374,8 @@ impl DocExtractionResult {
     #[must_use]
     #[pyo3(signature = (text, metadata))]
     #[new]
-    pub fn new(text: String, metadata: DocMetadata) -> Self {
+    pub fn new(text: String, metadata: String) -> Self {
         Self { text, metadata }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct DocMetadata {
-    #[pyo3(get)]
-    pub title: Option<String>,
-    #[pyo3(get)]
-    pub subject: Option<String>,
-    #[pyo3(get)]
-    pub author: Option<String>,
-    #[pyo3(get)]
-    pub last_author: Option<String>,
-    #[pyo3(get)]
-    pub created: Option<String>,
-    #[pyo3(get)]
-    pub modified: Option<String>,
-    #[pyo3(get)]
-    pub revision_number: Option<String>,
-}
-
-#[pymethods]
-impl DocMetadata {
-    #[must_use]
-    #[pyo3(signature = (title=None, subject=None, author=None, last_author=None, created=None, modified=None, revision_number=None))]
-    #[new]
-    pub fn new(
-        title: Option<String>,
-        subject: Option<String>,
-        author: Option<String>,
-        last_author: Option<String>,
-        created: Option<String>,
-        modified: Option<String>,
-        revision_number: Option<String>,
-    ) -> Self {
-        Self {
-            title,
-            subject,
-            author,
-            last_author,
-            created,
-            modified,
-            revision_number,
-        }
     }
 }
 
@@ -2919,11 +2383,11 @@ impl DocMetadata {
 #[pyclass(frozen, from_py_object)]
 pub struct Drawing {
     #[pyo3(get)]
-    pub drawing_type: DrawingType,
+    pub drawing_type: String,
     #[pyo3(get)]
-    pub extent: Option<Extent>,
+    pub extent: Option<String>,
     #[pyo3(get)]
-    pub doc_properties: Option<DocProperties>,
+    pub doc_properties: Option<String>,
     #[pyo3(get)]
     pub image_ref: Option<String>,
 }
@@ -2934,9 +2398,9 @@ impl Drawing {
     #[pyo3(signature = (drawing_type, extent=None, doc_properties=None, image_ref=None))]
     #[new]
     pub fn new(
-        drawing_type: DrawingType,
-        extent: Option<Extent>,
-        doc_properties: Option<DocProperties>,
+        drawing_type: String,
+        extent: Option<String>,
+        doc_properties: Option<String>,
         image_ref: Option<String>,
     ) -> Self {
         Self {
@@ -2951,68 +2415,6 @@ impl Drawing {
 #[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
-pub struct Extent {
-    #[pyo3(get)]
-    pub cx: i64,
-    #[pyo3(get)]
-    pub cy: i64,
-}
-
-#[pymethods]
-impl Extent {
-    #[must_use]
-    #[pyo3(signature = (cx=None, cy=None))]
-    #[new]
-    pub fn new(cx: Option<i64>, cy: Option<i64>) -> Self {
-        Self {
-            cx: cx.unwrap_or_default(),
-            cy: cy.unwrap_or_default(),
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn width_inches(&self) -> f64 {
-        let core_self = kreuzberg::extraction::docx::drawing::Extent {
-            cx: self.cx,
-            cy: self.cy,
-        };
-        core_self.width_inches()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn height_inches(&self) -> f64 {
-        let core_self = kreuzberg::extraction::docx::drawing::Extent {
-            cx: self.cx,
-            cy: self.cy,
-        };
-        core_self.height_inches()
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct DocProperties {
-    #[pyo3(get)]
-    pub id: Option<String>,
-    #[pyo3(get)]
-    pub name: Option<String>,
-    #[pyo3(get)]
-    pub description: Option<String>,
-}
-
-#[pymethods]
-impl DocProperties {
-    #[must_use]
-    #[pyo3(signature = (id=None, name=None, description=None))]
-    #[new]
-    pub fn new(id: Option<String>, name: Option<String>, description: Option<String>) -> Self {
-        Self { id, name, description }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
 pub struct AnchorProperties {
     #[pyo3(get)]
     pub behind_doc: bool,
@@ -3021,11 +2423,11 @@ pub struct AnchorProperties {
     #[pyo3(get)]
     pub relative_height: Option<i64>,
     #[pyo3(get)]
-    pub position_h: Option<Position>,
+    pub position_h: Option<String>,
     #[pyo3(get)]
-    pub position_v: Option<Position>,
+    pub position_v: Option<String>,
     #[pyo3(get)]
-    pub wrap_type: WrapType,
+    pub wrap_type: String,
 }
 
 #[pymethods]
@@ -3036,10 +2438,10 @@ impl AnchorProperties {
     pub fn new(
         behind_doc: Option<bool>,
         layout_in_cell: Option<bool>,
-        wrap_type: Option<WrapType>,
+        wrap_type: Option<String>,
         relative_height: Option<i64>,
-        position_h: Option<Position>,
-        position_v: Option<Position>,
+        position_h: Option<String>,
+        position_v: Option<String>,
     ) -> Self {
         Self {
             behind_doc: behind_doc.unwrap_or_default(),
@@ -3052,188 +2454,13 @@ impl AnchorProperties {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct Position {
-    #[pyo3(get)]
-    pub relative_from: String,
-    #[pyo3(get)]
-    pub offset: Option<i64>,
-}
-
-#[pymethods]
-impl Position {
-    #[must_use]
-    #[pyo3(signature = (relative_from, offset=None))]
-    #[new]
-    pub fn new(relative_from: String, offset: Option<i64>) -> Self {
-        Self { relative_from, offset }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct Document {
-    #[pyo3(get)]
-    pub paragraphs: Vec<String>,
-    #[pyo3(get)]
-    pub tables: Vec<Table>,
-    #[pyo3(get)]
-    pub headers: Vec<HeaderFooter>,
-    #[pyo3(get)]
-    pub footers: Vec<HeaderFooter>,
-    #[pyo3(get)]
-    pub footnotes: Vec<Note>,
-    #[pyo3(get)]
-    pub endnotes: Vec<Note>,
-    #[pyo3(get)]
-    pub numbering_defs: String,
-    /// Document elements in their original order.
-    #[pyo3(get)]
-    pub elements: Vec<DocumentElement>,
-    /// Parsed style catalog from `word/styles.xml`, if available.
-    #[pyo3(get)]
-    pub style_catalog: Option<StyleCatalog>,
-    /// Parsed theme from `word/theme/theme1.xml`, if available.
-    #[pyo3(get)]
-    pub theme: Option<Theme>,
-    /// Section properties parsed from `w:sectPr` elements.
-    #[pyo3(get)]
-    pub sections: Vec<SectionProperties>,
-    /// Drawing objects parsed from `w:drawing` elements.
-    #[pyo3(get)]
-    pub drawings: Vec<Drawing>,
-    /// Image relationships (rId → target path) for image extraction.
-    #[pyo3(get)]
-    pub image_relationships: String,
-}
-
-#[pymethods]
-impl Document {
-    #[allow(clippy::too_many_arguments)]
-    #[must_use]
-    #[pyo3(signature = (paragraphs=None, tables=None, headers=None, footers=None, footnotes=None, endnotes=None, numbering_defs=None, elements=None, sections=None, drawings=None, image_relationships=None, style_catalog=None, theme=None))]
-    #[new]
-    pub fn new(
-        paragraphs: Option<Vec<String>>,
-        tables: Option<Vec<Table>>,
-        headers: Option<Vec<HeaderFooter>>,
-        footers: Option<Vec<HeaderFooter>>,
-        footnotes: Option<Vec<Note>>,
-        endnotes: Option<Vec<Note>>,
-        numbering_defs: Option<String>,
-        elements: Option<Vec<DocumentElement>>,
-        sections: Option<Vec<SectionProperties>>,
-        drawings: Option<Vec<Drawing>>,
-        image_relationships: Option<String>,
-        style_catalog: Option<StyleCatalog>,
-        theme: Option<Theme>,
-    ) -> Self {
-        Self {
-            paragraphs: paragraphs.unwrap_or_default(),
-            tables: tables.unwrap_or_default(),
-            headers: headers.unwrap_or_default(),
-            footers: footers.unwrap_or_default(),
-            footnotes: footnotes.unwrap_or_default(),
-            endnotes: endnotes.unwrap_or_default(),
-            numbering_defs: numbering_defs.unwrap_or_default(),
-            elements: elements.unwrap_or_default(),
-            style_catalog,
-            theme,
-            sections: sections.unwrap_or_default(),
-            drawings: drawings.unwrap_or_default(),
-            image_relationships: image_relationships.unwrap_or_default(),
-        }
-    }
-
-    #[pyo3(signature = (style_id))]
-    pub fn resolve_heading_level(&self, style_id: String) -> Option<u8> {
-        let core_self = kreuzberg::extraction::docx::parser::Document {
-            paragraphs: Default::default(),
-            tables: self.tables.clone().into_iter().map(Into::into).collect(),
-            headers: self.headers.clone().into_iter().map(Into::into).collect(),
-            footers: self.footers.clone().into_iter().map(Into::into).collect(),
-            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
-            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: self.elements.clone().into_iter().map(Into::into).collect(),
-            style_catalog: self.style_catalog.clone().map(Into::into),
-            theme: self.theme.clone().map(Into::into),
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        };
-        core_self.resolve_heading_level(&style_id)
-    }
-
-    #[pyo3(signature = ())]
-    pub fn extract_text(&self) -> String {
-        let core_self = kreuzberg::extraction::docx::parser::Document {
-            paragraphs: Default::default(),
-            tables: self.tables.clone().into_iter().map(Into::into).collect(),
-            headers: self.headers.clone().into_iter().map(Into::into).collect(),
-            footers: self.footers.clone().into_iter().map(Into::into).collect(),
-            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
-            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: self.elements.clone().into_iter().map(Into::into).collect(),
-            style_catalog: self.style_catalog.clone().map(Into::into),
-            theme: self.theme.clone().map(Into::into),
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        };
-        core_self.extract_text().into()
-    }
-
-    #[pyo3(signature = (inject_placeholders))]
-    pub fn to_markdown(&self, inject_placeholders: bool) -> String {
-        let core_self = kreuzberg::extraction::docx::parser::Document {
-            paragraphs: Default::default(),
-            tables: self.tables.clone().into_iter().map(Into::into).collect(),
-            headers: self.headers.clone().into_iter().map(Into::into).collect(),
-            footers: self.footers.clone().into_iter().map(Into::into).collect(),
-            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
-            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: self.elements.clone().into_iter().map(Into::into).collect(),
-            style_catalog: self.style_catalog.clone().map(Into::into),
-            theme: self.theme.clone().map(Into::into),
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        };
-        core_self.to_markdown(inject_placeholders).into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn to_plain_text(&self) -> String {
-        let core_self = kreuzberg::extraction::docx::parser::Document {
-            paragraphs: Default::default(),
-            tables: self.tables.clone().into_iter().map(Into::into).collect(),
-            headers: self.headers.clone().into_iter().map(Into::into).collect(),
-            footers: self.footers.clone().into_iter().map(Into::into).collect(),
-            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
-            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: self.elements.clone().into_iter().map(Into::into).collect(),
-            style_catalog: self.style_catalog.clone().map(Into::into),
-            theme: self.theme.clone().map(Into::into),
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        };
-        core_self.to_plain_text().into()
-    }
-}
-
 #[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct TableRow {
     #[pyo3(get)]
     pub cells: Vec<TableCell>,
     #[pyo3(get)]
-    pub properties: Option<RowProperties>,
+    pub properties: Option<String>,
 }
 
 #[pymethods]
@@ -3241,7 +2468,7 @@ impl TableRow {
     #[must_use]
     #[pyo3(signature = (cells=None, properties=None))]
     #[new]
-    pub fn new(cells: Option<Vec<TableCell>>, properties: Option<RowProperties>) -> Self {
+    pub fn new(cells: Option<Vec<TableCell>>, properties: Option<String>) -> Self {
         Self {
             cells: cells.unwrap_or_default(),
             properties,
@@ -3257,7 +2484,7 @@ pub struct HeaderFooter {
     #[pyo3(get)]
     pub tables: Vec<Table>,
     #[pyo3(get)]
-    pub header_type: HeaderFooterType,
+    pub header_type: String,
 }
 
 #[pymethods]
@@ -3265,11 +2492,7 @@ impl HeaderFooter {
     #[must_use]
     #[pyo3(signature = (paragraphs=None, tables=None, header_type=None))]
     #[new]
-    pub fn new(
-        paragraphs: Option<Vec<String>>,
-        tables: Option<Vec<Table>>,
-        header_type: Option<HeaderFooterType>,
-    ) -> Self {
+    pub fn new(paragraphs: Option<Vec<String>>, tables: Option<Vec<Table>>, header_type: Option<String>) -> Self {
         Self {
             paragraphs: paragraphs.unwrap_or_default(),
             tables: tables.unwrap_or_default(),
@@ -3284,7 +2507,7 @@ pub struct Note {
     #[pyo3(get)]
     pub id: String,
     #[pyo3(get)]
-    pub note_type: NoteType,
+    pub note_type: String,
     #[pyo3(get)]
     pub paragraphs: Vec<String>,
 }
@@ -3294,78 +2517,12 @@ impl Note {
     #[must_use]
     #[pyo3(signature = (id, note_type, paragraphs))]
     #[new]
-    pub fn new(id: String, note_type: NoteType, paragraphs: Vec<String>) -> Self {
+    pub fn new(id: String, note_type: String, paragraphs: Vec<String>) -> Self {
         Self {
             id,
             note_type,
             paragraphs,
         }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct PageMargins {
-    /// Top margin in twips.
-    #[pyo3(get)]
-    pub top: Option<i32>,
-    /// Right margin in twips.
-    #[pyo3(get)]
-    pub right: Option<i32>,
-    /// Bottom margin in twips.
-    #[pyo3(get)]
-    pub bottom: Option<i32>,
-    /// Left margin in twips.
-    #[pyo3(get)]
-    pub left: Option<i32>,
-    /// Header offset in twips.
-    #[pyo3(get)]
-    pub header: Option<i32>,
-    /// Footer offset in twips.
-    #[pyo3(get)]
-    pub footer: Option<i32>,
-    /// Gutter margin in twips.
-    #[pyo3(get)]
-    pub gutter: Option<i32>,
-}
-
-#[pymethods]
-impl PageMargins {
-    #[must_use]
-    #[pyo3(signature = (top=None, right=None, bottom=None, left=None, header=None, footer=None, gutter=None))]
-    #[new]
-    pub fn new(
-        top: Option<i32>,
-        right: Option<i32>,
-        bottom: Option<i32>,
-        left: Option<i32>,
-        header: Option<i32>,
-        footer: Option<i32>,
-        gutter: Option<i32>,
-    ) -> Self {
-        Self {
-            top,
-            right,
-            bottom,
-            left,
-            header,
-            footer,
-            gutter,
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn to_points(&self) -> PageMarginsPoints {
-        let core_self = kreuzberg::extraction::docx::section::PageMargins {
-            top: self.top,
-            right: self.right,
-            bottom: self.bottom,
-            left: self.left,
-            header: self.header,
-            footer: self.footer,
-            gutter: self.gutter,
-        };
-        core_self.to_points().into()
     }
 }
 
@@ -3414,246 +2571,6 @@ impl PageMarginsPoints {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct ColumnLayout {
-    /// Number of columns.
-    #[pyo3(get)]
-    pub count: Option<i32>,
-    /// Space between columns in twips.
-    #[pyo3(get)]
-    pub space_twips: Option<i32>,
-    /// Whether columns have equal width.
-    #[pyo3(get)]
-    pub equal_width: Option<bool>,
-}
-
-#[pymethods]
-impl ColumnLayout {
-    #[must_use]
-    #[pyo3(signature = (count=None, space_twips=None, equal_width=None))]
-    #[new]
-    pub fn new(count: Option<i32>, space_twips: Option<i32>, equal_width: Option<bool>) -> Self {
-        Self {
-            count,
-            space_twips,
-            equal_width,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct SectionProperties {
-    /// Page width in twips (from `w:pgSz w:w`).
-    #[pyo3(get)]
-    pub page_width_twips: Option<i32>,
-    /// Page height in twips (from `w:pgSz w:h`).
-    #[pyo3(get)]
-    pub page_height_twips: Option<i32>,
-    /// Page orientation (from `w:pgSz w:orient`).
-    #[pyo3(get)]
-    pub orientation: Option<Orientation>,
-    /// Page margins (from `w:pgMar`).
-    #[pyo3(get)]
-    pub margins: PageMargins,
-    /// Column layout (from `w:cols`).
-    #[pyo3(get)]
-    pub columns: ColumnLayout,
-    /// Document grid line pitch in twips (from `w:docGrid w:linePitch`).
-    #[pyo3(get)]
-    pub doc_grid_line_pitch: Option<i32>,
-}
-
-#[pymethods]
-impl SectionProperties {
-    #[must_use]
-    #[pyo3(signature = (margins=None, columns=None, page_width_twips=None, page_height_twips=None, orientation=None, doc_grid_line_pitch=None))]
-    #[new]
-    pub fn new(
-        margins: Option<PageMargins>,
-        columns: Option<ColumnLayout>,
-        page_width_twips: Option<i32>,
-        page_height_twips: Option<i32>,
-        orientation: Option<Orientation>,
-        doc_grid_line_pitch: Option<i32>,
-    ) -> Self {
-        Self {
-            page_width_twips,
-            page_height_twips,
-            orientation,
-            margins: margins.unwrap_or_default(),
-            columns: columns.unwrap_or_default(),
-            doc_grid_line_pitch,
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn page_width_points(&self) -> Option<f64> {
-        let core_self = kreuzberg::extraction::docx::section::SectionProperties {
-            page_width_twips: self.page_width_twips,
-            page_height_twips: self.page_height_twips,
-            orientation: self.orientation.clone().map(Into::into),
-            margins: self.margins.clone().into(),
-            columns: self.columns.clone().into(),
-            doc_grid_line_pitch: self.doc_grid_line_pitch,
-        };
-        core_self.page_width_points()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn page_height_points(&self) -> Option<f64> {
-        let core_self = kreuzberg::extraction::docx::section::SectionProperties {
-            page_width_twips: self.page_width_twips,
-            page_height_twips: self.page_height_twips,
-            orientation: self.orientation.clone().map(Into::into),
-            margins: self.margins.clone().into(),
-            columns: self.columns.clone().into(),
-            doc_grid_line_pitch: self.doc_grid_line_pitch,
-        };
-        core_self.page_height_points()
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct RunProperties {
-    #[pyo3(get)]
-    pub bold: Option<bool>,
-    #[pyo3(get)]
-    pub italic: Option<bool>,
-    #[pyo3(get)]
-    pub underline: Option<bool>,
-    #[pyo3(get)]
-    pub strikethrough: Option<bool>,
-    /// Hex RGB color, e.g. `"2F5496"`.
-    #[pyo3(get)]
-    pub color: Option<String>,
-    /// Font size in half-points (`w:sz` val). Divide by 2 to get points.
-    #[pyo3(get)]
-    pub font_size_half_points: Option<i32>,
-    /// ASCII font family (`w:rFonts w:ascii`).
-    #[pyo3(get)]
-    pub font_ascii: Option<String>,
-    /// ASCII theme font (`w:rFonts w:asciiTheme`).
-    #[pyo3(get)]
-    pub font_ascii_theme: Option<String>,
-    /// Vertical alignment: "superscript", "subscript", or "baseline".
-    #[pyo3(get)]
-    pub vert_align: Option<String>,
-    /// High ANSI font family (w:rFonts w:hAnsi).
-    #[pyo3(get)]
-    pub font_h_ansi: Option<String>,
-    /// Complex script font family (w:rFonts w:cs).
-    #[pyo3(get)]
-    pub font_cs: Option<String>,
-    /// East Asian font family (w:rFonts w:eastAsia).
-    #[pyo3(get)]
-    pub font_east_asia: Option<String>,
-    /// Highlight color name (e.g., "yellow", "green", "cyan").
-    #[pyo3(get)]
-    pub highlight: Option<String>,
-    /// All caps text transformation.
-    #[pyo3(get)]
-    pub caps: Option<bool>,
-    /// Small caps text transformation.
-    #[pyo3(get)]
-    pub small_caps: Option<bool>,
-    /// Text shadow effect.
-    #[pyo3(get)]
-    pub shadow: Option<bool>,
-    /// Text outline effect.
-    #[pyo3(get)]
-    pub outline: Option<bool>,
-    /// Text emboss effect.
-    #[pyo3(get)]
-    pub emboss: Option<bool>,
-    /// Text imprint (engrave) effect.
-    #[pyo3(get)]
-    pub imprint: Option<bool>,
-    /// Character spacing in twips (from w:spacing w:val).
-    #[pyo3(get)]
-    pub char_spacing: Option<i32>,
-    /// Vertical position offset in half-points (from w:position w:val).
-    #[pyo3(get)]
-    pub position: Option<i32>,
-    /// Kerning threshold in half-points (from w:kern w:val).
-    #[pyo3(get)]
-    pub kern: Option<i32>,
-    /// Theme color reference (e.g., "accent1", "dk1").
-    #[pyo3(get)]
-    pub theme_color: Option<String>,
-    /// Theme color tint modification (hex value).
-    #[pyo3(get)]
-    pub theme_tint: Option<String>,
-    /// Theme color shade modification (hex value).
-    #[pyo3(get)]
-    pub theme_shade: Option<String>,
-}
-
-#[pymethods]
-impl RunProperties {
-    #[allow(clippy::too_many_arguments)]
-    #[must_use]
-    #[pyo3(signature = (bold=None, italic=None, underline=None, strikethrough=None, color=None, font_size_half_points=None, font_ascii=None, font_ascii_theme=None, vert_align=None, font_h_ansi=None, font_cs=None, font_east_asia=None, highlight=None, caps=None, small_caps=None, shadow=None, outline=None, emboss=None, imprint=None, char_spacing=None, position=None, kern=None, theme_color=None, theme_tint=None, theme_shade=None))]
-    #[new]
-    pub fn new(
-        bold: Option<bool>,
-        italic: Option<bool>,
-        underline: Option<bool>,
-        strikethrough: Option<bool>,
-        color: Option<String>,
-        font_size_half_points: Option<i32>,
-        font_ascii: Option<String>,
-        font_ascii_theme: Option<String>,
-        vert_align: Option<String>,
-        font_h_ansi: Option<String>,
-        font_cs: Option<String>,
-        font_east_asia: Option<String>,
-        highlight: Option<String>,
-        caps: Option<bool>,
-        small_caps: Option<bool>,
-        shadow: Option<bool>,
-        outline: Option<bool>,
-        emboss: Option<bool>,
-        imprint: Option<bool>,
-        char_spacing: Option<i32>,
-        position: Option<i32>,
-        kern: Option<i32>,
-        theme_color: Option<String>,
-        theme_tint: Option<String>,
-        theme_shade: Option<String>,
-    ) -> Self {
-        Self {
-            bold,
-            italic,
-            underline,
-            strikethrough,
-            color,
-            font_size_half_points,
-            font_ascii,
-            font_ascii_theme,
-            vert_align,
-            font_h_ansi,
-            font_cs,
-            font_east_asia,
-            highlight,
-            caps,
-            small_caps,
-            shadow,
-            outline,
-            emboss,
-            imprint,
-            char_spacing,
-            position,
-            kern,
-            theme_color,
-            theme_tint,
-            theme_shade,
-        }
-    }
-}
-
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct StyleDefinition {
@@ -3665,7 +2582,7 @@ pub struct StyleDefinition {
     pub name: Option<String>,
     /// Style type: paragraph, character, table, or numbering.
     #[pyo3(get)]
-    pub style_type: StyleType,
+    pub style_type: String,
     /// ID of the parent style (`<w:basedOn w:val="..."/>`).
     #[pyo3(get)]
     pub based_on: Option<String>,
@@ -3680,7 +2597,7 @@ pub struct StyleDefinition {
     pub paragraph_properties: String,
     /// Run properties defined directly on this style.
     #[pyo3(get)]
-    pub run_properties: RunProperties,
+    pub run_properties: String,
 }
 
 #[pymethods]
@@ -3691,10 +2608,10 @@ impl StyleDefinition {
     #[new]
     pub fn new(
         id: String,
-        style_type: StyleType,
+        style_type: String,
         is_default: bool,
         paragraph_properties: String,
-        run_properties: RunProperties,
+        run_properties: String,
         name: Option<String>,
         based_on: Option<String>,
         next_style: Option<String>,
@@ -3718,7 +2635,7 @@ pub struct ResolvedStyle {
     #[pyo3(get)]
     pub paragraph_properties: String,
     #[pyo3(get)]
-    pub run_properties: RunProperties,
+    pub run_properties: String,
 }
 
 #[pymethods]
@@ -3726,50 +2643,11 @@ impl ResolvedStyle {
     #[must_use]
     #[pyo3(signature = (paragraph_properties=None, run_properties=None))]
     #[new]
-    pub fn new(paragraph_properties: Option<String>, run_properties: Option<RunProperties>) -> Self {
+    pub fn new(paragraph_properties: Option<String>, run_properties: Option<String>) -> Self {
         Self {
             paragraph_properties: paragraph_properties.unwrap_or_default(),
             run_properties: run_properties.unwrap_or_default(),
         }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct StyleCatalog {
-    #[pyo3(get)]
-    pub styles: String,
-    #[pyo3(get)]
-    pub default_paragraph_properties: String,
-    #[pyo3(get)]
-    pub default_run_properties: RunProperties,
-}
-
-#[pymethods]
-impl StyleCatalog {
-    #[must_use]
-    #[pyo3(signature = (styles=None, default_paragraph_properties=None, default_run_properties=None))]
-    #[new]
-    pub fn new(
-        styles: Option<String>,
-        default_paragraph_properties: Option<String>,
-        default_run_properties: Option<RunProperties>,
-    ) -> Self {
-        Self {
-            styles: styles.unwrap_or_default(),
-            default_paragraph_properties: default_paragraph_properties.unwrap_or_default(),
-            default_run_properties: default_run_properties.unwrap_or_default(),
-        }
-    }
-
-    #[pyo3(signature = (style_id))]
-    pub fn resolve_style(&self, style_id: String) -> ResolvedStyle {
-        let core_self = kreuzberg::extraction::docx::styles::StyleCatalog {
-            styles: Default::default(),
-            default_paragraph_properties: Default::default(),
-            default_run_properties: self.default_run_properties.clone().into(),
-        };
-        core_self.resolve_style(&style_id).into()
     }
 }
 
@@ -3785,9 +2663,9 @@ pub struct TableProperties {
     #[pyo3(get)]
     pub layout: Option<String>,
     #[pyo3(get)]
-    pub look: Option<TableLook>,
+    pub look: Option<String>,
     #[pyo3(get)]
-    pub borders: Option<TableBorders>,
+    pub borders: Option<String>,
     #[pyo3(get)]
     pub cell_margins: Option<String>,
     #[pyo3(get)]
@@ -3807,8 +2685,8 @@ impl TableProperties {
         width: Option<String>,
         alignment: Option<String>,
         layout: Option<String>,
-        look: Option<TableLook>,
-        borders: Option<TableBorders>,
+        look: Option<String>,
+        borders: Option<String>,
         cell_margins: Option<String>,
         indent: Option<String>,
         caption: Option<String>,
@@ -3823,288 +2701,6 @@ impl TableProperties {
             cell_margins,
             indent,
             caption,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
-pub struct TableLook {
-    #[pyo3(get)]
-    pub first_row: bool,
-    #[pyo3(get)]
-    pub last_row: bool,
-    #[pyo3(get)]
-    pub first_column: bool,
-    #[pyo3(get)]
-    pub last_column: bool,
-    #[pyo3(get)]
-    pub no_h_band: bool,
-    #[pyo3(get)]
-    pub no_v_band: bool,
-}
-
-#[pymethods]
-impl TableLook {
-    #[must_use]
-    #[pyo3(signature = (first_row=None, last_row=None, first_column=None, last_column=None, no_h_band=None, no_v_band=None))]
-    #[new]
-    pub fn new(
-        first_row: Option<bool>,
-        last_row: Option<bool>,
-        first_column: Option<bool>,
-        last_column: Option<bool>,
-        no_h_band: Option<bool>,
-        no_v_band: Option<bool>,
-    ) -> Self {
-        Self {
-            first_row: first_row.unwrap_or_default(),
-            last_row: last_row.unwrap_or_default(),
-            first_column: first_column.unwrap_or_default(),
-            last_column: last_column.unwrap_or_default(),
-            no_h_band: no_h_band.unwrap_or_default(),
-            no_v_band: no_v_band.unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
-pub struct TableBorders {
-    #[pyo3(get)]
-    pub top: Option<String>,
-    #[pyo3(get)]
-    pub bottom: Option<String>,
-    #[pyo3(get)]
-    pub left: Option<String>,
-    #[pyo3(get)]
-    pub right: Option<String>,
-    #[pyo3(get)]
-    pub inside_h: Option<String>,
-    #[pyo3(get)]
-    pub inside_v: Option<String>,
-}
-
-#[pymethods]
-impl TableBorders {
-    #[must_use]
-    #[pyo3(signature = (top=None, bottom=None, left=None, right=None, inside_h=None, inside_v=None))]
-    #[new]
-    pub fn new(
-        top: Option<String>,
-        bottom: Option<String>,
-        left: Option<String>,
-        right: Option<String>,
-        inside_h: Option<String>,
-        inside_v: Option<String>,
-    ) -> Self {
-        Self {
-            top,
-            bottom,
-            left,
-            right,
-            inside_h,
-            inside_v,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct RowProperties {
-    #[pyo3(get)]
-    pub height: Option<i32>,
-    #[pyo3(get)]
-    pub height_rule: Option<String>,
-    #[pyo3(get)]
-    pub is_header: bool,
-    #[pyo3(get)]
-    pub cant_split: bool,
-}
-
-#[pymethods]
-impl RowProperties {
-    #[must_use]
-    #[pyo3(signature = (is_header=None, cant_split=None, height=None, height_rule=None))]
-    #[new]
-    pub fn new(
-        is_header: Option<bool>,
-        cant_split: Option<bool>,
-        height: Option<i32>,
-        height_rule: Option<String>,
-    ) -> Self {
-        Self {
-            height,
-            height_rule,
-            is_header: is_header.unwrap_or_default(),
-            cant_split: cant_split.unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
-pub struct ColorScheme {
-    /// Color scheme name.
-    #[pyo3(get)]
-    pub name: String,
-    /// Dark 1 (dark background) color.
-    #[pyo3(get)]
-    pub dk1: Option<ThemeColor>,
-    /// Light 1 (light background) color.
-    #[pyo3(get)]
-    pub lt1: Option<ThemeColor>,
-    /// Dark 2 color.
-    #[pyo3(get)]
-    pub dk2: Option<ThemeColor>,
-    /// Light 2 color.
-    #[pyo3(get)]
-    pub lt2: Option<ThemeColor>,
-    /// Accent color 1.
-    #[pyo3(get)]
-    pub accent1: Option<ThemeColor>,
-    /// Accent color 2.
-    #[pyo3(get)]
-    pub accent2: Option<ThemeColor>,
-    /// Accent color 3.
-    #[pyo3(get)]
-    pub accent3: Option<ThemeColor>,
-    /// Accent color 4.
-    #[pyo3(get)]
-    pub accent4: Option<ThemeColor>,
-    /// Accent color 5.
-    #[pyo3(get)]
-    pub accent5: Option<ThemeColor>,
-    /// Accent color 6.
-    #[pyo3(get)]
-    pub accent6: Option<ThemeColor>,
-    /// Hyperlink color.
-    #[pyo3(get)]
-    pub hlink: Option<ThemeColor>,
-    /// Followed hyperlink color.
-    #[pyo3(get)]
-    pub fol_hlink: Option<ThemeColor>,
-}
-
-#[pymethods]
-impl ColorScheme {
-    #[allow(clippy::too_many_arguments)]
-    #[must_use]
-    #[pyo3(signature = (name=None, dk1=None, lt1=None, dk2=None, lt2=None, accent1=None, accent2=None, accent3=None, accent4=None, accent5=None, accent6=None, hlink=None, fol_hlink=None))]
-    #[new]
-    pub fn new(
-        name: Option<String>,
-        dk1: Option<ThemeColor>,
-        lt1: Option<ThemeColor>,
-        dk2: Option<ThemeColor>,
-        lt2: Option<ThemeColor>,
-        accent1: Option<ThemeColor>,
-        accent2: Option<ThemeColor>,
-        accent3: Option<ThemeColor>,
-        accent4: Option<ThemeColor>,
-        accent5: Option<ThemeColor>,
-        accent6: Option<ThemeColor>,
-        hlink: Option<ThemeColor>,
-        fol_hlink: Option<ThemeColor>,
-    ) -> Self {
-        Self {
-            name: name.unwrap_or_default(),
-            dk1,
-            lt1,
-            dk2,
-            lt2,
-            accent1,
-            accent2,
-            accent3,
-            accent4,
-            accent5,
-            accent6,
-            hlink,
-            fol_hlink,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
-pub struct FontScheme {
-    /// Font scheme name.
-    #[pyo3(get)]
-    pub name: String,
-    /// Major (heading) font - Latin script.
-    #[pyo3(get)]
-    pub major_latin: Option<String>,
-    /// Major (heading) font - East Asian script.
-    #[pyo3(get)]
-    pub major_east_asian: Option<String>,
-    /// Major (heading) font - Complex script.
-    #[pyo3(get)]
-    pub major_complex_script: Option<String>,
-    /// Minor (body) font - Latin script.
-    #[pyo3(get)]
-    pub minor_latin: Option<String>,
-    /// Minor (body) font - East Asian script.
-    #[pyo3(get)]
-    pub minor_east_asian: Option<String>,
-    /// Minor (body) font - Complex script.
-    #[pyo3(get)]
-    pub minor_complex_script: Option<String>,
-}
-
-#[pymethods]
-impl FontScheme {
-    #[must_use]
-    #[pyo3(signature = (name=None, major_latin=None, major_east_asian=None, major_complex_script=None, minor_latin=None, minor_east_asian=None, minor_complex_script=None))]
-    #[new]
-    pub fn new(
-        name: Option<String>,
-        major_latin: Option<String>,
-        major_east_asian: Option<String>,
-        major_complex_script: Option<String>,
-        minor_latin: Option<String>,
-        minor_east_asian: Option<String>,
-        minor_complex_script: Option<String>,
-    ) -> Self {
-        Self {
-            name: name.unwrap_or_default(),
-            major_latin,
-            major_east_asian,
-            major_complex_script,
-            minor_latin,
-            minor_east_asian,
-            minor_complex_script,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct Theme {
-    /// Theme name (e.g., "Office Theme").
-    #[pyo3(get)]
-    pub name: String,
-    /// Color scheme (12 standard colors).
-    #[pyo3(get)]
-    pub color_scheme: Option<ColorScheme>,
-    /// Font scheme (major and minor fonts).
-    #[pyo3(get)]
-    pub font_scheme: Option<FontScheme>,
-}
-
-#[pymethods]
-impl Theme {
-    #[must_use]
-    #[pyo3(signature = (name=None, color_scheme=None, font_scheme=None))]
-    #[new]
-    pub fn new(name: Option<String>, color_scheme: Option<ColorScheme>, font_scheme: Option<FontScheme>) -> Self {
-        Self {
-            name: name.unwrap_or_default(),
-            color_scheme,
-            font_scheme,
         }
     }
 }
@@ -4390,7 +2986,7 @@ pub struct PptExtractionResult {
     pub slide_count: usize,
     /// Document metadata.
     #[pyo3(get)]
-    pub metadata: PptMetadata,
+    pub metadata: String,
     /// Speaker notes text per slide (if available).
     #[pyo3(get)]
     pub speaker_notes: Vec<String>,
@@ -4401,550 +2997,12 @@ impl PptExtractionResult {
     #[must_use]
     #[pyo3(signature = (text, slide_count, metadata, speaker_notes))]
     #[new]
-    pub fn new(text: String, slide_count: usize, metadata: PptMetadata, speaker_notes: Vec<String>) -> Self {
+    pub fn new(text: String, slide_count: usize, metadata: String, speaker_notes: Vec<String>) -> Self {
         Self {
             text,
             slide_count,
             metadata,
             speaker_notes,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct PptMetadata {
-    #[pyo3(get)]
-    pub title: Option<String>,
-    #[pyo3(get)]
-    pub subject: Option<String>,
-    #[pyo3(get)]
-    pub author: Option<String>,
-    #[pyo3(get)]
-    pub last_author: Option<String>,
-}
-
-#[pymethods]
-impl PptMetadata {
-    #[must_use]
-    #[pyo3(signature = (title=None, subject=None, author=None, last_author=None))]
-    #[new]
-    pub fn new(
-        title: Option<String>,
-        subject: Option<String>,
-        author: Option<String>,
-        last_author: Option<String>,
-    ) -> Self {
-        Self {
-            title,
-            subject,
-            author,
-            last_author,
-        }
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct PptxExtractionOptions {
-    /// Whether to extract embedded images.
-    #[pyo3(get)]
-    pub extract_images: bool,
-    /// Optional page configuration for boundary tracking.
-    #[pyo3(get)]
-    pub page_config: Option<PageConfig>,
-    /// Whether to output plain text (no markdown).
-    #[pyo3(get)]
-    pub plain: bool,
-    /// Whether to build the `DocumentStructure` tree.
-    #[pyo3(get)]
-    pub include_structure: bool,
-    /// Whether to emit `![alt](target)` references in markdown output.
-    #[pyo3(get)]
-    pub inject_placeholders: bool,
-}
-
-#[pymethods]
-impl PptxExtractionOptions {
-    #[must_use]
-    #[pyo3(signature = (extract_images=None, plain=None, include_structure=None, inject_placeholders=None, page_config=None))]
-    #[new]
-    pub fn new(
-        extract_images: Option<bool>,
-        plain: Option<bool>,
-        include_structure: Option<bool>,
-        inject_placeholders: Option<bool>,
-        page_config: Option<PageConfig>,
-    ) -> Self {
-        Self {
-            extract_images: extract_images.unwrap_or(true),
-            page_config,
-            plain: plain.unwrap_or(false),
-            include_structure: include_structure.unwrap_or(false),
-            inject_placeholders: inject_placeholders.unwrap_or(true),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PptxExtractionOptions {
-        kreuzberg::extraction::PptxExtractionOptions::default().into()
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct CodeExtractor {
-    inner: Arc<kreuzberg::extractors::CodeExtractor>,
-}
-
-#[pymethods]
-impl CodeExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, _mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        _mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, _mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: CodeExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, _mime_type, config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        _mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (path, _mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: CodeExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, _mime_type, config))]
-    pub fn extract_sync(&self, content: Vec<u8>, _mime_type: String, config: ExtractionConfig) -> PyResult<String> {
-        let config_core = config.into();
-        let _ = (content, _mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: CodeExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> CodeExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::CodeExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct CsvExtractor {
-    inner: Arc<kreuzberg::extractors::CsvExtractor>,
-}
-
-#[pymethods]
-impl CsvExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: CsvExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> CsvExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::CsvExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct StructuredExtractor {
-    inner: Arc<kreuzberg::extractors::StructuredExtractor>,
-}
-
-#[pymethods]
-impl StructuredExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: StructuredExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> StructuredExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::StructuredExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PlainTextExtractor {
-    inner: Arc<kreuzberg::extractors::PlainTextExtractor>,
-}
-
-#[pymethods]
-impl PlainTextExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PlainTextExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PlainTextExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::PlainTextExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct DjotExtractor {
-    inner: Arc<kreuzberg::extractors::DjotExtractor>,
-}
-
-#[pymethods]
-impl DjotExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DjotExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, mime_type, config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (path, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DjotExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (events))]
-    pub fn build_internal_document(events: Vec<String>) -> String {
-        let _ = events;
-        String::from("[unimplemented: DjotExtractor::build_internal_document]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> DjotExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::DjotExtractor::default()),
         }
     }
 }
@@ -5068,2783 +3126,11 @@ impl TableValidator {
     }
 }
 
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct ImageExtractor {
-    inner: Arc<kreuzberg::extractors::ImageExtractor>,
-}
-
-#[pymethods]
-impl ImageExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: ImageExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> ImageExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::ImageExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct ZipExtractor {
-    inner: Arc<kreuzberg::extractors::ZipExtractor>,
-}
-
-#[pymethods]
-impl ZipExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: ZipExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> PyResult<String> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: ZipExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> ZipExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::ZipExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct TarExtractor {
-    inner: Arc<kreuzberg::extractors::TarExtractor>,
-}
-
-#[pymethods]
-impl TarExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: TarExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> PyResult<String> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: TarExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> TarExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::TarExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct SevenZExtractor {
-    inner: Arc<kreuzberg::extractors::SevenZExtractor>,
-}
-
-#[pymethods]
-impl SevenZExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: SevenZExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> PyResult<String> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: SevenZExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> SevenZExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::SevenZExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct GzipExtractor {
-    inner: Arc<kreuzberg::extractors::GzipExtractor>,
-}
-
-#[pymethods]
-impl GzipExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: GzipExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> PyResult<String> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: GzipExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> GzipExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::GzipExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct EmailExtractor {
-    inner: Arc<kreuzberg::extractors::EmailExtractor>,
-}
-
-#[pymethods]
-impl EmailExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> PyResult<String> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: EmailExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: EmailExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> EmailExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::EmailExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PstExtractor {
-    inner: Arc<kreuzberg::extractors::PstExtractor>,
-}
-
-#[pymethods]
-impl PstExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> PyResult<String> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PstExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PstExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PstExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::PstExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct ExcelExtractor {
-    inner: Arc<kreuzberg::extractors::ExcelExtractor>,
-}
-
-#[pymethods]
-impl ExcelExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> PyResult<String> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: ExcelExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: ExcelExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, mime_type, _config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (path, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: ExcelExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> ExcelExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::ExcelExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct HwpExtractor {
-    inner: Arc<kreuzberg::extractors::HwpExtractor>,
-}
-
-#[pymethods]
-impl HwpExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: HwpExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> HwpExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::HwpExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct KeynoteExtractor {
-    inner: Arc<kreuzberg::extractors::KeynoteExtractor>,
-}
-
-#[pymethods]
-impl KeynoteExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: KeynoteExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> KeynoteExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::KeynoteExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct NumbersExtractor {
-    inner: Arc<kreuzberg::extractors::NumbersExtractor>,
-}
-
-#[pymethods]
-impl NumbersExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: NumbersExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> NumbersExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::NumbersExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PagesExtractor {
-    inner: Arc<kreuzberg::extractors::PagesExtractor>,
-}
-
-#[pymethods]
-impl PagesExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PagesExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PagesExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::PagesExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct HtmlExtractor {
-    inner: Arc<kreuzberg::extractors::HtmlExtractor>,
-}
-
-#[pymethods]
-impl HtmlExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> PyResult<String> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: HtmlExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: HtmlExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> HtmlExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::HtmlExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct BibtexExtractor {
-    inner: Arc<kreuzberg::extractors::BibtexExtractor>,
-}
-
-#[pymethods]
-impl BibtexExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: BibtexExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> BibtexExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::BibtexExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct CitationExtractor {
-    inner: Arc<kreuzberg::extractors::CitationExtractor>,
-}
-
-#[pymethods]
-impl CitationExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: CitationExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> CitationExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::CitationExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct DocExtractor {
-    inner: Arc<kreuzberg::extractors::DocExtractor>,
-}
-
-#[pymethods]
-impl DocExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DocExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> DocExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::DocExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct DbfExtractor {
-    inner: Arc<kreuzberg::extractors::DbfExtractor>,
-}
-
-#[pymethods]
-impl DbfExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DbfExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> DbfExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::DbfExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct DocxExtractor {
-    inner: Arc<kreuzberg::extractors::DocxExtractor>,
-}
-
-#[pymethods]
-impl DocxExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DocxExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> DocxExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::DocxExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct EpubExtractor {
-    inner: Arc<kreuzberg::extractors::EpubExtractor>,
-}
-
-#[pymethods]
-impl EpubExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: EpubExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> EpubExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::EpubExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct FictionBookExtractor {
-    inner: Arc<kreuzberg::extractors::FictionBookExtractor>,
-}
-
-#[pymethods]
-impl FictionBookExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: FictionBookExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> FictionBookExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::FictionBookExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct MarkdownExtractor {
-    inner: Arc<kreuzberg::extractors::MarkdownExtractor>,
-}
-
-#[pymethods]
-impl MarkdownExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: MarkdownExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, mime_type, config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (path, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: MarkdownExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (events, yaml=None))]
-    pub fn build_internal_document(events: Vec<String>, yaml: Option<String>) -> String {
-        let _ = (events, yaml);
-        String::from("[unimplemented: MarkdownExtractor::build_internal_document]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> MarkdownExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::MarkdownExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct MdxExtractor {
-    inner: Arc<kreuzberg::extractors::MdxExtractor>,
-}
-
-#[pymethods]
-impl MdxExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: MdxExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, mime_type, config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (path, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: MdxExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (events, yaml=None, raw_jsx_blocks=None))]
-    pub fn build_internal_document(
-        events: Vec<String>,
-        yaml: Option<String>,
-        raw_jsx_blocks: Option<Vec<String>>,
-    ) -> String {
-        let _ = (events, yaml, raw_jsx_blocks);
-        String::from("[unimplemented: MdxExtractor::build_internal_document]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> MdxExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::MdxExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct RstExtractor {
-    inner: Arc<kreuzberg::extractors::RstExtractor>,
-}
-
-#[pymethods]
-impl RstExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: RstExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, mime_type, config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (path, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: RstExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (content, inject_placeholders))]
-    pub fn build_internal_document(content: String, inject_placeholders: bool) -> String {
-        let _ = (content, inject_placeholders);
-        String::from("[unimplemented: RstExtractor::build_internal_document]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> RstExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::RstExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct LatexExtractor {
-    inner: Arc<kreuzberg::extractors::LatexExtractor>,
-}
-
-#[pymethods]
-impl LatexExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: LatexExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, mime_type, config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (path, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: LatexExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (source, inject_placeholders))]
-    pub fn build_internal_document(source: String, inject_placeholders: bool) -> String {
-        let _ = (source, inject_placeholders);
-        String::from("[unimplemented: LatexExtractor::build_internal_document]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> LatexExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::LatexExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct JupyterExtractor {
-    inner: Arc<kreuzberg::extractors::JupyterExtractor>,
-}
-
-#[pymethods]
-impl JupyterExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: JupyterExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> JupyterExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::JupyterExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct OrgModeExtractor {
-    inner: Arc<kreuzberg::extractors::OrgModeExtractor>,
-}
-
-#[pymethods]
-impl OrgModeExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: OrgModeExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, mime_type, config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (path, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: OrgModeExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (org_text))]
-    pub fn build_internal_document(org_text: String) -> String {
-        let _ = org_text;
-        String::from("[unimplemented: OrgModeExtractor::build_internal_document]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> OrgModeExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::OrgModeExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct OdtExtractor {
-    inner: Arc<kreuzberg::extractors::OdtExtractor>,
-}
-
-#[pymethods]
-impl OdtExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: OdtExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> OdtExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::OdtExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct OpmlExtractor {
-    inner: Arc<kreuzberg::extractors::OpmlExtractor>,
-}
-
-#[pymethods]
-impl OpmlExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: OpmlExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> OpmlExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::OpmlExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct TypstExtractor {
-    inner: Arc<kreuzberg::extractors::TypstExtractor>,
-}
-
-#[pymethods]
-impl TypstExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: TypstExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, mime_type, config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (path, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: TypstExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> TypstExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::TypstExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct JatsExtractor {
-    inner: Arc<kreuzberg::extractors::JatsExtractor>,
-}
-
-#[pymethods]
-impl JatsExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: JatsExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> JatsExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::JatsExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct NativeTextStats {
-    #[pyo3(get)]
-    pub non_whitespace: usize,
-    #[pyo3(get)]
-    pub alnum: usize,
-    #[pyo3(get)]
-    pub meaningful_words: usize,
-    #[pyo3(get)]
-    pub alnum_ratio: f64,
-    /// Count of Unicode replacement characters (U+FFFD) indicating encoding failures.
-    #[pyo3(get)]
-    pub garbage_char_count: usize,
-    /// Fraction of whitespace-delimited words that are 1-2 characters (0.0-1.0).
-    /// High values indicate fragmented/garbled text extraction.
-    #[pyo3(get)]
-    pub fragmented_word_ratio: f64,
-    /// Fraction of consecutive word pairs that are identical (0.0-1.0).
-    /// High values indicate column scrambling where text is duplicated.
-    #[pyo3(get)]
-    pub consecutive_repeat_ratio: f64,
-    /// Average word length (by chars). Very low values indicate garbled extraction.
-    #[pyo3(get)]
-    pub avg_word_length: f64,
-    /// Total word count (whitespace-delimited).
-    #[pyo3(get)]
-    pub word_count: usize,
-}
-
-#[pymethods]
-impl NativeTextStats {
-    #[allow(clippy::too_many_arguments)]
-    #[must_use]
-    #[pyo3(signature = (non_whitespace, alnum, meaningful_words, alnum_ratio, garbage_char_count, fragmented_word_ratio, consecutive_repeat_ratio, avg_word_length, word_count))]
-    #[new]
-    pub fn new(
-        non_whitespace: usize,
-        alnum: usize,
-        meaningful_words: usize,
-        alnum_ratio: f64,
-        garbage_char_count: usize,
-        fragmented_word_ratio: f64,
-        consecutive_repeat_ratio: f64,
-        avg_word_length: f64,
-        word_count: usize,
-    ) -> Self {
-        Self {
-            non_whitespace,
-            alnum,
-            meaningful_words,
-            alnum_ratio,
-            garbage_char_count,
-            fragmented_word_ratio,
-            consecutive_repeat_ratio,
-            avg_word_length,
-            word_count,
-        }
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (text, thresholds))]
-    pub fn compute(text: String, thresholds: OcrQualityThresholds) -> NativeTextStats {
-        let thresholds_core = thresholds.into();
-        kreuzberg::extractors::pdf::NativeTextStats::compute(&text, &thresholds_core).into()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = (text))]
-    pub fn from(text: String) -> NativeTextStats {
-        kreuzberg::extractors::pdf::NativeTextStats::from(&text).into()
-    }
-}
-
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrFallbackDecision {
     #[pyo3(get)]
-    pub stats: NativeTextStats,
+    pub stats: String,
     #[pyo3(get)]
     pub avg_non_whitespace: f64,
     #[pyo3(get)]
@@ -7858,502 +3144,12 @@ impl OcrFallbackDecision {
     #[must_use]
     #[pyo3(signature = (stats, avg_non_whitespace, avg_alnum, fallback))]
     #[new]
-    pub fn new(stats: NativeTextStats, avg_non_whitespace: f64, avg_alnum: f64, fallback: bool) -> Self {
+    pub fn new(stats: String, avg_non_whitespace: f64, avg_alnum: f64, fallback: bool) -> Self {
         Self {
             stats,
             avg_non_whitespace,
             avg_alnum,
             fallback,
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PdfExtractor {
-    inner: Arc<kreuzberg::extractors::PdfExtractor>,
-}
-
-#[pymethods]
-impl PdfExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PdfExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PdfExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::PdfExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PptExtractor {
-    inner: Arc<kreuzberg::extractors::PptExtractor>,
-}
-
-#[pymethods]
-impl PptExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PptExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PptExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::PptExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PptxExtractor {
-    inner: Arc<kreuzberg::extractors::PptxExtractor>,
-}
-
-#[pymethods]
-impl PptxExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PptxExtractor.extract_bytes",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, mime_type, config))]
-    pub fn extract_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (path, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PptxExtractor.extract_file",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PptxExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::PptxExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct RtfExtractor {
-    inner: Arc<kreuzberg::extractors::RtfExtractor>,
-}
-
-#[pymethods]
-impl RtfExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: RtfExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> RtfExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::RtfExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct XmlExtractor {
-    inner: Arc<kreuzberg::extractors::XmlExtractor>,
-}
-
-#[pymethods]
-impl XmlExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[pyo3(signature = ())]
-    pub fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, _config))]
-    pub fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> PyResult<String> {
-        let _config_core = _config.into();
-        let _ = (content, mime_type, _config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: XmlExtractor.extract_sync",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: XmlExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> XmlExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::XmlExtractor::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct DocbookExtractor {
-    inner: Arc<kreuzberg::extractors::DocbookExtractor>,
-}
-
-#[pymethods]
-impl DocbookExtractor {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (content, mime_type, config))]
-    pub fn extract_bytes<'py>(
-        &self,
-        py: Python<'py>,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let _ = (content, mime_type, config);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DocbookExtractor.extract_bytes",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> DocbookExtractor {
-        Self {
-            inner: Arc::new(kreuzberg::extractors::DocbookExtractor::default()),
         }
     }
 }
@@ -8375,386 +3171,6 @@ impl ModelCache {
     #[pyo3(signature = ())]
     pub fn take(&self) -> Option<String> {
         None
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
-pub struct PanicContext {
-    /// Source file where the panic occurred
-    #[pyo3(get)]
-    pub file: String,
-    /// Line number where the panic occurred
-    #[pyo3(get)]
-    pub line: u32,
-    /// Function name where the panic occurred
-    #[pyo3(get)]
-    pub function: String,
-    /// Panic message extracted from the panic payload
-    #[pyo3(get)]
-    pub message: String,
-    /// Timestamp when the panic was captured
-    #[pyo3(get)]
-    pub timestamp: String,
-}
-
-#[pymethods]
-impl PanicContext {
-    #[must_use]
-    #[pyo3(signature = (file, line, function, message, timestamp))]
-    #[new]
-    pub fn new(file: String, line: u32, function: String, message: String, timestamp: String) -> Self {
-        Self {
-            file,
-            line,
-            function,
-            message,
-            timestamp,
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn format(&self) -> String {
-        let core_self = kreuzberg::panic_context::PanicContext {
-            file: self.file.clone(),
-            line: self.line,
-            function: self.function.clone(),
-            message: self.message.clone(),
-            timestamp: Default::default(),
-        };
-        core_self.format().into()
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct DocumentExtractorRegistry {
-    inner: Arc<kreuzberg::plugins::DocumentExtractorRegistry>,
-}
-
-#[pymethods]
-impl DocumentExtractorRegistry {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (extractor))]
-    pub fn register(&self, extractor: String) -> PyResult<()> {
-        let _ = extractor;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DocumentExtractorRegistry.register",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (mime_type))]
-    pub fn get(&self, mime_type: String) -> PyResult<String> {
-        let _ = mime_type;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DocumentExtractorRegistry.get",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (name))]
-    pub fn remove(&self, name: String) -> PyResult<()> {
-        let _ = name;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DocumentExtractorRegistry.remove",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown_all(&self) -> PyResult<()> {
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: DocumentExtractorRegistry.shutdown_all",
-        ))
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> DocumentExtractorRegistry {
-        Self {
-            inner: Arc::new(kreuzberg::plugins::DocumentExtractorRegistry::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct OcrBackendRegistry {
-    inner: Arc<kreuzberg::plugins::OcrBackendRegistry>,
-}
-
-#[pymethods]
-impl OcrBackendRegistry {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (backend))]
-    pub fn register(&self, backend: OcrBackend) -> PyResult<()> {
-        let _ = backend;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: OcrBackendRegistry.register",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (name))]
-    pub fn get(&self, name: String) -> PyResult<OcrBackend> {
-        let result = self
-            .inner
-            .get(&name)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(OcrBackend {
-            inner: Arc::new(result),
-        })
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (language))]
-    pub fn get_for_language(&self, language: String) -> PyResult<OcrBackend> {
-        let result = self
-            .inner
-            .get_for_language(&language)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(OcrBackend {
-            inner: Arc::new(result),
-        })
-    }
-
-    #[pyo3(signature = ())]
-    pub fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (name))]
-    pub fn remove(&self, name: String) -> PyResult<()> {
-        let _ = name;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: OcrBackendRegistry.remove",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown_all(&self) -> PyResult<()> {
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: OcrBackendRegistry.shutdown_all",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn reset_to_defaults(&self) -> PyResult<()> {
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: OcrBackendRegistry.reset_to_defaults",
-        ))
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn new_empty() -> OcrBackendRegistry {
-        Self {
-            inner: Arc::new(kreuzberg::plugins::OcrBackendRegistry::new_empty()),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> OcrBackendRegistry {
-        Self {
-            inner: Arc::new(kreuzberg::plugins::OcrBackendRegistry::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PostProcessorRegistry {
-    inner: Arc<kreuzberg::plugins::PostProcessorRegistry>,
-}
-
-#[pymethods]
-impl PostProcessorRegistry {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (processor, priority))]
-    pub fn register(&self, processor: String, priority: i32) -> PyResult<()> {
-        let _ = (processor, priority);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PostProcessorRegistry.register",
-        ))
-    }
-
-    #[pyo3(signature = (stage))]
-    pub fn get_for_stage(&self, stage: String) -> Vec<String> {
-        let _ = stage;
-        Vec::new()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (name))]
-    pub fn remove(&self, name: String) -> PyResult<()> {
-        let _ = name;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PostProcessorRegistry.remove",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown_all(&self) -> PyResult<()> {
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PostProcessorRegistry.shutdown_all",
-        ))
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PostProcessorRegistry {
-        Self {
-            inner: Arc::new(kreuzberg::plugins::PostProcessorRegistry::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct RendererRegistry {
-    inner: Arc<kreuzberg::plugins::RendererRegistry>,
-}
-
-#[pymethods]
-impl RendererRegistry {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (renderer))]
-    pub fn register(&self, renderer: Renderer) -> PyResult<()> {
-        let _ = renderer;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: RendererRegistry.register",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (name))]
-    pub fn get(&self, name: String) -> PyResult<Renderer> {
-        let result = self
-            .inner
-            .get(&name)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(Renderer {
-            inner: Arc::new(result),
-        })
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (name, doc))]
-    pub fn render(&self, name: String, doc: String) -> PyResult<String> {
-        let _ = (name, doc);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: RendererRegistry.render",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    #[pyo3(signature = (name))]
-    pub fn remove(&self, name: String) -> () {
-        let _ = name;
-        ()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn reset_to_defaults(&self) -> PyResult<()> {
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: RendererRegistry.reset_to_defaults",
-        ))
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn new_empty() -> RendererRegistry {
-        Self {
-            inner: Arc::new(kreuzberg::plugins::RendererRegistry::new_empty()),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> RendererRegistry {
-        Self {
-            inner: Arc::new(kreuzberg::plugins::RendererRegistry::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct ValidatorRegistry {
-    inner: Arc<kreuzberg::plugins::ValidatorRegistry>,
-}
-
-#[pymethods]
-impl ValidatorRegistry {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (validator))]
-    pub fn register(&self, validator: String) -> PyResult<()> {
-        let _ = validator;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: ValidatorRegistry.register",
-        ))
-    }
-
-    #[pyo3(signature = ())]
-    pub fn get_all(&self) -> Vec<String> {
-        Vec::new()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (name))]
-    pub fn remove(&self, name: String) -> PyResult<()> {
-        let _ = name;
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: ValidatorRegistry.remove",
-        ))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown_all(&self) -> PyResult<()> {
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: ValidatorRegistry.shutdown_all",
-        ))
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> ValidatorRegistry {
-        Self {
-            inner: Arc::new(kreuzberg::plugins::ValidatorRegistry::default()),
-        }
     }
 }
 
@@ -8828,40 +3244,6 @@ impl ExtractionMetrics {
             batch_duration_ms,
             concurrent_extractions,
         }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct TokenReducer {
-    inner: Arc<kreuzberg::text::token_reduction::TokenReducer>,
-}
-
-#[pymethods]
-impl TokenReducer {
-    #[pyo3(signature = ())]
-    pub fn language(&self) -> String {
-        self.inner.language().into()
-    }
-
-    #[pyo3(signature = (text))]
-    pub fn reduce(&self, text: String) -> String {
-        self.inner.reduce(&text)
-    }
-
-    #[pyo3(signature = (texts))]
-    pub fn batch_reduce(&self, texts: Vec<String>) -> Vec<String> {
-        self.inner.batch_reduce(&texts)
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (config, language_hint=None))]
-    pub fn new(config: TokenReductionConfig, language_hint: Option<String>) -> PyResult<TokenReducer> {
-        let config_core = config.into();
-        kreuzberg::text::token_reduction::TokenReducer::new(&config_core, language_hint.as_deref())
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
     }
 }
 
@@ -12778,116 +7160,6 @@ impl Uri {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct PoolMetrics {
-    /// Total number of acquire calls on this pool
-    #[pyo3(get)]
-    pub total_acquires: String,
-    /// Total number of cache hits (reused objects from pool)
-    #[pyo3(get)]
-    pub total_cache_hits: String,
-    /// Peak number of objects stored simultaneously in this pool
-    #[pyo3(get)]
-    pub peak_items_stored: String,
-    /// Total number of objects created by the factory function
-    #[pyo3(get)]
-    pub total_creations: String,
-}
-
-#[pymethods]
-impl PoolMetrics {
-    #[must_use]
-    #[pyo3(signature = (total_acquires=None, total_cache_hits=None, peak_items_stored=None, total_creations=None))]
-    #[new]
-    pub fn new(
-        total_acquires: Option<String>,
-        total_cache_hits: Option<String>,
-        peak_items_stored: Option<String>,
-        total_creations: Option<String>,
-    ) -> Self {
-        Self {
-            total_acquires: total_acquires.unwrap_or_default(),
-            total_cache_hits: total_cache_hits.unwrap_or_default(),
-            peak_items_stored: peak_items_stored.unwrap_or_default(),
-            total_creations: total_creations.unwrap_or_default(),
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn hit_rate(&self) -> f64 {
-        let core_self = kreuzberg::utils::pool::PoolMetrics {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        };
-        core_self.hit_rate()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn snapshot(&self) -> PoolMetricsSnapshot {
-        let core_self = kreuzberg::utils::pool::PoolMetrics {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        };
-        core_self.snapshot().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn reset(&self) -> () {
-        let core_self = kreuzberg::utils::pool::PoolMetrics {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        };
-        core_self.reset()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PoolMetrics {
-        kreuzberg::utils::pool::PoolMetrics::default().into()
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct PoolMetricsSnapshot {
-    #[pyo3(get)]
-    pub total_acquires: usize,
-    #[pyo3(get)]
-    pub total_cache_hits: usize,
-    #[pyo3(get)]
-    pub peak_items_stored: usize,
-    #[pyo3(get)]
-    pub total_creations: usize,
-}
-
-#[pymethods]
-impl PoolMetricsSnapshot {
-    #[must_use]
-    #[pyo3(signature = (total_acquires, total_cache_hits, peak_items_stored, total_creations))]
-    #[new]
-    pub fn new(
-        total_acquires: usize,
-        total_cache_hits: usize,
-        peak_items_stored: usize,
-        total_creations: usize,
-    ) -> Self {
-        Self {
-            total_acquires,
-            total_cache_hits,
-            peak_items_stored,
-            total_creations,
-        }
-    }
-}
-
 #[derive(Clone)]
 #[pyclass(frozen, from_py_object)]
 pub struct StringBufferPool {
@@ -12928,151 +7200,6 @@ impl Pool {
             .clear()
             .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
         Ok(())
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct PoolSizeHint {
-    /// Estimated total string buffer pool size in bytes
-    #[pyo3(get)]
-    pub estimated_total_size: usize,
-    /// Recommended number of string buffers
-    #[pyo3(get)]
-    pub string_buffer_count: usize,
-    /// Recommended capacity per string buffer in bytes
-    #[pyo3(get)]
-    pub string_buffer_capacity: usize,
-    /// Recommended number of byte buffers
-    #[pyo3(get)]
-    pub byte_buffer_count: usize,
-    /// Recommended capacity per byte buffer in bytes
-    #[pyo3(get)]
-    pub byte_buffer_capacity: usize,
-}
-
-#[pymethods]
-impl PoolSizeHint {
-    #[must_use]
-    #[pyo3(signature = (estimated_total_size, string_buffer_count, string_buffer_capacity, byte_buffer_count, byte_buffer_capacity))]
-    #[new]
-    pub fn new(
-        estimated_total_size: usize,
-        string_buffer_count: usize,
-        string_buffer_capacity: usize,
-        byte_buffer_count: usize,
-        byte_buffer_capacity: usize,
-    ) -> Self {
-        Self {
-            estimated_total_size,
-            string_buffer_count,
-            string_buffer_capacity,
-            byte_buffer_count,
-            byte_buffer_capacity,
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn estimated_string_pool_memory(&self) -> usize {
-        let core_self = kreuzberg::utils::PoolSizeHint {
-            estimated_total_size: self.estimated_total_size,
-            string_buffer_count: self.string_buffer_count,
-            string_buffer_capacity: self.string_buffer_capacity,
-            byte_buffer_count: self.byte_buffer_count,
-            byte_buffer_capacity: self.byte_buffer_capacity,
-        };
-        core_self.estimated_string_pool_memory()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn estimated_byte_pool_memory(&self) -> usize {
-        let core_self = kreuzberg::utils::PoolSizeHint {
-            estimated_total_size: self.estimated_total_size,
-            string_buffer_count: self.string_buffer_count,
-            string_buffer_capacity: self.string_buffer_capacity,
-            byte_buffer_count: self.byte_buffer_count,
-            byte_buffer_capacity: self.byte_buffer_capacity,
-        };
-        core_self.estimated_byte_pool_memory()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn total_pool_memory(&self) -> usize {
-        let core_self = kreuzberg::utils::PoolSizeHint {
-            estimated_total_size: self.estimated_total_size,
-            string_buffer_count: self.string_buffer_count,
-            string_buffer_capacity: self.string_buffer_capacity,
-            byte_buffer_count: self.byte_buffer_count,
-            byte_buffer_capacity: self.byte_buffer_capacity,
-        };
-        core_self.total_pool_memory()
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct PoolConfig {
-    /// Maximum buffers per size bucket
-    #[pyo3(get)]
-    pub max_buffers_per_size: usize,
-    /// Initial capacity for new buffers
-    #[pyo3(get)]
-    pub initial_capacity: usize,
-    /// Maximum capacity before discarding
-    #[pyo3(get)]
-    pub max_capacity_before_discard: usize,
-}
-
-#[pymethods]
-impl PoolConfig {
-    #[must_use]
-    #[pyo3(signature = (max_buffers_per_size=None, initial_capacity=None, max_capacity_before_discard=None))]
-    #[new]
-    pub fn new(
-        max_buffers_per_size: Option<usize>,
-        initial_capacity: Option<usize>,
-        max_capacity_before_discard: Option<usize>,
-    ) -> Self {
-        Self {
-            max_buffers_per_size: max_buffers_per_size.unwrap_or(4),
-            initial_capacity: initial_capacity.unwrap_or(4096),
-            max_capacity_before_discard: max_capacity_before_discard.unwrap_or(65536),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PoolConfig {
-        kreuzberg::utils::string_pool::PoolConfig::default().into()
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct StringBufferPoolMetrics {
-    /// Total number of acquire calls
-    #[pyo3(get)]
-    pub total_acquires: usize,
-    /// Total number of buffer reuses from pool
-    #[pyo3(get)]
-    pub total_reuses: usize,
-    /// Hit rate as percentage (0.0-100.0)
-    #[pyo3(get)]
-    pub hit_rate: f64,
-}
-
-#[pymethods]
-impl StringBufferPoolMetrics {
-    #[must_use]
-    #[pyo3(signature = (total_acquires, total_reuses, hit_rate))]
-    #[new]
-    pub fn new(total_acquires: usize, total_reuses: usize, hit_rate: f64) -> Self {
-        Self {
-            total_acquires,
-            total_reuses,
-            hit_rate,
-        }
     }
 }
 
@@ -13156,155 +7283,6 @@ impl InternedString {
 
 #[derive(Clone)]
 #[pyclass(frozen, from_py_object)]
-pub struct Instant {
-    inner: Arc<kreuzberg::utils::timing::Instant>,
-}
-
-#[pymethods]
-impl Instant {
-    #[pyo3(signature = ())]
-    pub fn elapsed_secs_f64(&self) -> f64 {
-        self.inner.elapsed_secs_f64()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn elapsed_ms(&self) -> f64 {
-        self.inner.elapsed_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn elapsed_millis(&self) -> String {
-        String::from("[unimplemented: Instant.elapsed_millis]")
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn now() -> Instant {
-        Self {
-            inner: Arc::new(kreuzberg::utils::timing::Instant::now()),
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
-pub struct HocrWord {
-    #[pyo3(get)]
-    pub text: String,
-    #[pyo3(get)]
-    pub left: u32,
-    #[pyo3(get)]
-    pub top: u32,
-    #[pyo3(get)]
-    pub width: u32,
-    #[pyo3(get)]
-    pub height: u32,
-    #[pyo3(get)]
-    pub confidence: f64,
-}
-
-#[pymethods]
-impl HocrWord {
-    #[must_use]
-    #[pyo3(signature = (text, left, top, width, height, confidence))]
-    #[new]
-    pub fn new(text: String, left: u32, top: u32, width: u32, height: u32, confidence: f64) -> Self {
-        Self {
-            text,
-            left,
-            top,
-            width,
-            height,
-            confidence,
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn right(&self) -> u32 {
-        let core_self = kreuzberg::table_core::HocrWord {
-            text: self.text.clone(),
-            left: self.left,
-            top: self.top,
-            width: self.width,
-            height: self.height,
-            confidence: self.confidence,
-        };
-        core_self.right()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn bottom(&self) -> u32 {
-        let core_self = kreuzberg::table_core::HocrWord {
-            text: self.text.clone(),
-            left: self.left,
-            top: self.top,
-            width: self.width,
-            height: self.height,
-            confidence: self.confidence,
-        };
-        core_self.bottom()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn y_center(&self) -> f64 {
-        let core_self = kreuzberg::table_core::HocrWord {
-            text: self.text.clone(),
-            left: self.left,
-            top: self.top,
-            width: self.width,
-            height: self.height,
-            confidence: self.confidence,
-        };
-        core_self.y_center()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn x_center(&self) -> f64 {
-        let core_self = kreuzberg::table_core::HocrWord {
-            text: self.text.clone(),
-            left: self.left,
-            top: self.top,
-            width: self.width,
-            height: self.height,
-            confidence: self.confidence,
-        };
-        core_self.x_center()
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct ExtractionService {
-    inner: Arc<kreuzberg::service::ExtractionService>,
-}
-
-#[pymethods]
-impl ExtractionService {
-    #[pyo3(signature = (_cx))]
-    pub fn poll_ready(&self, _cx: String) -> String {
-        let _ = _cx;
-        String::from("[unimplemented: ExtractionService.poll_ready]")
-    }
-
-    #[pyo3(signature = (req))]
-    pub fn call(&self, req: ExtractionRequest) -> String {
-        let _ = req;
-        String::from("[unimplemented: ExtractionService.call]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> ExtractionService {
-        Self {
-            inner: Arc::new(kreuzberg::service::ExtractionService::default()),
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
 pub struct TracingLayer {
     inner: Arc<kreuzberg::service::layers::tracing::TracingLayer>,
 }
@@ -13335,125 +7313,13 @@ impl MetricsLayer {
 
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
-pub struct ExtractionRequest {
-    /// Where to read the document from.
-    #[pyo3(get)]
-    pub source: ExtractionSource,
-    /// Base extraction configuration.
-    #[pyo3(get)]
-    pub config: ExtractionConfig,
-    /// Optional per-file overrides (merged on top of `config`).
-    #[pyo3(get)]
-    pub file_overrides: Option<FileExtractionConfig>,
-}
-
-#[pymethods]
-impl ExtractionRequest {
-    #[must_use]
-    #[pyo3(signature = (source, config, file_overrides=None))]
-    #[new]
-    pub fn new(
-        source: ExtractionSource,
-        config: ExtractionConfig,
-        file_overrides: Option<FileExtractionConfig>,
-    ) -> Self {
-        Self {
-            source,
-            config,
-            file_overrides,
-        }
-    }
-
-    #[pyo3(signature = (overrides))]
-    pub fn with_overrides(&self, overrides: FileExtractionConfig) -> ExtractionRequest {
-        let _ = overrides;
-        compile_error!(
-            "alef: ExtractionRequest.with_overrides returns a Named/Json type but has no error variant — cannot auto-delegate"
-        )
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (path, config))]
-    pub fn file(path: String, config: ExtractionConfig) -> ExtractionRequest {
-        kreuzberg::service::ExtractionRequest::file(std::path::PathBuf::from(path), config.into()).into()
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (path, mime_hint, config))]
-    pub fn file_with_mime(path: String, mime_hint: String, config: ExtractionConfig) -> ExtractionRequest {
-        kreuzberg::service::ExtractionRequest::file_with_mime(std::path::PathBuf::from(path), mime_hint, config.into())
-            .into()
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (data, mime_type, config))]
-    pub fn bytes(data: Vec<u8>, mime_type: String, config: ExtractionConfig) -> ExtractionRequest {
-        kreuzberg::service::ExtractionRequest::bytes(&data, mime_type, config.into()).into()
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct ExtractionServiceBuilder {
-    inner: Arc<kreuzberg::service::ExtractionServiceBuilder>,
-}
-
-#[pymethods]
-impl ExtractionServiceBuilder {
-    #[pyo3(signature = (duration))]
-    pub fn with_timeout(&self, duration: u64) -> ExtractionServiceBuilder {
-        let _ = duration;
-        compile_error!(
-            "alef: ExtractionServiceBuilder.with_timeout returns a Named/Json type but has no error variant — cannot auto-delegate"
-        )
-    }
-
-    #[pyo3(signature = (max))]
-    pub fn with_concurrency_limit(&self, max: usize) -> ExtractionServiceBuilder {
-        let _ = max;
-        compile_error!(
-            "alef: ExtractionServiceBuilder.with_concurrency_limit returns a Named/Json type but has no error variant — cannot auto-delegate"
-        )
-    }
-
-    #[pyo3(signature = ())]
-    pub fn with_tracing(&self) -> ExtractionServiceBuilder {
-        compile_error!(
-            "alef: ExtractionServiceBuilder.with_tracing returns a Named/Json type but has no error variant — cannot auto-delegate"
-        )
-    }
-
-    #[pyo3(signature = ())]
-    pub fn with_metrics(&self) -> ExtractionServiceBuilder {
-        compile_error!(
-            "alef: ExtractionServiceBuilder.with_metrics returns a Named/Json type but has no error variant — cannot auto-delegate"
-        )
-    }
-
-    #[pyo3(signature = ())]
-    pub fn build(&self) -> String {
-        String::from("[unimplemented: ExtractionServiceBuilder.build]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> ExtractionServiceBuilder {
-        Self {
-            inner: Arc::new(kreuzberg::service::ExtractionServiceBuilder::default()),
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
 pub struct ApiError {
     /// HTTP status code
     #[pyo3(get)]
     pub status: String,
     /// Error response body
     #[pyo3(get)]
-    pub body: ErrorResponse,
+    pub body: String,
 }
 
 #[pymethods]
@@ -13461,7 +7327,7 @@ impl ApiError {
     #[must_use]
     #[pyo3(signature = (status, body))]
     #[new]
-    pub fn new(status: String, body: ErrorResponse) -> Self {
+    pub fn new(status: String, body: String) -> Self {
         Self { status, body }
     }
 
@@ -13521,49 +7387,6 @@ pub struct ApiDoc {
     inner: Arc<kreuzberg::api::openapi::ApiDoc>,
 }
 
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct ApiSizeLimits {
-    /// Maximum size of the entire request body in bytes.
-    ///
-    /// This applies to the total size of all uploaded files and form data
-    /// in a single request. Default: 100 MB (104,857,600 bytes).
-    #[pyo3(get)]
-    pub max_request_body_bytes: usize,
-    /// Maximum size of a single multipart field in bytes.
-    ///
-    /// This applies to individual files in a multipart upload.
-    /// Default: 100 MB (104,857,600 bytes).
-    #[pyo3(get)]
-    pub max_multipart_field_bytes: usize,
-}
-
-#[pymethods]
-impl ApiSizeLimits {
-    #[must_use]
-    #[pyo3(signature = (max_request_body_bytes=None, max_multipart_field_bytes=None))]
-    #[new]
-    pub fn new(max_request_body_bytes: Option<usize>, max_multipart_field_bytes: Option<usize>) -> Self {
-        Self {
-            max_request_body_bytes: max_request_body_bytes.unwrap_or_default(),
-            max_multipart_field_bytes: max_multipart_field_bytes.unwrap_or_default(),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> ApiSizeLimits {
-        kreuzberg::api::ApiSizeLimits::default().into()
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (max_request_body_mb, max_multipart_field_mb))]
-    pub fn from_mb(max_request_body_mb: usize, max_multipart_field_mb: usize) -> ApiSizeLimits {
-        kreuzberg::api::ApiSizeLimits::from_mb(max_request_body_mb, max_multipart_field_mb).into()
-    }
-}
-
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HealthResponse {
@@ -13617,38 +7440,6 @@ impl InfoResponse {
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractResponse {
     inner: Arc<kreuzberg::api::ExtractResponse>,
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct ErrorResponse {
-    /// Error type name
-    #[pyo3(get)]
-    pub error_type: String,
-    /// Error message
-    #[pyo3(get)]
-    pub message: String,
-    /// Stack trace (if available)
-    #[pyo3(get)]
-    pub traceback: Option<String>,
-    /// HTTP status code
-    #[pyo3(get)]
-    pub status_code: u16,
-}
-
-#[pymethods]
-impl ErrorResponse {
-    #[must_use]
-    #[pyo3(signature = (error_type, message, status_code, traceback=None))]
-    #[new]
-    pub fn new(error_type: String, message: String, status_code: u16, traceback: Option<String>) -> Self {
-        Self {
-            error_type,
-            message,
-            traceback,
-            status_code,
-        }
-    }
 }
 
 #[derive(Clone, serde::Serialize)]
@@ -14073,7 +7864,7 @@ pub struct OpenWebDocumentResponse {
     pub page_content: String,
     /// Document metadata
     #[pyo3(get)]
-    pub metadata: OpenWebDocumentMetadata,
+    pub metadata: String,
 }
 
 #[pymethods]
@@ -14081,26 +7872,8 @@ impl OpenWebDocumentResponse {
     #[must_use]
     #[pyo3(signature = (page_content, metadata))]
     #[new]
-    pub fn new(page_content: String, metadata: OpenWebDocumentMetadata) -> Self {
+    pub fn new(page_content: String, metadata: String) -> Self {
         Self { page_content, metadata }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct OpenWebDocumentMetadata {
-    /// Original filename
-    #[pyo3(get)]
-    pub source: String,
-}
-
-#[pymethods]
-impl OpenWebDocumentMetadata {
-    #[must_use]
-    #[pyo3(signature = (source))]
-    #[new]
-    pub fn new(source: String) -> Self {
-        Self { source }
     }
 }
 
@@ -14109,7 +7882,7 @@ impl OpenWebDocumentMetadata {
 pub struct DoclingCompatResponse {
     /// Converted document content
     #[pyo3(get)]
-    pub document: DoclingCompatDocument,
+    pub document: String,
     /// Processing status
     #[pyo3(get)]
     pub status: String,
@@ -14120,26 +7893,8 @@ impl DoclingCompatResponse {
     #[must_use]
     #[pyo3(signature = (document, status))]
     #[new]
-    pub fn new(document: DoclingCompatDocument, status: String) -> Self {
+    pub fn new(document: String, status: String) -> Self {
         Self { document, status }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct DoclingCompatDocument {
-    /// Markdown content of the converted document
-    #[pyo3(get)]
-    pub md_content: String,
-}
-
-#[pymethods]
-impl DoclingCompatDocument {
-    #[must_use]
-    #[pyo3(signature = (md_content))]
-    #[new]
-    pub fn new(md_content: String) -> Self {
-        Self { md_content }
     }
 }
 
@@ -14439,53 +8194,6 @@ impl ChunkTextParams {
             max_characters,
             overlap,
             chunker_type,
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct KreuzbergMcp {
-    inner: Arc<kreuzberg::mcp::KreuzbergMcp>,
-}
-
-#[pymethods]
-impl KreuzbergMcp {
-    #[pyo3(signature = ())]
-    pub fn clone(&self) -> KreuzbergMcp {
-        Self {
-            inner: Arc::new(self.inner.clone()),
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn get_info(&self) -> String {
-        String::from("[unimplemented: KreuzbergMcp.get_info]")
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn new() -> PyResult<KreuzbergMcp> {
-        kreuzberg::mcp::KreuzbergMcp::new()
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = (config))]
-    pub fn with_config(config: ExtractionConfig) -> KreuzbergMcp {
-        Self {
-            inner: Arc::new(kreuzberg::mcp::KreuzbergMcp::with_config(config.into())),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> KreuzbergMcp {
-        Self {
-            inner: Arc::new(kreuzberg::mcp::KreuzbergMcp::default()),
         }
     }
 }
@@ -14879,74 +8587,6 @@ impl Keyword {
     }
 }
 
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct OcrCache {
-    inner: Arc<kreuzberg::ocr::OcrCache>,
-}
-
-#[pymethods]
-impl OcrCache {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (image_hash, backend, config))]
-    pub fn get_cached_result(
-        &self,
-        image_hash: String,
-        backend: String,
-        config: String,
-    ) -> PyResult<Option<OcrExtractionResult>> {
-        let result = self
-            .inner
-            .get_cached_result(&image_hash, &backend, &config)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result.map(Into::into))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (image_hash, backend, config, result))]
-    pub fn set_cached_result(
-        &self,
-        image_hash: String,
-        backend: String,
-        config: String,
-        result: OcrExtractionResult,
-    ) -> PyResult<()> {
-        let result_core = result.into();
-        self.inner
-            .set_cached_result(&image_hash, &backend, &config, &result_core)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn clear(&self) -> PyResult<()> {
-        self.inner
-            .clear()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn get_stats(&self) -> PyResult<OcrCacheStats> {
-        let result = self
-            .inner
-            .get_stats()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (cache_dir=None))]
-    pub fn new(cache_dir: Option<String>) -> PyResult<OcrCache> {
-        kreuzberg::ocr::OcrCache::new(cache_dir.map(std::path::PathBuf::from))
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-}
-
 #[derive(Clone, Default, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrCacheStats {
@@ -14965,131 +8605,6 @@ impl OcrCacheStats {
         Self {
             total_files: total_files.unwrap_or_default(),
             total_size_mb: total_size_mb.unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
-pub struct TsvRow {
-    /// Hierarchical level (1=block, 2=para, 3=line, 4=word, 5=symbol)
-    #[pyo3(get)]
-    pub level: i32,
-    /// Page number (1-indexed)
-    #[pyo3(get)]
-    pub page_num: i32,
-    /// Block number within page
-    #[pyo3(get)]
-    pub block_num: i32,
-    /// Paragraph number within block
-    #[pyo3(get)]
-    pub par_num: i32,
-    /// Line number within paragraph
-    #[pyo3(get)]
-    pub line_num: i32,
-    /// Word number within line
-    #[pyo3(get)]
-    pub word_num: i32,
-    /// Left x-coordinate in pixels
-    #[pyo3(get)]
-    pub left: u32,
-    /// Top y-coordinate in pixels
-    #[pyo3(get)]
-    pub top: u32,
-    /// Width in pixels
-    #[pyo3(get)]
-    pub width: u32,
-    /// Height in pixels
-    #[pyo3(get)]
-    pub height: u32,
-    /// Confidence score (0-100)
-    #[pyo3(get)]
-    pub conf: f64,
-    /// Recognized text
-    #[pyo3(get)]
-    pub text: String,
-}
-
-#[pymethods]
-impl TsvRow {
-    #[allow(clippy::too_many_arguments)]
-    #[must_use]
-    #[pyo3(signature = (level, page_num, block_num, par_num, line_num, word_num, left, top, width, height, conf, text))]
-    #[new]
-    pub fn new(
-        level: i32,
-        page_num: i32,
-        block_num: i32,
-        par_num: i32,
-        line_num: i32,
-        word_num: i32,
-        left: u32,
-        top: u32,
-        width: u32,
-        height: u32,
-        conf: f64,
-        text: String,
-    ) -> Self {
-        Self {
-            level,
-            page_num,
-            block_num,
-            par_num,
-            line_num,
-            word_num,
-            left,
-            top,
-            width,
-            height,
-            conf,
-            text,
-        }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct LanguageRegistry {
-    inner: Arc<kreuzberg::ocr::LanguageRegistry>,
-}
-
-#[pymethods]
-impl LanguageRegistry {
-    #[pyo3(signature = (backend))]
-    pub fn get_supported_languages(&self, backend: String) -> Option<Vec<String>> {
-        self.inner.get_supported_languages(&backend)
-    }
-
-    #[pyo3(signature = (backend, language))]
-    pub fn is_language_supported(&self, backend: String, language: String) -> bool {
-        self.inner.is_language_supported(&backend, &language)
-    }
-
-    #[pyo3(signature = ())]
-    pub fn get_backends(&self) -> Vec<String> {
-        self.inner.get_backends()
-    }
-
-    #[pyo3(signature = (backend))]
-    pub fn get_language_count(&self, backend: String) -> usize {
-        self.inner.get_language_count(&backend)
-    }
-
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn global() -> LanguageRegistry {
-        Self {
-            inner: Arc::new(kreuzberg::ocr::LanguageRegistry::global().clone()),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> LanguageRegistry {
-        Self {
-            inner: Arc::new(kreuzberg::ocr::LanguageRegistry::default()),
         }
     }
 }
@@ -15124,106 +8639,6 @@ impl RecognizedTable {
 
 #[derive(Clone)]
 #[pyclass(frozen, from_py_object)]
-pub struct OcrProcessor {
-    inner: Arc<kreuzberg::ocr::OcrProcessor>,
-}
-
-#[pymethods]
-impl OcrProcessor {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (image_bytes, config))]
-    pub fn process_image(&self, image_bytes: Vec<u8>, config: TesseractConfig) -> PyResult<OcrExtractionResult> {
-        let config_core = config.into();
-        let result = self
-            .inner
-            .process_image(&image_bytes, &config_core)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (image_bytes, config, output_format))]
-    pub fn process_image_with_format(
-        &self,
-        image_bytes: Vec<u8>,
-        config: TesseractConfig,
-        output_format: OutputFormat,
-    ) -> PyResult<OcrExtractionResult> {
-        let config_core = config.into();
-        let output_format_core = output_format.into();
-        let result = self
-            .inner
-            .process_image_with_format(&image_bytes, &config_core, output_format_core)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn clear_cache(&self) -> PyResult<()> {
-        self.inner
-            .clear_cache()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn get_cache_stats(&self) -> PyResult<OcrCacheStats> {
-        let result = self
-            .inner
-            .get_cache_stats()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (file_path, config))]
-    pub fn process_image_file(&self, file_path: String, config: TesseractConfig) -> PyResult<OcrExtractionResult> {
-        let config_core = config.into();
-        let result = self
-            .inner
-            .process_image_file(&file_path, &config_core)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (file_path, config, output_format))]
-    pub fn process_image_file_with_format(
-        &self,
-        file_path: String,
-        config: TesseractConfig,
-        output_format: OutputFormat,
-    ) -> PyResult<OcrExtractionResult> {
-        let config_core = config.into();
-        let output_format_core = output_format.into();
-        let result = self
-            .inner
-            .process_image_file_with_format(&file_path, &config_core, output_format_core)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    #[pyo3(signature = (file_paths, config))]
-    pub fn process_image_files_batch(&self, file_paths: Vec<String>, config: TesseractConfig) -> Vec<String> {
-        let config_core = config.into();
-        let _ = (file_paths, config);
-        Vec::new()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (cache_dir=None))]
-    pub fn new(cache_dir: Option<String>) -> PyResult<OcrProcessor> {
-        kreuzberg::ocr::OcrProcessor::new(cache_dir.map(std::path::PathBuf::from))
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
 pub struct TessdataManager {
     inner: Arc<kreuzberg::ocr::TessdataManager>,
 }
@@ -15238,128 +8653,6 @@ impl TessdataManager {
     #[pyo3(signature = (lang))]
     pub fn is_language_cached(&self, lang: String) -> bool {
         self.inner.is_language_cached(&lang)
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct TesseractBackend {
-    inner: Arc<kreuzberg::ocr::TesseractBackend>,
-}
-
-#[pymethods]
-impl TesseractBackend {
-    #[pyo3(signature = ())]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn initialize(&self) -> PyResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn shutdown(&self) -> PyResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (image_bytes, config))]
-    pub fn process_image<'py>(
-        &self,
-        py: Python<'py>,
-        image_bytes: Vec<u8>,
-        config: OcrConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let inner = self.inner.clone();
-        pyo3_async_runtimes::tokio::future_into_py(py, async move {
-            let result = inner
-                .process_image(&image_bytes, &config_core)
-                .await
-                .map_err(|e| PyErr::new::<PyRuntimeError, _>(e.to_string()))?;
-            Ok(result.into())
-        })
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (path, config))]
-    pub fn process_image_file<'py>(
-        &self,
-        py: Python<'py>,
-        path: String,
-        config: OcrConfig,
-    ) -> PyResult<Bound<'py, PyAny>> {
-        let config_core = config.into();
-        let inner = self.inner.clone();
-        pyo3_async_runtimes::tokio::future_into_py(py, async move {
-            let result = inner
-                .process_image_file(std::path::Path::new(&path), &config_core)
-                .await
-                .map_err(|e| PyErr::new::<PyRuntimeError, _>(e.to_string()))?;
-            Ok(result.into())
-        })
-    }
-
-    #[pyo3(signature = (lang))]
-    pub fn supports_language(&self, lang: String) -> bool {
-        self.inner.supports_language(&lang)
-    }
-
-    #[pyo3(signature = ())]
-    pub fn backend_type(&self) -> OcrBackendType {
-        self.inner.backend_type().into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supported_languages(&self) -> Vec<String> {
-        self.inner.supported_languages()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn supports_table_detection(&self) -> bool {
-        self.inner.supports_table_detection()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn new() -> PyResult<TesseractBackend> {
-        kreuzberg::ocr::TesseractBackend::new()
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (cache_dir))]
-    pub fn with_cache_dir(cache_dir: String) -> PyResult<TesseractBackend> {
-        kreuzberg::ocr::TesseractBackend::with_cache_dir(std::path::PathBuf::from(cache_dir))
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> TesseractBackend {
-        Self {
-            inner: Arc::new(kreuzberg::ocr::TesseractBackend::default()),
-        }
     }
 }
 
@@ -15936,7 +9229,7 @@ pub struct FontSizeCluster {
     pub centroid: f32,
     /// The text blocks that belong to this cluster
     #[pyo3(get)]
-    pub members: Vec<TextBlock>,
+    pub members: Vec<String>,
 }
 
 #[pymethods]
@@ -15944,7 +9237,7 @@ impl FontSizeCluster {
     #[must_use]
     #[pyo3(signature = (centroid, members))]
     #[new]
-    pub fn new(centroid: f32, members: Vec<TextBlock>) -> Self {
+    pub fn new(centroid: f32, members: Vec<String>) -> Self {
         Self { centroid, members }
     }
 }
@@ -16015,48 +9308,6 @@ impl CharData {
 
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
-pub struct TextBlock {
-    /// The text content
-    #[pyo3(get)]
-    pub text: String,
-    /// The bounding box of the block
-    #[pyo3(get)]
-    pub bbox: BoundingBox,
-    /// The font size of the text in this block
-    #[pyo3(get)]
-    pub font_size: f32,
-}
-
-#[pymethods]
-impl TextBlock {
-    #[must_use]
-    #[pyo3(signature = (text, bbox, font_size))]
-    #[new]
-    pub fn new(text: String, bbox: BoundingBox, font_size: f32) -> Self {
-        Self { text, bbox, font_size }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct KMeansResult {
-    /// Cluster label for each block (0-indexed)
-    #[pyo3(get)]
-    pub labels: Vec<u32>,
-}
-
-#[pymethods]
-impl KMeansResult {
-    #[must_use]
-    #[pyo3(signature = (labels))]
-    #[new]
-    pub fn new(labels: Vec<u32>) -> Self {
-        Self { labels }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
 pub struct HierarchyBlock {
     /// The text content
     #[pyo3(get)]
@@ -16069,7 +9320,7 @@ pub struct HierarchyBlock {
     pub font_size: f32,
     /// The hierarchy level of this block (H1-H6 or Body)
     #[pyo3(get)]
-    pub hierarchy_level: HierarchyLevel,
+    pub hierarchy_level: String,
 }
 
 #[pymethods]
@@ -16077,87 +9328,12 @@ impl HierarchyBlock {
     #[must_use]
     #[pyo3(signature = (text, bbox, font_size, hierarchy_level))]
     #[new]
-    pub fn new(text: String, bbox: BoundingBox, font_size: f32, hierarchy_level: HierarchyLevel) -> Self {
+    pub fn new(text: String, bbox: BoundingBox, font_size: f32, hierarchy_level: String) -> Self {
         Self {
             text,
             bbox,
             font_size,
             hierarchy_level,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
-pub struct SegmentData {
-    /// The segment text content (may contain spaces / multiple words)
-    #[pyo3(get)]
-    pub text: String,
-    /// Left x position in PDF units
-    #[pyo3(get)]
-    pub x: f32,
-    /// Bottom y position in PDF units (PDF coordinate system, y=0 at bottom)
-    #[pyo3(get)]
-    pub y: f32,
-    /// Width of the segment bounding box
-    #[pyo3(get)]
-    pub width: f32,
-    /// Height of the segment bounding box
-    #[pyo3(get)]
-    pub height: f32,
-    /// Font size in points (from first character)
-    #[pyo3(get)]
-    pub font_size: f32,
-    /// Whether the font is bold
-    #[pyo3(get)]
-    pub is_bold: bool,
-    /// Whether the font is italic
-    #[pyo3(get)]
-    pub is_italic: bool,
-    /// Whether the font is monospace (e.g. Courier, Consolas)
-    #[pyo3(get)]
-    pub is_monospace: bool,
-    /// Baseline Y position (from first character origin, falls back to bounds bottom)
-    #[pyo3(get)]
-    pub baseline_y: f32,
-    /// Pre-assigned heading level from the PDF structure tree (1-6), or `None`
-    /// when the heading level is unknown and must be inferred via font-size clustering.
-    #[pyo3(get)]
-    pub assigned_role: Option<u8>,
-}
-
-#[pymethods]
-impl SegmentData {
-    #[allow(clippy::too_many_arguments)]
-    #[must_use]
-    #[pyo3(signature = (text, x, y, width, height, font_size, is_bold, is_italic, is_monospace, baseline_y, assigned_role=None))]
-    #[new]
-    pub fn new(
-        text: String,
-        x: f32,
-        y: f32,
-        width: f32,
-        height: f32,
-        font_size: f32,
-        is_bold: bool,
-        is_italic: bool,
-        is_monospace: bool,
-        baseline_y: f32,
-        assigned_role: Option<u8>,
-    ) -> Self {
-        Self {
-            text,
-            x,
-            y,
-            width,
-            height,
-            font_size,
-            is_bold,
-            is_italic,
-            is_monospace,
-            baseline_y,
-            assigned_role,
         }
     }
 }
@@ -16219,113 +9395,6 @@ impl PdfImage {
     }
 }
 
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PdfImageExtractor {
-    inner: Arc<kreuzberg::pdf::PdfImageExtractor>,
-}
-
-#[pymethods]
-impl PdfImageExtractor {
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn extract_images(&self) -> PyResult<Vec<PdfImage>> {
-        let result = self
-            .inner
-            .extract_images()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result.into_iter().map(Into::into).collect())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = (page_number))]
-    pub fn extract_images_from_page(&self, page_number: u32) -> PyResult<Vec<PdfImage>> {
-        let result = self
-            .inner
-            .extract_images_from_page(page_number)
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result.into_iter().map(Into::into).collect())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[pyo3(signature = ())]
-    pub fn get_image_count(&self) -> PyResult<usize> {
-        let result = self
-            .inner
-            .get_image_count()
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        Ok(result)
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (pdf_bytes))]
-    pub fn new(pdf_bytes: Vec<u8>) -> PyResult<PdfImageExtractor> {
-        kreuzberg::pdf::PdfImageExtractor::new(&pdf_bytes)
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (pdf_bytes, password=None))]
-    pub fn new_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> PyResult<PdfImageExtractor> {
-        kreuzberg::pdf::PdfImageExtractor::new_with_password(&pdf_bytes, password.as_deref())
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct PdfLayoutBBox {
-    #[pyo3(get)]
-    pub left: f32,
-    #[pyo3(get)]
-    pub bottom: f32,
-    #[pyo3(get)]
-    pub right: f32,
-    #[pyo3(get)]
-    pub top: f32,
-}
-
-#[pymethods]
-impl PdfLayoutBBox {
-    #[must_use]
-    #[pyo3(signature = (left, bottom, right, top))]
-    #[new]
-    pub fn new(left: f32, bottom: f32, right: f32, top: f32) -> Self {
-        Self {
-            left,
-            bottom,
-            right,
-            top,
-        }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn width(&self) -> f32 {
-        let core_self = kreuzberg::pdf::layout_runner::PdfLayoutBBox {
-            left: self.left,
-            bottom: self.bottom,
-            right: self.right,
-            top: self.top,
-        };
-        core_self.width()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn height(&self) -> f32 {
-        let core_self = kreuzberg::pdf::layout_runner::PdfLayoutBBox {
-            left: self.left,
-            bottom: self.bottom,
-            right: self.right,
-            top: self.top,
-        };
-        core_self.height()
-    }
-}
-
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageLayoutRegion {
@@ -16334,7 +9403,7 @@ pub struct PageLayoutRegion {
     #[pyo3(get)]
     pub confidence: f32,
     #[pyo3(get)]
-    pub bbox: PdfLayoutBBox,
+    pub bbox: String,
 }
 
 #[pymethods]
@@ -16342,7 +9411,7 @@ impl PageLayoutRegion {
     #[must_use]
     #[pyo3(signature = (class, confidence, bbox))]
     #[new]
-    pub fn new(class: LayoutClass, confidence: f32, bbox: PdfLayoutBBox) -> Self {
+    pub fn new(class: LayoutClass, confidence: f32, bbox: String) -> Self {
         Self {
             class,
             confidence,
@@ -16443,162 +9512,6 @@ impl PageTiming {
 
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
-pub struct LayoutTimingReport {
-    #[pyo3(get)]
-    pub total_ms: f64,
-    #[pyo3(get)]
-    pub per_page: Vec<PageTiming>,
-}
-
-#[pymethods]
-impl LayoutTimingReport {
-    #[must_use]
-    #[pyo3(signature = (total_ms, per_page))]
-    #[new]
-    pub fn new(total_ms: f64, per_page: Vec<PageTiming>) -> Self {
-        Self { total_ms, per_page }
-    }
-
-    #[pyo3(signature = ())]
-    pub fn avg_render_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_render_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn avg_inference_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_inference_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn avg_preprocess_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_preprocess_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn avg_onnx_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_onnx_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn avg_postprocess_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_postprocess_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn total_inference_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_inference_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn total_render_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_render_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn total_preprocess_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_preprocess_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn total_onnx_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_onnx_ms()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn total_postprocess_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_postprocess_ms()
-    }
-}
-
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-pub struct PdfMetadata {
-    /// PDF version (e.g., "1.7", "2.0")
-    #[pyo3(get)]
-    pub pdf_version: Option<String>,
-    /// PDF producer (application that created the PDF)
-    #[pyo3(get)]
-    pub producer: Option<String>,
-    /// Whether the PDF is encrypted/password-protected
-    #[pyo3(get)]
-    pub is_encrypted: Option<bool>,
-    /// First page width in points (1/72 inch)
-    #[pyo3(get)]
-    pub width: Option<i64>,
-    /// First page height in points (1/72 inch)
-    #[pyo3(get)]
-    pub height: Option<i64>,
-    /// Total number of pages in the PDF document
-    #[pyo3(get)]
-    pub page_count: Option<usize>,
-}
-
-#[pymethods]
-impl PdfMetadata {
-    #[must_use]
-    #[pyo3(signature = (pdf_version=None, producer=None, is_encrypted=None, width=None, height=None, page_count=None))]
-    #[new]
-    pub fn new(
-        pdf_version: Option<String>,
-        producer: Option<String>,
-        is_encrypted: Option<bool>,
-        width: Option<i64>,
-        height: Option<i64>,
-        page_count: Option<usize>,
-    ) -> Self {
-        Self {
-            pdf_version,
-            producer,
-            is_encrypted,
-            width,
-            height,
-            page_count,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct PdfExtractionMetadata {
     /// Document title
@@ -16624,7 +9537,7 @@ pub struct PdfExtractionMetadata {
     pub created_by: Option<String>,
     /// PDF-specific metadata
     #[pyo3(get)]
-    pub pdf_specific: PdfMetadata,
+    pub pdf_specific: String,
     /// Page structure with boundaries and optional per-page metadata
     #[pyo3(get)]
     pub page_structure: Option<PageStructure>,
@@ -16637,7 +9550,7 @@ impl PdfExtractionMetadata {
     #[pyo3(signature = (pdf_specific, title=None, subject=None, authors=None, keywords=None, created_at=None, modified_at=None, created_by=None, page_structure=None))]
     #[new]
     pub fn new(
-        pdf_specific: PdfMetadata,
+        pdf_specific: String,
         title: Option<String>,
         subject: Option<String>,
         authors: Option<Vec<String>>,
@@ -16707,134 +9620,10 @@ impl CommonPdfMetadata {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
-#[allow(clippy::similar_names)]
-pub struct PageRenderOptions {
-    #[pyo3(get)]
-    pub target_dpi: i32,
-    #[pyo3(get)]
-    pub max_image_dimension: i32,
-    #[pyo3(get)]
-    pub auto_adjust_dpi: bool,
-    #[pyo3(get)]
-    pub min_dpi: i32,
-    #[pyo3(get)]
-    pub max_dpi: i32,
-}
-
-#[pymethods]
-impl PageRenderOptions {
-    #[must_use]
-    #[pyo3(signature = (target_dpi=None, max_image_dimension=None, auto_adjust_dpi=None, min_dpi=None, max_dpi=None))]
-    #[new]
-    pub fn new(
-        target_dpi: Option<i32>,
-        max_image_dimension: Option<i32>,
-        auto_adjust_dpi: Option<bool>,
-        min_dpi: Option<i32>,
-        max_dpi: Option<i32>,
-    ) -> Self {
-        Self {
-            target_dpi: target_dpi.unwrap_or(300),
-            max_image_dimension: max_image_dimension.unwrap_or(65536),
-            auto_adjust_dpi: auto_adjust_dpi.unwrap_or(true),
-            min_dpi: min_dpi.unwrap_or(72),
-            max_dpi: max_dpi.unwrap_or(600),
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn default() -> PageRenderOptions {
-        kreuzberg::pdf::PageRenderOptions::default().into()
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PdfPageIterator {
-    inner: Arc<kreuzberg::pdf::PdfPageIterator>,
-}
-
-#[pymethods]
-impl PdfPageIterator {
-    #[pyo3(signature = ())]
-    pub fn page_count(&self) -> usize {
-        self.inner.page_count()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn next(&self) -> Option<String> {
-        None
-    }
-
-    #[pyo3(signature = ())]
-    pub fn size_hint(&self) -> String {
-        String::from("[unimplemented: PdfPageIterator.size_hint]")
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (pdf_bytes, dpi=None, password=None))]
-    pub fn new(pdf_bytes: Vec<u8>, dpi: Option<i32>, password: Option<String>) -> PyResult<PdfPageIterator> {
-        kreuzberg::pdf::PdfPageIterator::new(&pdf_bytes, dpi, password)
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = (path, dpi=None, password=None))]
-    pub fn from_file(path: String, dpi: Option<i32>, password: Option<String>) -> PyResult<PdfPageIterator> {
-        let _ = (path, dpi, password);
-        Err(pyo3::exceptions::PyNotImplementedError::new_err(
-            "Not implemented: PdfPageIterator::from_file",
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PdfRenderer {
-    inner: Arc<kreuzberg::pdf::rendering::PdfRenderer>,
-}
-
-#[pymethods]
-impl PdfRenderer {
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn new() -> PyResult<PdfRenderer> {
-        kreuzberg::pdf::rendering::PdfRenderer::new()
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
-}
-
 #[derive(Clone)]
 #[pyclass(frozen, from_py_object)]
 pub struct PdfUnifiedExtractionResult {
     inner: Arc<kreuzberg::pdf::text::PdfUnifiedExtractionResult>,
-}
-
-#[derive(Clone)]
-#[pyclass(frozen, from_py_object)]
-pub struct PdfTextExtractor {
-    inner: Arc<kreuzberg::pdf::text::PdfTextExtractor>,
-}
-
-#[pymethods]
-impl PdfTextExtractor {
-    #[allow(clippy::missing_errors_doc)]
-    #[staticmethod]
-    #[pyo3(signature = ())]
-    pub fn new() -> PyResult<PdfTextExtractor> {
-        kreuzberg::pdf::text::PdfTextExtractor::new()
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-    }
 }
 
 #[derive(Clone, PartialEq, serde::Serialize)]
@@ -17066,22 +9855,6 @@ impl Default for CodeContentMode {
     }
 }
 
-#[derive(Clone, PartialEq, serde::Serialize)]
-#[pyclass(eq, eq_int, from_py_object)]
-pub enum ListType {
-    Bullet = 0,
-    Numbered = 1,
-    Lettered = 2,
-    Indented = 3,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for ListType {
-    fn default() -> Self {
-        Self::Bullet
-    }
-}
-
 #[derive(Clone)]
 #[pyclass(frozen)]
 pub struct HwpError {
@@ -17123,68 +9896,6 @@ impl Default for HwpError {
         Self {
             inner: Default::default(),
         }
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen)]
-pub struct DrawingType {
-    pub(crate) inner: kreuzberg::extraction::docx::drawing::DrawingType,
-}
-
-#[pymethods]
-impl DrawingType {
-    #[new]
-    fn new(py: Python<'_>, value: &Bound<'_, pyo3::types::PyDict>) -> PyResult<Self> {
-        let json_mod = py.import("json")?;
-        let json_str: String = json_mod.call_method1("dumps", (value,))?.extract()?;
-        let inner: kreuzberg::extraction::docx::drawing::DrawingType = serde_json::from_str(&json_str)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Invalid DrawingType: {e}")))?;
-        Ok(Self { inner })
-    }
-}
-
-impl From<DrawingType> for kreuzberg::extraction::docx::drawing::DrawingType {
-    fn from(val: DrawingType) -> Self {
-        val.inner
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::DrawingType> for DrawingType {
-    fn from(val: kreuzberg::extraction::docx::drawing::DrawingType) -> Self {
-        Self { inner: val }
-    }
-}
-
-impl serde::Serialize for DrawingType {
-    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        self.inner.serialize(serializer)
-    }
-}
-
-impl Default for DrawingType {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
-#[pyclass(eq, eq_int, from_py_object)]
-pub enum WrapType {
-    #[pyo3(name = "None_")]
-    None = 0,
-    Square = 1,
-    Tight = 2,
-    TopAndBottom = 3,
-    Through = 4,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for WrapType {
-    fn default() -> Self {
-        Self::None
     }
 }
 
@@ -17285,110 +9996,6 @@ impl serde::Serialize for DocumentElement {
 }
 
 impl Default for DocumentElement {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
-#[pyclass(eq, eq_int, from_py_object)]
-pub enum HeaderFooterType {
-    Default = 0,
-    First = 1,
-    Even = 2,
-    Odd = 3,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for HeaderFooterType {
-    fn default() -> Self {
-        Self::Default
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
-#[pyclass(eq, eq_int, from_py_object)]
-pub enum NoteType {
-    Footnote = 0,
-    Endnote = 1,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for NoteType {
-    fn default() -> Self {
-        Self::Footnote
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
-#[pyclass(eq, eq_int, from_py_object)]
-pub enum Orientation {
-    Portrait = 0,
-    Landscape = 1,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for Orientation {
-    fn default() -> Self {
-        Self::Portrait
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
-#[pyclass(eq, eq_int, from_py_object)]
-pub enum StyleType {
-    Paragraph = 0,
-    Character = 1,
-    Table = 2,
-    Numbering = 3,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for StyleType {
-    fn default() -> Self {
-        Self::Paragraph
-    }
-}
-
-#[derive(Clone)]
-#[pyclass(frozen)]
-pub struct ThemeColor {
-    pub(crate) inner: kreuzberg::extraction::docx::theme::ThemeColor,
-}
-
-#[pymethods]
-impl ThemeColor {
-    #[new]
-    fn new(py: Python<'_>, value: &Bound<'_, pyo3::types::PyDict>) -> PyResult<Self> {
-        let json_mod = py.import("json")?;
-        let json_str: String = json_mod.call_method1("dumps", (value,))?.extract()?;
-        let inner: kreuzberg::extraction::docx::theme::ThemeColor = serde_json::from_str(&json_str)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Invalid ThemeColor: {e}")))?;
-        Ok(Self { inner })
-    }
-}
-
-impl From<ThemeColor> for kreuzberg::extraction::docx::theme::ThemeColor {
-    fn from(val: ThemeColor) -> Self {
-        val.inner
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::ThemeColor> for ThemeColor {
-    fn from(val: kreuzberg::extraction::docx::theme::ThemeColor) -> Self {
-        Self { inner: val }
-    }
-}
-
-impl serde::Serialize for ThemeColor {
-    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        self.inner.serialize(serializer)
-    }
-}
-
-impl Default for ThemeColor {
     fn default() -> Self {
         Self {
             inner: Default::default(),
@@ -17933,50 +10540,6 @@ impl Default for PoolError {
     }
 }
 
-#[derive(Clone)]
-#[pyclass(frozen)]
-pub struct ExtractionSource {
-    pub(crate) inner: kreuzberg::service::ExtractionSource,
-}
-
-#[pymethods]
-impl ExtractionSource {
-    #[new]
-    fn new(py: Python<'_>, value: &Bound<'_, pyo3::types::PyDict>) -> PyResult<Self> {
-        let json_mod = py.import("json")?;
-        let json_str: String = json_mod.call_method1("dumps", (value,))?.extract()?;
-        let inner: kreuzberg::service::ExtractionSource = serde_json::from_str(&json_str)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Invalid ExtractionSource: {e}")))?;
-        Ok(Self { inner })
-    }
-}
-
-impl From<ExtractionSource> for kreuzberg::service::ExtractionSource {
-    fn from(val: ExtractionSource) -> Self {
-        val.inner
-    }
-}
-
-impl From<kreuzberg::service::ExtractionSource> for ExtractionSource {
-    fn from(val: kreuzberg::service::ExtractionSource) -> Self {
-        Self { inner: val }
-    }
-}
-
-impl serde::Serialize for ExtractionSource {
-    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        self.inner.serialize(serializer)
-    }
-}
-
-impl Default for ExtractionSource {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
-    }
-}
-
 #[derive(Clone, PartialEq, serde::Serialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum KeywordAlgorithm {
@@ -18156,25 +10719,6 @@ impl Default for PdfError {
         Self {
             inner: Default::default(),
         }
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
-#[pyclass(eq, eq_int, from_py_object)]
-pub enum HierarchyLevel {
-    H1 = 0,
-    H2 = 1,
-    H3 = 2,
-    H4 = 3,
-    H5 = 4,
-    H6 = 5,
-    Body = 6,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for HierarchyLevel {
-    fn default() -> Self {
-        Self::H1
     }
 }
 
@@ -18531,8 +11075,9 @@ pub fn extract_file<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (file_size, mime_type))]
-pub fn get_pool_sizing_hint(file_size: u64, mime_type: String) -> PoolSizeHint {
-    kreuzberg::core::extractor::get_pool_sizing_hint(file_size, &mime_type).into()
+pub fn get_pool_sizing_hint(file_size: u64, mime_type: String) -> String {
+    let _ = (file_size, mime_type);
+    String::from("[unimplemented: get_pool_sizing_hint]")
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -18826,21 +11371,21 @@ pub fn derive_extraction_result(
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (data, config=None))]
-pub fn parse_json(data: Vec<u8>, config: Option<JsonExtractionConfig>) -> PyResult<StructuredDataResult> {
-    let config_core = config.map(Into::into);
-    kreuzberg::extraction::parse_json(&data, config_core)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn parse_json(data: Vec<u8>, config: Option<String>) -> PyResult<StructuredDataResult> {
+    let _ = (data, config);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: parse_json",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (data, config=None))]
-pub fn parse_jsonl(data: Vec<u8>, config: Option<JsonExtractionConfig>) -> PyResult<StructuredDataResult> {
-    let config_core = config.map(Into::into);
-    kreuzberg::extraction::structured::parse_jsonl(&data, config_core)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn parse_jsonl(data: Vec<u8>, config: Option<String>) -> PyResult<StructuredDataResult> {
+    let _ = (data, config);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: parse_jsonl",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -19305,10 +11850,11 @@ pub fn collect_and_convert_omath(reader: String) -> String {
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (bytes))]
-pub fn parse_document(bytes: Vec<u8>) -> PyResult<Document> {
-    kreuzberg::extraction::docx::parser::parse_document(&bytes)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn parse_document(bytes: Vec<u8>) -> PyResult<String> {
+    let _ = bytes;
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: parse_document",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -19322,29 +11868,26 @@ pub fn extract_text_from_bytes(bytes: Vec<u8>) -> PyResult<String> {
 
 #[pyfunction]
 #[pyo3(signature = (node))]
-pub fn parse_section_properties(node: String) -> SectionProperties {
+pub fn parse_section_properties(node: String) -> String {
     let _ = node;
-    compile_error!(
-        "alef: parse_section_properties returns a Named/Json type but has no error variant — cannot auto-delegate"
-    )
+    String::from("[unimplemented: parse_section_properties]")
 }
 
 #[pyfunction]
 #[pyo3(signature = (reader))]
-pub fn parse_section_properties_streaming(reader: String) -> SectionProperties {
+pub fn parse_section_properties_streaming(reader: String) -> String {
     let _ = reader;
-    compile_error!(
-        "alef: parse_section_properties_streaming returns a Named/Json type but has no error variant — cannot auto-delegate"
-    )
+    String::from("[unimplemented: parse_section_properties_streaming]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (xml))]
-pub fn parse_styles_xml(xml: String) -> PyResult<StyleCatalog> {
-    kreuzberg::extraction::docx::styles::parse_styles_xml(&xml)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn parse_styles_xml(xml: String) -> PyResult<String> {
+    let _ = xml;
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: parse_styles_xml",
+    ))
 }
 
 #[pyfunction]
@@ -19358,11 +11901,9 @@ pub fn parse_table_properties(reader: String) -> TableProperties {
 
 #[pyfunction]
 #[pyo3(signature = (reader))]
-pub fn parse_row_properties(reader: String) -> RowProperties {
+pub fn parse_row_properties(reader: String) -> String {
     let _ = reader;
-    compile_error!(
-        "alef: parse_row_properties returns a Named/Json type but has no error variant — cannot auto-delegate"
-    )
+    String::from("[unimplemented: parse_row_properties]")
 }
 
 #[pyfunction]
@@ -19382,10 +11923,11 @@ pub fn parse_table_grid(reader: String) -> TableGrid {
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (xml))]
-pub fn parse_theme_xml(xml: String) -> PyResult<Theme> {
-    kreuzberg::extraction::docx::theme::parse_theme_xml(&xml)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn parse_theme_xml(xml: String) -> PyResult<String> {
+    let _ = xml;
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: parse_theme_xml",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -19481,21 +12023,21 @@ pub fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bo
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (path, options))]
-pub fn extract_pptx_from_path(path: String, options: PptxExtractionOptions) -> PyResult<PptxExtractionResult> {
-    let options_core = options.into();
-    kreuzberg::extraction::extract_pptx_from_path(&path, &options_core)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn extract_pptx_from_path(path: String, options: String) -> PyResult<PptxExtractionResult> {
+    let _ = (path, options);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: extract_pptx_from_path",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (data, options))]
-pub fn extract_pptx_from_bytes(data: Vec<u8>, options: PptxExtractionOptions) -> PyResult<PptxExtractionResult> {
-    let options_core = options.into();
-    kreuzberg::extraction::extract_pptx_from_bytes(&data, &options_core)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn extract_pptx_from_bytes(data: Vec<u8>, options: String) -> PyResult<PptxExtractionResult> {
+    let _ = (data, options);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: extract_pptx_from_bytes",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -20275,8 +12817,9 @@ pub fn create_byte_buffer_pool(pool_size: usize, buffer_capacity: usize) -> Byte
 
 #[pyfunction]
 #[pyo3(signature = (file_size, mime_type))]
-pub fn estimate_pool_size(file_size: u64, mime_type: String) -> PoolSizeHint {
-    kreuzberg::utils::estimate_pool_size(file_size, &mime_type).into()
+pub fn estimate_pool_size(file_size: u64, mime_type: String) -> String {
+    let _ = (file_size, mime_type);
+    String::from("[unimplemented: estimate_pool_size]")
 }
 
 #[pyfunction]
@@ -20319,20 +12862,23 @@ pub fn escape_html_entities(text: String) -> String {
 
 #[pyfunction]
 #[pyo3(signature = (words, column_threshold))]
-pub fn detect_columns(words: Vec<HocrWord>, column_threshold: u32) -> Vec<u32> {
-    kreuzberg::table_core::detect_columns(&words, column_threshold)
+pub fn detect_columns(words: Vec<String>, column_threshold: u32) -> Vec<u32> {
+    let _ = (words, column_threshold);
+    Vec::new()
 }
 
 #[pyfunction]
 #[pyo3(signature = (words, row_threshold_ratio))]
-pub fn detect_rows(words: Vec<HocrWord>, row_threshold_ratio: f64) -> Vec<u32> {
-    kreuzberg::table_core::detect_rows(&words, row_threshold_ratio)
+pub fn detect_rows(words: Vec<String>, row_threshold_ratio: f64) -> Vec<u32> {
+    let _ = (words, row_threshold_ratio);
+    Vec::new()
 }
 
 #[pyfunction]
 #[pyo3(signature = (words, column_threshold, row_threshold_ratio))]
-pub fn reconstruct_table(words: Vec<HocrWord>, column_threshold: u32, row_threshold_ratio: f64) -> Vec<Vec<String>> {
-    kreuzberg::table_core::reconstruct_table(&words, column_threshold, row_threshold_ratio)
+pub fn reconstruct_table(words: Vec<String>, column_threshold: u32, row_threshold_ratio: f64) -> Vec<Vec<String>> {
+    let _ = (words, column_threshold, row_threshold_ratio);
+    Vec::new()
 }
 
 #[pyfunction]
@@ -20365,7 +12911,7 @@ pub fn create_router(config: ExtractionConfig) -> String {
 
 #[pyfunction]
 #[pyo3(signature = (config, limits))]
-pub fn create_router_with_limits(config: ExtractionConfig, limits: ApiSizeLimits) -> String {
+pub fn create_router_with_limits(config: ExtractionConfig, limits: String) -> String {
     let _ = (config, limits);
     String::from("[unimplemented: create_router_with_limits]")
 }
@@ -20374,7 +12920,7 @@ pub fn create_router_with_limits(config: ExtractionConfig, limits: ApiSizeLimits
 #[pyo3(signature = (config, limits, server_config))]
 pub fn create_router_with_limits_and_server_config(
     config: ExtractionConfig,
-    limits: ApiSizeLimits,
+    limits: String,
     server_config: ServerConfig,
 ) -> String {
     let _ = (config, limits, server_config);
@@ -20420,18 +12966,14 @@ pub fn serve_with_config_and_limits<'py>(
     host: String,
     port: u16,
     config: ExtractionConfig,
-    limits: ApiSizeLimits,
+    limits: String,
 ) -> PyResult<Bound<'py, PyAny>> {
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let config_json =
             serde_json::to_string(&config).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
         let config_core: kreuzberg::ExtractionConfig =
             serde_json::from_str(&config_json).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        let limits_json =
-            serde_json::to_string(&limits).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        let limits_core: kreuzberg::ApiSizeLimits =
-            serde_json::from_str(&limits_json).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        kreuzberg::api::serve_with_config_and_limits(host, port, config_core, limits_core)
+        kreuzberg::api::serve_with_config_and_limits(host, port, config_core, limits)
             .await
             .map_err(|e| PyErr::new::<PyRuntimeError, _>(e.to_string()))?;
         Ok(())
@@ -20840,18 +13382,18 @@ pub fn extract_keywords(text: String, config: KeywordConfig) -> PyResult<Vec<Key
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (block, page_number))]
-pub fn text_block_to_element(block: TextBlock, page_number: usize) -> PyResult<Option<OcrElement>> {
-    let block_core = block.into();
-    kreuzberg::ocr::text_block_to_element(&block_core, page_number)
-        .map(|val| val.map(Into::into))
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn text_block_to_element(block: String, page_number: usize) -> PyResult<Option<OcrElement>> {
+    let _ = (block, page_number);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: text_block_to_element",
+    ))
 }
 
 #[pyfunction]
 #[pyo3(signature = (row))]
-pub fn tsv_row_to_element(row: TsvRow) -> OcrElement {
-    let row_core = row.into();
-    kreuzberg::ocr::tsv_row_to_element(&row_core).into()
+pub fn tsv_row_to_element(row: String) -> OcrElement {
+    let _ = row;
+    compile_error!("alef: tsv_row_to_element returns a Named/Json type but has no error variant — cannot auto-delegate")
 }
 
 #[pyfunction]
@@ -20870,18 +13412,16 @@ pub fn iterator_word_to_element(
 
 #[pyfunction]
 #[pyo3(signature = (element))]
-pub fn element_to_hocr_word(element: OcrElement) -> HocrWord {
-    let element_core = element.into();
-    kreuzberg::ocr::element_to_hocr_word(&element_core).into()
+pub fn element_to_hocr_word(element: OcrElement) -> String {
+    let _ = element;
+    String::from("[unimplemented: element_to_hocr_word]")
 }
 
 #[pyfunction]
 #[pyo3(signature = (elements, min_confidence))]
-pub fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<HocrWord> {
-    kreuzberg::ocr::elements_to_hocr_words(&elements, min_confidence)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<String> {
+    let _ = (elements, min_confidence);
+    Vec::new()
 }
 
 #[pyfunction]
@@ -20926,10 +13466,11 @@ pub fn recognize_page_tables(
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (tsv_data, min_confidence))]
-pub fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> PyResult<Vec<HocrWord>> {
-    kreuzberg::ocr::extract_words_from_tsv(&tsv_data, min_confidence)
-        .map(|val| val.into_iter().map(Into::into).collect())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> PyResult<Vec<String>> {
+    let _ = (tsv_data, min_confidence);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: extract_words_from_tsv",
+    ))
 }
 
 #[pyfunction]
@@ -21126,12 +13667,9 @@ pub fn extract_annotations_from_document(document: String) -> Vec<PdfAnnotation>
 
 #[pyfunction]
 #[pyo3(signature = (document))]
-pub fn extract_bookmarks(document: Document) -> Vec<Uri> {
-    let document_core = document.into();
-    kreuzberg::pdf::bookmarks::extract_bookmarks(&document_core)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn extract_bookmarks(document: String) -> Vec<Uri> {
+    let _ = document;
+    Vec::new()
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -21145,12 +13683,9 @@ pub fn extract_bundled_pdfium() -> PyResult<String> {
 
 #[pyfunction]
 #[pyo3(signature = (document))]
-pub fn extract_embedded_files(document: Document) -> Vec<EmbeddedFile> {
-    let document_core = document.into();
-    kreuzberg::pdf::embedded_files::extract_embedded_files(&document_core)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
+    let _ = document;
+    Vec::new()
 }
 
 #[pyfunction]
@@ -21195,10 +13730,11 @@ pub fn clear_font_cache() -> () {
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (blocks, k))]
-pub fn cluster_font_sizes(blocks: Vec<TextBlock>, k: usize) -> PyResult<Vec<FontSizeCluster>> {
-    kreuzberg::pdf::cluster_font_sizes(&blocks, k)
-        .map(|val| val.into_iter().map(Into::into).collect())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn cluster_font_sizes(blocks: Vec<String>, k: usize) -> PyResult<Vec<FontSizeCluster>> {
+    let _ = (blocks, k);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: cluster_font_sizes",
+    ))
 }
 
 #[pyfunction]
@@ -21214,17 +13750,14 @@ pub fn assign_heading_levels_smart(
 
 #[pyfunction]
 #[pyo3(signature = (blocks, kmeans_result))]
-pub fn assign_hierarchy_levels(blocks: Vec<TextBlock>, kmeans_result: KMeansResult) -> Vec<HierarchyBlock> {
-    let kmeans_result_core = kmeans_result.into();
-    kreuzberg::pdf::assign_hierarchy_levels(&blocks, &kmeans_result_core)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn assign_hierarchy_levels(blocks: Vec<String>, kmeans_result: String) -> Vec<HierarchyBlock> {
+    let _ = (blocks, kmeans_result);
+    Vec::new()
 }
 
 #[pyfunction]
 #[pyo3(signature = (blocks, clusters))]
-pub fn assign_hierarchy_levels_from_clusters(blocks: Vec<TextBlock>, clusters: Vec<FontSizeCluster>) -> Vec<String> {
+pub fn assign_hierarchy_levels_from_clusters(blocks: Vec<String>, clusters: Vec<FontSizeCluster>) -> Vec<String> {
     let _ = (blocks, clusters);
     Vec::new()
 }
@@ -21242,7 +13775,7 @@ pub fn extract_chars_with_fonts(page: String) -> PyResult<Vec<CharData>> {
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (page))]
-pub fn extract_segments_from_page(page: String) -> PyResult<Vec<SegmentData>> {
+pub fn extract_segments_from_page(page: String) -> PyResult<Vec<String>> {
     let _ = page;
     Err(pyo3::exceptions::PyNotImplementedError::new_err(
         "Not implemented: extract_segments_from_page",
@@ -21251,16 +13784,14 @@ pub fn extract_segments_from_page(page: String) -> PyResult<Vec<SegmentData>> {
 
 #[pyfunction]
 #[pyo3(signature = (chars))]
-pub fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<TextBlock> {
-    kreuzberg::pdf::hierarchy::merge_chars_into_blocks(chars)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<String> {
+    let _ = chars;
+    Vec::new()
 }
 
 #[pyfunction]
 #[pyo3(signature = (page, blocks, config))]
-pub fn should_trigger_ocr(page: String, blocks: Vec<TextBlock>, config: ExtractionConfig) -> bool {
+pub fn should_trigger_ocr(page: String, blocks: Vec<String>, config: ExtractionConfig) -> bool {
     let _ = (page, blocks, config);
     false
 }
@@ -21314,28 +13845,31 @@ pub fn detect_layout_for_images(images: Vec<String>, engine: String) -> PyResult
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (pdf_bytes))]
-pub fn extract_metadata(pdf_bytes: Vec<u8>) -> PyResult<PdfMetadata> {
-    kreuzberg::pdf::extract_metadata(&pdf_bytes)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn extract_metadata(pdf_bytes: Vec<u8>) -> PyResult<String> {
+    let _ = pdf_bytes;
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: extract_metadata",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (pdf_bytes, password=None))]
-pub fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> PyResult<PdfMetadata> {
-    kreuzberg::pdf::metadata::extract_metadata_with_password(&pdf_bytes, password.as_deref())
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> PyResult<String> {
+    let _ = (pdf_bytes, password);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: extract_metadata_with_password",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (pdf_bytes, passwords))]
-pub fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> PyResult<PdfMetadata> {
-    kreuzberg::pdf::metadata::extract_metadata_with_passwords(&pdf_bytes, &passwords)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> PyResult<String> {
+    let _ = (pdf_bytes, passwords);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: extract_metadata_with_passwords",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -21365,14 +13899,11 @@ pub fn extract_common_metadata_from_document(document: String) -> PyResult<Commo
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (pdf_bytes, page_index, options))]
-pub fn render_page_to_image(pdf_bytes: Vec<u8>, page_index: usize, options: PageRenderOptions) -> PyResult<String> {
-    let options_json =
-        serde_json::to_string(&options).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-    let options_core: kreuzberg::PageRenderOptions =
-        serde_json::from_str(&options_json).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-    kreuzberg::pdf::render_page_to_image(&pdf_bytes, page_index, &options_core)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
+pub fn render_page_to_image(pdf_bytes: Vec<u8>, page_index: usize, options: String) -> PyResult<String> {
+    let _ = (pdf_bytes, page_index, options);
+    Err(pyo3::exceptions::PyNotImplementedError::new_err(
+        "Not implemented: render_page_to_image",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -21392,7 +13923,7 @@ pub fn render_pdf_page_to_png(
 #[allow(clippy::missing_errors_doc)]
 #[pyfunction]
 #[pyo3(signature = (page, min_confidence))]
-pub fn extract_words_from_page(page: String, min_confidence: f64) -> PyResult<Vec<HocrWord>> {
+pub fn extract_words_from_page(page: String, min_confidence: f64) -> PyResult<Vec<String>> {
     let _ = (page, min_confidence);
     Err(pyo3::exceptions::PyNotImplementedError::new_err(
         "Not implemented: extract_words_from_page",
@@ -21401,28 +13932,23 @@ pub fn extract_words_from_page(page: String, min_confidence: f64) -> PyResult<Ve
 
 #[pyfunction]
 #[pyo3(signature = (seg, page_height))]
-pub fn segment_to_hocr_word(seg: SegmentData, page_height: f32) -> HocrWord {
-    let seg_core = seg.into();
-    kreuzberg::pdf::table_reconstruct::segment_to_hocr_word(&seg_core, page_height).into()
+pub fn segment_to_hocr_word(seg: String, page_height: f32) -> String {
+    let _ = (seg, page_height);
+    String::from("[unimplemented: segment_to_hocr_word]")
 }
 
 #[pyfunction]
 #[pyo3(signature = (seg, page_height))]
-pub fn split_segment_to_words(seg: SegmentData, page_height: f32) -> Vec<HocrWord> {
-    let seg_core = seg.into();
-    kreuzberg::pdf::table_reconstruct::split_segment_to_words(&seg_core, page_height)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn split_segment_to_words(seg: String, page_height: f32) -> Vec<String> {
+    let _ = (seg, page_height);
+    Vec::new()
 }
 
 #[pyfunction]
 #[pyo3(signature = (segments, page_height))]
-pub fn segments_to_words(segments: Vec<SegmentData>, page_height: f32) -> Vec<HocrWord> {
-    kreuzberg::pdf::table_reconstruct::segments_to_words(&segments, page_height)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn segments_to_words(segments: Vec<String>, page_height: f32) -> Vec<String> {
+    let _ = (segments, page_height);
+    Vec::new()
 }
 
 #[pyfunction]
@@ -21571,30 +14097,6 @@ fn kreuzberg_error_to_py_err(e: kreuzberg::error::KreuzbergError) -> pyo3::PyErr
         kreuzberg::error::KreuzbergError::Timeout { .. } => KreuzbergTimeoutError::new_err(msg),
         kreuzberg::error::KreuzbergError::Other(..) => OtherError::new_err(msg),
         _ => KreuzbergError::new_err(msg),
-    }
-}
-
-impl From<BatchProcessorConfig> for kreuzberg::core::BatchProcessorConfig {
-    fn from(val: BatchProcessorConfig) -> Self {
-        Self {
-            string_pool_size: val.string_pool_size,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_pool_size: val.byte_pool_size,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-            max_concurrent: val.max_concurrent,
-        }
-    }
-}
-
-impl From<kreuzberg::core::BatchProcessorConfig> for BatchProcessorConfig {
-    fn from(val: kreuzberg::core::BatchProcessorConfig) -> Self {
-        Self {
-            string_pool_size: val.string_pool_size,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_pool_size: val.byte_pool_size,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-            max_concurrent: val.max_concurrent,
-        }
     }
 }
 
@@ -22360,36 +14862,10 @@ impl From<kreuzberg::extraction::StructuredDataResult> for StructuredDataResult 
     }
 }
 
-impl From<JsonExtractionConfig> for kreuzberg::extraction::JsonExtractionConfig {
-    fn from(val: JsonExtractionConfig) -> Self {
-        Self {
-            extract_schema: val.extract_schema,
-            max_depth: val.max_depth,
-            array_item_limit: val.array_item_limit,
-            include_type_info: val.include_type_info,
-            flatten_nested_objects: val.flatten_nested_objects,
-            custom_text_field_patterns: val.custom_text_field_patterns,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::JsonExtractionConfig> for JsonExtractionConfig {
-    fn from(val: kreuzberg::extraction::JsonExtractionConfig) -> Self {
-        Self {
-            extract_schema: val.extract_schema,
-            max_depth: val.max_depth,
-            array_item_limit: val.array_item_limit,
-            include_type_info: val.include_type_info,
-            flatten_nested_objects: val.flatten_nested_objects,
-            custom_text_field_patterns: val.custom_text_field_patterns,
-        }
-    }
-}
-
 impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
     fn from(val: ListItemMetadata) -> Self {
         Self {
-            list_type: val.list_type.into(),
+            list_type: Default::default(),
             byte_start: val.byte_start,
             byte_end: val.byte_end,
             indent_level: val.indent_level,
@@ -22400,18 +14876,10 @@ impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
 impl From<kreuzberg::extraction::ListItemMetadata> for ListItemMetadata {
     fn from(val: kreuzberg::extraction::ListItemMetadata) -> Self {
         Self {
-            list_type: val.list_type.into(),
+            list_type: format!("{:?}", val.list_type),
             byte_start: val.byte_start,
             byte_end: val.byte_end,
             indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::HwpDocument> for HwpDocument {
-    fn from(val: kreuzberg::extraction::hwp::model::HwpDocument) -> Self {
-        Self {
-            sections: val.sections.into_iter().map(Into::into).collect(),
         }
     }
 }
@@ -22428,48 +14896,6 @@ impl From<kreuzberg::extraction::hwp::model::Section> for Section {
     fn from(val: kreuzberg::extraction::hwp::model::Section) -> Self {
         Self {
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<ParaText> for kreuzberg::extraction::hwp::model::ParaText {
-    fn from(val: ParaText) -> Self {
-        Self { content: val.content }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::ParaText> for ParaText {
-    fn from(val: kreuzberg::extraction::hwp::model::ParaText) -> Self {
-        Self { content: val.content }
-    }
-}
-
-impl From<FileHeader> for kreuzberg::extraction::hwp::parser::FileHeader {
-    fn from(val: FileHeader) -> Self {
-        Self { flags: val.flags }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::parser::FileHeader> for FileHeader {
-    fn from(val: kreuzberg::extraction::hwp::parser::FileHeader) -> Self {
-        Self { flags: val.flags }
-    }
-}
-
-impl From<Record> for kreuzberg::extraction::hwp::parser::Record {
-    fn from(val: Record) -> Self {
-        Self {
-            tag_id: val.tag_id,
-            data: val.data,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::parser::Record> for Record {
-    fn from(val: kreuzberg::extraction::hwp::parser::Record) -> Self {
-        Self {
-            tag_id: val.tag_id,
-            data: val.data.to_vec(),
         }
     }
 }
@@ -22521,7 +14947,7 @@ impl From<DocExtractionResult> for kreuzberg::extraction::doc::DocExtractionResu
     fn from(val: DocExtractionResult) -> Self {
         Self {
             text: val.text,
-            metadata: val.metadata.into(),
+            metadata: Default::default(),
         }
     }
 }
@@ -22530,35 +14956,7 @@ impl From<kreuzberg::extraction::doc::DocExtractionResult> for DocExtractionResu
     fn from(val: kreuzberg::extraction::doc::DocExtractionResult) -> Self {
         Self {
             text: val.text,
-            metadata: val.metadata.into(),
-        }
-    }
-}
-
-impl From<DocMetadata> for kreuzberg::extraction::doc::DocMetadata {
-    fn from(val: DocMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-            created: val.created,
-            modified: val.modified,
-            revision_number: val.revision_number,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::doc::DocMetadata> for DocMetadata {
-    fn from(val: kreuzberg::extraction::doc::DocMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-            created: val.created,
-            modified: val.modified,
-            revision_number: val.revision_number,
+            metadata: format!("{:?}", val.metadata),
         }
     }
 }
@@ -22566,9 +14964,9 @@ impl From<kreuzberg::extraction::doc::DocMetadata> for DocMetadata {
 impl From<Drawing> for kreuzberg::extraction::docx::drawing::Drawing {
     fn from(val: Drawing) -> Self {
         Self {
-            drawing_type: val.drawing_type.into(),
-            extent: val.extent.map(Into::into),
-            doc_properties: val.doc_properties.map(Into::into),
+            drawing_type: Default::default(),
+            extent: Default::default(),
+            doc_properties: Default::default(),
             image_ref: val.image_ref,
         }
     }
@@ -22577,42 +14975,10 @@ impl From<Drawing> for kreuzberg::extraction::docx::drawing::Drawing {
 impl From<kreuzberg::extraction::docx::drawing::Drawing> for Drawing {
     fn from(val: kreuzberg::extraction::docx::drawing::Drawing) -> Self {
         Self {
-            drawing_type: val.drawing_type.into(),
-            extent: val.extent.map(Into::into),
-            doc_properties: val.doc_properties.map(Into::into),
+            drawing_type: format!("{:?}", val.drawing_type),
+            extent: val.extent.as_ref().map(|v| format!("{:?}", v)),
+            doc_properties: val.doc_properties.as_ref().map(|v| format!("{:?}", v)),
             image_ref: val.image_ref,
-        }
-    }
-}
-
-impl From<Extent> for kreuzberg::extraction::docx::drawing::Extent {
-    fn from(val: Extent) -> Self {
-        Self { cx: val.cx, cy: val.cy }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Extent> for Extent {
-    fn from(val: kreuzberg::extraction::docx::drawing::Extent) -> Self {
-        Self { cx: val.cx, cy: val.cy }
-    }
-}
-
-impl From<DocProperties> for kreuzberg::extraction::docx::drawing::DocProperties {
-    fn from(val: DocProperties) -> Self {
-        Self {
-            id: val.id,
-            name: val.name,
-            description: val.description,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::DocProperties> for DocProperties {
-    fn from(val: kreuzberg::extraction::docx::drawing::DocProperties) -> Self {
-        Self {
-            id: val.id,
-            name: val.name,
-            description: val.description,
         }
     }
 }
@@ -22623,58 +14989,9 @@ impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for AnchorProp
             behind_doc: val.behind_doc,
             layout_in_cell: val.layout_in_cell,
             relative_height: val.relative_height,
-            position_h: val.position_h.map(Into::into),
-            position_v: val.position_v.map(Into::into),
-            wrap_type: val.wrap_type.into(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Position> for Position {
-    fn from(val: kreuzberg::extraction::docx::drawing::Position) -> Self {
-        Self {
-            relative_from: val.relative_from,
-            offset: val.offset,
-        }
-    }
-}
-
-impl From<Document> for kreuzberg::extraction::docx::parser::Document {
-    fn from(val: Document) -> Self {
-        Self {
-            paragraphs: Default::default(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            footers: val.footers.into_iter().map(Into::into).collect(),
-            footnotes: val.footnotes.into_iter().map(Into::into).collect(),
-            endnotes: val.endnotes.into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: val.elements.into_iter().map(Into::into).collect(),
-            style_catalog: val.style_catalog.map(Into::into),
-            theme: val.theme.map(Into::into),
-            sections: val.sections.into_iter().map(Into::into).collect(),
-            drawings: val.drawings.into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::Document> for Document {
-    fn from(val: kreuzberg::extraction::docx::parser::Document) -> Self {
-        Self {
-            paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            footers: val.footers.into_iter().map(Into::into).collect(),
-            footnotes: val.footnotes.into_iter().map(Into::into).collect(),
-            endnotes: val.endnotes.into_iter().map(Into::into).collect(),
-            numbering_defs: format!("{:?}", val.numbering_defs),
-            elements: val.elements.into_iter().map(Into::into).collect(),
-            style_catalog: val.style_catalog.map(Into::into),
-            theme: val.theme.map(Into::into),
-            sections: val.sections.into_iter().map(Into::into).collect(),
-            drawings: val.drawings.into_iter().map(Into::into).collect(),
-            image_relationships: format!("{:?}", val.image_relationships),
+            position_h: val.position_h.as_ref().map(|v| format!("{:?}", v)),
+            position_v: val.position_v.as_ref().map(|v| format!("{:?}", v)),
+            wrap_type: format!("{:?}", val.wrap_type),
         }
     }
 }
@@ -22683,17 +15000,7 @@ impl From<kreuzberg::extraction::docx::parser::TableRow> for TableRow {
     fn from(val: kreuzberg::extraction::docx::parser::TableRow) -> Self {
         Self {
             cells: val.cells.into_iter().map(Into::into).collect(),
-            properties: val.properties.map(Into::into),
-        }
-    }
-}
-
-impl From<HeaderFooter> for kreuzberg::extraction::docx::parser::HeaderFooter {
-    fn from(val: HeaderFooter) -> Self {
-        Self {
-            paragraphs: Default::default(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            header_type: val.header_type.into(),
+            properties: val.properties.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -22703,17 +15010,7 @@ impl From<kreuzberg::extraction::docx::parser::HeaderFooter> for HeaderFooter {
         Self {
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
             tables: val.tables.into_iter().map(Into::into).collect(),
-            header_type: val.header_type.into(),
-        }
-    }
-}
-
-impl From<Note> for kreuzberg::extraction::docx::parser::Note {
-    fn from(val: Note) -> Self {
-        Self {
-            id: val.id,
-            note_type: val.note_type.into(),
-            paragraphs: Default::default(),
+            header_type: format!("{:?}", val.header_type),
         }
     }
 }
@@ -22722,50 +15019,8 @@ impl From<kreuzberg::extraction::docx::parser::Note> for Note {
     fn from(val: kreuzberg::extraction::docx::parser::Note) -> Self {
         Self {
             id: val.id,
-            note_type: val.note_type.into(),
+            note_type: format!("{:?}", val.note_type),
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<PageMargins> for kreuzberg::extraction::docx::section::PageMargins {
-    fn from(val: PageMargins) -> Self {
-        Self {
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
-            left: val.left,
-            header: val.header,
-            footer: val.footer,
-            gutter: val.gutter,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::PageMargins> for PageMargins {
-    fn from(val: kreuzberg::extraction::docx::section::PageMargins) -> Self {
-        Self {
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
-            left: val.left,
-            header: val.header,
-            footer: val.footer,
-            gutter: val.gutter,
-        }
-    }
-}
-
-impl From<PageMarginsPoints> for kreuzberg::extraction::docx::section::PageMarginsPoints {
-    fn from(val: PageMarginsPoints) -> Self {
-        Self {
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
-            left: val.left,
-            header: val.header,
-            footer: val.footer,
-            gutter: val.gutter,
         }
     }
 }
@@ -22784,136 +15039,17 @@ impl From<kreuzberg::extraction::docx::section::PageMarginsPoints> for PageMargi
     }
 }
 
-impl From<ColumnLayout> for kreuzberg::extraction::docx::section::ColumnLayout {
-    fn from(val: ColumnLayout) -> Self {
-        Self {
-            count: val.count,
-            space_twips: val.space_twips,
-            equal_width: val.equal_width,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::ColumnLayout> for ColumnLayout {
-    fn from(val: kreuzberg::extraction::docx::section::ColumnLayout) -> Self {
-        Self {
-            count: val.count,
-            space_twips: val.space_twips,
-            equal_width: val.equal_width,
-        }
-    }
-}
-
-impl From<SectionProperties> for kreuzberg::extraction::docx::section::SectionProperties {
-    fn from(val: SectionProperties) -> Self {
-        Self {
-            page_width_twips: val.page_width_twips,
-            page_height_twips: val.page_height_twips,
-            orientation: val.orientation.map(Into::into),
-            margins: val.margins.into(),
-            columns: val.columns.into(),
-            doc_grid_line_pitch: val.doc_grid_line_pitch,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::SectionProperties> for SectionProperties {
-    fn from(val: kreuzberg::extraction::docx::section::SectionProperties) -> Self {
-        Self {
-            page_width_twips: val.page_width_twips,
-            page_height_twips: val.page_height_twips,
-            orientation: val.orientation.map(Into::into),
-            margins: val.margins.into(),
-            columns: val.columns.into(),
-            doc_grid_line_pitch: val.doc_grid_line_pitch,
-        }
-    }
-}
-
-impl From<RunProperties> for kreuzberg::extraction::docx::styles::RunProperties {
-    fn from(val: RunProperties) -> Self {
-        Self {
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color: val.color,
-            font_size_half_points: val.font_size_half_points,
-            font_ascii: val.font_ascii,
-            font_ascii_theme: val.font_ascii_theme,
-            vert_align: val.vert_align,
-            font_h_ansi: val.font_h_ansi,
-            font_cs: val.font_cs,
-            font_east_asia: val.font_east_asia,
-            highlight: val.highlight,
-            caps: val.caps,
-            small_caps: val.small_caps,
-            shadow: val.shadow,
-            outline: val.outline,
-            emboss: val.emboss,
-            imprint: val.imprint,
-            char_spacing: val.char_spacing,
-            position: val.position,
-            kern: val.kern,
-            theme_color: val.theme_color,
-            theme_tint: val.theme_tint,
-            theme_shade: val.theme_shade,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::styles::RunProperties> for RunProperties {
-    fn from(val: kreuzberg::extraction::docx::styles::RunProperties) -> Self {
-        Self {
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color: val.color,
-            font_size_half_points: val.font_size_half_points,
-            font_ascii: val.font_ascii,
-            font_ascii_theme: val.font_ascii_theme,
-            vert_align: val.vert_align,
-            font_h_ansi: val.font_h_ansi,
-            font_cs: val.font_cs,
-            font_east_asia: val.font_east_asia,
-            highlight: val.highlight,
-            caps: val.caps,
-            small_caps: val.small_caps,
-            shadow: val.shadow,
-            outline: val.outline,
-            emboss: val.emboss,
-            imprint: val.imprint,
-            char_spacing: val.char_spacing,
-            position: val.position,
-            kern: val.kern,
-            theme_color: val.theme_color,
-            theme_tint: val.theme_tint,
-            theme_shade: val.theme_shade,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::styles::StyleDefinition> for StyleDefinition {
     fn from(val: kreuzberg::extraction::docx::styles::StyleDefinition) -> Self {
         Self {
             id: val.id,
             name: val.name,
-            style_type: val.style_type.into(),
+            style_type: format!("{:?}", val.style_type),
             based_on: val.based_on,
             next_style: val.next_style,
             is_default: val.is_default,
             paragraph_properties: format!("{:?}", val.paragraph_properties),
-            run_properties: val.run_properties.into(),
-        }
-    }
-}
-
-impl From<ResolvedStyle> for kreuzberg::extraction::docx::styles::ResolvedStyle {
-    fn from(val: ResolvedStyle) -> Self {
-        Self {
-            paragraph_properties: Default::default(),
-            run_properties: val.run_properties.into(),
+            run_properties: format!("{:?}", val.run_properties),
         }
     }
 }
@@ -22922,27 +15058,7 @@ impl From<kreuzberg::extraction::docx::styles::ResolvedStyle> for ResolvedStyle 
     fn from(val: kreuzberg::extraction::docx::styles::ResolvedStyle) -> Self {
         Self {
             paragraph_properties: format!("{:?}", val.paragraph_properties),
-            run_properties: val.run_properties.into(),
-        }
-    }
-}
-
-impl From<StyleCatalog> for kreuzberg::extraction::docx::styles::StyleCatalog {
-    fn from(val: StyleCatalog) -> Self {
-        Self {
-            styles: Default::default(),
-            default_paragraph_properties: Default::default(),
-            default_run_properties: val.default_run_properties.into(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::styles::StyleCatalog> for StyleCatalog {
-    fn from(val: kreuzberg::extraction::docx::styles::StyleCatalog) -> Self {
-        Self {
-            styles: format!("{:?}", val.styles),
-            default_paragraph_properties: format!("{:?}", val.default_paragraph_properties),
-            default_run_properties: val.default_run_properties.into(),
+            run_properties: format!("{:?}", val.run_properties),
         }
     }
 }
@@ -22954,8 +15070,8 @@ impl From<TableProperties> for kreuzberg::extraction::docx::table::TableProperti
             width: Default::default(),
             alignment: val.alignment,
             layout: val.layout,
-            look: val.look.map(Into::into),
-            borders: val.borders.map(Into::into),
+            look: Default::default(),
+            borders: Default::default(),
             cell_margins: Default::default(),
             indent: Default::default(),
             caption: val.caption,
@@ -22970,173 +15086,11 @@ impl From<kreuzberg::extraction::docx::table::TableProperties> for TableProperti
             width: val.width.as_ref().map(|v| format!("{:?}", v)),
             alignment: val.alignment,
             layout: val.layout,
-            look: val.look.map(Into::into),
-            borders: val.borders.map(Into::into),
+            look: val.look.as_ref().map(|v| format!("{:?}", v)),
+            borders: val.borders.as_ref().map(|v| format!("{:?}", v)),
             cell_margins: val.cell_margins.as_ref().map(|v| format!("{:?}", v)),
             indent: val.indent.as_ref().map(|v| format!("{:?}", v)),
             caption: val.caption,
-        }
-    }
-}
-
-impl From<TableLook> for kreuzberg::extraction::docx::table::TableLook {
-    fn from(val: TableLook) -> Self {
-        Self {
-            first_row: val.first_row,
-            last_row: val.last_row,
-            first_column: val.first_column,
-            last_column: val.last_column,
-            no_h_band: val.no_h_band,
-            no_v_band: val.no_v_band,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableLook> for TableLook {
-    fn from(val: kreuzberg::extraction::docx::table::TableLook) -> Self {
-        Self {
-            first_row: val.first_row,
-            last_row: val.last_row,
-            first_column: val.first_column,
-            last_column: val.last_column,
-            no_h_band: val.no_h_band,
-            no_v_band: val.no_v_band,
-        }
-    }
-}
-
-impl From<TableBorders> for kreuzberg::extraction::docx::table::TableBorders {
-    fn from(val: TableBorders) -> Self {
-        Self {
-            top: Default::default(),
-            bottom: Default::default(),
-            left: Default::default(),
-            right: Default::default(),
-            inside_h: Default::default(),
-            inside_v: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableBorders> for TableBorders {
-    fn from(val: kreuzberg::extraction::docx::table::TableBorders) -> Self {
-        Self {
-            top: val.top.as_ref().map(|v| format!("{:?}", v)),
-            bottom: val.bottom.as_ref().map(|v| format!("{:?}", v)),
-            left: val.left.as_ref().map(|v| format!("{:?}", v)),
-            right: val.right.as_ref().map(|v| format!("{:?}", v)),
-            inside_h: val.inside_h.as_ref().map(|v| format!("{:?}", v)),
-            inside_v: val.inside_v.as_ref().map(|v| format!("{:?}", v)),
-        }
-    }
-}
-
-impl From<RowProperties> for kreuzberg::extraction::docx::table::RowProperties {
-    fn from(val: RowProperties) -> Self {
-        Self {
-            height: val.height,
-            height_rule: val.height_rule,
-            is_header: val.is_header,
-            cant_split: val.cant_split,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::RowProperties> for RowProperties {
-    fn from(val: kreuzberg::extraction::docx::table::RowProperties) -> Self {
-        Self {
-            height: val.height,
-            height_rule: val.height_rule,
-            is_header: val.is_header,
-            cant_split: val.cant_split,
-        }
-    }
-}
-
-impl From<ColorScheme> for kreuzberg::extraction::docx::theme::ColorScheme {
-    fn from(val: ColorScheme) -> Self {
-        Self {
-            name: val.name,
-            dk1: val.dk1.map(Into::into),
-            lt1: val.lt1.map(Into::into),
-            dk2: val.dk2.map(Into::into),
-            lt2: val.lt2.map(Into::into),
-            accent1: val.accent1.map(Into::into),
-            accent2: val.accent2.map(Into::into),
-            accent3: val.accent3.map(Into::into),
-            accent4: val.accent4.map(Into::into),
-            accent5: val.accent5.map(Into::into),
-            accent6: val.accent6.map(Into::into),
-            hlink: val.hlink.map(Into::into),
-            fol_hlink: val.fol_hlink.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::ColorScheme> for ColorScheme {
-    fn from(val: kreuzberg::extraction::docx::theme::ColorScheme) -> Self {
-        Self {
-            name: val.name,
-            dk1: val.dk1.map(Into::into),
-            lt1: val.lt1.map(Into::into),
-            dk2: val.dk2.map(Into::into),
-            lt2: val.lt2.map(Into::into),
-            accent1: val.accent1.map(Into::into),
-            accent2: val.accent2.map(Into::into),
-            accent3: val.accent3.map(Into::into),
-            accent4: val.accent4.map(Into::into),
-            accent5: val.accent5.map(Into::into),
-            accent6: val.accent6.map(Into::into),
-            hlink: val.hlink.map(Into::into),
-            fol_hlink: val.fol_hlink.map(Into::into),
-        }
-    }
-}
-
-impl From<FontScheme> for kreuzberg::extraction::docx::theme::FontScheme {
-    fn from(val: FontScheme) -> Self {
-        Self {
-            name: val.name,
-            major_latin: val.major_latin,
-            major_east_asian: val.major_east_asian,
-            major_complex_script: val.major_complex_script,
-            minor_latin: val.minor_latin,
-            minor_east_asian: val.minor_east_asian,
-            minor_complex_script: val.minor_complex_script,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::FontScheme> for FontScheme {
-    fn from(val: kreuzberg::extraction::docx::theme::FontScheme) -> Self {
-        Self {
-            name: val.name,
-            major_latin: val.major_latin,
-            major_east_asian: val.major_east_asian,
-            major_complex_script: val.major_complex_script,
-            minor_latin: val.minor_latin,
-            minor_east_asian: val.minor_east_asian,
-            minor_complex_script: val.minor_complex_script,
-        }
-    }
-}
-
-impl From<Theme> for kreuzberg::extraction::docx::theme::Theme {
-    fn from(val: Theme) -> Self {
-        Self {
-            name: val.name,
-            color_scheme: val.color_scheme.map(Into::into),
-            font_scheme: val.font_scheme.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::Theme> for Theme {
-    fn from(val: kreuzberg::extraction::docx::theme::Theme) -> Self {
-        Self {
-            name: val.name,
-            color_scheme: val.color_scheme.map(Into::into),
-            font_scheme: val.font_scheme.map(Into::into),
         }
     }
 }
@@ -23209,7 +15163,7 @@ impl From<PptExtractionResult> for kreuzberg::extraction::ppt::PptExtractionResu
         Self {
             text: val.text,
             slide_count: val.slide_count,
-            metadata: val.metadata.into(),
+            metadata: Default::default(),
             speaker_notes: val.speaker_notes,
         }
     }
@@ -23220,86 +15174,8 @@ impl From<kreuzberg::extraction::ppt::PptExtractionResult> for PptExtractionResu
         Self {
             text: val.text,
             slide_count: val.slide_count,
-            metadata: val.metadata.into(),
+            metadata: format!("{:?}", val.metadata),
             speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<PptMetadata> for kreuzberg::extraction::ppt::PptMetadata {
-    fn from(val: PptMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ppt::PptMetadata> for PptMetadata {
-    fn from(val: kreuzberg::extraction::ppt::PptMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-        }
-    }
-}
-
-impl From<PptxExtractionOptions> for kreuzberg::extraction::PptxExtractionOptions {
-    fn from(val: PptxExtractionOptions) -> Self {
-        Self {
-            extract_images: val.extract_images,
-            page_config: val.page_config.map(Into::into),
-            plain: val.plain,
-            include_structure: val.include_structure,
-            inject_placeholders: val.inject_placeholders,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::PptxExtractionOptions> for PptxExtractionOptions {
-    fn from(val: kreuzberg::extraction::PptxExtractionOptions) -> Self {
-        Self {
-            extract_images: val.extract_images,
-            page_config: val.page_config.map(Into::into),
-            plain: val.plain,
-            include_structure: val.include_structure,
-            inject_placeholders: val.inject_placeholders,
-        }
-    }
-}
-
-impl From<NativeTextStats> for kreuzberg::extractors::pdf::NativeTextStats {
-    fn from(val: NativeTextStats) -> Self {
-        Self {
-            non_whitespace: val.non_whitespace,
-            alnum: val.alnum,
-            meaningful_words: val.meaningful_words,
-            alnum_ratio: val.alnum_ratio,
-            garbage_char_count: val.garbage_char_count,
-            fragmented_word_ratio: val.fragmented_word_ratio,
-            consecutive_repeat_ratio: val.consecutive_repeat_ratio,
-            avg_word_length: val.avg_word_length,
-            word_count: val.word_count,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::pdf::NativeTextStats> for NativeTextStats {
-    fn from(val: kreuzberg::extractors::pdf::NativeTextStats) -> Self {
-        Self {
-            non_whitespace: val.non_whitespace,
-            alnum: val.alnum,
-            meaningful_words: val.meaningful_words,
-            alnum_ratio: val.alnum_ratio,
-            garbage_char_count: val.garbage_char_count,
-            fragmented_word_ratio: val.fragmented_word_ratio,
-            consecutive_repeat_ratio: val.consecutive_repeat_ratio,
-            avg_word_length: val.avg_word_length,
-            word_count: val.word_count,
         }
     }
 }
@@ -23307,7 +15183,7 @@ impl From<kreuzberg::extractors::pdf::NativeTextStats> for NativeTextStats {
 impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecision {
     fn from(val: OcrFallbackDecision) -> Self {
         Self {
-            stats: val.stats.into(),
+            stats: Default::default(),
             avg_non_whitespace: val.avg_non_whitespace,
             avg_alnum: val.avg_alnum,
             fallback: val.fallback,
@@ -23318,22 +15194,10 @@ impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecisi
 impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecision {
     fn from(val: kreuzberg::extractors::pdf::OcrFallbackDecision) -> Self {
         Self {
-            stats: val.stats.into(),
+            stats: format!("{:?}", val.stats),
             avg_non_whitespace: val.avg_non_whitespace,
             avg_alnum: val.avg_alnum,
             fallback: val.fallback,
-        }
-    }
-}
-
-impl From<kreuzberg::panic_context::PanicContext> for PanicContext {
-    fn from(val: kreuzberg::panic_context::PanicContext) -> Self {
-        Self {
-            file: val.file,
-            line: val.line,
-            function: val.function,
-            message: val.message,
-            timestamp: format!("{:?}", val.timestamp),
         }
     }
 }
@@ -24225,23 +16089,6 @@ impl From<kreuzberg::EmailAttachment> for EmailAttachment {
     }
 }
 
-impl From<OcrExtractionResult> for kreuzberg::OcrExtractionResult {
-    fn from(val: OcrExtractionResult) -> Self {
-        Self {
-            content: val.content,
-            mime_type: val.mime_type,
-            metadata: val
-                .metadata
-                .into_iter()
-                .map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::Value::String(v))))
-                .collect(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            ocr_elements: val.ocr_elements.map(|v| v.into_iter().map(Into::into).collect()),
-            internal_document: Default::default(),
-        }
-    }
-}
-
 impl From<kreuzberg::OcrExtractionResult> for OcrExtractionResult {
     fn from(val: kreuzberg::OcrExtractionResult) -> Self {
         Self {
@@ -24255,17 +16102,6 @@ impl From<kreuzberg::OcrExtractionResult> for OcrExtractionResult {
     }
 }
 
-impl From<OcrTable> for kreuzberg::OcrTable {
-    fn from(val: OcrTable) -> Self {
-        Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
 impl From<kreuzberg::OcrTable> for OcrTable {
     fn from(val: kreuzberg::OcrTable) -> Self {
         Self {
@@ -24273,17 +16109,6 @@ impl From<kreuzberg::OcrTable> for OcrTable {
             markdown: val.markdown,
             page_number: val.page_number,
             bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<OcrTableBoundingBox> for kreuzberg::OcrTableBoundingBox {
-    fn from(val: OcrTableBoundingBox) -> Self {
-        Self {
-            left: val.left,
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
         }
     }
 }
@@ -25183,155 +17008,11 @@ impl From<kreuzberg::Uri> for Uri {
     }
 }
 
-impl From<PoolMetrics> for kreuzberg::utils::pool::PoolMetrics {
-    fn from(val: PoolMetrics) -> Self {
-        Self {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::utils::pool::PoolMetrics> for PoolMetrics {
-    fn from(val: kreuzberg::utils::pool::PoolMetrics) -> Self {
-        Self {
-            total_acquires: format!("{:?}", val.total_acquires),
-            total_cache_hits: format!("{:?}", val.total_cache_hits),
-            peak_items_stored: format!("{:?}", val.peak_items_stored),
-            total_creations: format!("{:?}", val.total_creations),
-        }
-    }
-}
-
-impl From<PoolMetricsSnapshot> for kreuzberg::utils::pool::PoolMetricsSnapshot {
-    fn from(val: PoolMetricsSnapshot) -> Self {
-        Self {
-            total_acquires: val.total_acquires,
-            total_cache_hits: val.total_cache_hits,
-            peak_items_stored: val.peak_items_stored,
-            total_creations: val.total_creations,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::pool::PoolMetricsSnapshot> for PoolMetricsSnapshot {
-    fn from(val: kreuzberg::utils::pool::PoolMetricsSnapshot) -> Self {
-        Self {
-            total_acquires: val.total_acquires,
-            total_cache_hits: val.total_cache_hits,
-            peak_items_stored: val.peak_items_stored,
-            total_creations: val.total_creations,
-        }
-    }
-}
-
-impl From<PoolSizeHint> for kreuzberg::utils::PoolSizeHint {
-    fn from(val: PoolSizeHint) -> Self {
-        Self {
-            estimated_total_size: val.estimated_total_size,
-            string_buffer_count: val.string_buffer_count,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_buffer_count: val.byte_buffer_count,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::PoolSizeHint> for PoolSizeHint {
-    fn from(val: kreuzberg::utils::PoolSizeHint) -> Self {
-        Self {
-            estimated_total_size: val.estimated_total_size,
-            string_buffer_count: val.string_buffer_count,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_buffer_count: val.byte_buffer_count,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-        }
-    }
-}
-
-impl From<PoolConfig> for kreuzberg::utils::string_pool::PoolConfig {
-    fn from(val: PoolConfig) -> Self {
-        Self {
-            max_buffers_per_size: val.max_buffers_per_size,
-            initial_capacity: val.initial_capacity,
-            max_capacity_before_discard: val.max_capacity_before_discard,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::string_pool::PoolConfig> for PoolConfig {
-    fn from(val: kreuzberg::utils::string_pool::PoolConfig) -> Self {
-        Self {
-            max_buffers_per_size: val.max_buffers_per_size,
-            initial_capacity: val.initial_capacity,
-            max_capacity_before_discard: val.max_capacity_before_discard,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::string_pool::StringBufferPoolMetrics> for StringBufferPoolMetrics {
-    fn from(val: kreuzberg::utils::string_pool::StringBufferPoolMetrics) -> Self {
-        Self {
-            total_acquires: val.total_acquires,
-            total_reuses: val.total_reuses,
-            hit_rate: val.hit_rate,
-        }
-    }
-}
-
-impl From<HocrWord> for kreuzberg::table_core::HocrWord {
-    fn from(val: HocrWord) -> Self {
-        Self {
-            text: val.text,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            confidence: val.confidence,
-        }
-    }
-}
-
-impl From<kreuzberg::table_core::HocrWord> for HocrWord {
-    fn from(val: kreuzberg::table_core::HocrWord) -> Self {
-        Self {
-            text: val.text,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            confidence: val.confidence,
-        }
-    }
-}
-
-impl From<ExtractionRequest> for kreuzberg::service::ExtractionRequest {
-    fn from(val: ExtractionRequest) -> Self {
-        Self {
-            source: val.source.into(),
-            config: val.config.into(),
-            file_overrides: val.file_overrides.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::service::ExtractionRequest> for ExtractionRequest {
-    fn from(val: kreuzberg::service::ExtractionRequest) -> Self {
-        Self {
-            source: val.source.into(),
-            config: val.config.into(),
-            file_overrides: val.file_overrides.map(Into::into),
-        }
-    }
-}
-
 impl From<ApiError> for kreuzberg::api::ApiError {
     fn from(val: ApiError) -> Self {
         Self {
             status: Default::default(),
-            body: val.body.into(),
+            body: Default::default(),
         }
     }
 }
@@ -25340,25 +17021,7 @@ impl From<kreuzberg::api::ApiError> for ApiError {
     fn from(val: kreuzberg::api::ApiError) -> Self {
         Self {
             status: format!("{:?}", val.status),
-            body: val.body.into(),
-        }
-    }
-}
-
-impl From<ApiSizeLimits> for kreuzberg::api::ApiSizeLimits {
-    fn from(val: ApiSizeLimits) -> Self {
-        Self {
-            max_request_body_bytes: val.max_request_body_bytes,
-            max_multipart_field_bytes: val.max_multipart_field_bytes,
-        }
-    }
-}
-
-impl From<kreuzberg::api::ApiSizeLimits> for ApiSizeLimits {
-    fn from(val: kreuzberg::api::ApiSizeLimits) -> Self {
-        Self {
-            max_request_body_bytes: val.max_request_body_bytes,
-            max_multipart_field_bytes: val.max_multipart_field_bytes,
+            body: format!("{:?}", val.body),
         }
     }
 }
@@ -25378,28 +17041,6 @@ impl From<kreuzberg::api::InfoResponse> for InfoResponse {
         Self {
             version: val.version,
             rust_backend: val.rust_backend,
-        }
-    }
-}
-
-impl From<ErrorResponse> for kreuzberg::api::ErrorResponse {
-    fn from(val: ErrorResponse) -> Self {
-        Self {
-            error_type: val.error_type,
-            message: val.message,
-            traceback: val.traceback,
-            status_code: val.status_code,
-        }
-    }
-}
-
-impl From<kreuzberg::api::ErrorResponse> for ErrorResponse {
-    fn from(val: kreuzberg::api::ErrorResponse) -> Self {
-        Self {
-            error_type: val.error_type,
-            message: val.message,
-            traceback: val.traceback,
-            status_code: val.status_code,
         }
     }
 }
@@ -25548,30 +17189,16 @@ impl From<kreuzberg::api::OpenWebDocumentResponse> for OpenWebDocumentResponse {
     fn from(val: kreuzberg::api::OpenWebDocumentResponse) -> Self {
         Self {
             page_content: val.page_content,
-            metadata: val.metadata.into(),
+            metadata: format!("{:?}", val.metadata),
         }
-    }
-}
-
-impl From<kreuzberg::api::OpenWebDocumentMetadata> for OpenWebDocumentMetadata {
-    fn from(val: kreuzberg::api::OpenWebDocumentMetadata) -> Self {
-        Self { source: val.source }
     }
 }
 
 impl From<kreuzberg::api::DoclingCompatResponse> for DoclingCompatResponse {
     fn from(val: kreuzberg::api::DoclingCompatResponse) -> Self {
         Self {
-            document: val.document.into(),
+            document: format!("{:?}", val.document),
             status: val.status,
-        }
-    }
-}
-
-impl From<kreuzberg::api::DoclingCompatDocument> for DoclingCompatDocument {
-    fn from(val: kreuzberg::api::DoclingCompatDocument) -> Self {
-        Self {
-            md_content: val.md_content,
         }
     }
 }
@@ -25771,58 +17398,11 @@ impl From<kreuzberg::Keyword> for Keyword {
     }
 }
 
-impl From<OcrCacheStats> for kreuzberg::ocr::OcrCacheStats {
-    fn from(val: OcrCacheStats) -> Self {
-        Self {
-            total_files: val.total_files,
-            total_size_mb: val.total_size_mb,
-        }
-    }
-}
-
 impl From<kreuzberg::ocr::OcrCacheStats> for OcrCacheStats {
     fn from(val: kreuzberg::ocr::OcrCacheStats) -> Self {
         Self {
             total_files: val.total_files,
             total_size_mb: val.total_size_mb,
-        }
-    }
-}
-
-impl From<TsvRow> for kreuzberg::ocr::TsvRow {
-    fn from(val: TsvRow) -> Self {
-        Self {
-            level: val.level,
-            page_num: val.page_num,
-            block_num: val.block_num,
-            par_num: val.par_num,
-            line_num: val.line_num,
-            word_num: val.word_num,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            conf: val.conf,
-            text: val.text,
-        }
-    }
-}
-
-impl From<kreuzberg::ocr::TsvRow> for TsvRow {
-    fn from(val: kreuzberg::ocr::TsvRow) -> Self {
-        Self {
-            level: val.level,
-            page_num: val.page_num,
-            block_num: val.block_num,
-            par_num: val.par_num,
-            line_num: val.line_num,
-            word_num: val.word_num,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            conf: val.conf,
-            text: val.text,
         }
     }
 }
@@ -25991,7 +17571,7 @@ impl From<FontSizeCluster> for kreuzberg::pdf::FontSizeCluster {
     fn from(val: FontSizeCluster) -> Self {
         Self {
             centroid: val.centroid,
-            members: val.members.into_iter().map(Into::into).collect(),
+            members: Default::default(),
         }
     }
 }
@@ -26000,7 +17580,7 @@ impl From<kreuzberg::pdf::FontSizeCluster> for FontSizeCluster {
     fn from(val: kreuzberg::pdf::FontSizeCluster) -> Self {
         Self {
             centroid: val.centroid,
-            members: val.members.into_iter().map(Into::into).collect(),
+            members: val.members.iter().map(|i| format!("{:?}", i)).collect(),
         }
     }
 }
@@ -26037,45 +17617,13 @@ impl From<kreuzberg::pdf::CharData> for CharData {
     }
 }
 
-impl From<TextBlock> for kreuzberg::pdf::TextBlock {
-    fn from(val: TextBlock) -> Self {
-        Self {
-            text: val.text,
-            bbox: val.bbox.into(),
-            font_size: val.font_size,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::TextBlock> for TextBlock {
-    fn from(val: kreuzberg::pdf::TextBlock) -> Self {
-        Self {
-            text: val.text,
-            bbox: val.bbox.into(),
-            font_size: val.font_size,
-        }
-    }
-}
-
-impl From<KMeansResult> for kreuzberg::pdf::hierarchy::KMeansResult {
-    fn from(val: KMeansResult) -> Self {
-        Self { labels: val.labels }
-    }
-}
-
-impl From<kreuzberg::pdf::hierarchy::KMeansResult> for KMeansResult {
-    fn from(val: kreuzberg::pdf::hierarchy::KMeansResult) -> Self {
-        Self { labels: val.labels }
-    }
-}
-
 impl From<HierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
     fn from(val: HierarchyBlock) -> Self {
         Self {
             text: val.text,
             bbox: val.bbox.into(),
             font_size: val.font_size,
-            hierarchy_level: val.hierarchy_level.into(),
+            hierarchy_level: Default::default(),
         }
     }
 }
@@ -26086,43 +17634,7 @@ impl From<kreuzberg::pdf::hierarchy::HierarchyBlock> for HierarchyBlock {
             text: val.text,
             bbox: val.bbox.into(),
             font_size: val.font_size,
-            hierarchy_level: val.hierarchy_level.into(),
-        }
-    }
-}
-
-impl From<SegmentData> for kreuzberg::pdf::hierarchy::SegmentData {
-    fn from(val: SegmentData) -> Self {
-        Self {
-            text: val.text,
-            x: val.x,
-            y: val.y,
-            width: val.width,
-            height: val.height,
-            font_size: val.font_size,
-            is_bold: val.is_bold,
-            is_italic: val.is_italic,
-            is_monospace: val.is_monospace,
-            baseline_y: val.baseline_y,
-            assigned_role: val.assigned_role,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::hierarchy::SegmentData> for SegmentData {
-    fn from(val: kreuzberg::pdf::hierarchy::SegmentData) -> Self {
-        Self {
-            text: val.text,
-            x: val.x,
-            y: val.y,
-            width: val.width,
-            height: val.height,
-            font_size: val.font_size,
-            is_bold: val.is_bold,
-            is_italic: val.is_italic,
-            is_monospace: val.is_monospace,
-            baseline_y: val.baseline_y,
-            assigned_role: val.assigned_role,
+            hierarchy_level: format!("{:?}", val.hierarchy_level),
         }
     }
 }
@@ -26159,23 +17671,12 @@ impl From<kreuzberg::pdf::PdfImage> for PdfImage {
     }
 }
 
-impl From<kreuzberg::pdf::layout_runner::PdfLayoutBBox> for PdfLayoutBBox {
-    fn from(val: kreuzberg::pdf::layout_runner::PdfLayoutBBox) -> Self {
-        Self {
-            left: val.left,
-            bottom: val.bottom,
-            right: val.right,
-            top: val.top,
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageLayoutRegion> for PageLayoutRegion {
     fn from(val: kreuzberg::pdf::layout_runner::PageLayoutRegion) -> Self {
         Self {
             class: val.class.into(),
             confidence: val.confidence,
-            bbox: val.bbox.into(),
+            bbox: format!("{:?}", val.bbox),
         }
     }
 }
@@ -26193,19 +17694,6 @@ impl From<kreuzberg::pdf::layout_runner::PageLayoutResult> for PageLayoutResult 
     }
 }
 
-impl From<PageTiming> for kreuzberg::pdf::layout_runner::PageTiming {
-    fn from(val: PageTiming) -> Self {
-        Self {
-            render_ms: val.render_ms,
-            preprocess_ms: val.preprocess_ms,
-            onnx_ms: val.onnx_ms,
-            inference_ms: val.inference_ms,
-            postprocess_ms: val.postprocess_ms,
-            mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageTiming> for PageTiming {
     fn from(val: kreuzberg::pdf::layout_runner::PageTiming) -> Self {
         Self {
@@ -26215,41 +17703,6 @@ impl From<kreuzberg::pdf::layout_runner::PageTiming> for PageTiming {
             inference_ms: val.inference_ms,
             postprocess_ms: val.postprocess_ms,
             mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::layout_runner::LayoutTimingReport> for LayoutTimingReport {
-    fn from(val: kreuzberg::pdf::layout_runner::LayoutTimingReport) -> Self {
-        Self {
-            total_ms: val.total_ms,
-            per_page: val.per_page.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<PdfMetadata> for kreuzberg::pdf::metadata::PdfMetadata {
-    fn from(val: PdfMetadata) -> Self {
-        Self {
-            pdf_version: val.pdf_version,
-            producer: val.producer,
-            is_encrypted: val.is_encrypted,
-            width: val.width,
-            height: val.height,
-            page_count: val.page_count,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::metadata::PdfMetadata> for PdfMetadata {
-    fn from(val: kreuzberg::pdf::metadata::PdfMetadata) -> Self {
-        Self {
-            pdf_version: val.pdf_version,
-            producer: val.producer,
-            is_encrypted: val.is_encrypted,
-            width: val.width,
-            height: val.height,
-            page_count: val.page_count,
         }
     }
 }
@@ -26264,7 +17717,7 @@ impl From<PdfExtractionMetadata> for kreuzberg::pdf::metadata::PdfExtractionMeta
             created_at: val.created_at,
             modified_at: val.modified_at,
             created_by: val.created_by,
-            pdf_specific: val.pdf_specific.into(),
+            pdf_specific: Default::default(),
             page_structure: val.page_structure.map(Into::into),
         }
     }
@@ -26280,7 +17733,7 @@ impl From<kreuzberg::pdf::metadata::PdfExtractionMetadata> for PdfExtractionMeta
             created_at: val.created_at,
             modified_at: val.modified_at,
             created_by: val.created_by,
-            pdf_specific: val.pdf_specific.into(),
+            pdf_specific: format!("{:?}", val.pdf_specific),
             page_structure: val.page_structure.map(Into::into),
         }
     }
@@ -26310,30 +17763,6 @@ impl From<kreuzberg::pdf::metadata::CommonPdfMetadata> for CommonPdfMetadata {
             created_at: val.created_at,
             modified_at: val.modified_at,
             created_by: val.created_by,
-        }
-    }
-}
-
-impl From<PageRenderOptions> for kreuzberg::pdf::PageRenderOptions {
-    fn from(val: PageRenderOptions) -> Self {
-        Self {
-            target_dpi: val.target_dpi,
-            max_image_dimension: val.max_image_dimension,
-            auto_adjust_dpi: val.auto_adjust_dpi,
-            min_dpi: val.min_dpi,
-            max_dpi: val.max_dpi,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::PageRenderOptions> for PageRenderOptions {
-    fn from(val: kreuzberg::pdf::PageRenderOptions) -> Self {
-        Self {
-            target_dpi: val.target_dpi,
-            max_image_dimension: val.max_image_dimension,
-            auto_adjust_dpi: val.auto_adjust_dpi,
-            min_dpi: val.min_dpi,
-            max_dpi: val.max_dpi,
         }
     }
 }
@@ -26472,40 +17901,6 @@ impl From<kreuzberg::CodeContentMode> for CodeContentMode {
     }
 }
 
-impl From<ListType> for kreuzberg::extraction::ListType {
-    fn from(val: ListType) -> Self {
-        match val {
-            ListType::Bullet => Self::Bullet,
-            ListType::Numbered => Self::Numbered,
-            ListType::Lettered => Self::Lettered,
-            ListType::Indented => Self::Indented,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ListType> for ListType {
-    fn from(val: kreuzberg::extraction::ListType) -> Self {
-        match val {
-            kreuzberg::extraction::ListType::Bullet => Self::Bullet,
-            kreuzberg::extraction::ListType::Numbered => Self::Numbered,
-            kreuzberg::extraction::ListType::Lettered => Self::Lettered,
-            kreuzberg::extraction::ListType::Indented => Self::Indented,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::WrapType> for WrapType {
-    fn from(val: kreuzberg::extraction::docx::drawing::WrapType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::drawing::WrapType::None => Self::None,
-            kreuzberg::extraction::docx::drawing::WrapType::Square => Self::Square,
-            kreuzberg::extraction::docx::drawing::WrapType::Tight => Self::Tight,
-            kreuzberg::extraction::docx::drawing::WrapType::TopAndBottom => Self::TopAndBottom,
-            kreuzberg::extraction::docx::drawing::WrapType::Through => Self::Through,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::math::FracType> for FracType {
     fn from(val: kreuzberg::extraction::docx::math::FracType) -> Self {
         match val {
@@ -26513,75 +17908,6 @@ impl From<kreuzberg::extraction::docx::math::FracType> for FracType {
             kreuzberg::extraction::docx::math::FracType::NoBar => Self::NoBar,
             kreuzberg::extraction::docx::math::FracType::Linear => Self::Linear,
             kreuzberg::extraction::docx::math::FracType::Skewed => Self::Skewed,
-        }
-    }
-}
-
-impl From<HeaderFooterType> for kreuzberg::extraction::docx::parser::HeaderFooterType {
-    fn from(val: HeaderFooterType) -> Self {
-        match val {
-            HeaderFooterType::Default => Self::Default,
-            HeaderFooterType::First => Self::First,
-            HeaderFooterType::Even => Self::Even,
-            HeaderFooterType::Odd => Self::Odd,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::HeaderFooterType> for HeaderFooterType {
-    fn from(val: kreuzberg::extraction::docx::parser::HeaderFooterType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::parser::HeaderFooterType::Default => Self::Default,
-            kreuzberg::extraction::docx::parser::HeaderFooterType::First => Self::First,
-            kreuzberg::extraction::docx::parser::HeaderFooterType::Even => Self::Even,
-            kreuzberg::extraction::docx::parser::HeaderFooterType::Odd => Self::Odd,
-        }
-    }
-}
-
-impl From<NoteType> for kreuzberg::extraction::docx::parser::NoteType {
-    fn from(val: NoteType) -> Self {
-        match val {
-            NoteType::Footnote => Self::Footnote,
-            NoteType::Endnote => Self::Endnote,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::NoteType> for NoteType {
-    fn from(val: kreuzberg::extraction::docx::parser::NoteType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::parser::NoteType::Footnote => Self::Footnote,
-            kreuzberg::extraction::docx::parser::NoteType::Endnote => Self::Endnote,
-        }
-    }
-}
-
-impl From<Orientation> for kreuzberg::extraction::docx::section::Orientation {
-    fn from(val: Orientation) -> Self {
-        match val {
-            Orientation::Portrait => Self::Portrait,
-            Orientation::Landscape => Self::Landscape,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::Orientation> for Orientation {
-    fn from(val: kreuzberg::extraction::docx::section::Orientation) -> Self {
-        match val {
-            kreuzberg::extraction::docx::section::Orientation::Portrait => Self::Portrait,
-            kreuzberg::extraction::docx::section::Orientation::Landscape => Self::Landscape,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::styles::StyleType> for StyleType {
-    fn from(val: kreuzberg::extraction::docx::styles::StyleType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::styles::StyleType::Paragraph => Self::Paragraph,
-            kreuzberg::extraction::docx::styles::StyleType::Character => Self::Character,
-            kreuzberg::extraction::docx::styles::StyleType::Table => Self::Table,
-            kreuzberg::extraction::docx::styles::StyleType::Numbering => Self::Numbering,
         }
     }
 }
@@ -27137,34 +18463,6 @@ impl From<kreuzberg::LayoutClass> for LayoutClass {
     }
 }
 
-impl From<HierarchyLevel> for kreuzberg::pdf::HierarchyLevel {
-    fn from(val: HierarchyLevel) -> Self {
-        match val {
-            HierarchyLevel::H1 => Self::H1,
-            HierarchyLevel::H2 => Self::H2,
-            HierarchyLevel::H3 => Self::H3,
-            HierarchyLevel::H4 => Self::H4,
-            HierarchyLevel::H5 => Self::H5,
-            HierarchyLevel::H6 => Self::H6,
-            HierarchyLevel::Body => Self::Body,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::HierarchyLevel> for HierarchyLevel {
-    fn from(val: kreuzberg::pdf::HierarchyLevel) -> Self {
-        match val {
-            kreuzberg::pdf::HierarchyLevel::H1 => Self::H1,
-            kreuzberg::pdf::HierarchyLevel::H2 => Self::H2,
-            kreuzberg::pdf::HierarchyLevel::H3 => Self::H3,
-            kreuzberg::pdf::HierarchyLevel::H4 => Self::H4,
-            kreuzberg::pdf::HierarchyLevel::H5 => Self::H5,
-            kreuzberg::pdf::HierarchyLevel::H6 => Self::H6,
-            kreuzberg::pdf::HierarchyLevel::Body => Self::Body,
-        }
-    }
-}
-
 #[pyfunction]
 pub fn init_async_runtime() -> PyResult<()> {
     // Tokio runtime auto-initializes on first future_into_py call
@@ -27174,9 +18472,6 @@ pub fn init_async_runtime() -> PyResult<()> {
 #[pymodule]
 pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(init_async_runtime, m)?)?;
-    m.add_class::<GenericCache>()?;
-    m.add_class::<BatchProcessorConfig>()?;
-    m.add_class::<BatchProcessor>()?;
     m.add_class::<AccelerationConfig>()?;
     m.add_class::<ContentFilterConfig>()?;
     m.add_class::<EmailConfig>()?;
@@ -27205,109 +18500,36 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<SupportedFormat>()?;
     m.add_class::<ServerConfig>()?;
     m.add_class::<StructuredDataResult>()?;
-    m.add_class::<JsonExtractionConfig>()?;
     m.add_class::<ListItemMetadata>()?;
-    m.add_class::<HwpDocument>()?;
     m.add_class::<Section>()?;
-    m.add_class::<ParaText>()?;
-    m.add_class::<FileHeader>()?;
-    m.add_class::<Record>()?;
     m.add_class::<StreamReader>()?;
-    m.add_class::<CfbReader>()?;
     m.add_class::<ImageOcrResult>()?;
     m.add_class::<HtmlExtractionResult>()?;
     m.add_class::<ExtractedInlineImage>()?;
     m.add_class::<DocExtractionResult>()?;
-    m.add_class::<DocMetadata>()?;
     m.add_class::<Drawing>()?;
-    m.add_class::<Extent>()?;
-    m.add_class::<DocProperties>()?;
     m.add_class::<AnchorProperties>()?;
-    m.add_class::<Position>()?;
-    m.add_class::<Document>()?;
     m.add_class::<TableRow>()?;
     m.add_class::<HeaderFooter>()?;
     m.add_class::<Note>()?;
-    m.add_class::<PageMargins>()?;
     m.add_class::<PageMarginsPoints>()?;
-    m.add_class::<ColumnLayout>()?;
-    m.add_class::<SectionProperties>()?;
-    m.add_class::<RunProperties>()?;
     m.add_class::<StyleDefinition>()?;
     m.add_class::<ResolvedStyle>()?;
-    m.add_class::<StyleCatalog>()?;
     m.add_class::<TableProperties>()?;
-    m.add_class::<TableLook>()?;
-    m.add_class::<TableBorders>()?;
-    m.add_class::<RowProperties>()?;
-    m.add_class::<ColorScheme>()?;
-    m.add_class::<FontScheme>()?;
-    m.add_class::<Theme>()?;
     m.add_class::<XlsxAppProperties>()?;
     m.add_class::<PptxAppProperties>()?;
     m.add_class::<CustomProperties>()?;
     m.add_class::<OdtProperties>()?;
     m.add_class::<PptExtractionResult>()?;
-    m.add_class::<PptMetadata>()?;
-    m.add_class::<PptxExtractionOptions>()?;
-    m.add_class::<CodeExtractor>()?;
-    m.add_class::<CsvExtractor>()?;
-    m.add_class::<StructuredExtractor>()?;
-    m.add_class::<PlainTextExtractor>()?;
-    m.add_class::<DjotExtractor>()?;
     m.add_class::<ZipBombValidator>()?;
     m.add_class::<StringGrowthValidator>()?;
     m.add_class::<IterationValidator>()?;
     m.add_class::<DepthValidator>()?;
     m.add_class::<EntityValidator>()?;
     m.add_class::<TableValidator>()?;
-    m.add_class::<ImageExtractor>()?;
-    m.add_class::<ZipExtractor>()?;
-    m.add_class::<TarExtractor>()?;
-    m.add_class::<SevenZExtractor>()?;
-    m.add_class::<GzipExtractor>()?;
-    m.add_class::<EmailExtractor>()?;
-    m.add_class::<PstExtractor>()?;
-    m.add_class::<ExcelExtractor>()?;
-    m.add_class::<HwpExtractor>()?;
-    m.add_class::<KeynoteExtractor>()?;
-    m.add_class::<NumbersExtractor>()?;
-    m.add_class::<PagesExtractor>()?;
-    m.add_class::<HtmlExtractor>()?;
-    m.add_class::<BibtexExtractor>()?;
-    m.add_class::<CitationExtractor>()?;
-    m.add_class::<DocExtractor>()?;
-    m.add_class::<DbfExtractor>()?;
-    m.add_class::<DocxExtractor>()?;
-    m.add_class::<EpubExtractor>()?;
-    m.add_class::<FictionBookExtractor>()?;
-    m.add_class::<MarkdownExtractor>()?;
-    m.add_class::<MdxExtractor>()?;
-    m.add_class::<RstExtractor>()?;
-    m.add_class::<LatexExtractor>()?;
-    m.add_class::<JupyterExtractor>()?;
-    m.add_class::<OrgModeExtractor>()?;
-    m.add_class::<OdtExtractor>()?;
-    m.add_class::<OpmlExtractor>()?;
-    m.add_class::<TypstExtractor>()?;
-    m.add_class::<JatsExtractor>()?;
-    m.add_class::<NativeTextStats>()?;
     m.add_class::<OcrFallbackDecision>()?;
-    m.add_class::<PdfExtractor>()?;
-    m.add_class::<PptExtractor>()?;
-    m.add_class::<PptxExtractor>()?;
-    m.add_class::<RtfExtractor>()?;
-    m.add_class::<XmlExtractor>()?;
-    m.add_class::<DocbookExtractor>()?;
     m.add_class::<ModelCache>()?;
-    m.add_class::<PanicContext>()?;
-    m.add_class::<DocumentExtractorRegistry>()?;
-    m.add_class::<OcrBackendRegistry>()?;
-    m.add_class::<PostProcessorRegistry>()?;
-    m.add_class::<RendererRegistry>()?;
-    m.add_class::<ValidatorRegistry>()?;
     m.add_class::<ExtractionMetrics>()?;
-    m.add_class::<TokenReducer>()?;
     m.add_class::<QualityProcessor>()?;
     m.add_class::<PdfAnnotation>()?;
     m.add_class::<DjotContent>()?;
@@ -27390,30 +18612,18 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Table>()?;
     m.add_class::<TableCell>()?;
     m.add_class::<Uri>()?;
-    m.add_class::<PoolMetrics>()?;
-    m.add_class::<PoolMetricsSnapshot>()?;
     m.add_class::<StringBufferPool>()?;
     m.add_class::<ByteBufferPool>()?;
     m.add_class::<Pool>()?;
-    m.add_class::<PoolSizeHint>()?;
-    m.add_class::<PoolConfig>()?;
-    m.add_class::<StringBufferPoolMetrics>()?;
     m.add_class::<PooledString>()?;
     m.add_class::<InternedString>()?;
-    m.add_class::<Instant>()?;
-    m.add_class::<HocrWord>()?;
-    m.add_class::<ExtractionService>()?;
     m.add_class::<TracingLayer>()?;
     m.add_class::<MetricsLayer>()?;
-    m.add_class::<ExtractionRequest>()?;
-    m.add_class::<ExtractionServiceBuilder>()?;
     m.add_class::<ApiError>()?;
     m.add_class::<ApiDoc>()?;
-    m.add_class::<ApiSizeLimits>()?;
     m.add_class::<HealthResponse>()?;
     m.add_class::<InfoResponse>()?;
     m.add_class::<ExtractResponse>()?;
-    m.add_class::<ErrorResponse>()?;
     m.add_class::<ApiState>()?;
     m.add_class::<CacheStatsResponse>()?;
     m.add_class::<CacheClearResponse>()?;
@@ -27429,9 +18639,7 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<WarmResponse>()?;
     m.add_class::<StructuredExtractionResponse>()?;
     m.add_class::<OpenWebDocumentResponse>()?;
-    m.add_class::<OpenWebDocumentMetadata>()?;
     m.add_class::<DoclingCompatResponse>()?;
-    m.add_class::<DoclingCompatDocument>()?;
     m.add_class::<ExtractFileParams>()?;
     m.add_class::<ExtractBytesParams>()?;
     m.add_class::<BatchExtractFilesParams>()?;
@@ -27440,7 +18648,6 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<EmbedTextParams>()?;
     m.add_class::<ExtractStructuredParams>()?;
     m.add_class::<ChunkTextParams>()?;
-    m.add_class::<KreuzbergMcp>()?;
     m.add_class::<ChunkingResult>()?;
     m.add_class::<ChunkingProcessor>()?;
     m.add_class::<VlmOcrBackend>()?;
@@ -27448,14 +18655,9 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<RakeParams>()?;
     m.add_class::<KeywordConfig>()?;
     m.add_class::<Keyword>()?;
-    m.add_class::<OcrCache>()?;
     m.add_class::<OcrCacheStats>()?;
-    m.add_class::<TsvRow>()?;
-    m.add_class::<LanguageRegistry>()?;
     m.add_class::<RecognizedTable>()?;
-    m.add_class::<OcrProcessor>()?;
     m.add_class::<TessdataManager>()?;
-    m.add_class::<TesseractBackend>()?;
     m.add_class::<PaddleOcrConfig>()?;
     m.add_class::<ModelPaths>()?;
     m.add_class::<OrientationResult>()?;
@@ -27465,25 +18667,14 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<EmbeddedFile>()?;
     m.add_class::<FontSizeCluster>()?;
     m.add_class::<CharData>()?;
-    m.add_class::<TextBlock>()?;
-    m.add_class::<KMeansResult>()?;
     m.add_class::<HierarchyBlock>()?;
-    m.add_class::<SegmentData>()?;
     m.add_class::<PdfImage>()?;
-    m.add_class::<PdfImageExtractor>()?;
-    m.add_class::<PdfLayoutBBox>()?;
     m.add_class::<PageLayoutRegion>()?;
     m.add_class::<PageLayoutResult>()?;
     m.add_class::<PageTiming>()?;
-    m.add_class::<LayoutTimingReport>()?;
-    m.add_class::<PdfMetadata>()?;
     m.add_class::<PdfExtractionMetadata>()?;
     m.add_class::<CommonPdfMetadata>()?;
-    m.add_class::<PageRenderOptions>()?;
-    m.add_class::<PdfPageIterator>()?;
-    m.add_class::<PdfRenderer>()?;
     m.add_class::<PdfUnifiedExtractionResult>()?;
-    m.add_class::<PdfTextExtractor>()?;
     m.add_class::<ExecutionProviderType>()?;
     m.add_class::<OutputFormat>()?;
     m.add_class::<HtmlTheme>()?;
@@ -27493,18 +18684,10 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<ChunkSizing>()?;
     m.add_class::<EmbeddingModelType>()?;
     m.add_class::<CodeContentMode>()?;
-    m.add_class::<ListType>()?;
     m.add_class::<HwpError>()?;
-    m.add_class::<DrawingType>()?;
-    m.add_class::<WrapType>()?;
     m.add_class::<FracType>()?;
     m.add_class::<MathNode>()?;
     m.add_class::<DocumentElement>()?;
-    m.add_class::<HeaderFooterType>()?;
-    m.add_class::<NoteType>()?;
-    m.add_class::<Orientation>()?;
-    m.add_class::<StyleType>()?;
-    m.add_class::<ThemeColor>()?;
     m.add_class::<SecurityError>()?;
     m.add_class::<OcrBackendType>()?;
     m.add_class::<ReductionLevel>()?;
@@ -27527,14 +18710,12 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PageUnitType>()?;
     m.add_class::<UriKind>()?;
     m.add_class::<PoolError>()?;
-    m.add_class::<ExtractionSource>()?;
     m.add_class::<KeywordAlgorithm>()?;
     m.add_class::<OcrError>()?;
     m.add_class::<PSMMode>()?;
     m.add_class::<PaddleLanguage>()?;
     m.add_class::<LayoutClass>()?;
     m.add_class::<PdfError>()?;
-    m.add_class::<HierarchyLevel>()?;
     m.add_function(wrap_pyfunction!(get_cache_metadata, m)?)?;
     m.add_function(wrap_pyfunction!(cleanup_cache, m)?)?;
     m.add_function(wrap_pyfunction!(smart_cleanup_cache, m)?)?;

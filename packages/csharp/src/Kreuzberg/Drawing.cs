@@ -12,13 +12,13 @@ namespace Kreuzberg;
 public sealed class Drawing
 {
     [JsonPropertyName("drawing_type")]
-    public JsonElement DrawingType { get; set; } = default!;
+    public string DrawingType { get; set; } = "";
 
     [JsonPropertyName("extent")]
-    public Extent? Extent { get; set; } = null;
+    public string? Extent { get; set; } = null;
 
     [JsonPropertyName("doc_properties")]
-    public DocProperties? DocProperties { get; set; } = null;
+    public string? DocProperties { get; set; } = null;
 
     [JsonPropertyName("image_ref")]
     public string? ImageRef { get; set; } = null;

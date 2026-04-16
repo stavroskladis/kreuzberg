@@ -33,6 +33,6 @@ public sealed class HierarchyBlock
     /// The hierarchy level of this block (H1-H6 or Body)
     /// </summary>
     [JsonPropertyName("hierarchy_level")]
-    public HierarchyLevel HierarchyLevel { get; set; } = default!;
+    public string HierarchyLevel { get; set; } = "";
 
 }

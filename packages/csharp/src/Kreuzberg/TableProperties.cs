@@ -24,10 +24,10 @@ public sealed class TableProperties
     public string? Layout { get; set; } = null;
 
     [JsonPropertyName("look")]
-    public TableLook? Look { get; set; } = null;
+    public string? Look { get; set; } = null;
 
     [JsonPropertyName("borders")]
-    public TableBorders? Borders { get; set; } = null;
+    public string? Borders { get; set; } = null;
 
     [JsonPropertyName("cell_margins")]
     public string? CellMargins { get; set; } = null;

@@ -17,7 +17,7 @@ public sealed class DoclingCompatResponse
     /// Converted document content
     /// </summary>
     [JsonPropertyName("document")]
-    public DoclingCompatDocument Document { get; set; } = default!;
+    public string Document { get; set; } = "";
 
     /// <summary>
     /// Processing status

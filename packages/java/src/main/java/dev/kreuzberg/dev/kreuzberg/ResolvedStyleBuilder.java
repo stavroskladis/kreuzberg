@@ -5,14 +5,14 @@ package dev.kreuzberg;
 public class ResolvedStyleBuilder {
 
     private String paragraphProperties = "";
-    private RunProperties runProperties = null;
+    private String runProperties = "";
 
     public ResolvedStyleBuilder withParagraphProperties(String value) {
         this.paragraphProperties = value;
         return this;
     }
 
-    public ResolvedStyleBuilder withRunProperties(RunProperties value) {
+    public ResolvedStyleBuilder withRunProperties(String value) {
         this.runProperties = value;
         return this;
     }

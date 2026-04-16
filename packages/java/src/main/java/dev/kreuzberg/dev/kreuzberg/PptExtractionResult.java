@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record PptExtractionResult(
     String text,
     @JsonProperty("slide_count") long slideCount,
-    PptMetadata metadata,
+    String metadata,
     @JsonProperty("speaker_notes") List<String> speakerNotes
 ) {
 }

@@ -15,7 +15,7 @@ public sealed class ListItemMetadata
     /// Type of list (Bullet, Numbered, etc.)
     /// </summary>
     [JsonPropertyName("list_type")]
-    public ListType ListType { get; set; } = default!;
+    public string ListType { get; set; } = "";
 
     /// <summary>
     /// Starting byte offset in the content string

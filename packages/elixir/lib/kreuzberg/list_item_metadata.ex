@@ -2,7 +2,7 @@
 defmodule Kreuzberg.ListItemMetadata do
   @moduledoc "Metadata about a detected list item."
 
-  defstruct list_type: :bullet,
+  defstruct list_type: "",
             byte_start: 0,
             byte_end: 0,
             indent_level: 0

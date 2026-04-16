@@ -4,10 +4,10 @@ defmodule Kreuzberg.StyleDefinition do
 
   defstruct id: "",
             name: nil,
-            style_type: :paragraph,
+            style_type: "",
             based_on: nil,
             next_style: nil,
             is_default: false,
             paragraph_properties: "",
-            run_properties: nil
+            run_properties: ""
 end

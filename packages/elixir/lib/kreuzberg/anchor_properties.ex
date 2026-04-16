@@ -5,7 +5,7 @@ defmodule Kreuzberg.AnchorProperties do
   defstruct behind_doc: false,
             layout_in_cell: false,
             relative_height: 0,
-            position_h: nil,
-            position_v: nil,
-            wrap_type: :none
+            position_h: "",
+            position_v: "",
+            wrap_type: ""
 end

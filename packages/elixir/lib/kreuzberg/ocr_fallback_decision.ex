@@ -2,7 +2,7 @@
 defmodule Kreuzberg.OcrFallbackDecision do
   @moduledoc false
 
-  defstruct stats: nil,
+  defstruct stats: "",
             avg_non_whitespace: 0.0,
             avg_alnum: 0.0,
             fallback: false

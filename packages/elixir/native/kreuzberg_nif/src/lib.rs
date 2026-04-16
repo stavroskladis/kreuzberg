@@ -2,63 +2,13 @@
 // Re-generate with: alef generate
 #![allow(dead_code)]
 
-use kreuzberg::extractors::SyncExtractor;
 use kreuzberg::plugins::OcrBackend;
 use kreuzberg::plugins::Plugin;
-use kreuzberg::plugins::Renderer;
-use kreuzberg::utils::Recyclable;
 use rustler::ResourceArc;
 use std::collections::HashMap;
 use std::ops::Deref;
 use std::ops::DerefMut;
 use std::sync::Arc;
-
-#[derive(Clone)]
-pub struct GenericCache {
-    inner: Arc<kreuzberg::cache::GenericCache>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for GenericCache {}
-
-impl rustler::Resource for GenericCache {}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct BatchProcessorConfig {
-    pub string_pool_size: usize,
-    pub string_buffer_capacity: usize,
-    pub byte_pool_size: usize,
-    pub byte_buffer_capacity: usize,
-    pub max_concurrent: Option<usize>,
-}
-
-impl BatchProcessorConfig {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            string_pool_size: opts.get("string_pool_size").and_then(|t| t.decode().ok()).unwrap_or(10),
-            string_buffer_capacity: opts
-                .get("string_buffer_capacity")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(8192),
-            byte_pool_size: opts.get("byte_pool_size").and_then(|t| t.decode().ok()).unwrap_or(10),
-            byte_buffer_capacity: opts
-                .get("byte_buffer_capacity")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(65536),
-            max_concurrent: opts.get("max_concurrent").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct BatchProcessor {
-    inner: Arc<kreuzberg::core::BatchProcessor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for BatchProcessor {}
-
-impl rustler::Resource for BatchProcessor {}
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct AccelerationConfig {
@@ -810,64 +760,13 @@ pub struct StructuredDataResult {
     pub text_fields: Vec<String>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct JsonExtractionConfig {
-    pub extract_schema: bool,
-    pub max_depth: usize,
-    pub array_item_limit: usize,
-    pub include_type_info: bool,
-    pub flatten_nested_objects: bool,
-    pub custom_text_field_patterns: Vec<String>,
-}
-
-impl JsonExtractionConfig {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            extract_schema: opts
-                .get("extract_schema")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
-            max_depth: opts.get("max_depth").and_then(|t| t.decode().ok()).unwrap_or(20),
-            array_item_limit: opts
-                .get("array_item_limit")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(500),
-            include_type_info: opts
-                .get("include_type_info")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
-            flatten_nested_objects: opts
-                .get("flatten_nested_objects")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(true),
-            custom_text_field_patterns: opts
-                .get("custom_text_field_patterns")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-        }
-    }
-}
-
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ListItemMetadata"]
 pub struct ListItemMetadata {
-    pub list_type: ListType,
+    pub list_type: String,
     pub byte_start: usize,
     pub byte_end: usize,
     pub indent_level: u32,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct HwpDocument {
-    pub sections: Vec<Section>,
-}
-
-impl HwpDocument {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            sections: opts.get("sections").and_then(|t| t.decode().ok()).unwrap_or_default(),
-        }
-    }
 }
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
@@ -883,25 +782,6 @@ impl Section {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ParaText"]
-pub struct ParaText {
-    pub content: String,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.FileHeader"]
-pub struct FileHeader {
-    pub flags: u32,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.Record"]
-pub struct Record {
-    pub tag_id: u16,
-    pub data: Vec<u8>,
-}
-
 #[derive(Clone)]
 pub struct StreamReader {
     inner: Arc<kreuzberg::extraction::hwp::reader::StreamReader>,
@@ -911,16 +791,6 @@ pub struct StreamReader {
 impl std::panic::RefUnwindSafe for StreamReader {}
 
 impl rustler::Resource for StreamReader {}
-
-#[derive(Clone)]
-pub struct CfbReader {
-    inner: Arc<kreuzberg::extraction::hwp::reader::CfbReader>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for CfbReader {}
-
-impl rustler::Resource for CfbReader {}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ImageOcrResult"]
@@ -953,73 +823,16 @@ pub struct ExtractedInlineImage {
 #[module = "Kreuzberg.DocExtractionResult"]
 pub struct DocExtractionResult {
     pub text: String,
-    pub metadata: DocMetadata,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct DocMetadata {
-    pub title: Option<String>,
-    pub subject: Option<String>,
-    pub author: Option<String>,
-    pub last_author: Option<String>,
-    pub created: Option<String>,
-    pub modified: Option<String>,
-    pub revision_number: Option<String>,
-}
-
-impl DocMetadata {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            title: opts.get("title").and_then(|t| t.decode().ok()),
-            subject: opts.get("subject").and_then(|t| t.decode().ok()),
-            author: opts.get("author").and_then(|t| t.decode().ok()),
-            last_author: opts.get("last_author").and_then(|t| t.decode().ok()),
-            created: opts.get("created").and_then(|t| t.decode().ok()),
-            modified: opts.get("modified").and_then(|t| t.decode().ok()),
-            revision_number: opts.get("revision_number").and_then(|t| t.decode().ok()),
-        }
-    }
+    pub metadata: String,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.Drawing"]
 pub struct Drawing {
-    pub drawing_type: DrawingType,
-    pub extent: Option<Extent>,
-    pub doc_properties: Option<DocProperties>,
+    pub drawing_type: String,
+    pub extent: Option<String>,
+    pub doc_properties: Option<String>,
     pub image_ref: Option<String>,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct Extent {
-    pub cx: i64,
-    pub cy: i64,
-}
-
-impl Extent {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            cx: opts.get("cx").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            cy: opts.get("cy").and_then(|t| t.decode().ok()).unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct DocProperties {
-    pub id: Option<String>,
-    pub name: Option<String>,
-    pub description: Option<String>,
-}
-
-impl DocProperties {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            id: opts.get("id").and_then(|t| t.decode().ok()),
-            name: opts.get("name").and_then(|t| t.decode().ok()),
-            description: opts.get("description").and_then(|t| t.decode().ok()),
-        }
-    }
 }
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
@@ -1027,9 +840,9 @@ pub struct AnchorProperties {
     pub behind_doc: bool,
     pub layout_in_cell: bool,
     pub relative_height: Option<i64>,
-    pub position_h: Option<Position>,
-    pub position_v: Option<Position>,
-    pub wrap_type: WrapType,
+    pub position_h: Option<String>,
+    pub position_v: Option<String>,
+    pub wrap_type: String,
 }
 
 impl AnchorProperties {
@@ -1048,60 +861,10 @@ impl AnchorProperties {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.Position"]
-pub struct Position {
-    pub relative_from: String,
-    pub offset: Option<i64>,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct Document {
-    pub paragraphs: Vec<String>,
-    pub tables: Vec<Table>,
-    pub headers: Vec<HeaderFooter>,
-    pub footers: Vec<HeaderFooter>,
-    pub footnotes: Vec<Note>,
-    pub endnotes: Vec<Note>,
-    pub numbering_defs: String,
-    pub elements: Vec<DocumentElement>,
-    pub style_catalog: Option<StyleCatalog>,
-    pub theme: Option<Theme>,
-    pub sections: Vec<SectionProperties>,
-    pub drawings: Vec<Drawing>,
-    pub image_relationships: String,
-}
-
-impl Document {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            paragraphs: opts.get("paragraphs").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            tables: opts.get("tables").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            headers: opts.get("headers").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            footers: opts.get("footers").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            footnotes: opts.get("footnotes").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            endnotes: opts.get("endnotes").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            numbering_defs: opts
-                .get("numbering_defs")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            elements: opts.get("elements").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            style_catalog: opts.get("style_catalog").and_then(|t| t.decode().ok()),
-            theme: opts.get("theme").and_then(|t| t.decode().ok()),
-            sections: opts.get("sections").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            drawings: opts.get("drawings").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            image_relationships: opts
-                .get("image_relationships")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-        }
-    }
-}
-
 #[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct TableRow {
     pub cells: Vec<TableCell>,
-    pub properties: Option<RowProperties>,
+    pub properties: Option<String>,
 }
 
 impl TableRow {
@@ -1117,7 +880,7 @@ impl TableRow {
 pub struct HeaderFooter {
     pub paragraphs: Vec<String>,
     pub tables: Vec<Table>,
-    pub header_type: HeaderFooterType,
+    pub header_type: String,
 }
 
 impl HeaderFooter {
@@ -1137,33 +900,8 @@ impl HeaderFooter {
 #[module = "Kreuzberg.Note"]
 pub struct Note {
     pub id: String,
-    pub note_type: NoteType,
+    pub note_type: String,
     pub paragraphs: Vec<String>,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct PageMargins {
-    pub top: Option<i32>,
-    pub right: Option<i32>,
-    pub bottom: Option<i32>,
-    pub left: Option<i32>,
-    pub header: Option<i32>,
-    pub footer: Option<i32>,
-    pub gutter: Option<i32>,
-}
-
-impl PageMargins {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            top: opts.get("top").and_then(|t| t.decode().ok()),
-            right: opts.get("right").and_then(|t| t.decode().ok()),
-            bottom: opts.get("bottom").and_then(|t| t.decode().ok()),
-            left: opts.get("left").and_then(|t| t.decode().ok()),
-            header: opts.get("header").and_then(|t| t.decode().ok()),
-            footer: opts.get("footer").and_then(|t| t.decode().ok()),
-            gutter: opts.get("gutter").and_then(|t| t.decode().ok()),
-        }
-    }
 }
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
@@ -1191,124 +929,23 @@ impl PageMarginsPoints {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct ColumnLayout {
-    pub count: Option<i32>,
-    pub space_twips: Option<i32>,
-    pub equal_width: Option<bool>,
-}
-
-impl ColumnLayout {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            count: opts.get("count").and_then(|t| t.decode().ok()),
-            space_twips: opts.get("space_twips").and_then(|t| t.decode().ok()),
-            equal_width: opts.get("equal_width").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct SectionProperties {
-    pub page_width_twips: Option<i32>,
-    pub page_height_twips: Option<i32>,
-    pub orientation: Option<Orientation>,
-    pub margins: PageMargins,
-    pub columns: ColumnLayout,
-    pub doc_grid_line_pitch: Option<i32>,
-}
-
-impl SectionProperties {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            page_width_twips: opts.get("page_width_twips").and_then(|t| t.decode().ok()),
-            page_height_twips: opts.get("page_height_twips").and_then(|t| t.decode().ok()),
-            orientation: opts.get("orientation").and_then(|t| t.decode().ok()),
-            margins: opts.get("margins").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            columns: opts.get("columns").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            doc_grid_line_pitch: opts.get("doc_grid_line_pitch").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct RunProperties {
-    pub bold: Option<bool>,
-    pub italic: Option<bool>,
-    pub underline: Option<bool>,
-    pub strikethrough: Option<bool>,
-    pub color: Option<String>,
-    pub font_size_half_points: Option<i32>,
-    pub font_ascii: Option<String>,
-    pub font_ascii_theme: Option<String>,
-    pub vert_align: Option<String>,
-    pub font_h_ansi: Option<String>,
-    pub font_cs: Option<String>,
-    pub font_east_asia: Option<String>,
-    pub highlight: Option<String>,
-    pub caps: Option<bool>,
-    pub small_caps: Option<bool>,
-    pub shadow: Option<bool>,
-    pub outline: Option<bool>,
-    pub emboss: Option<bool>,
-    pub imprint: Option<bool>,
-    pub char_spacing: Option<i32>,
-    pub position: Option<i32>,
-    pub kern: Option<i32>,
-    pub theme_color: Option<String>,
-    pub theme_tint: Option<String>,
-    pub theme_shade: Option<String>,
-}
-
-impl RunProperties {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            bold: opts.get("bold").and_then(|t| t.decode().ok()),
-            italic: opts.get("italic").and_then(|t| t.decode().ok()),
-            underline: opts.get("underline").and_then(|t| t.decode().ok()),
-            strikethrough: opts.get("strikethrough").and_then(|t| t.decode().ok()),
-            color: opts.get("color").and_then(|t| t.decode().ok()),
-            font_size_half_points: opts.get("font_size_half_points").and_then(|t| t.decode().ok()),
-            font_ascii: opts.get("font_ascii").and_then(|t| t.decode().ok()),
-            font_ascii_theme: opts.get("font_ascii_theme").and_then(|t| t.decode().ok()),
-            vert_align: opts.get("vert_align").and_then(|t| t.decode().ok()),
-            font_h_ansi: opts.get("font_h_ansi").and_then(|t| t.decode().ok()),
-            font_cs: opts.get("font_cs").and_then(|t| t.decode().ok()),
-            font_east_asia: opts.get("font_east_asia").and_then(|t| t.decode().ok()),
-            highlight: opts.get("highlight").and_then(|t| t.decode().ok()),
-            caps: opts.get("caps").and_then(|t| t.decode().ok()),
-            small_caps: opts.get("small_caps").and_then(|t| t.decode().ok()),
-            shadow: opts.get("shadow").and_then(|t| t.decode().ok()),
-            outline: opts.get("outline").and_then(|t| t.decode().ok()),
-            emboss: opts.get("emboss").and_then(|t| t.decode().ok()),
-            imprint: opts.get("imprint").and_then(|t| t.decode().ok()),
-            char_spacing: opts.get("char_spacing").and_then(|t| t.decode().ok()),
-            position: opts.get("position").and_then(|t| t.decode().ok()),
-            kern: opts.get("kern").and_then(|t| t.decode().ok()),
-            theme_color: opts.get("theme_color").and_then(|t| t.decode().ok()),
-            theme_tint: opts.get("theme_tint").and_then(|t| t.decode().ok()),
-            theme_shade: opts.get("theme_shade").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.StyleDefinition"]
 pub struct StyleDefinition {
     pub id: String,
     pub name: Option<String>,
-    pub style_type: StyleType,
+    pub style_type: String,
     pub based_on: Option<String>,
     pub next_style: Option<String>,
     pub is_default: bool,
     pub paragraph_properties: String,
-    pub run_properties: RunProperties,
+    pub run_properties: String,
 }
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct ResolvedStyle {
     pub paragraph_properties: String,
-    pub run_properties: RunProperties,
+    pub run_properties: String,
 }
 
 impl ResolvedStyle {
@@ -1327,36 +964,13 @@ impl ResolvedStyle {
 }
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct StyleCatalog {
-    pub styles: String,
-    pub default_paragraph_properties: String,
-    pub default_run_properties: RunProperties,
-}
-
-impl StyleCatalog {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            styles: opts.get("styles").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            default_paragraph_properties: opts
-                .get("default_paragraph_properties")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            default_run_properties: opts
-                .get("default_run_properties")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct TableProperties {
     pub style_id: Option<String>,
     pub width: Option<String>,
     pub alignment: Option<String>,
     pub layout: Option<String>,
-    pub look: Option<TableLook>,
-    pub borders: Option<TableBorders>,
+    pub look: Option<String>,
+    pub borders: Option<String>,
     pub cell_margins: Option<String>,
     pub indent: Option<String>,
     pub caption: Option<String>,
@@ -1374,156 +988,6 @@ impl TableProperties {
             cell_margins: opts.get("cell_margins").and_then(|t| t.decode().ok()),
             indent: opts.get("indent").and_then(|t| t.decode().ok()),
             caption: opts.get("caption").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct TableLook {
-    pub first_row: bool,
-    pub last_row: bool,
-    pub first_column: bool,
-    pub last_column: bool,
-    pub no_h_band: bool,
-    pub no_v_band: bool,
-}
-
-impl TableLook {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            first_row: opts.get("first_row").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            last_row: opts.get("last_row").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            first_column: opts
-                .get("first_column")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            last_column: opts
-                .get("last_column")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            no_h_band: opts.get("no_h_band").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            no_v_band: opts.get("no_v_band").and_then(|t| t.decode().ok()).unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct TableBorders {
-    pub top: Option<String>,
-    pub bottom: Option<String>,
-    pub left: Option<String>,
-    pub right: Option<String>,
-    pub inside_h: Option<String>,
-    pub inside_v: Option<String>,
-}
-
-impl TableBorders {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            top: opts.get("top").and_then(|t| t.decode().ok()),
-            bottom: opts.get("bottom").and_then(|t| t.decode().ok()),
-            left: opts.get("left").and_then(|t| t.decode().ok()),
-            right: opts.get("right").and_then(|t| t.decode().ok()),
-            inside_h: opts.get("inside_h").and_then(|t| t.decode().ok()),
-            inside_v: opts.get("inside_v").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct RowProperties {
-    pub height: Option<i32>,
-    pub height_rule: Option<String>,
-    pub is_header: bool,
-    pub cant_split: bool,
-}
-
-impl RowProperties {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            height: opts.get("height").and_then(|t| t.decode().ok()),
-            height_rule: opts.get("height_rule").and_then(|t| t.decode().ok()),
-            is_header: opts.get("is_header").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            cant_split: opts.get("cant_split").and_then(|t| t.decode().ok()).unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct ColorScheme {
-    pub name: String,
-    pub dk1: Option<ThemeColor>,
-    pub lt1: Option<ThemeColor>,
-    pub dk2: Option<ThemeColor>,
-    pub lt2: Option<ThemeColor>,
-    pub accent1: Option<ThemeColor>,
-    pub accent2: Option<ThemeColor>,
-    pub accent3: Option<ThemeColor>,
-    pub accent4: Option<ThemeColor>,
-    pub accent5: Option<ThemeColor>,
-    pub accent6: Option<ThemeColor>,
-    pub hlink: Option<ThemeColor>,
-    pub fol_hlink: Option<ThemeColor>,
-}
-
-impl ColorScheme {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            name: opts.get("name").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            dk1: opts.get("dk1").and_then(|t| t.decode().ok()),
-            lt1: opts.get("lt1").and_then(|t| t.decode().ok()),
-            dk2: opts.get("dk2").and_then(|t| t.decode().ok()),
-            lt2: opts.get("lt2").and_then(|t| t.decode().ok()),
-            accent1: opts.get("accent1").and_then(|t| t.decode().ok()),
-            accent2: opts.get("accent2").and_then(|t| t.decode().ok()),
-            accent3: opts.get("accent3").and_then(|t| t.decode().ok()),
-            accent4: opts.get("accent4").and_then(|t| t.decode().ok()),
-            accent5: opts.get("accent5").and_then(|t| t.decode().ok()),
-            accent6: opts.get("accent6").and_then(|t| t.decode().ok()),
-            hlink: opts.get("hlink").and_then(|t| t.decode().ok()),
-            fol_hlink: opts.get("fol_hlink").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct FontScheme {
-    pub name: String,
-    pub major_latin: Option<String>,
-    pub major_east_asian: Option<String>,
-    pub major_complex_script: Option<String>,
-    pub minor_latin: Option<String>,
-    pub minor_east_asian: Option<String>,
-    pub minor_complex_script: Option<String>,
-}
-
-impl FontScheme {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            name: opts.get("name").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            major_latin: opts.get("major_latin").and_then(|t| t.decode().ok()),
-            major_east_asian: opts.get("major_east_asian").and_then(|t| t.decode().ok()),
-            major_complex_script: opts.get("major_complex_script").and_then(|t| t.decode().ok()),
-            minor_latin: opts.get("minor_latin").and_then(|t| t.decode().ok()),
-            minor_east_asian: opts.get("minor_east_asian").and_then(|t| t.decode().ok()),
-            minor_complex_script: opts.get("minor_complex_script").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct Theme {
-    pub name: String,
-    pub color_scheme: Option<ColorScheme>,
-    pub font_scheme: Option<FontScheme>,
-}
-
-impl Theme {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            name: opts.get("name").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            color_scheme: opts.get("color_scheme").and_then(|t| t.decode().ok()),
-            font_scheme: opts.get("font_scheme").and_then(|t| t.decode().ok()),
         }
     }
 }
@@ -1666,105 +1130,9 @@ impl OdtProperties {
 pub struct PptExtractionResult {
     pub text: String,
     pub slide_count: usize,
-    pub metadata: PptMetadata,
+    pub metadata: String,
     pub speaker_notes: Vec<String>,
 }
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct PptMetadata {
-    pub title: Option<String>,
-    pub subject: Option<String>,
-    pub author: Option<String>,
-    pub last_author: Option<String>,
-}
-
-impl PptMetadata {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            title: opts.get("title").and_then(|t| t.decode().ok()),
-            subject: opts.get("subject").and_then(|t| t.decode().ok()),
-            author: opts.get("author").and_then(|t| t.decode().ok()),
-            last_author: opts.get("last_author").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct PptxExtractionOptions {
-    pub extract_images: bool,
-    pub page_config: Option<PageConfig>,
-    pub plain: bool,
-    pub include_structure: bool,
-    pub inject_placeholders: bool,
-}
-
-impl PptxExtractionOptions {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            extract_images: opts.get("extract_images").and_then(|t| t.decode().ok()).unwrap_or(true),
-            page_config: opts.get("page_config").and_then(|t| t.decode().ok()),
-            plain: opts.get("plain").and_then(|t| t.decode().ok()).unwrap_or(false),
-            include_structure: opts
-                .get("include_structure")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(false),
-            inject_placeholders: opts
-                .get("inject_placeholders")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(true),
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct CodeExtractor {
-    inner: Arc<kreuzberg::extractors::CodeExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for CodeExtractor {}
-
-impl rustler::Resource for CodeExtractor {}
-
-#[derive(Clone)]
-pub struct CsvExtractor {
-    inner: Arc<kreuzberg::extractors::CsvExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for CsvExtractor {}
-
-impl rustler::Resource for CsvExtractor {}
-
-#[derive(Clone)]
-pub struct StructuredExtractor {
-    inner: Arc<kreuzberg::extractors::StructuredExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for StructuredExtractor {}
-
-impl rustler::Resource for StructuredExtractor {}
-
-#[derive(Clone)]
-pub struct PlainTextExtractor {
-    inner: Arc<kreuzberg::extractors::PlainTextExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PlainTextExtractor {}
-
-impl rustler::Resource for PlainTextExtractor {}
-
-#[derive(Clone)]
-pub struct DjotExtractor {
-    inner: Arc<kreuzberg::extractors::DjotExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for DjotExtractor {}
-
-impl rustler::Resource for DjotExtractor {}
 
 #[derive(Clone)]
 pub struct ZipBombValidator {
@@ -1826,388 +1194,14 @@ impl std::panic::RefUnwindSafe for TableValidator {}
 
 impl rustler::Resource for TableValidator {}
 
-#[derive(Clone)]
-pub struct ImageExtractor {
-    inner: Arc<kreuzberg::extractors::ImageExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for ImageExtractor {}
-
-impl rustler::Resource for ImageExtractor {}
-
-#[derive(Clone)]
-pub struct ZipExtractor {
-    inner: Arc<kreuzberg::extractors::ZipExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for ZipExtractor {}
-
-impl rustler::Resource for ZipExtractor {}
-
-#[derive(Clone)]
-pub struct TarExtractor {
-    inner: Arc<kreuzberg::extractors::TarExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for TarExtractor {}
-
-impl rustler::Resource for TarExtractor {}
-
-#[derive(Clone)]
-pub struct SevenZExtractor {
-    inner: Arc<kreuzberg::extractors::SevenZExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for SevenZExtractor {}
-
-impl rustler::Resource for SevenZExtractor {}
-
-#[derive(Clone)]
-pub struct GzipExtractor {
-    inner: Arc<kreuzberg::extractors::GzipExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for GzipExtractor {}
-
-impl rustler::Resource for GzipExtractor {}
-
-#[derive(Clone)]
-pub struct EmailExtractor {
-    inner: Arc<kreuzberg::extractors::EmailExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for EmailExtractor {}
-
-impl rustler::Resource for EmailExtractor {}
-
-#[derive(Clone)]
-pub struct PstExtractor {
-    inner: Arc<kreuzberg::extractors::PstExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PstExtractor {}
-
-impl rustler::Resource for PstExtractor {}
-
-#[derive(Clone)]
-pub struct ExcelExtractor {
-    inner: Arc<kreuzberg::extractors::ExcelExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for ExcelExtractor {}
-
-impl rustler::Resource for ExcelExtractor {}
-
-#[derive(Clone)]
-pub struct HwpExtractor {
-    inner: Arc<kreuzberg::extractors::HwpExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for HwpExtractor {}
-
-impl rustler::Resource for HwpExtractor {}
-
-#[derive(Clone)]
-pub struct KeynoteExtractor {
-    inner: Arc<kreuzberg::extractors::KeynoteExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for KeynoteExtractor {}
-
-impl rustler::Resource for KeynoteExtractor {}
-
-#[derive(Clone)]
-pub struct NumbersExtractor {
-    inner: Arc<kreuzberg::extractors::NumbersExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for NumbersExtractor {}
-
-impl rustler::Resource for NumbersExtractor {}
-
-#[derive(Clone)]
-pub struct PagesExtractor {
-    inner: Arc<kreuzberg::extractors::PagesExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PagesExtractor {}
-
-impl rustler::Resource for PagesExtractor {}
-
-#[derive(Clone)]
-pub struct HtmlExtractor {
-    inner: Arc<kreuzberg::extractors::HtmlExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for HtmlExtractor {}
-
-impl rustler::Resource for HtmlExtractor {}
-
-#[derive(Clone)]
-pub struct BibtexExtractor {
-    inner: Arc<kreuzberg::extractors::BibtexExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for BibtexExtractor {}
-
-impl rustler::Resource for BibtexExtractor {}
-
-#[derive(Clone)]
-pub struct CitationExtractor {
-    inner: Arc<kreuzberg::extractors::CitationExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for CitationExtractor {}
-
-impl rustler::Resource for CitationExtractor {}
-
-#[derive(Clone)]
-pub struct DocExtractor {
-    inner: Arc<kreuzberg::extractors::DocExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for DocExtractor {}
-
-impl rustler::Resource for DocExtractor {}
-
-#[derive(Clone)]
-pub struct DbfExtractor {
-    inner: Arc<kreuzberg::extractors::DbfExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for DbfExtractor {}
-
-impl rustler::Resource for DbfExtractor {}
-
-#[derive(Clone)]
-pub struct DocxExtractor {
-    inner: Arc<kreuzberg::extractors::DocxExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for DocxExtractor {}
-
-impl rustler::Resource for DocxExtractor {}
-
-#[derive(Clone)]
-pub struct EpubExtractor {
-    inner: Arc<kreuzberg::extractors::EpubExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for EpubExtractor {}
-
-impl rustler::Resource for EpubExtractor {}
-
-#[derive(Clone)]
-pub struct FictionBookExtractor {
-    inner: Arc<kreuzberg::extractors::FictionBookExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for FictionBookExtractor {}
-
-impl rustler::Resource for FictionBookExtractor {}
-
-#[derive(Clone)]
-pub struct MarkdownExtractor {
-    inner: Arc<kreuzberg::extractors::MarkdownExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for MarkdownExtractor {}
-
-impl rustler::Resource for MarkdownExtractor {}
-
-#[derive(Clone)]
-pub struct MdxExtractor {
-    inner: Arc<kreuzberg::extractors::MdxExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for MdxExtractor {}
-
-impl rustler::Resource for MdxExtractor {}
-
-#[derive(Clone)]
-pub struct RstExtractor {
-    inner: Arc<kreuzberg::extractors::RstExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for RstExtractor {}
-
-impl rustler::Resource for RstExtractor {}
-
-#[derive(Clone)]
-pub struct LatexExtractor {
-    inner: Arc<kreuzberg::extractors::LatexExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for LatexExtractor {}
-
-impl rustler::Resource for LatexExtractor {}
-
-#[derive(Clone)]
-pub struct JupyterExtractor {
-    inner: Arc<kreuzberg::extractors::JupyterExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for JupyterExtractor {}
-
-impl rustler::Resource for JupyterExtractor {}
-
-#[derive(Clone)]
-pub struct OrgModeExtractor {
-    inner: Arc<kreuzberg::extractors::OrgModeExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for OrgModeExtractor {}
-
-impl rustler::Resource for OrgModeExtractor {}
-
-#[derive(Clone)]
-pub struct OdtExtractor {
-    inner: Arc<kreuzberg::extractors::OdtExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for OdtExtractor {}
-
-impl rustler::Resource for OdtExtractor {}
-
-#[derive(Clone)]
-pub struct OpmlExtractor {
-    inner: Arc<kreuzberg::extractors::OpmlExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for OpmlExtractor {}
-
-impl rustler::Resource for OpmlExtractor {}
-
-#[derive(Clone)]
-pub struct TypstExtractor {
-    inner: Arc<kreuzberg::extractors::TypstExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for TypstExtractor {}
-
-impl rustler::Resource for TypstExtractor {}
-
-#[derive(Clone)]
-pub struct JatsExtractor {
-    inner: Arc<kreuzberg::extractors::JatsExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for JatsExtractor {}
-
-impl rustler::Resource for JatsExtractor {}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.NativeTextStats"]
-pub struct NativeTextStats {
-    pub non_whitespace: usize,
-    pub alnum: usize,
-    pub meaningful_words: usize,
-    pub alnum_ratio: f64,
-    pub garbage_char_count: usize,
-    pub fragmented_word_ratio: f64,
-    pub consecutive_repeat_ratio: f64,
-    pub avg_word_length: f64,
-    pub word_count: usize,
-}
-
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.OcrFallbackDecision"]
 pub struct OcrFallbackDecision {
-    pub stats: NativeTextStats,
+    pub stats: String,
     pub avg_non_whitespace: f64,
     pub avg_alnum: f64,
     pub fallback: bool,
 }
-
-#[derive(Clone)]
-pub struct PdfExtractor {
-    inner: Arc<kreuzberg::extractors::PdfExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PdfExtractor {}
-
-impl rustler::Resource for PdfExtractor {}
-
-#[derive(Clone)]
-pub struct PptExtractor {
-    inner: Arc<kreuzberg::extractors::PptExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PptExtractor {}
-
-impl rustler::Resource for PptExtractor {}
-
-#[derive(Clone)]
-pub struct PptxExtractor {
-    inner: Arc<kreuzberg::extractors::PptxExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PptxExtractor {}
-
-impl rustler::Resource for PptxExtractor {}
-
-#[derive(Clone)]
-pub struct RtfExtractor {
-    inner: Arc<kreuzberg::extractors::RtfExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for RtfExtractor {}
-
-impl rustler::Resource for RtfExtractor {}
-
-#[derive(Clone)]
-pub struct XmlExtractor {
-    inner: Arc<kreuzberg::extractors::XmlExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for XmlExtractor {}
-
-impl rustler::Resource for XmlExtractor {}
-
-#[derive(Clone)]
-pub struct DocbookExtractor {
-    inner: Arc<kreuzberg::extractors::DocbookExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for DocbookExtractor {}
-
-impl rustler::Resource for DocbookExtractor {}
 
 #[derive(Clone)]
 pub struct ModelCache {
@@ -2218,66 +1212,6 @@ pub struct ModelCache {
 impl std::panic::RefUnwindSafe for ModelCache {}
 
 impl rustler::Resource for ModelCache {}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.PanicContext"]
-pub struct PanicContext {
-    pub file: String,
-    pub line: u32,
-    pub function: String,
-    pub message: String,
-    pub timestamp: String,
-}
-
-#[derive(Clone)]
-pub struct DocumentExtractorRegistry {
-    inner: Arc<kreuzberg::plugins::DocumentExtractorRegistry>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for DocumentExtractorRegistry {}
-
-impl rustler::Resource for DocumentExtractorRegistry {}
-
-#[derive(Clone)]
-pub struct OcrBackendRegistry {
-    inner: Arc<kreuzberg::plugins::OcrBackendRegistry>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for OcrBackendRegistry {}
-
-impl rustler::Resource for OcrBackendRegistry {}
-
-#[derive(Clone)]
-pub struct PostProcessorRegistry {
-    inner: Arc<kreuzberg::plugins::PostProcessorRegistry>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PostProcessorRegistry {}
-
-impl rustler::Resource for PostProcessorRegistry {}
-
-#[derive(Clone)]
-pub struct RendererRegistry {
-    inner: Arc<kreuzberg::plugins::RendererRegistry>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for RendererRegistry {}
-
-impl rustler::Resource for RendererRegistry {}
-
-#[derive(Clone)]
-pub struct ValidatorRegistry {
-    inner: Arc<kreuzberg::plugins::ValidatorRegistry>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for ValidatorRegistry {}
-
-impl rustler::Resource for ValidatorRegistry {}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ExtractionMetrics"]
@@ -2294,16 +1228,6 @@ pub struct ExtractionMetrics {
     pub batch_duration_ms: String,
     pub concurrent_extractions: String,
 }
-
-#[derive(Clone)]
-pub struct TokenReducer {
-    inner: Arc<kreuzberg::text::token_reduction::TokenReducer>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for TokenReducer {}
-
-impl rustler::Resource for TokenReducer {}
 
 #[derive(Clone)]
 pub struct QualityProcessor {
@@ -3502,46 +2426,6 @@ pub struct Uri {
     pub kind: UriKind,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct PoolMetrics {
-    pub total_acquires: String,
-    pub total_cache_hits: String,
-    pub peak_items_stored: String,
-    pub total_creations: String,
-}
-
-impl PoolMetrics {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            total_acquires: opts
-                .get("total_acquires")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            total_cache_hits: opts
-                .get("total_cache_hits")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            peak_items_stored: opts
-                .get("peak_items_stored")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            total_creations: opts
-                .get("total_creations")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.PoolMetricsSnapshot"]
-pub struct PoolMetricsSnapshot {
-    pub total_acquires: usize,
-    pub total_cache_hits: usize,
-    pub peak_items_stored: usize,
-    pub total_creations: usize,
-}
-
 #[derive(Clone)]
 pub struct StringBufferPool {
     inner: Arc<kreuzberg::utils::StringBufferPool>,
@@ -3572,50 +2456,6 @@ impl std::panic::RefUnwindSafe for Pool {}
 
 impl rustler::Resource for Pool {}
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.PoolSizeHint"]
-pub struct PoolSizeHint {
-    pub estimated_total_size: usize,
-    pub string_buffer_count: usize,
-    pub string_buffer_capacity: usize,
-    pub byte_buffer_count: usize,
-    pub byte_buffer_capacity: usize,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct PoolConfig {
-    pub max_buffers_per_size: usize,
-    pub initial_capacity: usize,
-    pub max_capacity_before_discard: usize,
-}
-
-impl PoolConfig {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            max_buffers_per_size: opts
-                .get("max_buffers_per_size")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(4),
-            initial_capacity: opts
-                .get("initial_capacity")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(4096),
-            max_capacity_before_discard: opts
-                .get("max_capacity_before_discard")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(65536),
-        }
-    }
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.StringBufferPoolMetrics"]
-pub struct StringBufferPoolMetrics {
-    pub total_acquires: usize,
-    pub total_reuses: usize,
-    pub hit_rate: f64,
-}
-
 #[derive(Clone)]
 pub struct PooledString {
     inner: Arc<kreuzberg::utils::string_pool::PooledString>,
@@ -3635,37 +2475,6 @@ pub struct InternedString {
 impl std::panic::RefUnwindSafe for InternedString {}
 
 impl rustler::Resource for InternedString {}
-
-#[derive(Clone)]
-pub struct Instant {
-    inner: Arc<kreuzberg::utils::timing::Instant>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for Instant {}
-
-impl rustler::Resource for Instant {}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.HocrWord"]
-pub struct HocrWord {
-    pub text: String,
-    pub left: u32,
-    pub top: u32,
-    pub width: u32,
-    pub height: u32,
-    pub confidence: f64,
-}
-
-#[derive(Clone)]
-pub struct ExtractionService {
-    inner: Arc<kreuzberg::service::ExtractionService>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for ExtractionService {}
-
-impl rustler::Resource for ExtractionService {}
 
 #[derive(Clone)]
 pub struct TracingLayer {
@@ -3688,28 +2497,10 @@ impl std::panic::RefUnwindSafe for MetricsLayer {}
 impl rustler::Resource for MetricsLayer {}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ExtractionRequest"]
-pub struct ExtractionRequest {
-    pub source: ExtractionSource,
-    pub config: ExtractionConfig,
-    pub file_overrides: Option<FileExtractionConfig>,
-}
-
-#[derive(Clone)]
-pub struct ExtractionServiceBuilder {
-    inner: Arc<kreuzberg::service::ExtractionServiceBuilder>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for ExtractionServiceBuilder {}
-
-impl rustler::Resource for ExtractionServiceBuilder {}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ApiError"]
 pub struct ApiError {
     pub status: String,
-    pub body: ErrorResponse,
+    pub body: String,
 }
 
 #[derive(Clone)]
@@ -3721,27 +2512,6 @@ pub struct ApiDoc {
 impl std::panic::RefUnwindSafe for ApiDoc {}
 
 impl rustler::Resource for ApiDoc {}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct ApiSizeLimits {
-    pub max_request_body_bytes: usize,
-    pub max_multipart_field_bytes: usize,
-}
-
-impl ApiSizeLimits {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            max_request_body_bytes: opts
-                .get("max_request_body_bytes")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            max_multipart_field_bytes: opts
-                .get("max_multipart_field_bytes")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-        }
-    }
-}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.HealthResponse"]
@@ -3767,15 +2537,6 @@ pub struct ExtractResponse {
 impl std::panic::RefUnwindSafe for ExtractResponse {}
 
 impl rustler::Resource for ExtractResponse {}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ErrorResponse"]
-pub struct ErrorResponse {
-    pub error_type: String,
-    pub message: String,
-    pub traceback: Option<String>,
-    pub status_code: u16,
-}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ApiState"]
@@ -3906,26 +2667,14 @@ pub struct StructuredExtractionResponse {
 #[module = "Kreuzberg.OpenWebDocumentResponse"]
 pub struct OpenWebDocumentResponse {
     pub page_content: String,
-    pub metadata: OpenWebDocumentMetadata,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.OpenWebDocumentMetadata"]
-pub struct OpenWebDocumentMetadata {
-    pub source: String,
+    pub metadata: String,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.DoclingCompatResponse"]
 pub struct DoclingCompatResponse {
-    pub document: DoclingCompatDocument,
+    pub document: String,
     pub status: String,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.DoclingCompatDocument"]
-pub struct DoclingCompatDocument {
-    pub md_content: String,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -4002,16 +2751,6 @@ pub struct ChunkTextParams {
     pub overlap: Option<usize>,
     pub chunker_type: Option<String>,
 }
-
-#[derive(Clone)]
-pub struct KreuzbergMcp {
-    inner: Arc<kreuzberg::mcp::KreuzbergMcp>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for KreuzbergMcp {}
-
-impl rustler::Resource for KreuzbergMcp {}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.ChunkingResult"]
@@ -4108,16 +2847,6 @@ pub struct Keyword {
     pub positions: Option<Vec<usize>>,
 }
 
-#[derive(Clone)]
-pub struct OcrCache {
-    inner: Arc<kreuzberg::ocr::OcrCache>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for OcrCache {}
-
-impl rustler::Resource for OcrCache {}
-
 #[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct OcrCacheStats {
     pub total_files: usize,
@@ -4140,49 +2869,12 @@ impl OcrCacheStats {
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.TsvRow"]
-pub struct TsvRow {
-    pub level: i32,
-    pub page_num: i32,
-    pub block_num: i32,
-    pub par_num: i32,
-    pub line_num: i32,
-    pub word_num: i32,
-    pub left: u32,
-    pub top: u32,
-    pub width: u32,
-    pub height: u32,
-    pub conf: f64,
-    pub text: String,
-}
-
-#[derive(Clone)]
-pub struct LanguageRegistry {
-    inner: Arc<kreuzberg::ocr::LanguageRegistry>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for LanguageRegistry {}
-
-impl rustler::Resource for LanguageRegistry {}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.RecognizedTable"]
 pub struct RecognizedTable {
     pub detection_bbox: BBox,
     pub cells: Vec<Vec<String>>,
     pub markdown: String,
 }
-
-#[derive(Clone)]
-pub struct OcrProcessor {
-    inner: Arc<kreuzberg::ocr::OcrProcessor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for OcrProcessor {}
-
-impl rustler::Resource for OcrProcessor {}
 
 #[derive(Clone)]
 pub struct TessdataManager {
@@ -4193,16 +2885,6 @@ pub struct TessdataManager {
 impl std::panic::RefUnwindSafe for TessdataManager {}
 
 impl rustler::Resource for TessdataManager {}
-
-#[derive(Clone)]
-pub struct TesseractBackend {
-    inner: Arc<kreuzberg::ocr::TesseractBackend>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for TesseractBackend {}
-
-impl rustler::Resource for TesseractBackend {}
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct PaddleOcrConfig {
@@ -4313,7 +2995,7 @@ pub struct EmbeddedFile {
 #[module = "Kreuzberg.FontSizeCluster"]
 pub struct FontSizeCluster {
     pub centroid: f32,
-    pub members: Vec<TextBlock>,
+    pub members: Vec<String>,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -4331,42 +3013,12 @@ pub struct CharData {
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.TextBlock"]
-pub struct TextBlock {
-    pub text: String,
-    pub bbox: BoundingBox,
-    pub font_size: f32,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.KMeansResult"]
-pub struct KMeansResult {
-    pub labels: Vec<u32>,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.HierarchyBlock"]
 pub struct HierarchyBlock {
     pub text: String,
     pub bbox: BoundingBox,
     pub font_size: f32,
-    pub hierarchy_level: HierarchyLevel,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.SegmentData"]
-pub struct SegmentData {
-    pub text: String,
-    pub x: f32,
-    pub y: f32,
-    pub width: f32,
-    pub height: f32,
-    pub font_size: f32,
-    pub is_bold: bool,
-    pub is_italic: bool,
-    pub is_monospace: bool,
-    pub baseline_y: f32,
-    pub assigned_role: Option<u8>,
+    pub hierarchy_level: String,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -4383,31 +3035,12 @@ pub struct PdfImage {
     pub decoded_format: String,
 }
 
-#[derive(Clone)]
-pub struct PdfImageExtractor {
-    inner: Arc<kreuzberg::pdf::PdfImageExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PdfImageExtractor {}
-
-impl rustler::Resource for PdfImageExtractor {}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.PdfLayoutBBox"]
-pub struct PdfLayoutBBox {
-    pub left: f32,
-    pub bottom: f32,
-    pub right: f32,
-    pub top: f32,
-}
-
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.PageLayoutRegion"]
 pub struct PageLayoutRegion {
     pub class: LayoutClass,
     pub confidence: f32,
-    pub bbox: PdfLayoutBBox,
+    pub bbox: String,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -4433,36 +3066,6 @@ pub struct PageTiming {
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.LayoutTimingReport"]
-pub struct LayoutTimingReport {
-    pub total_ms: f64,
-    pub per_page: Vec<PageTiming>,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct PdfMetadata {
-    pub pdf_version: Option<String>,
-    pub producer: Option<String>,
-    pub is_encrypted: Option<bool>,
-    pub width: Option<i64>,
-    pub height: Option<i64>,
-    pub page_count: Option<usize>,
-}
-
-impl PdfMetadata {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            pdf_version: opts.get("pdf_version").and_then(|t| t.decode().ok()),
-            producer: opts.get("producer").and_then(|t| t.decode().ok()),
-            is_encrypted: opts.get("is_encrypted").and_then(|t| t.decode().ok()),
-            width: opts.get("width").and_then(|t| t.decode().ok()),
-            height: opts.get("height").and_then(|t| t.decode().ok()),
-            page_count: opts.get("page_count").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.PdfExtractionMetadata"]
 pub struct PdfExtractionMetadata {
     pub title: Option<String>,
@@ -4472,7 +3075,7 @@ pub struct PdfExtractionMetadata {
     pub created_at: Option<String>,
     pub modified_at: Option<String>,
     pub created_by: Option<String>,
-    pub pdf_specific: PdfMetadata,
+    pub pdf_specific: String,
     pub page_structure: Option<PageStructure>,
 }
 
@@ -4488,53 +3091,6 @@ pub struct CommonPdfMetadata {
     pub created_by: Option<String>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct PageRenderOptions {
-    pub target_dpi: i32,
-    pub max_image_dimension: i32,
-    pub auto_adjust_dpi: bool,
-    pub min_dpi: i32,
-    pub max_dpi: i32,
-}
-
-impl PageRenderOptions {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            target_dpi: opts.get("target_dpi").and_then(|t| t.decode().ok()).unwrap_or(300),
-            max_image_dimension: opts
-                .get("max_image_dimension")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(65536),
-            auto_adjust_dpi: opts
-                .get("auto_adjust_dpi")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or(true),
-            min_dpi: opts.get("min_dpi").and_then(|t| t.decode().ok()).unwrap_or(72),
-            max_dpi: opts.get("max_dpi").and_then(|t| t.decode().ok()).unwrap_or(600),
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct PdfPageIterator {
-    inner: Arc<kreuzberg::pdf::PdfPageIterator>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PdfPageIterator {}
-
-impl rustler::Resource for PdfPageIterator {}
-
-#[derive(Clone)]
-pub struct PdfRenderer {
-    inner: Arc<kreuzberg::pdf::rendering::PdfRenderer>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PdfRenderer {}
-
-impl rustler::Resource for PdfRenderer {}
-
 #[derive(Clone)]
 pub struct PdfUnifiedExtractionResult {
     inner: Arc<kreuzberg::pdf::text::PdfUnifiedExtractionResult>,
@@ -4544,16 +3100,6 @@ pub struct PdfUnifiedExtractionResult {
 impl std::panic::RefUnwindSafe for PdfUnifiedExtractionResult {}
 
 impl rustler::Resource for PdfUnifiedExtractionResult {}
-
-#[derive(Clone)]
-pub struct PdfTextExtractor {
-    inner: Arc<kreuzberg::pdf::text::PdfTextExtractor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PdfTextExtractor {}
-
-impl rustler::Resource for PdfTextExtractor {}
 
 #[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
 pub enum ExecutionProviderType {
@@ -4692,21 +3238,6 @@ impl Default for CodeContentMode {
 }
 
 #[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum ListType {
-    Bullet,
-    Numbered,
-    Lettered,
-    Indented,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for ListType {
-    fn default() -> Self {
-        Self::Bullet
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
 pub enum HwpError {
     InvalidFormat,
     UnsupportedVersion,
@@ -4722,35 +3253,6 @@ pub enum HwpError {
 impl Default for HwpError {
     fn default() -> Self {
         Self::InvalidFormat
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum DrawingType {
-    Inline,
-    Anchored,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for DrawingType {
-    fn default() -> Self {
-        Self::Inline
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum WrapType {
-    None,
-    Square,
-    Tight,
-    TopAndBottom,
-    Through,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for WrapType {
-    fn default() -> Self {
-        Self::None
     }
 }
 
@@ -4809,75 +3311,6 @@ pub enum DocumentElement {
 impl Default for DocumentElement {
     fn default() -> Self {
         Self::Paragraph
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum HeaderFooterType {
-    Default,
-    First,
-    Even,
-    Odd,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for HeaderFooterType {
-    fn default() -> Self {
-        Self::Default
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum NoteType {
-    Footnote,
-    Endnote,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for NoteType {
-    fn default() -> Self {
-        Self::Footnote
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum Orientation {
-    Portrait,
-    Landscape,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for Orientation {
-    fn default() -> Self {
-        Self::Portrait
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum StyleType {
-    Paragraph,
-    Character,
-    Table,
-    Numbering,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for StyleType {
-    fn default() -> Self {
-        Self::Paragraph
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum ThemeColor {
-    Rgb,
-    System,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for ThemeColor {
-    fn default() -> Self {
-        Self::Rgb
     }
 }
 
@@ -5300,19 +3733,6 @@ impl Default for PoolError {
 }
 
 #[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum ExtractionSource {
-    File,
-    Bytes,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for ExtractionSource {
-    fn default() -> Self {
-        Self::File
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
 pub enum KeywordAlgorithm {
     Yake,
     Rake,
@@ -5440,24 +3860,6 @@ pub enum PdfError {
 impl Default for PdfError {
     fn default() -> Self {
         Self::InvalidPdf
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum HierarchyLevel {
-    H1,
-    H2,
-    H3,
-    H4,
-    H5,
-    H6,
-    Body,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for HierarchyLevel {
-    fn default() -> Self {
-        Self::H1
     }
 }
 
@@ -5731,8 +4133,8 @@ pub fn extract_file_async(path: String, mime_type: String, config: Option<String
 }
 
 #[rustler::nif]
-pub fn get_pool_sizing_hint(file_size: u64, mime_type: String) -> PoolSizeHint {
-    kreuzberg::core::extractor::get_pool_sizing_hint(file_size, &mime_type).into()
+pub fn get_pool_sizing_hint(file_size: u64, mime_type: String) -> String {
+    String::from("[unimplemented: get_pool_sizing_hint]")
 }
 
 #[rustler::nif]
@@ -5949,25 +4351,13 @@ pub fn derive_extraction_result(
 }
 
 #[rustler::nif]
-pub fn parse_json(data: Vec<u8>, config: Option<String>) -> Result<StructuredDataResult, String> {
-    let config_core: Option<kreuzberg::JsonExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::JsonExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result =
-        kreuzberg::extraction::parse_json(&data, Some(config_core.unwrap_or_default())).map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn parse_json(data: Vec<u8>, config: String) -> Result<StructuredDataResult, String> {
+    Err(String::from("Not implemented: parse_json"))
 }
 
 #[rustler::nif]
-pub fn parse_jsonl(data: Vec<u8>, config: Option<String>) -> Result<StructuredDataResult, String> {
-    let config_core: Option<kreuzberg::JsonExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::JsonExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::extraction::structured::parse_jsonl(&data, Some(config_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn parse_jsonl(data: Vec<u8>, config: String) -> Result<StructuredDataResult, String> {
+    Err(String::from("Not implemented: parse_jsonl"))
 }
 
 #[rustler::nif]
@@ -6279,9 +4669,8 @@ pub fn collect_and_convert_omath(reader: String) -> String {
 }
 
 #[rustler::nif]
-pub fn parse_document(bytes: Vec<u8>) -> Result<Document, String> {
-    let result = kreuzberg::extraction::docx::parser::parse_document(&bytes).map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn parse_document(bytes: Vec<u8>) -> Result<String, String> {
+    Err(String::from("Not implemented: parse_document"))
 }
 
 #[rustler::nif]
@@ -6291,19 +4680,18 @@ pub fn extract_text_from_bytes(bytes: Vec<u8>) -> Result<String, String> {
 }
 
 #[rustler::nif]
-pub fn parse_section_properties(node: String) -> SectionProperties {
-    panic!("alef: parse_section_properties not auto-delegatable")
+pub fn parse_section_properties(node: String) -> String {
+    String::from("[unimplemented: parse_section_properties]")
 }
 
 #[rustler::nif]
-pub fn parse_section_properties_streaming(reader: String) -> SectionProperties {
-    panic!("alef: parse_section_properties_streaming not auto-delegatable")
+pub fn parse_section_properties_streaming(reader: String) -> String {
+    String::from("[unimplemented: parse_section_properties_streaming]")
 }
 
 #[rustler::nif]
-pub fn parse_styles_xml(xml: String) -> Result<StyleCatalog, String> {
-    let result = kreuzberg::extraction::docx::styles::parse_styles_xml(&xml).map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn parse_styles_xml(xml: String) -> Result<String, String> {
+    Err(String::from("Not implemented: parse_styles_xml"))
 }
 
 #[rustler::nif]
@@ -6312,8 +4700,8 @@ pub fn parse_table_properties(reader: String) -> TableProperties {
 }
 
 #[rustler::nif]
-pub fn parse_row_properties(reader: String) -> RowProperties {
-    panic!("alef: parse_row_properties not auto-delegatable")
+pub fn parse_row_properties(reader: String) -> String {
+    String::from("[unimplemented: parse_row_properties]")
 }
 
 #[rustler::nif]
@@ -6327,9 +4715,8 @@ pub fn parse_table_grid(reader: String) -> TableGrid {
 }
 
 #[rustler::nif]
-pub fn parse_theme_xml(xml: String) -> Result<Theme, String> {
-    let result = kreuzberg::extraction::docx::theme::parse_theme_xml(&xml).map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn parse_theme_xml(xml: String) -> Result<String, String> {
+    Err(String::from("Not implemented: parse_theme_xml"))
 }
 
 #[rustler::nif]
@@ -6420,25 +4807,13 @@ pub fn extract_ppt_text_with_options(
 }
 
 #[rustler::nif]
-pub fn extract_pptx_from_path(path: String, options: Option<String>) -> Result<PptxExtractionResult, String> {
-    let options_core: Option<kreuzberg::PptxExtractionOptions> = options
-        .map(|s| serde_json::from_str::<kreuzberg::PptxExtractionOptions>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::extraction::extract_pptx_from_path(&path, Some(options_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn extract_pptx_from_path(path: String, options: String) -> Result<PptxExtractionResult, String> {
+    Err(String::from("Not implemented: extract_pptx_from_path"))
 }
 
 #[rustler::nif]
-pub fn extract_pptx_from_bytes(data: Vec<u8>, options: Option<String>) -> Result<PptxExtractionResult, String> {
-    let options_core: Option<kreuzberg::PptxExtractionOptions> = options
-        .map(|s| serde_json::from_str::<kreuzberg::PptxExtractionOptions>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::extraction::extract_pptx_from_bytes(&data, Some(options_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn extract_pptx_from_bytes(data: Vec<u8>, options: String) -> Result<PptxExtractionResult, String> {
+    Err(String::from("Not implemented: extract_pptx_from_bytes"))
 }
 
 #[rustler::nif]
@@ -7056,8 +5431,8 @@ pub fn create_byte_buffer_pool(pool_size: usize, buffer_capacity: usize) -> Reso
 }
 
 #[rustler::nif]
-pub fn estimate_pool_size(file_size: u64, mime_type: String) -> PoolSizeHint {
-    kreuzberg::utils::estimate_pool_size(file_size, &mime_type).into()
+pub fn estimate_pool_size(file_size: u64, mime_type: String) -> String {
+    String::from("[unimplemented: estimate_pool_size]")
 }
 
 #[rustler::nif]
@@ -7092,18 +5467,18 @@ pub fn escape_html_entities(text: String) -> String {
 }
 
 #[rustler::nif]
-pub fn detect_columns(words: Vec<HocrWord>, column_threshold: u32) -> Vec<u32> {
-    kreuzberg::table_core::detect_columns(words, column_threshold)
+pub fn detect_columns(words: Vec<String>, column_threshold: u32) -> Vec<u32> {
+    Vec::new()
 }
 
 #[rustler::nif]
-pub fn detect_rows(words: Vec<HocrWord>, row_threshold_ratio: f64) -> Vec<u32> {
-    kreuzberg::table_core::detect_rows(words, row_threshold_ratio)
+pub fn detect_rows(words: Vec<String>, row_threshold_ratio: f64) -> Vec<u32> {
+    Vec::new()
 }
 
 #[rustler::nif]
-pub fn reconstruct_table(words: Vec<HocrWord>, column_threshold: u32, row_threshold_ratio: f64) -> Vec<Vec<String>> {
-    kreuzberg::table_core::reconstruct_table(words, column_threshold, row_threshold_ratio)
+pub fn reconstruct_table(words: Vec<String>, column_threshold: u32, row_threshold_ratio: f64) -> Vec<Vec<String>> {
+    Vec::new()
 }
 
 #[rustler::nif]
@@ -7133,34 +5508,22 @@ pub fn create_router(config: Option<String>) -> String {
 }
 
 #[rustler::nif]
-pub fn create_router_with_limits(config: Option<String>, limits: Option<String>) -> String {
+pub fn create_router_with_limits(config: Option<String>, limits: String) -> String {
     let config_core: Option<kreuzberg::ExtractionConfig> = config
         .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
         .transpose()
         .map_err(|e| e.to_string())?;
-    let limits_core: Option<kreuzberg::ApiSizeLimits> = limits
-        .map(|s| serde_json::from_str::<kreuzberg::ApiSizeLimits>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::api::create_router_with_limits(
-        Some(config_core.unwrap_or_default()),
-        Some(limits_core.unwrap_or_default()),
-    )
-    .into()
+    kreuzberg::api::create_router_with_limits(Some(config_core.unwrap_or_default()), &limits).into()
 }
 
 #[rustler::nif]
 pub fn create_router_with_limits_and_server_config(
     config: Option<String>,
-    limits: Option<String>,
+    limits: String,
     server_config: Option<String>,
 ) -> String {
     let config_core: Option<kreuzberg::ExtractionConfig> = config
         .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let limits_core: Option<kreuzberg::ApiSizeLimits> = limits
-        .map(|s| serde_json::from_str::<kreuzberg::ApiSizeLimits>(&s))
         .transpose()
         .map_err(|e| e.to_string())?;
     let server_config_core: Option<kreuzberg::ServerConfig> = server_config
@@ -7169,7 +5532,7 @@ pub fn create_router_with_limits_and_server_config(
         .map_err(|e| e.to_string())?;
     kreuzberg::api::create_router_with_limits_and_server_config(
         Some(config_core.unwrap_or_default()),
-        Some(limits_core.unwrap_or_default()),
+        &limits,
         Some(server_config_core.unwrap_or_default()),
     )
     .into()
@@ -7198,26 +5561,17 @@ pub fn serve_with_config_and_limits_async(
     host: String,
     port: u16,
     config: Option<String>,
-    limits: Option<String>,
+    limits: String,
 ) -> Result<(), String> {
     let config_core: Option<kreuzberg::ExtractionConfig> = config
         .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
         .transpose()
         .map_err(|e| e.to_string())?;
-    let limits_core: Option<kreuzberg::ApiSizeLimits> = limits
-        .map(|s| serde_json::from_str::<kreuzberg::ApiSizeLimits>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
     let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
     let result = rt
         .block_on(async {
-            kreuzberg::api::serve_with_config_and_limits(
-                &host,
-                port,
-                Some(config_core.unwrap_or_default()),
-                Some(limits_core.unwrap_or_default()),
-            )
-            .await
+            kreuzberg::api::serve_with_config_and_limits(&host, port, Some(config_core.unwrap_or_default()), &limits)
+                .await
         })
         .map_err(|e| e.to_string())?;
     Ok(result)
@@ -7568,14 +5922,13 @@ pub fn extract_keywords(text: String, config: Option<String>) -> Result<Vec<Keyw
 }
 
 #[rustler::nif]
-pub fn text_block_to_element(block: TextBlock, page_number: usize) -> Result<Option<OcrElement>, String> {
-    let result = kreuzberg::ocr::text_block_to_element(block.into(), page_number).map_err(|e| e.to_string())?;
-    Ok(result)
+pub fn text_block_to_element(block: String, page_number: usize) -> Result<Option<OcrElement>, String> {
+    Err(String::from("Not implemented: text_block_to_element"))
 }
 
 #[rustler::nif]
-pub fn tsv_row_to_element(row: TsvRow) -> OcrElement {
-    kreuzberg::ocr::tsv_row_to_element(row.into()).into()
+pub fn tsv_row_to_element(row: String) -> OcrElement {
+    panic!("alef: tsv_row_to_element not auto-delegatable")
 }
 
 #[rustler::nif]
@@ -7584,16 +5937,13 @@ pub fn iterator_word_to_element(word: String, block_type: String, para_info: Str
 }
 
 #[rustler::nif]
-pub fn element_to_hocr_word(element: OcrElement) -> HocrWord {
-    kreuzberg::ocr::element_to_hocr_word(element.into()).into()
+pub fn element_to_hocr_word(element: OcrElement) -> String {
+    String::from("[unimplemented: element_to_hocr_word]")
 }
 
 #[rustler::nif]
-pub fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<HocrWord> {
-    kreuzberg::ocr::elements_to_hocr_words(elements, min_confidence)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<String> {
+    Vec::new()
 }
 
 #[rustler::nif]
@@ -7630,9 +5980,8 @@ pub fn recognize_page_tables(
 }
 
 #[rustler::nif]
-pub fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<HocrWord>, String> {
-    let result = kreuzberg::ocr::extract_words_from_tsv(&tsv_data, min_confidence).map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
+pub fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<String>, String> {
+    Err(String::from("Not implemented: extract_words_from_tsv"))
 }
 
 #[rustler::nif]
@@ -7784,15 +6133,8 @@ pub fn extract_annotations_from_document(document: String) -> Vec<PdfAnnotation>
 }
 
 #[rustler::nif]
-pub fn extract_bookmarks(document: Option<String>) -> Vec<Uri> {
-    let document_core: Option<kreuzberg::Document> = document
-        .map(|s| serde_json::from_str::<kreuzberg::Document>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::pdf::bookmarks::extract_bookmarks(Some(document_core.unwrap_or_default()))
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn extract_bookmarks(document: String) -> Vec<Uri> {
+    Vec::new()
 }
 
 #[rustler::nif]
@@ -7802,15 +6144,8 @@ pub fn extract_bundled_pdfium() -> Result<String, String> {
 }
 
 #[rustler::nif]
-pub fn extract_embedded_files(document: Option<String>) -> Vec<EmbeddedFile> {
-    let document_core: Option<kreuzberg::Document> = document
-        .map(|s| serde_json::from_str::<kreuzberg::Document>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::pdf::embedded_files::extract_embedded_files(Some(document_core.unwrap_or_default()))
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
+    Vec::new()
 }
 
 #[rustler::nif(schedule = "DirtyCpu")]
@@ -7852,9 +6187,8 @@ pub fn clear_font_cache() -> () {
 }
 
 #[rustler::nif]
-pub fn cluster_font_sizes(blocks: Vec<TextBlock>, k: usize) -> Result<Vec<FontSizeCluster>, String> {
-    let result = kreuzberg::pdf::cluster_font_sizes(blocks, k).map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
+pub fn cluster_font_sizes(blocks: Vec<String>, k: usize) -> Result<Vec<FontSizeCluster>, String> {
+    Err(String::from("Not implemented: cluster_font_sizes"))
 }
 
 #[rustler::nif]
@@ -7867,15 +6201,12 @@ pub fn assign_heading_levels_smart(
 }
 
 #[rustler::nif]
-pub fn assign_hierarchy_levels(blocks: Vec<TextBlock>, kmeans_result: KMeansResult) -> Vec<HierarchyBlock> {
-    kreuzberg::pdf::assign_hierarchy_levels(blocks, kmeans_result.into())
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn assign_hierarchy_levels(blocks: Vec<String>, kmeans_result: String) -> Vec<HierarchyBlock> {
+    Vec::new()
 }
 
 #[rustler::nif]
-pub fn assign_hierarchy_levels_from_clusters(blocks: Vec<TextBlock>, clusters: Vec<FontSizeCluster>) -> Vec<String> {
+pub fn assign_hierarchy_levels_from_clusters(blocks: Vec<String>, clusters: Vec<FontSizeCluster>) -> Vec<String> {
     Vec::new()
 }
 
@@ -7885,20 +6216,17 @@ pub fn extract_chars_with_fonts(page: String) -> Result<Vec<CharData>, String> {
 }
 
 #[rustler::nif]
-pub fn extract_segments_from_page(page: String) -> Result<Vec<SegmentData>, String> {
+pub fn extract_segments_from_page(page: String) -> Result<Vec<String>, String> {
     Err(String::from("Not implemented: extract_segments_from_page"))
 }
 
 #[rustler::nif]
-pub fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<TextBlock> {
-    kreuzberg::pdf::hierarchy::merge_chars_into_blocks(chars)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<String> {
+    Vec::new()
 }
 
 #[rustler::nif]
-pub fn should_trigger_ocr(page: String, blocks: Vec<TextBlock>, config: Option<String>) -> bool {
+pub fn should_trigger_ocr(page: String, blocks: Vec<String>, config: Option<String>) -> bool {
     let config_core: Option<kreuzberg::ExtractionConfig> = config
         .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
         .transpose()
@@ -7937,23 +6265,18 @@ pub fn detect_layout_for_images(images: Vec<String>, engine: String) -> Result<V
 }
 
 #[rustler::nif]
-pub fn extract_metadata(pdf_bytes: Vec<u8>) -> Result<PdfMetadata, String> {
-    let result = kreuzberg::pdf::extract_metadata(&pdf_bytes).map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn extract_metadata(pdf_bytes: Vec<u8>) -> Result<String, String> {
+    Err(String::from("Not implemented: extract_metadata"))
 }
 
 #[rustler::nif]
-pub fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: String) -> Result<PdfMetadata, String> {
-    let result =
-        kreuzberg::pdf::metadata::extract_metadata_with_password(&pdf_bytes, &password).map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: String) -> Result<String, String> {
+    Err(String::from("Not implemented: extract_metadata_with_password"))
 }
 
 #[rustler::nif]
-pub fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<PdfMetadata, String> {
-    let result =
-        kreuzberg::pdf::metadata::extract_metadata_with_passwords(&pdf_bytes, passwords).map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<String, String> {
+    Err(String::from("Not implemented: extract_metadata_with_passwords"))
 }
 
 #[rustler::nif]
@@ -7971,14 +6294,8 @@ pub fn extract_common_metadata_from_document(document: String) -> Result<CommonP
 }
 
 #[rustler::nif]
-pub fn render_page_to_image(pdf_bytes: Vec<u8>, page_index: usize, options: Option<String>) -> Result<String, String> {
-    let options_core: Option<kreuzberg::PageRenderOptions> = options
-        .map(|s| serde_json::from_str::<kreuzberg::PageRenderOptions>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::pdf::render_page_to_image(&pdf_bytes, page_index, Some(options_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn render_page_to_image(pdf_bytes: Vec<u8>, page_index: usize, options: String) -> Result<String, String> {
+    Err(String::from("Not implemented: render_page_to_image"))
 }
 
 #[rustler::nif]
@@ -7994,29 +6311,23 @@ pub fn render_pdf_page_to_png(
 }
 
 #[rustler::nif]
-pub fn extract_words_from_page(page: String, min_confidence: f64) -> Result<Vec<HocrWord>, String> {
+pub fn extract_words_from_page(page: String, min_confidence: f64) -> Result<Vec<String>, String> {
     Err(String::from("Not implemented: extract_words_from_page"))
 }
 
 #[rustler::nif]
-pub fn segment_to_hocr_word(seg: SegmentData, page_height: f32) -> HocrWord {
-    kreuzberg::pdf::table_reconstruct::segment_to_hocr_word(seg.into(), page_height).into()
+pub fn segment_to_hocr_word(seg: String, page_height: f32) -> String {
+    String::from("[unimplemented: segment_to_hocr_word]")
 }
 
 #[rustler::nif]
-pub fn split_segment_to_words(seg: SegmentData, page_height: f32) -> Vec<HocrWord> {
-    kreuzberg::pdf::table_reconstruct::split_segment_to_words(seg.into(), page_height)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn split_segment_to_words(seg: String, page_height: f32) -> Vec<String> {
+    Vec::new()
 }
 
 #[rustler::nif]
-pub fn segments_to_words(segments: Vec<SegmentData>, page_height: f32) -> Vec<HocrWord> {
-    kreuzberg::pdf::table_reconstruct::segments_to_words(segments, page_height)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn segments_to_words(segments: Vec<String>, page_height: f32) -> Vec<String> {
+    Vec::new()
 }
 
 #[rustler::nif]
@@ -8113,231 +6424,6 @@ pub fn serialize_to_json(result: Option<String>) -> Result<String, String> {
         .map_err(|e| e.to_string())?;
     let result = kreuzberg::serialize_to_json(Some(result_core.unwrap_or_default())).map_err(|e| e.to_string())?;
     Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn genericcache_new(
-    cache_type: String,
-    cache_dir: String,
-    max_age_days: f64,
-    max_cache_size_mb: f64,
-    min_free_space_mb: f64,
-) -> Result<ResourceArc<GenericCache>, String> {
-    let result = kreuzberg::GenericCache::new(
-        &cache_type,
-        &cache_dir,
-        max_age_days,
-        max_cache_size_mb,
-        min_free_space_mb,
-    )
-    .map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(GenericCache {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn genericcache_get(
-    resource: ResourceArc<GenericCache>,
-    cache_key: String,
-    source_file: String,
-    namespace: String,
-    ttl_override_secs: u64,
-) -> Result<Option<Vec<u8>>, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .get(&cache_key, &source_file, &namespace, ttl_override_secs)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn genericcache_get_default(
-    resource: ResourceArc<GenericCache>,
-    cache_key: String,
-    source_file: String,
-) -> Result<Option<Vec<u8>>, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .get_default(&cache_key, &source_file)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn genericcache_set(
-    resource: ResourceArc<GenericCache>,
-    cache_key: String,
-    data: Vec<u8>,
-    source_file: String,
-    namespace: String,
-    ttl_secs: u64,
-) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .set(&cache_key, &data, &source_file, &namespace, ttl_secs)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn genericcache_set_default(
-    resource: ResourceArc<GenericCache>,
-    cache_key: String,
-    data: Vec<u8>,
-    source_file: String,
-) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .set_default(&cache_key, &data, &source_file)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn genericcache_is_processing(resource: ResourceArc<GenericCache>, cache_key: String) -> Result<bool, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .is_processing(&cache_key)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn genericcache_mark_processing(resource: ResourceArc<GenericCache>, cache_key: String) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .mark_processing(&cache_key)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn genericcache_mark_complete(resource: ResourceArc<GenericCache>, cache_key: String) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .mark_complete(&cache_key)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn genericcache_clear(resource: ResourceArc<GenericCache>) -> Result<String, String> {
-    Err(String::from("Not implemented: genericcache_clear"))
-}
-
-#[rustler::nif]
-pub fn genericcache_delete_namespace(resource: ResourceArc<GenericCache>, namespace: String) -> Result<String, String> {
-    Err(String::from("Not implemented: genericcache_delete_namespace"))
-}
-
-#[rustler::nif]
-pub fn genericcache_get_stats(resource: ResourceArc<GenericCache>) -> Result<String, String> {
-    Err(String::from("Not implemented: genericcache_get_stats"))
-}
-
-#[rustler::nif]
-pub fn genericcache_get_stats_filtered(
-    resource: ResourceArc<GenericCache>,
-    namespace: String,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: genericcache_get_stats_filtered"))
-}
-
-#[rustler::nif]
-pub fn genericcache_cache_dir(resource: ResourceArc<GenericCache>) -> String {
-    resource
-        .inner
-        .as_ref()
-        .clone()
-        .cache_dir()
-        .to_string_lossy()
-        .to_string()
-}
-
-#[rustler::nif]
-pub fn genericcache_cache_type(resource: ResourceArc<GenericCache>) -> String {
-    resource.inner.as_ref().clone().cache_type().into()
-}
-
-#[rustler::nif]
-pub fn batchprocessorconfig_default() -> BatchProcessorConfig {
-    kreuzberg::BatchProcessorConfig::default().into()
-}
-
-#[rustler::nif]
-pub fn batchprocessor_with_config(config: BatchProcessorConfig) -> ResourceArc<BatchProcessor> {
-    ResourceArc::new(BatchProcessor {
-        inner: Arc::new(kreuzberg::BatchProcessor::with_config(config.into())),
-    })
-}
-
-#[rustler::nif]
-pub fn batchprocessor_with_pool_hint(hint: PoolSizeHint) -> ResourceArc<BatchProcessor> {
-    ResourceArc::new(BatchProcessor {
-        inner: Arc::new(kreuzberg::BatchProcessor::with_pool_hint(hint.into())),
-    })
-}
-
-#[rustler::nif]
-pub fn batchprocessor_string_pool(resource: ResourceArc<BatchProcessor>) -> ResourceArc<StringBufferPool> {
-    ResourceArc::new(StringBufferPool {
-        inner: Arc::new(resource.inner.as_ref().clone().string_pool()),
-    })
-}
-
-#[rustler::nif]
-pub fn batchprocessor_byte_pool(resource: ResourceArc<BatchProcessor>) -> ResourceArc<ByteBufferPool> {
-    ResourceArc::new(ByteBufferPool {
-        inner: Arc::new(resource.inner.as_ref().clone().byte_pool()),
-    })
-}
-
-#[rustler::nif]
-pub fn batchprocessor_config(resource: ResourceArc<BatchProcessor>) -> BatchProcessorConfig {
-    resource.inner.as_ref().clone().config().clone().into()
-}
-
-#[rustler::nif]
-pub fn batchprocessor_string_pool_size(resource: ResourceArc<BatchProcessor>) -> usize {
-    resource.inner.as_ref().clone().string_pool_size()
-}
-
-#[rustler::nif]
-pub fn batchprocessor_byte_pool_size(resource: ResourceArc<BatchProcessor>) -> usize {
-    resource.inner.as_ref().clone().byte_pool_size()
-}
-
-#[rustler::nif]
-pub fn batchprocessor_clear_pools(resource: ResourceArc<BatchProcessor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .clear_pools()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn batchprocessor_default() -> ResourceArc<BatchProcessor> {
-    ResourceArc::new(BatchProcessor {
-        inner: Arc::new(kreuzberg::BatchProcessor::default()),
-    })
 }
 
 #[rustler::nif]
@@ -8552,56 +6638,6 @@ pub fn serverconfig_from_json_file(path: String) -> Result<ServerConfig, String>
 }
 
 #[rustler::nif]
-pub fn jsonextractionconfig_default() -> JsonExtractionConfig {
-    kreuzberg::JsonExtractionConfig::default().into()
-}
-
-#[rustler::nif]
-pub fn hwpdocument_extract_text(obj: HwpDocument) -> String {
-    kreuzberg::HwpDocument::from(obj).extract_text().into()
-}
-
-#[rustler::nif]
-pub fn paratext_from_record(record: Record) -> Result<ParaText, String> {
-    let result = kreuzberg::ParaText::from_record(record.into()).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn fileheader_parse(data: Vec<u8>) -> Result<FileHeader, String> {
-    let result = kreuzberg::FileHeader::parse(&data).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn fileheader_is_compressed(obj: FileHeader) -> bool {
-    kreuzberg::FileHeader::from(obj).is_compressed()
-}
-
-#[rustler::nif]
-pub fn fileheader_is_encrypted(obj: FileHeader) -> bool {
-    kreuzberg::FileHeader::from(obj).is_encrypted()
-}
-
-#[rustler::nif]
-pub fn fileheader_is_distribute(obj: FileHeader) -> bool {
-    kreuzberg::FileHeader::from(obj).is_distribute()
-}
-
-#[rustler::nif]
-pub fn record_parse(reader: ResourceArc<StreamReader>) -> Result<Record, String> {
-    let result = kreuzberg::Record::parse(&reader.inner).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn record_data_reader(obj: Record) -> ResourceArc<StreamReader> {
-    ResourceArc::new(StreamReader {
-        inner: Arc::new(kreuzberg::Record::from(obj).data_reader()),
-    })
-}
-
-#[rustler::nif]
 pub fn streamreader_read_u8(resource: ResourceArc<StreamReader>) -> Result<u8, String> {
     let result = resource.inner.as_ref().clone().read_u8().map_err(|e| e.to_string())?;
     Ok(result)
@@ -8638,419 +6674,6 @@ pub fn streamreader_position(resource: ResourceArc<StreamReader>) -> u64 {
 #[rustler::nif]
 pub fn streamreader_remaining(resource: ResourceArc<StreamReader>) -> usize {
     resource.inner.as_ref().clone().remaining()
-}
-
-#[rustler::nif]
-pub fn cfbreader_from_bytes(bytes: Vec<u8>) -> Result<ResourceArc<CfbReader>, String> {
-    let result = kreuzberg::CfbReader::from_bytes(&bytes).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(CfbReader {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn extent_width_inches(obj: Extent) -> f64 {
-    kreuzberg::Extent::from(obj).width_inches()
-}
-
-#[rustler::nif]
-pub fn extent_height_inches(obj: Extent) -> f64 {
-    kreuzberg::Extent::from(obj).height_inches()
-}
-
-#[rustler::nif]
-pub fn document_resolve_heading_level(obj: Document, style_id: String) -> Option<u8> {
-    kreuzberg::Document::from(obj).resolve_heading_level(&style_id)
-}
-
-#[rustler::nif]
-pub fn document_extract_text(obj: Document) -> String {
-    kreuzberg::Document::from(obj).extract_text().into()
-}
-
-#[rustler::nif]
-pub fn document_to_markdown(obj: Document, inject_placeholders: bool) -> String {
-    kreuzberg::Document::from(obj).to_markdown(inject_placeholders).into()
-}
-
-#[rustler::nif]
-pub fn document_to_plain_text(obj: Document) -> String {
-    kreuzberg::Document::from(obj).to_plain_text().into()
-}
-
-#[rustler::nif]
-pub fn pagemargins_to_points(obj: PageMargins) -> PageMarginsPoints {
-    kreuzberg::PageMargins::from(obj).to_points().into()
-}
-
-#[rustler::nif]
-pub fn sectionproperties_page_width_points(obj: SectionProperties) -> Option<f64> {
-    kreuzberg::SectionProperties::from(obj).page_width_points()
-}
-
-#[rustler::nif]
-pub fn sectionproperties_page_height_points(obj: SectionProperties) -> Option<f64> {
-    kreuzberg::SectionProperties::from(obj).page_height_points()
-}
-
-#[rustler::nif]
-pub fn stylecatalog_resolve_style(obj: StyleCatalog, style_id: String) -> ResolvedStyle {
-    kreuzberg::StyleCatalog::from(obj).resolve_style(&style_id).into()
-}
-
-#[rustler::nif]
-pub fn pptxextractionoptions_default() -> PptxExtractionOptions {
-    kreuzberg::PptxExtractionOptions::default().into()
-}
-
-#[rustler::nif]
-pub fn codeextractor_default() -> ResourceArc<CodeExtractor> {
-    ResourceArc::new(CodeExtractor {
-        inner: Arc::new(kreuzberg::CodeExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn codeextractor_name(resource: ResourceArc<CodeExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn codeextractor_version(resource: ResourceArc<CodeExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn codeextractor_initialize(resource: ResourceArc<CodeExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn codeextractor_shutdown(resource: ResourceArc<CodeExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn codeextractor_description(resource: ResourceArc<CodeExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn codeextractor_author(resource: ResourceArc<CodeExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn codeextractor_extract_bytes_async(
-    resource: ResourceArc<CodeExtractor>,
-    content: Vec<u8>,
-    _mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: codeextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn codeextractor_extract_file_async(
-    resource: ResourceArc<CodeExtractor>,
-    path: String,
-    _mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: codeextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn codeextractor_supported_mime_types(resource: ResourceArc<CodeExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn codeextractor_priority(resource: ResourceArc<CodeExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn codeextractor_as_sync_extractor(resource: ResourceArc<CodeExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn codeextractor_extract_sync(
-    resource: ResourceArc<CodeExtractor>,
-    content: Vec<u8>,
-    _mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: codeextractor_extract_sync"))
-}
-
-#[rustler::nif]
-pub fn csvextractor_default() -> ResourceArc<CsvExtractor> {
-    ResourceArc::new(CsvExtractor {
-        inner: Arc::new(kreuzberg::CsvExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn csvextractor_name(resource: ResourceArc<CsvExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn csvextractor_version(resource: ResourceArc<CsvExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn csvextractor_initialize(resource: ResourceArc<CsvExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn csvextractor_shutdown(resource: ResourceArc<CsvExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn csvextractor_description(resource: ResourceArc<CsvExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn csvextractor_author(resource: ResourceArc<CsvExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn csvextractor_extract_bytes_async(
-    resource: ResourceArc<CsvExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: csvextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn csvextractor_supported_mime_types(resource: ResourceArc<CsvExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn csvextractor_priority(resource: ResourceArc<CsvExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn structuredextractor_default() -> ResourceArc<StructuredExtractor> {
-    ResourceArc::new(StructuredExtractor {
-        inner: Arc::new(kreuzberg::StructuredExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn structuredextractor_name(resource: ResourceArc<StructuredExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn structuredextractor_version(resource: ResourceArc<StructuredExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn structuredextractor_initialize(resource: ResourceArc<StructuredExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn structuredextractor_shutdown(resource: ResourceArc<StructuredExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn structuredextractor_extract_bytes_async(
-    resource: ResourceArc<StructuredExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: structuredextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn structuredextractor_supported_mime_types(resource: ResourceArc<StructuredExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn structuredextractor_priority(resource: ResourceArc<StructuredExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn plaintextextractor_default() -> ResourceArc<PlainTextExtractor> {
-    ResourceArc::new(PlainTextExtractor {
-        inner: Arc::new(kreuzberg::PlainTextExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn plaintextextractor_name(resource: ResourceArc<PlainTextExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn plaintextextractor_version(resource: ResourceArc<PlainTextExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn plaintextextractor_initialize(resource: ResourceArc<PlainTextExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn plaintextextractor_shutdown(resource: ResourceArc<PlainTextExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn plaintextextractor_description(resource: ResourceArc<PlainTextExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn plaintextextractor_author(resource: ResourceArc<PlainTextExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn plaintextextractor_extract_bytes_async(
-    resource: ResourceArc<PlainTextExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: plaintextextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn plaintextextractor_supported_mime_types(resource: ResourceArc<PlainTextExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn plaintextextractor_priority(resource: ResourceArc<PlainTextExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn djotextractor_build_internal_document(events: Vec<String>) -> String {
-    String::from("[unimplemented: djotextractor_build_internal_document]")
-}
-
-#[rustler::nif]
-pub fn djotextractor_default() -> ResourceArc<DjotExtractor> {
-    ResourceArc::new(DjotExtractor {
-        inner: Arc::new(kreuzberg::DjotExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn djotextractor_name(resource: ResourceArc<DjotExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn djotextractor_version(resource: ResourceArc<DjotExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn djotextractor_initialize(resource: ResourceArc<DjotExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn djotextractor_shutdown(resource: ResourceArc<DjotExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn djotextractor_description(resource: ResourceArc<DjotExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn djotextractor_author(resource: ResourceArc<DjotExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn djotextractor_extract_bytes_async(
-    resource: ResourceArc<DjotExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: djotextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn djotextractor_extract_file_async(
-    resource: ResourceArc<DjotExtractor>,
-    path: String,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: djotextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn djotextractor_supported_mime_types(resource: ResourceArc<DjotExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn djotextractor_priority(resource: ResourceArc<DjotExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
 }
 
 #[rustler::nif]
@@ -9132,2477 +6755,6 @@ pub fn tablevalidator_current_cells(resource: ResourceArc<TableValidator>) -> us
 }
 
 #[rustler::nif]
-pub fn imageextractor_default() -> ResourceArc<ImageExtractor> {
-    ResourceArc::new(ImageExtractor {
-        inner: Arc::new(kreuzberg::ImageExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn imageextractor_name(resource: ResourceArc<ImageExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn imageextractor_version(resource: ResourceArc<ImageExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn imageextractor_initialize(resource: ResourceArc<ImageExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn imageextractor_shutdown(resource: ResourceArc<ImageExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn imageextractor_description(resource: ResourceArc<ImageExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn imageextractor_author(resource: ResourceArc<ImageExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn imageextractor_extract_bytes_async(
-    resource: ResourceArc<ImageExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: imageextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn imageextractor_supported_mime_types(resource: ResourceArc<ImageExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn imageextractor_priority(resource: ResourceArc<ImageExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn zipextractor_default() -> ResourceArc<ZipExtractor> {
-    ResourceArc::new(ZipExtractor {
-        inner: Arc::new(kreuzberg::ZipExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn zipextractor_name(resource: ResourceArc<ZipExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn zipextractor_version(resource: ResourceArc<ZipExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn zipextractor_initialize(resource: ResourceArc<ZipExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn zipextractor_shutdown(resource: ResourceArc<ZipExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn zipextractor_description(resource: ResourceArc<ZipExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn zipextractor_author(resource: ResourceArc<ZipExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn zipextractor_extract_bytes_async(
-    resource: ResourceArc<ZipExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: zipextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn zipextractor_supported_mime_types(resource: ResourceArc<ZipExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn zipextractor_priority(resource: ResourceArc<ZipExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn zipextractor_as_sync_extractor(resource: ResourceArc<ZipExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn zipextractor_extract_sync(
-    resource: ResourceArc<ZipExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: zipextractor_extract_sync"))
-}
-
-#[rustler::nif]
-pub fn tarextractor_default() -> ResourceArc<TarExtractor> {
-    ResourceArc::new(TarExtractor {
-        inner: Arc::new(kreuzberg::TarExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn tarextractor_name(resource: ResourceArc<TarExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn tarextractor_version(resource: ResourceArc<TarExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn tarextractor_initialize(resource: ResourceArc<TarExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn tarextractor_shutdown(resource: ResourceArc<TarExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn tarextractor_description(resource: ResourceArc<TarExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn tarextractor_author(resource: ResourceArc<TarExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn tarextractor_extract_bytes_async(
-    resource: ResourceArc<TarExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: tarextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn tarextractor_supported_mime_types(resource: ResourceArc<TarExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn tarextractor_priority(resource: ResourceArc<TarExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn tarextractor_as_sync_extractor(resource: ResourceArc<TarExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn tarextractor_extract_sync(
-    resource: ResourceArc<TarExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: tarextractor_extract_sync"))
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_default() -> ResourceArc<SevenZExtractor> {
-    ResourceArc::new(SevenZExtractor {
-        inner: Arc::new(kreuzberg::SevenZExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_name(resource: ResourceArc<SevenZExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_version(resource: ResourceArc<SevenZExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_initialize(resource: ResourceArc<SevenZExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_shutdown(resource: ResourceArc<SevenZExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_description(resource: ResourceArc<SevenZExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_author(resource: ResourceArc<SevenZExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn sevenzextractor_extract_bytes_async(
-    resource: ResourceArc<SevenZExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: sevenzextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_supported_mime_types(resource: ResourceArc<SevenZExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_priority(resource: ResourceArc<SevenZExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_as_sync_extractor(resource: ResourceArc<SevenZExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn sevenzextractor_extract_sync(
-    resource: ResourceArc<SevenZExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: sevenzextractor_extract_sync"))
-}
-
-#[rustler::nif]
-pub fn gzipextractor_default() -> ResourceArc<GzipExtractor> {
-    ResourceArc::new(GzipExtractor {
-        inner: Arc::new(kreuzberg::GzipExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn gzipextractor_name(resource: ResourceArc<GzipExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn gzipextractor_version(resource: ResourceArc<GzipExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn gzipextractor_initialize(resource: ResourceArc<GzipExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn gzipextractor_shutdown(resource: ResourceArc<GzipExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn gzipextractor_description(resource: ResourceArc<GzipExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn gzipextractor_author(resource: ResourceArc<GzipExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn gzipextractor_extract_bytes_async(
-    resource: ResourceArc<GzipExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: gzipextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn gzipextractor_supported_mime_types(resource: ResourceArc<GzipExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn gzipextractor_priority(resource: ResourceArc<GzipExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn gzipextractor_as_sync_extractor(resource: ResourceArc<GzipExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn gzipextractor_extract_sync(
-    resource: ResourceArc<GzipExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: gzipextractor_extract_sync"))
-}
-
-#[rustler::nif]
-pub fn emailextractor_default() -> ResourceArc<EmailExtractor> {
-    ResourceArc::new(EmailExtractor {
-        inner: Arc::new(kreuzberg::EmailExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn emailextractor_name(resource: ResourceArc<EmailExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn emailextractor_version(resource: ResourceArc<EmailExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn emailextractor_initialize(resource: ResourceArc<EmailExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn emailextractor_shutdown(resource: ResourceArc<EmailExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn emailextractor_extract_sync(
-    resource: ResourceArc<EmailExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: emailextractor_extract_sync"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn emailextractor_extract_bytes_async(
-    resource: ResourceArc<EmailExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: emailextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn emailextractor_supported_mime_types(resource: ResourceArc<EmailExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn emailextractor_priority(resource: ResourceArc<EmailExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn emailextractor_as_sync_extractor(resource: ResourceArc<EmailExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn pstextractor_default() -> ResourceArc<PstExtractor> {
-    ResourceArc::new(PstExtractor {
-        inner: Arc::new(kreuzberg::PstExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn pstextractor_name(resource: ResourceArc<PstExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn pstextractor_version(resource: ResourceArc<PstExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn pstextractor_initialize(resource: ResourceArc<PstExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn pstextractor_shutdown(resource: ResourceArc<PstExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn pstextractor_extract_sync(
-    resource: ResourceArc<PstExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: pstextractor_extract_sync"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn pstextractor_extract_bytes_async(
-    resource: ResourceArc<PstExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: pstextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn pstextractor_supported_mime_types(resource: ResourceArc<PstExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn pstextractor_priority(resource: ResourceArc<PstExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn pstextractor_as_sync_extractor(resource: ResourceArc<PstExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn excelextractor_default() -> ResourceArc<ExcelExtractor> {
-    ResourceArc::new(ExcelExtractor {
-        inner: Arc::new(kreuzberg::ExcelExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn excelextractor_name(resource: ResourceArc<ExcelExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn excelextractor_version(resource: ResourceArc<ExcelExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn excelextractor_initialize(resource: ResourceArc<ExcelExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn excelextractor_shutdown(resource: ResourceArc<ExcelExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn excelextractor_extract_sync(
-    resource: ResourceArc<ExcelExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: excelextractor_extract_sync"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn excelextractor_extract_bytes_async(
-    resource: ResourceArc<ExcelExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: excelextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn excelextractor_extract_file_async(
-    resource: ResourceArc<ExcelExtractor>,
-    path: String,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: excelextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn excelextractor_supported_mime_types(resource: ResourceArc<ExcelExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn excelextractor_priority(resource: ResourceArc<ExcelExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn excelextractor_as_sync_extractor(resource: ResourceArc<ExcelExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn hwpextractor_default() -> ResourceArc<HwpExtractor> {
-    ResourceArc::new(HwpExtractor {
-        inner: Arc::new(kreuzberg::HwpExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn hwpextractor_name(resource: ResourceArc<HwpExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn hwpextractor_version(resource: ResourceArc<HwpExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn hwpextractor_initialize(resource: ResourceArc<HwpExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn hwpextractor_shutdown(resource: ResourceArc<HwpExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn hwpextractor_description(resource: ResourceArc<HwpExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn hwpextractor_author(resource: ResourceArc<HwpExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn hwpextractor_extract_bytes_async(
-    resource: ResourceArc<HwpExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: hwpextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn hwpextractor_supported_mime_types(resource: ResourceArc<HwpExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn hwpextractor_priority(resource: ResourceArc<HwpExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn keynoteextractor_default() -> ResourceArc<KeynoteExtractor> {
-    ResourceArc::new(KeynoteExtractor {
-        inner: Arc::new(kreuzberg::KeynoteExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn keynoteextractor_name(resource: ResourceArc<KeynoteExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn keynoteextractor_version(resource: ResourceArc<KeynoteExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn keynoteextractor_initialize(resource: ResourceArc<KeynoteExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn keynoteextractor_shutdown(resource: ResourceArc<KeynoteExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn keynoteextractor_description(resource: ResourceArc<KeynoteExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn keynoteextractor_author(resource: ResourceArc<KeynoteExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn keynoteextractor_extract_bytes_async(
-    resource: ResourceArc<KeynoteExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: keynoteextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn keynoteextractor_supported_mime_types(resource: ResourceArc<KeynoteExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn keynoteextractor_priority(resource: ResourceArc<KeynoteExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn numbersextractor_default() -> ResourceArc<NumbersExtractor> {
-    ResourceArc::new(NumbersExtractor {
-        inner: Arc::new(kreuzberg::NumbersExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn numbersextractor_name(resource: ResourceArc<NumbersExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn numbersextractor_version(resource: ResourceArc<NumbersExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn numbersextractor_initialize(resource: ResourceArc<NumbersExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn numbersextractor_shutdown(resource: ResourceArc<NumbersExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn numbersextractor_description(resource: ResourceArc<NumbersExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn numbersextractor_author(resource: ResourceArc<NumbersExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn numbersextractor_extract_bytes_async(
-    resource: ResourceArc<NumbersExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: numbersextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn numbersextractor_supported_mime_types(resource: ResourceArc<NumbersExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn numbersextractor_priority(resource: ResourceArc<NumbersExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn pagesextractor_default() -> ResourceArc<PagesExtractor> {
-    ResourceArc::new(PagesExtractor {
-        inner: Arc::new(kreuzberg::PagesExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn pagesextractor_name(resource: ResourceArc<PagesExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn pagesextractor_version(resource: ResourceArc<PagesExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn pagesextractor_initialize(resource: ResourceArc<PagesExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn pagesextractor_shutdown(resource: ResourceArc<PagesExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn pagesextractor_description(resource: ResourceArc<PagesExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn pagesextractor_author(resource: ResourceArc<PagesExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn pagesextractor_extract_bytes_async(
-    resource: ResourceArc<PagesExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: pagesextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn pagesextractor_supported_mime_types(resource: ResourceArc<PagesExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn pagesextractor_priority(resource: ResourceArc<PagesExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn htmlextractor_default() -> ResourceArc<HtmlExtractor> {
-    ResourceArc::new(HtmlExtractor {
-        inner: Arc::new(kreuzberg::HtmlExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn htmlextractor_name(resource: ResourceArc<HtmlExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn htmlextractor_version(resource: ResourceArc<HtmlExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn htmlextractor_initialize(resource: ResourceArc<HtmlExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn htmlextractor_shutdown(resource: ResourceArc<HtmlExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn htmlextractor_extract_sync(
-    resource: ResourceArc<HtmlExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: htmlextractor_extract_sync"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn htmlextractor_extract_bytes_async(
-    resource: ResourceArc<HtmlExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: htmlextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn htmlextractor_supported_mime_types(resource: ResourceArc<HtmlExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn htmlextractor_priority(resource: ResourceArc<HtmlExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn htmlextractor_as_sync_extractor(resource: ResourceArc<HtmlExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn bibtexextractor_default() -> ResourceArc<BibtexExtractor> {
-    ResourceArc::new(BibtexExtractor {
-        inner: Arc::new(kreuzberg::BibtexExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn bibtexextractor_name(resource: ResourceArc<BibtexExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn bibtexextractor_version(resource: ResourceArc<BibtexExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn bibtexextractor_initialize(resource: ResourceArc<BibtexExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn bibtexextractor_shutdown(resource: ResourceArc<BibtexExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn bibtexextractor_description(resource: ResourceArc<BibtexExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn bibtexextractor_author(resource: ResourceArc<BibtexExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn bibtexextractor_extract_bytes_async(
-    resource: ResourceArc<BibtexExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: bibtexextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn bibtexextractor_supported_mime_types(resource: ResourceArc<BibtexExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn bibtexextractor_priority(resource: ResourceArc<BibtexExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn citationextractor_default() -> ResourceArc<CitationExtractor> {
-    ResourceArc::new(CitationExtractor {
-        inner: Arc::new(kreuzberg::CitationExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn citationextractor_name(resource: ResourceArc<CitationExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn citationextractor_version(resource: ResourceArc<CitationExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn citationextractor_initialize(resource: ResourceArc<CitationExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn citationextractor_shutdown(resource: ResourceArc<CitationExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn citationextractor_description(resource: ResourceArc<CitationExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn citationextractor_author(resource: ResourceArc<CitationExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn citationextractor_extract_bytes_async(
-    resource: ResourceArc<CitationExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: citationextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn citationextractor_supported_mime_types(resource: ResourceArc<CitationExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn citationextractor_priority(resource: ResourceArc<CitationExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn docextractor_default() -> ResourceArc<DocExtractor> {
-    ResourceArc::new(DocExtractor {
-        inner: Arc::new(kreuzberg::DocExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn docextractor_name(resource: ResourceArc<DocExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn docextractor_version(resource: ResourceArc<DocExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn docextractor_initialize(resource: ResourceArc<DocExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn docextractor_shutdown(resource: ResourceArc<DocExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn docextractor_description(resource: ResourceArc<DocExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn docextractor_author(resource: ResourceArc<DocExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn docextractor_extract_bytes_async(
-    resource: ResourceArc<DocExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: docextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn docextractor_supported_mime_types(resource: ResourceArc<DocExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn docextractor_priority(resource: ResourceArc<DocExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn dbfextractor_default() -> ResourceArc<DbfExtractor> {
-    ResourceArc::new(DbfExtractor {
-        inner: Arc::new(kreuzberg::DbfExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn dbfextractor_name(resource: ResourceArc<DbfExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn dbfextractor_version(resource: ResourceArc<DbfExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn dbfextractor_initialize(resource: ResourceArc<DbfExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn dbfextractor_shutdown(resource: ResourceArc<DbfExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn dbfextractor_description(resource: ResourceArc<DbfExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn dbfextractor_author(resource: ResourceArc<DbfExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn dbfextractor_extract_bytes_async(
-    resource: ResourceArc<DbfExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: dbfextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn dbfextractor_supported_mime_types(resource: ResourceArc<DbfExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn dbfextractor_priority(resource: ResourceArc<DbfExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn docxextractor_default() -> ResourceArc<DocxExtractor> {
-    ResourceArc::new(DocxExtractor {
-        inner: Arc::new(kreuzberg::DocxExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn docxextractor_name(resource: ResourceArc<DocxExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn docxextractor_version(resource: ResourceArc<DocxExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn docxextractor_initialize(resource: ResourceArc<DocxExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn docxextractor_shutdown(resource: ResourceArc<DocxExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn docxextractor_description(resource: ResourceArc<DocxExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn docxextractor_author(resource: ResourceArc<DocxExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn docxextractor_extract_bytes_async(
-    resource: ResourceArc<DocxExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: docxextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn docxextractor_supported_mime_types(resource: ResourceArc<DocxExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn docxextractor_priority(resource: ResourceArc<DocxExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn epubextractor_default() -> ResourceArc<EpubExtractor> {
-    ResourceArc::new(EpubExtractor {
-        inner: Arc::new(kreuzberg::EpubExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn epubextractor_name(resource: ResourceArc<EpubExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn epubextractor_version(resource: ResourceArc<EpubExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn epubextractor_initialize(resource: ResourceArc<EpubExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn epubextractor_shutdown(resource: ResourceArc<EpubExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn epubextractor_description(resource: ResourceArc<EpubExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn epubextractor_author(resource: ResourceArc<EpubExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn epubextractor_extract_bytes_async(
-    resource: ResourceArc<EpubExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: epubextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn epubextractor_supported_mime_types(resource: ResourceArc<EpubExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn epubextractor_priority(resource: ResourceArc<EpubExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn fictionbookextractor_default() -> ResourceArc<FictionBookExtractor> {
-    ResourceArc::new(FictionBookExtractor {
-        inner: Arc::new(kreuzberg::FictionBookExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn fictionbookextractor_name(resource: ResourceArc<FictionBookExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn fictionbookextractor_version(resource: ResourceArc<FictionBookExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn fictionbookextractor_initialize(resource: ResourceArc<FictionBookExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn fictionbookextractor_shutdown(resource: ResourceArc<FictionBookExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn fictionbookextractor_description(resource: ResourceArc<FictionBookExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn fictionbookextractor_author(resource: ResourceArc<FictionBookExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn fictionbookextractor_extract_bytes_async(
-    resource: ResourceArc<FictionBookExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from(
-        "Not implemented: fictionbookextractor_extract_bytes_async",
-    ))
-}
-
-#[rustler::nif]
-pub fn fictionbookextractor_supported_mime_types(resource: ResourceArc<FictionBookExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn fictionbookextractor_priority(resource: ResourceArc<FictionBookExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn markdownextractor_build_internal_document(events: Vec<String>, yaml: String) -> String {
-    String::from("[unimplemented: markdownextractor_build_internal_document]")
-}
-
-#[rustler::nif]
-pub fn markdownextractor_default() -> ResourceArc<MarkdownExtractor> {
-    ResourceArc::new(MarkdownExtractor {
-        inner: Arc::new(kreuzberg::MarkdownExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn markdownextractor_name(resource: ResourceArc<MarkdownExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn markdownextractor_version(resource: ResourceArc<MarkdownExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn markdownextractor_initialize(resource: ResourceArc<MarkdownExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn markdownextractor_shutdown(resource: ResourceArc<MarkdownExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn markdownextractor_description(resource: ResourceArc<MarkdownExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn markdownextractor_author(resource: ResourceArc<MarkdownExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn markdownextractor_extract_bytes_async(
-    resource: ResourceArc<MarkdownExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: markdownextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn markdownextractor_extract_file_async(
-    resource: ResourceArc<MarkdownExtractor>,
-    path: String,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: markdownextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn markdownextractor_supported_mime_types(resource: ResourceArc<MarkdownExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn markdownextractor_priority(resource: ResourceArc<MarkdownExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn mdxextractor_build_internal_document(events: Vec<String>, yaml: String, raw_jsx_blocks: Vec<String>) -> String {
-    String::from("[unimplemented: mdxextractor_build_internal_document]")
-}
-
-#[rustler::nif]
-pub fn mdxextractor_default() -> ResourceArc<MdxExtractor> {
-    ResourceArc::new(MdxExtractor {
-        inner: Arc::new(kreuzberg::MdxExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn mdxextractor_name(resource: ResourceArc<MdxExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn mdxextractor_version(resource: ResourceArc<MdxExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn mdxextractor_initialize(resource: ResourceArc<MdxExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn mdxextractor_shutdown(resource: ResourceArc<MdxExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn mdxextractor_description(resource: ResourceArc<MdxExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn mdxextractor_author(resource: ResourceArc<MdxExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn mdxextractor_extract_bytes_async(
-    resource: ResourceArc<MdxExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: mdxextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn mdxextractor_extract_file_async(
-    resource: ResourceArc<MdxExtractor>,
-    path: String,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: mdxextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn mdxextractor_supported_mime_types(resource: ResourceArc<MdxExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn mdxextractor_priority(resource: ResourceArc<MdxExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn rstextractor_build_internal_document(content: String, inject_placeholders: bool) -> String {
-    String::from("[unimplemented: rstextractor_build_internal_document]")
-}
-
-#[rustler::nif]
-pub fn rstextractor_default() -> ResourceArc<RstExtractor> {
-    ResourceArc::new(RstExtractor {
-        inner: Arc::new(kreuzberg::RstExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn rstextractor_name(resource: ResourceArc<RstExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn rstextractor_version(resource: ResourceArc<RstExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn rstextractor_initialize(resource: ResourceArc<RstExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn rstextractor_shutdown(resource: ResourceArc<RstExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn rstextractor_description(resource: ResourceArc<RstExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn rstextractor_author(resource: ResourceArc<RstExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn rstextractor_extract_bytes_async(
-    resource: ResourceArc<RstExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: rstextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn rstextractor_extract_file_async(
-    resource: ResourceArc<RstExtractor>,
-    path: String,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: rstextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn rstextractor_supported_mime_types(resource: ResourceArc<RstExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn rstextractor_priority(resource: ResourceArc<RstExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn latexextractor_build_internal_document(source: String, inject_placeholders: bool) -> String {
-    String::from("[unimplemented: latexextractor_build_internal_document]")
-}
-
-#[rustler::nif]
-pub fn latexextractor_default() -> ResourceArc<LatexExtractor> {
-    ResourceArc::new(LatexExtractor {
-        inner: Arc::new(kreuzberg::LatexExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn latexextractor_name(resource: ResourceArc<LatexExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn latexextractor_version(resource: ResourceArc<LatexExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn latexextractor_initialize(resource: ResourceArc<LatexExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn latexextractor_shutdown(resource: ResourceArc<LatexExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn latexextractor_description(resource: ResourceArc<LatexExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn latexextractor_author(resource: ResourceArc<LatexExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn latexextractor_extract_bytes_async(
-    resource: ResourceArc<LatexExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: latexextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn latexextractor_extract_file_async(
-    resource: ResourceArc<LatexExtractor>,
-    path: String,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: latexextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn latexextractor_supported_mime_types(resource: ResourceArc<LatexExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn latexextractor_priority(resource: ResourceArc<LatexExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn jupyterextractor_default() -> ResourceArc<JupyterExtractor> {
-    ResourceArc::new(JupyterExtractor {
-        inner: Arc::new(kreuzberg::JupyterExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn jupyterextractor_name(resource: ResourceArc<JupyterExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn jupyterextractor_version(resource: ResourceArc<JupyterExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn jupyterextractor_initialize(resource: ResourceArc<JupyterExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn jupyterextractor_shutdown(resource: ResourceArc<JupyterExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn jupyterextractor_description(resource: ResourceArc<JupyterExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn jupyterextractor_author(resource: ResourceArc<JupyterExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn jupyterextractor_extract_bytes_async(
-    resource: ResourceArc<JupyterExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: jupyterextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn jupyterextractor_supported_mime_types(resource: ResourceArc<JupyterExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn jupyterextractor_priority(resource: ResourceArc<JupyterExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_build_internal_document(org_text: String) -> String {
-    String::from("[unimplemented: orgmodeextractor_build_internal_document]")
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_default() -> ResourceArc<OrgModeExtractor> {
-    ResourceArc::new(OrgModeExtractor {
-        inner: Arc::new(kreuzberg::OrgModeExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_name(resource: ResourceArc<OrgModeExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_version(resource: ResourceArc<OrgModeExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_initialize(resource: ResourceArc<OrgModeExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_shutdown(resource: ResourceArc<OrgModeExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_description(resource: ResourceArc<OrgModeExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_author(resource: ResourceArc<OrgModeExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn orgmodeextractor_extract_bytes_async(
-    resource: ResourceArc<OrgModeExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: orgmodeextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn orgmodeextractor_extract_file_async(
-    resource: ResourceArc<OrgModeExtractor>,
-    path: String,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: orgmodeextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_supported_mime_types(resource: ResourceArc<OrgModeExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn orgmodeextractor_priority(resource: ResourceArc<OrgModeExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn odtextractor_default() -> ResourceArc<OdtExtractor> {
-    ResourceArc::new(OdtExtractor {
-        inner: Arc::new(kreuzberg::OdtExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn odtextractor_name(resource: ResourceArc<OdtExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn odtextractor_version(resource: ResourceArc<OdtExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn odtextractor_initialize(resource: ResourceArc<OdtExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn odtextractor_shutdown(resource: ResourceArc<OdtExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn odtextractor_description(resource: ResourceArc<OdtExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn odtextractor_author(resource: ResourceArc<OdtExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn odtextractor_extract_bytes_async(
-    resource: ResourceArc<OdtExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: odtextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn odtextractor_supported_mime_types(resource: ResourceArc<OdtExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn odtextractor_priority(resource: ResourceArc<OdtExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn opmlextractor_default() -> ResourceArc<OpmlExtractor> {
-    ResourceArc::new(OpmlExtractor {
-        inner: Arc::new(kreuzberg::OpmlExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn opmlextractor_name(resource: ResourceArc<OpmlExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn opmlextractor_version(resource: ResourceArc<OpmlExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn opmlextractor_initialize(resource: ResourceArc<OpmlExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn opmlextractor_shutdown(resource: ResourceArc<OpmlExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn opmlextractor_description(resource: ResourceArc<OpmlExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn opmlextractor_author(resource: ResourceArc<OpmlExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn opmlextractor_extract_bytes_async(
-    resource: ResourceArc<OpmlExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: opmlextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn opmlextractor_supported_mime_types(resource: ResourceArc<OpmlExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn opmlextractor_priority(resource: ResourceArc<OpmlExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn typstextractor_default() -> ResourceArc<TypstExtractor> {
-    ResourceArc::new(TypstExtractor {
-        inner: Arc::new(kreuzberg::TypstExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn typstextractor_name(resource: ResourceArc<TypstExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn typstextractor_version(resource: ResourceArc<TypstExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn typstextractor_initialize(resource: ResourceArc<TypstExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn typstextractor_shutdown(resource: ResourceArc<TypstExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn typstextractor_description(resource: ResourceArc<TypstExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn typstextractor_author(resource: ResourceArc<TypstExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn typstextractor_extract_bytes_async(
-    resource: ResourceArc<TypstExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: typstextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn typstextractor_extract_file_async(
-    resource: ResourceArc<TypstExtractor>,
-    path: String,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: typstextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn typstextractor_supported_mime_types(resource: ResourceArc<TypstExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn typstextractor_priority(resource: ResourceArc<TypstExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn jatsextractor_default() -> ResourceArc<JatsExtractor> {
-    ResourceArc::new(JatsExtractor {
-        inner: Arc::new(kreuzberg::JatsExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn jatsextractor_name(resource: ResourceArc<JatsExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn jatsextractor_version(resource: ResourceArc<JatsExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn jatsextractor_initialize(resource: ResourceArc<JatsExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn jatsextractor_shutdown(resource: ResourceArc<JatsExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn jatsextractor_extract_bytes_async(
-    resource: ResourceArc<JatsExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: jatsextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn jatsextractor_supported_mime_types(resource: ResourceArc<JatsExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn jatsextractor_priority(resource: ResourceArc<JatsExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn nativetextstats_compute(text: String, thresholds: OcrQualityThresholds) -> NativeTextStats {
-    kreuzberg::NativeTextStats::compute(&text, thresholds.into()).into()
-}
-
-#[rustler::nif]
-pub fn nativetextstats_from(text: String) -> NativeTextStats {
-    kreuzberg::NativeTextStats::from(&text).into()
-}
-
-#[rustler::nif]
-pub fn pdfextractor_default() -> ResourceArc<PdfExtractor> {
-    ResourceArc::new(PdfExtractor {
-        inner: Arc::new(kreuzberg::PdfExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn pdfextractor_name(resource: ResourceArc<PdfExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn pdfextractor_version(resource: ResourceArc<PdfExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn pdfextractor_initialize(resource: ResourceArc<PdfExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn pdfextractor_shutdown(resource: ResourceArc<PdfExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn pdfextractor_extract_bytes_async(
-    resource: ResourceArc<PdfExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: pdfextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn pdfextractor_supported_mime_types(resource: ResourceArc<PdfExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn pptextractor_default() -> ResourceArc<PptExtractor> {
-    ResourceArc::new(PptExtractor {
-        inner: Arc::new(kreuzberg::PptExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn pptextractor_name(resource: ResourceArc<PptExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn pptextractor_version(resource: ResourceArc<PptExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn pptextractor_initialize(resource: ResourceArc<PptExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn pptextractor_shutdown(resource: ResourceArc<PptExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn pptextractor_description(resource: ResourceArc<PptExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn pptextractor_author(resource: ResourceArc<PptExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn pptextractor_extract_bytes_async(
-    resource: ResourceArc<PptExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: pptextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn pptextractor_supported_mime_types(resource: ResourceArc<PptExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn pptextractor_priority(resource: ResourceArc<PptExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn pptxextractor_default() -> ResourceArc<PptxExtractor> {
-    ResourceArc::new(PptxExtractor {
-        inner: Arc::new(kreuzberg::PptxExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn pptxextractor_name(resource: ResourceArc<PptxExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn pptxextractor_version(resource: ResourceArc<PptxExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn pptxextractor_initialize(resource: ResourceArc<PptxExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn pptxextractor_shutdown(resource: ResourceArc<PptxExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn pptxextractor_extract_bytes_async(
-    resource: ResourceArc<PptxExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: pptxextractor_extract_bytes_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn pptxextractor_extract_file_async(
-    resource: ResourceArc<PptxExtractor>,
-    path: String,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: pptxextractor_extract_file_async"))
-}
-
-#[rustler::nif]
-pub fn pptxextractor_supported_mime_types(resource: ResourceArc<PptxExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn pptxextractor_priority(resource: ResourceArc<PptxExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn rtfextractor_default() -> ResourceArc<RtfExtractor> {
-    ResourceArc::new(RtfExtractor {
-        inner: Arc::new(kreuzberg::RtfExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn rtfextractor_name(resource: ResourceArc<RtfExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn rtfextractor_version(resource: ResourceArc<RtfExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn rtfextractor_initialize(resource: ResourceArc<RtfExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn rtfextractor_shutdown(resource: ResourceArc<RtfExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn rtfextractor_description(resource: ResourceArc<RtfExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn rtfextractor_author(resource: ResourceArc<RtfExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn rtfextractor_extract_bytes_async(
-    resource: ResourceArc<RtfExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: rtfextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn rtfextractor_supported_mime_types(resource: ResourceArc<RtfExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn rtfextractor_priority(resource: ResourceArc<RtfExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn xmlextractor_default() -> ResourceArc<XmlExtractor> {
-    ResourceArc::new(XmlExtractor {
-        inner: Arc::new(kreuzberg::XmlExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn xmlextractor_name(resource: ResourceArc<XmlExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn xmlextractor_version(resource: ResourceArc<XmlExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn xmlextractor_initialize(resource: ResourceArc<XmlExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn xmlextractor_shutdown(resource: ResourceArc<XmlExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn xmlextractor_description(resource: ResourceArc<XmlExtractor>) -> String {
-    resource.inner.as_ref().clone().description().into()
-}
-
-#[rustler::nif]
-pub fn xmlextractor_author(resource: ResourceArc<XmlExtractor>) -> String {
-    resource.inner.as_ref().clone().author().into()
-}
-
-#[rustler::nif]
-pub fn xmlextractor_extract_sync(
-    resource: ResourceArc<XmlExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    _config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: xmlextractor_extract_sync"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn xmlextractor_extract_bytes_async(
-    resource: ResourceArc<XmlExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: xmlextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn xmlextractor_supported_mime_types(resource: ResourceArc<XmlExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn xmlextractor_priority(resource: ResourceArc<XmlExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
-pub fn xmlextractor_as_sync_extractor(resource: ResourceArc<XmlExtractor>) -> Option<SyncExtractor> {
-    resource.inner.as_ref().clone().as_sync_extractor()
-}
-
-#[rustler::nif]
-pub fn docbookextractor_default() -> ResourceArc<DocbookExtractor> {
-    ResourceArc::new(DocbookExtractor {
-        inner: Arc::new(kreuzberg::DocbookExtractor::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn docbookextractor_name(resource: ResourceArc<DocbookExtractor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn docbookextractor_version(resource: ResourceArc<DocbookExtractor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn docbookextractor_initialize(resource: ResourceArc<DocbookExtractor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn docbookextractor_shutdown(resource: ResourceArc<DocbookExtractor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn docbookextractor_extract_bytes_async(
-    resource: ResourceArc<DocbookExtractor>,
-    content: Vec<u8>,
-    mime_type: String,
-    config: ExtractionConfig,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: docbookextractor_extract_bytes_async"))
-}
-
-#[rustler::nif]
-pub fn docbookextractor_supported_mime_types(resource: ResourceArc<DocbookExtractor>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_mime_types()
-}
-
-#[rustler::nif]
-pub fn docbookextractor_priority(resource: ResourceArc<DocbookExtractor>) -> i32 {
-    resource.inner.as_ref().clone().priority()
-}
-
-#[rustler::nif]
 pub fn modelcache_put(resource: ResourceArc<ModelCache>, model: String) -> () {
     ()
 }
@@ -11610,344 +6762,6 @@ pub fn modelcache_put(resource: ResourceArc<ModelCache>, model: String) -> () {
 #[rustler::nif]
 pub fn modelcache_take(resource: ResourceArc<ModelCache>) -> Option<String> {
     None
-}
-
-#[rustler::nif]
-pub fn paniccontext_format(obj: PanicContext) -> String {
-    kreuzberg::PanicContext::from(obj).format().into()
-}
-
-#[rustler::nif]
-pub fn documentextractorregistry_register(
-    resource: ResourceArc<DocumentExtractorRegistry>,
-    extractor: String,
-) -> Result<(), String> {
-    Err(String::from("Not implemented: documentextractorregistry_register"))
-}
-
-#[rustler::nif]
-pub fn documentextractorregistry_get(
-    resource: ResourceArc<DocumentExtractorRegistry>,
-    mime_type: String,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: documentextractorregistry_get"))
-}
-
-#[rustler::nif]
-pub fn documentextractorregistry_list(resource: ResourceArc<DocumentExtractorRegistry>) -> Vec<String> {
-    resource.inner.as_ref().clone().list()
-}
-
-#[rustler::nif]
-pub fn documentextractorregistry_remove(
-    resource: ResourceArc<DocumentExtractorRegistry>,
-    name: String,
-) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .remove(&name)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn documentextractorregistry_shutdown_all(resource: ResourceArc<DocumentExtractorRegistry>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .shutdown_all()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn documentextractorregistry_default() -> ResourceArc<DocumentExtractorRegistry> {
-    ResourceArc::new(DocumentExtractorRegistry {
-        inner: Arc::new(kreuzberg::DocumentExtractorRegistry::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn ocrbackendregistry_new_empty() -> ResourceArc<OcrBackendRegistry> {
-    ResourceArc::new(OcrBackendRegistry {
-        inner: Arc::new(kreuzberg::OcrBackendRegistry::new_empty()),
-    })
-}
-
-#[rustler::nif]
-pub fn ocrbackendregistry_register(
-    resource: ResourceArc<OcrBackendRegistry>,
-    backend: ResourceArc<OcrBackend>,
-) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .register(&backend.inner)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn ocrbackendregistry_get(
-    resource: ResourceArc<OcrBackendRegistry>,
-    name: String,
-) -> Result<ResourceArc<OcrBackend>, String> {
-    let result = resource.inner.as_ref().clone().get(&name).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(OcrBackend {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn ocrbackendregistry_get_for_language(
-    resource: ResourceArc<OcrBackendRegistry>,
-    language: String,
-) -> Result<ResourceArc<OcrBackend>, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .get_for_language(&language)
-        .map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(OcrBackend {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn ocrbackendregistry_list(resource: ResourceArc<OcrBackendRegistry>) -> Vec<String> {
-    resource.inner.as_ref().clone().list()
-}
-
-#[rustler::nif]
-pub fn ocrbackendregistry_remove(resource: ResourceArc<OcrBackendRegistry>, name: String) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .remove(&name)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn ocrbackendregistry_shutdown_all(resource: ResourceArc<OcrBackendRegistry>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .shutdown_all()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn ocrbackendregistry_reset_to_defaults(resource: ResourceArc<OcrBackendRegistry>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .reset_to_defaults()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn ocrbackendregistry_default() -> ResourceArc<OcrBackendRegistry> {
-    ResourceArc::new(OcrBackendRegistry {
-        inner: Arc::new(kreuzberg::OcrBackendRegistry::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn postprocessorregistry_register(
-    resource: ResourceArc<PostProcessorRegistry>,
-    processor: String,
-    priority: i32,
-) -> Result<(), String> {
-    Err(String::from("Not implemented: postprocessorregistry_register"))
-}
-
-#[rustler::nif]
-pub fn postprocessorregistry_get_for_stage(resource: ResourceArc<PostProcessorRegistry>, stage: String) -> Vec<String> {
-    Vec::new()
-}
-
-#[rustler::nif]
-pub fn postprocessorregistry_list(resource: ResourceArc<PostProcessorRegistry>) -> Vec<String> {
-    resource.inner.as_ref().clone().list()
-}
-
-#[rustler::nif]
-pub fn postprocessorregistry_remove(resource: ResourceArc<PostProcessorRegistry>, name: String) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .remove(&name)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn postprocessorregistry_shutdown_all(resource: ResourceArc<PostProcessorRegistry>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .shutdown_all()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn postprocessorregistry_default() -> ResourceArc<PostProcessorRegistry> {
-    ResourceArc::new(PostProcessorRegistry {
-        inner: Arc::new(kreuzberg::PostProcessorRegistry::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn rendererregistry_new_empty() -> ResourceArc<RendererRegistry> {
-    ResourceArc::new(RendererRegistry {
-        inner: Arc::new(kreuzberg::RendererRegistry::new_empty()),
-    })
-}
-
-#[rustler::nif]
-pub fn rendererregistry_register(
-    resource: ResourceArc<RendererRegistry>,
-    renderer: ResourceArc<Renderer>,
-) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .register(&renderer.inner)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn rendererregistry_get(
-    resource: ResourceArc<RendererRegistry>,
-    name: String,
-) -> Result<ResourceArc<Renderer>, String> {
-    let result = resource.inner.as_ref().clone().get(&name).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(Renderer {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn rendererregistry_render(
-    resource: ResourceArc<RendererRegistry>,
-    name: String,
-    doc: String,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: rendererregistry_render"))
-}
-
-#[rustler::nif]
-pub fn rendererregistry_list(resource: ResourceArc<RendererRegistry>) -> Vec<String> {
-    resource.inner.as_ref().clone().list()
-}
-
-#[rustler::nif]
-pub fn rendererregistry_remove(resource: ResourceArc<RendererRegistry>, name: String) -> () {
-    resource.inner.as_ref().clone().remove(&name)
-}
-
-#[rustler::nif]
-pub fn rendererregistry_reset_to_defaults(resource: ResourceArc<RendererRegistry>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .reset_to_defaults()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn rendererregistry_default() -> ResourceArc<RendererRegistry> {
-    ResourceArc::new(RendererRegistry {
-        inner: Arc::new(kreuzberg::RendererRegistry::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn validatorregistry_register(resource: ResourceArc<ValidatorRegistry>, validator: String) -> Result<(), String> {
-    Err(String::from("Not implemented: validatorregistry_register"))
-}
-
-#[rustler::nif]
-pub fn validatorregistry_get_all(resource: ResourceArc<ValidatorRegistry>) -> Vec<String> {
-    Vec::new()
-}
-
-#[rustler::nif]
-pub fn validatorregistry_list(resource: ResourceArc<ValidatorRegistry>) -> Vec<String> {
-    resource.inner.as_ref().clone().list()
-}
-
-#[rustler::nif]
-pub fn validatorregistry_remove(resource: ResourceArc<ValidatorRegistry>, name: String) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .remove(&name)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn validatorregistry_shutdown_all(resource: ResourceArc<ValidatorRegistry>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .shutdown_all()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn validatorregistry_default() -> ResourceArc<ValidatorRegistry> {
-    ResourceArc::new(ValidatorRegistry {
-        inner: Arc::new(kreuzberg::ValidatorRegistry::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn tokenreducer_new(
-    config: TokenReductionConfig,
-    language_hint: String,
-) -> Result<ResourceArc<TokenReducer>, String> {
-    let result = kreuzberg::TokenReducer::new(config.into(), &language_hint).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(TokenReducer {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn tokenreducer_language(resource: ResourceArc<TokenReducer>) -> String {
-    resource.inner.as_ref().clone().language().into()
-}
-
-#[rustler::nif]
-pub fn tokenreducer_reduce(resource: ResourceArc<TokenReducer>, text: String) -> String {
-    resource.inner.as_ref().clone().reduce(&text).into()
-}
-
-#[rustler::nif]
-pub fn tokenreducer_batch_reduce(resource: ResourceArc<TokenReducer>, texts: Vec<String>) -> Vec<String> {
-    resource.inner.as_ref().clone().batch_reduce(texts)
 }
 
 #[rustler::nif]
@@ -12215,26 +7029,6 @@ pub fn uri_with_page(obj: Uri, page: u32) -> Uri {
 }
 
 #[rustler::nif]
-pub fn poolmetrics_hit_rate(obj: PoolMetrics) -> f64 {
-    kreuzberg::PoolMetrics::from(obj).hit_rate()
-}
-
-#[rustler::nif]
-pub fn poolmetrics_snapshot(obj: PoolMetrics) -> PoolMetricsSnapshot {
-    kreuzberg::PoolMetrics::from(obj).snapshot().into()
-}
-
-#[rustler::nif]
-pub fn poolmetrics_reset(obj: PoolMetrics) -> () {
-    kreuzberg::PoolMetrics::from(obj).reset()
-}
-
-#[rustler::nif]
-pub fn poolmetrics_default() -> PoolMetrics {
-    kreuzberg::PoolMetrics::default().into()
-}
-
-#[rustler::nif]
 pub fn pool_acquire(resource: ResourceArc<Pool>) -> Result<String, String> {
     Err(String::from("Not implemented: pool_acquire"))
 }
@@ -12248,26 +7042,6 @@ pub fn pool_size(resource: ResourceArc<Pool>) -> usize {
 pub fn pool_clear(resource: ResourceArc<Pool>) -> Result<(), String> {
     let result = resource.inner.as_ref().clone().clear().map_err(|e| e.to_string())?;
     Ok(result)
-}
-
-#[rustler::nif]
-pub fn poolsizehint_estimated_string_pool_memory(obj: PoolSizeHint) -> usize {
-    kreuzberg::PoolSizeHint::from(obj).estimated_string_pool_memory()
-}
-
-#[rustler::nif]
-pub fn poolsizehint_estimated_byte_pool_memory(obj: PoolSizeHint) -> usize {
-    kreuzberg::PoolSizeHint::from(obj).estimated_byte_pool_memory()
-}
-
-#[rustler::nif]
-pub fn poolsizehint_total_pool_memory(obj: PoolSizeHint) -> usize {
-    kreuzberg::PoolSizeHint::from(obj).total_pool_memory()
-}
-
-#[rustler::nif]
-pub fn poolconfig_default() -> PoolConfig {
-    kreuzberg::PoolConfig::default().into()
 }
 
 #[rustler::nif]
@@ -12326,65 +7100,6 @@ pub fn internedstring_deref(resource: ResourceArc<InternedString>) -> String {
 }
 
 #[rustler::nif]
-pub fn instant_now() -> ResourceArc<Instant> {
-    ResourceArc::new(Instant {
-        inner: Arc::new(kreuzberg::Instant::now()),
-    })
-}
-
-#[rustler::nif]
-pub fn instant_elapsed_secs_f64(resource: ResourceArc<Instant>) -> f64 {
-    resource.inner.as_ref().clone().elapsed_secs_f64()
-}
-
-#[rustler::nif]
-pub fn instant_elapsed_ms(resource: ResourceArc<Instant>) -> f64 {
-    resource.inner.as_ref().clone().elapsed_ms()
-}
-
-#[rustler::nif]
-pub fn instant_elapsed_millis(resource: ResourceArc<Instant>) -> String {
-    String::from("[unimplemented: instant_elapsed_millis]")
-}
-
-#[rustler::nif]
-pub fn hocrword_right(obj: HocrWord) -> u32 {
-    kreuzberg::HocrWord::from(obj).right()
-}
-
-#[rustler::nif]
-pub fn hocrword_bottom(obj: HocrWord) -> u32 {
-    kreuzberg::HocrWord::from(obj).bottom()
-}
-
-#[rustler::nif]
-pub fn hocrword_y_center(obj: HocrWord) -> f64 {
-    kreuzberg::HocrWord::from(obj).y_center()
-}
-
-#[rustler::nif]
-pub fn hocrword_x_center(obj: HocrWord) -> f64 {
-    kreuzberg::HocrWord::from(obj).x_center()
-}
-
-#[rustler::nif]
-pub fn extractionservice_default() -> ResourceArc<ExtractionService> {
-    ResourceArc::new(ExtractionService {
-        inner: Arc::new(kreuzberg::ExtractionService::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn extractionservice_poll_ready(resource: ResourceArc<ExtractionService>, _cx: String) -> String {
-    String::from("[unimplemented: extractionservice_poll_ready]")
-}
-
-#[rustler::nif]
-pub fn extractionservice_call(resource: ResourceArc<ExtractionService>, req: ExtractionRequest) -> String {
-    String::from("[unimplemented: extractionservice_call]")
-}
-
-#[rustler::nif]
 pub fn tracinglayer_layer(resource: ResourceArc<TracingLayer>, inner: String) -> String {
     String::from("[unimplemented: tracinglayer_layer]")
 }
@@ -12392,88 +7107,6 @@ pub fn tracinglayer_layer(resource: ResourceArc<TracingLayer>, inner: String) ->
 #[rustler::nif]
 pub fn metricslayer_layer(resource: ResourceArc<MetricsLayer>, inner: String) -> String {
     String::from("[unimplemented: metricslayer_layer]")
-}
-
-#[rustler::nif]
-pub fn extractionrequest_file(path: String, config: ExtractionConfig) -> ExtractionRequest {
-    kreuzberg::ExtractionRequest::file(std::path::PathBuf::from(path), config.into()).into()
-}
-
-#[rustler::nif]
-pub fn extractionrequest_file_with_mime(
-    path: String,
-    mime_hint: String,
-    config: ExtractionConfig,
-) -> ExtractionRequest {
-    kreuzberg::ExtractionRequest::file_with_mime(std::path::PathBuf::from(path), &mime_hint, config.into()).into()
-}
-
-#[rustler::nif]
-pub fn extractionrequest_bytes(data: Vec<u8>, mime_type: String, config: ExtractionConfig) -> ExtractionRequest {
-    kreuzberg::ExtractionRequest::bytes(&data, &mime_type, config.into()).into()
-}
-
-#[rustler::nif]
-pub fn extractionrequest_with_overrides(obj: ExtractionRequest, overrides: FileExtractionConfig) -> ExtractionRequest {
-    kreuzberg::ExtractionRequest::from(obj)
-        .with_overrides(overrides.into())
-        .into()
-}
-
-#[rustler::nif]
-pub fn extractionservicebuilder_default() -> ResourceArc<ExtractionServiceBuilder> {
-    ResourceArc::new(ExtractionServiceBuilder {
-        inner: Arc::new(kreuzberg::ExtractionServiceBuilder::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn extractionservicebuilder_with_timeout(
-    resource: ResourceArc<ExtractionServiceBuilder>,
-    duration: u64,
-) -> ResourceArc<ExtractionServiceBuilder> {
-    ResourceArc::new(ExtractionServiceBuilder {
-        inner: Arc::new(
-            resource
-                .inner
-                .as_ref()
-                .clone()
-                .with_timeout(std::time::Duration::from_millis(duration)),
-        ),
-    })
-}
-
-#[rustler::nif]
-pub fn extractionservicebuilder_with_concurrency_limit(
-    resource: ResourceArc<ExtractionServiceBuilder>,
-    max: usize,
-) -> ResourceArc<ExtractionServiceBuilder> {
-    ResourceArc::new(ExtractionServiceBuilder {
-        inner: Arc::new(resource.inner.as_ref().clone().with_concurrency_limit(max)),
-    })
-}
-
-#[rustler::nif]
-pub fn extractionservicebuilder_with_tracing(
-    resource: ResourceArc<ExtractionServiceBuilder>,
-) -> ResourceArc<ExtractionServiceBuilder> {
-    ResourceArc::new(ExtractionServiceBuilder {
-        inner: Arc::new(resource.inner.as_ref().clone().with_tracing()),
-    })
-}
-
-#[rustler::nif]
-pub fn extractionservicebuilder_with_metrics(
-    resource: ResourceArc<ExtractionServiceBuilder>,
-) -> ResourceArc<ExtractionServiceBuilder> {
-    ResourceArc::new(ExtractionServiceBuilder {
-        inner: Arc::new(resource.inner.as_ref().clone().with_metrics()),
-    })
-}
-
-#[rustler::nif]
-pub fn extractionservicebuilder_build(resource: ResourceArc<ExtractionServiceBuilder>) -> String {
-    String::from("[unimplemented: extractionservicebuilder_build]")
 }
 
 #[rustler::nif]
@@ -12504,50 +7137,6 @@ pub fn apierror_into_response(obj: ApiError) -> String {
 #[rustler::nif]
 pub fn apierror_from(error: String) -> ApiError {
     panic!("alef: apierror_from not auto-delegatable")
-}
-
-#[rustler::nif]
-pub fn apisizelimits_default() -> ApiSizeLimits {
-    kreuzberg::ApiSizeLimits::default().into()
-}
-
-#[rustler::nif]
-pub fn apisizelimits_from_mb(max_request_body_mb: usize, max_multipart_field_mb: usize) -> ApiSizeLimits {
-    kreuzberg::ApiSizeLimits::from_mb(max_request_body_mb, max_multipart_field_mb).into()
-}
-
-#[rustler::nif]
-pub fn kreuzbergmcp_clone(resource: ResourceArc<KreuzbergMcp>) -> ResourceArc<KreuzbergMcp> {
-    ResourceArc::new(KreuzbergMcp {
-        inner: Arc::new(resource.inner.as_ref().clone().clone()),
-    })
-}
-
-#[rustler::nif]
-pub fn kreuzbergmcp_new() -> Result<ResourceArc<KreuzbergMcp>, String> {
-    let result = kreuzberg::KreuzbergMcp::new().map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(KreuzbergMcp {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn kreuzbergmcp_with_config(config: ExtractionConfig) -> ResourceArc<KreuzbergMcp> {
-    ResourceArc::new(KreuzbergMcp {
-        inner: Arc::new(kreuzberg::KreuzbergMcp::with_config(config.into())),
-    })
-}
-
-#[rustler::nif]
-pub fn kreuzbergmcp_get_info(resource: ResourceArc<KreuzbergMcp>) -> String {
-    String::from("[unimplemented: kreuzbergmcp_get_info]")
-}
-
-#[rustler::nif]
-pub fn kreuzbergmcp_default() -> ResourceArc<KreuzbergMcp> {
-    ResourceArc::new(KreuzbergMcp {
-        inner: Arc::new(kreuzberg::KreuzbergMcp::default()),
-    })
 }
 
 #[rustler::nif]
@@ -12721,205 +7310,6 @@ pub fn keyword_with_positions(text: String, score: f32, algorithm: KeywordAlgori
 }
 
 #[rustler::nif]
-pub fn ocrcache_new(cache_dir: String) -> Result<ResourceArc<OcrCache>, String> {
-    let result = kreuzberg::OcrCache::new(std::path::PathBuf::from(cache_dir)).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(OcrCache {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn ocrcache_get_cached_result(
-    resource: ResourceArc<OcrCache>,
-    image_hash: String,
-    backend: String,
-    config: String,
-) -> Result<Option<OcrExtractionResult>, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .get_cached_result(&image_hash, &backend, &config)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn ocrcache_set_cached_result(
-    resource: ResourceArc<OcrCache>,
-    image_hash: String,
-    backend: String,
-    config: String,
-    result: OcrExtractionResult,
-) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .set_cached_result(&image_hash, &backend, &config, result.into())
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn ocrcache_clear(resource: ResourceArc<OcrCache>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().clear().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn ocrcache_get_stats(resource: ResourceArc<OcrCache>) -> Result<OcrCacheStats, String> {
-    let result = resource.inner.as_ref().clone().get_stats().map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn languageregistry_global() -> ResourceArc<LanguageRegistry> {
-    ResourceArc::new(LanguageRegistry {
-        inner: Arc::new(kreuzberg::LanguageRegistry::global().clone()),
-    })
-}
-
-#[rustler::nif]
-pub fn languageregistry_get_supported_languages(
-    resource: ResourceArc<LanguageRegistry>,
-    backend: String,
-) -> Option<Vec<String>> {
-    resource.inner.as_ref().clone().get_supported_languages(&backend)
-}
-
-#[rustler::nif]
-pub fn languageregistry_is_language_supported(
-    resource: ResourceArc<LanguageRegistry>,
-    backend: String,
-    language: String,
-) -> bool {
-    resource
-        .inner
-        .as_ref()
-        .clone()
-        .is_language_supported(&backend, &language)
-}
-
-#[rustler::nif]
-pub fn languageregistry_get_backends(resource: ResourceArc<LanguageRegistry>) -> Vec<String> {
-    resource.inner.as_ref().clone().get_backends()
-}
-
-#[rustler::nif]
-pub fn languageregistry_get_language_count(resource: ResourceArc<LanguageRegistry>, backend: String) -> usize {
-    resource.inner.as_ref().clone().get_language_count(&backend)
-}
-
-#[rustler::nif]
-pub fn languageregistry_default() -> ResourceArc<LanguageRegistry> {
-    ResourceArc::new(LanguageRegistry {
-        inner: Arc::new(kreuzberg::LanguageRegistry::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn ocrprocessor_new(cache_dir: String) -> Result<ResourceArc<OcrProcessor>, String> {
-    let result = kreuzberg::OcrProcessor::new(std::path::PathBuf::from(cache_dir)).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(OcrProcessor {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn ocrprocessor_process_image(
-    resource: ResourceArc<OcrProcessor>,
-    image_bytes: Vec<u8>,
-    config: TesseractConfig,
-) -> Result<OcrExtractionResult, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .process_image(&image_bytes, config.into())
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn ocrprocessor_process_image_with_format(
-    resource: ResourceArc<OcrProcessor>,
-    image_bytes: Vec<u8>,
-    config: TesseractConfig,
-    output_format: OutputFormat,
-) -> Result<OcrExtractionResult, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .process_image_with_format(&image_bytes, config.into(), output_format.into())
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn ocrprocessor_clear_cache(resource: ResourceArc<OcrProcessor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .clear_cache()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn ocrprocessor_get_cache_stats(resource: ResourceArc<OcrProcessor>) -> Result<OcrCacheStats, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .get_cache_stats()
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn ocrprocessor_process_image_file(
-    resource: ResourceArc<OcrProcessor>,
-    file_path: String,
-    config: TesseractConfig,
-) -> Result<OcrExtractionResult, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .process_image_file(&file_path, config.into())
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn ocrprocessor_process_image_file_with_format(
-    resource: ResourceArc<OcrProcessor>,
-    file_path: String,
-    config: TesseractConfig,
-    output_format: OutputFormat,
-) -> Result<OcrExtractionResult, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .process_image_file_with_format(&file_path, config.into(), output_format.into())
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn ocrprocessor_process_image_files_batch(
-    resource: ResourceArc<OcrProcessor>,
-    file_paths: Vec<String>,
-    config: TesseractConfig,
-) -> Vec<String> {
-    Vec::new()
-}
-
-#[rustler::nif]
 pub fn tessdatamanager_cache_dir(resource: ResourceArc<TessdataManager>) -> String {
     resource
         .inner
@@ -12933,117 +7323,6 @@ pub fn tessdatamanager_cache_dir(resource: ResourceArc<TessdataManager>) -> Stri
 #[rustler::nif]
 pub fn tessdatamanager_is_language_cached(resource: ResourceArc<TessdataManager>, lang: String) -> bool {
     resource.inner.as_ref().clone().is_language_cached(&lang)
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_new() -> Result<ResourceArc<TesseractBackend>, String> {
-    let result = kreuzberg::TesseractBackend::new().map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(TesseractBackend {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_with_cache_dir(cache_dir: String) -> Result<ResourceArc<TesseractBackend>, String> {
-    let result =
-        kreuzberg::TesseractBackend::with_cache_dir(std::path::PathBuf::from(cache_dir)).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(TesseractBackend {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_default() -> ResourceArc<TesseractBackend> {
-    ResourceArc::new(TesseractBackend {
-        inner: Arc::new(kreuzberg::TesseractBackend::default()),
-    })
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_name(resource: ResourceArc<TesseractBackend>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_version(resource: ResourceArc<TesseractBackend>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_initialize(resource: ResourceArc<TesseractBackend>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_shutdown(resource: ResourceArc<TesseractBackend>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn tesseractbackend_process_image_async(
-    resource: ResourceArc<TesseractBackend>,
-    image_bytes: Vec<u8>,
-    config: OcrConfig,
-) -> Result<ExtractionResult, String> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            resource
-                .inner
-                .as_ref()
-                .clone()
-                .process_image(&image_bytes, config.into())
-                .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn tesseractbackend_process_image_file_async(
-    resource: ResourceArc<TesseractBackend>,
-    path: String,
-    config: OcrConfig,
-) -> Result<ExtractionResult, String> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            resource
-                .inner
-                .as_ref()
-                .clone()
-                .process_image_file(std::path::PathBuf::from(path), config.into())
-                .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_supports_language(resource: ResourceArc<TesseractBackend>, lang: String) -> bool {
-    resource.inner.as_ref().clone().supports_language(&lang)
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_backend_type(resource: ResourceArc<TesseractBackend>) -> OcrBackendType {
-    resource.inner.as_ref().clone().backend_type().into()
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_supported_languages(resource: ResourceArc<TesseractBackend>) -> Vec<String> {
-    resource.inner.as_ref().clone().supported_languages()
-}
-
-#[rustler::nif]
-pub fn tesseractbackend_supports_table_detection(resource: ResourceArc<TesseractBackend>) -> bool {
-    resource.inner.as_ref().clone().supports_table_detection()
 }
 
 #[rustler::nif]
@@ -13181,202 +7460,6 @@ pub fn layoutdetection_sort_by_confidence_desc(detections: Vec<LayoutDetection>)
 #[rustler::nif]
 pub fn layoutdetection_fmt(obj: LayoutDetection, f: String) -> String {
     String::from("[unimplemented: layoutdetection_fmt]")
-}
-
-#[rustler::nif]
-pub fn pdfimageextractor_new(pdf_bytes: Vec<u8>) -> Result<ResourceArc<PdfImageExtractor>, String> {
-    let result = kreuzberg::PdfImageExtractor::new(&pdf_bytes).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(PdfImageExtractor {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn pdfimageextractor_new_with_password(
-    pdf_bytes: Vec<u8>,
-    password: String,
-) -> Result<ResourceArc<PdfImageExtractor>, String> {
-    let result = kreuzberg::PdfImageExtractor::new_with_password(&pdf_bytes, &password).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(PdfImageExtractor {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn pdfimageextractor_extract_images(resource: ResourceArc<PdfImageExtractor>) -> Result<Vec<PdfImage>, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .extract_images()
-        .map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
-}
-
-#[rustler::nif]
-pub fn pdfimageextractor_extract_images_from_page(
-    resource: ResourceArc<PdfImageExtractor>,
-    page_number: u32,
-) -> Result<Vec<PdfImage>, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .extract_images_from_page(page_number)
-        .map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
-}
-
-#[rustler::nif]
-pub fn pdfimageextractor_get_image_count(resource: ResourceArc<PdfImageExtractor>) -> Result<usize, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .get_image_count()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn pdflayoutbbox_width(obj: PdfLayoutBBox) -> f32 {
-    kreuzberg::PdfLayoutBBox::from(obj).width()
-}
-
-#[rustler::nif]
-pub fn pdflayoutbbox_height(obj: PdfLayoutBBox) -> f32 {
-    kreuzberg::PdfLayoutBBox::from(obj).height()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_avg_render_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).avg_render_ms()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_avg_inference_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).avg_inference_ms()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_avg_preprocess_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).avg_preprocess_ms()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_avg_onnx_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).avg_onnx_ms()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_avg_postprocess_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).avg_postprocess_ms()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_total_inference_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).total_inference_ms()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_total_render_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).total_render_ms()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_total_preprocess_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).total_preprocess_ms()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_total_onnx_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).total_onnx_ms()
-}
-
-#[rustler::nif]
-pub fn layouttimingreport_total_postprocess_ms(obj: LayoutTimingReport) -> f64 {
-    kreuzberg::LayoutTimingReport::from(obj).total_postprocess_ms()
-}
-
-#[rustler::nif]
-pub fn pagerenderoptions_default() -> PageRenderOptions {
-    kreuzberg::PageRenderOptions::default().into()
-}
-
-#[rustler::nif]
-pub fn pdfpageiterator_new(
-    pdf_bytes: Vec<u8>,
-    dpi: i32,
-    password: String,
-) -> Result<ResourceArc<PdfPageIterator>, String> {
-    let result = kreuzberg::PdfPageIterator::new(&pdf_bytes, dpi, &password).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(PdfPageIterator {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn pdfpageiterator_from_file(
-    path: String,
-    dpi: i32,
-    password: String,
-) -> Result<ResourceArc<PdfPageIterator>, String> {
-    Err(String::from("Not implemented: pdfpageiterator_from_file"))
-}
-
-#[rustler::nif]
-pub fn pdfpageiterator_page_count(resource: ResourceArc<PdfPageIterator>) -> usize {
-    resource.inner.as_ref().clone().page_count()
-}
-
-#[rustler::nif]
-pub fn pdfpageiterator_next(resource: ResourceArc<PdfPageIterator>) -> Option<String> {
-    None
-}
-
-#[rustler::nif]
-pub fn pdfpageiterator_size_hint(resource: ResourceArc<PdfPageIterator>) -> String {
-    String::from("[unimplemented: pdfpageiterator_size_hint]")
-}
-
-#[rustler::nif]
-pub fn pdfrenderer_new() -> Result<ResourceArc<PdfRenderer>, String> {
-    let result = kreuzberg::PdfRenderer::new().map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(PdfRenderer {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn pdftextextractor_new() -> Result<ResourceArc<PdfTextExtractor>, String> {
-    let result = kreuzberg::PdfTextExtractor::new().map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(PdfTextExtractor {
-        inner: Arc::new(result),
-    }))
-}
-
-impl From<BatchProcessorConfig> for kreuzberg::core::BatchProcessorConfig {
-    fn from(val: BatchProcessorConfig) -> Self {
-        Self {
-            string_pool_size: val.string_pool_size,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_pool_size: val.byte_pool_size,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-            max_concurrent: val.max_concurrent,
-        }
-    }
-}
-
-impl From<kreuzberg::core::BatchProcessorConfig> for BatchProcessorConfig {
-    fn from(val: kreuzberg::core::BatchProcessorConfig) -> Self {
-        Self {
-            string_pool_size: val.string_pool_size,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_pool_size: val.byte_pool_size,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-            max_concurrent: val.max_concurrent,
-        }
-    }
 }
 
 impl From<AccelerationConfig> for kreuzberg::AccelerationConfig {
@@ -14141,36 +8224,10 @@ impl From<kreuzberg::extraction::StructuredDataResult> for StructuredDataResult 
     }
 }
 
-impl From<JsonExtractionConfig> for kreuzberg::extraction::JsonExtractionConfig {
-    fn from(val: JsonExtractionConfig) -> Self {
-        Self {
-            extract_schema: val.extract_schema,
-            max_depth: val.max_depth,
-            array_item_limit: val.array_item_limit,
-            include_type_info: val.include_type_info,
-            flatten_nested_objects: val.flatten_nested_objects,
-            custom_text_field_patterns: val.custom_text_field_patterns,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::JsonExtractionConfig> for JsonExtractionConfig {
-    fn from(val: kreuzberg::extraction::JsonExtractionConfig) -> Self {
-        Self {
-            extract_schema: val.extract_schema,
-            max_depth: val.max_depth,
-            array_item_limit: val.array_item_limit,
-            include_type_info: val.include_type_info,
-            flatten_nested_objects: val.flatten_nested_objects,
-            custom_text_field_patterns: val.custom_text_field_patterns,
-        }
-    }
-}
-
 impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
     fn from(val: ListItemMetadata) -> Self {
         Self {
-            list_type: val.list_type.into(),
+            list_type: Default::default(),
             byte_start: val.byte_start,
             byte_end: val.byte_end,
             indent_level: val.indent_level,
@@ -14181,18 +8238,10 @@ impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
 impl From<kreuzberg::extraction::ListItemMetadata> for ListItemMetadata {
     fn from(val: kreuzberg::extraction::ListItemMetadata) -> Self {
         Self {
-            list_type: val.list_type.into(),
+            list_type: format!("{:?}", val.list_type),
             byte_start: val.byte_start,
             byte_end: val.byte_end,
             indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::HwpDocument> for HwpDocument {
-    fn from(val: kreuzberg::extraction::hwp::model::HwpDocument) -> Self {
-        Self {
-            sections: val.sections.into_iter().map(Into::into).collect(),
         }
     }
 }
@@ -14209,48 +8258,6 @@ impl From<kreuzberg::extraction::hwp::model::Section> for Section {
     fn from(val: kreuzberg::extraction::hwp::model::Section) -> Self {
         Self {
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<ParaText> for kreuzberg::extraction::hwp::model::ParaText {
-    fn from(val: ParaText) -> Self {
-        Self { content: val.content }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::ParaText> for ParaText {
-    fn from(val: kreuzberg::extraction::hwp::model::ParaText) -> Self {
-        Self { content: val.content }
-    }
-}
-
-impl From<FileHeader> for kreuzberg::extraction::hwp::parser::FileHeader {
-    fn from(val: FileHeader) -> Self {
-        Self { flags: val.flags }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::parser::FileHeader> for FileHeader {
-    fn from(val: kreuzberg::extraction::hwp::parser::FileHeader) -> Self {
-        Self { flags: val.flags }
-    }
-}
-
-impl From<Record> for kreuzberg::extraction::hwp::parser::Record {
-    fn from(val: Record) -> Self {
-        Self {
-            tag_id: val.tag_id,
-            data: val.data,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::parser::Record> for Record {
-    fn from(val: kreuzberg::extraction::hwp::parser::Record) -> Self {
-        Self {
-            tag_id: val.tag_id,
-            data: val.data.to_vec(),
         }
     }
 }
@@ -14302,7 +8309,7 @@ impl From<DocExtractionResult> for kreuzberg::extraction::doc::DocExtractionResu
     fn from(val: DocExtractionResult) -> Self {
         Self {
             text: val.text,
-            metadata: val.metadata.into(),
+            metadata: Default::default(),
         }
     }
 }
@@ -14311,35 +8318,7 @@ impl From<kreuzberg::extraction::doc::DocExtractionResult> for DocExtractionResu
     fn from(val: kreuzberg::extraction::doc::DocExtractionResult) -> Self {
         Self {
             text: val.text,
-            metadata: val.metadata.into(),
-        }
-    }
-}
-
-impl From<DocMetadata> for kreuzberg::extraction::doc::DocMetadata {
-    fn from(val: DocMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-            created: val.created,
-            modified: val.modified,
-            revision_number: val.revision_number,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::doc::DocMetadata> for DocMetadata {
-    fn from(val: kreuzberg::extraction::doc::DocMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-            created: val.created,
-            modified: val.modified,
-            revision_number: val.revision_number,
+            metadata: format!("{:?}", val.metadata),
         }
     }
 }
@@ -14347,9 +8326,9 @@ impl From<kreuzberg::extraction::doc::DocMetadata> for DocMetadata {
 impl From<Drawing> for kreuzberg::extraction::docx::drawing::Drawing {
     fn from(val: Drawing) -> Self {
         Self {
-            drawing_type: val.drawing_type.into(),
-            extent: val.extent.map(Into::into),
-            doc_properties: val.doc_properties.map(Into::into),
+            drawing_type: Default::default(),
+            extent: Default::default(),
+            doc_properties: Default::default(),
             image_ref: val.image_ref,
         }
     }
@@ -14358,42 +8337,10 @@ impl From<Drawing> for kreuzberg::extraction::docx::drawing::Drawing {
 impl From<kreuzberg::extraction::docx::drawing::Drawing> for Drawing {
     fn from(val: kreuzberg::extraction::docx::drawing::Drawing) -> Self {
         Self {
-            drawing_type: val.drawing_type.into(),
-            extent: val.extent.map(Into::into),
-            doc_properties: val.doc_properties.map(Into::into),
+            drawing_type: format!("{:?}", val.drawing_type),
+            extent: val.extent.as_ref().map(|v| format!("{:?}", v)),
+            doc_properties: val.doc_properties.as_ref().map(|v| format!("{:?}", v)),
             image_ref: val.image_ref,
-        }
-    }
-}
-
-impl From<Extent> for kreuzberg::extraction::docx::drawing::Extent {
-    fn from(val: Extent) -> Self {
-        Self { cx: val.cx, cy: val.cy }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Extent> for Extent {
-    fn from(val: kreuzberg::extraction::docx::drawing::Extent) -> Self {
-        Self { cx: val.cx, cy: val.cy }
-    }
-}
-
-impl From<DocProperties> for kreuzberg::extraction::docx::drawing::DocProperties {
-    fn from(val: DocProperties) -> Self {
-        Self {
-            id: val.id,
-            name: val.name,
-            description: val.description,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::DocProperties> for DocProperties {
-    fn from(val: kreuzberg::extraction::docx::drawing::DocProperties) -> Self {
-        Self {
-            id: val.id,
-            name: val.name,
-            description: val.description,
         }
     }
 }
@@ -14404,58 +8351,9 @@ impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for AnchorProp
             behind_doc: val.behind_doc,
             layout_in_cell: val.layout_in_cell,
             relative_height: val.relative_height,
-            position_h: val.position_h.map(Into::into),
-            position_v: val.position_v.map(Into::into),
-            wrap_type: val.wrap_type.into(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Position> for Position {
-    fn from(val: kreuzberg::extraction::docx::drawing::Position) -> Self {
-        Self {
-            relative_from: val.relative_from,
-            offset: val.offset,
-        }
-    }
-}
-
-impl From<Document> for kreuzberg::extraction::docx::parser::Document {
-    fn from(val: Document) -> Self {
-        Self {
-            paragraphs: Default::default(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            footers: val.footers.into_iter().map(Into::into).collect(),
-            footnotes: val.footnotes.into_iter().map(Into::into).collect(),
-            endnotes: val.endnotes.into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: val.elements.into_iter().map(Into::into).collect(),
-            style_catalog: val.style_catalog.map(Into::into),
-            theme: val.theme.map(Into::into),
-            sections: val.sections.into_iter().map(Into::into).collect(),
-            drawings: val.drawings.into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::Document> for Document {
-    fn from(val: kreuzberg::extraction::docx::parser::Document) -> Self {
-        Self {
-            paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            footers: val.footers.into_iter().map(Into::into).collect(),
-            footnotes: val.footnotes.into_iter().map(Into::into).collect(),
-            endnotes: val.endnotes.into_iter().map(Into::into).collect(),
-            numbering_defs: format!("{:?}", val.numbering_defs),
-            elements: val.elements.into_iter().map(Into::into).collect(),
-            style_catalog: val.style_catalog.map(Into::into),
-            theme: val.theme.map(Into::into),
-            sections: val.sections.into_iter().map(Into::into).collect(),
-            drawings: val.drawings.into_iter().map(Into::into).collect(),
-            image_relationships: format!("{:?}", val.image_relationships),
+            position_h: val.position_h.as_ref().map(|v| format!("{:?}", v)),
+            position_v: val.position_v.as_ref().map(|v| format!("{:?}", v)),
+            wrap_type: format!("{:?}", val.wrap_type),
         }
     }
 }
@@ -14464,17 +8362,7 @@ impl From<kreuzberg::extraction::docx::parser::TableRow> for TableRow {
     fn from(val: kreuzberg::extraction::docx::parser::TableRow) -> Self {
         Self {
             cells: val.cells.into_iter().map(Into::into).collect(),
-            properties: val.properties.map(Into::into),
-        }
-    }
-}
-
-impl From<HeaderFooter> for kreuzberg::extraction::docx::parser::HeaderFooter {
-    fn from(val: HeaderFooter) -> Self {
-        Self {
-            paragraphs: Default::default(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            header_type: val.header_type.into(),
+            properties: val.properties.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -14484,17 +8372,7 @@ impl From<kreuzberg::extraction::docx::parser::HeaderFooter> for HeaderFooter {
         Self {
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
             tables: val.tables.into_iter().map(Into::into).collect(),
-            header_type: val.header_type.into(),
-        }
-    }
-}
-
-impl From<Note> for kreuzberg::extraction::docx::parser::Note {
-    fn from(val: Note) -> Self {
-        Self {
-            id: val.id,
-            note_type: val.note_type.into(),
-            paragraphs: Default::default(),
+            header_type: format!("{:?}", val.header_type),
         }
     }
 }
@@ -14503,50 +8381,8 @@ impl From<kreuzberg::extraction::docx::parser::Note> for Note {
     fn from(val: kreuzberg::extraction::docx::parser::Note) -> Self {
         Self {
             id: val.id,
-            note_type: val.note_type.into(),
+            note_type: format!("{:?}", val.note_type),
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<PageMargins> for kreuzberg::extraction::docx::section::PageMargins {
-    fn from(val: PageMargins) -> Self {
-        Self {
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
-            left: val.left,
-            header: val.header,
-            footer: val.footer,
-            gutter: val.gutter,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::PageMargins> for PageMargins {
-    fn from(val: kreuzberg::extraction::docx::section::PageMargins) -> Self {
-        Self {
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
-            left: val.left,
-            header: val.header,
-            footer: val.footer,
-            gutter: val.gutter,
-        }
-    }
-}
-
-impl From<PageMarginsPoints> for kreuzberg::extraction::docx::section::PageMarginsPoints {
-    fn from(val: PageMarginsPoints) -> Self {
-        Self {
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
-            left: val.left,
-            header: val.header,
-            footer: val.footer,
-            gutter: val.gutter,
         }
     }
 }
@@ -14565,136 +8401,17 @@ impl From<kreuzberg::extraction::docx::section::PageMarginsPoints> for PageMargi
     }
 }
 
-impl From<ColumnLayout> for kreuzberg::extraction::docx::section::ColumnLayout {
-    fn from(val: ColumnLayout) -> Self {
-        Self {
-            count: val.count,
-            space_twips: val.space_twips,
-            equal_width: val.equal_width,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::ColumnLayout> for ColumnLayout {
-    fn from(val: kreuzberg::extraction::docx::section::ColumnLayout) -> Self {
-        Self {
-            count: val.count,
-            space_twips: val.space_twips,
-            equal_width: val.equal_width,
-        }
-    }
-}
-
-impl From<SectionProperties> for kreuzberg::extraction::docx::section::SectionProperties {
-    fn from(val: SectionProperties) -> Self {
-        Self {
-            page_width_twips: val.page_width_twips,
-            page_height_twips: val.page_height_twips,
-            orientation: val.orientation.map(Into::into),
-            margins: val.margins.into(),
-            columns: val.columns.into(),
-            doc_grid_line_pitch: val.doc_grid_line_pitch,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::SectionProperties> for SectionProperties {
-    fn from(val: kreuzberg::extraction::docx::section::SectionProperties) -> Self {
-        Self {
-            page_width_twips: val.page_width_twips,
-            page_height_twips: val.page_height_twips,
-            orientation: val.orientation.map(Into::into),
-            margins: val.margins.into(),
-            columns: val.columns.into(),
-            doc_grid_line_pitch: val.doc_grid_line_pitch,
-        }
-    }
-}
-
-impl From<RunProperties> for kreuzberg::extraction::docx::styles::RunProperties {
-    fn from(val: RunProperties) -> Self {
-        Self {
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color: val.color,
-            font_size_half_points: val.font_size_half_points,
-            font_ascii: val.font_ascii,
-            font_ascii_theme: val.font_ascii_theme,
-            vert_align: val.vert_align,
-            font_h_ansi: val.font_h_ansi,
-            font_cs: val.font_cs,
-            font_east_asia: val.font_east_asia,
-            highlight: val.highlight,
-            caps: val.caps,
-            small_caps: val.small_caps,
-            shadow: val.shadow,
-            outline: val.outline,
-            emboss: val.emboss,
-            imprint: val.imprint,
-            char_spacing: val.char_spacing,
-            position: val.position,
-            kern: val.kern,
-            theme_color: val.theme_color,
-            theme_tint: val.theme_tint,
-            theme_shade: val.theme_shade,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::styles::RunProperties> for RunProperties {
-    fn from(val: kreuzberg::extraction::docx::styles::RunProperties) -> Self {
-        Self {
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color: val.color,
-            font_size_half_points: val.font_size_half_points,
-            font_ascii: val.font_ascii,
-            font_ascii_theme: val.font_ascii_theme,
-            vert_align: val.vert_align,
-            font_h_ansi: val.font_h_ansi,
-            font_cs: val.font_cs,
-            font_east_asia: val.font_east_asia,
-            highlight: val.highlight,
-            caps: val.caps,
-            small_caps: val.small_caps,
-            shadow: val.shadow,
-            outline: val.outline,
-            emboss: val.emboss,
-            imprint: val.imprint,
-            char_spacing: val.char_spacing,
-            position: val.position,
-            kern: val.kern,
-            theme_color: val.theme_color,
-            theme_tint: val.theme_tint,
-            theme_shade: val.theme_shade,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::styles::StyleDefinition> for StyleDefinition {
     fn from(val: kreuzberg::extraction::docx::styles::StyleDefinition) -> Self {
         Self {
             id: val.id,
             name: val.name,
-            style_type: val.style_type.into(),
+            style_type: format!("{:?}", val.style_type),
             based_on: val.based_on,
             next_style: val.next_style,
             is_default: val.is_default,
             paragraph_properties: format!("{:?}", val.paragraph_properties),
-            run_properties: val.run_properties.into(),
-        }
-    }
-}
-
-impl From<ResolvedStyle> for kreuzberg::extraction::docx::styles::ResolvedStyle {
-    fn from(val: ResolvedStyle) -> Self {
-        Self {
-            paragraph_properties: Default::default(),
-            run_properties: val.run_properties.into(),
+            run_properties: format!("{:?}", val.run_properties),
         }
     }
 }
@@ -14703,27 +8420,7 @@ impl From<kreuzberg::extraction::docx::styles::ResolvedStyle> for ResolvedStyle 
     fn from(val: kreuzberg::extraction::docx::styles::ResolvedStyle) -> Self {
         Self {
             paragraph_properties: format!("{:?}", val.paragraph_properties),
-            run_properties: val.run_properties.into(),
-        }
-    }
-}
-
-impl From<StyleCatalog> for kreuzberg::extraction::docx::styles::StyleCatalog {
-    fn from(val: StyleCatalog) -> Self {
-        Self {
-            styles: Default::default(),
-            default_paragraph_properties: Default::default(),
-            default_run_properties: val.default_run_properties.into(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::styles::StyleCatalog> for StyleCatalog {
-    fn from(val: kreuzberg::extraction::docx::styles::StyleCatalog) -> Self {
-        Self {
-            styles: format!("{:?}", val.styles),
-            default_paragraph_properties: format!("{:?}", val.default_paragraph_properties),
-            default_run_properties: val.default_run_properties.into(),
+            run_properties: format!("{:?}", val.run_properties),
         }
     }
 }
@@ -14735,8 +8432,8 @@ impl From<TableProperties> for kreuzberg::extraction::docx::table::TableProperti
             width: Default::default(),
             alignment: val.alignment,
             layout: val.layout,
-            look: val.look.map(Into::into),
-            borders: val.borders.map(Into::into),
+            look: Default::default(),
+            borders: Default::default(),
             cell_margins: Default::default(),
             indent: Default::default(),
             caption: val.caption,
@@ -14751,173 +8448,11 @@ impl From<kreuzberg::extraction::docx::table::TableProperties> for TableProperti
             width: val.width.as_ref().map(|v| format!("{:?}", v)),
             alignment: val.alignment,
             layout: val.layout,
-            look: val.look.map(Into::into),
-            borders: val.borders.map(Into::into),
+            look: val.look.as_ref().map(|v| format!("{:?}", v)),
+            borders: val.borders.as_ref().map(|v| format!("{:?}", v)),
             cell_margins: val.cell_margins.as_ref().map(|v| format!("{:?}", v)),
             indent: val.indent.as_ref().map(|v| format!("{:?}", v)),
             caption: val.caption,
-        }
-    }
-}
-
-impl From<TableLook> for kreuzberg::extraction::docx::table::TableLook {
-    fn from(val: TableLook) -> Self {
-        Self {
-            first_row: val.first_row,
-            last_row: val.last_row,
-            first_column: val.first_column,
-            last_column: val.last_column,
-            no_h_band: val.no_h_band,
-            no_v_band: val.no_v_band,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableLook> for TableLook {
-    fn from(val: kreuzberg::extraction::docx::table::TableLook) -> Self {
-        Self {
-            first_row: val.first_row,
-            last_row: val.last_row,
-            first_column: val.first_column,
-            last_column: val.last_column,
-            no_h_band: val.no_h_band,
-            no_v_band: val.no_v_band,
-        }
-    }
-}
-
-impl From<TableBorders> for kreuzberg::extraction::docx::table::TableBorders {
-    fn from(val: TableBorders) -> Self {
-        Self {
-            top: Default::default(),
-            bottom: Default::default(),
-            left: Default::default(),
-            right: Default::default(),
-            inside_h: Default::default(),
-            inside_v: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableBorders> for TableBorders {
-    fn from(val: kreuzberg::extraction::docx::table::TableBorders) -> Self {
-        Self {
-            top: val.top.as_ref().map(|v| format!("{:?}", v)),
-            bottom: val.bottom.as_ref().map(|v| format!("{:?}", v)),
-            left: val.left.as_ref().map(|v| format!("{:?}", v)),
-            right: val.right.as_ref().map(|v| format!("{:?}", v)),
-            inside_h: val.inside_h.as_ref().map(|v| format!("{:?}", v)),
-            inside_v: val.inside_v.as_ref().map(|v| format!("{:?}", v)),
-        }
-    }
-}
-
-impl From<RowProperties> for kreuzberg::extraction::docx::table::RowProperties {
-    fn from(val: RowProperties) -> Self {
-        Self {
-            height: val.height,
-            height_rule: val.height_rule,
-            is_header: val.is_header,
-            cant_split: val.cant_split,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::RowProperties> for RowProperties {
-    fn from(val: kreuzberg::extraction::docx::table::RowProperties) -> Self {
-        Self {
-            height: val.height,
-            height_rule: val.height_rule,
-            is_header: val.is_header,
-            cant_split: val.cant_split,
-        }
-    }
-}
-
-impl From<ColorScheme> for kreuzberg::extraction::docx::theme::ColorScheme {
-    fn from(val: ColorScheme) -> Self {
-        Self {
-            name: val.name,
-            dk1: val.dk1.map(Into::into),
-            lt1: val.lt1.map(Into::into),
-            dk2: val.dk2.map(Into::into),
-            lt2: val.lt2.map(Into::into),
-            accent1: val.accent1.map(Into::into),
-            accent2: val.accent2.map(Into::into),
-            accent3: val.accent3.map(Into::into),
-            accent4: val.accent4.map(Into::into),
-            accent5: val.accent5.map(Into::into),
-            accent6: val.accent6.map(Into::into),
-            hlink: val.hlink.map(Into::into),
-            fol_hlink: val.fol_hlink.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::ColorScheme> for ColorScheme {
-    fn from(val: kreuzberg::extraction::docx::theme::ColorScheme) -> Self {
-        Self {
-            name: val.name,
-            dk1: val.dk1.map(Into::into),
-            lt1: val.lt1.map(Into::into),
-            dk2: val.dk2.map(Into::into),
-            lt2: val.lt2.map(Into::into),
-            accent1: val.accent1.map(Into::into),
-            accent2: val.accent2.map(Into::into),
-            accent3: val.accent3.map(Into::into),
-            accent4: val.accent4.map(Into::into),
-            accent5: val.accent5.map(Into::into),
-            accent6: val.accent6.map(Into::into),
-            hlink: val.hlink.map(Into::into),
-            fol_hlink: val.fol_hlink.map(Into::into),
-        }
-    }
-}
-
-impl From<FontScheme> for kreuzberg::extraction::docx::theme::FontScheme {
-    fn from(val: FontScheme) -> Self {
-        Self {
-            name: val.name,
-            major_latin: val.major_latin,
-            major_east_asian: val.major_east_asian,
-            major_complex_script: val.major_complex_script,
-            minor_latin: val.minor_latin,
-            minor_east_asian: val.minor_east_asian,
-            minor_complex_script: val.minor_complex_script,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::FontScheme> for FontScheme {
-    fn from(val: kreuzberg::extraction::docx::theme::FontScheme) -> Self {
-        Self {
-            name: val.name,
-            major_latin: val.major_latin,
-            major_east_asian: val.major_east_asian,
-            major_complex_script: val.major_complex_script,
-            minor_latin: val.minor_latin,
-            minor_east_asian: val.minor_east_asian,
-            minor_complex_script: val.minor_complex_script,
-        }
-    }
-}
-
-impl From<Theme> for kreuzberg::extraction::docx::theme::Theme {
-    fn from(val: Theme) -> Self {
-        Self {
-            name: val.name,
-            color_scheme: val.color_scheme.map(Into::into),
-            font_scheme: val.font_scheme.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::Theme> for Theme {
-    fn from(val: kreuzberg::extraction::docx::theme::Theme) -> Self {
-        Self {
-            name: val.name,
-            color_scheme: val.color_scheme.map(Into::into),
-            font_scheme: val.font_scheme.map(Into::into),
         }
     }
 }
@@ -14990,7 +8525,7 @@ impl From<PptExtractionResult> for kreuzberg::extraction::ppt::PptExtractionResu
         Self {
             text: val.text,
             slide_count: val.slide_count,
-            metadata: val.metadata.into(),
+            metadata: Default::default(),
             speaker_notes: val.speaker_notes,
         }
     }
@@ -15001,86 +8536,8 @@ impl From<kreuzberg::extraction::ppt::PptExtractionResult> for PptExtractionResu
         Self {
             text: val.text,
             slide_count: val.slide_count,
-            metadata: val.metadata.into(),
+            metadata: format!("{:?}", val.metadata),
             speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<PptMetadata> for kreuzberg::extraction::ppt::PptMetadata {
-    fn from(val: PptMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ppt::PptMetadata> for PptMetadata {
-    fn from(val: kreuzberg::extraction::ppt::PptMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-        }
-    }
-}
-
-impl From<PptxExtractionOptions> for kreuzberg::extraction::PptxExtractionOptions {
-    fn from(val: PptxExtractionOptions) -> Self {
-        Self {
-            extract_images: val.extract_images,
-            page_config: val.page_config.map(Into::into),
-            plain: val.plain,
-            include_structure: val.include_structure,
-            inject_placeholders: val.inject_placeholders,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::PptxExtractionOptions> for PptxExtractionOptions {
-    fn from(val: kreuzberg::extraction::PptxExtractionOptions) -> Self {
-        Self {
-            extract_images: val.extract_images,
-            page_config: val.page_config.map(Into::into),
-            plain: val.plain,
-            include_structure: val.include_structure,
-            inject_placeholders: val.inject_placeholders,
-        }
-    }
-}
-
-impl From<NativeTextStats> for kreuzberg::extractors::pdf::NativeTextStats {
-    fn from(val: NativeTextStats) -> Self {
-        Self {
-            non_whitespace: val.non_whitespace,
-            alnum: val.alnum,
-            meaningful_words: val.meaningful_words,
-            alnum_ratio: val.alnum_ratio,
-            garbage_char_count: val.garbage_char_count,
-            fragmented_word_ratio: val.fragmented_word_ratio,
-            consecutive_repeat_ratio: val.consecutive_repeat_ratio,
-            avg_word_length: val.avg_word_length,
-            word_count: val.word_count,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::pdf::NativeTextStats> for NativeTextStats {
-    fn from(val: kreuzberg::extractors::pdf::NativeTextStats) -> Self {
-        Self {
-            non_whitespace: val.non_whitespace,
-            alnum: val.alnum,
-            meaningful_words: val.meaningful_words,
-            alnum_ratio: val.alnum_ratio,
-            garbage_char_count: val.garbage_char_count,
-            fragmented_word_ratio: val.fragmented_word_ratio,
-            consecutive_repeat_ratio: val.consecutive_repeat_ratio,
-            avg_word_length: val.avg_word_length,
-            word_count: val.word_count,
         }
     }
 }
@@ -15088,7 +8545,7 @@ impl From<kreuzberg::extractors::pdf::NativeTextStats> for NativeTextStats {
 impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecision {
     fn from(val: OcrFallbackDecision) -> Self {
         Self {
-            stats: val.stats.into(),
+            stats: Default::default(),
             avg_non_whitespace: val.avg_non_whitespace,
             avg_alnum: val.avg_alnum,
             fallback: val.fallback,
@@ -15099,22 +8556,10 @@ impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecisi
 impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecision {
     fn from(val: kreuzberg::extractors::pdf::OcrFallbackDecision) -> Self {
         Self {
-            stats: val.stats.into(),
+            stats: format!("{:?}", val.stats),
             avg_non_whitespace: val.avg_non_whitespace,
             avg_alnum: val.avg_alnum,
             fallback: val.fallback,
-        }
-    }
-}
-
-impl From<kreuzberg::panic_context::PanicContext> for PanicContext {
-    fn from(val: kreuzberg::panic_context::PanicContext) -> Self {
-        Self {
-            file: val.file,
-            line: val.line,
-            function: val.function,
-            message: val.message,
-            timestamp: format!("{:?}", val.timestamp),
         }
     }
 }
@@ -16006,23 +9451,6 @@ impl From<kreuzberg::EmailAttachment> for EmailAttachment {
     }
 }
 
-impl From<OcrExtractionResult> for kreuzberg::OcrExtractionResult {
-    fn from(val: OcrExtractionResult) -> Self {
-        Self {
-            content: val.content,
-            mime_type: val.mime_type,
-            metadata: val
-                .metadata
-                .into_iter()
-                .map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::Value::String(v))))
-                .collect(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            ocr_elements: val.ocr_elements.map(|v| v.into_iter().map(Into::into).collect()),
-            internal_document: Default::default(),
-        }
-    }
-}
-
 impl From<kreuzberg::OcrExtractionResult> for OcrExtractionResult {
     fn from(val: kreuzberg::OcrExtractionResult) -> Self {
         Self {
@@ -16036,17 +9464,6 @@ impl From<kreuzberg::OcrExtractionResult> for OcrExtractionResult {
     }
 }
 
-impl From<OcrTable> for kreuzberg::OcrTable {
-    fn from(val: OcrTable) -> Self {
-        Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
 impl From<kreuzberg::OcrTable> for OcrTable {
     fn from(val: kreuzberg::OcrTable) -> Self {
         Self {
@@ -16054,17 +9471,6 @@ impl From<kreuzberg::OcrTable> for OcrTable {
             markdown: val.markdown,
             page_number: val.page_number,
             bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<OcrTableBoundingBox> for kreuzberg::OcrTableBoundingBox {
-    fn from(val: OcrTableBoundingBox) -> Self {
-        Self {
-            left: val.left,
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
         }
     }
 }
@@ -16964,155 +10370,11 @@ impl From<kreuzberg::Uri> for Uri {
     }
 }
 
-impl From<PoolMetrics> for kreuzberg::utils::pool::PoolMetrics {
-    fn from(val: PoolMetrics) -> Self {
-        Self {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::utils::pool::PoolMetrics> for PoolMetrics {
-    fn from(val: kreuzberg::utils::pool::PoolMetrics) -> Self {
-        Self {
-            total_acquires: format!("{:?}", val.total_acquires),
-            total_cache_hits: format!("{:?}", val.total_cache_hits),
-            peak_items_stored: format!("{:?}", val.peak_items_stored),
-            total_creations: format!("{:?}", val.total_creations),
-        }
-    }
-}
-
-impl From<PoolMetricsSnapshot> for kreuzberg::utils::pool::PoolMetricsSnapshot {
-    fn from(val: PoolMetricsSnapshot) -> Self {
-        Self {
-            total_acquires: val.total_acquires,
-            total_cache_hits: val.total_cache_hits,
-            peak_items_stored: val.peak_items_stored,
-            total_creations: val.total_creations,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::pool::PoolMetricsSnapshot> for PoolMetricsSnapshot {
-    fn from(val: kreuzberg::utils::pool::PoolMetricsSnapshot) -> Self {
-        Self {
-            total_acquires: val.total_acquires,
-            total_cache_hits: val.total_cache_hits,
-            peak_items_stored: val.peak_items_stored,
-            total_creations: val.total_creations,
-        }
-    }
-}
-
-impl From<PoolSizeHint> for kreuzberg::utils::PoolSizeHint {
-    fn from(val: PoolSizeHint) -> Self {
-        Self {
-            estimated_total_size: val.estimated_total_size,
-            string_buffer_count: val.string_buffer_count,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_buffer_count: val.byte_buffer_count,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::PoolSizeHint> for PoolSizeHint {
-    fn from(val: kreuzberg::utils::PoolSizeHint) -> Self {
-        Self {
-            estimated_total_size: val.estimated_total_size,
-            string_buffer_count: val.string_buffer_count,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_buffer_count: val.byte_buffer_count,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-        }
-    }
-}
-
-impl From<PoolConfig> for kreuzberg::utils::string_pool::PoolConfig {
-    fn from(val: PoolConfig) -> Self {
-        Self {
-            max_buffers_per_size: val.max_buffers_per_size,
-            initial_capacity: val.initial_capacity,
-            max_capacity_before_discard: val.max_capacity_before_discard,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::string_pool::PoolConfig> for PoolConfig {
-    fn from(val: kreuzberg::utils::string_pool::PoolConfig) -> Self {
-        Self {
-            max_buffers_per_size: val.max_buffers_per_size,
-            initial_capacity: val.initial_capacity,
-            max_capacity_before_discard: val.max_capacity_before_discard,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::string_pool::StringBufferPoolMetrics> for StringBufferPoolMetrics {
-    fn from(val: kreuzberg::utils::string_pool::StringBufferPoolMetrics) -> Self {
-        Self {
-            total_acquires: val.total_acquires,
-            total_reuses: val.total_reuses,
-            hit_rate: val.hit_rate,
-        }
-    }
-}
-
-impl From<HocrWord> for kreuzberg::table_core::HocrWord {
-    fn from(val: HocrWord) -> Self {
-        Self {
-            text: val.text,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            confidence: val.confidence,
-        }
-    }
-}
-
-impl From<kreuzberg::table_core::HocrWord> for HocrWord {
-    fn from(val: kreuzberg::table_core::HocrWord) -> Self {
-        Self {
-            text: val.text,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            confidence: val.confidence,
-        }
-    }
-}
-
-impl From<ExtractionRequest> for kreuzberg::service::ExtractionRequest {
-    fn from(val: ExtractionRequest) -> Self {
-        Self {
-            source: val.source.into(),
-            config: val.config.into(),
-            file_overrides: val.file_overrides.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::service::ExtractionRequest> for ExtractionRequest {
-    fn from(val: kreuzberg::service::ExtractionRequest) -> Self {
-        Self {
-            source: val.source.into(),
-            config: val.config.into(),
-            file_overrides: val.file_overrides.map(Into::into),
-        }
-    }
-}
-
 impl From<ApiError> for kreuzberg::api::ApiError {
     fn from(val: ApiError) -> Self {
         Self {
             status: Default::default(),
-            body: val.body.into(),
+            body: Default::default(),
         }
     }
 }
@@ -17121,25 +10383,7 @@ impl From<kreuzberg::api::ApiError> for ApiError {
     fn from(val: kreuzberg::api::ApiError) -> Self {
         Self {
             status: format!("{:?}", val.status),
-            body: val.body.into(),
-        }
-    }
-}
-
-impl From<ApiSizeLimits> for kreuzberg::api::ApiSizeLimits {
-    fn from(val: ApiSizeLimits) -> Self {
-        Self {
-            max_request_body_bytes: val.max_request_body_bytes,
-            max_multipart_field_bytes: val.max_multipart_field_bytes,
-        }
-    }
-}
-
-impl From<kreuzberg::api::ApiSizeLimits> for ApiSizeLimits {
-    fn from(val: kreuzberg::api::ApiSizeLimits) -> Self {
-        Self {
-            max_request_body_bytes: val.max_request_body_bytes,
-            max_multipart_field_bytes: val.max_multipart_field_bytes,
+            body: format!("{:?}", val.body),
         }
     }
 }
@@ -17159,28 +10403,6 @@ impl From<kreuzberg::api::InfoResponse> for InfoResponse {
         Self {
             version: val.version,
             rust_backend: val.rust_backend,
-        }
-    }
-}
-
-impl From<ErrorResponse> for kreuzberg::api::ErrorResponse {
-    fn from(val: ErrorResponse) -> Self {
-        Self {
-            error_type: val.error_type,
-            message: val.message,
-            traceback: val.traceback,
-            status_code: val.status_code,
-        }
-    }
-}
-
-impl From<kreuzberg::api::ErrorResponse> for ErrorResponse {
-    fn from(val: kreuzberg::api::ErrorResponse) -> Self {
-        Self {
-            error_type: val.error_type,
-            message: val.message,
-            traceback: val.traceback,
-            status_code: val.status_code,
         }
     }
 }
@@ -17329,30 +10551,16 @@ impl From<kreuzberg::api::OpenWebDocumentResponse> for OpenWebDocumentResponse {
     fn from(val: kreuzberg::api::OpenWebDocumentResponse) -> Self {
         Self {
             page_content: val.page_content,
-            metadata: val.metadata.into(),
+            metadata: format!("{:?}", val.metadata),
         }
-    }
-}
-
-impl From<kreuzberg::api::OpenWebDocumentMetadata> for OpenWebDocumentMetadata {
-    fn from(val: kreuzberg::api::OpenWebDocumentMetadata) -> Self {
-        Self { source: val.source }
     }
 }
 
 impl From<kreuzberg::api::DoclingCompatResponse> for DoclingCompatResponse {
     fn from(val: kreuzberg::api::DoclingCompatResponse) -> Self {
         Self {
-            document: val.document.into(),
+            document: format!("{:?}", val.document),
             status: val.status,
-        }
-    }
-}
-
-impl From<kreuzberg::api::DoclingCompatDocument> for DoclingCompatDocument {
-    fn from(val: kreuzberg::api::DoclingCompatDocument) -> Self {
-        Self {
-            md_content: val.md_content,
         }
     }
 }
@@ -17552,58 +10760,11 @@ impl From<kreuzberg::Keyword> for Keyword {
     }
 }
 
-impl From<OcrCacheStats> for kreuzberg::ocr::OcrCacheStats {
-    fn from(val: OcrCacheStats) -> Self {
-        Self {
-            total_files: val.total_files,
-            total_size_mb: val.total_size_mb,
-        }
-    }
-}
-
 impl From<kreuzberg::ocr::OcrCacheStats> for OcrCacheStats {
     fn from(val: kreuzberg::ocr::OcrCacheStats) -> Self {
         Self {
             total_files: val.total_files,
             total_size_mb: val.total_size_mb,
-        }
-    }
-}
-
-impl From<TsvRow> for kreuzberg::ocr::TsvRow {
-    fn from(val: TsvRow) -> Self {
-        Self {
-            level: val.level,
-            page_num: val.page_num,
-            block_num: val.block_num,
-            par_num: val.par_num,
-            line_num: val.line_num,
-            word_num: val.word_num,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            conf: val.conf,
-            text: val.text,
-        }
-    }
-}
-
-impl From<kreuzberg::ocr::TsvRow> for TsvRow {
-    fn from(val: kreuzberg::ocr::TsvRow) -> Self {
-        Self {
-            level: val.level,
-            page_num: val.page_num,
-            block_num: val.block_num,
-            par_num: val.par_num,
-            line_num: val.line_num,
-            word_num: val.word_num,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            conf: val.conf,
-            text: val.text,
         }
     }
 }
@@ -17772,7 +10933,7 @@ impl From<FontSizeCluster> for kreuzberg::pdf::FontSizeCluster {
     fn from(val: FontSizeCluster) -> Self {
         Self {
             centroid: val.centroid,
-            members: val.members.into_iter().map(Into::into).collect(),
+            members: Default::default(),
         }
     }
 }
@@ -17781,7 +10942,7 @@ impl From<kreuzberg::pdf::FontSizeCluster> for FontSizeCluster {
     fn from(val: kreuzberg::pdf::FontSizeCluster) -> Self {
         Self {
             centroid: val.centroid,
-            members: val.members.into_iter().map(Into::into).collect(),
+            members: val.members.iter().map(|i| format!("{:?}", i)).collect(),
         }
     }
 }
@@ -17818,45 +10979,13 @@ impl From<kreuzberg::pdf::CharData> for CharData {
     }
 }
 
-impl From<TextBlock> for kreuzberg::pdf::TextBlock {
-    fn from(val: TextBlock) -> Self {
-        Self {
-            text: val.text,
-            bbox: val.bbox.into(),
-            font_size: val.font_size,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::TextBlock> for TextBlock {
-    fn from(val: kreuzberg::pdf::TextBlock) -> Self {
-        Self {
-            text: val.text,
-            bbox: val.bbox.into(),
-            font_size: val.font_size,
-        }
-    }
-}
-
-impl From<KMeansResult> for kreuzberg::pdf::hierarchy::KMeansResult {
-    fn from(val: KMeansResult) -> Self {
-        Self { labels: val.labels }
-    }
-}
-
-impl From<kreuzberg::pdf::hierarchy::KMeansResult> for KMeansResult {
-    fn from(val: kreuzberg::pdf::hierarchy::KMeansResult) -> Self {
-        Self { labels: val.labels }
-    }
-}
-
 impl From<HierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
     fn from(val: HierarchyBlock) -> Self {
         Self {
             text: val.text,
             bbox: val.bbox.into(),
             font_size: val.font_size,
-            hierarchy_level: val.hierarchy_level.into(),
+            hierarchy_level: Default::default(),
         }
     }
 }
@@ -17867,43 +10996,7 @@ impl From<kreuzberg::pdf::hierarchy::HierarchyBlock> for HierarchyBlock {
             text: val.text,
             bbox: val.bbox.into(),
             font_size: val.font_size,
-            hierarchy_level: val.hierarchy_level.into(),
-        }
-    }
-}
-
-impl From<SegmentData> for kreuzberg::pdf::hierarchy::SegmentData {
-    fn from(val: SegmentData) -> Self {
-        Self {
-            text: val.text,
-            x: val.x,
-            y: val.y,
-            width: val.width,
-            height: val.height,
-            font_size: val.font_size,
-            is_bold: val.is_bold,
-            is_italic: val.is_italic,
-            is_monospace: val.is_monospace,
-            baseline_y: val.baseline_y,
-            assigned_role: val.assigned_role,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::hierarchy::SegmentData> for SegmentData {
-    fn from(val: kreuzberg::pdf::hierarchy::SegmentData) -> Self {
-        Self {
-            text: val.text,
-            x: val.x,
-            y: val.y,
-            width: val.width,
-            height: val.height,
-            font_size: val.font_size,
-            is_bold: val.is_bold,
-            is_italic: val.is_italic,
-            is_monospace: val.is_monospace,
-            baseline_y: val.baseline_y,
-            assigned_role: val.assigned_role,
+            hierarchy_level: format!("{:?}", val.hierarchy_level),
         }
     }
 }
@@ -17940,23 +11033,12 @@ impl From<kreuzberg::pdf::PdfImage> for PdfImage {
     }
 }
 
-impl From<kreuzberg::pdf::layout_runner::PdfLayoutBBox> for PdfLayoutBBox {
-    fn from(val: kreuzberg::pdf::layout_runner::PdfLayoutBBox) -> Self {
-        Self {
-            left: val.left,
-            bottom: val.bottom,
-            right: val.right,
-            top: val.top,
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageLayoutRegion> for PageLayoutRegion {
     fn from(val: kreuzberg::pdf::layout_runner::PageLayoutRegion) -> Self {
         Self {
             class: val.class.into(),
             confidence: val.confidence,
-            bbox: val.bbox.into(),
+            bbox: format!("{:?}", val.bbox),
         }
     }
 }
@@ -17974,19 +11056,6 @@ impl From<kreuzberg::pdf::layout_runner::PageLayoutResult> for PageLayoutResult 
     }
 }
 
-impl From<PageTiming> for kreuzberg::pdf::layout_runner::PageTiming {
-    fn from(val: PageTiming) -> Self {
-        Self {
-            render_ms: val.render_ms,
-            preprocess_ms: val.preprocess_ms,
-            onnx_ms: val.onnx_ms,
-            inference_ms: val.inference_ms,
-            postprocess_ms: val.postprocess_ms,
-            mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageTiming> for PageTiming {
     fn from(val: kreuzberg::pdf::layout_runner::PageTiming) -> Self {
         Self {
@@ -17996,41 +11065,6 @@ impl From<kreuzberg::pdf::layout_runner::PageTiming> for PageTiming {
             inference_ms: val.inference_ms,
             postprocess_ms: val.postprocess_ms,
             mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::layout_runner::LayoutTimingReport> for LayoutTimingReport {
-    fn from(val: kreuzberg::pdf::layout_runner::LayoutTimingReport) -> Self {
-        Self {
-            total_ms: val.total_ms,
-            per_page: val.per_page.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<PdfMetadata> for kreuzberg::pdf::metadata::PdfMetadata {
-    fn from(val: PdfMetadata) -> Self {
-        Self {
-            pdf_version: val.pdf_version,
-            producer: val.producer,
-            is_encrypted: val.is_encrypted,
-            width: val.width,
-            height: val.height,
-            page_count: val.page_count,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::metadata::PdfMetadata> for PdfMetadata {
-    fn from(val: kreuzberg::pdf::metadata::PdfMetadata) -> Self {
-        Self {
-            pdf_version: val.pdf_version,
-            producer: val.producer,
-            is_encrypted: val.is_encrypted,
-            width: val.width,
-            height: val.height,
-            page_count: val.page_count,
         }
     }
 }
@@ -18045,7 +11079,7 @@ impl From<PdfExtractionMetadata> for kreuzberg::pdf::metadata::PdfExtractionMeta
             created_at: val.created_at,
             modified_at: val.modified_at,
             created_by: val.created_by,
-            pdf_specific: val.pdf_specific.into(),
+            pdf_specific: Default::default(),
             page_structure: val.page_structure.map(Into::into),
         }
     }
@@ -18061,7 +11095,7 @@ impl From<kreuzberg::pdf::metadata::PdfExtractionMetadata> for PdfExtractionMeta
             created_at: val.created_at,
             modified_at: val.modified_at,
             created_by: val.created_by,
-            pdf_specific: val.pdf_specific.into(),
+            pdf_specific: format!("{:?}", val.pdf_specific),
             page_structure: val.page_structure.map(Into::into),
         }
     }
@@ -18091,30 +11125,6 @@ impl From<kreuzberg::pdf::metadata::CommonPdfMetadata> for CommonPdfMetadata {
             created_at: val.created_at,
             modified_at: val.modified_at,
             created_by: val.created_by,
-        }
-    }
-}
-
-impl From<PageRenderOptions> for kreuzberg::pdf::PageRenderOptions {
-    fn from(val: PageRenderOptions) -> Self {
-        Self {
-            target_dpi: val.target_dpi,
-            max_image_dimension: val.max_image_dimension,
-            auto_adjust_dpi: val.auto_adjust_dpi,
-            min_dpi: val.min_dpi,
-            max_dpi: val.max_dpi,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::PageRenderOptions> for PageRenderOptions {
-    fn from(val: kreuzberg::pdf::PageRenderOptions) -> Self {
-        Self {
-            target_dpi: val.target_dpi,
-            max_image_dimension: val.max_image_dimension,
-            auto_adjust_dpi: val.auto_adjust_dpi,
-            min_dpi: val.min_dpi,
-            max_dpi: val.max_dpi,
         }
     }
 }
@@ -18329,28 +11339,6 @@ impl From<kreuzberg::CodeContentMode> for CodeContentMode {
     }
 }
 
-impl From<ListType> for kreuzberg::extraction::ListType {
-    fn from(val: ListType) -> Self {
-        match val {
-            ListType::Bullet => Self::Bullet,
-            ListType::Numbered => Self::Numbered,
-            ListType::Lettered => Self::Lettered,
-            ListType::Indented => Self::Indented,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ListType> for ListType {
-    fn from(val: kreuzberg::extraction::ListType) -> Self {
-        match val {
-            kreuzberg::extraction::ListType::Bullet => Self::Bullet,
-            kreuzberg::extraction::ListType::Numbered => Self::Numbered,
-            kreuzberg::extraction::ListType::Lettered => Self::Lettered,
-            kreuzberg::extraction::ListType::Indented => Self::Indented,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::hwp::error::HwpError> for HwpError {
     fn from(val: kreuzberg::extraction::hwp::error::HwpError) -> Self {
         match val {
@@ -18362,36 +11350,6 @@ impl From<kreuzberg::extraction::hwp::error::HwpError> for HwpError {
             kreuzberg::extraction::hwp::error::HwpError::ParseError(..) => Self::ParseError,
             kreuzberg::extraction::hwp::error::HwpError::EncodingError(..) => Self::EncodingError,
             kreuzberg::extraction::hwp::error::HwpError::NotFound(..) => Self::NotFound,
-        }
-    }
-}
-
-impl From<DrawingType> for kreuzberg::extraction::docx::drawing::DrawingType {
-    fn from(val: DrawingType) -> Self {
-        match val {
-            DrawingType::Inline => Self::Inline,
-            DrawingType::Anchored => Self::Anchored(Default::default()),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::DrawingType> for DrawingType {
-    fn from(val: kreuzberg::extraction::docx::drawing::DrawingType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::drawing::DrawingType::Inline => Self::Inline,
-            kreuzberg::extraction::docx::drawing::DrawingType::Anchored(..) => Self::Anchored,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::WrapType> for WrapType {
-    fn from(val: kreuzberg::extraction::docx::drawing::WrapType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::drawing::WrapType::None => Self::None,
-            kreuzberg::extraction::docx::drawing::WrapType::Square => Self::Square,
-            kreuzberg::extraction::docx::drawing::WrapType::Tight => Self::Tight,
-            kreuzberg::extraction::docx::drawing::WrapType::TopAndBottom => Self::TopAndBottom,
-            kreuzberg::extraction::docx::drawing::WrapType::Through => Self::Through,
         }
     }
 }
@@ -18432,112 +11390,12 @@ impl From<kreuzberg::extraction::docx::math::MathNode> for MathNode {
     }
 }
 
-impl From<DocumentElement> for kreuzberg::extraction::docx::parser::DocumentElement {
-    fn from(val: DocumentElement) -> Self {
-        match val {
-            DocumentElement::Paragraph => Self::Paragraph(Default::default()),
-            DocumentElement::Table => Self::Table(Default::default()),
-            DocumentElement::Drawing => Self::Drawing(Default::default()),
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::parser::DocumentElement> for DocumentElement {
     fn from(val: kreuzberg::extraction::docx::parser::DocumentElement) -> Self {
         match val {
             kreuzberg::extraction::docx::parser::DocumentElement::Paragraph(..) => Self::Paragraph,
             kreuzberg::extraction::docx::parser::DocumentElement::Table(..) => Self::Table,
             kreuzberg::extraction::docx::parser::DocumentElement::Drawing(..) => Self::Drawing,
-        }
-    }
-}
-
-impl From<HeaderFooterType> for kreuzberg::extraction::docx::parser::HeaderFooterType {
-    fn from(val: HeaderFooterType) -> Self {
-        match val {
-            HeaderFooterType::Default => Self::Default,
-            HeaderFooterType::First => Self::First,
-            HeaderFooterType::Even => Self::Even,
-            HeaderFooterType::Odd => Self::Odd,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::HeaderFooterType> for HeaderFooterType {
-    fn from(val: kreuzberg::extraction::docx::parser::HeaderFooterType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::parser::HeaderFooterType::Default => Self::Default,
-            kreuzberg::extraction::docx::parser::HeaderFooterType::First => Self::First,
-            kreuzberg::extraction::docx::parser::HeaderFooterType::Even => Self::Even,
-            kreuzberg::extraction::docx::parser::HeaderFooterType::Odd => Self::Odd,
-        }
-    }
-}
-
-impl From<NoteType> for kreuzberg::extraction::docx::parser::NoteType {
-    fn from(val: NoteType) -> Self {
-        match val {
-            NoteType::Footnote => Self::Footnote,
-            NoteType::Endnote => Self::Endnote,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::NoteType> for NoteType {
-    fn from(val: kreuzberg::extraction::docx::parser::NoteType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::parser::NoteType::Footnote => Self::Footnote,
-            kreuzberg::extraction::docx::parser::NoteType::Endnote => Self::Endnote,
-        }
-    }
-}
-
-impl From<Orientation> for kreuzberg::extraction::docx::section::Orientation {
-    fn from(val: Orientation) -> Self {
-        match val {
-            Orientation::Portrait => Self::Portrait,
-            Orientation::Landscape => Self::Landscape,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::Orientation> for Orientation {
-    fn from(val: kreuzberg::extraction::docx::section::Orientation) -> Self {
-        match val {
-            kreuzberg::extraction::docx::section::Orientation::Portrait => Self::Portrait,
-            kreuzberg::extraction::docx::section::Orientation::Landscape => Self::Landscape,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::styles::StyleType> for StyleType {
-    fn from(val: kreuzberg::extraction::docx::styles::StyleType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::styles::StyleType::Paragraph => Self::Paragraph,
-            kreuzberg::extraction::docx::styles::StyleType::Character => Self::Character,
-            kreuzberg::extraction::docx::styles::StyleType::Table => Self::Table,
-            kreuzberg::extraction::docx::styles::StyleType::Numbering => Self::Numbering,
-        }
-    }
-}
-
-impl From<ThemeColor> for kreuzberg::extraction::docx::theme::ThemeColor {
-    fn from(val: ThemeColor) -> Self {
-        match val {
-            ThemeColor::Rgb => Self::Rgb(Default::default()),
-            ThemeColor::System => Self::System {
-                name: Default::default(),
-                last_color: Default::default(),
-            },
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::ThemeColor> for ThemeColor {
-    fn from(val: kreuzberg::extraction::docx::theme::ThemeColor) -> Self {
-        match val {
-            kreuzberg::extraction::docx::theme::ThemeColor::Rgb(..) => Self::Rgb,
-            kreuzberg::extraction::docx::theme::ThemeColor::System { .. } => Self::System,
         }
     }
 }
@@ -19228,30 +12086,6 @@ impl From<kreuzberg::utils::PoolError> for PoolError {
     }
 }
 
-impl From<ExtractionSource> for kreuzberg::service::ExtractionSource {
-    fn from(val: ExtractionSource) -> Self {
-        match val {
-            ExtractionSource::File => Self::File {
-                path: Default::default(),
-                mime_hint: Default::default(),
-            },
-            ExtractionSource::Bytes => Self::Bytes {
-                data: Default::default(),
-                mime_type: Default::default(),
-            },
-        }
-    }
-}
-
-impl From<kreuzberg::service::ExtractionSource> for ExtractionSource {
-    fn from(val: kreuzberg::service::ExtractionSource) -> Self {
-        match val {
-            kreuzberg::service::ExtractionSource::File { .. } => Self::File,
-            kreuzberg::service::ExtractionSource::Bytes { .. } => Self::Bytes,
-        }
-    }
-}
-
 impl From<KeywordAlgorithm> for kreuzberg::KeywordAlgorithm {
     fn from(val: KeywordAlgorithm) -> Self {
         match val {
@@ -19392,34 +12226,6 @@ impl From<kreuzberg::pdf::PdfError> for PdfError {
     }
 }
 
-impl From<HierarchyLevel> for kreuzberg::pdf::HierarchyLevel {
-    fn from(val: HierarchyLevel) -> Self {
-        match val {
-            HierarchyLevel::H1 => Self::H1,
-            HierarchyLevel::H2 => Self::H2,
-            HierarchyLevel::H3 => Self::H3,
-            HierarchyLevel::H4 => Self::H4,
-            HierarchyLevel::H5 => Self::H5,
-            HierarchyLevel::H6 => Self::H6,
-            HierarchyLevel::Body => Self::Body,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::HierarchyLevel> for HierarchyLevel {
-    fn from(val: kreuzberg::pdf::HierarchyLevel) -> Self {
-        match val {
-            kreuzberg::pdf::HierarchyLevel::H1 => Self::H1,
-            kreuzberg::pdf::HierarchyLevel::H2 => Self::H2,
-            kreuzberg::pdf::HierarchyLevel::H3 => Self::H3,
-            kreuzberg::pdf::HierarchyLevel::H4 => Self::H4,
-            kreuzberg::pdf::HierarchyLevel::H5 => Self::H5,
-            kreuzberg::pdf::HierarchyLevel::H6 => Self::H6,
-            kreuzberg::pdf::HierarchyLevel::Body => Self::Body,
-        }
-    }
-}
-
 /// Convert a `kreuzberg::error::KreuzbergError` error to a Rustler error string.
 #[allow(dead_code)]
 fn kreuzberg_error_to_rustler_err(e: kreuzberg::error::KreuzbergError) -> String {
@@ -19427,30 +12233,14 @@ fn kreuzberg_error_to_rustler_err(e: kreuzberg::error::KreuzbergError) -> String
 }
 
 fn on_load(env: rustler::Env, _info: rustler::Term) -> bool {
-    env.register::<GenericCache>()
-        .expect("Failed to register resource type GenericCache");
-    env.register::<BatchProcessor>()
-        .expect("Failed to register resource type BatchProcessor");
     env.register::<FileBytes>()
         .expect("Failed to register resource type FileBytes");
     env.register::<StreamReader>()
         .expect("Failed to register resource type StreamReader");
-    env.register::<CfbReader>()
-        .expect("Failed to register resource type CfbReader");
     env.register::<CustomProperties>()
         .expect("Failed to register resource type CustomProperties");
     env.register::<SyncExtractor>()
         .expect("Failed to register resource type SyncExtractor");
-    env.register::<CodeExtractor>()
-        .expect("Failed to register resource type CodeExtractor");
-    env.register::<CsvExtractor>()
-        .expect("Failed to register resource type CsvExtractor");
-    env.register::<StructuredExtractor>()
-        .expect("Failed to register resource type StructuredExtractor");
-    env.register::<PlainTextExtractor>()
-        .expect("Failed to register resource type PlainTextExtractor");
-    env.register::<DjotExtractor>()
-        .expect("Failed to register resource type DjotExtractor");
     env.register::<ZipBombValidator>()
         .expect("Failed to register resource type ZipBombValidator");
     env.register::<StringGrowthValidator>()
@@ -19463,98 +12253,14 @@ fn on_load(env: rustler::Env, _info: rustler::Term) -> bool {
         .expect("Failed to register resource type EntityValidator");
     env.register::<TableValidator>()
         .expect("Failed to register resource type TableValidator");
-    env.register::<ImageExtractor>()
-        .expect("Failed to register resource type ImageExtractor");
-    env.register::<ZipExtractor>()
-        .expect("Failed to register resource type ZipExtractor");
-    env.register::<TarExtractor>()
-        .expect("Failed to register resource type TarExtractor");
-    env.register::<SevenZExtractor>()
-        .expect("Failed to register resource type SevenZExtractor");
-    env.register::<GzipExtractor>()
-        .expect("Failed to register resource type GzipExtractor");
-    env.register::<EmailExtractor>()
-        .expect("Failed to register resource type EmailExtractor");
-    env.register::<PstExtractor>()
-        .expect("Failed to register resource type PstExtractor");
-    env.register::<ExcelExtractor>()
-        .expect("Failed to register resource type ExcelExtractor");
-    env.register::<HwpExtractor>()
-        .expect("Failed to register resource type HwpExtractor");
-    env.register::<KeynoteExtractor>()
-        .expect("Failed to register resource type KeynoteExtractor");
-    env.register::<NumbersExtractor>()
-        .expect("Failed to register resource type NumbersExtractor");
-    env.register::<PagesExtractor>()
-        .expect("Failed to register resource type PagesExtractor");
-    env.register::<HtmlExtractor>()
-        .expect("Failed to register resource type HtmlExtractor");
-    env.register::<BibtexExtractor>()
-        .expect("Failed to register resource type BibtexExtractor");
-    env.register::<CitationExtractor>()
-        .expect("Failed to register resource type CitationExtractor");
-    env.register::<DocExtractor>()
-        .expect("Failed to register resource type DocExtractor");
-    env.register::<DbfExtractor>()
-        .expect("Failed to register resource type DbfExtractor");
-    env.register::<DocxExtractor>()
-        .expect("Failed to register resource type DocxExtractor");
-    env.register::<EpubExtractor>()
-        .expect("Failed to register resource type EpubExtractor");
-    env.register::<FictionBookExtractor>()
-        .expect("Failed to register resource type FictionBookExtractor");
-    env.register::<MarkdownExtractor>()
-        .expect("Failed to register resource type MarkdownExtractor");
-    env.register::<MdxExtractor>()
-        .expect("Failed to register resource type MdxExtractor");
-    env.register::<RstExtractor>()
-        .expect("Failed to register resource type RstExtractor");
-    env.register::<LatexExtractor>()
-        .expect("Failed to register resource type LatexExtractor");
-    env.register::<JupyterExtractor>()
-        .expect("Failed to register resource type JupyterExtractor");
-    env.register::<OrgModeExtractor>()
-        .expect("Failed to register resource type OrgModeExtractor");
-    env.register::<OdtExtractor>()
-        .expect("Failed to register resource type OdtExtractor");
-    env.register::<OpmlExtractor>()
-        .expect("Failed to register resource type OpmlExtractor");
-    env.register::<TypstExtractor>()
-        .expect("Failed to register resource type TypstExtractor");
-    env.register::<JatsExtractor>()
-        .expect("Failed to register resource type JatsExtractor");
-    env.register::<PdfExtractor>()
-        .expect("Failed to register resource type PdfExtractor");
-    env.register::<PptExtractor>()
-        .expect("Failed to register resource type PptExtractor");
-    env.register::<PptxExtractor>()
-        .expect("Failed to register resource type PptxExtractor");
-    env.register::<RtfExtractor>()
-        .expect("Failed to register resource type RtfExtractor");
-    env.register::<XmlExtractor>()
-        .expect("Failed to register resource type XmlExtractor");
-    env.register::<DocbookExtractor>()
-        .expect("Failed to register resource type DocbookExtractor");
     env.register::<ModelCache>()
         .expect("Failed to register resource type ModelCache");
     env.register::<OcrBackend>()
         .expect("Failed to register resource type OcrBackend");
-    env.register::<DocumentExtractorRegistry>()
-        .expect("Failed to register resource type DocumentExtractorRegistry");
-    env.register::<OcrBackendRegistry>()
-        .expect("Failed to register resource type OcrBackendRegistry");
-    env.register::<PostProcessorRegistry>()
-        .expect("Failed to register resource type PostProcessorRegistry");
-    env.register::<RendererRegistry>()
-        .expect("Failed to register resource type RendererRegistry");
-    env.register::<ValidatorRegistry>()
-        .expect("Failed to register resource type ValidatorRegistry");
     env.register::<Renderer>()
         .expect("Failed to register resource type Renderer");
     env.register::<Plugin>()
         .expect("Failed to register resource type Plugin");
-    env.register::<TokenReducer>()
-        .expect("Failed to register resource type TokenReducer");
     env.register::<QualityProcessor>()
         .expect("Failed to register resource type QualityProcessor");
     env.register::<NodeId>()
@@ -19572,48 +12278,22 @@ fn on_load(env: rustler::Env, _info: rustler::Term) -> bool {
         .expect("Failed to register resource type PooledString");
     env.register::<InternedString>()
         .expect("Failed to register resource type InternedString");
-    env.register::<Instant>()
-        .expect("Failed to register resource type Instant");
-    env.register::<ExtractionService>()
-        .expect("Failed to register resource type ExtractionService");
     env.register::<TracingLayer>()
         .expect("Failed to register resource type TracingLayer");
     env.register::<MetricsLayer>()
         .expect("Failed to register resource type MetricsLayer");
-    env.register::<ExtractionServiceBuilder>()
-        .expect("Failed to register resource type ExtractionServiceBuilder");
     env.register::<ApiDoc>()
         .expect("Failed to register resource type ApiDoc");
     env.register::<ExtractResponse>()
         .expect("Failed to register resource type ExtractResponse");
-    env.register::<KreuzbergMcp>()
-        .expect("Failed to register resource type KreuzbergMcp");
     env.register::<ChunkingProcessor>()
         .expect("Failed to register resource type ChunkingProcessor");
     env.register::<VlmOcrBackend>()
         .expect("Failed to register resource type VlmOcrBackend");
-    env.register::<OcrCache>()
-        .expect("Failed to register resource type OcrCache");
-    env.register::<LanguageRegistry>()
-        .expect("Failed to register resource type LanguageRegistry");
-    env.register::<OcrProcessor>()
-        .expect("Failed to register resource type OcrProcessor");
     env.register::<TessdataManager>()
         .expect("Failed to register resource type TessdataManager");
-    env.register::<TesseractBackend>()
-        .expect("Failed to register resource type TesseractBackend");
-    env.register::<LayoutModel>()
-        .expect("Failed to register resource type LayoutModel");
-    env.register::<PdfImageExtractor>()
-        .expect("Failed to register resource type PdfImageExtractor");
-    env.register::<PdfPageIterator>()
-        .expect("Failed to register resource type PdfPageIterator");
-    env.register::<PdfRenderer>()
-        .expect("Failed to register resource type PdfRenderer");
     env.register::<PdfUnifiedExtractionResult>()
         .expect("Failed to register resource type PdfUnifiedExtractionResult");
-    env.register::<PdfTextExtractor>()
-        .expect("Failed to register resource type PdfTextExtractor");
     true
 }
 

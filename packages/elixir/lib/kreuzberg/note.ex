@@ -3,6 +3,6 @@ defmodule Kreuzberg.Note do
   @moduledoc false
 
   defstruct id: "",
-            note_type: :footnote,
+            note_type: "",
             paragraphs: []
 end

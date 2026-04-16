@@ -850,7 +850,7 @@ public final class Kreuzberg {
         return extractFile(path, null, config);
     }
 
-    public static PoolSizeHint getPoolSizingHint(long fileSize, String mimeType) throws KreuzbergRsException {
+    public static String getPoolSizingHint(long fileSize, String mimeType) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(fileSize, "fileSize must not be null");
         java.util.Objects.requireNonNull(mimeType, "mimeType must not be null");
         return KreuzbergRs.getPoolSizingHint(fileSize, mimeType);
@@ -1572,7 +1572,7 @@ public final class Kreuzberg {
         return KreuzbergRs.deriveExtractionResult(doc, includeDocumentStructure, outputFormat);
     }
 
-    public static StructuredDataResult parseJson(byte[] data, JsonExtractionConfig config) throws KreuzbergRsException {
+    public static StructuredDataResult parseJson(byte[] data, String config) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(data, "data must not be null");
         return KreuzbergRs.parseJson(data, config);
     }
@@ -1607,7 +1607,7 @@ public final class Kreuzberg {
      * # }
      * ```
      */
-    public static StructuredDataResult parseJsonl(byte[] data, JsonExtractionConfig config) throws KreuzbergRsException {
+    public static StructuredDataResult parseJsonl(byte[] data, String config) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(data, "data must not be null");
         return KreuzbergRs.parseJsonl(data, config);
     }
@@ -2473,7 +2473,7 @@ public final class Kreuzberg {
     /**
      * Parse a DOCX document from bytes and return the structured document.
      */
-    public static Document parseDocument(byte[] bytes) throws KreuzbergRsException {
+    public static String parseDocument(byte[] bytes) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(bytes, "bytes must not be null");
         return KreuzbergRs.parseDocument(bytes);
     }
@@ -2489,7 +2489,7 @@ public final class Kreuzberg {
     /**
      * Parse a `w:sectPr` XML element (roxmltree node) into `SectionProperties`.
      */
-    public static SectionProperties parseSectionProperties(String node) throws KreuzbergRsException {
+    public static String parseSectionProperties(String node) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(node, "node must not be null");
         return KreuzbergRs.parseSectionProperties(node);
     }
@@ -2503,7 +2503,7 @@ public final class Kreuzberg {
      * **Important:** This function advances the reader past the closing `</w:sectPr>` tag.
      * The caller must not attempt to process the `w:sectPr` end event again.
      */
-    public static SectionProperties parseSectionPropertiesStreaming(String reader) throws KreuzbergRsException {
+    public static String parseSectionPropertiesStreaming(String reader) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(reader, "reader must not be null");
         return KreuzbergRs.parseSectionPropertiesStreaming(reader);
     }
@@ -2514,7 +2514,7 @@ public final class Kreuzberg {
      * Uses `roxmltree` for tree-based XML parsing, consistent with the
      * office metadata parsing approach used elsewhere in the codebase.
      */
-    public static StyleCatalog parseStylesXml(String xml) throws KreuzbergRsException {
+    public static String parseStylesXml(String xml) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(xml, "xml must not be null");
         return KreuzbergRs.parseStylesXml(xml);
     }
@@ -2535,7 +2535,7 @@ public final class Kreuzberg {
      * 
      * Expects the reader to be positioned just after the `<w:trPr>` start tag.
      */
-    public static RowProperties parseRowProperties(String reader) throws KreuzbergRsException {
+    public static String parseRowProperties(String reader) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(reader, "reader must not be null");
         return KreuzbergRs.parseRowProperties(reader);
     }
@@ -2572,7 +2572,7 @@ public final class Kreuzberg {
      * * `Ok(Theme)` - The parsed theme
      * * `Err(KreuzbergError)` - If parsing fails
      */
-    public static Theme parseThemeXml(String xml) throws KreuzbergRsException {
+    public static String parseThemeXml(String xml) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(xml, "xml must not be null");
         return KreuzbergRs.parseThemeXml(xml);
     }
@@ -2748,7 +2748,7 @@ public final class Kreuzberg {
      * 
      * A `PptxExtractionResult` containing extracted content, metadata, and images.
      */
-    public static PptxExtractionResult extractPptxFromPath(String path, PptxExtractionOptions options) throws KreuzbergRsException {
+    public static PptxExtractionResult extractPptxFromPath(String path, String options) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(path, "path must not be null");
         java.util.Objects.requireNonNull(options, "options must not be null");
         return KreuzbergRs.extractPptxFromPath(path, options);
@@ -2766,7 +2766,7 @@ public final class Kreuzberg {
      * 
      * A `PptxExtractionResult` containing extracted content, metadata, and images.
      */
-    public static PptxExtractionResult extractPptxFromBytes(byte[] data, PptxExtractionOptions options) throws KreuzbergRsException {
+    public static PptxExtractionResult extractPptxFromBytes(byte[] data, String options) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(data, "data must not be null");
         java.util.Objects.requireNonNull(options, "options must not be null");
         return KreuzbergRs.extractPptxFromBytes(data, options);
@@ -4649,7 +4649,7 @@ public final class Kreuzberg {
      * // of 65KB each (for 1-10MB files)
      * ```
      */
-    public static PoolSizeHint estimatePoolSize(long fileSize, String mimeType) throws KreuzbergRsException {
+    public static String estimatePoolSize(long fileSize, String mimeType) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(fileSize, "fileSize must not be null");
         java.util.Objects.requireNonNull(mimeType, "mimeType must not be null");
         return KreuzbergRs.estimatePoolSize(fileSize, mimeType);
@@ -4756,7 +4756,7 @@ public final class Kreuzberg {
      * Groups words by approximate x-position (within `column_threshold` pixels)
      * and returns the median x-position for each detected column, sorted left to right.
      */
-    public static List<Integer> detectColumns(List<HocrWord> words, int columnThreshold) throws KreuzbergRsException {
+    public static List<Integer> detectColumns(List<String> words, int columnThreshold) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(words, "words must not be null");
         java.util.Objects.requireNonNull(columnThreshold, "columnThreshold must not be null");
         return KreuzbergRs.detectColumns(words, columnThreshold);
@@ -4769,7 +4769,7 @@ public final class Kreuzberg {
      * y-position for each detected row. The `row_threshold_ratio` is multiplied
      * by the median word height to determine the grouping threshold.
      */
-    public static List<Integer> detectRows(List<HocrWord> words, double rowThresholdRatio) throws KreuzbergRsException {
+    public static List<Integer> detectRows(List<String> words, double rowThresholdRatio) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(words, "words must not be null");
         java.util.Objects.requireNonNull(rowThresholdRatio, "rowThresholdRatio must not be null");
         return KreuzbergRs.detectRows(words, rowThresholdRatio);
@@ -4786,7 +4786,7 @@ public final class Kreuzberg {
      * 
      * Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
      */
-    public static List<List<String>> reconstructTable(List<HocrWord> words, int columnThreshold, double rowThresholdRatio) throws KreuzbergRsException {
+    public static List<List<String>> reconstructTable(List<String> words, int columnThreshold, double rowThresholdRatio) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(words, "words must not be null");
         java.util.Objects.requireNonNull(columnThreshold, "columnThreshold must not be null");
         java.util.Objects.requireNonNull(rowThresholdRatio, "rowThresholdRatio must not be null");
@@ -4936,7 +4936,7 @@ public final class Kreuzberg {
      * # }
      * ```
      */
-    public static String createRouterWithLimits(ExtractionConfig config, ApiSizeLimits limits) throws KreuzbergRsException {
+    public static String createRouterWithLimits(ExtractionConfig config, String limits) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(config, "config must not be null");
         java.util.Objects.requireNonNull(limits, "limits must not be null");
         return KreuzbergRs.createRouterWithLimits(config, limits);
@@ -4972,7 +4972,7 @@ public final class Kreuzberg {
      * # }
      * ```
      */
-    public static String createRouterWithLimitsAndServerConfig(ExtractionConfig config, ApiSizeLimits limits, ServerConfig serverConfig) throws KreuzbergRsException {
+    public static String createRouterWithLimitsAndServerConfig(ExtractionConfig config, String limits, ServerConfig serverConfig) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(config, "config must not be null");
         java.util.Objects.requireNonNull(limits, "limits must not be null");
         java.util.Objects.requireNonNull(serverConfig, "serverConfig must not be null");
@@ -5095,7 +5095,7 @@ public final class Kreuzberg {
      * }
      * ```
      */
-    public static void serveWithConfigAndLimits(String host, short port, ExtractionConfig config, ApiSizeLimits limits) throws KreuzbergRsException {
+    public static void serveWithConfigAndLimits(String host, short port, ExtractionConfig config, String limits) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(host, "host must not be null");
         java.util.Objects.requireNonNull(port, "port must not be null");
         java.util.Objects.requireNonNull(config, "config must not be null");
@@ -6077,7 +6077,7 @@ public final class Kreuzberg {
      * 
      * Returns `Ok(None)` if the detection is filtered out due to low `box_score`.
      */
-    public static OcrElement textBlockToElement(TextBlock block, long pageNumber) throws KreuzbergRsException {
+    public static OcrElement textBlockToElement(String block, long pageNumber) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(block, "block must not be null");
         java.util.Objects.requireNonNull(pageNumber, "pageNumber must not be null");
         return KreuzbergRs.textBlockToElement(block, pageNumber);
@@ -6099,7 +6099,7 @@ public final class Kreuzberg {
      * 
      * An `OcrElement` with rectangle geometry and Tesseract metadata.
      */
-    public static OcrElement tsvRowToElement(TsvRow row) throws KreuzbergRsException {
+    public static OcrElement tsvRowToElement(String row) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(row, "row must not be null");
         return KreuzbergRs.tsvRowToElement(row);
     }
@@ -6146,7 +6146,7 @@ public final class Kreuzberg {
      * 
      * An `HocrWord` suitable for table reconstruction algorithms.
      */
-    public static HocrWord elementToHocrWord(OcrElement element) throws KreuzbergRsException {
+    public static String elementToHocrWord(OcrElement element) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(element, "element must not be null");
         return KreuzbergRs.elementToHocrWord(element);
     }
@@ -6166,7 +6166,7 @@ public final class Kreuzberg {
      * 
      * A vector of HocrWords filtered by confidence and element level.
      */
-    public static List<HocrWord> elementsToHocrWords(List<OcrElement> elements, double minConfidence) throws KreuzbergRsException {
+    public static List<String> elementsToHocrWords(List<OcrElement> elements, double minConfidence) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(elements, "elements must not be null");
         java.util.Objects.requireNonNull(minConfidence, "minConfidence must not be null");
         return KreuzbergRs.elementsToHocrWords(elements, minConfidence);
@@ -6241,7 +6241,7 @@ public final class Kreuzberg {
      * This parses Tesseract's TSV format (level, page_num, block_num, ...) and
      * converts it to the HocrWord format used for table reconstruction.
      */
-    public static List<HocrWord> extractWordsFromTsv(String tsvData, double minConfidence) throws KreuzbergRsException {
+    public static List<String> extractWordsFromTsv(String tsvData, double minConfidence) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(tsvData, "tsvData must not be null");
         java.util.Objects.requireNonNull(minConfidence, "minConfidence must not be null");
         return KreuzbergRs.extractWordsFromTsv(tsvData, minConfidence);
@@ -6571,7 +6571,7 @@ public final class Kreuzberg {
      * Walks the `/Outlines` tree in the document catalog, collecting each bookmark's
      * title and destination. Returns an empty `Vec` if the document has no outlines.
      */
-    public static List<Uri> extractBookmarks(Document document) throws KreuzbergRsException {
+    public static List<Uri> extractBookmarks(String document) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(document, "document must not be null");
         return KreuzbergRs.extractBookmarks(document);
     }
@@ -6624,7 +6624,7 @@ public final class Kreuzberg {
      * Walks the `/Names` → `/EmbeddedFiles` name tree in the catalog.
      * Returns an empty `Vec` if the document has no embedded files.
      */
-    public static List<EmbeddedFile> extractEmbeddedFiles(Document document) throws KreuzbergRsException {
+    public static List<EmbeddedFile> extractEmbeddedFiles(String document) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(document, "document must not be null");
         return KreuzbergRs.extractEmbeddedFiles(document);
     }
@@ -6750,7 +6750,7 @@ public final class Kreuzberg {
      * # }
      * ```
      */
-    public static List<FontSizeCluster> clusterFontSizes(List<TextBlock> blocks, long k) throws KreuzbergRsException {
+    public static List<FontSizeCluster> clusterFontSizes(List<String> blocks, long k) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(blocks, "blocks must not be null");
         java.util.Objects.requireNonNull(k, "k must not be null");
         return KreuzbergRs.clusterFontSizes(blocks, k);
@@ -6832,7 +6832,7 @@ public final class Kreuzberg {
      * # }
      * ```
      */
-    public static List<HierarchyBlock> assignHierarchyLevels(List<TextBlock> blocks, KMeansResult kmeansResult) throws KreuzbergRsException {
+    public static List<HierarchyBlock> assignHierarchyLevels(List<String> blocks, String kmeansResult) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(blocks, "blocks must not be null");
         java.util.Objects.requireNonNull(kmeansResult, "kmeansResult must not be null");
         return KreuzbergRs.assignHierarchyLevels(blocks, kmeansResult);
@@ -6855,7 +6855,7 @@ public final class Kreuzberg {
      * If blocks is empty or clusters is empty, returns empty vector.
      * All blocks get Body level if only one cluster exists.
      */
-    public static List<String> assignHierarchyLevelsFromClusters(List<TextBlock> blocks, List<FontSizeCluster> clusters) throws KreuzbergRsException {
+    public static List<String> assignHierarchyLevelsFromClusters(List<String> blocks, List<FontSizeCluster> clusters) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(blocks, "blocks must not be null");
         java.util.Objects.requireNonNull(clusters, "clusters must not be null");
         return KreuzbergRs.assignHierarchyLevelsFromClusters(blocks, clusters);
@@ -6912,7 +6912,7 @@ public final class Kreuzberg {
      * Typically 10-50x fewer items than character-level extraction, with far fewer FFI calls
      * per item (one segment.text() + one segment.chars() sample vs N chars with 4+ FFI calls each).
      */
-    public static List<SegmentData> extractSegmentsFromPage(String page) throws KreuzbergRsException {
+    public static List<String> extractSegmentsFromPage(String page) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(page, "page must not be null");
         return KreuzbergRs.extractSegmentsFromPage(page);
     }
@@ -6941,7 +6941,7 @@ public final class Kreuzberg {
      * 4. Merge characters into blocks based on proximity thresholds
      * 5. Return sorted blocks by position (top to bottom, left to right)
      */
-    public static List<TextBlock> mergeCharsIntoBlocks(List<CharData> chars) throws KreuzbergRsException {
+    public static List<String> mergeCharsIntoBlocks(List<CharData> chars) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(chars, "chars must not be null");
         return KreuzbergRs.mergeCharsIntoBlocks(chars);
     }
@@ -6963,7 +6963,7 @@ public final class Kreuzberg {
      * 
      * `true` if OCR should be triggered (coverage below threshold), `false` otherwise.
      */
-    public static boolean shouldTriggerOcr(String page, List<TextBlock> blocks, ExtractionConfig config) throws KreuzbergRsException {
+    public static boolean shouldTriggerOcr(String page, List<String> blocks, ExtractionConfig config) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(page, "page must not be null");
         java.util.Objects.requireNonNull(blocks, "blocks must not be null");
         java.util.Objects.requireNonNull(config, "config must not be null");
@@ -7024,7 +7024,7 @@ public final class Kreuzberg {
      * 
      * Returns only PDF-specific metadata (version, producer, encryption status, dimensions).
      */
-    public static PdfMetadata extractMetadata(byte[] pdfBytes) throws KreuzbergRsException {
+    public static String extractMetadata(byte[] pdfBytes) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(pdfBytes, "pdfBytes must not be null");
         return KreuzbergRs.extractMetadata(pdfBytes);
     }
@@ -7034,16 +7034,16 @@ public final class Kreuzberg {
      * 
      * Returns only PDF-specific metadata (version, producer, encryption status, dimensions).
      */
-    public static PdfMetadata extractMetadataWithPassword(byte[] pdfBytes, String password) throws KreuzbergRsException {
+    public static String extractMetadataWithPassword(byte[] pdfBytes, String password) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(pdfBytes, "pdfBytes must not be null");
         return KreuzbergRs.extractMetadataWithPassword(pdfBytes, password);
     }
 
-    public static PdfMetadata extractMetadataWithPassword(byte[] pdfBytes) throws KreuzbergRsException {
+    public static String extractMetadataWithPassword(byte[] pdfBytes) throws KreuzbergRsException {
         return extractMetadataWithPassword(pdfBytes, null);
     }
 
-    public static PdfMetadata extractMetadataWithPasswords(byte[] pdfBytes, List<String> passwords) throws KreuzbergRsException {
+    public static String extractMetadataWithPasswords(byte[] pdfBytes, List<String> passwords) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(pdfBytes, "pdfBytes must not be null");
         java.util.Objects.requireNonNull(passwords, "passwords must not be null");
         return KreuzbergRs.extractMetadataWithPasswords(pdfBytes, passwords);
@@ -7093,7 +7093,7 @@ public final class Kreuzberg {
         return KreuzbergRs.extractCommonMetadataFromDocument(document);
     }
 
-    public static String renderPageToImage(byte[] pdfBytes, long pageIndex, PageRenderOptions options) throws KreuzbergRsException {
+    public static String renderPageToImage(byte[] pdfBytes, long pageIndex, String options) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(pdfBytes, "pdfBytes must not be null");
         java.util.Objects.requireNonNull(pageIndex, "pageIndex must not be null");
         java.util.Objects.requireNonNull(options, "options must not be null");
@@ -7167,7 +7167,7 @@ public final class Kreuzberg {
      * # }
      * ```
      */
-    public static List<HocrWord> extractWordsFromPage(String page, double minConfidence) throws KreuzbergRsException {
+    public static List<String> extractWordsFromPage(String page, double minConfidence) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(page, "page must not be null");
         java.util.Objects.requireNonNull(minConfidence, "minConfidence must not be null");
         return KreuzbergRs.extractWordsFromPage(page, minConfidence);
@@ -7179,7 +7179,7 @@ public final class Kreuzberg {
      * `SegmentData` uses PDF coordinates (y=0 at bottom, increases upward).
      * `HocrWord` uses image coordinates (y=0 at top, increases downward).
      */
-    public static HocrWord segmentToHocrWord(SegmentData seg, float pageHeight) throws KreuzbergRsException {
+    public static String segmentToHocrWord(String seg, float pageHeight) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(seg, "seg must not be null");
         java.util.Objects.requireNonNull(pageHeight, "pageHeight must not be null");
         return KreuzbergRs.segmentToHocrWord(seg, pageHeight);
@@ -7196,7 +7196,7 @@ public final class Kreuzberg {
      * Multi-word segments get proportional bbox estimation per word based on
      * byte offset within the segment text.
      */
-    public static List<HocrWord> splitSegmentToWords(SegmentData seg, float pageHeight) throws KreuzbergRsException {
+    public static List<String> splitSegmentToWords(String seg, float pageHeight) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(seg, "seg must not be null");
         java.util.Objects.requireNonNull(pageHeight, "pageHeight must not be null");
         return KreuzbergRs.splitSegmentToWords(seg, pageHeight);
@@ -7208,7 +7208,7 @@ public final class Kreuzberg {
      * Splits multi-word segments into individual words with proportional bounding
      * boxes, ensuring each word can be independently matched to table cells.
      */
-    public static List<HocrWord> segmentsToWords(List<SegmentData> segments, float pageHeight) throws KreuzbergRsException {
+    public static List<String> segmentsToWords(List<String> segments, float pageHeight) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(segments, "segments must not be null");
         java.util.Objects.requireNonNull(pageHeight, "pageHeight must not be null");
         return KreuzbergRs.segmentsToWords(segments, pageHeight);

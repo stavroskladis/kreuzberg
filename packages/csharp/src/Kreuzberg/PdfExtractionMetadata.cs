@@ -61,7 +61,7 @@ public sealed class PdfExtractionMetadata
     /// PDF-specific metadata
     /// </summary>
     [JsonPropertyName("pdf_specific")]
-    public PdfMetadata PdfSpecific { get; set; } = default!;
+    public string PdfSpecific { get; set; } = "";
 
     /// <summary>
     /// Page structure with boundaries and optional per-page metadata

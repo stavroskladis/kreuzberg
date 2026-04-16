@@ -7,7 +7,7 @@ public class HeaderFooterBuilder {
 
     private List<String> paragraphs = List.of();
     private List<Table> tables = List.of();
-    private HeaderFooterType headerType = null;
+    private String headerType = "";
 
     public HeaderFooterBuilder withParagraphs(List<String> value) {
         this.paragraphs = value;
@@ -19,7 +19,7 @@ public class HeaderFooterBuilder {
         return this;
     }
 
-    public HeaderFooterBuilder withHeaderType(HeaderFooterType value) {
+    public HeaderFooterBuilder withHeaderType(String value) {
         this.headerType = value;
         return this;
     }

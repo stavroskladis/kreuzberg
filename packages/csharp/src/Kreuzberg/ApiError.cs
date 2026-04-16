@@ -21,6 +21,6 @@ public sealed class ApiError
     /// Error response body
     /// </summary>
     [JsonPropertyName("body")]
-    public ErrorResponse Body { get; set; } = default!;
+    public string Body { get; set; } = "";
 
 }

@@ -12,7 +12,7 @@ public sealed class Note
     public string Id { get; set; } = "";
 
     [JsonPropertyName("note_type")]
-    public NoteType NoteType { get; set; } = default!;
+    public string NoteType { get; set; } = "";
 
     [JsonPropertyName("paragraphs")]
     public List<string> Paragraphs { get; set; } = [];

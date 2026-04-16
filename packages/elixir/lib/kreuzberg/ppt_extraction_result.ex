@@ -4,6 +4,6 @@ defmodule Kreuzberg.PptExtractionResult do
 
   defstruct text: "",
             slide_count: 0,
-            metadata: nil,
+            metadata: "",
             speaker_notes: []
 end

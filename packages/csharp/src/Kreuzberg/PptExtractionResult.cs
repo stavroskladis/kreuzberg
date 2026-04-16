@@ -27,7 +27,7 @@ public sealed class PptExtractionResult
     /// Document metadata.
     /// </summary>
     [JsonPropertyName("metadata")]
-    public PptMetadata Metadata { get; set; } = default!;
+    public string Metadata { get; set; } = "";
 
     /// <summary>
     /// Speaker notes text per slide (if available).

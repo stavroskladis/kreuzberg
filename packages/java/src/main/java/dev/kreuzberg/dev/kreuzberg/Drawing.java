@@ -5,9 +5,9 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record Drawing(
-    @JsonProperty("drawing_type") Object drawingType,
-    Optional<Extent> extent,
-    @JsonProperty("doc_properties") Optional<DocProperties> docProperties,
+    @JsonProperty("drawing_type") String drawingType,
+    Optional<String> extent,
+    @JsonProperty("doc_properties") Optional<String> docProperties,
     @JsonProperty("image_ref") Optional<String> imageRef
 ) {
 }

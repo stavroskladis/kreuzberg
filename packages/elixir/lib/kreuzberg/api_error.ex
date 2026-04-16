@@ -3,5 +3,5 @@ defmodule Kreuzberg.ApiError do
   @moduledoc "API-specific error wrapper."
 
   defstruct status: "",
-            body: nil
+            body: ""
 end

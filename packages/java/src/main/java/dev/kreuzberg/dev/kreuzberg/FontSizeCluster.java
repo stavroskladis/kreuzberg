@@ -3,5 +3,5 @@ package dev.kreuzberg;
 
 import java.util.List;
 
-public record FontSizeCluster(float centroid, List<TextBlock> members) {
+public record FontSizeCluster(float centroid, List<String> members) {
 }

@@ -7,6 +7,6 @@ public record HierarchyBlock(
     String text,
     BoundingBox bbox,
     @JsonProperty("font_size") float fontSize,
-    @JsonProperty("hierarchy_level") HierarchyLevel hierarchyLevel
+    @JsonProperty("hierarchy_level") String hierarchyLevel
 ) {
 }

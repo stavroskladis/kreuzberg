@@ -2,6 +2,6 @@
 defmodule Kreuzberg.DoclingCompatResponse do
   @moduledoc "OpenWebUI \"Docling\" engine response format."
 
-  defstruct document: nil,
+  defstruct document: "",
             status: ""
 end

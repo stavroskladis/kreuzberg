@@ -2,5 +2,5 @@
 package dev.kreuzberg;
 
 
-public record PageLayoutRegion(LayoutClass class, float confidence, PdfLayoutBBox bbox) {
+public record PageLayoutRegion(LayoutClass class, float confidence, String bbox) {
 }

@@ -4,5 +4,5 @@ defmodule Kreuzberg.HeaderFooter do
 
   defstruct paragraphs: [],
             tables: [],
-            header_type: :default
+            header_type: ""
 end

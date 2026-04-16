@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public sealed interface FormatMetadata {
 
-    record Pdf(@JsonProperty("0") PdfMetadata 0) implements FormatMetadata { }
+    record Pdf(@JsonProperty("0") String 0) implements FormatMetadata { }
 
     record Docx(@JsonProperty("0") DocxMetadata 0) implements FormatMetadata { }
 

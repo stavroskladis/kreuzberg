@@ -7,14 +7,14 @@ import java.util.Optional;
 public class TableRowBuilder {
 
     private List<TableCell> cells = List.of();
-    private Optional<RowProperties> properties = Optional.empty();
+    private Optional<String> properties = Optional.empty();
 
     public TableRowBuilder withCells(List<TableCell> value) {
         this.cells = value;
         return this;
     }
 
-    public TableRowBuilder withProperties(Optional<RowProperties> value) {
+    public TableRowBuilder withProperties(Optional<String> value) {
         this.properties = value;
         return this;
     }

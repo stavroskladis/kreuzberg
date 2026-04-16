@@ -3,5 +3,5 @@ defmodule Kreuzberg.OpenWebDocumentResponse do
   @moduledoc "OpenWebUI \"External\" engine response format."
 
   defstruct page_content: "",
-            metadata: nil
+            metadata: ""
 end

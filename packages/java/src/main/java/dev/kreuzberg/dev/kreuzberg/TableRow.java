@@ -4,7 +4,7 @@ package dev.kreuzberg;
 import java.util.List;
 import java.util.Optional;
 
-public record TableRow(List<TableCell> cells, Optional<RowProperties> properties) {
+public record TableRow(List<TableCell> cells, Optional<String> properties) {
     public static TableRowBuilder builder() {
         return new TableRowBuilder();
     }

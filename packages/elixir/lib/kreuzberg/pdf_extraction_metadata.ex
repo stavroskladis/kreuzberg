@@ -9,6 +9,6 @@ defmodule Kreuzberg.PdfExtractionMetadata do
             created_at: nil,
             modified_at: nil,
             created_by: nil,
-            pdf_specific: nil,
+            pdf_specific: "",
             page_structure: nil
 end

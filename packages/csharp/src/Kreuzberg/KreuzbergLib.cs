@@ -1115,7 +1115,7 @@ public static class KreuzbergLib
         });
     }
 
-    public static PoolSizeHint GetPoolSizingHint(ulong fileSize, string mimeType)
+    public static string GetPoolSizingHint(ulong fileSize, string mimeType)
     {
         ArgumentNullException.ThrowIfNull(mimeType);
         var result = NativeMethods.GetPoolSizingHint(
@@ -1123,11 +1123,8 @@ public static class KreuzbergLib
             mimeType
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.PoolSizeHintToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PoolSizeHintFree(result);
-        var returnValue = JsonSerializer.Deserialize<PoolSizeHint>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -2139,14 +2136,12 @@ public static class KreuzbergLib
         return returnValue;
     }
 
-    public static StructuredDataResult ParseJson(byte[] data, JsonExtractionConfig? config)
+    public static StructuredDataResult ParseJson(byte[] data, string? config)
     {
         ArgumentNullException.ThrowIfNull(data);
-        var configJson = config != null ? JsonSerializer.Serialize(config, JsonOptions) : "null";
-        var configHandle = NativeMethods.JsonExtractionConfigFromJson(configJson);
         var result = NativeMethods.ParseJson(
             data,
-            configHandle
+            config!
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var jsonPtr = NativeMethods.StructuredDataResultToJson(result);
@@ -2154,7 +2149,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.StructuredDataResultFree(result);
         var returnValue = JsonSerializer.Deserialize<StructuredDataResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.JsonExtractionConfigFree(configHandle);
         return returnValue;
     }
 
@@ -2186,14 +2180,12 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="data"></param>
     /// <param name="config">Optional.</param>
-    public static StructuredDataResult ParseJsonl(byte[] data, JsonExtractionConfig? config)
+    public static StructuredDataResult ParseJsonl(byte[] data, string? config)
     {
         ArgumentNullException.ThrowIfNull(data);
-        var configJson = config != null ? JsonSerializer.Serialize(config, JsonOptions) : "null";
-        var configHandle = NativeMethods.JsonExtractionConfigFromJson(configJson);
         var result = NativeMethods.ParseJsonl(
             data,
-            configHandle
+            config!
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var jsonPtr = NativeMethods.StructuredDataResultToJson(result);
@@ -2201,7 +2193,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.StructuredDataResultFree(result);
         var returnValue = JsonSerializer.Deserialize<StructuredDataResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.JsonExtractionConfigFree(configHandle);
         return returnValue;
     }
 
@@ -3547,18 +3538,15 @@ public static class KreuzbergLib
     /// Parse a DOCX document from bytes and return the structured document.
     /// </summary>
     /// <param name="bytes"></param>
-    public static Document ParseDocument(byte[] bytes)
+    public static string ParseDocument(byte[] bytes)
     {
         ArgumentNullException.ThrowIfNull(bytes);
         var result = NativeMethods.ParseDocument(
             bytes
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.DocumentToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.DocumentFree(result);
-        var returnValue = JsonSerializer.Deserialize<Document>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -3582,18 +3570,15 @@ public static class KreuzbergLib
     /// Parse a `w:sectPr` XML element (roxmltree node) into `SectionProperties`.
     /// </summary>
     /// <param name="node"></param>
-    public static SectionProperties ParseSectionProperties(string node)
+    public static string ParseSectionProperties(string node)
     {
         ArgumentNullException.ThrowIfNull(node);
         var result = NativeMethods.ParseSectionProperties(
             node
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.SectionPropertiesToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.SectionPropertiesFree(result);
-        var returnValue = JsonSerializer.Deserialize<SectionProperties>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -3607,18 +3592,15 @@ public static class KreuzbergLib
     /// The caller must not attempt to process the `w:sectPr` end event again.
     /// </summary>
     /// <param name="reader"></param>
-    public static SectionProperties ParseSectionPropertiesStreaming(string reader)
+    public static string ParseSectionPropertiesStreaming(string reader)
     {
         ArgumentNullException.ThrowIfNull(reader);
         var result = NativeMethods.ParseSectionPropertiesStreaming(
             reader
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.SectionPropertiesToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.SectionPropertiesFree(result);
-        var returnValue = JsonSerializer.Deserialize<SectionProperties>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -3629,18 +3611,15 @@ public static class KreuzbergLib
     /// office metadata parsing approach used elsewhere in the codebase.
     /// </summary>
     /// <param name="xml"></param>
-    public static StyleCatalog ParseStylesXml(string xml)
+    public static string ParseStylesXml(string xml)
     {
         ArgumentNullException.ThrowIfNull(xml);
         var result = NativeMethods.ParseStylesXml(
             xml
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.StyleCatalogToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.StyleCatalogFree(result);
-        var returnValue = JsonSerializer.Deserialize<StyleCatalog>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -3672,18 +3651,15 @@ public static class KreuzbergLib
     /// Expects the reader to be positioned just after the `<w:trPr>` start tag.
     /// </summary>
     /// <param name="reader"></param>
-    public static RowProperties ParseRowProperties(string reader)
+    public static string ParseRowProperties(string reader)
     {
         ArgumentNullException.ThrowIfNull(reader);
         var result = NativeMethods.ParseRowProperties(
             reader
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.RowPropertiesToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.RowPropertiesFree(result);
-        var returnValue = JsonSerializer.Deserialize<RowProperties>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -3739,18 +3715,15 @@ public static class KreuzbergLib
     /// * `Err(KreuzbergError)` - If parsing fails
     /// </summary>
     /// <param name="xml"></param>
-    public static Theme ParseThemeXml(string xml)
+    public static string ParseThemeXml(string xml)
     {
         ArgumentNullException.ThrowIfNull(xml);
         var result = NativeMethods.ParseThemeXml(
             xml
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ThemeToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ThemeFree(result);
-        var returnValue = JsonSerializer.Deserialize<Theme>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -4031,15 +4004,13 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="path"></param>
     /// <param name="options"></param>
-    public static PptxExtractionResult ExtractPptxFromPath(string path, PptxExtractionOptions options)
+    public static PptxExtractionResult ExtractPptxFromPath(string path, string options)
     {
         ArgumentNullException.ThrowIfNull(path);
         ArgumentNullException.ThrowIfNull(options);
-        var optionsJson = JsonSerializer.Serialize(options, JsonOptions);
-        var optionsHandle = NativeMethods.PptxExtractionOptionsFromJson(optionsJson);
         var result = NativeMethods.ExtractPptxFromPath(
             path,
-            optionsHandle
+            options
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var jsonPtr = NativeMethods.PptxExtractionResultToJson(result);
@@ -4047,7 +4018,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.PptxExtractionResultFree(result);
         var returnValue = JsonSerializer.Deserialize<PptxExtractionResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.PptxExtractionOptionsFree(optionsHandle);
         return returnValue;
     }
 
@@ -4065,15 +4035,13 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="data"></param>
     /// <param name="options"></param>
-    public static PptxExtractionResult ExtractPptxFromBytes(byte[] data, PptxExtractionOptions options)
+    public static PptxExtractionResult ExtractPptxFromBytes(byte[] data, string options)
     {
         ArgumentNullException.ThrowIfNull(data);
         ArgumentNullException.ThrowIfNull(options);
-        var optionsJson = JsonSerializer.Serialize(options, JsonOptions);
-        var optionsHandle = NativeMethods.PptxExtractionOptionsFromJson(optionsJson);
         var result = NativeMethods.ExtractPptxFromBytes(
             data,
-            optionsHandle
+            options
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var jsonPtr = NativeMethods.PptxExtractionResultToJson(result);
@@ -4081,7 +4049,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.PptxExtractionResultFree(result);
         var returnValue = JsonSerializer.Deserialize<PptxExtractionResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.PptxExtractionOptionsFree(optionsHandle);
         return returnValue;
     }
 
@@ -6830,7 +6797,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="fileSize"></param>
     /// <param name="mimeType"></param>
-    public static PoolSizeHint EstimatePoolSize(ulong fileSize, string mimeType)
+    public static string EstimatePoolSize(ulong fileSize, string mimeType)
     {
         ArgumentNullException.ThrowIfNull(mimeType);
         var result = NativeMethods.EstimatePoolSize(
@@ -6838,11 +6805,8 @@ public static class KreuzbergLib
             mimeType
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.PoolSizeHintToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PoolSizeHintFree(result);
-        var returnValue = JsonSerializer.Deserialize<PoolSizeHint>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -6983,7 +6947,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="words"></param>
     /// <param name="columnThreshold"></param>
-    public static List<uint> DetectColumns(List<HocrWord> words, uint columnThreshold)
+    public static List<uint> DetectColumns(List<string> words, uint columnThreshold)
     {
         var wordsJson = JsonSerializer.Serialize(words, JsonOptions);
         var wordsHandle = Marshal.StringToHGlobalAnsi(wordsJson);
@@ -7008,7 +6972,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="words"></param>
     /// <param name="rowThresholdRatio"></param>
-    public static List<uint> DetectRows(List<HocrWord> words, double rowThresholdRatio)
+    public static List<uint> DetectRows(List<string> words, double rowThresholdRatio)
     {
         var wordsJson = JsonSerializer.Serialize(words, JsonOptions);
         var wordsHandle = Marshal.StringToHGlobalAnsi(wordsJson);
@@ -7038,7 +7002,7 @@ public static class KreuzbergLib
     /// <param name="words"></param>
     /// <param name="columnThreshold"></param>
     /// <param name="rowThresholdRatio"></param>
-    public static List<List<string>> ReconstructTable(List<HocrWord> words, uint columnThreshold, double rowThresholdRatio)
+    public static List<List<string>> ReconstructTable(List<string> words, uint columnThreshold, double rowThresholdRatio)
     {
         var wordsJson = JsonSerializer.Serialize(words, JsonOptions);
         var wordsHandle = Marshal.StringToHGlobalAnsi(wordsJson);
@@ -7233,23 +7197,20 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="config"></param>
     /// <param name="limits"></param>
-    public static string CreateRouterWithLimits(ExtractionConfig config, ApiSizeLimits limits)
+    public static string CreateRouterWithLimits(ExtractionConfig config, string limits)
     {
         ArgumentNullException.ThrowIfNull(config);
         ArgumentNullException.ThrowIfNull(limits);
         var configJson = JsonSerializer.Serialize(config, JsonOptions);
         var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var limitsJson = JsonSerializer.Serialize(limits, JsonOptions);
-        var limitsHandle = NativeMethods.ApiSizeLimitsFromJson(limitsJson);
         var result = NativeMethods.CreateRouterWithLimits(
             configHandle,
-            limitsHandle
+            limits
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
         NativeMethods.ExtractionConfigFree(configHandle);
-        NativeMethods.ApiSizeLimitsFree(limitsHandle);
         return returnValue;
     }
 
@@ -7286,27 +7247,24 @@ public static class KreuzbergLib
     /// <param name="config"></param>
     /// <param name="limits"></param>
     /// <param name="serverConfig"></param>
-    public static string CreateRouterWithLimitsAndServerConfig(ExtractionConfig config, ApiSizeLimits limits, ServerConfig serverConfig)
+    public static string CreateRouterWithLimitsAndServerConfig(ExtractionConfig config, string limits, ServerConfig serverConfig)
     {
         ArgumentNullException.ThrowIfNull(config);
         ArgumentNullException.ThrowIfNull(limits);
         ArgumentNullException.ThrowIfNull(serverConfig);
         var configJson = JsonSerializer.Serialize(config, JsonOptions);
         var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var limitsJson = JsonSerializer.Serialize(limits, JsonOptions);
-        var limitsHandle = NativeMethods.ApiSizeLimitsFromJson(limitsJson);
         var serverConfigJson = JsonSerializer.Serialize(serverConfig, JsonOptions);
         var serverConfigHandle = NativeMethods.ServerConfigFromJson(serverConfigJson);
         var result = NativeMethods.CreateRouterWithLimitsAndServerConfig(
             configHandle,
-            limitsHandle,
+            limits,
             serverConfigHandle
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
         NativeMethods.ExtractionConfigFree(configHandle);
-        NativeMethods.ApiSizeLimitsFree(limitsHandle);
         NativeMethods.ServerConfigFree(serverConfigHandle);
         return returnValue;
     }
@@ -7452,25 +7410,22 @@ public static class KreuzbergLib
     /// <param name="port"></param>
     /// <param name="config"></param>
     /// <param name="limits"></param>
-    public static async Task ServeWithConfigAndLimits(string host, ushort port, ExtractionConfig config, ApiSizeLimits limits)
+    public static async Task ServeWithConfigAndLimits(string host, ushort port, ExtractionConfig config, string limits)
     {
         ArgumentNullException.ThrowIfNull(host);
         ArgumentNullException.ThrowIfNull(config);
         ArgumentNullException.ThrowIfNull(limits);
         var configJson = JsonSerializer.Serialize(config, JsonOptions);
         var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var limitsJson = JsonSerializer.Serialize(limits, JsonOptions);
-        var limitsHandle = NativeMethods.ApiSizeLimitsFromJson(limitsJson);
         return await Task.Run(() =>
         {
             NativeMethods.ServeWithConfigAndLimits(
                 host,
                 port,
                 configHandle,
-                limitsHandle
+                limits
             );
             NativeMethods.ExtractionConfigFree(configHandle);
-            NativeMethods.ApiSizeLimitsFree(limitsHandle);
         });
     }
 
@@ -8825,20 +8780,17 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="block"></param>
     /// <param name="pageNumber"></param>
-    public static OcrElement? TextBlockToElement(TextBlock block, ulong pageNumber)
+    public static OcrElement? TextBlockToElement(string block, ulong pageNumber)
     {
         ArgumentNullException.ThrowIfNull(block);
-        var blockJson = JsonSerializer.Serialize(block, JsonOptions);
-        var blockHandle = NativeMethods.TextBlockFromJson(blockJson);
         var result = NativeMethods.TextBlockToElement(
-            blockHandle,
+            block,
             pageNumber
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<OcrElement?>(json ?? "null", JsonOptions)!;
-        NativeMethods.TextBlockFree(blockHandle);
         return returnValue;
     }
 
@@ -8859,13 +8811,11 @@ public static class KreuzbergLib
     /// An `OcrElement` with rectangle geometry and Tesseract metadata.
     /// </summary>
     /// <param name="row"></param>
-    public static OcrElement TsvRowToElement(TsvRow row)
+    public static OcrElement TsvRowToElement(string row)
     {
         ArgumentNullException.ThrowIfNull(row);
-        var rowJson = JsonSerializer.Serialize(row, JsonOptions);
-        var rowHandle = NativeMethods.TsvRowFromJson(rowJson);
         var result = NativeMethods.TsvRowToElement(
-            rowHandle
+            row
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var jsonPtr = NativeMethods.OcrElementToJson(result);
@@ -8873,7 +8823,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.OcrElementFree(result);
         var returnValue = JsonSerializer.Deserialize<OcrElement>(json ?? "null", JsonOptions)!;
-        NativeMethods.TsvRowFree(rowHandle);
         return returnValue;
     }
 
@@ -8932,7 +8881,7 @@ public static class KreuzbergLib
     /// An `HocrWord` suitable for table reconstruction algorithms.
     /// </summary>
     /// <param name="element"></param>
-    public static HocrWord ElementToHocrWord(OcrElement element)
+    public static string ElementToHocrWord(OcrElement element)
     {
         ArgumentNullException.ThrowIfNull(element);
         var elementJson = JsonSerializer.Serialize(element, JsonOptions);
@@ -8941,11 +8890,8 @@ public static class KreuzbergLib
             elementHandle
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.HocrWordToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.HocrWordFree(result);
-        var returnValue = JsonSerializer.Deserialize<HocrWord>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         NativeMethods.OcrElementFree(elementHandle);
         return returnValue;
     }
@@ -8967,7 +8913,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="elements"></param>
     /// <param name="minConfidence"></param>
-    public static List<HocrWord> ElementsToHocrWords(List<OcrElement> elements, double minConfidence)
+    public static List<string> ElementsToHocrWords(List<OcrElement> elements, double minConfidence)
     {
         var elementsJson = JsonSerializer.Serialize(elements, JsonOptions);
         var elementsHandle = Marshal.StringToHGlobalAnsi(elementsJson);
@@ -8978,7 +8924,7 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<HocrWord>>(json ?? "null", JsonOptions)!;
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         Marshal.FreeHGlobal(elementsHandle);
         return returnValue;
     }
@@ -9099,7 +9045,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="tsvData"></param>
     /// <param name="minConfidence"></param>
-    public static List<HocrWord> ExtractWordsFromTsv(string tsvData, double minConfidence)
+    public static List<string> ExtractWordsFromTsv(string tsvData, double minConfidence)
     {
         ArgumentNullException.ThrowIfNull(tsvData);
         var result = NativeMethods.ExtractWordsFromTsv(
@@ -9109,7 +9055,7 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<HocrWord>>(json ?? "null", JsonOptions)!;
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -9623,19 +9569,16 @@ public static class KreuzbergLib
     /// title and destination. Returns an empty `Vec` if the document has no outlines.
     /// </summary>
     /// <param name="document"></param>
-    public static List<Uri> ExtractBookmarks(Document document)
+    public static List<Uri> ExtractBookmarks(string document)
     {
         ArgumentNullException.ThrowIfNull(document);
-        var documentJson = JsonSerializer.Serialize(document, JsonOptions);
-        var documentHandle = NativeMethods.DocumentFromJson(documentJson);
         var result = NativeMethods.ExtractBookmarks(
-            documentHandle
+            document
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<Uri>>(json ?? "null", JsonOptions)!;
-        NativeMethods.DocumentFree(documentHandle);
         return returnValue;
     }
 
@@ -9693,19 +9636,16 @@ public static class KreuzbergLib
     /// Returns an empty `Vec` if the document has no embedded files.
     /// </summary>
     /// <param name="document"></param>
-    public static List<EmbeddedFile> ExtractEmbeddedFiles(Document document)
+    public static List<EmbeddedFile> ExtractEmbeddedFiles(string document)
     {
         ArgumentNullException.ThrowIfNull(document);
-        var documentJson = JsonSerializer.Serialize(document, JsonOptions);
-        var documentHandle = NativeMethods.DocumentFromJson(documentJson);
         var result = NativeMethods.ExtractEmbeddedFiles(
-            documentHandle
+            document
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<EmbeddedFile>>(json ?? "null", JsonOptions)!;
-        NativeMethods.DocumentFree(documentHandle);
         return returnValue;
     }
 
@@ -9860,7 +9800,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="blocks"></param>
     /// <param name="k"></param>
-    public static List<FontSizeCluster> ClusterFontSizes(List<TextBlock> blocks, ulong k)
+    public static List<FontSizeCluster> ClusterFontSizes(List<string> blocks, ulong k)
     {
         var blocksJson = JsonSerializer.Serialize(blocks, JsonOptions);
         var blocksHandle = Marshal.StringToHGlobalAnsi(blocksJson);
@@ -9967,23 +9907,20 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="blocks"></param>
     /// <param name="kmeansResult"></param>
-    public static List<HierarchyBlock> AssignHierarchyLevels(List<TextBlock> blocks, KMeansResult kmeansResult)
+    public static List<HierarchyBlock> AssignHierarchyLevels(List<string> blocks, string kmeansResult)
     {
         ArgumentNullException.ThrowIfNull(kmeansResult);
         var blocksJson = JsonSerializer.Serialize(blocks, JsonOptions);
         var blocksHandle = Marshal.StringToHGlobalAnsi(blocksJson);
-        var kmeansResultJson = JsonSerializer.Serialize(kmeansResult, JsonOptions);
-        var kmeansResultHandle = NativeMethods.KMeansResultFromJson(kmeansResultJson);
         var result = NativeMethods.AssignHierarchyLevels(
             blocksHandle,
-            kmeansResultHandle
+            kmeansResult
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<HierarchyBlock>>(json ?? "null", JsonOptions)!;
         Marshal.FreeHGlobal(blocksHandle);
-        NativeMethods.KMeansResultFree(kmeansResultHandle);
         return returnValue;
     }
 
@@ -10006,7 +9943,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="blocks"></param>
     /// <param name="clusters"></param>
-    public static List<string> AssignHierarchyLevelsFromClusters(List<TextBlock> blocks, List<FontSizeCluster> clusters)
+    public static List<string> AssignHierarchyLevelsFromClusters(List<string> blocks, List<FontSizeCluster> clusters)
     {
         var blocksJson = JsonSerializer.Serialize(blocks, JsonOptions);
         var blocksHandle = Marshal.StringToHGlobalAnsi(blocksJson);
@@ -10086,7 +10023,7 @@ public static class KreuzbergLib
     /// per item (one segment.text() + one segment.chars() sample vs N chars with 4+ FFI calls each).
     /// </summary>
     /// <param name="page"></param>
-    public static List<SegmentData> ExtractSegmentsFromPage(string page)
+    public static List<string> ExtractSegmentsFromPage(string page)
     {
         ArgumentNullException.ThrowIfNull(page);
         var result = NativeMethods.ExtractSegmentsFromPage(
@@ -10095,7 +10032,7 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<SegmentData>>(json ?? "null", JsonOptions)!;
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -10124,7 +10061,7 @@ public static class KreuzbergLib
     /// 5. Return sorted blocks by position (top to bottom, left to right)
     /// </summary>
     /// <param name="chars"></param>
-    public static List<TextBlock> MergeCharsIntoBlocks(List<CharData> chars)
+    public static List<string> MergeCharsIntoBlocks(List<CharData> chars)
     {
         var charsJson = JsonSerializer.Serialize(chars, JsonOptions);
         var charsHandle = Marshal.StringToHGlobalAnsi(charsJson);
@@ -10134,7 +10071,7 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<TextBlock>>(json ?? "null", JsonOptions)!;
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         Marshal.FreeHGlobal(charsHandle);
         return returnValue;
     }
@@ -10159,7 +10096,7 @@ public static class KreuzbergLib
     /// <param name="page"></param>
     /// <param name="blocks"></param>
     /// <param name="config"></param>
-    public static bool ShouldTriggerOcr(string page, List<TextBlock> blocks, ExtractionConfig config)
+    public static bool ShouldTriggerOcr(string page, List<string> blocks, ExtractionConfig config)
     {
         ArgumentNullException.ThrowIfNull(page);
         ArgumentNullException.ThrowIfNull(config);
@@ -10285,18 +10222,15 @@ public static class KreuzbergLib
     /// Returns only PDF-specific metadata (version, producer, encryption status, dimensions).
     /// </summary>
     /// <param name="pdfBytes"></param>
-    public static PdfMetadata ExtractMetadata(byte[] pdfBytes)
+    public static string ExtractMetadata(byte[] pdfBytes)
     {
         ArgumentNullException.ThrowIfNull(pdfBytes);
         var result = NativeMethods.ExtractMetadata(
             pdfBytes
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.PdfMetadataToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PdfMetadataFree(result);
-        var returnValue = JsonSerializer.Deserialize<PdfMetadata>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -10307,7 +10241,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="pdfBytes"></param>
     /// <param name="password">Optional.</param>
-    public static PdfMetadata ExtractMetadataWithPassword(byte[] pdfBytes, string? password)
+    public static string ExtractMetadataWithPassword(byte[] pdfBytes, string? password)
     {
         ArgumentNullException.ThrowIfNull(pdfBytes);
         var result = NativeMethods.ExtractMetadataWithPassword(
@@ -10315,15 +10249,12 @@ public static class KreuzbergLib
             password!
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.PdfMetadataToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PdfMetadataFree(result);
-        var returnValue = JsonSerializer.Deserialize<PdfMetadata>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
-    public static PdfMetadata ExtractMetadataWithPasswords(byte[] pdfBytes, List<string> passwords)
+    public static string ExtractMetadataWithPasswords(byte[] pdfBytes, List<string> passwords)
     {
         ArgumentNullException.ThrowIfNull(pdfBytes);
         var passwordsJson = JsonSerializer.Serialize(passwords, JsonOptions);
@@ -10333,11 +10264,8 @@ public static class KreuzbergLib
             passwordsHandle
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.PdfMetadataToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PdfMetadataFree(result);
-        var returnValue = JsonSerializer.Deserialize<PdfMetadata>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         Marshal.FreeHGlobal(passwordsHandle);
         return returnValue;
     }
@@ -10411,21 +10339,18 @@ public static class KreuzbergLib
         return returnValue;
     }
 
-    public static string RenderPageToImage(byte[] pdfBytes, ulong pageIndex, PageRenderOptions options)
+    public static string RenderPageToImage(byte[] pdfBytes, ulong pageIndex, string options)
     {
         ArgumentNullException.ThrowIfNull(pdfBytes);
         ArgumentNullException.ThrowIfNull(options);
-        var optionsJson = JsonSerializer.Serialize(options, JsonOptions);
-        var optionsHandle = NativeMethods.PageRenderOptionsFromJson(optionsJson);
         var result = NativeMethods.RenderPageToImage(
             pdfBytes,
             pageIndex,
-            optionsHandle
+            options
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
-        NativeMethods.PageRenderOptionsFree(optionsHandle);
         return returnValue;
     }
 
@@ -10508,7 +10433,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="page"></param>
     /// <param name="minConfidence"></param>
-    public static List<HocrWord> ExtractWordsFromPage(string page, double minConfidence)
+    public static List<string> ExtractWordsFromPage(string page, double minConfidence)
     {
         ArgumentNullException.ThrowIfNull(page);
         var result = NativeMethods.ExtractWordsFromPage(
@@ -10518,7 +10443,7 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<HocrWord>>(json ?? "null", JsonOptions)!;
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -10530,22 +10455,16 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="seg"></param>
     /// <param name="pageHeight"></param>
-    public static HocrWord SegmentToHocrWord(SegmentData seg, float pageHeight)
+    public static string SegmentToHocrWord(string seg, float pageHeight)
     {
         ArgumentNullException.ThrowIfNull(seg);
-        var segJson = JsonSerializer.Serialize(seg, JsonOptions);
-        var segHandle = NativeMethods.SegmentDataFromJson(segJson);
         var result = NativeMethods.SegmentToHocrWord(
-            segHandle,
+            seg,
             pageHeight
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.HocrWordToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.HocrWordFree(result);
-        var returnValue = JsonSerializer.Deserialize<HocrWord>(json ?? "null", JsonOptions)!;
-        NativeMethods.SegmentDataFree(segHandle);
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -10562,20 +10481,17 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="seg"></param>
     /// <param name="pageHeight"></param>
-    public static List<HocrWord> SplitSegmentToWords(SegmentData seg, float pageHeight)
+    public static List<string> SplitSegmentToWords(string seg, float pageHeight)
     {
         ArgumentNullException.ThrowIfNull(seg);
-        var segJson = JsonSerializer.Serialize(seg, JsonOptions);
-        var segHandle = NativeMethods.SegmentDataFromJson(segJson);
         var result = NativeMethods.SplitSegmentToWords(
-            segHandle,
+            seg,
             pageHeight
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<HocrWord>>(json ?? "null", JsonOptions)!;
-        NativeMethods.SegmentDataFree(segHandle);
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -10587,7 +10503,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="segments"></param>
     /// <param name="pageHeight"></param>
-    public static List<HocrWord> SegmentsToWords(List<SegmentData> segments, float pageHeight)
+    public static List<string> SegmentsToWords(List<string> segments, float pageHeight)
     {
         var segmentsJson = JsonSerializer.Serialize(segments, JsonOptions);
         var segmentsHandle = Marshal.StringToHGlobalAnsi(segmentsJson);
@@ -10598,7 +10514,7 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<HocrWord>>(json ?? "null", JsonOptions)!;
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         Marshal.FreeHGlobal(segmentsHandle);
         return returnValue;
     }
@@ -10838,17 +10754,6 @@ public static class KreuzbergLib
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
         NativeMethods.ExtractionResultFree(resultHandle);
-        return returnValue;
-    }
-
-    public static BatchProcessorConfig BatchProcessorConfigDefault()
-    {
-        var result = NativeMethods.BatchProcessorConfigDefault();
-        var jsonPtr = NativeMethods.BatchProcessorConfigToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.BatchProcessorConfigFree(result);
-        var returnValue = JsonSerializer.Deserialize<BatchProcessorConfig>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -11543,328 +11448,6 @@ public static class KreuzbergLib
         return returnValue;
     }
 
-    public static JsonExtractionConfig JsonExtractionConfigDefault()
-    {
-        var result = NativeMethods.JsonExtractionConfigDefault();
-        var jsonPtr = NativeMethods.JsonExtractionConfigToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.JsonExtractionConfigFree(result);
-        var returnValue = JsonSerializer.Deserialize<JsonExtractionConfig>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Concatenate the text of every paragraph in every section, separated by
-    /// newlines.
-    /// </summary>
-    public static string HwpDocumentExtractText()
-    {
-        var result = NativeMethods.HwpDocumentExtractText();
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Decode a ParaText record from raw bytes.
-    ///
-    /// The data field of a TAG_PARA_TEXT record is a sequence of UTF-16LE code
-    /// units.  Control characters < 0x0020 are mapped to whitespace or skipped;
-    /// characters in the private-use range 0xF020–0xF07F (HWP internal controls)
-    /// are discarded.
-    /// </summary>
-    /// <param name="record"></param>
-    public static ParaText ParaTextFromRecord(Record record)
-    {
-        ArgumentNullException.ThrowIfNull(record);
-        var recordJson = JsonSerializer.Serialize(record, JsonOptions);
-        var recordHandle = NativeMethods.RecordFromJson(recordJson);
-        var result = NativeMethods.ParaTextFromRecord(
-            recordHandle
-        );
-        var jsonPtr = NativeMethods.ParaTextToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ParaTextFree(result);
-        var returnValue = JsonSerializer.Deserialize<ParaText>(json ?? "null", JsonOptions)!;
-        NativeMethods.RecordFree(recordHandle);
-        return returnValue;
-    }
-
-    public static FileHeader FileHeaderParse(byte[] data)
-    {
-        ArgumentNullException.ThrowIfNull(data);
-        var result = NativeMethods.FileHeaderParse(
-            data
-        );
-        var jsonPtr = NativeMethods.FileHeaderToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.FileHeaderFree(result);
-        var returnValue = JsonSerializer.Deserialize<FileHeader>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Whether section streams are zlib/deflate-compressed.
-    /// </summary>
-    public static bool FileHeaderIsCompressed()
-    {
-        var result = NativeMethods.FileHeaderIsCompressed();
-        var returnValue = result != 0;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Whether the document is password-encrypted.
-    /// </summary>
-    public static bool FileHeaderIsEncrypted()
-    {
-        var result = NativeMethods.FileHeaderIsEncrypted();
-        var returnValue = result != 0;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Whether the document is a distribution document (text in ViewText/).
-    /// </summary>
-    public static bool FileHeaderIsDistribute()
-    {
-        var result = NativeMethods.FileHeaderIsDistribute();
-        var returnValue = result != 0;
-        return returnValue;
-    }
-
-    public static Record RecordParse(StreamReader reader)
-    {
-        ArgumentNullException.ThrowIfNull(reader);
-        var result = NativeMethods.RecordParse(
-            reader.Handle
-        );
-        var jsonPtr = NativeMethods.RecordToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.RecordFree(result);
-        var returnValue = JsonSerializer.Deserialize<Record>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Return a fresh `StreamReader` over this record's data bytes.
-    /// </summary>
-    public static StreamReader RecordDataReader()
-    {
-        var result = NativeMethods.RecordDataReader();
-        var returnValue = new StreamReader(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convert width to inches.
-    /// </summary>
-    public static double ExtentWidthInches()
-    {
-        var result = NativeMethods.ExtentWidthInches();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convert height to inches.
-    /// </summary>
-    public static double ExtentHeightInches()
-    {
-        var result = NativeMethods.ExtentHeightInches();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Resolve heading level for a paragraph style using the StyleCatalog.
-    ///
-    /// Walks the style inheritance chain to find `outline_level`.
-    /// Falls back to string-matching on style name/ID if no StyleCatalog is available.
-    /// Returns 1-6 (markdown heading levels).
-    /// </summary>
-    /// <param name="styleId"></param>
-    public static byte? DocumentResolveHeadingLevel(string styleId)
-    {
-        ArgumentNullException.ThrowIfNull(styleId);
-        var result = NativeMethods.DocumentResolveHeadingLevel(
-            styleId
-        );
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<byte?>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    public static string DocumentExtractText()
-    {
-        var result = NativeMethods.DocumentExtractText();
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Render the document as markdown.
-    ///
-    /// When `inject_placeholders` is `true`, drawings that reference an image
-    /// emit `![alt](image)` placeholders. When `false` they are silently
-    /// skipped, which is useful when the caller only wants text.
-    /// </summary>
-    /// <param name="injectPlaceholders"></param>
-    public static string DocumentToMarkdown(bool injectPlaceholders)
-    {
-        var result = NativeMethods.DocumentToMarkdown(
-            injectPlaceholders
-        );
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Render the document as plain text (no markdown formatting).
-    /// </summary>
-    public static string DocumentToPlainText()
-    {
-        var result = NativeMethods.DocumentToPlainText();
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convert all margins from twips to points.
-    ///
-    /// Conversion factor: 1 twip = 1/20 point, or equivalently divide by 20.
-    /// </summary>
-    public static PageMarginsPoints PageMarginsToPoints()
-    {
-        var result = NativeMethods.PageMarginsToPoints();
-        var jsonPtr = NativeMethods.PageMarginsPointsToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PageMarginsPointsFree(result);
-        var returnValue = JsonSerializer.Deserialize<PageMarginsPoints>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convert page width from twips to points.
-    /// </summary>
-    public static double? SectionPropertiesPageWidthPoints()
-    {
-        var result = NativeMethods.SectionPropertiesPageWidthPoints();
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<double?>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convert page height from twips to points.
-    /// </summary>
-    public static double? SectionPropertiesPageHeightPoints()
-    {
-        var result = NativeMethods.SectionPropertiesPageHeightPoints();
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<double?>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Resolve a style by walking its `basedOn` inheritance chain.
-    ///
-    /// The resolution order is:
-    /// 1. Document defaults (`<w:docDefaults>`)
-    /// 2. Base style chain (walking `basedOn` from root to leaf)
-    /// 3. The style itself
-    ///
-    /// For `Option` fields, a child value of `Some(x)` overrides the parent.
-    /// A value of `None` inherits from the parent. For boolean toggle properties,
-    /// `Some(false)` explicitly disables the property.
-    ///
-    /// The chain depth is limited to 20 to prevent infinite loops from circular references.
-    /// </summary>
-    /// <param name="styleId"></param>
-    public static ResolvedStyle StyleCatalogResolveStyle(string styleId)
-    {
-        ArgumentNullException.ThrowIfNull(styleId);
-        var result = NativeMethods.StyleCatalogResolveStyle(
-            styleId
-        );
-        var jsonPtr = NativeMethods.ResolvedStyleToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ResolvedStyleFree(result);
-        var returnValue = JsonSerializer.Deserialize<ResolvedStyle>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    public static PptxExtractionOptions PptxExtractionOptionsDefault()
-    {
-        var result = NativeMethods.PptxExtractionOptionsDefault();
-        var jsonPtr = NativeMethods.PptxExtractionOptionsToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PptxExtractionOptionsFree(result);
-        var returnValue = JsonSerializer.Deserialize<PptxExtractionOptions>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    public static NativeTextStats NativeTextStatsCompute(string text, OcrQualityThresholds thresholds)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        ArgumentNullException.ThrowIfNull(thresholds);
-        var thresholdsJson = JsonSerializer.Serialize(thresholds, JsonOptions);
-        var thresholdsHandle = NativeMethods.OcrQualityThresholdsFromJson(thresholdsJson);
-        var result = NativeMethods.NativeTextStatsCompute(
-            text,
-            thresholdsHandle
-        );
-        var jsonPtr = NativeMethods.NativeTextStatsToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.NativeTextStatsFree(result);
-        var returnValue = JsonSerializer.Deserialize<NativeTextStats>(json ?? "null", JsonOptions)!;
-        NativeMethods.OcrQualityThresholdsFree(thresholdsHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convenience method using default thresholds.
-    /// </summary>
-    /// <param name="text"></param>
-    public static NativeTextStats NativeTextStatsFrom(string text)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        var result = NativeMethods.NativeTextStatsFrom(
-            text
-        );
-        var jsonPtr = NativeMethods.NativeTextStatsToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.NativeTextStatsFree(result);
-        var returnValue = JsonSerializer.Deserialize<NativeTextStats>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Formats the panic context as a human-readable string.
-    /// </summary>
-    public static string PanicContextFormat()
-    {
-        var result = NativeMethods.PanicContextFormat();
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
     /// <summary>
     /// Create a `DocumentStructure` with pre-allocated capacity.
     /// </summary>
@@ -12371,233 +11954,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Calculate the cache hit rate as a percentage (0.0-100.0).
-    /// </summary>
-    public static double PoolMetricsHitRate()
-    {
-        var result = NativeMethods.PoolMetricsHitRate();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Get all metrics as a struct for reporting.
-    /// </summary>
-    public static PoolMetricsSnapshot PoolMetricsSnapshot()
-    {
-        var result = NativeMethods.PoolMetricsSnapshot();
-        var jsonPtr = NativeMethods.PoolMetricsSnapshotToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PoolMetricsSnapshotFree(result);
-        var returnValue = JsonSerializer.Deserialize<PoolMetricsSnapshot>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Reset all metrics to zero.
-    /// </summary>
-    public static void PoolMetricsReset()
-    {
-        NativeMethods.PoolMetricsReset();
-    }
-
-    public static PoolMetrics PoolMetricsDefault()
-    {
-        var result = NativeMethods.PoolMetricsDefault();
-        var jsonPtr = NativeMethods.PoolMetricsToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PoolMetricsFree(result);
-        var returnValue = JsonSerializer.Deserialize<PoolMetrics>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Calculate the estimated string pool memory in bytes.
-    ///
-    /// This is the total estimated memory for all string buffers.
-    /// </summary>
-    public static ulong PoolSizeHintEstimatedStringPoolMemory()
-    {
-        var result = NativeMethods.PoolSizeHintEstimatedStringPoolMemory();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Calculate the estimated byte pool memory in bytes.
-    ///
-    /// This is the total estimated memory for all byte buffers.
-    /// </summary>
-    public static ulong PoolSizeHintEstimatedBytePoolMemory()
-    {
-        var result = NativeMethods.PoolSizeHintEstimatedBytePoolMemory();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Calculate the total estimated pool memory in bytes.
-    ///
-    /// This includes both string and byte buffer pools.
-    /// </summary>
-    public static ulong PoolSizeHintTotalPoolMemory()
-    {
-        var result = NativeMethods.PoolSizeHintTotalPoolMemory();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static PoolConfig PoolConfigDefault()
-    {
-        var result = NativeMethods.PoolConfigDefault();
-        var jsonPtr = NativeMethods.PoolConfigToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PoolConfigFree(result);
-        var returnValue = JsonSerializer.Deserialize<PoolConfig>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Get the right edge position.
-    /// </summary>
-    public static uint HocrWordRight()
-    {
-        var result = NativeMethods.HocrWordRight();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Get the bottom edge position.
-    /// </summary>
-    public static uint HocrWordBottom()
-    {
-        var result = NativeMethods.HocrWordBottom();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Get the vertical center position.
-    /// </summary>
-    public static double HocrWordYCenter()
-    {
-        var result = NativeMethods.HocrWordYCenter();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Get the horizontal center position.
-    /// </summary>
-    public static double HocrWordXCenter()
-    {
-        var result = NativeMethods.HocrWordXCenter();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Create a file-based extraction request.
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="config"></param>
-    public static ExtractionRequest ExtractionRequestFile(string path, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var result = NativeMethods.ExtractionRequestFile(
-            path,
-            configHandle
-        );
-        var jsonPtr = NativeMethods.ExtractionRequestToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionRequestFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionRequest>(json ?? "null", JsonOptions)!;
-        NativeMethods.ExtractionConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Create a file-based extraction request with a MIME type hint.
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="mimeHint"></param>
-    /// <param name="config"></param>
-    public static ExtractionRequest ExtractionRequestFileWithMime(string path, string mimeHint, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(mimeHint);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var result = NativeMethods.ExtractionRequestFileWithMime(
-            path,
-            mimeHint,
-            configHandle
-        );
-        var jsonPtr = NativeMethods.ExtractionRequestToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionRequestFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionRequest>(json ?? "null", JsonOptions)!;
-        NativeMethods.ExtractionConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Create a bytes-based extraction request.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <param name="mimeType"></param>
-    /// <param name="config"></param>
-    public static ExtractionRequest ExtractionRequestBytes(byte[] data, string mimeType, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(data);
-        ArgumentNullException.ThrowIfNull(mimeType);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var result = NativeMethods.ExtractionRequestBytes(
-            data,
-            mimeType,
-            configHandle
-        );
-        var jsonPtr = NativeMethods.ExtractionRequestToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionRequestFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionRequest>(json ?? "null", JsonOptions)!;
-        NativeMethods.ExtractionConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Set per-file overrides on this request.
-    /// </summary>
-    /// <param name="overrides"></param>
-    public static ExtractionRequest ExtractionRequestWithOverrides(FileExtractionConfig overrides)
-    {
-        ArgumentNullException.ThrowIfNull(overrides);
-        var overridesJson = JsonSerializer.Serialize(overrides, JsonOptions);
-        var overridesHandle = NativeMethods.FileExtractionConfigFromJson(overridesJson);
-        var result = NativeMethods.ExtractionRequestWithOverrides(
-            overridesHandle
-        );
-        var jsonPtr = NativeMethods.ExtractionRequestToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionRequestFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionRequest>(json ?? "null", JsonOptions)!;
-        NativeMethods.FileExtractionConfigFree(overridesHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Create a validation error (400).
     /// </summary>
     /// <param name="error"></param>
@@ -12690,50 +12046,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.ApiErrorFree(result);
         var returnValue = JsonSerializer.Deserialize<ApiError>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    public static ApiSizeLimits ApiSizeLimitsDefault()
-    {
-        var result = NativeMethods.ApiSizeLimitsDefault();
-        var jsonPtr = NativeMethods.ApiSizeLimitsToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ApiSizeLimitsFree(result);
-        var returnValue = JsonSerializer.Deserialize<ApiSizeLimits>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Create size limits from MB values (convenience method).
-    ///
-    /// # Arguments
-    ///
-    /// * `max_request_body_mb` - Maximum total request size in megabytes
-    /// * `max_multipart_field_mb` - Maximum individual file size in megabytes
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use kreuzberg::api::ApiSizeLimits;
-    ///
-    /// // 50 MB limits
-    /// let limits = ApiSizeLimits::from_mb(50, 50);
-    /// ```
-    /// </summary>
-    /// <param name="maxRequestBodyMb"></param>
-    /// <param name="maxMultipartFieldMb"></param>
-    public static ApiSizeLimits ApiSizeLimitsFromMb(ulong maxRequestBodyMb, ulong maxMultipartFieldMb)
-    {
-        var result = NativeMethods.ApiSizeLimitsFromMb(
-            maxRequestBodyMb,
-            maxMultipartFieldMb
-        );
-        var jsonPtr = NativeMethods.ApiSizeLimitsToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ApiSizeLimitsFree(result);
-        var returnValue = JsonSerializer.Deserialize<ApiSizeLimits>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -13294,101 +12606,6 @@ public static class KreuzbergLib
         );
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    public static float PdfLayoutBBoxWidth()
-    {
-        var result = NativeMethods.PdfLayoutBBoxWidth();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static float PdfLayoutBBoxHeight()
-    {
-        var result = NativeMethods.PdfLayoutBBoxHeight();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportAvgRenderMs()
-    {
-        var result = NativeMethods.LayoutTimingReportAvgRenderMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportAvgInferenceMs()
-    {
-        var result = NativeMethods.LayoutTimingReportAvgInferenceMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportAvgPreprocessMs()
-    {
-        var result = NativeMethods.LayoutTimingReportAvgPreprocessMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportAvgOnnxMs()
-    {
-        var result = NativeMethods.LayoutTimingReportAvgOnnxMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportAvgPostprocessMs()
-    {
-        var result = NativeMethods.LayoutTimingReportAvgPostprocessMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportTotalInferenceMs()
-    {
-        var result = NativeMethods.LayoutTimingReportTotalInferenceMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportTotalRenderMs()
-    {
-        var result = NativeMethods.LayoutTimingReportTotalRenderMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportTotalPreprocessMs()
-    {
-        var result = NativeMethods.LayoutTimingReportTotalPreprocessMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportTotalOnnxMs()
-    {
-        var result = NativeMethods.LayoutTimingReportTotalOnnxMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static double LayoutTimingReportTotalPostprocessMs()
-    {
-        var result = NativeMethods.LayoutTimingReportTotalPostprocessMs();
-        var returnValue = result;
-        return returnValue;
-    }
-
-    public static PageRenderOptions PageRenderOptionsDefault()
-    {
-        var result = NativeMethods.PageRenderOptionsDefault();
-        var jsonPtr = NativeMethods.PageRenderOptionsToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PageRenderOptionsFree(result);
-        var returnValue = JsonSerializer.Deserialize<PageRenderOptions>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 

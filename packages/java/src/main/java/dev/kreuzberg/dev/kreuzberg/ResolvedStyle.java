@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ResolvedStyle(
     @JsonProperty("paragraph_properties") String paragraphProperties,
-    @JsonProperty("run_properties") RunProperties runProperties
+    @JsonProperty("run_properties") String runProperties
 ) {
     public static ResolvedStyleBuilder builder() {
         return new ResolvedStyleBuilder();

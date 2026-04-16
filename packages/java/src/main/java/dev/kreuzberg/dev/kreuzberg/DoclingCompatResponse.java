@@ -2,5 +2,5 @@
 package dev.kreuzberg;
 
 
-public record DoclingCompatResponse(DoclingCompatDocument document, String status) {
+public record DoclingCompatResponse(String document, String status) {
 }

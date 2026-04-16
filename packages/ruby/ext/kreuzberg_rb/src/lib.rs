@@ -2,11 +2,8 @@
 // Re-generate with: alef generate
 #![allow(dead_code)]
 
-use kreuzberg::extractors::SyncExtractor;
 use kreuzberg::plugins::OcrBackend;
 use kreuzberg::plugins::Plugin;
-use kreuzberg::plugins::Renderer;
-use kreuzberg::utils::Recyclable;
 use magnus::{Error, IntoValueFromNative, Ruby, function, method, prelude::*, try_convert::TryConvertOwned};
 use std::collections::HashMap;
 use std::ops::Deref;
@@ -44,256 +41,6 @@ fn json_to_ruby(handle: &Ruby, val: serde_json::Value) -> magnus::Value {
             }
             hash.into_value_with(handle)
         }
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::GenericCache")]
-pub struct GenericCache {
-    inner: Arc<kreuzberg::cache::GenericCache>,
-}
-
-unsafe impl IntoValueFromNative for GenericCache {}
-
-impl magnus::TryConvert for GenericCache {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &GenericCache = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for GenericCache {}
-
-impl GenericCache {
-    fn get(
-        &self,
-        cache_key: String,
-        source_file: Option<String>,
-        namespace: Option<String>,
-        ttl_override_secs: Option<u64>,
-    ) -> Result<Option<Vec<u8>>, Error> {
-        let result = self
-            .inner
-            .get(
-                &cache_key,
-                source_file.as_deref(),
-                namespace.as_deref(),
-                ttl_override_secs,
-            )
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result)
-    }
-
-    fn get_default(&self, cache_key: String, source_file: Option<String>) -> Result<Option<Vec<u8>>, Error> {
-        let result = self
-            .inner
-            .get_default(&cache_key, source_file.as_deref())
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result)
-    }
-
-    fn set(
-        &self,
-        cache_key: String,
-        data: Vec<u8>,
-        source_file: Option<String>,
-        namespace: Option<String>,
-        ttl_secs: Option<u64>,
-    ) -> Result<(), Error> {
-        self.inner
-            .set(
-                &cache_key,
-                &data,
-                source_file.as_deref(),
-                namespace.as_deref(),
-                ttl_secs,
-            )
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn set_default(&self, cache_key: String, data: Vec<u8>, source_file: Option<String>) -> Result<(), Error> {
-        self.inner
-            .set_default(&cache_key, &data, source_file.as_deref())
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn is_processing(&self, cache_key: String) -> Result<bool, Error> {
-        let result = self
-            .inner
-            .is_processing(&cache_key)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result)
-    }
-
-    fn mark_processing(&self, cache_key: String) -> Result<(), Error> {
-        self.inner
-            .mark_processing(cache_key)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn mark_complete(&self, cache_key: String) -> Result<(), Error> {
-        self.inner
-            .mark_complete(&cache_key)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn clear(&self) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: clear",
-        ))
-    }
-
-    fn delete_namespace(&self, namespace: String) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: delete_namespace",
-        ))
-    }
-
-    fn get_stats(&self) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: get_stats",
-        ))
-    }
-
-    fn get_stats_filtered(&self, namespace: Option<String>) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: get_stats_filtered",
-        ))
-    }
-
-    fn cache_dir(&self) -> String {
-        self.inner.cache_dir().to_string_lossy().to_string()
-    }
-
-    fn cache_type(&self) -> String {
-        self.inner.cache_type().into()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::BatchProcessorConfig")]
-#[serde(default)]
-pub struct BatchProcessorConfig {
-    pub string_pool_size: usize,
-    pub string_buffer_capacity: usize,
-    pub byte_pool_size: usize,
-    pub byte_buffer_capacity: usize,
-    pub max_concurrent: Option<usize>,
-}
-
-unsafe impl IntoValueFromNative for BatchProcessorConfig {}
-
-impl magnus::TryConvert for BatchProcessorConfig {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &BatchProcessorConfig = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for BatchProcessorConfig {}
-
-impl Default for BatchProcessorConfig {
-    fn default() -> Self {
-        Self {
-            string_pool_size: Default::default(),
-            string_buffer_capacity: Default::default(),
-            byte_pool_size: Default::default(),
-            byte_buffer_capacity: Default::default(),
-            max_concurrent: Default::default(),
-        }
-    }
-}
-
-impl BatchProcessorConfig {
-    fn new(
-        string_pool_size: Option<usize>,
-        string_buffer_capacity: Option<usize>,
-        byte_pool_size: Option<usize>,
-        byte_buffer_capacity: Option<usize>,
-        max_concurrent: Option<usize>,
-    ) -> Self {
-        Self {
-            string_pool_size: string_pool_size.unwrap_or(10),
-            string_buffer_capacity: string_buffer_capacity.unwrap_or(8192),
-            byte_pool_size: byte_pool_size.unwrap_or(10),
-            byte_buffer_capacity: byte_buffer_capacity.unwrap_or(65536),
-            max_concurrent,
-        }
-    }
-
-    fn string_pool_size(&self) -> usize {
-        self.string_pool_size
-    }
-
-    fn string_buffer_capacity(&self) -> usize {
-        self.string_buffer_capacity
-    }
-
-    fn byte_pool_size(&self) -> usize {
-        self.byte_pool_size
-    }
-
-    fn byte_buffer_capacity(&self) -> usize {
-        self.byte_buffer_capacity
-    }
-
-    fn max_concurrent(&self) -> Option<usize> {
-        self.max_concurrent
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::BatchProcessor")]
-pub struct BatchProcessor {
-    inner: Arc<kreuzberg::core::BatchProcessor>,
-}
-
-unsafe impl IntoValueFromNative for BatchProcessor {}
-
-impl magnus::TryConvert for BatchProcessor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &BatchProcessor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for BatchProcessor {}
-
-impl BatchProcessor {
-    fn string_pool(&self) -> StringBufferPool {
-        StringBufferPool {
-            inner: Arc::new(self.inner.string_pool()),
-        }
-    }
-
-    fn byte_pool(&self) -> ByteBufferPool {
-        ByteBufferPool {
-            inner: Arc::new(self.inner.byte_pool()),
-        }
-    }
-
-    fn config(&self) -> BatchProcessorConfig {
-        self.inner.config().clone().into()
-    }
-
-    fn string_pool_size(&self) -> usize {
-        self.inner.string_pool_size()
-    }
-
-    fn byte_pool_size(&self) -> usize {
-        self.inner.byte_pool_size()
-    }
-
-    fn clear_pools(&self) -> Result<(), Error> {
-        self.inner
-            .clear_pools()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
     }
 }
 
@@ -2967,88 +2714,9 @@ impl StructuredDataResult {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::JsonExtractionConfig")]
-#[serde(default)]
-pub struct JsonExtractionConfig {
-    pub extract_schema: bool,
-    pub max_depth: usize,
-    pub array_item_limit: usize,
-    pub include_type_info: bool,
-    pub flatten_nested_objects: bool,
-    pub custom_text_field_patterns: Vec<String>,
-}
-
-unsafe impl IntoValueFromNative for JsonExtractionConfig {}
-
-impl magnus::TryConvert for JsonExtractionConfig {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &JsonExtractionConfig = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for JsonExtractionConfig {}
-
-impl Default for JsonExtractionConfig {
-    fn default() -> Self {
-        Self {
-            extract_schema: Default::default(),
-            max_depth: Default::default(),
-            array_item_limit: Default::default(),
-            include_type_info: Default::default(),
-            flatten_nested_objects: Default::default(),
-            custom_text_field_patterns: Default::default(),
-        }
-    }
-}
-
-impl JsonExtractionConfig {
-    fn new(
-        extract_schema: Option<bool>,
-        max_depth: Option<usize>,
-        array_item_limit: Option<usize>,
-        include_type_info: Option<bool>,
-        flatten_nested_objects: Option<bool>,
-        custom_text_field_patterns: Option<Vec<String>>,
-    ) -> Self {
-        Self {
-            extract_schema: extract_schema.unwrap_or(false),
-            max_depth: max_depth.unwrap_or(20),
-            array_item_limit: array_item_limit.unwrap_or(500),
-            include_type_info: include_type_info.unwrap_or(false),
-            flatten_nested_objects: flatten_nested_objects.unwrap_or(true),
-            custom_text_field_patterns: custom_text_field_patterns.unwrap_or_default(),
-        }
-    }
-
-    fn extract_schema(&self) -> bool {
-        self.extract_schema
-    }
-
-    fn max_depth(&self) -> usize {
-        self.max_depth
-    }
-
-    fn array_item_limit(&self) -> usize {
-        self.array_item_limit
-    }
-
-    fn include_type_info(&self) -> bool {
-        self.include_type_info
-    }
-
-    fn flatten_nested_objects(&self) -> bool {
-        self.flatten_nested_objects
-    }
-
-    fn custom_text_field_patterns(&self) -> Vec<String> {
-        self.custom_text_field_patterns.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ListItemMetadata")]
 pub struct ListItemMetadata {
-    pub list_type: ListType,
+    pub list_type: String,
     pub byte_start: usize,
     pub byte_end: usize,
     pub indent_level: u32,
@@ -3065,7 +2733,7 @@ impl magnus::TryConvert for ListItemMetadata {
 unsafe impl TryConvertOwned for ListItemMetadata {}
 
 impl ListItemMetadata {
-    fn new(list_type: ListType, byte_start: usize, byte_end: usize, indent_level: u32) -> Self {
+    fn new(list_type: String, byte_start: usize, byte_end: usize, indent_level: u32) -> Self {
         Self {
             list_type,
             byte_start,
@@ -3074,7 +2742,7 @@ impl ListItemMetadata {
         }
     }
 
-    fn list_type(&self) -> ListType {
+    fn list_type(&self) -> String {
         self.list_type.clone()
     }
 
@@ -3088,50 +2756,6 @@ impl ListItemMetadata {
 
     fn indent_level(&self) -> u32 {
         self.indent_level
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::HwpDocument")]
-#[serde(default)]
-pub struct HwpDocument {
-    pub sections: Vec<Section>,
-}
-
-unsafe impl IntoValueFromNative for HwpDocument {}
-
-impl magnus::TryConvert for HwpDocument {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &HwpDocument = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for HwpDocument {}
-
-impl Default for HwpDocument {
-    fn default() -> Self {
-        Self {
-            sections: Default::default(),
-        }
-    }
-}
-
-impl HwpDocument {
-    fn new(sections: Option<Vec<Section>>) -> Self {
-        Self {
-            sections: sections.unwrap_or_default(),
-        }
-    }
-
-    fn sections(&self) -> Vec<Section> {
-        self.sections.clone()
-    }
-
-    fn extract_text(&self) -> String {
-        let core_self = kreuzberg::extraction::hwp::model::HwpDocument {
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.extract_text().into()
     }
 }
 
@@ -3169,112 +2793,6 @@ impl Section {
 
     fn paragraphs(&self) -> Vec<String> {
         self.paragraphs.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ParaText")]
-pub struct ParaText {
-    pub content: String,
-}
-
-unsafe impl IntoValueFromNative for ParaText {}
-
-impl magnus::TryConvert for ParaText {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ParaText = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ParaText {}
-
-impl ParaText {
-    fn new(content: String) -> Self {
-        Self { content }
-    }
-
-    fn content(&self) -> String {
-        self.content.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::FileHeader")]
-pub struct FileHeader {
-    pub flags: u32,
-}
-
-unsafe impl IntoValueFromNative for FileHeader {}
-
-impl magnus::TryConvert for FileHeader {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &FileHeader = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for FileHeader {}
-
-impl FileHeader {
-    fn new(flags: u32) -> Self {
-        Self { flags }
-    }
-
-    fn flags(&self) -> u32 {
-        self.flags
-    }
-
-    fn is_compressed(&self) -> bool {
-        let core_self = kreuzberg::extraction::hwp::parser::FileHeader { flags: self.flags };
-        core_self.is_compressed()
-    }
-
-    fn is_encrypted(&self) -> bool {
-        let core_self = kreuzberg::extraction::hwp::parser::FileHeader { flags: self.flags };
-        core_self.is_encrypted()
-    }
-
-    fn is_distribute(&self) -> bool {
-        let core_self = kreuzberg::extraction::hwp::parser::FileHeader { flags: self.flags };
-        core_self.is_distribute()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::Record")]
-pub struct Record {
-    pub tag_id: u16,
-    pub data: Vec<u8>,
-}
-
-unsafe impl IntoValueFromNative for Record {}
-
-impl magnus::TryConvert for Record {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Record = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Record {}
-
-impl Record {
-    fn new(tag_id: u16, data: Vec<u8>) -> Self {
-        Self { tag_id, data }
-    }
-
-    fn tag_id(&self) -> u16 {
-        self.tag_id
-    }
-
-    fn data(&self) -> Vec<u8> {
-        self.data.clone()
-    }
-
-    fn data_reader(&self) -> StreamReader {
-        let core_self = kreuzberg::extraction::hwp::parser::Record {
-            tag_id: self.tag_id,
-            data: self.data.clone(),
-        };
-        core_self.data_reader().into()
     }
 }
 
@@ -3335,24 +2853,6 @@ impl StreamReader {
         self.inner.remaining()
     }
 }
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::CfbReader")]
-pub struct CfbReader {
-    inner: Arc<kreuzberg::extraction::hwp::reader::CfbReader>,
-}
-
-unsafe impl IntoValueFromNative for CfbReader {}
-
-impl magnus::TryConvert for CfbReader {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &CfbReader = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for CfbReader {}
-
-impl CfbReader {}
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ImageOcrResult")]
@@ -3503,7 +3003,7 @@ impl ExtractedInlineImage {
 #[magnus::wrap(class = "Kreuzberg::DocExtractionResult")]
 pub struct DocExtractionResult {
     pub text: String,
-    pub metadata: DocMetadata,
+    pub metadata: String,
 }
 
 unsafe impl IntoValueFromNative for DocExtractionResult {}
@@ -3517,7 +3017,7 @@ impl magnus::TryConvert for DocExtractionResult {
 unsafe impl TryConvertOwned for DocExtractionResult {}
 
 impl DocExtractionResult {
-    fn new(text: String, metadata: DocMetadata) -> Self {
+    fn new(text: String, metadata: String) -> Self {
         Self { text, metadata }
     }
 
@@ -3525,104 +3025,17 @@ impl DocExtractionResult {
         self.text.clone()
     }
 
-    fn metadata(&self) -> DocMetadata {
+    fn metadata(&self) -> String {
         self.metadata.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::DocMetadata")]
-#[serde(default)]
-pub struct DocMetadata {
-    pub title: Option<String>,
-    pub subject: Option<String>,
-    pub author: Option<String>,
-    pub last_author: Option<String>,
-    pub created: Option<String>,
-    pub modified: Option<String>,
-    pub revision_number: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for DocMetadata {}
-
-impl magnus::TryConvert for DocMetadata {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DocMetadata = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DocMetadata {}
-
-impl Default for DocMetadata {
-    fn default() -> Self {
-        Self {
-            title: Default::default(),
-            subject: Default::default(),
-            author: Default::default(),
-            last_author: Default::default(),
-            created: Default::default(),
-            modified: Default::default(),
-            revision_number: Default::default(),
-        }
-    }
-}
-
-impl DocMetadata {
-    fn new(
-        title: Option<String>,
-        subject: Option<String>,
-        author: Option<String>,
-        last_author: Option<String>,
-        created: Option<String>,
-        modified: Option<String>,
-        revision_number: Option<String>,
-    ) -> Self {
-        Self {
-            title,
-            subject,
-            author,
-            last_author,
-            created,
-            modified,
-            revision_number,
-        }
-    }
-
-    fn title(&self) -> Option<String> {
-        self.title.clone()
-    }
-
-    fn subject(&self) -> Option<String> {
-        self.subject.clone()
-    }
-
-    fn author(&self) -> Option<String> {
-        self.author.clone()
-    }
-
-    fn last_author(&self) -> Option<String> {
-        self.last_author.clone()
-    }
-
-    fn created(&self) -> Option<String> {
-        self.created.clone()
-    }
-
-    fn modified(&self) -> Option<String> {
-        self.modified.clone()
-    }
-
-    fn revision_number(&self) -> Option<String> {
-        self.revision_number.clone()
     }
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Drawing")]
 pub struct Drawing {
-    pub drawing_type: DrawingType,
-    pub extent: Option<Extent>,
-    pub doc_properties: Option<DocProperties>,
+    pub drawing_type: String,
+    pub extent: Option<String>,
+    pub doc_properties: Option<String>,
     pub image_ref: Option<String>,
 }
 
@@ -3638,9 +3051,9 @@ unsafe impl TryConvertOwned for Drawing {}
 
 impl Drawing {
     fn new(
-        drawing_type: DrawingType,
-        extent: Option<Extent>,
-        doc_properties: Option<DocProperties>,
+        drawing_type: String,
+        extent: Option<String>,
+        doc_properties: Option<String>,
         image_ref: Option<String>,
     ) -> Self {
         Self {
@@ -3651,127 +3064,20 @@ impl Drawing {
         }
     }
 
-    fn drawing_type(&self) -> DrawingType {
+    fn drawing_type(&self) -> String {
         self.drawing_type.clone()
     }
 
-    fn extent(&self) -> Option<Extent> {
+    fn extent(&self) -> Option<String> {
         self.extent.clone()
     }
 
-    fn doc_properties(&self) -> Option<DocProperties> {
+    fn doc_properties(&self) -> Option<String> {
         self.doc_properties.clone()
     }
 
     fn image_ref(&self) -> Option<String> {
         self.image_ref.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::Extent")]
-#[serde(default)]
-pub struct Extent {
-    pub cx: i64,
-    pub cy: i64,
-}
-
-unsafe impl IntoValueFromNative for Extent {}
-
-impl magnus::TryConvert for Extent {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Extent = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Extent {}
-
-impl Default for Extent {
-    fn default() -> Self {
-        Self {
-            cx: Default::default(),
-            cy: Default::default(),
-        }
-    }
-}
-
-impl Extent {
-    fn new(cx: Option<i64>, cy: Option<i64>) -> Self {
-        Self {
-            cx: cx.unwrap_or_default(),
-            cy: cy.unwrap_or_default(),
-        }
-    }
-
-    fn cx(&self) -> i64 {
-        self.cx
-    }
-
-    fn cy(&self) -> i64 {
-        self.cy
-    }
-
-    fn width_inches(&self) -> f64 {
-        let core_self = kreuzberg::extraction::docx::drawing::Extent {
-            cx: self.cx,
-            cy: self.cy,
-        };
-        core_self.width_inches()
-    }
-
-    fn height_inches(&self) -> f64 {
-        let core_self = kreuzberg::extraction::docx::drawing::Extent {
-            cx: self.cx,
-            cy: self.cy,
-        };
-        core_self.height_inches()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::DocProperties")]
-#[serde(default)]
-pub struct DocProperties {
-    pub id: Option<String>,
-    pub name: Option<String>,
-    pub description: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for DocProperties {}
-
-impl magnus::TryConvert for DocProperties {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DocProperties = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DocProperties {}
-
-impl Default for DocProperties {
-    fn default() -> Self {
-        Self {
-            id: Default::default(),
-            name: Default::default(),
-            description: Default::default(),
-        }
-    }
-}
-
-impl DocProperties {
-    fn new(id: Option<String>, name: Option<String>, description: Option<String>) -> Self {
-        Self { id, name, description }
-    }
-
-    fn id(&self) -> Option<String> {
-        self.id.clone()
-    }
-
-    fn name(&self) -> Option<String> {
-        self.name.clone()
-    }
-
-    fn description(&self) -> Option<String> {
-        self.description.clone()
     }
 }
 
@@ -3782,9 +3088,9 @@ pub struct AnchorProperties {
     pub behind_doc: bool,
     pub layout_in_cell: bool,
     pub relative_height: Option<i64>,
-    pub position_h: Option<Position>,
-    pub position_v: Option<Position>,
-    pub wrap_type: WrapType,
+    pub position_h: Option<String>,
+    pub position_v: Option<String>,
+    pub wrap_type: String,
 }
 
 unsafe impl IntoValueFromNative for AnchorProperties {}
@@ -3815,9 +3121,9 @@ impl AnchorProperties {
         behind_doc: Option<bool>,
         layout_in_cell: Option<bool>,
         relative_height: Option<i64>,
-        position_h: Option<Position>,
-        position_v: Option<Position>,
-        wrap_type: Option<WrapType>,
+        position_h: Option<String>,
+        position_v: Option<String>,
+        wrap_type: Option<String>,
     ) -> Self {
         Self {
             behind_doc: behind_doc.unwrap_or_default(),
@@ -3841,258 +3147,16 @@ impl AnchorProperties {
         self.relative_height
     }
 
-    fn position_h(&self) -> Option<Position> {
+    fn position_h(&self) -> Option<String> {
         self.position_h.clone()
     }
 
-    fn position_v(&self) -> Option<Position> {
+    fn position_v(&self) -> Option<String> {
         self.position_v.clone()
     }
 
-    fn wrap_type(&self) -> WrapType {
+    fn wrap_type(&self) -> String {
         self.wrap_type.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::Position")]
-pub struct Position {
-    pub relative_from: String,
-    pub offset: Option<i64>,
-}
-
-unsafe impl IntoValueFromNative for Position {}
-
-impl magnus::TryConvert for Position {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Position = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Position {}
-
-impl Position {
-    fn new(relative_from: String, offset: Option<i64>) -> Self {
-        Self { relative_from, offset }
-    }
-
-    fn relative_from(&self) -> String {
-        self.relative_from.clone()
-    }
-
-    fn offset(&self) -> Option<i64> {
-        self.offset
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::Document")]
-#[serde(default)]
-pub struct Document {
-    pub paragraphs: Vec<String>,
-    pub tables: Vec<Table>,
-    pub headers: Vec<HeaderFooter>,
-    pub footers: Vec<HeaderFooter>,
-    pub footnotes: Vec<Note>,
-    pub endnotes: Vec<Note>,
-    pub numbering_defs: String,
-    pub elements: Vec<DocumentElement>,
-    pub style_catalog: Option<StyleCatalog>,
-    pub theme: Option<Theme>,
-    pub sections: Vec<SectionProperties>,
-    pub drawings: Vec<Drawing>,
-    pub image_relationships: String,
-}
-
-unsafe impl IntoValueFromNative for Document {}
-
-impl magnus::TryConvert for Document {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Document = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Document {}
-
-impl Default for Document {
-    fn default() -> Self {
-        Self {
-            paragraphs: Default::default(),
-            tables: Default::default(),
-            headers: Default::default(),
-            footers: Default::default(),
-            footnotes: Default::default(),
-            endnotes: Default::default(),
-            numbering_defs: Default::default(),
-            elements: Default::default(),
-            style_catalog: Default::default(),
-            theme: Default::default(),
-            sections: Default::default(),
-            drawings: Default::default(),
-            image_relationships: Default::default(),
-        }
-    }
-}
-
-impl Document {
-    fn new(
-        paragraphs: Option<Vec<String>>,
-        tables: Option<Vec<Table>>,
-        headers: Option<Vec<HeaderFooter>>,
-        footers: Option<Vec<HeaderFooter>>,
-        footnotes: Option<Vec<Note>>,
-        endnotes: Option<Vec<Note>>,
-        numbering_defs: Option<String>,
-        elements: Option<Vec<DocumentElement>>,
-        style_catalog: Option<StyleCatalog>,
-        theme: Option<Theme>,
-        sections: Option<Vec<SectionProperties>>,
-        drawings: Option<Vec<Drawing>>,
-        image_relationships: Option<String>,
-    ) -> Self {
-        Self {
-            paragraphs: paragraphs.unwrap_or_default(),
-            tables: tables.unwrap_or_default(),
-            headers: headers.unwrap_or_default(),
-            footers: footers.unwrap_or_default(),
-            footnotes: footnotes.unwrap_or_default(),
-            endnotes: endnotes.unwrap_or_default(),
-            numbering_defs: numbering_defs.unwrap_or_default(),
-            elements: elements.unwrap_or_default(),
-            style_catalog,
-            theme,
-            sections: sections.unwrap_or_default(),
-            drawings: drawings.unwrap_or_default(),
-            image_relationships: image_relationships.unwrap_or_default(),
-        }
-    }
-
-    fn paragraphs(&self) -> Vec<String> {
-        self.paragraphs.clone()
-    }
-
-    fn tables(&self) -> Vec<Table> {
-        self.tables.clone()
-    }
-
-    fn headers(&self) -> Vec<HeaderFooter> {
-        self.headers.clone()
-    }
-
-    fn footers(&self) -> Vec<HeaderFooter> {
-        self.footers.clone()
-    }
-
-    fn footnotes(&self) -> Vec<Note> {
-        self.footnotes.clone()
-    }
-
-    fn endnotes(&self) -> Vec<Note> {
-        self.endnotes.clone()
-    }
-
-    fn numbering_defs(&self) -> String {
-        self.numbering_defs.clone()
-    }
-
-    fn elements(&self) -> Vec<DocumentElement> {
-        self.elements.clone()
-    }
-
-    fn style_catalog(&self) -> Option<StyleCatalog> {
-        self.style_catalog.clone()
-    }
-
-    fn theme(&self) -> Option<Theme> {
-        self.theme.clone()
-    }
-
-    fn sections(&self) -> Vec<SectionProperties> {
-        self.sections.clone()
-    }
-
-    fn drawings(&self) -> Vec<Drawing> {
-        self.drawings.clone()
-    }
-
-    fn image_relationships(&self) -> String {
-        self.image_relationships.clone()
-    }
-
-    fn resolve_heading_level(&self, style_id: String) -> Option<u8> {
-        let core_self = kreuzberg::extraction::docx::parser::Document {
-            paragraphs: Default::default(),
-            tables: self.tables.clone().into_iter().map(Into::into).collect(),
-            headers: self.headers.clone().into_iter().map(Into::into).collect(),
-            footers: self.footers.clone().into_iter().map(Into::into).collect(),
-            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
-            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: self.elements.clone().into_iter().map(Into::into).collect(),
-            style_catalog: self.style_catalog.clone().map(Into::into),
-            theme: self.theme.clone().map(Into::into),
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        };
-        core_self.resolve_heading_level(&style_id)
-    }
-
-    fn extract_text(&self) -> String {
-        let core_self = kreuzberg::extraction::docx::parser::Document {
-            paragraphs: Default::default(),
-            tables: self.tables.clone().into_iter().map(Into::into).collect(),
-            headers: self.headers.clone().into_iter().map(Into::into).collect(),
-            footers: self.footers.clone().into_iter().map(Into::into).collect(),
-            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
-            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: self.elements.clone().into_iter().map(Into::into).collect(),
-            style_catalog: self.style_catalog.clone().map(Into::into),
-            theme: self.theme.clone().map(Into::into),
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        };
-        core_self.extract_text().into()
-    }
-
-    fn to_markdown(&self, inject_placeholders: bool) -> String {
-        let core_self = kreuzberg::extraction::docx::parser::Document {
-            paragraphs: Default::default(),
-            tables: self.tables.clone().into_iter().map(Into::into).collect(),
-            headers: self.headers.clone().into_iter().map(Into::into).collect(),
-            footers: self.footers.clone().into_iter().map(Into::into).collect(),
-            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
-            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: self.elements.clone().into_iter().map(Into::into).collect(),
-            style_catalog: self.style_catalog.clone().map(Into::into),
-            theme: self.theme.clone().map(Into::into),
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        };
-        core_self.to_markdown(inject_placeholders).into()
-    }
-
-    fn to_plain_text(&self) -> String {
-        let core_self = kreuzberg::extraction::docx::parser::Document {
-            paragraphs: Default::default(),
-            tables: self.tables.clone().into_iter().map(Into::into).collect(),
-            headers: self.headers.clone().into_iter().map(Into::into).collect(),
-            footers: self.footers.clone().into_iter().map(Into::into).collect(),
-            footnotes: self.footnotes.clone().into_iter().map(Into::into).collect(),
-            endnotes: self.endnotes.clone().into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: self.elements.clone().into_iter().map(Into::into).collect(),
-            style_catalog: self.style_catalog.clone().map(Into::into),
-            theme: self.theme.clone().map(Into::into),
-            sections: self.sections.clone().into_iter().map(Into::into).collect(),
-            drawings: self.drawings.clone().into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        };
-        core_self.to_plain_text().into()
     }
 }
 
@@ -4101,7 +3165,7 @@ impl Document {
 #[serde(default)]
 pub struct TableRow {
     pub cells: Vec<TableCell>,
-    pub properties: Option<RowProperties>,
+    pub properties: Option<String>,
 }
 
 unsafe impl IntoValueFromNative for TableRow {}
@@ -4124,7 +3188,7 @@ impl Default for TableRow {
 }
 
 impl TableRow {
-    fn new(cells: Option<Vec<TableCell>>, properties: Option<RowProperties>) -> Self {
+    fn new(cells: Option<Vec<TableCell>>, properties: Option<String>) -> Self {
         Self {
             cells: cells.unwrap_or_default(),
             properties,
@@ -4135,7 +3199,7 @@ impl TableRow {
         self.cells.clone()
     }
 
-    fn properties(&self) -> Option<RowProperties> {
+    fn properties(&self) -> Option<String> {
         self.properties.clone()
     }
 }
@@ -4146,7 +3210,7 @@ impl TableRow {
 pub struct HeaderFooter {
     pub paragraphs: Vec<String>,
     pub tables: Vec<Table>,
-    pub header_type: HeaderFooterType,
+    pub header_type: String,
 }
 
 unsafe impl IntoValueFromNative for HeaderFooter {}
@@ -4170,7 +3234,7 @@ impl Default for HeaderFooter {
 }
 
 impl HeaderFooter {
-    fn new(paragraphs: Option<Vec<String>>, tables: Option<Vec<Table>>, header_type: Option<HeaderFooterType>) -> Self {
+    fn new(paragraphs: Option<Vec<String>>, tables: Option<Vec<Table>>, header_type: Option<String>) -> Self {
         Self {
             paragraphs: paragraphs.unwrap_or_default(),
             tables: tables.unwrap_or_default(),
@@ -4186,7 +3250,7 @@ impl HeaderFooter {
         self.tables.clone()
     }
 
-    fn header_type(&self) -> HeaderFooterType {
+    fn header_type(&self) -> String {
         self.header_type.clone()
     }
 }
@@ -4195,7 +3259,7 @@ impl HeaderFooter {
 #[magnus::wrap(class = "Kreuzberg::Note")]
 pub struct Note {
     pub id: String,
-    pub note_type: NoteType,
+    pub note_type: String,
     pub paragraphs: Vec<String>,
 }
 
@@ -4210,7 +3274,7 @@ impl magnus::TryConvert for Note {
 unsafe impl TryConvertOwned for Note {}
 
 impl Note {
-    fn new(id: String, note_type: NoteType, paragraphs: Vec<String>) -> Self {
+    fn new(id: String, note_type: String, paragraphs: Vec<String>) -> Self {
         Self {
             id,
             note_type,
@@ -4222,112 +3286,12 @@ impl Note {
         self.id.clone()
     }
 
-    fn note_type(&self) -> NoteType {
+    fn note_type(&self) -> String {
         self.note_type.clone()
     }
 
     fn paragraphs(&self) -> Vec<String> {
         self.paragraphs.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PageMargins")]
-#[serde(default)]
-pub struct PageMargins {
-    pub top: Option<i32>,
-    pub right: Option<i32>,
-    pub bottom: Option<i32>,
-    pub left: Option<i32>,
-    pub header: Option<i32>,
-    pub footer: Option<i32>,
-    pub gutter: Option<i32>,
-}
-
-unsafe impl IntoValueFromNative for PageMargins {}
-
-impl magnus::TryConvert for PageMargins {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PageMargins = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PageMargins {}
-
-impl Default for PageMargins {
-    fn default() -> Self {
-        Self {
-            top: Default::default(),
-            right: Default::default(),
-            bottom: Default::default(),
-            left: Default::default(),
-            header: Default::default(),
-            footer: Default::default(),
-            gutter: Default::default(),
-        }
-    }
-}
-
-impl PageMargins {
-    fn new(
-        top: Option<i32>,
-        right: Option<i32>,
-        bottom: Option<i32>,
-        left: Option<i32>,
-        header: Option<i32>,
-        footer: Option<i32>,
-        gutter: Option<i32>,
-    ) -> Self {
-        Self {
-            top,
-            right,
-            bottom,
-            left,
-            header,
-            footer,
-            gutter,
-        }
-    }
-
-    fn top(&self) -> Option<i32> {
-        self.top
-    }
-
-    fn right(&self) -> Option<i32> {
-        self.right
-    }
-
-    fn bottom(&self) -> Option<i32> {
-        self.bottom
-    }
-
-    fn left(&self) -> Option<i32> {
-        self.left
-    }
-
-    fn header(&self) -> Option<i32> {
-        self.header
-    }
-
-    fn footer(&self) -> Option<i32> {
-        self.footer
-    }
-
-    fn gutter(&self) -> Option<i32> {
-        self.gutter
-    }
-
-    fn to_points(&self) -> PageMarginsPoints {
-        let core_self = kreuzberg::extraction::docx::section::PageMargins {
-            top: self.top,
-            right: self.right,
-            bottom: self.bottom,
-            left: self.left,
-            header: self.header,
-            footer: self.footer,
-            gutter: self.gutter,
-        };
-        core_self.to_points().into()
     }
 }
 
@@ -4419,426 +3383,16 @@ impl PageMarginsPoints {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ColumnLayout")]
-#[serde(default)]
-pub struct ColumnLayout {
-    pub count: Option<i32>,
-    pub space_twips: Option<i32>,
-    pub equal_width: Option<bool>,
-}
-
-unsafe impl IntoValueFromNative for ColumnLayout {}
-
-impl magnus::TryConvert for ColumnLayout {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ColumnLayout = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ColumnLayout {}
-
-impl Default for ColumnLayout {
-    fn default() -> Self {
-        Self {
-            count: Default::default(),
-            space_twips: Default::default(),
-            equal_width: Default::default(),
-        }
-    }
-}
-
-impl ColumnLayout {
-    fn new(count: Option<i32>, space_twips: Option<i32>, equal_width: Option<bool>) -> Self {
-        Self {
-            count,
-            space_twips,
-            equal_width,
-        }
-    }
-
-    fn count(&self) -> Option<i32> {
-        self.count
-    }
-
-    fn space_twips(&self) -> Option<i32> {
-        self.space_twips
-    }
-
-    fn equal_width(&self) -> Option<bool> {
-        self.equal_width
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::SectionProperties")]
-#[serde(default)]
-pub struct SectionProperties {
-    pub page_width_twips: Option<i32>,
-    pub page_height_twips: Option<i32>,
-    pub orientation: Option<Orientation>,
-    pub margins: PageMargins,
-    pub columns: ColumnLayout,
-    pub doc_grid_line_pitch: Option<i32>,
-}
-
-unsafe impl IntoValueFromNative for SectionProperties {}
-
-impl magnus::TryConvert for SectionProperties {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &SectionProperties = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for SectionProperties {}
-
-impl Default for SectionProperties {
-    fn default() -> Self {
-        Self {
-            page_width_twips: Default::default(),
-            page_height_twips: Default::default(),
-            orientation: Default::default(),
-            margins: Default::default(),
-            columns: Default::default(),
-            doc_grid_line_pitch: Default::default(),
-        }
-    }
-}
-
-impl SectionProperties {
-    fn new(
-        page_width_twips: Option<i32>,
-        page_height_twips: Option<i32>,
-        orientation: Option<Orientation>,
-        margins: Option<PageMargins>,
-        columns: Option<ColumnLayout>,
-        doc_grid_line_pitch: Option<i32>,
-    ) -> Self {
-        Self {
-            page_width_twips,
-            page_height_twips,
-            orientation,
-            margins: margins.unwrap_or_default(),
-            columns: columns.unwrap_or_default(),
-            doc_grid_line_pitch,
-        }
-    }
-
-    fn page_width_twips(&self) -> Option<i32> {
-        self.page_width_twips
-    }
-
-    fn page_height_twips(&self) -> Option<i32> {
-        self.page_height_twips
-    }
-
-    fn orientation(&self) -> Option<Orientation> {
-        self.orientation.clone()
-    }
-
-    fn margins(&self) -> PageMargins {
-        self.margins.clone()
-    }
-
-    fn columns(&self) -> ColumnLayout {
-        self.columns.clone()
-    }
-
-    fn doc_grid_line_pitch(&self) -> Option<i32> {
-        self.doc_grid_line_pitch
-    }
-
-    fn page_width_points(&self) -> Option<f64> {
-        let core_self = kreuzberg::extraction::docx::section::SectionProperties {
-            page_width_twips: self.page_width_twips,
-            page_height_twips: self.page_height_twips,
-            orientation: self.orientation.clone().map(Into::into),
-            margins: self.margins.clone().into(),
-            columns: self.columns.clone().into(),
-            doc_grid_line_pitch: self.doc_grid_line_pitch,
-        };
-        core_self.page_width_points()
-    }
-
-    fn page_height_points(&self) -> Option<f64> {
-        let core_self = kreuzberg::extraction::docx::section::SectionProperties {
-            page_width_twips: self.page_width_twips,
-            page_height_twips: self.page_height_twips,
-            orientation: self.orientation.clone().map(Into::into),
-            margins: self.margins.clone().into(),
-            columns: self.columns.clone().into(),
-            doc_grid_line_pitch: self.doc_grid_line_pitch,
-        };
-        core_self.page_height_points()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::RunProperties")]
-#[serde(default)]
-pub struct RunProperties {
-    pub bold: Option<bool>,
-    pub italic: Option<bool>,
-    pub underline: Option<bool>,
-    pub strikethrough: Option<bool>,
-    pub color: Option<String>,
-    pub font_size_half_points: Option<i32>,
-    pub font_ascii: Option<String>,
-    pub font_ascii_theme: Option<String>,
-    pub vert_align: Option<String>,
-    pub font_h_ansi: Option<String>,
-    pub font_cs: Option<String>,
-    pub font_east_asia: Option<String>,
-    pub highlight: Option<String>,
-    pub caps: Option<bool>,
-    pub small_caps: Option<bool>,
-    pub shadow: Option<bool>,
-    pub outline: Option<bool>,
-    pub emboss: Option<bool>,
-    pub imprint: Option<bool>,
-    pub char_spacing: Option<i32>,
-    pub position: Option<i32>,
-    pub kern: Option<i32>,
-    pub theme_color: Option<String>,
-    pub theme_tint: Option<String>,
-    pub theme_shade: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for RunProperties {}
-
-impl magnus::TryConvert for RunProperties {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &RunProperties = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for RunProperties {}
-
-impl Default for RunProperties {
-    fn default() -> Self {
-        Self {
-            bold: Default::default(),
-            italic: Default::default(),
-            underline: Default::default(),
-            strikethrough: Default::default(),
-            color: Default::default(),
-            font_size_half_points: Default::default(),
-            font_ascii: Default::default(),
-            font_ascii_theme: Default::default(),
-            vert_align: Default::default(),
-            font_h_ansi: Default::default(),
-            font_cs: Default::default(),
-            font_east_asia: Default::default(),
-            highlight: Default::default(),
-            caps: Default::default(),
-            small_caps: Default::default(),
-            shadow: Default::default(),
-            outline: Default::default(),
-            emboss: Default::default(),
-            imprint: Default::default(),
-            char_spacing: Default::default(),
-            position: Default::default(),
-            kern: Default::default(),
-            theme_color: Default::default(),
-            theme_tint: Default::default(),
-            theme_shade: Default::default(),
-        }
-    }
-}
-
-impl RunProperties {
-    fn new(kwargs: magnus::RHash) -> Result<Self, magnus::Error> {
-        let ruby = unsafe { magnus::Ruby::get_unchecked() };
-        Ok(Self {
-            bold: kwargs
-                .get(ruby.to_symbol("bold"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            italic: kwargs
-                .get(ruby.to_symbol("italic"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            underline: kwargs
-                .get(ruby.to_symbol("underline"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            strikethrough: kwargs
-                .get(ruby.to_symbol("strikethrough"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            color: kwargs
-                .get(ruby.to_symbol("color"))
-                .and_then(|v| String::try_convert(v).ok()),
-            font_size_half_points: kwargs
-                .get(ruby.to_symbol("font_size_half_points"))
-                .and_then(|v| i32::try_convert(v).ok()),
-            font_ascii: kwargs
-                .get(ruby.to_symbol("font_ascii"))
-                .and_then(|v| String::try_convert(v).ok()),
-            font_ascii_theme: kwargs
-                .get(ruby.to_symbol("font_ascii_theme"))
-                .and_then(|v| String::try_convert(v).ok()),
-            vert_align: kwargs
-                .get(ruby.to_symbol("vert_align"))
-                .and_then(|v| String::try_convert(v).ok()),
-            font_h_ansi: kwargs
-                .get(ruby.to_symbol("font_h_ansi"))
-                .and_then(|v| String::try_convert(v).ok()),
-            font_cs: kwargs
-                .get(ruby.to_symbol("font_cs"))
-                .and_then(|v| String::try_convert(v).ok()),
-            font_east_asia: kwargs
-                .get(ruby.to_symbol("font_east_asia"))
-                .and_then(|v| String::try_convert(v).ok()),
-            highlight: kwargs
-                .get(ruby.to_symbol("highlight"))
-                .and_then(|v| String::try_convert(v).ok()),
-            caps: kwargs
-                .get(ruby.to_symbol("caps"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            small_caps: kwargs
-                .get(ruby.to_symbol("small_caps"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            shadow: kwargs
-                .get(ruby.to_symbol("shadow"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            outline: kwargs
-                .get(ruby.to_symbol("outline"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            emboss: kwargs
-                .get(ruby.to_symbol("emboss"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            imprint: kwargs
-                .get(ruby.to_symbol("imprint"))
-                .and_then(|v| bool::try_convert(v).ok()),
-            char_spacing: kwargs
-                .get(ruby.to_symbol("char_spacing"))
-                .and_then(|v| i32::try_convert(v).ok()),
-            position: kwargs
-                .get(ruby.to_symbol("position"))
-                .and_then(|v| i32::try_convert(v).ok()),
-            kern: kwargs
-                .get(ruby.to_symbol("kern"))
-                .and_then(|v| i32::try_convert(v).ok()),
-            theme_color: kwargs
-                .get(ruby.to_symbol("theme_color"))
-                .and_then(|v| String::try_convert(v).ok()),
-            theme_tint: kwargs
-                .get(ruby.to_symbol("theme_tint"))
-                .and_then(|v| String::try_convert(v).ok()),
-            theme_shade: kwargs
-                .get(ruby.to_symbol("theme_shade"))
-                .and_then(|v| String::try_convert(v).ok()),
-        })
-    }
-
-    fn bold(&self) -> Option<bool> {
-        self.bold
-    }
-
-    fn italic(&self) -> Option<bool> {
-        self.italic
-    }
-
-    fn underline(&self) -> Option<bool> {
-        self.underline
-    }
-
-    fn strikethrough(&self) -> Option<bool> {
-        self.strikethrough
-    }
-
-    fn color(&self) -> Option<String> {
-        self.color.clone()
-    }
-
-    fn font_size_half_points(&self) -> Option<i32> {
-        self.font_size_half_points
-    }
-
-    fn font_ascii(&self) -> Option<String> {
-        self.font_ascii.clone()
-    }
-
-    fn font_ascii_theme(&self) -> Option<String> {
-        self.font_ascii_theme.clone()
-    }
-
-    fn vert_align(&self) -> Option<String> {
-        self.vert_align.clone()
-    }
-
-    fn font_h_ansi(&self) -> Option<String> {
-        self.font_h_ansi.clone()
-    }
-
-    fn font_cs(&self) -> Option<String> {
-        self.font_cs.clone()
-    }
-
-    fn font_east_asia(&self) -> Option<String> {
-        self.font_east_asia.clone()
-    }
-
-    fn highlight(&self) -> Option<String> {
-        self.highlight.clone()
-    }
-
-    fn caps(&self) -> Option<bool> {
-        self.caps
-    }
-
-    fn small_caps(&self) -> Option<bool> {
-        self.small_caps
-    }
-
-    fn shadow(&self) -> Option<bool> {
-        self.shadow
-    }
-
-    fn outline(&self) -> Option<bool> {
-        self.outline
-    }
-
-    fn emboss(&self) -> Option<bool> {
-        self.emboss
-    }
-
-    fn imprint(&self) -> Option<bool> {
-        self.imprint
-    }
-
-    fn char_spacing(&self) -> Option<i32> {
-        self.char_spacing
-    }
-
-    fn position(&self) -> Option<i32> {
-        self.position
-    }
-
-    fn kern(&self) -> Option<i32> {
-        self.kern
-    }
-
-    fn theme_color(&self) -> Option<String> {
-        self.theme_color.clone()
-    }
-
-    fn theme_tint(&self) -> Option<String> {
-        self.theme_tint.clone()
-    }
-
-    fn theme_shade(&self) -> Option<String> {
-        self.theme_shade.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::StyleDefinition")]
 pub struct StyleDefinition {
     pub id: String,
     pub name: Option<String>,
-    pub style_type: StyleType,
+    pub style_type: String,
     pub based_on: Option<String>,
     pub next_style: Option<String>,
     pub is_default: bool,
     pub paragraph_properties: String,
-    pub run_properties: RunProperties,
+    pub run_properties: String,
 }
 
 unsafe impl IntoValueFromNative for StyleDefinition {}
@@ -4854,10 +3408,10 @@ unsafe impl TryConvertOwned for StyleDefinition {}
 impl StyleDefinition {
     fn new(
         id: String,
-        style_type: StyleType,
+        style_type: String,
         is_default: bool,
         paragraph_properties: String,
-        run_properties: RunProperties,
+        run_properties: String,
         name: Option<String>,
         based_on: Option<String>,
         next_style: Option<String>,
@@ -4882,7 +3436,7 @@ impl StyleDefinition {
         self.name.clone()
     }
 
-    fn style_type(&self) -> StyleType {
+    fn style_type(&self) -> String {
         self.style_type.clone()
     }
 
@@ -4902,7 +3456,7 @@ impl StyleDefinition {
         self.paragraph_properties.clone()
     }
 
-    fn run_properties(&self) -> RunProperties {
+    fn run_properties(&self) -> String {
         self.run_properties.clone()
     }
 }
@@ -4912,7 +3466,7 @@ impl StyleDefinition {
 #[serde(default)]
 pub struct ResolvedStyle {
     pub paragraph_properties: String,
-    pub run_properties: RunProperties,
+    pub run_properties: String,
 }
 
 unsafe impl IntoValueFromNative for ResolvedStyle {}
@@ -4935,7 +3489,7 @@ impl Default for ResolvedStyle {
 }
 
 impl ResolvedStyle {
-    fn new(paragraph_properties: Option<String>, run_properties: Option<RunProperties>) -> Self {
+    fn new(paragraph_properties: Option<String>, run_properties: Option<String>) -> Self {
         Self {
             paragraph_properties: paragraph_properties.unwrap_or_default(),
             run_properties: run_properties.unwrap_or_default(),
@@ -4946,72 +3500,8 @@ impl ResolvedStyle {
         self.paragraph_properties.clone()
     }
 
-    fn run_properties(&self) -> RunProperties {
+    fn run_properties(&self) -> String {
         self.run_properties.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::StyleCatalog")]
-#[serde(default)]
-pub struct StyleCatalog {
-    pub styles: String,
-    pub default_paragraph_properties: String,
-    pub default_run_properties: RunProperties,
-}
-
-unsafe impl IntoValueFromNative for StyleCatalog {}
-
-impl magnus::TryConvert for StyleCatalog {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &StyleCatalog = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for StyleCatalog {}
-
-impl Default for StyleCatalog {
-    fn default() -> Self {
-        Self {
-            styles: Default::default(),
-            default_paragraph_properties: Default::default(),
-            default_run_properties: Default::default(),
-        }
-    }
-}
-
-impl StyleCatalog {
-    fn new(
-        styles: Option<String>,
-        default_paragraph_properties: Option<String>,
-        default_run_properties: Option<RunProperties>,
-    ) -> Self {
-        Self {
-            styles: styles.unwrap_or_default(),
-            default_paragraph_properties: default_paragraph_properties.unwrap_or_default(),
-            default_run_properties: default_run_properties.unwrap_or_default(),
-        }
-    }
-
-    fn styles(&self) -> String {
-        self.styles.clone()
-    }
-
-    fn default_paragraph_properties(&self) -> String {
-        self.default_paragraph_properties.clone()
-    }
-
-    fn default_run_properties(&self) -> RunProperties {
-        self.default_run_properties.clone()
-    }
-
-    fn resolve_style(&self, style_id: String) -> ResolvedStyle {
-        let core_self = kreuzberg::extraction::docx::styles::StyleCatalog {
-            styles: Default::default(),
-            default_paragraph_properties: Default::default(),
-            default_run_properties: self.default_run_properties.clone().into(),
-        };
-        core_self.resolve_style(&style_id).into()
     }
 }
 
@@ -5023,8 +3513,8 @@ pub struct TableProperties {
     pub width: Option<String>,
     pub alignment: Option<String>,
     pub layout: Option<String>,
-    pub look: Option<TableLook>,
-    pub borders: Option<TableBorders>,
+    pub look: Option<String>,
+    pub borders: Option<String>,
     pub cell_margins: Option<String>,
     pub indent: Option<String>,
     pub caption: Option<String>,
@@ -5062,8 +3552,8 @@ impl TableProperties {
         width: Option<String>,
         alignment: Option<String>,
         layout: Option<String>,
-        look: Option<TableLook>,
-        borders: Option<TableBorders>,
+        look: Option<String>,
+        borders: Option<String>,
         cell_margins: Option<String>,
         indent: Option<String>,
         caption: Option<String>,
@@ -5097,11 +3587,11 @@ impl TableProperties {
         self.layout.clone()
     }
 
-    fn look(&self) -> Option<TableLook> {
+    fn look(&self) -> Option<String> {
         self.look.clone()
     }
 
-    fn borders(&self) -> Option<TableBorders> {
+    fn borders(&self) -> Option<String> {
         self.borders.clone()
     }
 
@@ -5115,500 +3605,6 @@ impl TableProperties {
 
     fn caption(&self) -> Option<String> {
         self.caption.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::TableLook")]
-#[serde(default)]
-pub struct TableLook {
-    pub first_row: bool,
-    pub last_row: bool,
-    pub first_column: bool,
-    pub last_column: bool,
-    pub no_h_band: bool,
-    pub no_v_band: bool,
-}
-
-unsafe impl IntoValueFromNative for TableLook {}
-
-impl magnus::TryConvert for TableLook {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TableLook = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TableLook {}
-
-impl Default for TableLook {
-    fn default() -> Self {
-        Self {
-            first_row: Default::default(),
-            last_row: Default::default(),
-            first_column: Default::default(),
-            last_column: Default::default(),
-            no_h_band: Default::default(),
-            no_v_band: Default::default(),
-        }
-    }
-}
-
-impl TableLook {
-    fn new(
-        first_row: Option<bool>,
-        last_row: Option<bool>,
-        first_column: Option<bool>,
-        last_column: Option<bool>,
-        no_h_band: Option<bool>,
-        no_v_band: Option<bool>,
-    ) -> Self {
-        Self {
-            first_row: first_row.unwrap_or_default(),
-            last_row: last_row.unwrap_or_default(),
-            first_column: first_column.unwrap_or_default(),
-            last_column: last_column.unwrap_or_default(),
-            no_h_band: no_h_band.unwrap_or_default(),
-            no_v_band: no_v_band.unwrap_or_default(),
-        }
-    }
-
-    fn first_row(&self) -> bool {
-        self.first_row
-    }
-
-    fn last_row(&self) -> bool {
-        self.last_row
-    }
-
-    fn first_column(&self) -> bool {
-        self.first_column
-    }
-
-    fn last_column(&self) -> bool {
-        self.last_column
-    }
-
-    fn no_h_band(&self) -> bool {
-        self.no_h_band
-    }
-
-    fn no_v_band(&self) -> bool {
-        self.no_v_band
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::TableBorders")]
-#[serde(default)]
-pub struct TableBorders {
-    pub top: Option<String>,
-    pub bottom: Option<String>,
-    pub left: Option<String>,
-    pub right: Option<String>,
-    pub inside_h: Option<String>,
-    pub inside_v: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for TableBorders {}
-
-impl magnus::TryConvert for TableBorders {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TableBorders = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TableBorders {}
-
-impl Default for TableBorders {
-    fn default() -> Self {
-        Self {
-            top: Default::default(),
-            bottom: Default::default(),
-            left: Default::default(),
-            right: Default::default(),
-            inside_h: Default::default(),
-            inside_v: Default::default(),
-        }
-    }
-}
-
-impl TableBorders {
-    fn new(
-        top: Option<String>,
-        bottom: Option<String>,
-        left: Option<String>,
-        right: Option<String>,
-        inside_h: Option<String>,
-        inside_v: Option<String>,
-    ) -> Self {
-        Self {
-            top,
-            bottom,
-            left,
-            right,
-            inside_h,
-            inside_v,
-        }
-    }
-
-    fn top(&self) -> Option<String> {
-        self.top.clone()
-    }
-
-    fn bottom(&self) -> Option<String> {
-        self.bottom.clone()
-    }
-
-    fn left(&self) -> Option<String> {
-        self.left.clone()
-    }
-
-    fn right(&self) -> Option<String> {
-        self.right.clone()
-    }
-
-    fn inside_h(&self) -> Option<String> {
-        self.inside_h.clone()
-    }
-
-    fn inside_v(&self) -> Option<String> {
-        self.inside_v.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::RowProperties")]
-#[serde(default)]
-pub struct RowProperties {
-    pub height: Option<i32>,
-    pub height_rule: Option<String>,
-    pub is_header: bool,
-    pub cant_split: bool,
-}
-
-unsafe impl IntoValueFromNative for RowProperties {}
-
-impl magnus::TryConvert for RowProperties {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &RowProperties = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for RowProperties {}
-
-impl Default for RowProperties {
-    fn default() -> Self {
-        Self {
-            height: Default::default(),
-            height_rule: Default::default(),
-            is_header: Default::default(),
-            cant_split: Default::default(),
-        }
-    }
-}
-
-impl RowProperties {
-    fn new(
-        height: Option<i32>,
-        height_rule: Option<String>,
-        is_header: Option<bool>,
-        cant_split: Option<bool>,
-    ) -> Self {
-        Self {
-            height,
-            height_rule,
-            is_header: is_header.unwrap_or_default(),
-            cant_split: cant_split.unwrap_or_default(),
-        }
-    }
-
-    fn height(&self) -> Option<i32> {
-        self.height
-    }
-
-    fn height_rule(&self) -> Option<String> {
-        self.height_rule.clone()
-    }
-
-    fn is_header(&self) -> bool {
-        self.is_header
-    }
-
-    fn cant_split(&self) -> bool {
-        self.cant_split
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ColorScheme")]
-#[serde(default)]
-pub struct ColorScheme {
-    pub name: String,
-    pub dk1: Option<ThemeColor>,
-    pub lt1: Option<ThemeColor>,
-    pub dk2: Option<ThemeColor>,
-    pub lt2: Option<ThemeColor>,
-    pub accent1: Option<ThemeColor>,
-    pub accent2: Option<ThemeColor>,
-    pub accent3: Option<ThemeColor>,
-    pub accent4: Option<ThemeColor>,
-    pub accent5: Option<ThemeColor>,
-    pub accent6: Option<ThemeColor>,
-    pub hlink: Option<ThemeColor>,
-    pub fol_hlink: Option<ThemeColor>,
-}
-
-unsafe impl IntoValueFromNative for ColorScheme {}
-
-impl magnus::TryConvert for ColorScheme {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ColorScheme = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ColorScheme {}
-
-impl Default for ColorScheme {
-    fn default() -> Self {
-        Self {
-            name: Default::default(),
-            dk1: Default::default(),
-            lt1: Default::default(),
-            dk2: Default::default(),
-            lt2: Default::default(),
-            accent1: Default::default(),
-            accent2: Default::default(),
-            accent3: Default::default(),
-            accent4: Default::default(),
-            accent5: Default::default(),
-            accent6: Default::default(),
-            hlink: Default::default(),
-            fol_hlink: Default::default(),
-        }
-    }
-}
-
-impl ColorScheme {
-    fn new(
-        name: Option<String>,
-        dk1: Option<ThemeColor>,
-        lt1: Option<ThemeColor>,
-        dk2: Option<ThemeColor>,
-        lt2: Option<ThemeColor>,
-        accent1: Option<ThemeColor>,
-        accent2: Option<ThemeColor>,
-        accent3: Option<ThemeColor>,
-        accent4: Option<ThemeColor>,
-        accent5: Option<ThemeColor>,
-        accent6: Option<ThemeColor>,
-        hlink: Option<ThemeColor>,
-        fol_hlink: Option<ThemeColor>,
-    ) -> Self {
-        Self {
-            name: name.unwrap_or_default(),
-            dk1,
-            lt1,
-            dk2,
-            lt2,
-            accent1,
-            accent2,
-            accent3,
-            accent4,
-            accent5,
-            accent6,
-            hlink,
-            fol_hlink,
-        }
-    }
-
-    fn name(&self) -> String {
-        self.name.clone()
-    }
-
-    fn dk1(&self) -> Option<ThemeColor> {
-        self.dk1.clone()
-    }
-
-    fn lt1(&self) -> Option<ThemeColor> {
-        self.lt1.clone()
-    }
-
-    fn dk2(&self) -> Option<ThemeColor> {
-        self.dk2.clone()
-    }
-
-    fn lt2(&self) -> Option<ThemeColor> {
-        self.lt2.clone()
-    }
-
-    fn accent1(&self) -> Option<ThemeColor> {
-        self.accent1.clone()
-    }
-
-    fn accent2(&self) -> Option<ThemeColor> {
-        self.accent2.clone()
-    }
-
-    fn accent3(&self) -> Option<ThemeColor> {
-        self.accent3.clone()
-    }
-
-    fn accent4(&self) -> Option<ThemeColor> {
-        self.accent4.clone()
-    }
-
-    fn accent5(&self) -> Option<ThemeColor> {
-        self.accent5.clone()
-    }
-
-    fn accent6(&self) -> Option<ThemeColor> {
-        self.accent6.clone()
-    }
-
-    fn hlink(&self) -> Option<ThemeColor> {
-        self.hlink.clone()
-    }
-
-    fn fol_hlink(&self) -> Option<ThemeColor> {
-        self.fol_hlink.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::FontScheme")]
-#[serde(default)]
-pub struct FontScheme {
-    pub name: String,
-    pub major_latin: Option<String>,
-    pub major_east_asian: Option<String>,
-    pub major_complex_script: Option<String>,
-    pub minor_latin: Option<String>,
-    pub minor_east_asian: Option<String>,
-    pub minor_complex_script: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for FontScheme {}
-
-impl magnus::TryConvert for FontScheme {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &FontScheme = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for FontScheme {}
-
-impl Default for FontScheme {
-    fn default() -> Self {
-        Self {
-            name: Default::default(),
-            major_latin: Default::default(),
-            major_east_asian: Default::default(),
-            major_complex_script: Default::default(),
-            minor_latin: Default::default(),
-            minor_east_asian: Default::default(),
-            minor_complex_script: Default::default(),
-        }
-    }
-}
-
-impl FontScheme {
-    fn new(
-        name: Option<String>,
-        major_latin: Option<String>,
-        major_east_asian: Option<String>,
-        major_complex_script: Option<String>,
-        minor_latin: Option<String>,
-        minor_east_asian: Option<String>,
-        minor_complex_script: Option<String>,
-    ) -> Self {
-        Self {
-            name: name.unwrap_or_default(),
-            major_latin,
-            major_east_asian,
-            major_complex_script,
-            minor_latin,
-            minor_east_asian,
-            minor_complex_script,
-        }
-    }
-
-    fn name(&self) -> String {
-        self.name.clone()
-    }
-
-    fn major_latin(&self) -> Option<String> {
-        self.major_latin.clone()
-    }
-
-    fn major_east_asian(&self) -> Option<String> {
-        self.major_east_asian.clone()
-    }
-
-    fn major_complex_script(&self) -> Option<String> {
-        self.major_complex_script.clone()
-    }
-
-    fn minor_latin(&self) -> Option<String> {
-        self.minor_latin.clone()
-    }
-
-    fn minor_east_asian(&self) -> Option<String> {
-        self.minor_east_asian.clone()
-    }
-
-    fn minor_complex_script(&self) -> Option<String> {
-        self.minor_complex_script.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::Theme")]
-#[serde(default)]
-pub struct Theme {
-    pub name: String,
-    pub color_scheme: Option<ColorScheme>,
-    pub font_scheme: Option<FontScheme>,
-}
-
-unsafe impl IntoValueFromNative for Theme {}
-
-impl magnus::TryConvert for Theme {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Theme = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Theme {}
-
-impl Default for Theme {
-    fn default() -> Self {
-        Self {
-            name: Default::default(),
-            color_scheme: Default::default(),
-            font_scheme: Default::default(),
-        }
-    }
-}
-
-impl Theme {
-    fn new(name: Option<String>, color_scheme: Option<ColorScheme>, font_scheme: Option<FontScheme>) -> Self {
-        Self {
-            name: name.unwrap_or_default(),
-            color_scheme,
-            font_scheme,
-        }
-    }
-
-    fn name(&self) -> String {
-        self.name.clone()
-    }
-
-    fn color_scheme(&self) -> Option<ColorScheme> {
-        self.color_scheme.clone()
-    }
-
-    fn font_scheme(&self) -> Option<FontScheme> {
-        self.font_scheme.clone()
     }
 }
 
@@ -6082,7 +4078,7 @@ impl OdtProperties {
 pub struct PptExtractionResult {
     pub text: String,
     pub slide_count: usize,
-    pub metadata: PptMetadata,
+    pub metadata: String,
     pub speaker_notes: Vec<String>,
 }
 
@@ -6097,7 +4093,7 @@ impl magnus::TryConvert for PptExtractionResult {
 unsafe impl TryConvertOwned for PptExtractionResult {}
 
 impl PptExtractionResult {
-    fn new(text: String, slide_count: usize, metadata: PptMetadata, speaker_notes: Vec<String>) -> Self {
+    fn new(text: String, slide_count: usize, metadata: String, speaker_notes: Vec<String>) -> Self {
         Self {
             text,
             slide_count,
@@ -6114,505 +4110,12 @@ impl PptExtractionResult {
         self.slide_count
     }
 
-    fn metadata(&self) -> PptMetadata {
+    fn metadata(&self) -> String {
         self.metadata.clone()
     }
 
     fn speaker_notes(&self) -> Vec<String> {
         self.speaker_notes.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PptMetadata")]
-#[serde(default)]
-pub struct PptMetadata {
-    pub title: Option<String>,
-    pub subject: Option<String>,
-    pub author: Option<String>,
-    pub last_author: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for PptMetadata {}
-
-impl magnus::TryConvert for PptMetadata {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PptMetadata = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PptMetadata {}
-
-impl Default for PptMetadata {
-    fn default() -> Self {
-        Self {
-            title: Default::default(),
-            subject: Default::default(),
-            author: Default::default(),
-            last_author: Default::default(),
-        }
-    }
-}
-
-impl PptMetadata {
-    fn new(
-        title: Option<String>,
-        subject: Option<String>,
-        author: Option<String>,
-        last_author: Option<String>,
-    ) -> Self {
-        Self {
-            title,
-            subject,
-            author,
-            last_author,
-        }
-    }
-
-    fn title(&self) -> Option<String> {
-        self.title.clone()
-    }
-
-    fn subject(&self) -> Option<String> {
-        self.subject.clone()
-    }
-
-    fn author(&self) -> Option<String> {
-        self.author.clone()
-    }
-
-    fn last_author(&self) -> Option<String> {
-        self.last_author.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PptxExtractionOptions")]
-#[serde(default)]
-pub struct PptxExtractionOptions {
-    pub extract_images: bool,
-    pub page_config: Option<PageConfig>,
-    pub plain: bool,
-    pub include_structure: bool,
-    pub inject_placeholders: bool,
-}
-
-unsafe impl IntoValueFromNative for PptxExtractionOptions {}
-
-impl magnus::TryConvert for PptxExtractionOptions {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PptxExtractionOptions = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PptxExtractionOptions {}
-
-impl Default for PptxExtractionOptions {
-    fn default() -> Self {
-        Self {
-            extract_images: Default::default(),
-            page_config: Default::default(),
-            plain: Default::default(),
-            include_structure: Default::default(),
-            inject_placeholders: Default::default(),
-        }
-    }
-}
-
-impl PptxExtractionOptions {
-    fn new(
-        extract_images: Option<bool>,
-        page_config: Option<PageConfig>,
-        plain: Option<bool>,
-        include_structure: Option<bool>,
-        inject_placeholders: Option<bool>,
-    ) -> Self {
-        Self {
-            extract_images: extract_images.unwrap_or(true),
-            page_config,
-            plain: plain.unwrap_or(false),
-            include_structure: include_structure.unwrap_or(false),
-            inject_placeholders: inject_placeholders.unwrap_or(true),
-        }
-    }
-
-    fn extract_images(&self) -> bool {
-        self.extract_images
-    }
-
-    fn page_config(&self) -> Option<PageConfig> {
-        self.page_config.clone()
-    }
-
-    fn plain(&self) -> bool {
-        self.plain
-    }
-
-    fn include_structure(&self) -> bool {
-        self.include_structure
-    }
-
-    fn inject_placeholders(&self) -> bool {
-        self.inject_placeholders
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::CodeExtractor")]
-pub struct CodeExtractor {
-    inner: Arc<kreuzberg::extractors::CodeExtractor>,
-}
-
-unsafe impl IntoValueFromNative for CodeExtractor {}
-
-impl magnus::TryConvert for CodeExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &CodeExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for CodeExtractor {}
-
-impl CodeExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        _mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, _mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, _mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::CsvExtractor")]
-pub struct CsvExtractor {
-    inner: Arc<kreuzberg::extractors::CsvExtractor>,
-}
-
-unsafe impl IntoValueFromNative for CsvExtractor {}
-
-impl magnus::TryConvert for CsvExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &CsvExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for CsvExtractor {}
-
-impl CsvExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::StructuredExtractor")]
-pub struct StructuredExtractor {
-    inner: Arc<kreuzberg::extractors::StructuredExtractor>,
-}
-
-unsafe impl IntoValueFromNative for StructuredExtractor {}
-
-impl magnus::TryConvert for StructuredExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &StructuredExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for StructuredExtractor {}
-
-impl StructuredExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PlainTextExtractor")]
-pub struct PlainTextExtractor {
-    inner: Arc<kreuzberg::extractors::PlainTextExtractor>,
-}
-
-unsafe impl IntoValueFromNative for PlainTextExtractor {}
-
-impl magnus::TryConvert for PlainTextExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PlainTextExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PlainTextExtractor {}
-
-impl PlainTextExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::DjotExtractor")]
-pub struct DjotExtractor {
-    inner: Arc<kreuzberg::extractors::DjotExtractor>,
-}
-
-unsafe impl IntoValueFromNative for DjotExtractor {}
-
-impl magnus::TryConvert for DjotExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DjotExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DjotExtractor {}
-
-impl DjotExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
     }
 }
 
@@ -6779,2249 +4282,10 @@ impl TableValidator {
     }
 }
 
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::ImageExtractor")]
-pub struct ImageExtractor {
-    inner: Arc<kreuzberg::extractors::ImageExtractor>,
-}
-
-unsafe impl IntoValueFromNative for ImageExtractor {}
-
-impl magnus::TryConvert for ImageExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ImageExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ImageExtractor {}
-
-impl ImageExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::ZipExtractor")]
-pub struct ZipExtractor {
-    inner: Arc<kreuzberg::extractors::ZipExtractor>,
-}
-
-unsafe impl IntoValueFromNative for ZipExtractor {}
-
-impl magnus::TryConvert for ZipExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ZipExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ZipExtractor {}
-
-impl ZipExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::TarExtractor")]
-pub struct TarExtractor {
-    inner: Arc<kreuzberg::extractors::TarExtractor>,
-}
-
-unsafe impl IntoValueFromNative for TarExtractor {}
-
-impl magnus::TryConvert for TarExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TarExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TarExtractor {}
-
-impl TarExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::SevenZExtractor")]
-pub struct SevenZExtractor {
-    inner: Arc<kreuzberg::extractors::SevenZExtractor>,
-}
-
-unsafe impl IntoValueFromNative for SevenZExtractor {}
-
-impl magnus::TryConvert for SevenZExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &SevenZExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for SevenZExtractor {}
-
-impl SevenZExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::GzipExtractor")]
-pub struct GzipExtractor {
-    inner: Arc<kreuzberg::extractors::GzipExtractor>,
-}
-
-unsafe impl IntoValueFromNative for GzipExtractor {}
-
-impl magnus::TryConvert for GzipExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &GzipExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for GzipExtractor {}
-
-impl GzipExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::EmailExtractor")]
-pub struct EmailExtractor {
-    inner: Arc<kreuzberg::extractors::EmailExtractor>,
-}
-
-unsafe impl IntoValueFromNative for EmailExtractor {}
-
-impl magnus::TryConvert for EmailExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &EmailExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for EmailExtractor {}
-
-impl EmailExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PstExtractor")]
-pub struct PstExtractor {
-    inner: Arc<kreuzberg::extractors::PstExtractor>,
-}
-
-unsafe impl IntoValueFromNative for PstExtractor {}
-
-impl magnus::TryConvert for PstExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PstExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PstExtractor {}
-
-impl PstExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::ExcelExtractor")]
-pub struct ExcelExtractor {
-    inner: Arc<kreuzberg::extractors::ExcelExtractor>,
-}
-
-unsafe impl IntoValueFromNative for ExcelExtractor {}
-
-impl magnus::TryConvert for ExcelExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ExcelExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ExcelExtractor {}
-
-impl ExcelExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, mime_type: String, _config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::HwpExtractor")]
-pub struct HwpExtractor {
-    inner: Arc<kreuzberg::extractors::HwpExtractor>,
-}
-
-unsafe impl IntoValueFromNative for HwpExtractor {}
-
-impl magnus::TryConvert for HwpExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &HwpExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for HwpExtractor {}
-
-impl HwpExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::KeynoteExtractor")]
-pub struct KeynoteExtractor {
-    inner: Arc<kreuzberg::extractors::KeynoteExtractor>,
-}
-
-unsafe impl IntoValueFromNative for KeynoteExtractor {}
-
-impl magnus::TryConvert for KeynoteExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &KeynoteExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for KeynoteExtractor {}
-
-impl KeynoteExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::NumbersExtractor")]
-pub struct NumbersExtractor {
-    inner: Arc<kreuzberg::extractors::NumbersExtractor>,
-}
-
-unsafe impl IntoValueFromNative for NumbersExtractor {}
-
-impl magnus::TryConvert for NumbersExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &NumbersExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for NumbersExtractor {}
-
-impl NumbersExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PagesExtractor")]
-pub struct PagesExtractor {
-    inner: Arc<kreuzberg::extractors::PagesExtractor>,
-}
-
-unsafe impl IntoValueFromNative for PagesExtractor {}
-
-impl magnus::TryConvert for PagesExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PagesExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PagesExtractor {}
-
-impl PagesExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::HtmlExtractor")]
-pub struct HtmlExtractor {
-    inner: Arc<kreuzberg::extractors::HtmlExtractor>,
-}
-
-unsafe impl IntoValueFromNative for HtmlExtractor {}
-
-impl magnus::TryConvert for HtmlExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &HtmlExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for HtmlExtractor {}
-
-impl HtmlExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::BibtexExtractor")]
-pub struct BibtexExtractor {
-    inner: Arc<kreuzberg::extractors::BibtexExtractor>,
-}
-
-unsafe impl IntoValueFromNative for BibtexExtractor {}
-
-impl magnus::TryConvert for BibtexExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &BibtexExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for BibtexExtractor {}
-
-impl BibtexExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::CitationExtractor")]
-pub struct CitationExtractor {
-    inner: Arc<kreuzberg::extractors::CitationExtractor>,
-}
-
-unsafe impl IntoValueFromNative for CitationExtractor {}
-
-impl magnus::TryConvert for CitationExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &CitationExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for CitationExtractor {}
-
-impl CitationExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::DocExtractor")]
-pub struct DocExtractor {
-    inner: Arc<kreuzberg::extractors::DocExtractor>,
-}
-
-unsafe impl IntoValueFromNative for DocExtractor {}
-
-impl magnus::TryConvert for DocExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DocExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DocExtractor {}
-
-impl DocExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::DbfExtractor")]
-pub struct DbfExtractor {
-    inner: Arc<kreuzberg::extractors::DbfExtractor>,
-}
-
-unsafe impl IntoValueFromNative for DbfExtractor {}
-
-impl magnus::TryConvert for DbfExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DbfExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DbfExtractor {}
-
-impl DbfExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::DocxExtractor")]
-pub struct DocxExtractor {
-    inner: Arc<kreuzberg::extractors::DocxExtractor>,
-}
-
-unsafe impl IntoValueFromNative for DocxExtractor {}
-
-impl magnus::TryConvert for DocxExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DocxExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DocxExtractor {}
-
-impl DocxExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::EpubExtractor")]
-pub struct EpubExtractor {
-    inner: Arc<kreuzberg::extractors::EpubExtractor>,
-}
-
-unsafe impl IntoValueFromNative for EpubExtractor {}
-
-impl magnus::TryConvert for EpubExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &EpubExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for EpubExtractor {}
-
-impl EpubExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::FictionBookExtractor")]
-pub struct FictionBookExtractor {
-    inner: Arc<kreuzberg::extractors::FictionBookExtractor>,
-}
-
-unsafe impl IntoValueFromNative for FictionBookExtractor {}
-
-impl magnus::TryConvert for FictionBookExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &FictionBookExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for FictionBookExtractor {}
-
-impl FictionBookExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::MarkdownExtractor")]
-pub struct MarkdownExtractor {
-    inner: Arc<kreuzberg::extractors::MarkdownExtractor>,
-}
-
-unsafe impl IntoValueFromNative for MarkdownExtractor {}
-
-impl magnus::TryConvert for MarkdownExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &MarkdownExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for MarkdownExtractor {}
-
-impl MarkdownExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::MdxExtractor")]
-pub struct MdxExtractor {
-    inner: Arc<kreuzberg::extractors::MdxExtractor>,
-}
-
-unsafe impl IntoValueFromNative for MdxExtractor {}
-
-impl magnus::TryConvert for MdxExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &MdxExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for MdxExtractor {}
-
-impl MdxExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::RstExtractor")]
-pub struct RstExtractor {
-    inner: Arc<kreuzberg::extractors::RstExtractor>,
-}
-
-unsafe impl IntoValueFromNative for RstExtractor {}
-
-impl magnus::TryConvert for RstExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &RstExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for RstExtractor {}
-
-impl RstExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::LatexExtractor")]
-pub struct LatexExtractor {
-    inner: Arc<kreuzberg::extractors::LatexExtractor>,
-}
-
-unsafe impl IntoValueFromNative for LatexExtractor {}
-
-impl magnus::TryConvert for LatexExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &LatexExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for LatexExtractor {}
-
-impl LatexExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::JupyterExtractor")]
-pub struct JupyterExtractor {
-    inner: Arc<kreuzberg::extractors::JupyterExtractor>,
-}
-
-unsafe impl IntoValueFromNative for JupyterExtractor {}
-
-impl magnus::TryConvert for JupyterExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &JupyterExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for JupyterExtractor {}
-
-impl JupyterExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::OrgModeExtractor")]
-pub struct OrgModeExtractor {
-    inner: Arc<kreuzberg::extractors::OrgModeExtractor>,
-}
-
-unsafe impl IntoValueFromNative for OrgModeExtractor {}
-
-impl magnus::TryConvert for OrgModeExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &OrgModeExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for OrgModeExtractor {}
-
-impl OrgModeExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::OdtExtractor")]
-pub struct OdtExtractor {
-    inner: Arc<kreuzberg::extractors::OdtExtractor>,
-}
-
-unsafe impl IntoValueFromNative for OdtExtractor {}
-
-impl magnus::TryConvert for OdtExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &OdtExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for OdtExtractor {}
-
-impl OdtExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::OpmlExtractor")]
-pub struct OpmlExtractor {
-    inner: Arc<kreuzberg::extractors::OpmlExtractor>,
-}
-
-unsafe impl IntoValueFromNative for OpmlExtractor {}
-
-impl magnus::TryConvert for OpmlExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &OpmlExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for OpmlExtractor {}
-
-impl OpmlExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::TypstExtractor")]
-pub struct TypstExtractor {
-    inner: Arc<kreuzberg::extractors::TypstExtractor>,
-}
-
-unsafe impl IntoValueFromNative for TypstExtractor {}
-
-impl magnus::TryConvert for TypstExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TypstExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TypstExtractor {}
-
-impl TypstExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::JatsExtractor")]
-pub struct JatsExtractor {
-    inner: Arc<kreuzberg::extractors::JatsExtractor>,
-}
-
-unsafe impl IntoValueFromNative for JatsExtractor {}
-
-impl magnus::TryConvert for JatsExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &JatsExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for JatsExtractor {}
-
-impl JatsExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        _config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::NativeTextStats")]
-pub struct NativeTextStats {
-    pub non_whitespace: usize,
-    pub alnum: usize,
-    pub meaningful_words: usize,
-    pub alnum_ratio: f64,
-    pub garbage_char_count: usize,
-    pub fragmented_word_ratio: f64,
-    pub consecutive_repeat_ratio: f64,
-    pub avg_word_length: f64,
-    pub word_count: usize,
-}
-
-unsafe impl IntoValueFromNative for NativeTextStats {}
-
-impl magnus::TryConvert for NativeTextStats {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &NativeTextStats = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for NativeTextStats {}
-
-impl NativeTextStats {
-    fn new(
-        non_whitespace: usize,
-        alnum: usize,
-        meaningful_words: usize,
-        alnum_ratio: f64,
-        garbage_char_count: usize,
-        fragmented_word_ratio: f64,
-        consecutive_repeat_ratio: f64,
-        avg_word_length: f64,
-        word_count: usize,
-    ) -> Self {
-        Self {
-            non_whitespace,
-            alnum,
-            meaningful_words,
-            alnum_ratio,
-            garbage_char_count,
-            fragmented_word_ratio,
-            consecutive_repeat_ratio,
-            avg_word_length,
-            word_count,
-        }
-    }
-
-    fn non_whitespace(&self) -> usize {
-        self.non_whitespace
-    }
-
-    fn alnum(&self) -> usize {
-        self.alnum
-    }
-
-    fn meaningful_words(&self) -> usize {
-        self.meaningful_words
-    }
-
-    fn alnum_ratio(&self) -> f64 {
-        self.alnum_ratio
-    }
-
-    fn garbage_char_count(&self) -> usize {
-        self.garbage_char_count
-    }
-
-    fn fragmented_word_ratio(&self) -> f64 {
-        self.fragmented_word_ratio
-    }
-
-    fn consecutive_repeat_ratio(&self) -> f64 {
-        self.consecutive_repeat_ratio
-    }
-
-    fn avg_word_length(&self) -> f64 {
-        self.avg_word_length
-    }
-
-    fn word_count(&self) -> usize {
-        self.word_count
-    }
-}
-
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrFallbackDecision")]
 pub struct OcrFallbackDecision {
-    pub stats: NativeTextStats,
+    pub stats: String,
     pub avg_non_whitespace: f64,
     pub avg_alnum: f64,
     pub fallback: bool,
@@ -9038,7 +4302,7 @@ impl magnus::TryConvert for OcrFallbackDecision {
 unsafe impl TryConvertOwned for OcrFallbackDecision {}
 
 impl OcrFallbackDecision {
-    fn new(stats: NativeTextStats, avg_non_whitespace: f64, avg_alnum: f64, fallback: bool) -> Self {
+    fn new(stats: String, avg_non_whitespace: f64, avg_alnum: f64, fallback: bool) -> Self {
         Self {
             stats,
             avg_non_whitespace,
@@ -9047,7 +4311,7 @@ impl OcrFallbackDecision {
         }
     }
 
-    fn stats(&self) -> NativeTextStats {
+    fn stats(&self) -> String {
         self.stats.clone()
     }
 
@@ -9061,406 +4325,6 @@ impl OcrFallbackDecision {
 
     fn fallback(&self) -> bool {
         self.fallback
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PdfExtractor")]
-pub struct PdfExtractor {
-    inner: Arc<kreuzberg::extractors::PdfExtractor>,
-}
-
-unsafe impl IntoValueFromNative for PdfExtractor {}
-
-impl magnus::TryConvert for PdfExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PdfExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PdfExtractor {}
-
-impl PdfExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PptExtractor")]
-pub struct PptExtractor {
-    inner: Arc<kreuzberg::extractors::PptExtractor>,
-}
-
-unsafe impl IntoValueFromNative for PptExtractor {}
-
-impl magnus::TryConvert for PptExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PptExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PptExtractor {}
-
-impl PptExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PptxExtractor")]
-pub struct PptxExtractor {
-    inner: Arc<kreuzberg::extractors::PptxExtractor>,
-}
-
-unsafe impl IntoValueFromNative for PptxExtractor {}
-
-impl magnus::TryConvert for PptxExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PptxExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PptxExtractor {}
-
-impl PptxExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn extract_file_async(&self, path: String, mime_type: String, config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_file_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::RtfExtractor")]
-pub struct RtfExtractor {
-    inner: Arc<kreuzberg::extractors::RtfExtractor>,
-}
-
-unsafe impl IntoValueFromNative for RtfExtractor {}
-
-impl magnus::TryConvert for RtfExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &RtfExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for RtfExtractor {}
-
-impl RtfExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::XmlExtractor")]
-pub struct XmlExtractor {
-    inner: Arc<kreuzberg::extractors::XmlExtractor>,
-}
-
-unsafe impl IntoValueFromNative for XmlExtractor {}
-
-impl magnus::TryConvert for XmlExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &XmlExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for XmlExtractor {}
-
-impl XmlExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn description(&self) -> String {
-        self.inner.description().into()
-    }
-
-    fn author(&self) -> String {
-        self.inner.author().into()
-    }
-
-    fn extract_sync(&self, content: Vec<u8>, mime_type: String, _config: ExtractionConfig) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_sync",
-        ))
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
-    }
-
-    fn as_sync_extractor(&self) -> Option<SyncExtractor> {
-        self.inner.as_sync_extractor().map(|v| SyncExtractor {
-            inner: Arc::new(v.clone()),
-        })
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::DocbookExtractor")]
-pub struct DocbookExtractor {
-    inner: Arc<kreuzberg::extractors::DocbookExtractor>,
-}
-
-unsafe impl IntoValueFromNative for DocbookExtractor {}
-
-impl magnus::TryConvert for DocbookExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DocbookExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DocbookExtractor {}
-
-impl DocbookExtractor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn extract_bytes_async(
-        &self,
-        content: Vec<u8>,
-        mime_type: String,
-        config: ExtractionConfig,
-    ) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: extract_bytes_async",
-        ))
-    }
-
-    fn supported_mime_types(&self) -> Vec<String> {
-        self.inner.supported_mime_types().into_iter().map(Into::into).collect()
-    }
-
-    fn priority(&self) -> i32 {
-        self.inner.priority()
     }
 }
 
@@ -9487,340 +4351,6 @@ impl ModelCache {
 
     fn take(&self) -> Option<String> {
         None
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PanicContext")]
-pub struct PanicContext {
-    pub file: String,
-    pub line: u32,
-    pub function: String,
-    pub message: String,
-    pub timestamp: String,
-}
-
-unsafe impl IntoValueFromNative for PanicContext {}
-
-impl magnus::TryConvert for PanicContext {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PanicContext = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PanicContext {}
-
-impl PanicContext {
-    fn new(file: String, line: u32, function: String, message: String, timestamp: String) -> Self {
-        Self {
-            file,
-            line,
-            function,
-            message,
-            timestamp,
-        }
-    }
-
-    fn file(&self) -> String {
-        self.file.clone()
-    }
-
-    fn line(&self) -> u32 {
-        self.line
-    }
-
-    fn function(&self) -> String {
-        self.function.clone()
-    }
-
-    fn message(&self) -> String {
-        self.message.clone()
-    }
-
-    fn timestamp(&self) -> String {
-        self.timestamp.clone()
-    }
-
-    fn format(&self) -> String {
-        let core_self = kreuzberg::panic_context::PanicContext {
-            file: self.file.clone(),
-            line: self.line,
-            function: self.function.clone(),
-            message: self.message.clone(),
-            timestamp: Default::default(),
-        };
-        core_self.format().into()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::DocumentExtractorRegistry")]
-pub struct DocumentExtractorRegistry {
-    inner: Arc<kreuzberg::plugins::DocumentExtractorRegistry>,
-}
-
-unsafe impl IntoValueFromNative for DocumentExtractorRegistry {}
-
-impl magnus::TryConvert for DocumentExtractorRegistry {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DocumentExtractorRegistry = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DocumentExtractorRegistry {}
-
-impl DocumentExtractorRegistry {
-    fn register(&self, extractor: String) -> Result<(), Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: register",
-        ))
-    }
-
-    fn get(&self, mime_type: String) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: get",
-        ))
-    }
-
-    fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    fn remove(&self, name: String) -> Result<(), Error> {
-        self.inner
-            .remove(&name)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown_all(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown_all()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::OcrBackendRegistry")]
-pub struct OcrBackendRegistry {
-    inner: Arc<kreuzberg::plugins::OcrBackendRegistry>,
-}
-
-unsafe impl IntoValueFromNative for OcrBackendRegistry {}
-
-impl magnus::TryConvert for OcrBackendRegistry {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &OcrBackendRegistry = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for OcrBackendRegistry {}
-
-impl OcrBackendRegistry {
-    fn register(&self, backend: OcrBackend) -> Result<(), Error> {
-        self.inner
-            .register(&backend.inner)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn get(&self, name: String) -> Result<OcrBackend, Error> {
-        let result = self
-            .inner
-            .get(&name)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(OcrBackend {
-            inner: Arc::new(result),
-        })
-    }
-
-    fn get_for_language(&self, language: String) -> Result<OcrBackend, Error> {
-        let result = self
-            .inner
-            .get_for_language(&language)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(OcrBackend {
-            inner: Arc::new(result),
-        })
-    }
-
-    fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    fn remove(&self, name: String) -> Result<(), Error> {
-        self.inner
-            .remove(&name)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown_all(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown_all()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn reset_to_defaults(&self) -> Result<(), Error> {
-        self.inner
-            .reset_to_defaults()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PostProcessorRegistry")]
-pub struct PostProcessorRegistry {
-    inner: Arc<kreuzberg::plugins::PostProcessorRegistry>,
-}
-
-unsafe impl IntoValueFromNative for PostProcessorRegistry {}
-
-impl magnus::TryConvert for PostProcessorRegistry {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PostProcessorRegistry = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PostProcessorRegistry {}
-
-impl PostProcessorRegistry {
-    fn register(&self, processor: String, priority: i32) -> Result<(), Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: register",
-        ))
-    }
-
-    fn get_for_stage(&self, stage: String) -> Vec<String> {
-        Vec::new()
-    }
-
-    fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    fn remove(&self, name: String) -> Result<(), Error> {
-        self.inner
-            .remove(&name)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown_all(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown_all()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::RendererRegistry")]
-pub struct RendererRegistry {
-    inner: Arc<kreuzberg::plugins::RendererRegistry>,
-}
-
-unsafe impl IntoValueFromNative for RendererRegistry {}
-
-impl magnus::TryConvert for RendererRegistry {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &RendererRegistry = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for RendererRegistry {}
-
-impl RendererRegistry {
-    fn register(&self, renderer: Renderer) -> Result<(), Error> {
-        self.inner
-            .register(&renderer.inner)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn get(&self, name: String) -> Result<Renderer, Error> {
-        let result = self
-            .inner
-            .get(&name)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(Renderer {
-            inner: Arc::new(result),
-        })
-    }
-
-    fn render(&self, name: String, doc: String) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: render",
-        ))
-    }
-
-    fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    fn remove(&self, name: String) -> () {
-        self.inner.remove(&name)
-    }
-
-    fn reset_to_defaults(&self) -> Result<(), Error> {
-        self.inner
-            .reset_to_defaults()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::ValidatorRegistry")]
-pub struct ValidatorRegistry {
-    inner: Arc<kreuzberg::plugins::ValidatorRegistry>,
-}
-
-unsafe impl IntoValueFromNative for ValidatorRegistry {}
-
-impl magnus::TryConvert for ValidatorRegistry {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ValidatorRegistry = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ValidatorRegistry {}
-
-impl ValidatorRegistry {
-    fn register(&self, validator: String) -> Result<(), Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: register",
-        ))
-    }
-
-    fn get_all(&self) -> Vec<String> {
-        Vec::new()
-    }
-
-    fn list(&self) -> Vec<String> {
-        self.inner.list()
-    }
-
-    fn remove(&self, name: String) -> Result<(), Error> {
-        self.inner
-            .remove(&name)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown_all(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown_all()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
     }
 }
 
@@ -9921,36 +4451,6 @@ impl ExtractionMetrics {
 
     fn concurrent_extractions(&self) -> String {
         self.concurrent_extractions.clone()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::TokenReducer")]
-pub struct TokenReducer {
-    inner: Arc<kreuzberg::text::token_reduction::TokenReducer>,
-}
-
-unsafe impl IntoValueFromNative for TokenReducer {}
-
-impl magnus::TryConvert for TokenReducer {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TokenReducer = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TokenReducer {}
-
-impl TokenReducer {
-    fn language(&self) -> String {
-        self.inner.language().into()
-    }
-
-    fn reduce(&self, text: String) -> String {
-        self.inner.reduce(&text)
-    }
-
-    fn batch_reduce(&self, texts: Vec<String>) -> Vec<String> {
-        self.inner.batch_reduce(&texts)
     }
 }
 
@@ -15216,145 +9716,6 @@ impl Uri {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PoolMetrics")]
-#[serde(default)]
-pub struct PoolMetrics {
-    pub total_acquires: String,
-    pub total_cache_hits: String,
-    pub peak_items_stored: String,
-    pub total_creations: String,
-}
-
-unsafe impl IntoValueFromNative for PoolMetrics {}
-
-impl magnus::TryConvert for PoolMetrics {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PoolMetrics = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PoolMetrics {}
-
-impl Default for PoolMetrics {
-    fn default() -> Self {
-        Self {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        }
-    }
-}
-
-impl PoolMetrics {
-    fn new(
-        total_acquires: Option<String>,
-        total_cache_hits: Option<String>,
-        peak_items_stored: Option<String>,
-        total_creations: Option<String>,
-    ) -> Self {
-        Self {
-            total_acquires: total_acquires.unwrap_or_default(),
-            total_cache_hits: total_cache_hits.unwrap_or_default(),
-            peak_items_stored: peak_items_stored.unwrap_or_default(),
-            total_creations: total_creations.unwrap_or_default(),
-        }
-    }
-
-    fn total_acquires(&self) -> String {
-        self.total_acquires.clone()
-    }
-
-    fn total_cache_hits(&self) -> String {
-        self.total_cache_hits.clone()
-    }
-
-    fn peak_items_stored(&self) -> String {
-        self.peak_items_stored.clone()
-    }
-
-    fn total_creations(&self) -> String {
-        self.total_creations.clone()
-    }
-
-    fn hit_rate(&self) -> f64 {
-        let core_self = kreuzberg::utils::pool::PoolMetrics {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        };
-        core_self.hit_rate()
-    }
-
-    fn snapshot(&self) -> PoolMetricsSnapshot {
-        let core_self = kreuzberg::utils::pool::PoolMetrics {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        };
-        core_self.snapshot().into()
-    }
-
-    fn reset(&self) -> () {
-        let core_self = kreuzberg::utils::pool::PoolMetrics {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        };
-        core_self.reset()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PoolMetricsSnapshot")]
-pub struct PoolMetricsSnapshot {
-    pub total_acquires: usize,
-    pub total_cache_hits: usize,
-    pub peak_items_stored: usize,
-    pub total_creations: usize,
-}
-
-unsafe impl IntoValueFromNative for PoolMetricsSnapshot {}
-
-impl magnus::TryConvert for PoolMetricsSnapshot {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PoolMetricsSnapshot = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PoolMetricsSnapshot {}
-
-impl PoolMetricsSnapshot {
-    fn new(total_acquires: usize, total_cache_hits: usize, peak_items_stored: usize, total_creations: usize) -> Self {
-        Self {
-            total_acquires,
-            total_cache_hits,
-            peak_items_stored,
-            total_creations,
-        }
-    }
-
-    fn total_acquires(&self) -> usize {
-        self.total_acquires
-    }
-
-    fn total_cache_hits(&self) -> usize {
-        self.total_cache_hits
-    }
-
-    fn peak_items_stored(&self) -> usize {
-        self.peak_items_stored
-    }
-
-    fn total_creations(&self) -> usize {
-        self.total_creations
-    }
-}
-
 #[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::StringBufferPool")]
 pub struct StringBufferPool {
@@ -15424,192 +9785,6 @@ impl Pool {
             .clear()
             .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
         Ok(())
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PoolSizeHint")]
-pub struct PoolSizeHint {
-    pub estimated_total_size: usize,
-    pub string_buffer_count: usize,
-    pub string_buffer_capacity: usize,
-    pub byte_buffer_count: usize,
-    pub byte_buffer_capacity: usize,
-}
-
-unsafe impl IntoValueFromNative for PoolSizeHint {}
-
-impl magnus::TryConvert for PoolSizeHint {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PoolSizeHint = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PoolSizeHint {}
-
-impl PoolSizeHint {
-    fn new(
-        estimated_total_size: usize,
-        string_buffer_count: usize,
-        string_buffer_capacity: usize,
-        byte_buffer_count: usize,
-        byte_buffer_capacity: usize,
-    ) -> Self {
-        Self {
-            estimated_total_size,
-            string_buffer_count,
-            string_buffer_capacity,
-            byte_buffer_count,
-            byte_buffer_capacity,
-        }
-    }
-
-    fn estimated_total_size(&self) -> usize {
-        self.estimated_total_size
-    }
-
-    fn string_buffer_count(&self) -> usize {
-        self.string_buffer_count
-    }
-
-    fn string_buffer_capacity(&self) -> usize {
-        self.string_buffer_capacity
-    }
-
-    fn byte_buffer_count(&self) -> usize {
-        self.byte_buffer_count
-    }
-
-    fn byte_buffer_capacity(&self) -> usize {
-        self.byte_buffer_capacity
-    }
-
-    fn estimated_string_pool_memory(&self) -> usize {
-        let core_self = kreuzberg::utils::PoolSizeHint {
-            estimated_total_size: self.estimated_total_size,
-            string_buffer_count: self.string_buffer_count,
-            string_buffer_capacity: self.string_buffer_capacity,
-            byte_buffer_count: self.byte_buffer_count,
-            byte_buffer_capacity: self.byte_buffer_capacity,
-        };
-        core_self.estimated_string_pool_memory()
-    }
-
-    fn estimated_byte_pool_memory(&self) -> usize {
-        let core_self = kreuzberg::utils::PoolSizeHint {
-            estimated_total_size: self.estimated_total_size,
-            string_buffer_count: self.string_buffer_count,
-            string_buffer_capacity: self.string_buffer_capacity,
-            byte_buffer_count: self.byte_buffer_count,
-            byte_buffer_capacity: self.byte_buffer_capacity,
-        };
-        core_self.estimated_byte_pool_memory()
-    }
-
-    fn total_pool_memory(&self) -> usize {
-        let core_self = kreuzberg::utils::PoolSizeHint {
-            estimated_total_size: self.estimated_total_size,
-            string_buffer_count: self.string_buffer_count,
-            string_buffer_capacity: self.string_buffer_capacity,
-            byte_buffer_count: self.byte_buffer_count,
-            byte_buffer_capacity: self.byte_buffer_capacity,
-        };
-        core_self.total_pool_memory()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PoolConfig")]
-#[serde(default)]
-pub struct PoolConfig {
-    pub max_buffers_per_size: usize,
-    pub initial_capacity: usize,
-    pub max_capacity_before_discard: usize,
-}
-
-unsafe impl IntoValueFromNative for PoolConfig {}
-
-impl magnus::TryConvert for PoolConfig {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PoolConfig = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PoolConfig {}
-
-impl Default for PoolConfig {
-    fn default() -> Self {
-        Self {
-            max_buffers_per_size: Default::default(),
-            initial_capacity: Default::default(),
-            max_capacity_before_discard: Default::default(),
-        }
-    }
-}
-
-impl PoolConfig {
-    fn new(
-        max_buffers_per_size: Option<usize>,
-        initial_capacity: Option<usize>,
-        max_capacity_before_discard: Option<usize>,
-    ) -> Self {
-        Self {
-            max_buffers_per_size: max_buffers_per_size.unwrap_or(4),
-            initial_capacity: initial_capacity.unwrap_or(4096),
-            max_capacity_before_discard: max_capacity_before_discard.unwrap_or(65536),
-        }
-    }
-
-    fn max_buffers_per_size(&self) -> usize {
-        self.max_buffers_per_size
-    }
-
-    fn initial_capacity(&self) -> usize {
-        self.initial_capacity
-    }
-
-    fn max_capacity_before_discard(&self) -> usize {
-        self.max_capacity_before_discard
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::StringBufferPoolMetrics")]
-pub struct StringBufferPoolMetrics {
-    pub total_acquires: usize,
-    pub total_reuses: usize,
-    pub hit_rate: f64,
-}
-
-unsafe impl IntoValueFromNative for StringBufferPoolMetrics {}
-
-impl magnus::TryConvert for StringBufferPoolMetrics {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &StringBufferPoolMetrics = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for StringBufferPoolMetrics {}
-
-impl StringBufferPoolMetrics {
-    fn new(total_acquires: usize, total_reuses: usize, hit_rate: f64) -> Self {
-        Self {
-            total_acquires,
-            total_reuses,
-            hit_rate,
-        }
-    }
-
-    fn total_acquires(&self) -> usize {
-        self.total_acquires
-    }
-
-    fn total_reuses(&self) -> usize {
-        self.total_reuses
-    }
-
-    fn hit_rate(&self) -> f64 {
-        self.hit_rate
     }
 }
 
@@ -15697,168 +9872,6 @@ impl InternedString {
 }
 
 #[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::Instant")]
-pub struct Instant {
-    inner: Arc<kreuzberg::utils::timing::Instant>,
-}
-
-unsafe impl IntoValueFromNative for Instant {}
-
-impl magnus::TryConvert for Instant {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Instant = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Instant {}
-
-impl Instant {
-    fn elapsed_secs_f64(&self) -> f64 {
-        self.inner.elapsed_secs_f64()
-    }
-
-    fn elapsed_ms(&self) -> f64 {
-        self.inner.elapsed_ms()
-    }
-
-    fn elapsed_millis(&self) -> String {
-        String::from("[unimplemented: elapsed_millis]")
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::HocrWord")]
-pub struct HocrWord {
-    pub text: String,
-    pub left: u32,
-    pub top: u32,
-    pub width: u32,
-    pub height: u32,
-    pub confidence: f64,
-}
-
-unsafe impl IntoValueFromNative for HocrWord {}
-
-impl magnus::TryConvert for HocrWord {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &HocrWord = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for HocrWord {}
-
-impl HocrWord {
-    fn new(text: String, left: u32, top: u32, width: u32, height: u32, confidence: f64) -> Self {
-        Self {
-            text,
-            left,
-            top,
-            width,
-            height,
-            confidence,
-        }
-    }
-
-    fn text(&self) -> String {
-        self.text.clone()
-    }
-
-    fn left(&self) -> u32 {
-        self.left
-    }
-
-    fn top(&self) -> u32 {
-        self.top
-    }
-
-    fn width(&self) -> u32 {
-        self.width
-    }
-
-    fn height(&self) -> u32 {
-        self.height
-    }
-
-    fn confidence(&self) -> f64 {
-        self.confidence
-    }
-
-    fn right(&self) -> u32 {
-        let core_self = kreuzberg::table_core::HocrWord {
-            text: self.text.clone(),
-            left: self.left,
-            top: self.top,
-            width: self.width,
-            height: self.height,
-            confidence: self.confidence,
-        };
-        core_self.right()
-    }
-
-    fn bottom(&self) -> u32 {
-        let core_self = kreuzberg::table_core::HocrWord {
-            text: self.text.clone(),
-            left: self.left,
-            top: self.top,
-            width: self.width,
-            height: self.height,
-            confidence: self.confidence,
-        };
-        core_self.bottom()
-    }
-
-    fn y_center(&self) -> f64 {
-        let core_self = kreuzberg::table_core::HocrWord {
-            text: self.text.clone(),
-            left: self.left,
-            top: self.top,
-            width: self.width,
-            height: self.height,
-            confidence: self.confidence,
-        };
-        core_self.y_center()
-    }
-
-    fn x_center(&self) -> f64 {
-        let core_self = kreuzberg::table_core::HocrWord {
-            text: self.text.clone(),
-            left: self.left,
-            top: self.top,
-            width: self.width,
-            height: self.height,
-            confidence: self.confidence,
-        };
-        core_self.x_center()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::ExtractionService")]
-pub struct ExtractionService {
-    inner: Arc<kreuzberg::service::ExtractionService>,
-}
-
-unsafe impl IntoValueFromNative for ExtractionService {}
-
-impl magnus::TryConvert for ExtractionService {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ExtractionService = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ExtractionService {}
-
-impl ExtractionService {
-    fn poll_ready(&self, _cx: String) -> String {
-        String::from("[unimplemented: poll_ready]")
-    }
-
-    fn call(&self, req: ExtractionRequest) -> String {
-        String::from("[unimplemented: call]")
-    }
-}
-
-#[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::TracingLayer")]
 pub struct TracingLayer {
     inner: Arc<kreuzberg::service::layers::tracing::TracingLayer>,
@@ -15903,105 +9916,10 @@ impl MetricsLayer {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ExtractionRequest")]
-pub struct ExtractionRequest {
-    pub source: ExtractionSource,
-    pub config: ExtractionConfig,
-    pub file_overrides: Option<FileExtractionConfig>,
-}
-
-unsafe impl IntoValueFromNative for ExtractionRequest {}
-
-impl magnus::TryConvert for ExtractionRequest {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ExtractionRequest = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ExtractionRequest {}
-
-impl ExtractionRequest {
-    fn new(source: ExtractionSource, config: ExtractionConfig, file_overrides: Option<FileExtractionConfig>) -> Self {
-        Self {
-            source,
-            config,
-            file_overrides,
-        }
-    }
-
-    fn source(&self) -> ExtractionSource {
-        self.source.clone()
-    }
-
-    fn config(&self) -> ExtractionConfig {
-        self.config.clone()
-    }
-
-    fn file_overrides(&self) -> Option<FileExtractionConfig> {
-        self.file_overrides.clone()
-    }
-
-    fn with_overrides(&self, overrides: FileExtractionConfig) -> ExtractionRequest {
-        panic!("alef: with_overrides not auto-delegatable")
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::ExtractionServiceBuilder")]
-pub struct ExtractionServiceBuilder {
-    inner: Arc<kreuzberg::service::ExtractionServiceBuilder>,
-}
-
-unsafe impl IntoValueFromNative for ExtractionServiceBuilder {}
-
-impl magnus::TryConvert for ExtractionServiceBuilder {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ExtractionServiceBuilder = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ExtractionServiceBuilder {}
-
-impl ExtractionServiceBuilder {
-    fn with_timeout(&self, duration: u64) -> ExtractionServiceBuilder {
-        Self {
-            inner: Arc::new(
-                self.inner
-                    .as_ref()
-                    .clone()
-                    .with_timeout(std::time::Duration::from_millis(duration)),
-            ),
-        }
-    }
-
-    fn with_concurrency_limit(&self, max: usize) -> ExtractionServiceBuilder {
-        Self {
-            inner: Arc::new(self.inner.as_ref().clone().with_concurrency_limit(max)),
-        }
-    }
-
-    fn with_tracing(&self) -> ExtractionServiceBuilder {
-        Self {
-            inner: Arc::new(self.inner.as_ref().clone().with_tracing()),
-        }
-    }
-
-    fn with_metrics(&self) -> ExtractionServiceBuilder {
-        Self {
-            inner: Arc::new(self.inner.as_ref().clone().with_metrics()),
-        }
-    }
-
-    fn build(&self) -> String {
-        String::from("[unimplemented: build]")
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ApiError")]
 pub struct ApiError {
     pub status: String,
-    pub body: ErrorResponse,
+    pub body: String,
 }
 
 unsafe impl IntoValueFromNative for ApiError {}
@@ -16015,7 +9933,7 @@ impl magnus::TryConvert for ApiError {
 unsafe impl TryConvertOwned for ApiError {}
 
 impl ApiError {
-    fn new(status: String, body: ErrorResponse) -> Self {
+    fn new(status: String, body: String) -> Self {
         Self { status, body }
     }
 
@@ -16023,7 +9941,7 @@ impl ApiError {
         self.status.clone()
     }
 
-    fn body(&self) -> ErrorResponse {
+    fn body(&self) -> String {
         self.body.clone()
     }
 
@@ -16049,50 +9967,6 @@ impl magnus::TryConvert for ApiDoc {
 unsafe impl TryConvertOwned for ApiDoc {}
 
 impl ApiDoc {}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ApiSizeLimits")]
-#[serde(default)]
-pub struct ApiSizeLimits {
-    pub max_request_body_bytes: usize,
-    pub max_multipart_field_bytes: usize,
-}
-
-unsafe impl IntoValueFromNative for ApiSizeLimits {}
-
-impl magnus::TryConvert for ApiSizeLimits {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ApiSizeLimits = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ApiSizeLimits {}
-
-impl Default for ApiSizeLimits {
-    fn default() -> Self {
-        Self {
-            max_request_body_bytes: Default::default(),
-            max_multipart_field_bytes: Default::default(),
-        }
-    }
-}
-
-impl ApiSizeLimits {
-    fn new(max_request_body_bytes: Option<usize>, max_multipart_field_bytes: Option<usize>) -> Self {
-        Self {
-            max_request_body_bytes: max_request_body_bytes.unwrap_or_default(),
-            max_multipart_field_bytes: max_multipart_field_bytes.unwrap_or_default(),
-        }
-    }
-
-    fn max_request_body_bytes(&self) -> usize {
-        self.max_request_body_bytes
-    }
-
-    fn max_multipart_field_bytes(&self) -> usize {
-        self.max_multipart_field_bytes
-    }
-}
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HealthResponse")]
@@ -16182,52 +10056,6 @@ impl magnus::TryConvert for ExtractResponse {
 unsafe impl TryConvertOwned for ExtractResponse {}
 
 impl ExtractResponse {}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ErrorResponse")]
-pub struct ErrorResponse {
-    pub error_type: String,
-    pub message: String,
-    pub traceback: Option<String>,
-    pub status_code: u16,
-}
-
-unsafe impl IntoValueFromNative for ErrorResponse {}
-
-impl magnus::TryConvert for ErrorResponse {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ErrorResponse = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ErrorResponse {}
-
-impl ErrorResponse {
-    fn new(error_type: String, message: String, status_code: u16, traceback: Option<String>) -> Self {
-        Self {
-            error_type,
-            message,
-            traceback,
-            status_code,
-        }
-    }
-
-    fn error_type(&self) -> String {
-        self.error_type.clone()
-    }
-
-    fn message(&self) -> String {
-        self.message.clone()
-    }
-
-    fn traceback(&self) -> Option<String> {
-        self.traceback.clone()
-    }
-
-    fn status_code(&self) -> u16 {
-        self.status_code
-    }
-}
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ApiState")]
@@ -16825,7 +10653,7 @@ impl StructuredExtractionResponse {
 #[magnus::wrap(class = "Kreuzberg::OpenWebDocumentResponse")]
 pub struct OpenWebDocumentResponse {
     pub page_content: String,
-    pub metadata: OpenWebDocumentMetadata,
+    pub metadata: String,
 }
 
 unsafe impl IntoValueFromNative for OpenWebDocumentResponse {}
@@ -16839,7 +10667,7 @@ impl magnus::TryConvert for OpenWebDocumentResponse {
 unsafe impl TryConvertOwned for OpenWebDocumentResponse {}
 
 impl OpenWebDocumentResponse {
-    fn new(page_content: String, metadata: OpenWebDocumentMetadata) -> Self {
+    fn new(page_content: String, metadata: String) -> Self {
         Self { page_content, metadata }
     }
 
@@ -16847,41 +10675,15 @@ impl OpenWebDocumentResponse {
         self.page_content.clone()
     }
 
-    fn metadata(&self) -> OpenWebDocumentMetadata {
+    fn metadata(&self) -> String {
         self.metadata.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::OpenWebDocumentMetadata")]
-pub struct OpenWebDocumentMetadata {
-    pub source: String,
-}
-
-unsafe impl IntoValueFromNative for OpenWebDocumentMetadata {}
-
-impl magnus::TryConvert for OpenWebDocumentMetadata {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &OpenWebDocumentMetadata = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for OpenWebDocumentMetadata {}
-
-impl OpenWebDocumentMetadata {
-    fn new(source: String) -> Self {
-        Self { source }
-    }
-
-    fn source(&self) -> String {
-        self.source.clone()
     }
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DoclingCompatResponse")]
 pub struct DoclingCompatResponse {
-    pub document: DoclingCompatDocument,
+    pub document: String,
     pub status: String,
 }
 
@@ -16896,42 +10698,16 @@ impl magnus::TryConvert for DoclingCompatResponse {
 unsafe impl TryConvertOwned for DoclingCompatResponse {}
 
 impl DoclingCompatResponse {
-    fn new(document: DoclingCompatDocument, status: String) -> Self {
+    fn new(document: String, status: String) -> Self {
         Self { document, status }
     }
 
-    fn document(&self) -> DoclingCompatDocument {
+    fn document(&self) -> String {
         self.document.clone()
     }
 
     fn status(&self) -> String {
         self.status.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::DoclingCompatDocument")]
-pub struct DoclingCompatDocument {
-    pub md_content: String,
-}
-
-unsafe impl IntoValueFromNative for DoclingCompatDocument {}
-
-impl magnus::TryConvert for DoclingCompatDocument {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DoclingCompatDocument = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DoclingCompatDocument {}
-
-impl DoclingCompatDocument {
-    fn new(md_content: String) -> Self {
-        Self { md_content }
-    }
-
-    fn md_content(&self) -> String {
-        self.md_content.clone()
     }
 }
 
@@ -17342,34 +11118,6 @@ impl ChunkTextParams {
 
     fn chunker_type(&self) -> Option<String> {
         self.chunker_type.clone()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::KreuzbergMcp")]
-pub struct KreuzbergMcp {
-    inner: Arc<kreuzberg::mcp::KreuzbergMcp>,
-}
-
-unsafe impl IntoValueFromNative for KreuzbergMcp {}
-
-impl magnus::TryConvert for KreuzbergMcp {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &KreuzbergMcp = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for KreuzbergMcp {}
-
-impl KreuzbergMcp {
-    fn clone(&self) -> KreuzbergMcp {
-        Self {
-            inner: Arc::new(self.inner.clone()),
-        }
-    }
-
-    fn get_info(&self) -> String {
-        String::from("[unimplemented: get_info]")
     }
 }
 
@@ -17794,65 +11542,6 @@ impl Keyword {
     }
 }
 
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::OcrCache")]
-pub struct OcrCache {
-    inner: Arc<kreuzberg::ocr::OcrCache>,
-}
-
-unsafe impl IntoValueFromNative for OcrCache {}
-
-impl magnus::TryConvert for OcrCache {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &OcrCache = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for OcrCache {}
-
-impl OcrCache {
-    fn get_cached_result(
-        &self,
-        image_hash: String,
-        backend: String,
-        config: String,
-    ) -> Result<Option<OcrExtractionResult>, Error> {
-        let result = self
-            .inner
-            .get_cached_result(&image_hash, &backend, &config)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.map(Into::into))
-    }
-
-    fn set_cached_result(
-        &self,
-        image_hash: String,
-        backend: String,
-        config: String,
-        result: OcrExtractionResult,
-    ) -> Result<(), Error> {
-        self.inner
-            .set_cached_result(&image_hash, &backend, &config, result.into())
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn clear(&self) -> Result<(), Error> {
-        self.inner
-            .clear()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn get_stats(&self) -> Result<OcrCacheStats, Error> {
-        let result = self
-            .inner
-            .get_stats()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-}
-
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrCacheStats")]
 #[serde(default)]
@@ -17898,147 +11587,6 @@ impl OcrCacheStats {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::TsvRow")]
-pub struct TsvRow {
-    pub level: i32,
-    pub page_num: i32,
-    pub block_num: i32,
-    pub par_num: i32,
-    pub line_num: i32,
-    pub word_num: i32,
-    pub left: u32,
-    pub top: u32,
-    pub width: u32,
-    pub height: u32,
-    pub conf: f64,
-    pub text: String,
-}
-
-unsafe impl IntoValueFromNative for TsvRow {}
-
-impl magnus::TryConvert for TsvRow {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TsvRow = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TsvRow {}
-
-impl TsvRow {
-    fn new(
-        level: i32,
-        page_num: i32,
-        block_num: i32,
-        par_num: i32,
-        line_num: i32,
-        word_num: i32,
-        left: u32,
-        top: u32,
-        width: u32,
-        height: u32,
-        conf: f64,
-        text: String,
-    ) -> Self {
-        Self {
-            level,
-            page_num,
-            block_num,
-            par_num,
-            line_num,
-            word_num,
-            left,
-            top,
-            width,
-            height,
-            conf,
-            text,
-        }
-    }
-
-    fn level(&self) -> i32 {
-        self.level
-    }
-
-    fn page_num(&self) -> i32 {
-        self.page_num
-    }
-
-    fn block_num(&self) -> i32 {
-        self.block_num
-    }
-
-    fn par_num(&self) -> i32 {
-        self.par_num
-    }
-
-    fn line_num(&self) -> i32 {
-        self.line_num
-    }
-
-    fn word_num(&self) -> i32 {
-        self.word_num
-    }
-
-    fn left(&self) -> u32 {
-        self.left
-    }
-
-    fn top(&self) -> u32 {
-        self.top
-    }
-
-    fn width(&self) -> u32 {
-        self.width
-    }
-
-    fn height(&self) -> u32 {
-        self.height
-    }
-
-    fn conf(&self) -> f64 {
-        self.conf
-    }
-
-    fn text(&self) -> String {
-        self.text.clone()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::LanguageRegistry")]
-pub struct LanguageRegistry {
-    inner: Arc<kreuzberg::ocr::LanguageRegistry>,
-}
-
-unsafe impl IntoValueFromNative for LanguageRegistry {}
-
-impl magnus::TryConvert for LanguageRegistry {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &LanguageRegistry = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for LanguageRegistry {}
-
-impl LanguageRegistry {
-    fn get_supported_languages(&self, backend: String) -> Option<Vec<String>> {
-        self.inner.get_supported_languages(&backend)
-    }
-
-    fn is_language_supported(&self, backend: String, language: String) -> bool {
-        self.inner.is_language_supported(&backend, &language)
-    }
-
-    fn get_backends(&self) -> Vec<String> {
-        self.inner.get_backends()
-    }
-
-    fn get_language_count(&self, backend: String) -> usize {
-        self.inner.get_language_count(&backend)
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::RecognizedTable")]
 pub struct RecognizedTable {
     pub detection_bbox: BBox,
@@ -18079,85 +11627,6 @@ impl RecognizedTable {
 }
 
 #[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::OcrProcessor")]
-pub struct OcrProcessor {
-    inner: Arc<kreuzberg::ocr::OcrProcessor>,
-}
-
-unsafe impl IntoValueFromNative for OcrProcessor {}
-
-impl magnus::TryConvert for OcrProcessor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &OcrProcessor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for OcrProcessor {}
-
-impl OcrProcessor {
-    fn process_image(&self, image_bytes: Vec<u8>, config: TesseractConfig) -> Result<OcrExtractionResult, Error> {
-        let result = self
-            .inner
-            .process_image(&image_bytes, config.into())
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn process_image_with_format(
-        &self,
-        image_bytes: Vec<u8>,
-        config: TesseractConfig,
-        output_format: OutputFormat,
-    ) -> Result<OcrExtractionResult, Error> {
-        let result = self
-            .inner
-            .process_image_with_format(&image_bytes, config.into(), output_format.into())
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn clear_cache(&self) -> Result<(), Error> {
-        self.inner
-            .clear_cache()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn get_cache_stats(&self) -> Result<OcrCacheStats, Error> {
-        let result = self
-            .inner
-            .get_cache_stats()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn process_image_file(&self, file_path: String, config: TesseractConfig) -> Result<OcrExtractionResult, Error> {
-        let result = self
-            .inner
-            .process_image_file(&file_path, config.into())
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn process_image_file_with_format(
-        &self,
-        file_path: String,
-        config: TesseractConfig,
-        output_format: OutputFormat,
-    ) -> Result<OcrExtractionResult, Error> {
-        let result = self
-            .inner
-            .process_image_file_with_format(&file_path, config.into(), output_format.into())
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn process_image_files_batch(&self, file_paths: Vec<String>, config: TesseractConfig) -> Vec<String> {
-        Vec::new()
-    }
-}
-
-#[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::TessdataManager")]
 pub struct TessdataManager {
     inner: Arc<kreuzberg::ocr::TessdataManager>,
@@ -18180,86 +11649,6 @@ impl TessdataManager {
 
     fn is_language_cached(&self, lang: String) -> bool {
         self.inner.is_language_cached(&lang)
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::TesseractBackend")]
-pub struct TesseractBackend {
-    inner: Arc<kreuzberg::ocr::TesseractBackend>,
-}
-
-unsafe impl IntoValueFromNative for TesseractBackend {}
-
-impl magnus::TryConvert for TesseractBackend {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TesseractBackend = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TesseractBackend {}
-
-impl TesseractBackend {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn process_image_async(&self, image_bytes: Vec<u8>, config: OcrConfig) -> Result<ExtractionResult, Error> {
-        let inner = self.inner.clone();
-        let rt = tokio::runtime::Runtime::new()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        let result = rt
-            .block_on(async { inner.process_image(&image_bytes, config.into()).await })
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn process_image_file_async(&self, path: String, config: OcrConfig) -> Result<ExtractionResult, Error> {
-        let inner = self.inner.clone();
-        let rt = tokio::runtime::Runtime::new()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        let result = rt
-            .block_on(async {
-                inner
-                    .process_image_file(std::path::Path::new(&path), config.into())
-                    .await
-            })
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn supports_language(&self, lang: String) -> bool {
-        self.inner.supports_language(&lang)
-    }
-
-    fn backend_type(&self) -> OcrBackendType {
-        self.inner.backend_type().into()
-    }
-
-    fn supported_languages(&self) -> Vec<String> {
-        self.inner.supported_languages()
-    }
-
-    fn supports_table_detection(&self) -> bool {
-        self.inner.supports_table_detection()
     }
 }
 
@@ -18908,7 +12297,7 @@ impl EmbeddedFile {
 #[magnus::wrap(class = "Kreuzberg::FontSizeCluster")]
 pub struct FontSizeCluster {
     pub centroid: f32,
-    pub members: Vec<TextBlock>,
+    pub members: Vec<String>,
 }
 
 unsafe impl IntoValueFromNative for FontSizeCluster {}
@@ -18922,7 +12311,7 @@ impl magnus::TryConvert for FontSizeCluster {
 unsafe impl TryConvertOwned for FontSizeCluster {}
 
 impl FontSizeCluster {
-    fn new(centroid: f32, members: Vec<TextBlock>) -> Self {
+    fn new(centroid: f32, members: Vec<String>) -> Self {
         Self { centroid, members }
     }
 
@@ -18930,7 +12319,7 @@ impl FontSizeCluster {
         self.centroid
     }
 
-    fn members(&self) -> Vec<TextBlock> {
+    fn members(&self) -> Vec<String> {
         self.members.clone()
     }
 }
@@ -19022,74 +12411,12 @@ impl CharData {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::TextBlock")]
-pub struct TextBlock {
-    pub text: String,
-    pub bbox: BoundingBox,
-    pub font_size: f32,
-}
-
-unsafe impl IntoValueFromNative for TextBlock {}
-
-impl magnus::TryConvert for TextBlock {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TextBlock = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TextBlock {}
-
-impl TextBlock {
-    fn new(text: String, bbox: BoundingBox, font_size: f32) -> Self {
-        Self { text, bbox, font_size }
-    }
-
-    fn text(&self) -> String {
-        self.text.clone()
-    }
-
-    fn bbox(&self) -> BoundingBox {
-        self.bbox.clone()
-    }
-
-    fn font_size(&self) -> f32 {
-        self.font_size
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::KMeansResult")]
-pub struct KMeansResult {
-    pub labels: Vec<u32>,
-}
-
-unsafe impl IntoValueFromNative for KMeansResult {}
-
-impl magnus::TryConvert for KMeansResult {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &KMeansResult = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for KMeansResult {}
-
-impl KMeansResult {
-    fn new(labels: Vec<u32>) -> Self {
-        Self { labels }
-    }
-
-    fn labels(&self) -> Vec<u32> {
-        self.labels.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HierarchyBlock")]
 pub struct HierarchyBlock {
     pub text: String,
     pub bbox: BoundingBox,
     pub font_size: f32,
-    pub hierarchy_level: HierarchyLevel,
+    pub hierarchy_level: String,
 }
 
 unsafe impl IntoValueFromNative for HierarchyBlock {}
@@ -19103,7 +12430,7 @@ impl magnus::TryConvert for HierarchyBlock {
 unsafe impl TryConvertOwned for HierarchyBlock {}
 
 impl HierarchyBlock {
-    fn new(text: String, bbox: BoundingBox, font_size: f32, hierarchy_level: HierarchyLevel) -> Self {
+    fn new(text: String, bbox: BoundingBox, font_size: f32, hierarchy_level: String) -> Self {
         Self {
             text,
             bbox,
@@ -19124,108 +12451,8 @@ impl HierarchyBlock {
         self.font_size
     }
 
-    fn hierarchy_level(&self) -> HierarchyLevel {
+    fn hierarchy_level(&self) -> String {
         self.hierarchy_level.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::SegmentData")]
-pub struct SegmentData {
-    pub text: String,
-    pub x: f32,
-    pub y: f32,
-    pub width: f32,
-    pub height: f32,
-    pub font_size: f32,
-    pub is_bold: bool,
-    pub is_italic: bool,
-    pub is_monospace: bool,
-    pub baseline_y: f32,
-    pub assigned_role: Option<u8>,
-}
-
-unsafe impl IntoValueFromNative for SegmentData {}
-
-impl magnus::TryConvert for SegmentData {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &SegmentData = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for SegmentData {}
-
-impl SegmentData {
-    fn new(
-        text: String,
-        x: f32,
-        y: f32,
-        width: f32,
-        height: f32,
-        font_size: f32,
-        is_bold: bool,
-        is_italic: bool,
-        is_monospace: bool,
-        baseline_y: f32,
-        assigned_role: Option<u8>,
-    ) -> Self {
-        Self {
-            text,
-            x,
-            y,
-            width,
-            height,
-            font_size,
-            is_bold,
-            is_italic,
-            is_monospace,
-            baseline_y,
-            assigned_role,
-        }
-    }
-
-    fn text(&self) -> String {
-        self.text.clone()
-    }
-
-    fn x(&self) -> f32 {
-        self.x
-    }
-
-    fn y(&self) -> f32 {
-        self.y
-    }
-
-    fn width(&self) -> f32 {
-        self.width
-    }
-
-    fn height(&self) -> f32 {
-        self.height
-    }
-
-    fn font_size(&self) -> f32 {
-        self.font_size
-    }
-
-    fn is_bold(&self) -> bool {
-        self.is_bold
-    }
-
-    fn is_italic(&self) -> bool {
-        self.is_italic
-    }
-
-    fn is_monospace(&self) -> bool {
-        self.is_monospace
-    }
-
-    fn baseline_y(&self) -> f32 {
-        self.baseline_y
-    }
-
-    fn assigned_role(&self) -> Option<u8> {
-        self.assigned_role
     }
 }
 
@@ -19315,120 +12542,12 @@ impl PdfImage {
     }
 }
 
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PdfImageExtractor")]
-pub struct PdfImageExtractor {
-    inner: Arc<kreuzberg::pdf::PdfImageExtractor>,
-}
-
-unsafe impl IntoValueFromNative for PdfImageExtractor {}
-
-impl magnus::TryConvert for PdfImageExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PdfImageExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PdfImageExtractor {}
-
-impl PdfImageExtractor {
-    fn extract_images(&self) -> Result<Vec<PdfImage>, Error> {
-        let result = self
-            .inner
-            .extract_images()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into_iter().map(Into::into).collect())
-    }
-
-    fn extract_images_from_page(&self, page_number: u32) -> Result<Vec<PdfImage>, Error> {
-        let result = self
-            .inner
-            .extract_images_from_page(page_number)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into_iter().map(Into::into).collect())
-    }
-
-    fn get_image_count(&self) -> Result<usize, Error> {
-        let result = self
-            .inner
-            .get_image_count()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result)
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PdfLayoutBBox")]
-pub struct PdfLayoutBBox {
-    pub left: f32,
-    pub bottom: f32,
-    pub right: f32,
-    pub top: f32,
-}
-
-unsafe impl IntoValueFromNative for PdfLayoutBBox {}
-
-impl magnus::TryConvert for PdfLayoutBBox {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PdfLayoutBBox = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PdfLayoutBBox {}
-
-impl PdfLayoutBBox {
-    fn new(left: f32, bottom: f32, right: f32, top: f32) -> Self {
-        Self {
-            left,
-            bottom,
-            right,
-            top,
-        }
-    }
-
-    fn left(&self) -> f32 {
-        self.left
-    }
-
-    fn bottom(&self) -> f32 {
-        self.bottom
-    }
-
-    fn right(&self) -> f32 {
-        self.right
-    }
-
-    fn top(&self) -> f32 {
-        self.top
-    }
-
-    fn width(&self) -> f32 {
-        let core_self = kreuzberg::pdf::layout_runner::PdfLayoutBBox {
-            left: self.left,
-            bottom: self.bottom,
-            right: self.right,
-            top: self.top,
-        };
-        core_self.width()
-    }
-
-    fn height(&self) -> f32 {
-        let core_self = kreuzberg::pdf::layout_runner::PdfLayoutBBox {
-            left: self.left,
-            bottom: self.bottom,
-            right: self.right,
-            top: self.top,
-        };
-        core_self.height()
-    }
-}
-
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageLayoutRegion")]
 pub struct PageLayoutRegion {
     pub class: LayoutClass,
     pub confidence: f32,
-    pub bbox: PdfLayoutBBox,
+    pub bbox: String,
 }
 
 unsafe impl IntoValueFromNative for PageLayoutRegion {}
@@ -19442,7 +12561,7 @@ impl magnus::TryConvert for PageLayoutRegion {
 unsafe impl TryConvertOwned for PageLayoutRegion {}
 
 impl PageLayoutRegion {
-    fn new(class: LayoutClass, confidence: f32, bbox: PdfLayoutBBox) -> Self {
+    fn new(class: LayoutClass, confidence: f32, bbox: String) -> Self {
         Self {
             class,
             confidence,
@@ -19458,7 +12577,7 @@ impl PageLayoutRegion {
         self.confidence
     }
 
-    fn bbox(&self) -> PdfLayoutBBox {
+    fn bbox(&self) -> String {
         self.bbox.clone()
     }
 }
@@ -19594,196 +12713,6 @@ impl PageTiming {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::LayoutTimingReport")]
-pub struct LayoutTimingReport {
-    pub total_ms: f64,
-    pub per_page: Vec<PageTiming>,
-}
-
-unsafe impl IntoValueFromNative for LayoutTimingReport {}
-
-impl magnus::TryConvert for LayoutTimingReport {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &LayoutTimingReport = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for LayoutTimingReport {}
-
-impl LayoutTimingReport {
-    fn new(total_ms: f64, per_page: Vec<PageTiming>) -> Self {
-        Self { total_ms, per_page }
-    }
-
-    fn total_ms(&self) -> f64 {
-        self.total_ms
-    }
-
-    fn per_page(&self) -> Vec<PageTiming> {
-        self.per_page.clone()
-    }
-
-    fn avg_render_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_render_ms()
-    }
-
-    fn avg_inference_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_inference_ms()
-    }
-
-    fn avg_preprocess_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_preprocess_ms()
-    }
-
-    fn avg_onnx_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_onnx_ms()
-    }
-
-    fn avg_postprocess_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.avg_postprocess_ms()
-    }
-
-    fn total_inference_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_inference_ms()
-    }
-
-    fn total_render_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_render_ms()
-    }
-
-    fn total_preprocess_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_preprocess_ms()
-    }
-
-    fn total_onnx_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_onnx_ms()
-    }
-
-    fn total_postprocess_ms(&self) -> f64 {
-        let core_self = kreuzberg::pdf::layout_runner::LayoutTimingReport {
-            total_ms: self.total_ms,
-            per_page: self.per_page.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.total_postprocess_ms()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PdfMetadata")]
-#[serde(default)]
-pub struct PdfMetadata {
-    pub pdf_version: Option<String>,
-    pub producer: Option<String>,
-    pub is_encrypted: Option<bool>,
-    pub width: Option<i64>,
-    pub height: Option<i64>,
-    pub page_count: Option<usize>,
-}
-
-unsafe impl IntoValueFromNative for PdfMetadata {}
-
-impl magnus::TryConvert for PdfMetadata {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PdfMetadata = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PdfMetadata {}
-
-impl Default for PdfMetadata {
-    fn default() -> Self {
-        Self {
-            pdf_version: Default::default(),
-            producer: Default::default(),
-            is_encrypted: Default::default(),
-            width: Default::default(),
-            height: Default::default(),
-            page_count: Default::default(),
-        }
-    }
-}
-
-impl PdfMetadata {
-    fn new(
-        pdf_version: Option<String>,
-        producer: Option<String>,
-        is_encrypted: Option<bool>,
-        width: Option<i64>,
-        height: Option<i64>,
-        page_count: Option<usize>,
-    ) -> Self {
-        Self {
-            pdf_version,
-            producer,
-            is_encrypted,
-            width,
-            height,
-            page_count,
-        }
-    }
-
-    fn pdf_version(&self) -> Option<String> {
-        self.pdf_version.clone()
-    }
-
-    fn producer(&self) -> Option<String> {
-        self.producer.clone()
-    }
-
-    fn is_encrypted(&self) -> Option<bool> {
-        self.is_encrypted
-    }
-
-    fn width(&self) -> Option<i64> {
-        self.width
-    }
-
-    fn height(&self) -> Option<i64> {
-        self.height
-    }
-
-    fn page_count(&self) -> Option<usize> {
-        self.page_count
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PdfExtractionMetadata")]
 pub struct PdfExtractionMetadata {
     pub title: Option<String>,
@@ -19793,7 +12722,7 @@ pub struct PdfExtractionMetadata {
     pub created_at: Option<String>,
     pub modified_at: Option<String>,
     pub created_by: Option<String>,
-    pub pdf_specific: PdfMetadata,
+    pub pdf_specific: String,
     pub page_structure: Option<PageStructure>,
 }
 
@@ -19809,7 +12738,7 @@ unsafe impl TryConvertOwned for PdfExtractionMetadata {}
 
 impl PdfExtractionMetadata {
     fn new(
-        pdf_specific: PdfMetadata,
+        pdf_specific: String,
         title: Option<String>,
         subject: Option<String>,
         authors: Option<Vec<String>>,
@@ -19860,7 +12789,7 @@ impl PdfExtractionMetadata {
         self.created_by.clone()
     }
 
-    fn pdf_specific(&self) -> PdfMetadata {
+    fn pdf_specific(&self) -> String {
         self.pdf_specific.clone()
     }
 
@@ -19941,125 +12870,6 @@ impl CommonPdfMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PageRenderOptions")]
-#[serde(default)]
-pub struct PageRenderOptions {
-    pub target_dpi: i32,
-    pub max_image_dimension: i32,
-    pub auto_adjust_dpi: bool,
-    pub min_dpi: i32,
-    pub max_dpi: i32,
-}
-
-unsafe impl IntoValueFromNative for PageRenderOptions {}
-
-impl magnus::TryConvert for PageRenderOptions {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PageRenderOptions = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PageRenderOptions {}
-
-impl Default for PageRenderOptions {
-    fn default() -> Self {
-        Self {
-            target_dpi: Default::default(),
-            max_image_dimension: Default::default(),
-            auto_adjust_dpi: Default::default(),
-            min_dpi: Default::default(),
-            max_dpi: Default::default(),
-        }
-    }
-}
-
-impl PageRenderOptions {
-    fn new(
-        target_dpi: Option<i32>,
-        max_image_dimension: Option<i32>,
-        auto_adjust_dpi: Option<bool>,
-        min_dpi: Option<i32>,
-        max_dpi: Option<i32>,
-    ) -> Self {
-        Self {
-            target_dpi: target_dpi.unwrap_or(300),
-            max_image_dimension: max_image_dimension.unwrap_or(65536),
-            auto_adjust_dpi: auto_adjust_dpi.unwrap_or(true),
-            min_dpi: min_dpi.unwrap_or(72),
-            max_dpi: max_dpi.unwrap_or(600),
-        }
-    }
-
-    fn target_dpi(&self) -> i32 {
-        self.target_dpi
-    }
-
-    fn max_image_dimension(&self) -> i32 {
-        self.max_image_dimension
-    }
-
-    fn auto_adjust_dpi(&self) -> bool {
-        self.auto_adjust_dpi
-    }
-
-    fn min_dpi(&self) -> i32 {
-        self.min_dpi
-    }
-
-    fn max_dpi(&self) -> i32 {
-        self.max_dpi
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PdfPageIterator")]
-pub struct PdfPageIterator {
-    inner: Arc<kreuzberg::pdf::PdfPageIterator>,
-}
-
-unsafe impl IntoValueFromNative for PdfPageIterator {}
-
-impl magnus::TryConvert for PdfPageIterator {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PdfPageIterator = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PdfPageIterator {}
-
-impl PdfPageIterator {
-    fn page_count(&self) -> usize {
-        self.inner.page_count()
-    }
-
-    fn next(&self) -> Option<String> {
-        None
-    }
-
-    fn size_hint(&self) -> String {
-        String::from("[unimplemented: size_hint]")
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PdfRenderer")]
-pub struct PdfRenderer {
-    inner: Arc<kreuzberg::pdf::rendering::PdfRenderer>,
-}
-
-unsafe impl IntoValueFromNative for PdfRenderer {}
-
-impl magnus::TryConvert for PdfRenderer {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PdfRenderer = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PdfRenderer {}
-
-impl PdfRenderer {}
-
 #[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::PdfUnifiedExtractionResult")]
 pub struct PdfUnifiedExtractionResult {
@@ -20077,24 +12887,6 @@ impl magnus::TryConvert for PdfUnifiedExtractionResult {
 unsafe impl TryConvertOwned for PdfUnifiedExtractionResult {}
 
 impl PdfUnifiedExtractionResult {}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PdfTextExtractor")]
-pub struct PdfTextExtractor {
-    inner: Arc<kreuzberg::pdf::text::PdfTextExtractor>,
-}
-
-unsafe impl IntoValueFromNative for PdfTextExtractor {}
-
-impl magnus::TryConvert for PdfTextExtractor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PdfTextExtractor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PdfTextExtractor {}
-
-impl PdfTextExtractor {}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
 pub enum ExecutionProviderType {
@@ -20472,51 +13264,6 @@ impl magnus::TryConvert for CodeContentMode {
 unsafe impl IntoValueFromNative for CodeContentMode {}
 unsafe impl TryConvertOwned for CodeContentMode {}
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
-pub enum ListType {
-    Bullet,
-    Numbered,
-    Lettered,
-    Indented,
-}
-
-impl Default for ListType {
-    fn default() -> Self {
-        Self::Bullet
-    }
-}
-
-impl magnus::IntoValue for ListType {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        let sym = match self {
-            ListType::Bullet => "bullet",
-            ListType::Numbered => "numbered",
-            ListType::Lettered => "lettered",
-            ListType::Indented => "indented",
-        };
-        handle.to_symbol(sym).into_value_with(handle)
-    }
-}
-
-impl magnus::TryConvert for ListType {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        match s.as_str() {
-            "bullet" => Ok(ListType::Bullet),
-            "numbered" => Ok(ListType::Numbered),
-            "lettered" => Ok(ListType::Lettered),
-            "indented" => Ok(ListType::Indented),
-            other => Err(magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_arg_error(),
-                format!("invalid ListType value: {other}"),
-            )),
-        }
-    }
-}
-
-unsafe impl IntoValueFromNative for ListType {}
-unsafe impl TryConvertOwned for ListType {}
-
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub enum HwpError {
     InvalidFormat { _0: String },
@@ -20553,85 +13300,6 @@ impl magnus::TryConvert for HwpError {
 
 unsafe impl IntoValueFromNative for HwpError {}
 unsafe impl TryConvertOwned for HwpError {}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum DrawingType {
-    Inline,
-    Anchored { _0: AnchorProperties },
-}
-
-impl Default for DrawingType {
-    fn default() -> Self {
-        Self::Inline
-    }
-}
-
-impl magnus::IntoValue for DrawingType {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for DrawingType {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for DrawingType {}
-unsafe impl TryConvertOwned for DrawingType {}
-
-#[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
-pub enum WrapType {
-    None,
-    Square,
-    Tight,
-    TopAndBottom,
-    Through,
-}
-
-impl Default for WrapType {
-    fn default() -> Self {
-        Self::None
-    }
-}
-
-impl magnus::IntoValue for WrapType {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        let sym = match self {
-            WrapType::None => "none",
-            WrapType::Square => "square",
-            WrapType::Tight => "tight",
-            WrapType::TopAndBottom => "top_and_bottom",
-            WrapType::Through => "through",
-        };
-        handle.to_symbol(sym).into_value_with(handle)
-    }
-}
-
-impl magnus::TryConvert for WrapType {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        match s.as_str() {
-            "none" => Ok(WrapType::None),
-            "square" => Ok(WrapType::Square),
-            "tight" => Ok(WrapType::Tight),
-            "top_and_bottom" => Ok(WrapType::TopAndBottom),
-            "through" => Ok(WrapType::Through),
-            other => Err(magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_arg_error(),
-                format!("invalid WrapType value: {other}"),
-            )),
-        }
-    }
-}
-
-unsafe impl IntoValueFromNative for WrapType {}
-unsafe impl TryConvertOwned for WrapType {}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
 pub enum FracType {
@@ -20815,205 +13483,6 @@ impl magnus::TryConvert for DocumentElement {
 
 unsafe impl IntoValueFromNative for DocumentElement {}
 unsafe impl TryConvertOwned for DocumentElement {}
-
-#[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
-pub enum HeaderFooterType {
-    Default,
-    First,
-    Even,
-    Odd,
-}
-
-impl Default for HeaderFooterType {
-    fn default() -> Self {
-        Self::Default
-    }
-}
-
-impl magnus::IntoValue for HeaderFooterType {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        let sym = match self {
-            HeaderFooterType::Default => "default",
-            HeaderFooterType::First => "first",
-            HeaderFooterType::Even => "even",
-            HeaderFooterType::Odd => "odd",
-        };
-        handle.to_symbol(sym).into_value_with(handle)
-    }
-}
-
-impl magnus::TryConvert for HeaderFooterType {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        match s.as_str() {
-            "default" => Ok(HeaderFooterType::Default),
-            "first" => Ok(HeaderFooterType::First),
-            "even" => Ok(HeaderFooterType::Even),
-            "odd" => Ok(HeaderFooterType::Odd),
-            other => Err(magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_arg_error(),
-                format!("invalid HeaderFooterType value: {other}"),
-            )),
-        }
-    }
-}
-
-unsafe impl IntoValueFromNative for HeaderFooterType {}
-unsafe impl TryConvertOwned for HeaderFooterType {}
-
-#[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
-pub enum NoteType {
-    Footnote,
-    Endnote,
-}
-
-impl Default for NoteType {
-    fn default() -> Self {
-        Self::Footnote
-    }
-}
-
-impl magnus::IntoValue for NoteType {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        let sym = match self {
-            NoteType::Footnote => "footnote",
-            NoteType::Endnote => "endnote",
-        };
-        handle.to_symbol(sym).into_value_with(handle)
-    }
-}
-
-impl magnus::TryConvert for NoteType {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        match s.as_str() {
-            "footnote" => Ok(NoteType::Footnote),
-            "endnote" => Ok(NoteType::Endnote),
-            other => Err(magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_arg_error(),
-                format!("invalid NoteType value: {other}"),
-            )),
-        }
-    }
-}
-
-unsafe impl IntoValueFromNative for NoteType {}
-unsafe impl TryConvertOwned for NoteType {}
-
-#[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
-pub enum Orientation {
-    Portrait,
-    Landscape,
-}
-
-impl Default for Orientation {
-    fn default() -> Self {
-        Self::Portrait
-    }
-}
-
-impl magnus::IntoValue for Orientation {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        let sym = match self {
-            Orientation::Portrait => "portrait",
-            Orientation::Landscape => "landscape",
-        };
-        handle.to_symbol(sym).into_value_with(handle)
-    }
-}
-
-impl magnus::TryConvert for Orientation {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        match s.as_str() {
-            "portrait" => Ok(Orientation::Portrait),
-            "landscape" => Ok(Orientation::Landscape),
-            other => Err(magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_arg_error(),
-                format!("invalid Orientation value: {other}"),
-            )),
-        }
-    }
-}
-
-unsafe impl IntoValueFromNative for Orientation {}
-unsafe impl TryConvertOwned for Orientation {}
-
-#[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
-pub enum StyleType {
-    Paragraph,
-    Character,
-    Table,
-    Numbering,
-}
-
-impl Default for StyleType {
-    fn default() -> Self {
-        Self::Paragraph
-    }
-}
-
-impl magnus::IntoValue for StyleType {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        let sym = match self {
-            StyleType::Paragraph => "paragraph",
-            StyleType::Character => "character",
-            StyleType::Table => "table",
-            StyleType::Numbering => "numbering",
-        };
-        handle.to_symbol(sym).into_value_with(handle)
-    }
-}
-
-impl magnus::TryConvert for StyleType {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        match s.as_str() {
-            "paragraph" => Ok(StyleType::Paragraph),
-            "character" => Ok(StyleType::Character),
-            "table" => Ok(StyleType::Table),
-            "numbering" => Ok(StyleType::Numbering),
-            other => Err(magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_arg_error(),
-                format!("invalid StyleType value: {other}"),
-            )),
-        }
-    }
-}
-
-unsafe impl IntoValueFromNative for StyleType {}
-unsafe impl TryConvertOwned for StyleType {}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum ThemeColor {
-    Rgb { _0: String },
-    System { name: String, last_color: String },
-}
-
-impl Default for ThemeColor {
-    fn default() -> Self {
-        Self::Rgb { _0: Default::default() }
-    }
-}
-
-impl magnus::IntoValue for ThemeColor {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for ThemeColor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for ThemeColor {}
-unsafe impl TryConvertOwned for ThemeColor {}
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub enum SecurityError {
@@ -21773,7 +14242,7 @@ unsafe impl TryConvertOwned for ElementType {}
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "format_type")]
 pub enum FormatMetadata {
-    Pdf { _0: PdfMetadata },
+    Pdf { _0: String },
     Docx { _0: DocxMetadata },
     Excel { _0: ExcelMetadata },
     Email { _0: EmailMetadata },
@@ -22225,40 +14694,6 @@ impl magnus::TryConvert for PoolError {
 unsafe impl IntoValueFromNative for PoolError {}
 unsafe impl TryConvertOwned for PoolError {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum ExtractionSource {
-    File { path: String, mime_hint: Option<String> },
-    Bytes { data: String, mime_type: String },
-}
-
-impl Default for ExtractionSource {
-    fn default() -> Self {
-        Self::File {
-            path: Default::default(),
-            mime_hint: Default::default(),
-        }
-    }
-}
-
-impl magnus::IntoValue for ExtractionSource {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for ExtractionSource {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for ExtractionSource {}
-unsafe impl TryConvertOwned for ExtractionSource {}
-
 #[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
 pub enum KeywordAlgorithm {
     Yake,
@@ -22606,60 +15041,6 @@ impl magnus::TryConvert for PdfError {
 unsafe impl IntoValueFromNative for PdfError {}
 unsafe impl TryConvertOwned for PdfError {}
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
-pub enum HierarchyLevel {
-    H1,
-    H2,
-    H3,
-    H4,
-    H5,
-    H6,
-    Body,
-}
-
-impl Default for HierarchyLevel {
-    fn default() -> Self {
-        Self::H1
-    }
-}
-
-impl magnus::IntoValue for HierarchyLevel {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        let sym = match self {
-            HierarchyLevel::H1 => "h1",
-            HierarchyLevel::H2 => "h2",
-            HierarchyLevel::H3 => "h3",
-            HierarchyLevel::H4 => "h4",
-            HierarchyLevel::H5 => "h5",
-            HierarchyLevel::H6 => "h6",
-            HierarchyLevel::Body => "body",
-        };
-        handle.to_symbol(sym).into_value_with(handle)
-    }
-}
-
-impl magnus::TryConvert for HierarchyLevel {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        match s.as_str() {
-            "h1" => Ok(HierarchyLevel::H1),
-            "h2" => Ok(HierarchyLevel::H2),
-            "h3" => Ok(HierarchyLevel::H3),
-            "h4" => Ok(HierarchyLevel::H4),
-            "h5" => Ok(HierarchyLevel::H5),
-            "h6" => Ok(HierarchyLevel::H6),
-            "body" => Ok(HierarchyLevel::Body),
-            other => Err(magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_arg_error(),
-                format!("invalid HierarchyLevel value: {other}"),
-            )),
-        }
-    }
-}
-
-unsafe impl IntoValueFromNative for HierarchyLevel {}
-unsafe impl TryConvertOwned for HierarchyLevel {}
-
 fn get_cache_metadata(cache_dir: String) -> Result<String, Error> {
     Err(magnus::Error::new(
         magnus::exception::runtime_error(),
@@ -22958,8 +15339,8 @@ fn extract_file_async(
     ))
 }
 
-fn get_pool_sizing_hint(file_size: u64, mime_type: String) -> PoolSizeHint {
-    kreuzberg::core::extractor::get_pool_sizing_hint(file_size, &mime_type).into()
+fn get_pool_sizing_hint(file_size: u64, mime_type: String) -> String {
+    String::from("[unimplemented: get_pool_sizing_hint]")
 }
 
 fn extract_file_sync(
@@ -23228,33 +15609,17 @@ fn derive_extraction_result(doc: String, include_document_structure: bool, outpu
 }
 
 fn parse_json(data: Vec<u8>, config: Option<String>) -> Result<StructuredDataResult, Error> {
-    let config: Option<JsonExtractionConfig> = config
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::JsonExtractionConfig = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    let result = kreuzberg::extraction::parse_json(&data, config.map(Into::into))
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: parse_json",
+    ))
 }
 
 fn parse_jsonl(data: Vec<u8>, config: Option<String>) -> Result<StructuredDataResult, Error> {
-    let config: Option<JsonExtractionConfig> = config
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::JsonExtractionConfig = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    let result = kreuzberg::extraction::structured::parse_jsonl(&data, config.map(Into::into))
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: parse_jsonl",
+    ))
 }
 
 fn parse_yaml(data: Vec<u8>) -> Result<StructuredDataResult, Error> {
@@ -23618,10 +15983,11 @@ fn collect_and_convert_omath(reader: String) -> String {
     String::from("[unimplemented: collect_and_convert_omath]")
 }
 
-fn parse_document(bytes: Vec<u8>) -> Result<Document, Error> {
-    let result = kreuzberg::extraction::docx::parser::parse_document(&bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+fn parse_document(bytes: Vec<u8>) -> Result<String, Error> {
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: parse_document",
+    ))
 }
 
 fn extract_text_from_bytes(bytes: Vec<u8>) -> Result<String, Error> {
@@ -23630,26 +15996,27 @@ fn extract_text_from_bytes(bytes: Vec<u8>) -> Result<String, Error> {
     Ok(result)
 }
 
-fn parse_section_properties(node: String) -> SectionProperties {
-    panic!("alef: parse_section_properties not auto-delegatable")
+fn parse_section_properties(node: String) -> String {
+    String::from("[unimplemented: parse_section_properties]")
 }
 
-fn parse_section_properties_streaming(reader: String) -> SectionProperties {
-    panic!("alef: parse_section_properties_streaming not auto-delegatable")
+fn parse_section_properties_streaming(reader: String) -> String {
+    String::from("[unimplemented: parse_section_properties_streaming]")
 }
 
-fn parse_styles_xml(xml: String) -> Result<StyleCatalog, Error> {
-    let result = kreuzberg::extraction::docx::styles::parse_styles_xml(&xml)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+fn parse_styles_xml(xml: String) -> Result<String, Error> {
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: parse_styles_xml",
+    ))
 }
 
 fn parse_table_properties(reader: String) -> TableProperties {
     panic!("alef: parse_table_properties not auto-delegatable")
 }
 
-fn parse_row_properties(reader: String) -> RowProperties {
-    panic!("alef: parse_row_properties not auto-delegatable")
+fn parse_row_properties(reader: String) -> String {
+    String::from("[unimplemented: parse_row_properties]")
 }
 
 fn parse_cell_properties(reader: String) -> String {
@@ -23660,10 +16027,11 @@ fn parse_table_grid(reader: String) -> TableGrid {
     panic!("alef: parse_table_grid not auto-delegatable")
 }
 
-fn parse_theme_xml(xml: String) -> Result<Theme, Error> {
-    let result = kreuzberg::extraction::docx::theme::parse_theme_xml(&xml)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+fn parse_theme_xml(xml: String) -> Result<String, Error> {
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: parse_theme_xml",
+    ))
 }
 
 fn extract_text(bytes: Vec<u8>) -> Result<String, Error> {
@@ -23764,25 +16132,17 @@ fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bool) 
 }
 
 fn extract_pptx_from_path(path: String, options: String) -> Result<PptxExtractionResult, Error> {
-    let options: PptxExtractionOptions = {
-        let core: kreuzberg::PptxExtractionOptions = serde_json::from_str(&options)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::extraction::extract_pptx_from_path(&path, options.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: extract_pptx_from_path",
+    ))
 }
 
 fn extract_pptx_from_bytes(data: Vec<u8>, options: String) -> Result<PptxExtractionResult, Error> {
-    let options: PptxExtractionOptions = {
-        let core: kreuzberg::PptxExtractionOptions = serde_json::from_str(&options)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::extraction::extract_pptx_from_bytes(&data, options.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: extract_pptx_from_bytes",
+    ))
 }
 
 fn parse_xml_svg(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<XmlExtractionResult, Error> {
@@ -24351,8 +16711,8 @@ fn create_byte_buffer_pool(pool_size: usize, buffer_capacity: usize) -> ByteBuff
     }
 }
 
-fn estimate_pool_size(file_size: u64, mime_type: String) -> PoolSizeHint {
-    kreuzberg::utils::estimate_pool_size(file_size, &mime_type).into()
+fn estimate_pool_size(file_size: u64, mime_type: String) -> String {
+    String::from("[unimplemented: estimate_pool_size]")
 }
 
 fn acquire_string_buffer() -> PooledString {
@@ -24381,16 +16741,16 @@ fn escape_html_entities(text: String) -> String {
     String::from("[unimplemented: escape_html_entities]")
 }
 
-fn detect_columns(words: Vec<HocrWord>, column_threshold: u32) -> Vec<u32> {
-    kreuzberg::table_core::detect_columns(&words, column_threshold)
+fn detect_columns(words: Vec<String>, column_threshold: u32) -> Vec<u32> {
+    Vec::new()
 }
 
-fn detect_rows(words: Vec<HocrWord>, row_threshold_ratio: f64) -> Vec<u32> {
-    kreuzberg::table_core::detect_rows(&words, row_threshold_ratio)
+fn detect_rows(words: Vec<String>, row_threshold_ratio: f64) -> Vec<u32> {
+    Vec::new()
 }
 
-fn reconstruct_table(words: Vec<HocrWord>, column_threshold: u32, row_threshold_ratio: f64) -> Vec<Vec<String>> {
-    kreuzberg::table_core::reconstruct_table(&words, column_threshold, row_threshold_ratio)
+fn reconstruct_table(words: Vec<String>, column_threshold: u32, row_threshold_ratio: f64) -> Vec<Vec<String>> {
+    Vec::new()
 }
 
 fn table_to_markdown(table: Vec<Vec<String>>) -> String {
@@ -24422,22 +16782,12 @@ fn create_router_with_limits(config: String, limits: String) -> String {
             .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
         core.into()
     };
-    let limits: ApiSizeLimits = {
-        let core: kreuzberg::ApiSizeLimits = serde_json::from_str(&limits)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
     String::from("[unimplemented: create_router_with_limits]")
 }
 
 fn create_router_with_limits_and_server_config(config: String, limits: String, server_config: String) -> String {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    let limits: ApiSizeLimits = {
-        let core: kreuzberg::ApiSizeLimits = serde_json::from_str(&limits)
             .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
         core.into()
     };
@@ -24493,11 +16843,6 @@ fn serve_with_config_and_limits(host: String, port: u16, config: String, limits:
             .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
         core.into()
     };
-    let limits: ApiSizeLimits = {
-        let core: kreuzberg::ApiSizeLimits = serde_json::from_str(&limits)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
     Err(magnus::Error::new(
         magnus::exception::runtime_error(),
         "Not implemented: serve_with_config_and_limits",
@@ -24507,11 +16852,6 @@ fn serve_with_config_and_limits(host: String, port: u16, config: String, limits:
 fn serve_with_config_and_limits_async(host: String, port: u16, config: String, limits: String) -> Result<(), Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    let limits: ApiSizeLimits = {
-        let core: kreuzberg::ApiSizeLimits = serde_json::from_str(&limits)
             .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
         core.into()
     };
@@ -24969,23 +17309,14 @@ fn extract_keywords(text: String, config: String) -> Result<Vec<Keyword>, Error>
 }
 
 fn text_block_to_element(block: String, page_number: usize) -> Result<Option<OcrElement>, Error> {
-    let block: TextBlock = {
-        let core: kreuzberg::TextBlock = serde_json::from_str(&block)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::ocr::text_block_to_element(block.into(), page_number)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.map(Into::into))
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: text_block_to_element",
+    ))
 }
 
 fn tsv_row_to_element(row: String) -> OcrElement {
-    let row: TsvRow = {
-        let core: kreuzberg::TsvRow = serde_json::from_str(&row)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::ocr::tsv_row_to_element(row.into()).into()
+    panic!("alef: tsv_row_to_element not auto-delegatable")
 }
 
 fn iterator_word_to_element(
@@ -24997,20 +17328,17 @@ fn iterator_word_to_element(
     panic!("alef: iterator_word_to_element not auto-delegatable")
 }
 
-fn element_to_hocr_word(element: String) -> HocrWord {
+fn element_to_hocr_word(element: String) -> String {
     let element: OcrElement = {
         let core: kreuzberg::OcrElement = serde_json::from_str(&element)
             .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
         core.into()
     };
-    kreuzberg::ocr::element_to_hocr_word(element.into()).into()
+    String::from("[unimplemented: element_to_hocr_word]")
 }
 
-fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<HocrWord> {
-    kreuzberg::ocr::elements_to_hocr_words(&elements, min_confidence)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<String> {
+    Vec::new()
 }
 
 fn parse_hocr_to_internal_document(hocr_html: String) -> String {
@@ -25056,10 +17384,11 @@ fn recognize_page_tables(
     Vec::new()
 }
 
-fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<HocrWord>, Error> {
-    let result = kreuzberg::ocr::extract_words_from_tsv(&tsv_data, min_confidence)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into_iter().map(Into::into).collect())
+fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<String>, Error> {
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: extract_words_from_tsv",
+    ))
 }
 
 fn compute_hash(data: String) -> String {
@@ -25198,15 +17527,7 @@ fn extract_annotations_from_document(document: String) -> Vec<PdfAnnotation> {
 }
 
 fn extract_bookmarks(document: String) -> Vec<Uri> {
-    let document: Document = {
-        let core: kreuzberg::Document = serde_json::from_str(&document)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::pdf::bookmarks::extract_bookmarks(document.into())
-        .into_iter()
-        .map(Into::into)
-        .collect()
+    Vec::new()
 }
 
 fn extract_bundled_pdfium() -> Result<String, Error> {
@@ -25216,15 +17537,7 @@ fn extract_bundled_pdfium() -> Result<String, Error> {
 }
 
 fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
-    let document: Document = {
-        let core: kreuzberg::Document = serde_json::from_str(&document)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::pdf::embedded_files::extract_embedded_files(document.into())
-        .into_iter()
-        .map(Into::into)
-        .collect()
+    Vec::new()
 }
 
 fn extract_and_process_embedded_files(pdf_bytes: Vec<u8>, config: String) -> Result<String, Error> {
@@ -25266,10 +17579,11 @@ fn clear_font_cache() -> () {
     kreuzberg::pdf::fonts::clear_font_cache()
 }
 
-fn cluster_font_sizes(blocks: Vec<TextBlock>, k: usize) -> Result<Vec<FontSizeCluster>, Error> {
-    let result = kreuzberg::pdf::cluster_font_sizes(&blocks, k)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into_iter().map(Into::into).collect())
+fn cluster_font_sizes(blocks: Vec<String>, k: usize) -> Result<Vec<FontSizeCluster>, Error> {
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: cluster_font_sizes",
+    ))
 }
 
 fn assign_heading_levels_smart(
@@ -25280,19 +17594,11 @@ fn assign_heading_levels_smart(
     Vec::new()
 }
 
-fn assign_hierarchy_levels(blocks: Vec<TextBlock>, kmeans_result: String) -> Vec<HierarchyBlock> {
-    let kmeans_result: KMeansResult = {
-        let core: kreuzberg::KMeansResult = serde_json::from_str(&kmeans_result)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::pdf::assign_hierarchy_levels(&blocks, kmeans_result.into())
-        .into_iter()
-        .map(Into::into)
-        .collect()
+fn assign_hierarchy_levels(blocks: Vec<String>, kmeans_result: String) -> Vec<HierarchyBlock> {
+    Vec::new()
 }
 
-fn assign_hierarchy_levels_from_clusters(blocks: Vec<TextBlock>, clusters: Vec<FontSizeCluster>) -> Vec<String> {
+fn assign_hierarchy_levels_from_clusters(blocks: Vec<String>, clusters: Vec<FontSizeCluster>) -> Vec<String> {
     Vec::new()
 }
 
@@ -25303,21 +17609,18 @@ fn extract_chars_with_fonts(page: String) -> Result<Vec<CharData>, Error> {
     ))
 }
 
-fn extract_segments_from_page(page: String) -> Result<Vec<SegmentData>, Error> {
+fn extract_segments_from_page(page: String) -> Result<Vec<String>, Error> {
     Err(magnus::Error::new(
         magnus::exception::runtime_error(),
         "Not implemented: extract_segments_from_page",
     ))
 }
 
-fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<TextBlock> {
-    kreuzberg::pdf::hierarchy::merge_chars_into_blocks(chars)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<String> {
+    Vec::new()
 }
 
-fn should_trigger_ocr(page: String, blocks: Vec<TextBlock>, config: String) -> bool {
+fn should_trigger_ocr(page: String, blocks: Vec<String>, config: String) -> bool {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
             .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
@@ -25358,22 +17661,25 @@ fn detect_layout_for_images(images: Vec<String>, engine: String) -> Result<Vec<D
     ))
 }
 
-fn extract_metadata(pdf_bytes: Vec<u8>) -> Result<PdfMetadata, Error> {
-    let result = kreuzberg::pdf::extract_metadata(&pdf_bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+fn extract_metadata(pdf_bytes: Vec<u8>) -> Result<String, Error> {
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: extract_metadata",
+    ))
 }
 
-fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> Result<PdfMetadata, Error> {
-    let result = kreuzberg::pdf::metadata::extract_metadata_with_password(&pdf_bytes, password.as_deref())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> Result<String, Error> {
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: extract_metadata_with_password",
+    ))
 }
 
-fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<PdfMetadata, Error> {
-    let result = kreuzberg::pdf::metadata::extract_metadata_with_passwords(&pdf_bytes, &passwords)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<String, Error> {
+    Err(magnus::Error::new(
+        magnus::exception::runtime_error(),
+        "Not implemented: extract_metadata_with_passwords",
+    ))
 }
 
 fn extract_metadata_from_document(
@@ -25395,11 +17701,6 @@ fn extract_common_metadata_from_document(document: String) -> Result<CommonPdfMe
 }
 
 fn render_page_to_image(pdf_bytes: Vec<u8>, page_index: usize, options: String) -> Result<String, Error> {
-    let options: PageRenderOptions = {
-        let core: kreuzberg::PageRenderOptions = serde_json::from_str(&options)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
     Err(magnus::Error::new(
         magnus::exception::runtime_error(),
         "Not implemented: render_page_to_image",
@@ -25417,39 +17718,23 @@ fn render_pdf_page_to_png(
     Ok(result)
 }
 
-fn extract_words_from_page(page: String, min_confidence: f64) -> Result<Vec<HocrWord>, Error> {
+fn extract_words_from_page(page: String, min_confidence: f64) -> Result<Vec<String>, Error> {
     Err(magnus::Error::new(
         magnus::exception::runtime_error(),
         "Not implemented: extract_words_from_page",
     ))
 }
 
-fn segment_to_hocr_word(seg: String, page_height: f32) -> HocrWord {
-    let seg: SegmentData = {
-        let core: kreuzberg::SegmentData = serde_json::from_str(&seg)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::pdf::table_reconstruct::segment_to_hocr_word(seg.into(), page_height).into()
+fn segment_to_hocr_word(seg: String, page_height: f32) -> String {
+    String::from("[unimplemented: segment_to_hocr_word]")
 }
 
-fn split_segment_to_words(seg: String, page_height: f32) -> Vec<HocrWord> {
-    let seg: SegmentData = {
-        let core: kreuzberg::SegmentData = serde_json::from_str(&seg)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::pdf::table_reconstruct::split_segment_to_words(seg.into(), page_height)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+fn split_segment_to_words(seg: String, page_height: f32) -> Vec<String> {
+    Vec::new()
 }
 
-fn segments_to_words(segments: Vec<SegmentData>, page_height: f32) -> Vec<HocrWord> {
-    kreuzberg::pdf::table_reconstruct::segments_to_words(&segments, page_height)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+fn segments_to_words(segments: Vec<String>, page_height: f32) -> Vec<String> {
+    Vec::new()
 }
 
 fn post_process_table(
@@ -25550,30 +17835,6 @@ fn serialize_to_json(result: String) -> Result<String, Error> {
     let result = kreuzberg::serialize_to_json(result.into())
         .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
     Ok(result)
-}
-
-impl From<BatchProcessorConfig> for kreuzberg::core::BatchProcessorConfig {
-    fn from(val: BatchProcessorConfig) -> Self {
-        Self {
-            string_pool_size: val.string_pool_size,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_pool_size: val.byte_pool_size,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-            max_concurrent: val.max_concurrent,
-        }
-    }
-}
-
-impl From<kreuzberg::core::BatchProcessorConfig> for BatchProcessorConfig {
-    fn from(val: kreuzberg::core::BatchProcessorConfig) -> Self {
-        Self {
-            string_pool_size: val.string_pool_size,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_pool_size: val.byte_pool_size,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-            max_concurrent: val.max_concurrent,
-        }
-    }
 }
 
 impl From<AccelerationConfig> for kreuzberg::AccelerationConfig {
@@ -26338,36 +18599,10 @@ impl From<kreuzberg::extraction::StructuredDataResult> for StructuredDataResult 
     }
 }
 
-impl From<JsonExtractionConfig> for kreuzberg::extraction::JsonExtractionConfig {
-    fn from(val: JsonExtractionConfig) -> Self {
-        Self {
-            extract_schema: val.extract_schema,
-            max_depth: val.max_depth,
-            array_item_limit: val.array_item_limit,
-            include_type_info: val.include_type_info,
-            flatten_nested_objects: val.flatten_nested_objects,
-            custom_text_field_patterns: val.custom_text_field_patterns,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::JsonExtractionConfig> for JsonExtractionConfig {
-    fn from(val: kreuzberg::extraction::JsonExtractionConfig) -> Self {
-        Self {
-            extract_schema: val.extract_schema,
-            max_depth: val.max_depth,
-            array_item_limit: val.array_item_limit,
-            include_type_info: val.include_type_info,
-            flatten_nested_objects: val.flatten_nested_objects,
-            custom_text_field_patterns: val.custom_text_field_patterns,
-        }
-    }
-}
-
 impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
     fn from(val: ListItemMetadata) -> Self {
         Self {
-            list_type: val.list_type.into(),
+            list_type: Default::default(),
             byte_start: val.byte_start,
             byte_end: val.byte_end,
             indent_level: val.indent_level,
@@ -26378,18 +18613,10 @@ impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
 impl From<kreuzberg::extraction::ListItemMetadata> for ListItemMetadata {
     fn from(val: kreuzberg::extraction::ListItemMetadata) -> Self {
         Self {
-            list_type: val.list_type.into(),
+            list_type: format!("{:?}", val.list_type),
             byte_start: val.byte_start,
             byte_end: val.byte_end,
             indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::HwpDocument> for HwpDocument {
-    fn from(val: kreuzberg::extraction::hwp::model::HwpDocument) -> Self {
-        Self {
-            sections: val.sections.into_iter().map(Into::into).collect(),
         }
     }
 }
@@ -26406,48 +18633,6 @@ impl From<kreuzberg::extraction::hwp::model::Section> for Section {
     fn from(val: kreuzberg::extraction::hwp::model::Section) -> Self {
         Self {
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<ParaText> for kreuzberg::extraction::hwp::model::ParaText {
-    fn from(val: ParaText) -> Self {
-        Self { content: val.content }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::ParaText> for ParaText {
-    fn from(val: kreuzberg::extraction::hwp::model::ParaText) -> Self {
-        Self { content: val.content }
-    }
-}
-
-impl From<FileHeader> for kreuzberg::extraction::hwp::parser::FileHeader {
-    fn from(val: FileHeader) -> Self {
-        Self { flags: val.flags }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::parser::FileHeader> for FileHeader {
-    fn from(val: kreuzberg::extraction::hwp::parser::FileHeader) -> Self {
-        Self { flags: val.flags }
-    }
-}
-
-impl From<Record> for kreuzberg::extraction::hwp::parser::Record {
-    fn from(val: Record) -> Self {
-        Self {
-            tag_id: val.tag_id,
-            data: val.data,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::parser::Record> for Record {
-    fn from(val: kreuzberg::extraction::hwp::parser::Record) -> Self {
-        Self {
-            tag_id: val.tag_id,
-            data: val.data.to_vec(),
         }
     }
 }
@@ -26499,7 +18684,7 @@ impl From<DocExtractionResult> for kreuzberg::extraction::doc::DocExtractionResu
     fn from(val: DocExtractionResult) -> Self {
         Self {
             text: val.text,
-            metadata: val.metadata.into(),
+            metadata: Default::default(),
         }
     }
 }
@@ -26508,35 +18693,7 @@ impl From<kreuzberg::extraction::doc::DocExtractionResult> for DocExtractionResu
     fn from(val: kreuzberg::extraction::doc::DocExtractionResult) -> Self {
         Self {
             text: val.text,
-            metadata: val.metadata.into(),
-        }
-    }
-}
-
-impl From<DocMetadata> for kreuzberg::extraction::doc::DocMetadata {
-    fn from(val: DocMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-            created: val.created,
-            modified: val.modified,
-            revision_number: val.revision_number,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::doc::DocMetadata> for DocMetadata {
-    fn from(val: kreuzberg::extraction::doc::DocMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-            created: val.created,
-            modified: val.modified,
-            revision_number: val.revision_number,
+            metadata: format!("{:?}", val.metadata),
         }
     }
 }
@@ -26544,9 +18701,9 @@ impl From<kreuzberg::extraction::doc::DocMetadata> for DocMetadata {
 impl From<Drawing> for kreuzberg::extraction::docx::drawing::Drawing {
     fn from(val: Drawing) -> Self {
         Self {
-            drawing_type: val.drawing_type.into(),
-            extent: val.extent.map(Into::into),
-            doc_properties: val.doc_properties.map(Into::into),
+            drawing_type: Default::default(),
+            extent: Default::default(),
+            doc_properties: Default::default(),
             image_ref: val.image_ref,
         }
     }
@@ -26555,42 +18712,10 @@ impl From<Drawing> for kreuzberg::extraction::docx::drawing::Drawing {
 impl From<kreuzberg::extraction::docx::drawing::Drawing> for Drawing {
     fn from(val: kreuzberg::extraction::docx::drawing::Drawing) -> Self {
         Self {
-            drawing_type: val.drawing_type.into(),
-            extent: val.extent.map(Into::into),
-            doc_properties: val.doc_properties.map(Into::into),
+            drawing_type: format!("{:?}", val.drawing_type),
+            extent: val.extent.as_ref().map(|v| format!("{:?}", v)),
+            doc_properties: val.doc_properties.as_ref().map(|v| format!("{:?}", v)),
             image_ref: val.image_ref,
-        }
-    }
-}
-
-impl From<Extent> for kreuzberg::extraction::docx::drawing::Extent {
-    fn from(val: Extent) -> Self {
-        Self { cx: val.cx, cy: val.cy }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Extent> for Extent {
-    fn from(val: kreuzberg::extraction::docx::drawing::Extent) -> Self {
-        Self { cx: val.cx, cy: val.cy }
-    }
-}
-
-impl From<DocProperties> for kreuzberg::extraction::docx::drawing::DocProperties {
-    fn from(val: DocProperties) -> Self {
-        Self {
-            id: val.id,
-            name: val.name,
-            description: val.description,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::DocProperties> for DocProperties {
-    fn from(val: kreuzberg::extraction::docx::drawing::DocProperties) -> Self {
-        Self {
-            id: val.id,
-            name: val.name,
-            description: val.description,
         }
     }
 }
@@ -26601,58 +18726,9 @@ impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for AnchorProp
             behind_doc: val.behind_doc,
             layout_in_cell: val.layout_in_cell,
             relative_height: val.relative_height,
-            position_h: val.position_h.map(Into::into),
-            position_v: val.position_v.map(Into::into),
-            wrap_type: val.wrap_type.into(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Position> for Position {
-    fn from(val: kreuzberg::extraction::docx::drawing::Position) -> Self {
-        Self {
-            relative_from: val.relative_from,
-            offset: val.offset,
-        }
-    }
-}
-
-impl From<Document> for kreuzberg::extraction::docx::parser::Document {
-    fn from(val: Document) -> Self {
-        Self {
-            paragraphs: Default::default(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            footers: val.footers.into_iter().map(Into::into).collect(),
-            footnotes: val.footnotes.into_iter().map(Into::into).collect(),
-            endnotes: val.endnotes.into_iter().map(Into::into).collect(),
-            numbering_defs: Default::default(),
-            elements: val.elements.into_iter().map(Into::into).collect(),
-            style_catalog: val.style_catalog.map(Into::into),
-            theme: val.theme.map(Into::into),
-            sections: val.sections.into_iter().map(Into::into).collect(),
-            drawings: val.drawings.into_iter().map(Into::into).collect(),
-            image_relationships: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::Document> for Document {
-    fn from(val: kreuzberg::extraction::docx::parser::Document) -> Self {
-        Self {
-            paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            footers: val.footers.into_iter().map(Into::into).collect(),
-            footnotes: val.footnotes.into_iter().map(Into::into).collect(),
-            endnotes: val.endnotes.into_iter().map(Into::into).collect(),
-            numbering_defs: format!("{:?}", val.numbering_defs),
-            elements: val.elements.into_iter().map(Into::into).collect(),
-            style_catalog: val.style_catalog.map(Into::into),
-            theme: val.theme.map(Into::into),
-            sections: val.sections.into_iter().map(Into::into).collect(),
-            drawings: val.drawings.into_iter().map(Into::into).collect(),
-            image_relationships: format!("{:?}", val.image_relationships),
+            position_h: val.position_h.as_ref().map(|v| format!("{:?}", v)),
+            position_v: val.position_v.as_ref().map(|v| format!("{:?}", v)),
+            wrap_type: format!("{:?}", val.wrap_type),
         }
     }
 }
@@ -26661,17 +18737,7 @@ impl From<kreuzberg::extraction::docx::parser::TableRow> for TableRow {
     fn from(val: kreuzberg::extraction::docx::parser::TableRow) -> Self {
         Self {
             cells: val.cells.into_iter().map(Into::into).collect(),
-            properties: val.properties.map(Into::into),
-        }
-    }
-}
-
-impl From<HeaderFooter> for kreuzberg::extraction::docx::parser::HeaderFooter {
-    fn from(val: HeaderFooter) -> Self {
-        Self {
-            paragraphs: Default::default(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            header_type: val.header_type.into(),
+            properties: val.properties.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -26681,17 +18747,7 @@ impl From<kreuzberg::extraction::docx::parser::HeaderFooter> for HeaderFooter {
         Self {
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
             tables: val.tables.into_iter().map(Into::into).collect(),
-            header_type: val.header_type.into(),
-        }
-    }
-}
-
-impl From<Note> for kreuzberg::extraction::docx::parser::Note {
-    fn from(val: Note) -> Self {
-        Self {
-            id: val.id,
-            note_type: val.note_type.into(),
-            paragraphs: Default::default(),
+            header_type: format!("{:?}", val.header_type),
         }
     }
 }
@@ -26700,50 +18756,8 @@ impl From<kreuzberg::extraction::docx::parser::Note> for Note {
     fn from(val: kreuzberg::extraction::docx::parser::Note) -> Self {
         Self {
             id: val.id,
-            note_type: val.note_type.into(),
+            note_type: format!("{:?}", val.note_type),
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<PageMargins> for kreuzberg::extraction::docx::section::PageMargins {
-    fn from(val: PageMargins) -> Self {
-        Self {
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
-            left: val.left,
-            header: val.header,
-            footer: val.footer,
-            gutter: val.gutter,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::PageMargins> for PageMargins {
-    fn from(val: kreuzberg::extraction::docx::section::PageMargins) -> Self {
-        Self {
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
-            left: val.left,
-            header: val.header,
-            footer: val.footer,
-            gutter: val.gutter,
-        }
-    }
-}
-
-impl From<PageMarginsPoints> for kreuzberg::extraction::docx::section::PageMarginsPoints {
-    fn from(val: PageMarginsPoints) -> Self {
-        Self {
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
-            left: val.left,
-            header: val.header,
-            footer: val.footer,
-            gutter: val.gutter,
         }
     }
 }
@@ -26762,136 +18776,17 @@ impl From<kreuzberg::extraction::docx::section::PageMarginsPoints> for PageMargi
     }
 }
 
-impl From<ColumnLayout> for kreuzberg::extraction::docx::section::ColumnLayout {
-    fn from(val: ColumnLayout) -> Self {
-        Self {
-            count: val.count,
-            space_twips: val.space_twips,
-            equal_width: val.equal_width,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::ColumnLayout> for ColumnLayout {
-    fn from(val: kreuzberg::extraction::docx::section::ColumnLayout) -> Self {
-        Self {
-            count: val.count,
-            space_twips: val.space_twips,
-            equal_width: val.equal_width,
-        }
-    }
-}
-
-impl From<SectionProperties> for kreuzberg::extraction::docx::section::SectionProperties {
-    fn from(val: SectionProperties) -> Self {
-        Self {
-            page_width_twips: val.page_width_twips,
-            page_height_twips: val.page_height_twips,
-            orientation: val.orientation.map(Into::into),
-            margins: val.margins.into(),
-            columns: val.columns.into(),
-            doc_grid_line_pitch: val.doc_grid_line_pitch,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::SectionProperties> for SectionProperties {
-    fn from(val: kreuzberg::extraction::docx::section::SectionProperties) -> Self {
-        Self {
-            page_width_twips: val.page_width_twips,
-            page_height_twips: val.page_height_twips,
-            orientation: val.orientation.map(Into::into),
-            margins: val.margins.into(),
-            columns: val.columns.into(),
-            doc_grid_line_pitch: val.doc_grid_line_pitch,
-        }
-    }
-}
-
-impl From<RunProperties> for kreuzberg::extraction::docx::styles::RunProperties {
-    fn from(val: RunProperties) -> Self {
-        Self {
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color: val.color,
-            font_size_half_points: val.font_size_half_points,
-            font_ascii: val.font_ascii,
-            font_ascii_theme: val.font_ascii_theme,
-            vert_align: val.vert_align,
-            font_h_ansi: val.font_h_ansi,
-            font_cs: val.font_cs,
-            font_east_asia: val.font_east_asia,
-            highlight: val.highlight,
-            caps: val.caps,
-            small_caps: val.small_caps,
-            shadow: val.shadow,
-            outline: val.outline,
-            emboss: val.emboss,
-            imprint: val.imprint,
-            char_spacing: val.char_spacing,
-            position: val.position,
-            kern: val.kern,
-            theme_color: val.theme_color,
-            theme_tint: val.theme_tint,
-            theme_shade: val.theme_shade,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::styles::RunProperties> for RunProperties {
-    fn from(val: kreuzberg::extraction::docx::styles::RunProperties) -> Self {
-        Self {
-            bold: val.bold,
-            italic: val.italic,
-            underline: val.underline,
-            strikethrough: val.strikethrough,
-            color: val.color,
-            font_size_half_points: val.font_size_half_points,
-            font_ascii: val.font_ascii,
-            font_ascii_theme: val.font_ascii_theme,
-            vert_align: val.vert_align,
-            font_h_ansi: val.font_h_ansi,
-            font_cs: val.font_cs,
-            font_east_asia: val.font_east_asia,
-            highlight: val.highlight,
-            caps: val.caps,
-            small_caps: val.small_caps,
-            shadow: val.shadow,
-            outline: val.outline,
-            emboss: val.emboss,
-            imprint: val.imprint,
-            char_spacing: val.char_spacing,
-            position: val.position,
-            kern: val.kern,
-            theme_color: val.theme_color,
-            theme_tint: val.theme_tint,
-            theme_shade: val.theme_shade,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::styles::StyleDefinition> for StyleDefinition {
     fn from(val: kreuzberg::extraction::docx::styles::StyleDefinition) -> Self {
         Self {
             id: val.id,
             name: val.name,
-            style_type: val.style_type.into(),
+            style_type: format!("{:?}", val.style_type),
             based_on: val.based_on,
             next_style: val.next_style,
             is_default: val.is_default,
             paragraph_properties: format!("{:?}", val.paragraph_properties),
-            run_properties: val.run_properties.into(),
-        }
-    }
-}
-
-impl From<ResolvedStyle> for kreuzberg::extraction::docx::styles::ResolvedStyle {
-    fn from(val: ResolvedStyle) -> Self {
-        Self {
-            paragraph_properties: Default::default(),
-            run_properties: val.run_properties.into(),
+            run_properties: format!("{:?}", val.run_properties),
         }
     }
 }
@@ -26900,27 +18795,7 @@ impl From<kreuzberg::extraction::docx::styles::ResolvedStyle> for ResolvedStyle 
     fn from(val: kreuzberg::extraction::docx::styles::ResolvedStyle) -> Self {
         Self {
             paragraph_properties: format!("{:?}", val.paragraph_properties),
-            run_properties: val.run_properties.into(),
-        }
-    }
-}
-
-impl From<StyleCatalog> for kreuzberg::extraction::docx::styles::StyleCatalog {
-    fn from(val: StyleCatalog) -> Self {
-        Self {
-            styles: Default::default(),
-            default_paragraph_properties: Default::default(),
-            default_run_properties: val.default_run_properties.into(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::styles::StyleCatalog> for StyleCatalog {
-    fn from(val: kreuzberg::extraction::docx::styles::StyleCatalog) -> Self {
-        Self {
-            styles: format!("{:?}", val.styles),
-            default_paragraph_properties: format!("{:?}", val.default_paragraph_properties),
-            default_run_properties: val.default_run_properties.into(),
+            run_properties: format!("{:?}", val.run_properties),
         }
     }
 }
@@ -26932,8 +18807,8 @@ impl From<TableProperties> for kreuzberg::extraction::docx::table::TableProperti
             width: Default::default(),
             alignment: val.alignment,
             layout: val.layout,
-            look: val.look.map(Into::into),
-            borders: val.borders.map(Into::into),
+            look: Default::default(),
+            borders: Default::default(),
             cell_margins: Default::default(),
             indent: Default::default(),
             caption: val.caption,
@@ -26948,173 +18823,11 @@ impl From<kreuzberg::extraction::docx::table::TableProperties> for TableProperti
             width: val.width.as_ref().map(|v| format!("{:?}", v)),
             alignment: val.alignment,
             layout: val.layout,
-            look: val.look.map(Into::into),
-            borders: val.borders.map(Into::into),
+            look: val.look.as_ref().map(|v| format!("{:?}", v)),
+            borders: val.borders.as_ref().map(|v| format!("{:?}", v)),
             cell_margins: val.cell_margins.as_ref().map(|v| format!("{:?}", v)),
             indent: val.indent.as_ref().map(|v| format!("{:?}", v)),
             caption: val.caption,
-        }
-    }
-}
-
-impl From<TableLook> for kreuzberg::extraction::docx::table::TableLook {
-    fn from(val: TableLook) -> Self {
-        Self {
-            first_row: val.first_row,
-            last_row: val.last_row,
-            first_column: val.first_column,
-            last_column: val.last_column,
-            no_h_band: val.no_h_band,
-            no_v_band: val.no_v_band,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableLook> for TableLook {
-    fn from(val: kreuzberg::extraction::docx::table::TableLook) -> Self {
-        Self {
-            first_row: val.first_row,
-            last_row: val.last_row,
-            first_column: val.first_column,
-            last_column: val.last_column,
-            no_h_band: val.no_h_band,
-            no_v_band: val.no_v_band,
-        }
-    }
-}
-
-impl From<TableBorders> for kreuzberg::extraction::docx::table::TableBorders {
-    fn from(val: TableBorders) -> Self {
-        Self {
-            top: Default::default(),
-            bottom: Default::default(),
-            left: Default::default(),
-            right: Default::default(),
-            inside_h: Default::default(),
-            inside_v: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableBorders> for TableBorders {
-    fn from(val: kreuzberg::extraction::docx::table::TableBorders) -> Self {
-        Self {
-            top: val.top.as_ref().map(|v| format!("{:?}", v)),
-            bottom: val.bottom.as_ref().map(|v| format!("{:?}", v)),
-            left: val.left.as_ref().map(|v| format!("{:?}", v)),
-            right: val.right.as_ref().map(|v| format!("{:?}", v)),
-            inside_h: val.inside_h.as_ref().map(|v| format!("{:?}", v)),
-            inside_v: val.inside_v.as_ref().map(|v| format!("{:?}", v)),
-        }
-    }
-}
-
-impl From<RowProperties> for kreuzberg::extraction::docx::table::RowProperties {
-    fn from(val: RowProperties) -> Self {
-        Self {
-            height: val.height,
-            height_rule: val.height_rule,
-            is_header: val.is_header,
-            cant_split: val.cant_split,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::RowProperties> for RowProperties {
-    fn from(val: kreuzberg::extraction::docx::table::RowProperties) -> Self {
-        Self {
-            height: val.height,
-            height_rule: val.height_rule,
-            is_header: val.is_header,
-            cant_split: val.cant_split,
-        }
-    }
-}
-
-impl From<ColorScheme> for kreuzberg::extraction::docx::theme::ColorScheme {
-    fn from(val: ColorScheme) -> Self {
-        Self {
-            name: val.name,
-            dk1: val.dk1.map(Into::into),
-            lt1: val.lt1.map(Into::into),
-            dk2: val.dk2.map(Into::into),
-            lt2: val.lt2.map(Into::into),
-            accent1: val.accent1.map(Into::into),
-            accent2: val.accent2.map(Into::into),
-            accent3: val.accent3.map(Into::into),
-            accent4: val.accent4.map(Into::into),
-            accent5: val.accent5.map(Into::into),
-            accent6: val.accent6.map(Into::into),
-            hlink: val.hlink.map(Into::into),
-            fol_hlink: val.fol_hlink.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::ColorScheme> for ColorScheme {
-    fn from(val: kreuzberg::extraction::docx::theme::ColorScheme) -> Self {
-        Self {
-            name: val.name,
-            dk1: val.dk1.map(Into::into),
-            lt1: val.lt1.map(Into::into),
-            dk2: val.dk2.map(Into::into),
-            lt2: val.lt2.map(Into::into),
-            accent1: val.accent1.map(Into::into),
-            accent2: val.accent2.map(Into::into),
-            accent3: val.accent3.map(Into::into),
-            accent4: val.accent4.map(Into::into),
-            accent5: val.accent5.map(Into::into),
-            accent6: val.accent6.map(Into::into),
-            hlink: val.hlink.map(Into::into),
-            fol_hlink: val.fol_hlink.map(Into::into),
-        }
-    }
-}
-
-impl From<FontScheme> for kreuzberg::extraction::docx::theme::FontScheme {
-    fn from(val: FontScheme) -> Self {
-        Self {
-            name: val.name,
-            major_latin: val.major_latin,
-            major_east_asian: val.major_east_asian,
-            major_complex_script: val.major_complex_script,
-            minor_latin: val.minor_latin,
-            minor_east_asian: val.minor_east_asian,
-            minor_complex_script: val.minor_complex_script,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::FontScheme> for FontScheme {
-    fn from(val: kreuzberg::extraction::docx::theme::FontScheme) -> Self {
-        Self {
-            name: val.name,
-            major_latin: val.major_latin,
-            major_east_asian: val.major_east_asian,
-            major_complex_script: val.major_complex_script,
-            minor_latin: val.minor_latin,
-            minor_east_asian: val.minor_east_asian,
-            minor_complex_script: val.minor_complex_script,
-        }
-    }
-}
-
-impl From<Theme> for kreuzberg::extraction::docx::theme::Theme {
-    fn from(val: Theme) -> Self {
-        Self {
-            name: val.name,
-            color_scheme: val.color_scheme.map(Into::into),
-            font_scheme: val.font_scheme.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::Theme> for Theme {
-    fn from(val: kreuzberg::extraction::docx::theme::Theme) -> Self {
-        Self {
-            name: val.name,
-            color_scheme: val.color_scheme.map(Into::into),
-            font_scheme: val.font_scheme.map(Into::into),
         }
     }
 }
@@ -27187,7 +18900,7 @@ impl From<PptExtractionResult> for kreuzberg::extraction::ppt::PptExtractionResu
         Self {
             text: val.text,
             slide_count: val.slide_count,
-            metadata: val.metadata.into(),
+            metadata: Default::default(),
             speaker_notes: val.speaker_notes,
         }
     }
@@ -27198,86 +18911,8 @@ impl From<kreuzberg::extraction::ppt::PptExtractionResult> for PptExtractionResu
         Self {
             text: val.text,
             slide_count: val.slide_count,
-            metadata: val.metadata.into(),
+            metadata: format!("{:?}", val.metadata),
             speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<PptMetadata> for kreuzberg::extraction::ppt::PptMetadata {
-    fn from(val: PptMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ppt::PptMetadata> for PptMetadata {
-    fn from(val: kreuzberg::extraction::ppt::PptMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            author: val.author,
-            last_author: val.last_author,
-        }
-    }
-}
-
-impl From<PptxExtractionOptions> for kreuzberg::extraction::PptxExtractionOptions {
-    fn from(val: PptxExtractionOptions) -> Self {
-        Self {
-            extract_images: val.extract_images,
-            page_config: val.page_config.map(Into::into),
-            plain: val.plain,
-            include_structure: val.include_structure,
-            inject_placeholders: val.inject_placeholders,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::PptxExtractionOptions> for PptxExtractionOptions {
-    fn from(val: kreuzberg::extraction::PptxExtractionOptions) -> Self {
-        Self {
-            extract_images: val.extract_images,
-            page_config: val.page_config.map(Into::into),
-            plain: val.plain,
-            include_structure: val.include_structure,
-            inject_placeholders: val.inject_placeholders,
-        }
-    }
-}
-
-impl From<NativeTextStats> for kreuzberg::extractors::pdf::NativeTextStats {
-    fn from(val: NativeTextStats) -> Self {
-        Self {
-            non_whitespace: val.non_whitespace,
-            alnum: val.alnum,
-            meaningful_words: val.meaningful_words,
-            alnum_ratio: val.alnum_ratio,
-            garbage_char_count: val.garbage_char_count,
-            fragmented_word_ratio: val.fragmented_word_ratio,
-            consecutive_repeat_ratio: val.consecutive_repeat_ratio,
-            avg_word_length: val.avg_word_length,
-            word_count: val.word_count,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::pdf::NativeTextStats> for NativeTextStats {
-    fn from(val: kreuzberg::extractors::pdf::NativeTextStats) -> Self {
-        Self {
-            non_whitespace: val.non_whitespace,
-            alnum: val.alnum,
-            meaningful_words: val.meaningful_words,
-            alnum_ratio: val.alnum_ratio,
-            garbage_char_count: val.garbage_char_count,
-            fragmented_word_ratio: val.fragmented_word_ratio,
-            consecutive_repeat_ratio: val.consecutive_repeat_ratio,
-            avg_word_length: val.avg_word_length,
-            word_count: val.word_count,
         }
     }
 }
@@ -27285,7 +18920,7 @@ impl From<kreuzberg::extractors::pdf::NativeTextStats> for NativeTextStats {
 impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecision {
     fn from(val: OcrFallbackDecision) -> Self {
         Self {
-            stats: val.stats.into(),
+            stats: Default::default(),
             avg_non_whitespace: val.avg_non_whitespace,
             avg_alnum: val.avg_alnum,
             fallback: val.fallback,
@@ -27296,22 +18931,10 @@ impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecisi
 impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecision {
     fn from(val: kreuzberg::extractors::pdf::OcrFallbackDecision) -> Self {
         Self {
-            stats: val.stats.into(),
+            stats: format!("{:?}", val.stats),
             avg_non_whitespace: val.avg_non_whitespace,
             avg_alnum: val.avg_alnum,
             fallback: val.fallback,
-        }
-    }
-}
-
-impl From<kreuzberg::panic_context::PanicContext> for PanicContext {
-    fn from(val: kreuzberg::panic_context::PanicContext) -> Self {
-        Self {
-            file: val.file,
-            line: val.line,
-            function: val.function,
-            message: val.message,
-            timestamp: format!("{:?}", val.timestamp),
         }
     }
 }
@@ -28203,23 +19826,6 @@ impl From<kreuzberg::EmailAttachment> for EmailAttachment {
     }
 }
 
-impl From<OcrExtractionResult> for kreuzberg::OcrExtractionResult {
-    fn from(val: OcrExtractionResult) -> Self {
-        Self {
-            content: val.content,
-            mime_type: val.mime_type,
-            metadata: val
-                .metadata
-                .into_iter()
-                .map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::Value::String(v))))
-                .collect(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
-            ocr_elements: val.ocr_elements.map(|v| v.into_iter().map(Into::into).collect()),
-            internal_document: Default::default(),
-        }
-    }
-}
-
 impl From<kreuzberg::OcrExtractionResult> for OcrExtractionResult {
     fn from(val: kreuzberg::OcrExtractionResult) -> Self {
         Self {
@@ -28233,17 +19839,6 @@ impl From<kreuzberg::OcrExtractionResult> for OcrExtractionResult {
     }
 }
 
-impl From<OcrTable> for kreuzberg::OcrTable {
-    fn from(val: OcrTable) -> Self {
-        Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
 impl From<kreuzberg::OcrTable> for OcrTable {
     fn from(val: kreuzberg::OcrTable) -> Self {
         Self {
@@ -28251,17 +19846,6 @@ impl From<kreuzberg::OcrTable> for OcrTable {
             markdown: val.markdown,
             page_number: val.page_number,
             bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<OcrTableBoundingBox> for kreuzberg::OcrTableBoundingBox {
-    fn from(val: OcrTableBoundingBox) -> Self {
-        Self {
-            left: val.left,
-            top: val.top,
-            right: val.right,
-            bottom: val.bottom,
         }
     }
 }
@@ -29161,155 +20745,11 @@ impl From<kreuzberg::Uri> for Uri {
     }
 }
 
-impl From<PoolMetrics> for kreuzberg::utils::pool::PoolMetrics {
-    fn from(val: PoolMetrics) -> Self {
-        Self {
-            total_acquires: Default::default(),
-            total_cache_hits: Default::default(),
-            peak_items_stored: Default::default(),
-            total_creations: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::utils::pool::PoolMetrics> for PoolMetrics {
-    fn from(val: kreuzberg::utils::pool::PoolMetrics) -> Self {
-        Self {
-            total_acquires: format!("{:?}", val.total_acquires),
-            total_cache_hits: format!("{:?}", val.total_cache_hits),
-            peak_items_stored: format!("{:?}", val.peak_items_stored),
-            total_creations: format!("{:?}", val.total_creations),
-        }
-    }
-}
-
-impl From<PoolMetricsSnapshot> for kreuzberg::utils::pool::PoolMetricsSnapshot {
-    fn from(val: PoolMetricsSnapshot) -> Self {
-        Self {
-            total_acquires: val.total_acquires,
-            total_cache_hits: val.total_cache_hits,
-            peak_items_stored: val.peak_items_stored,
-            total_creations: val.total_creations,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::pool::PoolMetricsSnapshot> for PoolMetricsSnapshot {
-    fn from(val: kreuzberg::utils::pool::PoolMetricsSnapshot) -> Self {
-        Self {
-            total_acquires: val.total_acquires,
-            total_cache_hits: val.total_cache_hits,
-            peak_items_stored: val.peak_items_stored,
-            total_creations: val.total_creations,
-        }
-    }
-}
-
-impl From<PoolSizeHint> for kreuzberg::utils::PoolSizeHint {
-    fn from(val: PoolSizeHint) -> Self {
-        Self {
-            estimated_total_size: val.estimated_total_size,
-            string_buffer_count: val.string_buffer_count,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_buffer_count: val.byte_buffer_count,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::PoolSizeHint> for PoolSizeHint {
-    fn from(val: kreuzberg::utils::PoolSizeHint) -> Self {
-        Self {
-            estimated_total_size: val.estimated_total_size,
-            string_buffer_count: val.string_buffer_count,
-            string_buffer_capacity: val.string_buffer_capacity,
-            byte_buffer_count: val.byte_buffer_count,
-            byte_buffer_capacity: val.byte_buffer_capacity,
-        }
-    }
-}
-
-impl From<PoolConfig> for kreuzberg::utils::string_pool::PoolConfig {
-    fn from(val: PoolConfig) -> Self {
-        Self {
-            max_buffers_per_size: val.max_buffers_per_size,
-            initial_capacity: val.initial_capacity,
-            max_capacity_before_discard: val.max_capacity_before_discard,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::string_pool::PoolConfig> for PoolConfig {
-    fn from(val: kreuzberg::utils::string_pool::PoolConfig) -> Self {
-        Self {
-            max_buffers_per_size: val.max_buffers_per_size,
-            initial_capacity: val.initial_capacity,
-            max_capacity_before_discard: val.max_capacity_before_discard,
-        }
-    }
-}
-
-impl From<kreuzberg::utils::string_pool::StringBufferPoolMetrics> for StringBufferPoolMetrics {
-    fn from(val: kreuzberg::utils::string_pool::StringBufferPoolMetrics) -> Self {
-        Self {
-            total_acquires: val.total_acquires,
-            total_reuses: val.total_reuses,
-            hit_rate: val.hit_rate,
-        }
-    }
-}
-
-impl From<HocrWord> for kreuzberg::table_core::HocrWord {
-    fn from(val: HocrWord) -> Self {
-        Self {
-            text: val.text,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            confidence: val.confidence,
-        }
-    }
-}
-
-impl From<kreuzberg::table_core::HocrWord> for HocrWord {
-    fn from(val: kreuzberg::table_core::HocrWord) -> Self {
-        Self {
-            text: val.text,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            confidence: val.confidence,
-        }
-    }
-}
-
-impl From<ExtractionRequest> for kreuzberg::service::ExtractionRequest {
-    fn from(val: ExtractionRequest) -> Self {
-        Self {
-            source: val.source.into(),
-            config: val.config.into(),
-            file_overrides: val.file_overrides.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::service::ExtractionRequest> for ExtractionRequest {
-    fn from(val: kreuzberg::service::ExtractionRequest) -> Self {
-        Self {
-            source: val.source.into(),
-            config: val.config.into(),
-            file_overrides: val.file_overrides.map(Into::into),
-        }
-    }
-}
-
 impl From<ApiError> for kreuzberg::api::ApiError {
     fn from(val: ApiError) -> Self {
         Self {
             status: Default::default(),
-            body: val.body.into(),
+            body: Default::default(),
         }
     }
 }
@@ -29318,25 +20758,7 @@ impl From<kreuzberg::api::ApiError> for ApiError {
     fn from(val: kreuzberg::api::ApiError) -> Self {
         Self {
             status: format!("{:?}", val.status),
-            body: val.body.into(),
-        }
-    }
-}
-
-impl From<ApiSizeLimits> for kreuzberg::api::ApiSizeLimits {
-    fn from(val: ApiSizeLimits) -> Self {
-        Self {
-            max_request_body_bytes: val.max_request_body_bytes,
-            max_multipart_field_bytes: val.max_multipart_field_bytes,
-        }
-    }
-}
-
-impl From<kreuzberg::api::ApiSizeLimits> for ApiSizeLimits {
-    fn from(val: kreuzberg::api::ApiSizeLimits) -> Self {
-        Self {
-            max_request_body_bytes: val.max_request_body_bytes,
-            max_multipart_field_bytes: val.max_multipart_field_bytes,
+            body: format!("{:?}", val.body),
         }
     }
 }
@@ -29356,28 +20778,6 @@ impl From<kreuzberg::api::InfoResponse> for InfoResponse {
         Self {
             version: val.version,
             rust_backend: val.rust_backend,
-        }
-    }
-}
-
-impl From<ErrorResponse> for kreuzberg::api::ErrorResponse {
-    fn from(val: ErrorResponse) -> Self {
-        Self {
-            error_type: val.error_type,
-            message: val.message,
-            traceback: val.traceback,
-            status_code: val.status_code,
-        }
-    }
-}
-
-impl From<kreuzberg::api::ErrorResponse> for ErrorResponse {
-    fn from(val: kreuzberg::api::ErrorResponse) -> Self {
-        Self {
-            error_type: val.error_type,
-            message: val.message,
-            traceback: val.traceback,
-            status_code: val.status_code,
         }
     }
 }
@@ -29526,30 +20926,16 @@ impl From<kreuzberg::api::OpenWebDocumentResponse> for OpenWebDocumentResponse {
     fn from(val: kreuzberg::api::OpenWebDocumentResponse) -> Self {
         Self {
             page_content: val.page_content,
-            metadata: val.metadata.into(),
+            metadata: format!("{:?}", val.metadata),
         }
-    }
-}
-
-impl From<kreuzberg::api::OpenWebDocumentMetadata> for OpenWebDocumentMetadata {
-    fn from(val: kreuzberg::api::OpenWebDocumentMetadata) -> Self {
-        Self { source: val.source }
     }
 }
 
 impl From<kreuzberg::api::DoclingCompatResponse> for DoclingCompatResponse {
     fn from(val: kreuzberg::api::DoclingCompatResponse) -> Self {
         Self {
-            document: val.document.into(),
+            document: format!("{:?}", val.document),
             status: val.status,
-        }
-    }
-}
-
-impl From<kreuzberg::api::DoclingCompatDocument> for DoclingCompatDocument {
-    fn from(val: kreuzberg::api::DoclingCompatDocument) -> Self {
-        Self {
-            md_content: val.md_content,
         }
     }
 }
@@ -29749,58 +21135,11 @@ impl From<kreuzberg::Keyword> for Keyword {
     }
 }
 
-impl From<OcrCacheStats> for kreuzberg::ocr::OcrCacheStats {
-    fn from(val: OcrCacheStats) -> Self {
-        Self {
-            total_files: val.total_files,
-            total_size_mb: val.total_size_mb,
-        }
-    }
-}
-
 impl From<kreuzberg::ocr::OcrCacheStats> for OcrCacheStats {
     fn from(val: kreuzberg::ocr::OcrCacheStats) -> Self {
         Self {
             total_files: val.total_files,
             total_size_mb: val.total_size_mb,
-        }
-    }
-}
-
-impl From<TsvRow> for kreuzberg::ocr::TsvRow {
-    fn from(val: TsvRow) -> Self {
-        Self {
-            level: val.level,
-            page_num: val.page_num,
-            block_num: val.block_num,
-            par_num: val.par_num,
-            line_num: val.line_num,
-            word_num: val.word_num,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            conf: val.conf,
-            text: val.text,
-        }
-    }
-}
-
-impl From<kreuzberg::ocr::TsvRow> for TsvRow {
-    fn from(val: kreuzberg::ocr::TsvRow) -> Self {
-        Self {
-            level: val.level,
-            page_num: val.page_num,
-            block_num: val.block_num,
-            par_num: val.par_num,
-            line_num: val.line_num,
-            word_num: val.word_num,
-            left: val.left,
-            top: val.top,
-            width: val.width,
-            height: val.height,
-            conf: val.conf,
-            text: val.text,
         }
     }
 }
@@ -29969,7 +21308,7 @@ impl From<FontSizeCluster> for kreuzberg::pdf::FontSizeCluster {
     fn from(val: FontSizeCluster) -> Self {
         Self {
             centroid: val.centroid,
-            members: val.members.into_iter().map(Into::into).collect(),
+            members: Default::default(),
         }
     }
 }
@@ -29978,7 +21317,7 @@ impl From<kreuzberg::pdf::FontSizeCluster> for FontSizeCluster {
     fn from(val: kreuzberg::pdf::FontSizeCluster) -> Self {
         Self {
             centroid: val.centroid,
-            members: val.members.into_iter().map(Into::into).collect(),
+            members: val.members.iter().map(|i| format!("{:?}", i)).collect(),
         }
     }
 }
@@ -30015,45 +21354,13 @@ impl From<kreuzberg::pdf::CharData> for CharData {
     }
 }
 
-impl From<TextBlock> for kreuzberg::pdf::TextBlock {
-    fn from(val: TextBlock) -> Self {
-        Self {
-            text: val.text,
-            bbox: val.bbox.into(),
-            font_size: val.font_size,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::TextBlock> for TextBlock {
-    fn from(val: kreuzberg::pdf::TextBlock) -> Self {
-        Self {
-            text: val.text,
-            bbox: val.bbox.into(),
-            font_size: val.font_size,
-        }
-    }
-}
-
-impl From<KMeansResult> for kreuzberg::pdf::hierarchy::KMeansResult {
-    fn from(val: KMeansResult) -> Self {
-        Self { labels: val.labels }
-    }
-}
-
-impl From<kreuzberg::pdf::hierarchy::KMeansResult> for KMeansResult {
-    fn from(val: kreuzberg::pdf::hierarchy::KMeansResult) -> Self {
-        Self { labels: val.labels }
-    }
-}
-
 impl From<HierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
     fn from(val: HierarchyBlock) -> Self {
         Self {
             text: val.text,
             bbox: val.bbox.into(),
             font_size: val.font_size,
-            hierarchy_level: val.hierarchy_level.into(),
+            hierarchy_level: Default::default(),
         }
     }
 }
@@ -30064,43 +21371,7 @@ impl From<kreuzberg::pdf::hierarchy::HierarchyBlock> for HierarchyBlock {
             text: val.text,
             bbox: val.bbox.into(),
             font_size: val.font_size,
-            hierarchy_level: val.hierarchy_level.into(),
-        }
-    }
-}
-
-impl From<SegmentData> for kreuzberg::pdf::hierarchy::SegmentData {
-    fn from(val: SegmentData) -> Self {
-        Self {
-            text: val.text,
-            x: val.x,
-            y: val.y,
-            width: val.width,
-            height: val.height,
-            font_size: val.font_size,
-            is_bold: val.is_bold,
-            is_italic: val.is_italic,
-            is_monospace: val.is_monospace,
-            baseline_y: val.baseline_y,
-            assigned_role: val.assigned_role,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::hierarchy::SegmentData> for SegmentData {
-    fn from(val: kreuzberg::pdf::hierarchy::SegmentData) -> Self {
-        Self {
-            text: val.text,
-            x: val.x,
-            y: val.y,
-            width: val.width,
-            height: val.height,
-            font_size: val.font_size,
-            is_bold: val.is_bold,
-            is_italic: val.is_italic,
-            is_monospace: val.is_monospace,
-            baseline_y: val.baseline_y,
-            assigned_role: val.assigned_role,
+            hierarchy_level: format!("{:?}", val.hierarchy_level),
         }
     }
 }
@@ -30137,23 +21408,12 @@ impl From<kreuzberg::pdf::PdfImage> for PdfImage {
     }
 }
 
-impl From<kreuzberg::pdf::layout_runner::PdfLayoutBBox> for PdfLayoutBBox {
-    fn from(val: kreuzberg::pdf::layout_runner::PdfLayoutBBox) -> Self {
-        Self {
-            left: val.left,
-            bottom: val.bottom,
-            right: val.right,
-            top: val.top,
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageLayoutRegion> for PageLayoutRegion {
     fn from(val: kreuzberg::pdf::layout_runner::PageLayoutRegion) -> Self {
         Self {
             class: val.class.into(),
             confidence: val.confidence,
-            bbox: val.bbox.into(),
+            bbox: format!("{:?}", val.bbox),
         }
     }
 }
@@ -30171,19 +21431,6 @@ impl From<kreuzberg::pdf::layout_runner::PageLayoutResult> for PageLayoutResult 
     }
 }
 
-impl From<PageTiming> for kreuzberg::pdf::layout_runner::PageTiming {
-    fn from(val: PageTiming) -> Self {
-        Self {
-            render_ms: val.render_ms,
-            preprocess_ms: val.preprocess_ms,
-            onnx_ms: val.onnx_ms,
-            inference_ms: val.inference_ms,
-            postprocess_ms: val.postprocess_ms,
-            mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageTiming> for PageTiming {
     fn from(val: kreuzberg::pdf::layout_runner::PageTiming) -> Self {
         Self {
@@ -30193,41 +21440,6 @@ impl From<kreuzberg::pdf::layout_runner::PageTiming> for PageTiming {
             inference_ms: val.inference_ms,
             postprocess_ms: val.postprocess_ms,
             mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::layout_runner::LayoutTimingReport> for LayoutTimingReport {
-    fn from(val: kreuzberg::pdf::layout_runner::LayoutTimingReport) -> Self {
-        Self {
-            total_ms: val.total_ms,
-            per_page: val.per_page.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<PdfMetadata> for kreuzberg::pdf::metadata::PdfMetadata {
-    fn from(val: PdfMetadata) -> Self {
-        Self {
-            pdf_version: val.pdf_version,
-            producer: val.producer,
-            is_encrypted: val.is_encrypted,
-            width: val.width,
-            height: val.height,
-            page_count: val.page_count,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::metadata::PdfMetadata> for PdfMetadata {
-    fn from(val: kreuzberg::pdf::metadata::PdfMetadata) -> Self {
-        Self {
-            pdf_version: val.pdf_version,
-            producer: val.producer,
-            is_encrypted: val.is_encrypted,
-            width: val.width,
-            height: val.height,
-            page_count: val.page_count,
         }
     }
 }
@@ -30242,7 +21454,7 @@ impl From<PdfExtractionMetadata> for kreuzberg::pdf::metadata::PdfExtractionMeta
             created_at: val.created_at,
             modified_at: val.modified_at,
             created_by: val.created_by,
-            pdf_specific: val.pdf_specific.into(),
+            pdf_specific: Default::default(),
             page_structure: val.page_structure.map(Into::into),
         }
     }
@@ -30258,7 +21470,7 @@ impl From<kreuzberg::pdf::metadata::PdfExtractionMetadata> for PdfExtractionMeta
             created_at: val.created_at,
             modified_at: val.modified_at,
             created_by: val.created_by,
-            pdf_specific: val.pdf_specific.into(),
+            pdf_specific: format!("{:?}", val.pdf_specific),
             page_structure: val.page_structure.map(Into::into),
         }
     }
@@ -30288,30 +21500,6 @@ impl From<kreuzberg::pdf::metadata::CommonPdfMetadata> for CommonPdfMetadata {
             created_at: val.created_at,
             modified_at: val.modified_at,
             created_by: val.created_by,
-        }
-    }
-}
-
-impl From<PageRenderOptions> for kreuzberg::pdf::PageRenderOptions {
-    fn from(val: PageRenderOptions) -> Self {
-        Self {
-            target_dpi: val.target_dpi,
-            max_image_dimension: val.max_image_dimension,
-            auto_adjust_dpi: val.auto_adjust_dpi,
-            min_dpi: val.min_dpi,
-            max_dpi: val.max_dpi,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::PageRenderOptions> for PageRenderOptions {
-    fn from(val: kreuzberg::pdf::PageRenderOptions) -> Self {
-        Self {
-            target_dpi: val.target_dpi,
-            max_image_dimension: val.max_image_dimension,
-            auto_adjust_dpi: val.auto_adjust_dpi,
-            min_dpi: val.min_dpi,
-            max_dpi: val.max_dpi,
         }
     }
 }
@@ -30516,28 +21704,6 @@ impl From<kreuzberg::CodeContentMode> for CodeContentMode {
     }
 }
 
-impl From<ListType> for kreuzberg::extraction::ListType {
-    fn from(val: ListType) -> Self {
-        match val {
-            ListType::Bullet => Self::Bullet,
-            ListType::Numbered => Self::Numbered,
-            ListType::Lettered => Self::Lettered,
-            ListType::Indented => Self::Indented,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ListType> for ListType {
-    fn from(val: kreuzberg::extraction::ListType) -> Self {
-        match val {
-            kreuzberg::extraction::ListType::Bullet => Self::Bullet,
-            kreuzberg::extraction::ListType::Numbered => Self::Numbered,
-            kreuzberg::extraction::ListType::Lettered => Self::Lettered,
-            kreuzberg::extraction::ListType::Indented => Self::Indented,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::hwp::error::HwpError> for HwpError {
     fn from(val: kreuzberg::extraction::hwp::error::HwpError) -> Self {
         match val {
@@ -30551,36 +21717,6 @@ impl From<kreuzberg::extraction::hwp::error::HwpError> for HwpError {
             kreuzberg::extraction::hwp::error::HwpError::ParseError(_0) => Self::ParseError { _0 },
             kreuzberg::extraction::hwp::error::HwpError::EncodingError(_0) => Self::EncodingError { _0 },
             kreuzberg::extraction::hwp::error::HwpError::NotFound(_0) => Self::NotFound { _0 },
-        }
-    }
-}
-
-impl From<DrawingType> for kreuzberg::extraction::docx::drawing::DrawingType {
-    fn from(val: DrawingType) -> Self {
-        match val {
-            DrawingType::Inline => Self::Inline,
-            DrawingType::Anchored { _0 } => Self::Anchored(_0.into()),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::DrawingType> for DrawingType {
-    fn from(val: kreuzberg::extraction::docx::drawing::DrawingType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::drawing::DrawingType::Inline => Self::Inline,
-            kreuzberg::extraction::docx::drawing::DrawingType::Anchored(_0) => Self::Anchored { _0: _0.into() },
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::WrapType> for WrapType {
-    fn from(val: kreuzberg::extraction::docx::drawing::WrapType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::drawing::WrapType::None => Self::None,
-            kreuzberg::extraction::docx::drawing::WrapType::Square => Self::Square,
-            kreuzberg::extraction::docx::drawing::WrapType::Tight => Self::Tight,
-            kreuzberg::extraction::docx::drawing::WrapType::TopAndBottom => Self::TopAndBottom,
-            kreuzberg::extraction::docx::drawing::WrapType::Through => Self::Through,
         }
     }
 }
@@ -30651,111 +21787,12 @@ impl From<kreuzberg::extraction::docx::math::MathNode> for MathNode {
     }
 }
 
-impl From<DocumentElement> for kreuzberg::extraction::docx::parser::DocumentElement {
-    fn from(val: DocumentElement) -> Self {
-        match val {
-            DocumentElement::Paragraph { _0 } => Self::Paragraph(_0),
-            DocumentElement::Table { _0 } => Self::Table(_0),
-            DocumentElement::Drawing { _0 } => Self::Drawing(_0),
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::parser::DocumentElement> for DocumentElement {
     fn from(val: kreuzberg::extraction::docx::parser::DocumentElement) -> Self {
         match val {
             kreuzberg::extraction::docx::parser::DocumentElement::Paragraph(_0) => Self::Paragraph { _0 },
             kreuzberg::extraction::docx::parser::DocumentElement::Table(_0) => Self::Table { _0 },
             kreuzberg::extraction::docx::parser::DocumentElement::Drawing(_0) => Self::Drawing { _0 },
-        }
-    }
-}
-
-impl From<HeaderFooterType> for kreuzberg::extraction::docx::parser::HeaderFooterType {
-    fn from(val: HeaderFooterType) -> Self {
-        match val {
-            HeaderFooterType::Default => Self::Default,
-            HeaderFooterType::First => Self::First,
-            HeaderFooterType::Even => Self::Even,
-            HeaderFooterType::Odd => Self::Odd,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::HeaderFooterType> for HeaderFooterType {
-    fn from(val: kreuzberg::extraction::docx::parser::HeaderFooterType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::parser::HeaderFooterType::Default => Self::Default,
-            kreuzberg::extraction::docx::parser::HeaderFooterType::First => Self::First,
-            kreuzberg::extraction::docx::parser::HeaderFooterType::Even => Self::Even,
-            kreuzberg::extraction::docx::parser::HeaderFooterType::Odd => Self::Odd,
-        }
-    }
-}
-
-impl From<NoteType> for kreuzberg::extraction::docx::parser::NoteType {
-    fn from(val: NoteType) -> Self {
-        match val {
-            NoteType::Footnote => Self::Footnote,
-            NoteType::Endnote => Self::Endnote,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::NoteType> for NoteType {
-    fn from(val: kreuzberg::extraction::docx::parser::NoteType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::parser::NoteType::Footnote => Self::Footnote,
-            kreuzberg::extraction::docx::parser::NoteType::Endnote => Self::Endnote,
-        }
-    }
-}
-
-impl From<Orientation> for kreuzberg::extraction::docx::section::Orientation {
-    fn from(val: Orientation) -> Self {
-        match val {
-            Orientation::Portrait => Self::Portrait,
-            Orientation::Landscape => Self::Landscape,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::section::Orientation> for Orientation {
-    fn from(val: kreuzberg::extraction::docx::section::Orientation) -> Self {
-        match val {
-            kreuzberg::extraction::docx::section::Orientation::Portrait => Self::Portrait,
-            kreuzberg::extraction::docx::section::Orientation::Landscape => Self::Landscape,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::styles::StyleType> for StyleType {
-    fn from(val: kreuzberg::extraction::docx::styles::StyleType) -> Self {
-        match val {
-            kreuzberg::extraction::docx::styles::StyleType::Paragraph => Self::Paragraph,
-            kreuzberg::extraction::docx::styles::StyleType::Character => Self::Character,
-            kreuzberg::extraction::docx::styles::StyleType::Table => Self::Table,
-            kreuzberg::extraction::docx::styles::StyleType::Numbering => Self::Numbering,
-        }
-    }
-}
-
-impl From<ThemeColor> for kreuzberg::extraction::docx::theme::ThemeColor {
-    fn from(val: ThemeColor) -> Self {
-        match val {
-            ThemeColor::Rgb { _0 } => Self::Rgb(_0),
-            ThemeColor::System { name, last_color } => Self::System { name, last_color },
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::theme::ThemeColor> for ThemeColor {
-    fn from(val: kreuzberg::extraction::docx::theme::ThemeColor) -> Self {
-        match val {
-            kreuzberg::extraction::docx::theme::ThemeColor::Rgb(_0) => Self::Rgb { _0 },
-            kreuzberg::extraction::docx::theme::ThemeColor::System { name, last_color } => {
-                Self::System { name, last_color }
-            }
         }
     }
 }
@@ -31211,7 +22248,7 @@ impl From<kreuzberg::ElementType> for ElementType {
 impl From<FormatMetadata> for kreuzberg::FormatMetadata {
     fn from(val: FormatMetadata) -> Self {
         match val {
-            FormatMetadata::Pdf { _0 } => Self::Pdf(_0.into()),
+            FormatMetadata::Pdf { _0 } => Self::Pdf(serde_json::from_str(&_0).unwrap_or_default()),
             FormatMetadata::Docx { _0 } => Self::Docx(Box::new(_0.into())),
             FormatMetadata::Excel { _0 } => Self::Excel(_0.into()),
             FormatMetadata::Email { _0 } => Self::Email(_0.into()),
@@ -31238,7 +22275,9 @@ impl From<FormatMetadata> for kreuzberg::FormatMetadata {
 impl From<kreuzberg::FormatMetadata> for FormatMetadata {
     fn from(val: kreuzberg::FormatMetadata) -> Self {
         match val {
-            kreuzberg::FormatMetadata::Pdf(_0) => Self::Pdf { _0: _0.into() },
+            kreuzberg::FormatMetadata::Pdf(_0) => Self::Pdf {
+                _0: serde_json::to_string(&_0).unwrap_or_default(),
+            },
             kreuzberg::FormatMetadata::Docx(_0) => Self::Docx { _0: (*_0).into() },
             kreuzberg::FormatMetadata::Excel(_0) => Self::Excel { _0: _0.into() },
             kreuzberg::FormatMetadata::Email(_0) => Self::Email { _0: _0.into() },
@@ -31470,24 +22509,6 @@ impl From<kreuzberg::utils::PoolError> for PoolError {
     }
 }
 
-impl From<ExtractionSource> for kreuzberg::service::ExtractionSource {
-    fn from(val: ExtractionSource) -> Self {
-        match val {
-            ExtractionSource::File { path, mime_hint } => Self::File { path, mime_hint },
-            ExtractionSource::Bytes { data, mime_type } => Self::Bytes { data, mime_type },
-        }
-    }
-}
-
-impl From<kreuzberg::service::ExtractionSource> for ExtractionSource {
-    fn from(val: kreuzberg::service::ExtractionSource) -> Self {
-        match val {
-            kreuzberg::service::ExtractionSource::File { path, mime_hint } => Self::File { path, mime_hint },
-            kreuzberg::service::ExtractionSource::Bytes { data, mime_type } => Self::Bytes { data, mime_type },
-        }
-    }
-}
-
 impl From<KeywordAlgorithm> for kreuzberg::KeywordAlgorithm {
     fn from(val: KeywordAlgorithm) -> Self {
         match val {
@@ -31628,34 +22649,6 @@ impl From<kreuzberg::pdf::PdfError> for PdfError {
     }
 }
 
-impl From<HierarchyLevel> for kreuzberg::pdf::HierarchyLevel {
-    fn from(val: HierarchyLevel) -> Self {
-        match val {
-            HierarchyLevel::H1 => Self::H1,
-            HierarchyLevel::H2 => Self::H2,
-            HierarchyLevel::H3 => Self::H3,
-            HierarchyLevel::H4 => Self::H4,
-            HierarchyLevel::H5 => Self::H5,
-            HierarchyLevel::H6 => Self::H6,
-            HierarchyLevel::Body => Self::Body,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::HierarchyLevel> for HierarchyLevel {
-    fn from(val: kreuzberg::pdf::HierarchyLevel) -> Self {
-        match val {
-            kreuzberg::pdf::HierarchyLevel::H1 => Self::H1,
-            kreuzberg::pdf::HierarchyLevel::H2 => Self::H2,
-            kreuzberg::pdf::HierarchyLevel::H3 => Self::H3,
-            kreuzberg::pdf::HierarchyLevel::H4 => Self::H4,
-            kreuzberg::pdf::HierarchyLevel::H5 => Self::H5,
-            kreuzberg::pdf::HierarchyLevel::H6 => Self::H6,
-            kreuzberg::pdf::HierarchyLevel::Body => Self::Body,
-        }
-    }
-}
-
 /// Convert a `kreuzberg::error::KreuzbergError` error to a Magnus runtime error.
 #[allow(dead_code)]
 fn kreuzberg_error_to_magnus_err(e: kreuzberg::error::KreuzbergError) -> magnus::Error {
@@ -31666,43 +22659,6 @@ fn kreuzberg_error_to_magnus_err(e: kreuzberg::error::KreuzbergError) -> magnus:
 #[magnus::init]
 fn init(ruby: &Ruby) -> Result<(), Error> {
     let module = ruby.define_module("Kreuzberg")?;
-
-    let class = module.define_class("GenericCache", ruby.class_object())?;
-    class.define_method("get", method!(GenericCache::get, 4))?;
-    class.define_method("get_default", method!(GenericCache::get_default, 2))?;
-    class.define_method("set", method!(GenericCache::set, 5))?;
-    class.define_method("set_default", method!(GenericCache::set_default, 3))?;
-    class.define_method("is_processing", method!(GenericCache::is_processing, 1))?;
-    class.define_method("mark_processing", method!(GenericCache::mark_processing, 1))?;
-    class.define_method("mark_complete", method!(GenericCache::mark_complete, 1))?;
-    class.define_method("clear", method!(GenericCache::clear, 0))?;
-    class.define_method("delete_namespace", method!(GenericCache::delete_namespace, 1))?;
-    class.define_method("get_stats", method!(GenericCache::get_stats, 0))?;
-    class.define_method("get_stats_filtered", method!(GenericCache::get_stats_filtered, 1))?;
-    class.define_method("cache_dir", method!(GenericCache::cache_dir, 0))?;
-    class.define_method("cache_type", method!(GenericCache::cache_type, 0))?;
-
-    let class = module.define_class("BatchProcessorConfig", ruby.class_object())?;
-    class.define_singleton_method("new", function!(BatchProcessorConfig::new, 5))?;
-    class.define_method("string_pool_size", method!(BatchProcessorConfig::string_pool_size, 0))?;
-    class.define_method(
-        "string_buffer_capacity",
-        method!(BatchProcessorConfig::string_buffer_capacity, 0),
-    )?;
-    class.define_method("byte_pool_size", method!(BatchProcessorConfig::byte_pool_size, 0))?;
-    class.define_method(
-        "byte_buffer_capacity",
-        method!(BatchProcessorConfig::byte_buffer_capacity, 0),
-    )?;
-    class.define_method("max_concurrent", method!(BatchProcessorConfig::max_concurrent, 0))?;
-
-    let class = module.define_class("BatchProcessor", ruby.class_object())?;
-    class.define_method("string_pool", method!(BatchProcessor::string_pool, 0))?;
-    class.define_method("byte_pool", method!(BatchProcessor::byte_pool, 0))?;
-    class.define_method("config", method!(BatchProcessor::config, 0))?;
-    class.define_method("string_pool_size", method!(BatchProcessor::string_pool_size, 0))?;
-    class.define_method("byte_pool_size", method!(BatchProcessor::byte_pool_size, 0))?;
-    class.define_method("clear_pools", method!(BatchProcessor::clear_pools, 0))?;
 
     let class = module.define_class("AccelerationConfig", ruby.class_object())?;
     class.define_singleton_method("new", function!(AccelerationConfig::new, 2))?;
@@ -32120,21 +23076,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("metadata", method!(StructuredDataResult::metadata, 0))?;
     class.define_method("text_fields", method!(StructuredDataResult::text_fields, 0))?;
 
-    let class = module.define_class("JsonExtractionConfig", ruby.class_object())?;
-    class.define_singleton_method("new", function!(JsonExtractionConfig::new, 6))?;
-    class.define_method("extract_schema", method!(JsonExtractionConfig::extract_schema, 0))?;
-    class.define_method("max_depth", method!(JsonExtractionConfig::max_depth, 0))?;
-    class.define_method("array_item_limit", method!(JsonExtractionConfig::array_item_limit, 0))?;
-    class.define_method("include_type_info", method!(JsonExtractionConfig::include_type_info, 0))?;
-    class.define_method(
-        "flatten_nested_objects",
-        method!(JsonExtractionConfig::flatten_nested_objects, 0),
-    )?;
-    class.define_method(
-        "custom_text_field_patterns",
-        method!(JsonExtractionConfig::custom_text_field_patterns, 0),
-    )?;
-
     let class = module.define_class("ListItemMetadata", ruby.class_object())?;
     class.define_singleton_method("new", function!(ListItemMetadata::new, 4))?;
     class.define_method("list_type", method!(ListItemMetadata::list_type, 0))?;
@@ -32142,31 +23083,9 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("byte_end", method!(ListItemMetadata::byte_end, 0))?;
     class.define_method("indent_level", method!(ListItemMetadata::indent_level, 0))?;
 
-    let class = module.define_class("HwpDocument", ruby.class_object())?;
-    class.define_singleton_method("new", function!(HwpDocument::new, 1))?;
-    class.define_method("sections", method!(HwpDocument::sections, 0))?;
-    class.define_method("extract_text", method!(HwpDocument::extract_text, 0))?;
-
     let class = module.define_class("Section", ruby.class_object())?;
     class.define_singleton_method("new", function!(Section::new, 1))?;
     class.define_method("paragraphs", method!(Section::paragraphs, 0))?;
-
-    let class = module.define_class("ParaText", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ParaText::new, 1))?;
-    class.define_method("content", method!(ParaText::content, 0))?;
-
-    let class = module.define_class("FileHeader", ruby.class_object())?;
-    class.define_singleton_method("new", function!(FileHeader::new, 1))?;
-    class.define_method("flags", method!(FileHeader::flags, 0))?;
-    class.define_method("is_compressed", method!(FileHeader::is_compressed, 0))?;
-    class.define_method("is_encrypted", method!(FileHeader::is_encrypted, 0))?;
-    class.define_method("is_distribute", method!(FileHeader::is_distribute, 0))?;
-
-    let class = module.define_class("Record", ruby.class_object())?;
-    class.define_singleton_method("new", function!(Record::new, 2))?;
-    class.define_method("tag_id", method!(Record::tag_id, 0))?;
-    class.define_method("data", method!(Record::data, 0))?;
-    class.define_method("data_reader", method!(Record::data_reader, 0))?;
 
     let class = module.define_class("StreamReader", ruby.class_object())?;
     class.define_method("read_u8", method!(StreamReader::read_u8, 0))?;
@@ -32175,8 +23094,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("read_bytes", method!(StreamReader::read_bytes, 1))?;
     class.define_method("position", method!(StreamReader::position, 0))?;
     class.define_method("remaining", method!(StreamReader::remaining, 0))?;
-
-    let class = module.define_class("CfbReader", ruby.class_object())?;
 
     let class = module.define_class("ImageOcrResult", ruby.class_object())?;
     class.define_singleton_method("new", function!(ImageOcrResult::new, 3))?;
@@ -32204,35 +23121,12 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("text", method!(DocExtractionResult::text, 0))?;
     class.define_method("metadata", method!(DocExtractionResult::metadata, 0))?;
 
-    let class = module.define_class("DocMetadata", ruby.class_object())?;
-    class.define_singleton_method("new", function!(DocMetadata::new, 7))?;
-    class.define_method("title", method!(DocMetadata::title, 0))?;
-    class.define_method("subject", method!(DocMetadata::subject, 0))?;
-    class.define_method("author", method!(DocMetadata::author, 0))?;
-    class.define_method("last_author", method!(DocMetadata::last_author, 0))?;
-    class.define_method("created", method!(DocMetadata::created, 0))?;
-    class.define_method("modified", method!(DocMetadata::modified, 0))?;
-    class.define_method("revision_number", method!(DocMetadata::revision_number, 0))?;
-
     let class = module.define_class("Drawing", ruby.class_object())?;
     class.define_singleton_method("new", function!(Drawing::new, 4))?;
     class.define_method("drawing_type", method!(Drawing::drawing_type, 0))?;
     class.define_method("extent", method!(Drawing::extent, 0))?;
     class.define_method("doc_properties", method!(Drawing::doc_properties, 0))?;
     class.define_method("image_ref", method!(Drawing::image_ref, 0))?;
-
-    let class = module.define_class("Extent", ruby.class_object())?;
-    class.define_singleton_method("new", function!(Extent::new, 2))?;
-    class.define_method("cx", method!(Extent::cx, 0))?;
-    class.define_method("cy", method!(Extent::cy, 0))?;
-    class.define_method("width_inches", method!(Extent::width_inches, 0))?;
-    class.define_method("height_inches", method!(Extent::height_inches, 0))?;
-
-    let class = module.define_class("DocProperties", ruby.class_object())?;
-    class.define_singleton_method("new", function!(DocProperties::new, 3))?;
-    class.define_method("id", method!(DocProperties::id, 0))?;
-    class.define_method("name", method!(DocProperties::name, 0))?;
-    class.define_method("description", method!(DocProperties::description, 0))?;
 
     let class = module.define_class("AnchorProperties", ruby.class_object())?;
     class.define_singleton_method("new", function!(AnchorProperties::new, 6))?;
@@ -32242,31 +23136,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("position_h", method!(AnchorProperties::position_h, 0))?;
     class.define_method("position_v", method!(AnchorProperties::position_v, 0))?;
     class.define_method("wrap_type", method!(AnchorProperties::wrap_type, 0))?;
-
-    let class = module.define_class("Position", ruby.class_object())?;
-    class.define_singleton_method("new", function!(Position::new, 2))?;
-    class.define_method("relative_from", method!(Position::relative_from, 0))?;
-    class.define_method("offset", method!(Position::offset, 0))?;
-
-    let class = module.define_class("Document", ruby.class_object())?;
-    class.define_singleton_method("new", function!(Document::new, 13))?;
-    class.define_method("paragraphs", method!(Document::paragraphs, 0))?;
-    class.define_method("tables", method!(Document::tables, 0))?;
-    class.define_method("headers", method!(Document::headers, 0))?;
-    class.define_method("footers", method!(Document::footers, 0))?;
-    class.define_method("footnotes", method!(Document::footnotes, 0))?;
-    class.define_method("endnotes", method!(Document::endnotes, 0))?;
-    class.define_method("numbering_defs", method!(Document::numbering_defs, 0))?;
-    class.define_method("elements", method!(Document::elements, 0))?;
-    class.define_method("style_catalog", method!(Document::style_catalog, 0))?;
-    class.define_method("theme", method!(Document::theme, 0))?;
-    class.define_method("sections", method!(Document::sections, 0))?;
-    class.define_method("drawings", method!(Document::drawings, 0))?;
-    class.define_method("image_relationships", method!(Document::image_relationships, 0))?;
-    class.define_method("resolve_heading_level", method!(Document::resolve_heading_level, 1))?;
-    class.define_method("extract_text", method!(Document::extract_text, 0))?;
-    class.define_method("to_markdown", method!(Document::to_markdown, 1))?;
-    class.define_method("to_plain_text", method!(Document::to_plain_text, 0))?;
 
     let class = module.define_class("TableRow", ruby.class_object())?;
     class.define_singleton_method("new", function!(TableRow::new, 2))?;
@@ -32285,17 +23154,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("note_type", method!(Note::note_type, 0))?;
     class.define_method("paragraphs", method!(Note::paragraphs, 0))?;
 
-    let class = module.define_class("PageMargins", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PageMargins::new, 7))?;
-    class.define_method("top", method!(PageMargins::top, 0))?;
-    class.define_method("right", method!(PageMargins::right, 0))?;
-    class.define_method("bottom", method!(PageMargins::bottom, 0))?;
-    class.define_method("left", method!(PageMargins::left, 0))?;
-    class.define_method("header", method!(PageMargins::header, 0))?;
-    class.define_method("footer", method!(PageMargins::footer, 0))?;
-    class.define_method("gutter", method!(PageMargins::gutter, 0))?;
-    class.define_method("to_points", method!(PageMargins::to_points, 0))?;
-
     let class = module.define_class("PageMarginsPoints", ruby.class_object())?;
     class.define_singleton_method("new", function!(PageMarginsPoints::new, 7))?;
     class.define_method("top", method!(PageMarginsPoints::top, 0))?;
@@ -32305,57 +23163,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("header", method!(PageMarginsPoints::header, 0))?;
     class.define_method("footer", method!(PageMarginsPoints::footer, 0))?;
     class.define_method("gutter", method!(PageMarginsPoints::gutter, 0))?;
-
-    let class = module.define_class("ColumnLayout", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ColumnLayout::new, 3))?;
-    class.define_method("count", method!(ColumnLayout::count, 0))?;
-    class.define_method("space_twips", method!(ColumnLayout::space_twips, 0))?;
-    class.define_method("equal_width", method!(ColumnLayout::equal_width, 0))?;
-
-    let class = module.define_class("SectionProperties", ruby.class_object())?;
-    class.define_singleton_method("new", function!(SectionProperties::new, 6))?;
-    class.define_method("page_width_twips", method!(SectionProperties::page_width_twips, 0))?;
-    class.define_method("page_height_twips", method!(SectionProperties::page_height_twips, 0))?;
-    class.define_method("orientation", method!(SectionProperties::orientation, 0))?;
-    class.define_method("margins", method!(SectionProperties::margins, 0))?;
-    class.define_method("columns", method!(SectionProperties::columns, 0))?;
-    class.define_method(
-        "doc_grid_line_pitch",
-        method!(SectionProperties::doc_grid_line_pitch, 0),
-    )?;
-    class.define_method("page_width_points", method!(SectionProperties::page_width_points, 0))?;
-    class.define_method("page_height_points", method!(SectionProperties::page_height_points, 0))?;
-
-    let class = module.define_class("RunProperties", ruby.class_object())?;
-    class.define_singleton_method("new", function!(RunProperties::new, 1))?;
-    class.define_method("bold", method!(RunProperties::bold, 0))?;
-    class.define_method("italic", method!(RunProperties::italic, 0))?;
-    class.define_method("underline", method!(RunProperties::underline, 0))?;
-    class.define_method("strikethrough", method!(RunProperties::strikethrough, 0))?;
-    class.define_method("color", method!(RunProperties::color, 0))?;
-    class.define_method(
-        "font_size_half_points",
-        method!(RunProperties::font_size_half_points, 0),
-    )?;
-    class.define_method("font_ascii", method!(RunProperties::font_ascii, 0))?;
-    class.define_method("font_ascii_theme", method!(RunProperties::font_ascii_theme, 0))?;
-    class.define_method("vert_align", method!(RunProperties::vert_align, 0))?;
-    class.define_method("font_h_ansi", method!(RunProperties::font_h_ansi, 0))?;
-    class.define_method("font_cs", method!(RunProperties::font_cs, 0))?;
-    class.define_method("font_east_asia", method!(RunProperties::font_east_asia, 0))?;
-    class.define_method("highlight", method!(RunProperties::highlight, 0))?;
-    class.define_method("caps", method!(RunProperties::caps, 0))?;
-    class.define_method("small_caps", method!(RunProperties::small_caps, 0))?;
-    class.define_method("shadow", method!(RunProperties::shadow, 0))?;
-    class.define_method("outline", method!(RunProperties::outline, 0))?;
-    class.define_method("emboss", method!(RunProperties::emboss, 0))?;
-    class.define_method("imprint", method!(RunProperties::imprint, 0))?;
-    class.define_method("char_spacing", method!(RunProperties::char_spacing, 0))?;
-    class.define_method("position", method!(RunProperties::position, 0))?;
-    class.define_method("kern", method!(RunProperties::kern, 0))?;
-    class.define_method("theme_color", method!(RunProperties::theme_color, 0))?;
-    class.define_method("theme_tint", method!(RunProperties::theme_tint, 0))?;
-    class.define_method("theme_shade", method!(RunProperties::theme_shade, 0))?;
 
     let class = module.define_class("StyleDefinition", ruby.class_object())?;
     class.define_singleton_method("new", function!(StyleDefinition::new, 8))?;
@@ -32376,19 +23183,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("paragraph_properties", method!(ResolvedStyle::paragraph_properties, 0))?;
     class.define_method("run_properties", method!(ResolvedStyle::run_properties, 0))?;
 
-    let class = module.define_class("StyleCatalog", ruby.class_object())?;
-    class.define_singleton_method("new", function!(StyleCatalog::new, 3))?;
-    class.define_method("styles", method!(StyleCatalog::styles, 0))?;
-    class.define_method(
-        "default_paragraph_properties",
-        method!(StyleCatalog::default_paragraph_properties, 0),
-    )?;
-    class.define_method(
-        "default_run_properties",
-        method!(StyleCatalog::default_run_properties, 0),
-    )?;
-    class.define_method("resolve_style", method!(StyleCatalog::resolve_style, 1))?;
-
     let class = module.define_class("TableProperties", ruby.class_object())?;
     class.define_singleton_method("new", function!(TableProperties::new, 9))?;
     class.define_method("style_id", method!(TableProperties::style_id, 0))?;
@@ -32400,63 +23194,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("cell_margins", method!(TableProperties::cell_margins, 0))?;
     class.define_method("indent", method!(TableProperties::indent, 0))?;
     class.define_method("caption", method!(TableProperties::caption, 0))?;
-
-    let class = module.define_class("TableLook", ruby.class_object())?;
-    class.define_singleton_method("new", function!(TableLook::new, 6))?;
-    class.define_method("first_row", method!(TableLook::first_row, 0))?;
-    class.define_method("last_row", method!(TableLook::last_row, 0))?;
-    class.define_method("first_column", method!(TableLook::first_column, 0))?;
-    class.define_method("last_column", method!(TableLook::last_column, 0))?;
-    class.define_method("no_h_band", method!(TableLook::no_h_band, 0))?;
-    class.define_method("no_v_band", method!(TableLook::no_v_band, 0))?;
-
-    let class = module.define_class("TableBorders", ruby.class_object())?;
-    class.define_singleton_method("new", function!(TableBorders::new, 6))?;
-    class.define_method("top", method!(TableBorders::top, 0))?;
-    class.define_method("bottom", method!(TableBorders::bottom, 0))?;
-    class.define_method("left", method!(TableBorders::left, 0))?;
-    class.define_method("right", method!(TableBorders::right, 0))?;
-    class.define_method("inside_h", method!(TableBorders::inside_h, 0))?;
-    class.define_method("inside_v", method!(TableBorders::inside_v, 0))?;
-
-    let class = module.define_class("RowProperties", ruby.class_object())?;
-    class.define_singleton_method("new", function!(RowProperties::new, 4))?;
-    class.define_method("height", method!(RowProperties::height, 0))?;
-    class.define_method("height_rule", method!(RowProperties::height_rule, 0))?;
-    class.define_method("is_header", method!(RowProperties::is_header, 0))?;
-    class.define_method("cant_split", method!(RowProperties::cant_split, 0))?;
-
-    let class = module.define_class("ColorScheme", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ColorScheme::new, 13))?;
-    class.define_method("name", method!(ColorScheme::name, 0))?;
-    class.define_method("dk1", method!(ColorScheme::dk1, 0))?;
-    class.define_method("lt1", method!(ColorScheme::lt1, 0))?;
-    class.define_method("dk2", method!(ColorScheme::dk2, 0))?;
-    class.define_method("lt2", method!(ColorScheme::lt2, 0))?;
-    class.define_method("accent1", method!(ColorScheme::accent1, 0))?;
-    class.define_method("accent2", method!(ColorScheme::accent2, 0))?;
-    class.define_method("accent3", method!(ColorScheme::accent3, 0))?;
-    class.define_method("accent4", method!(ColorScheme::accent4, 0))?;
-    class.define_method("accent5", method!(ColorScheme::accent5, 0))?;
-    class.define_method("accent6", method!(ColorScheme::accent6, 0))?;
-    class.define_method("hlink", method!(ColorScheme::hlink, 0))?;
-    class.define_method("fol_hlink", method!(ColorScheme::fol_hlink, 0))?;
-
-    let class = module.define_class("FontScheme", ruby.class_object())?;
-    class.define_singleton_method("new", function!(FontScheme::new, 7))?;
-    class.define_method("name", method!(FontScheme::name, 0))?;
-    class.define_method("major_latin", method!(FontScheme::major_latin, 0))?;
-    class.define_method("major_east_asian", method!(FontScheme::major_east_asian, 0))?;
-    class.define_method("major_complex_script", method!(FontScheme::major_complex_script, 0))?;
-    class.define_method("minor_latin", method!(FontScheme::minor_latin, 0))?;
-    class.define_method("minor_east_asian", method!(FontScheme::minor_east_asian, 0))?;
-    class.define_method("minor_complex_script", method!(FontScheme::minor_complex_script, 0))?;
-
-    let class = module.define_class("Theme", ruby.class_object())?;
-    class.define_singleton_method("new", function!(Theme::new, 3))?;
-    class.define_method("name", method!(Theme::name, 0))?;
-    class.define_method("color_scheme", method!(Theme::color_scheme, 0))?;
-    class.define_method("font_scheme", method!(Theme::font_scheme, 0))?;
 
     let class = module.define_class("XlsxAppProperties", ruby.class_object())?;
     class.define_singleton_method("new", function!(XlsxAppProperties::new, 9))?;
@@ -32521,96 +23258,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("metadata", method!(PptExtractionResult::metadata, 0))?;
     class.define_method("speaker_notes", method!(PptExtractionResult::speaker_notes, 0))?;
 
-    let class = module.define_class("PptMetadata", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PptMetadata::new, 4))?;
-    class.define_method("title", method!(PptMetadata::title, 0))?;
-    class.define_method("subject", method!(PptMetadata::subject, 0))?;
-    class.define_method("author", method!(PptMetadata::author, 0))?;
-    class.define_method("last_author", method!(PptMetadata::last_author, 0))?;
-
-    let class = module.define_class("PptxExtractionOptions", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PptxExtractionOptions::new, 5))?;
-    class.define_method("extract_images", method!(PptxExtractionOptions::extract_images, 0))?;
-    class.define_method("page_config", method!(PptxExtractionOptions::page_config, 0))?;
-    class.define_method("plain", method!(PptxExtractionOptions::plain, 0))?;
-    class.define_method(
-        "include_structure",
-        method!(PptxExtractionOptions::include_structure, 0),
-    )?;
-    class.define_method(
-        "inject_placeholders",
-        method!(PptxExtractionOptions::inject_placeholders, 0),
-    )?;
-
-    let class = module.define_class("CodeExtractor", ruby.class_object())?;
-    class.define_method("name", method!(CodeExtractor::name, 0))?;
-    class.define_method("version", method!(CodeExtractor::version, 0))?;
-    class.define_method("initialize", method!(CodeExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(CodeExtractor::shutdown, 0))?;
-    class.define_method("description", method!(CodeExtractor::description, 0))?;
-    class.define_method("author", method!(CodeExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(CodeExtractor::extract_bytes_async, 3))?;
-    class.define_method("extract_file_async", method!(CodeExtractor::extract_file_async, 3))?;
-    class.define_method("supported_mime_types", method!(CodeExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(CodeExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(CodeExtractor::as_sync_extractor, 0))?;
-    class.define_method("extract_sync", method!(CodeExtractor::extract_sync, 3))?;
-
-    let class = module.define_class("CsvExtractor", ruby.class_object())?;
-    class.define_method("name", method!(CsvExtractor::name, 0))?;
-    class.define_method("version", method!(CsvExtractor::version, 0))?;
-    class.define_method("initialize", method!(CsvExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(CsvExtractor::shutdown, 0))?;
-    class.define_method("description", method!(CsvExtractor::description, 0))?;
-    class.define_method("author", method!(CsvExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(CsvExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(CsvExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(CsvExtractor::priority, 0))?;
-
-    let class = module.define_class("StructuredExtractor", ruby.class_object())?;
-    class.define_method("name", method!(StructuredExtractor::name, 0))?;
-    class.define_method("version", method!(StructuredExtractor::version, 0))?;
-    class.define_method("initialize", method!(StructuredExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(StructuredExtractor::shutdown, 0))?;
-    class.define_method(
-        "extract_bytes_async",
-        method!(StructuredExtractor::extract_bytes_async, 3),
-    )?;
-    class.define_method(
-        "supported_mime_types",
-        method!(StructuredExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(StructuredExtractor::priority, 0))?;
-
-    let class = module.define_class("PlainTextExtractor", ruby.class_object())?;
-    class.define_method("name", method!(PlainTextExtractor::name, 0))?;
-    class.define_method("version", method!(PlainTextExtractor::version, 0))?;
-    class.define_method("initialize", method!(PlainTextExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(PlainTextExtractor::shutdown, 0))?;
-    class.define_method("description", method!(PlainTextExtractor::description, 0))?;
-    class.define_method("author", method!(PlainTextExtractor::author, 0))?;
-    class.define_method(
-        "extract_bytes_async",
-        method!(PlainTextExtractor::extract_bytes_async, 3),
-    )?;
-    class.define_method(
-        "supported_mime_types",
-        method!(PlainTextExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(PlainTextExtractor::priority, 0))?;
-
-    let class = module.define_class("DjotExtractor", ruby.class_object())?;
-    class.define_method("name", method!(DjotExtractor::name, 0))?;
-    class.define_method("version", method!(DjotExtractor::version, 0))?;
-    class.define_method("initialize", method!(DjotExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(DjotExtractor::shutdown, 0))?;
-    class.define_method("description", method!(DjotExtractor::description, 0))?;
-    class.define_method("author", method!(DjotExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(DjotExtractor::extract_bytes_async, 3))?;
-    class.define_method("extract_file_async", method!(DjotExtractor::extract_file_async, 3))?;
-    class.define_method("supported_mime_types", method!(DjotExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(DjotExtractor::priority, 0))?;
-
     let class = module.define_class("ZipBombValidator", ruby.class_object())?;
 
     let class = module.define_class("StringGrowthValidator", ruby.class_object())?;
@@ -32633,403 +23280,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("add_cells", method!(TableValidator::add_cells, 1))?;
     class.define_method("current_cells", method!(TableValidator::current_cells, 0))?;
 
-    let class = module.define_class("ImageExtractor", ruby.class_object())?;
-    class.define_method("name", method!(ImageExtractor::name, 0))?;
-    class.define_method("version", method!(ImageExtractor::version, 0))?;
-    class.define_method("initialize", method!(ImageExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(ImageExtractor::shutdown, 0))?;
-    class.define_method("description", method!(ImageExtractor::description, 0))?;
-    class.define_method("author", method!(ImageExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(ImageExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(ImageExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(ImageExtractor::priority, 0))?;
-
-    let class = module.define_class("ZipExtractor", ruby.class_object())?;
-    class.define_method("name", method!(ZipExtractor::name, 0))?;
-    class.define_method("version", method!(ZipExtractor::version, 0))?;
-    class.define_method("initialize", method!(ZipExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(ZipExtractor::shutdown, 0))?;
-    class.define_method("description", method!(ZipExtractor::description, 0))?;
-    class.define_method("author", method!(ZipExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(ZipExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(ZipExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(ZipExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(ZipExtractor::as_sync_extractor, 0))?;
-    class.define_method("extract_sync", method!(ZipExtractor::extract_sync, 3))?;
-
-    let class = module.define_class("TarExtractor", ruby.class_object())?;
-    class.define_method("name", method!(TarExtractor::name, 0))?;
-    class.define_method("version", method!(TarExtractor::version, 0))?;
-    class.define_method("initialize", method!(TarExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(TarExtractor::shutdown, 0))?;
-    class.define_method("description", method!(TarExtractor::description, 0))?;
-    class.define_method("author", method!(TarExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(TarExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(TarExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(TarExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(TarExtractor::as_sync_extractor, 0))?;
-    class.define_method("extract_sync", method!(TarExtractor::extract_sync, 3))?;
-
-    let class = module.define_class("SevenZExtractor", ruby.class_object())?;
-    class.define_method("name", method!(SevenZExtractor::name, 0))?;
-    class.define_method("version", method!(SevenZExtractor::version, 0))?;
-    class.define_method("initialize", method!(SevenZExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(SevenZExtractor::shutdown, 0))?;
-    class.define_method("description", method!(SevenZExtractor::description, 0))?;
-    class.define_method("author", method!(SevenZExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(SevenZExtractor::extract_bytes_async, 3))?;
-    class.define_method(
-        "supported_mime_types",
-        method!(SevenZExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(SevenZExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(SevenZExtractor::as_sync_extractor, 0))?;
-    class.define_method("extract_sync", method!(SevenZExtractor::extract_sync, 3))?;
-
-    let class = module.define_class("GzipExtractor", ruby.class_object())?;
-    class.define_method("name", method!(GzipExtractor::name, 0))?;
-    class.define_method("version", method!(GzipExtractor::version, 0))?;
-    class.define_method("initialize", method!(GzipExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(GzipExtractor::shutdown, 0))?;
-    class.define_method("description", method!(GzipExtractor::description, 0))?;
-    class.define_method("author", method!(GzipExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(GzipExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(GzipExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(GzipExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(GzipExtractor::as_sync_extractor, 0))?;
-    class.define_method("extract_sync", method!(GzipExtractor::extract_sync, 3))?;
-
-    let class = module.define_class("EmailExtractor", ruby.class_object())?;
-    class.define_method("name", method!(EmailExtractor::name, 0))?;
-    class.define_method("version", method!(EmailExtractor::version, 0))?;
-    class.define_method("initialize", method!(EmailExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(EmailExtractor::shutdown, 0))?;
-    class.define_method("extract_sync", method!(EmailExtractor::extract_sync, 3))?;
-    class.define_method("extract_bytes_async", method!(EmailExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(EmailExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(EmailExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(EmailExtractor::as_sync_extractor, 0))?;
-
-    let class = module.define_class("PstExtractor", ruby.class_object())?;
-    class.define_method("name", method!(PstExtractor::name, 0))?;
-    class.define_method("version", method!(PstExtractor::version, 0))?;
-    class.define_method("initialize", method!(PstExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(PstExtractor::shutdown, 0))?;
-    class.define_method("extract_sync", method!(PstExtractor::extract_sync, 3))?;
-    class.define_method("extract_bytes_async", method!(PstExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(PstExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(PstExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(PstExtractor::as_sync_extractor, 0))?;
-
-    let class = module.define_class("ExcelExtractor", ruby.class_object())?;
-    class.define_method("name", method!(ExcelExtractor::name, 0))?;
-    class.define_method("version", method!(ExcelExtractor::version, 0))?;
-    class.define_method("initialize", method!(ExcelExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(ExcelExtractor::shutdown, 0))?;
-    class.define_method("extract_sync", method!(ExcelExtractor::extract_sync, 3))?;
-    class.define_method("extract_bytes_async", method!(ExcelExtractor::extract_bytes_async, 3))?;
-    class.define_method("extract_file_async", method!(ExcelExtractor::extract_file_async, 3))?;
-    class.define_method("supported_mime_types", method!(ExcelExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(ExcelExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(ExcelExtractor::as_sync_extractor, 0))?;
-
-    let class = module.define_class("HwpExtractor", ruby.class_object())?;
-    class.define_method("name", method!(HwpExtractor::name, 0))?;
-    class.define_method("version", method!(HwpExtractor::version, 0))?;
-    class.define_method("initialize", method!(HwpExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(HwpExtractor::shutdown, 0))?;
-    class.define_method("description", method!(HwpExtractor::description, 0))?;
-    class.define_method("author", method!(HwpExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(HwpExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(HwpExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(HwpExtractor::priority, 0))?;
-
-    let class = module.define_class("KeynoteExtractor", ruby.class_object())?;
-    class.define_method("name", method!(KeynoteExtractor::name, 0))?;
-    class.define_method("version", method!(KeynoteExtractor::version, 0))?;
-    class.define_method("initialize", method!(KeynoteExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(KeynoteExtractor::shutdown, 0))?;
-    class.define_method("description", method!(KeynoteExtractor::description, 0))?;
-    class.define_method("author", method!(KeynoteExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(KeynoteExtractor::extract_bytes_async, 3))?;
-    class.define_method(
-        "supported_mime_types",
-        method!(KeynoteExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(KeynoteExtractor::priority, 0))?;
-
-    let class = module.define_class("NumbersExtractor", ruby.class_object())?;
-    class.define_method("name", method!(NumbersExtractor::name, 0))?;
-    class.define_method("version", method!(NumbersExtractor::version, 0))?;
-    class.define_method("initialize", method!(NumbersExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(NumbersExtractor::shutdown, 0))?;
-    class.define_method("description", method!(NumbersExtractor::description, 0))?;
-    class.define_method("author", method!(NumbersExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(NumbersExtractor::extract_bytes_async, 3))?;
-    class.define_method(
-        "supported_mime_types",
-        method!(NumbersExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(NumbersExtractor::priority, 0))?;
-
-    let class = module.define_class("PagesExtractor", ruby.class_object())?;
-    class.define_method("name", method!(PagesExtractor::name, 0))?;
-    class.define_method("version", method!(PagesExtractor::version, 0))?;
-    class.define_method("initialize", method!(PagesExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(PagesExtractor::shutdown, 0))?;
-    class.define_method("description", method!(PagesExtractor::description, 0))?;
-    class.define_method("author", method!(PagesExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(PagesExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(PagesExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(PagesExtractor::priority, 0))?;
-
-    let class = module.define_class("HtmlExtractor", ruby.class_object())?;
-    class.define_method("name", method!(HtmlExtractor::name, 0))?;
-    class.define_method("version", method!(HtmlExtractor::version, 0))?;
-    class.define_method("initialize", method!(HtmlExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(HtmlExtractor::shutdown, 0))?;
-    class.define_method("extract_sync", method!(HtmlExtractor::extract_sync, 3))?;
-    class.define_method("extract_bytes_async", method!(HtmlExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(HtmlExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(HtmlExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(HtmlExtractor::as_sync_extractor, 0))?;
-
-    let class = module.define_class("BibtexExtractor", ruby.class_object())?;
-    class.define_method("name", method!(BibtexExtractor::name, 0))?;
-    class.define_method("version", method!(BibtexExtractor::version, 0))?;
-    class.define_method("initialize", method!(BibtexExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(BibtexExtractor::shutdown, 0))?;
-    class.define_method("description", method!(BibtexExtractor::description, 0))?;
-    class.define_method("author", method!(BibtexExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(BibtexExtractor::extract_bytes_async, 3))?;
-    class.define_method(
-        "supported_mime_types",
-        method!(BibtexExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(BibtexExtractor::priority, 0))?;
-
-    let class = module.define_class("CitationExtractor", ruby.class_object())?;
-    class.define_method("name", method!(CitationExtractor::name, 0))?;
-    class.define_method("version", method!(CitationExtractor::version, 0))?;
-    class.define_method("initialize", method!(CitationExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(CitationExtractor::shutdown, 0))?;
-    class.define_method("description", method!(CitationExtractor::description, 0))?;
-    class.define_method("author", method!(CitationExtractor::author, 0))?;
-    class.define_method(
-        "extract_bytes_async",
-        method!(CitationExtractor::extract_bytes_async, 3),
-    )?;
-    class.define_method(
-        "supported_mime_types",
-        method!(CitationExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(CitationExtractor::priority, 0))?;
-
-    let class = module.define_class("DocExtractor", ruby.class_object())?;
-    class.define_method("name", method!(DocExtractor::name, 0))?;
-    class.define_method("version", method!(DocExtractor::version, 0))?;
-    class.define_method("initialize", method!(DocExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(DocExtractor::shutdown, 0))?;
-    class.define_method("description", method!(DocExtractor::description, 0))?;
-    class.define_method("author", method!(DocExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(DocExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(DocExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(DocExtractor::priority, 0))?;
-
-    let class = module.define_class("DbfExtractor", ruby.class_object())?;
-    class.define_method("name", method!(DbfExtractor::name, 0))?;
-    class.define_method("version", method!(DbfExtractor::version, 0))?;
-    class.define_method("initialize", method!(DbfExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(DbfExtractor::shutdown, 0))?;
-    class.define_method("description", method!(DbfExtractor::description, 0))?;
-    class.define_method("author", method!(DbfExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(DbfExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(DbfExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(DbfExtractor::priority, 0))?;
-
-    let class = module.define_class("DocxExtractor", ruby.class_object())?;
-    class.define_method("name", method!(DocxExtractor::name, 0))?;
-    class.define_method("version", method!(DocxExtractor::version, 0))?;
-    class.define_method("initialize", method!(DocxExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(DocxExtractor::shutdown, 0))?;
-    class.define_method("description", method!(DocxExtractor::description, 0))?;
-    class.define_method("author", method!(DocxExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(DocxExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(DocxExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(DocxExtractor::priority, 0))?;
-
-    let class = module.define_class("EpubExtractor", ruby.class_object())?;
-    class.define_method("name", method!(EpubExtractor::name, 0))?;
-    class.define_method("version", method!(EpubExtractor::version, 0))?;
-    class.define_method("initialize", method!(EpubExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(EpubExtractor::shutdown, 0))?;
-    class.define_method("description", method!(EpubExtractor::description, 0))?;
-    class.define_method("author", method!(EpubExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(EpubExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(EpubExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(EpubExtractor::priority, 0))?;
-
-    let class = module.define_class("FictionBookExtractor", ruby.class_object())?;
-    class.define_method("name", method!(FictionBookExtractor::name, 0))?;
-    class.define_method("version", method!(FictionBookExtractor::version, 0))?;
-    class.define_method("initialize", method!(FictionBookExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(FictionBookExtractor::shutdown, 0))?;
-    class.define_method("description", method!(FictionBookExtractor::description, 0))?;
-    class.define_method("author", method!(FictionBookExtractor::author, 0))?;
-    class.define_method(
-        "extract_bytes_async",
-        method!(FictionBookExtractor::extract_bytes_async, 3),
-    )?;
-    class.define_method(
-        "supported_mime_types",
-        method!(FictionBookExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(FictionBookExtractor::priority, 0))?;
-
-    let class = module.define_class("MarkdownExtractor", ruby.class_object())?;
-    class.define_method("name", method!(MarkdownExtractor::name, 0))?;
-    class.define_method("version", method!(MarkdownExtractor::version, 0))?;
-    class.define_method("initialize", method!(MarkdownExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(MarkdownExtractor::shutdown, 0))?;
-    class.define_method("description", method!(MarkdownExtractor::description, 0))?;
-    class.define_method("author", method!(MarkdownExtractor::author, 0))?;
-    class.define_method(
-        "extract_bytes_async",
-        method!(MarkdownExtractor::extract_bytes_async, 3),
-    )?;
-    class.define_method("extract_file_async", method!(MarkdownExtractor::extract_file_async, 3))?;
-    class.define_method(
-        "supported_mime_types",
-        method!(MarkdownExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(MarkdownExtractor::priority, 0))?;
-
-    let class = module.define_class("MdxExtractor", ruby.class_object())?;
-    class.define_method("name", method!(MdxExtractor::name, 0))?;
-    class.define_method("version", method!(MdxExtractor::version, 0))?;
-    class.define_method("initialize", method!(MdxExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(MdxExtractor::shutdown, 0))?;
-    class.define_method("description", method!(MdxExtractor::description, 0))?;
-    class.define_method("author", method!(MdxExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(MdxExtractor::extract_bytes_async, 3))?;
-    class.define_method("extract_file_async", method!(MdxExtractor::extract_file_async, 3))?;
-    class.define_method("supported_mime_types", method!(MdxExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(MdxExtractor::priority, 0))?;
-
-    let class = module.define_class("RstExtractor", ruby.class_object())?;
-    class.define_method("name", method!(RstExtractor::name, 0))?;
-    class.define_method("version", method!(RstExtractor::version, 0))?;
-    class.define_method("initialize", method!(RstExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(RstExtractor::shutdown, 0))?;
-    class.define_method("description", method!(RstExtractor::description, 0))?;
-    class.define_method("author", method!(RstExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(RstExtractor::extract_bytes_async, 3))?;
-    class.define_method("extract_file_async", method!(RstExtractor::extract_file_async, 3))?;
-    class.define_method("supported_mime_types", method!(RstExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(RstExtractor::priority, 0))?;
-
-    let class = module.define_class("LatexExtractor", ruby.class_object())?;
-    class.define_method("name", method!(LatexExtractor::name, 0))?;
-    class.define_method("version", method!(LatexExtractor::version, 0))?;
-    class.define_method("initialize", method!(LatexExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(LatexExtractor::shutdown, 0))?;
-    class.define_method("description", method!(LatexExtractor::description, 0))?;
-    class.define_method("author", method!(LatexExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(LatexExtractor::extract_bytes_async, 3))?;
-    class.define_method("extract_file_async", method!(LatexExtractor::extract_file_async, 3))?;
-    class.define_method("supported_mime_types", method!(LatexExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(LatexExtractor::priority, 0))?;
-
-    let class = module.define_class("JupyterExtractor", ruby.class_object())?;
-    class.define_method("name", method!(JupyterExtractor::name, 0))?;
-    class.define_method("version", method!(JupyterExtractor::version, 0))?;
-    class.define_method("initialize", method!(JupyterExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(JupyterExtractor::shutdown, 0))?;
-    class.define_method("description", method!(JupyterExtractor::description, 0))?;
-    class.define_method("author", method!(JupyterExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(JupyterExtractor::extract_bytes_async, 3))?;
-    class.define_method(
-        "supported_mime_types",
-        method!(JupyterExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(JupyterExtractor::priority, 0))?;
-
-    let class = module.define_class("OrgModeExtractor", ruby.class_object())?;
-    class.define_method("name", method!(OrgModeExtractor::name, 0))?;
-    class.define_method("version", method!(OrgModeExtractor::version, 0))?;
-    class.define_method("initialize", method!(OrgModeExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(OrgModeExtractor::shutdown, 0))?;
-    class.define_method("description", method!(OrgModeExtractor::description, 0))?;
-    class.define_method("author", method!(OrgModeExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(OrgModeExtractor::extract_bytes_async, 3))?;
-    class.define_method("extract_file_async", method!(OrgModeExtractor::extract_file_async, 3))?;
-    class.define_method(
-        "supported_mime_types",
-        method!(OrgModeExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(OrgModeExtractor::priority, 0))?;
-
-    let class = module.define_class("OdtExtractor", ruby.class_object())?;
-    class.define_method("name", method!(OdtExtractor::name, 0))?;
-    class.define_method("version", method!(OdtExtractor::version, 0))?;
-    class.define_method("initialize", method!(OdtExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(OdtExtractor::shutdown, 0))?;
-    class.define_method("description", method!(OdtExtractor::description, 0))?;
-    class.define_method("author", method!(OdtExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(OdtExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(OdtExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(OdtExtractor::priority, 0))?;
-
-    let class = module.define_class("OpmlExtractor", ruby.class_object())?;
-    class.define_method("name", method!(OpmlExtractor::name, 0))?;
-    class.define_method("version", method!(OpmlExtractor::version, 0))?;
-    class.define_method("initialize", method!(OpmlExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(OpmlExtractor::shutdown, 0))?;
-    class.define_method("description", method!(OpmlExtractor::description, 0))?;
-    class.define_method("author", method!(OpmlExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(OpmlExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(OpmlExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(OpmlExtractor::priority, 0))?;
-
-    let class = module.define_class("TypstExtractor", ruby.class_object())?;
-    class.define_method("name", method!(TypstExtractor::name, 0))?;
-    class.define_method("version", method!(TypstExtractor::version, 0))?;
-    class.define_method("initialize", method!(TypstExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(TypstExtractor::shutdown, 0))?;
-    class.define_method("description", method!(TypstExtractor::description, 0))?;
-    class.define_method("author", method!(TypstExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(TypstExtractor::extract_bytes_async, 3))?;
-    class.define_method("extract_file_async", method!(TypstExtractor::extract_file_async, 3))?;
-    class.define_method("supported_mime_types", method!(TypstExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(TypstExtractor::priority, 0))?;
-
-    let class = module.define_class("JatsExtractor", ruby.class_object())?;
-    class.define_method("name", method!(JatsExtractor::name, 0))?;
-    class.define_method("version", method!(JatsExtractor::version, 0))?;
-    class.define_method("initialize", method!(JatsExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(JatsExtractor::shutdown, 0))?;
-    class.define_method("extract_bytes_async", method!(JatsExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(JatsExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(JatsExtractor::priority, 0))?;
-
-    let class = module.define_class("NativeTextStats", ruby.class_object())?;
-    class.define_singleton_method("new", function!(NativeTextStats::new, 9))?;
-    class.define_method("non_whitespace", method!(NativeTextStats::non_whitespace, 0))?;
-    class.define_method("alnum", method!(NativeTextStats::alnum, 0))?;
-    class.define_method("meaningful_words", method!(NativeTextStats::meaningful_words, 0))?;
-    class.define_method("alnum_ratio", method!(NativeTextStats::alnum_ratio, 0))?;
-    class.define_method("garbage_char_count", method!(NativeTextStats::garbage_char_count, 0))?;
-    class.define_method(
-        "fragmented_word_ratio",
-        method!(NativeTextStats::fragmented_word_ratio, 0),
-    )?;
-    class.define_method(
-        "consecutive_repeat_ratio",
-        method!(NativeTextStats::consecutive_repeat_ratio, 0),
-    )?;
-    class.define_method("avg_word_length", method!(NativeTextStats::avg_word_length, 0))?;
-    class.define_method("word_count", method!(NativeTextStats::word_count, 0))?;
-
     let class = module.define_class("OcrFallbackDecision", ruby.class_object())?;
     class.define_singleton_method("new", function!(OcrFallbackDecision::new, 4))?;
     class.define_method("stats", method!(OcrFallbackDecision::stats, 0))?;
@@ -33040,121 +23290,9 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("avg_alnum", method!(OcrFallbackDecision::avg_alnum, 0))?;
     class.define_method("fallback", method!(OcrFallbackDecision::fallback, 0))?;
 
-    let class = module.define_class("PdfExtractor", ruby.class_object())?;
-    class.define_method("name", method!(PdfExtractor::name, 0))?;
-    class.define_method("version", method!(PdfExtractor::version, 0))?;
-    class.define_method("initialize", method!(PdfExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(PdfExtractor::shutdown, 0))?;
-    class.define_method("extract_bytes_async", method!(PdfExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(PdfExtractor::supported_mime_types, 0))?;
-
-    let class = module.define_class("PptExtractor", ruby.class_object())?;
-    class.define_method("name", method!(PptExtractor::name, 0))?;
-    class.define_method("version", method!(PptExtractor::version, 0))?;
-    class.define_method("initialize", method!(PptExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(PptExtractor::shutdown, 0))?;
-    class.define_method("description", method!(PptExtractor::description, 0))?;
-    class.define_method("author", method!(PptExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(PptExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(PptExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(PptExtractor::priority, 0))?;
-
-    let class = module.define_class("PptxExtractor", ruby.class_object())?;
-    class.define_method("name", method!(PptxExtractor::name, 0))?;
-    class.define_method("version", method!(PptxExtractor::version, 0))?;
-    class.define_method("initialize", method!(PptxExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(PptxExtractor::shutdown, 0))?;
-    class.define_method("extract_bytes_async", method!(PptxExtractor::extract_bytes_async, 3))?;
-    class.define_method("extract_file_async", method!(PptxExtractor::extract_file_async, 3))?;
-    class.define_method("supported_mime_types", method!(PptxExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(PptxExtractor::priority, 0))?;
-
-    let class = module.define_class("RtfExtractor", ruby.class_object())?;
-    class.define_method("name", method!(RtfExtractor::name, 0))?;
-    class.define_method("version", method!(RtfExtractor::version, 0))?;
-    class.define_method("initialize", method!(RtfExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(RtfExtractor::shutdown, 0))?;
-    class.define_method("description", method!(RtfExtractor::description, 0))?;
-    class.define_method("author", method!(RtfExtractor::author, 0))?;
-    class.define_method("extract_bytes_async", method!(RtfExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(RtfExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(RtfExtractor::priority, 0))?;
-
-    let class = module.define_class("XmlExtractor", ruby.class_object())?;
-    class.define_method("name", method!(XmlExtractor::name, 0))?;
-    class.define_method("version", method!(XmlExtractor::version, 0))?;
-    class.define_method("initialize", method!(XmlExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(XmlExtractor::shutdown, 0))?;
-    class.define_method("description", method!(XmlExtractor::description, 0))?;
-    class.define_method("author", method!(XmlExtractor::author, 0))?;
-    class.define_method("extract_sync", method!(XmlExtractor::extract_sync, 3))?;
-    class.define_method("extract_bytes_async", method!(XmlExtractor::extract_bytes_async, 3))?;
-    class.define_method("supported_mime_types", method!(XmlExtractor::supported_mime_types, 0))?;
-    class.define_method("priority", method!(XmlExtractor::priority, 0))?;
-    class.define_method("as_sync_extractor", method!(XmlExtractor::as_sync_extractor, 0))?;
-
-    let class = module.define_class("DocbookExtractor", ruby.class_object())?;
-    class.define_method("name", method!(DocbookExtractor::name, 0))?;
-    class.define_method("version", method!(DocbookExtractor::version, 0))?;
-    class.define_method("initialize", method!(DocbookExtractor::initialize, 0))?;
-    class.define_method("shutdown", method!(DocbookExtractor::shutdown, 0))?;
-    class.define_method("extract_bytes_async", method!(DocbookExtractor::extract_bytes_async, 3))?;
-    class.define_method(
-        "supported_mime_types",
-        method!(DocbookExtractor::supported_mime_types, 0),
-    )?;
-    class.define_method("priority", method!(DocbookExtractor::priority, 0))?;
-
     let class = module.define_class("ModelCache", ruby.class_object())?;
     class.define_method("put", method!(ModelCache::put, 1))?;
     class.define_method("take", method!(ModelCache::take, 0))?;
-
-    let class = module.define_class("PanicContext", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PanicContext::new, 5))?;
-    class.define_method("file", method!(PanicContext::file, 0))?;
-    class.define_method("line", method!(PanicContext::line, 0))?;
-    class.define_method("function", method!(PanicContext::function, 0))?;
-    class.define_method("message", method!(PanicContext::message, 0))?;
-    class.define_method("timestamp", method!(PanicContext::timestamp, 0))?;
-    class.define_method("format", method!(PanicContext::format, 0))?;
-
-    let class = module.define_class("DocumentExtractorRegistry", ruby.class_object())?;
-    class.define_method("register", method!(DocumentExtractorRegistry::register, 1))?;
-    class.define_method("get", method!(DocumentExtractorRegistry::get, 1))?;
-    class.define_method("list", method!(DocumentExtractorRegistry::list, 0))?;
-    class.define_method("remove", method!(DocumentExtractorRegistry::remove, 1))?;
-    class.define_method("shutdown_all", method!(DocumentExtractorRegistry::shutdown_all, 0))?;
-
-    let class = module.define_class("OcrBackendRegistry", ruby.class_object())?;
-    class.define_method("register", method!(OcrBackendRegistry::register, 1))?;
-    class.define_method("get", method!(OcrBackendRegistry::get, 1))?;
-    class.define_method("get_for_language", method!(OcrBackendRegistry::get_for_language, 1))?;
-    class.define_method("list", method!(OcrBackendRegistry::list, 0))?;
-    class.define_method("remove", method!(OcrBackendRegistry::remove, 1))?;
-    class.define_method("shutdown_all", method!(OcrBackendRegistry::shutdown_all, 0))?;
-    class.define_method("reset_to_defaults", method!(OcrBackendRegistry::reset_to_defaults, 0))?;
-
-    let class = module.define_class("PostProcessorRegistry", ruby.class_object())?;
-    class.define_method("register", method!(PostProcessorRegistry::register, 2))?;
-    class.define_method("get_for_stage", method!(PostProcessorRegistry::get_for_stage, 1))?;
-    class.define_method("list", method!(PostProcessorRegistry::list, 0))?;
-    class.define_method("remove", method!(PostProcessorRegistry::remove, 1))?;
-    class.define_method("shutdown_all", method!(PostProcessorRegistry::shutdown_all, 0))?;
-
-    let class = module.define_class("RendererRegistry", ruby.class_object())?;
-    class.define_method("register", method!(RendererRegistry::register, 1))?;
-    class.define_method("get", method!(RendererRegistry::get, 1))?;
-    class.define_method("render", method!(RendererRegistry::render, 2))?;
-    class.define_method("list", method!(RendererRegistry::list, 0))?;
-    class.define_method("remove", method!(RendererRegistry::remove, 1))?;
-    class.define_method("reset_to_defaults", method!(RendererRegistry::reset_to_defaults, 0))?;
-
-    let class = module.define_class("ValidatorRegistry", ruby.class_object())?;
-    class.define_method("register", method!(ValidatorRegistry::register, 1))?;
-    class.define_method("get_all", method!(ValidatorRegistry::get_all, 0))?;
-    class.define_method("list", method!(ValidatorRegistry::list, 0))?;
-    class.define_method("remove", method!(ValidatorRegistry::remove, 1))?;
-    class.define_method("shutdown_all", method!(ValidatorRegistry::shutdown_all, 0))?;
 
     let class = module.define_class("ExtractionMetrics", ruby.class_object())?;
     class.define_singleton_method("new", function!(ExtractionMetrics::new, 11))?;
@@ -33184,11 +23322,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         "concurrent_extractions",
         method!(ExtractionMetrics::concurrent_extractions, 0),
     )?;
-
-    let class = module.define_class("TokenReducer", ruby.class_object())?;
-    class.define_method("language", method!(TokenReducer::language, 0))?;
-    class.define_method("reduce", method!(TokenReducer::reduce, 1))?;
-    class.define_method("batch_reduce", method!(TokenReducer::batch_reduce, 1))?;
 
     let class = module.define_class("QualityProcessor", ruby.class_object())?;
     class.define_method("name", method!(QualityProcessor::name, 0))?;
@@ -33953,23 +24086,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("kind", method!(Uri::kind, 0))?;
     class.define_method("with_page", method!(Uri::with_page, 1))?;
 
-    let class = module.define_class("PoolMetrics", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PoolMetrics::new, 4))?;
-    class.define_method("total_acquires", method!(PoolMetrics::total_acquires, 0))?;
-    class.define_method("total_cache_hits", method!(PoolMetrics::total_cache_hits, 0))?;
-    class.define_method("peak_items_stored", method!(PoolMetrics::peak_items_stored, 0))?;
-    class.define_method("total_creations", method!(PoolMetrics::total_creations, 0))?;
-    class.define_method("hit_rate", method!(PoolMetrics::hit_rate, 0))?;
-    class.define_method("snapshot", method!(PoolMetrics::snapshot, 0))?;
-    class.define_method("reset", method!(PoolMetrics::reset, 0))?;
-
-    let class = module.define_class("PoolMetricsSnapshot", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PoolMetricsSnapshot::new, 4))?;
-    class.define_method("total_acquires", method!(PoolMetricsSnapshot::total_acquires, 0))?;
-    class.define_method("total_cache_hits", method!(PoolMetricsSnapshot::total_cache_hits, 0))?;
-    class.define_method("peak_items_stored", method!(PoolMetricsSnapshot::peak_items_stored, 0))?;
-    class.define_method("total_creations", method!(PoolMetricsSnapshot::total_creations, 0))?;
-
     let class = module.define_class("StringBufferPool", ruby.class_object())?;
 
     let class = module.define_class("ByteBufferPool", ruby.class_object())?;
@@ -33978,41 +24094,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("acquire", method!(Pool::acquire, 0))?;
     class.define_method("size", method!(Pool::size, 0))?;
     class.define_method("clear", method!(Pool::clear, 0))?;
-
-    let class = module.define_class("PoolSizeHint", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PoolSizeHint::new, 5))?;
-    class.define_method("estimated_total_size", method!(PoolSizeHint::estimated_total_size, 0))?;
-    class.define_method("string_buffer_count", method!(PoolSizeHint::string_buffer_count, 0))?;
-    class.define_method(
-        "string_buffer_capacity",
-        method!(PoolSizeHint::string_buffer_capacity, 0),
-    )?;
-    class.define_method("byte_buffer_count", method!(PoolSizeHint::byte_buffer_count, 0))?;
-    class.define_method("byte_buffer_capacity", method!(PoolSizeHint::byte_buffer_capacity, 0))?;
-    class.define_method(
-        "estimated_string_pool_memory",
-        method!(PoolSizeHint::estimated_string_pool_memory, 0),
-    )?;
-    class.define_method(
-        "estimated_byte_pool_memory",
-        method!(PoolSizeHint::estimated_byte_pool_memory, 0),
-    )?;
-    class.define_method("total_pool_memory", method!(PoolSizeHint::total_pool_memory, 0))?;
-
-    let class = module.define_class("PoolConfig", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PoolConfig::new, 3))?;
-    class.define_method("max_buffers_per_size", method!(PoolConfig::max_buffers_per_size, 0))?;
-    class.define_method("initial_capacity", method!(PoolConfig::initial_capacity, 0))?;
-    class.define_method(
-        "max_capacity_before_discard",
-        method!(PoolConfig::max_capacity_before_discard, 0),
-    )?;
-
-    let class = module.define_class("StringBufferPoolMetrics", ruby.class_object())?;
-    class.define_singleton_method("new", function!(StringBufferPoolMetrics::new, 3))?;
-    class.define_method("total_acquires", method!(StringBufferPoolMetrics::total_acquires, 0))?;
-    class.define_method("total_reuses", method!(StringBufferPoolMetrics::total_reuses, 0))?;
-    class.define_method("hit_rate", method!(StringBufferPoolMetrics::hit_rate, 0))?;
 
     let class = module.define_class("PooledString", ruby.class_object())?;
     class.define_method("buffer_mut", method!(PooledString::buffer_mut, 0))?;
@@ -34029,50 +24110,11 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("eq", method!(InternedString::eq, 1))?;
     class.define_method("deref", method!(InternedString::deref, 0))?;
 
-    let class = module.define_class("Instant", ruby.class_object())?;
-    class.define_method("elapsed_secs_f64", method!(Instant::elapsed_secs_f64, 0))?;
-    class.define_method("elapsed_ms", method!(Instant::elapsed_ms, 0))?;
-    class.define_method("elapsed_millis", method!(Instant::elapsed_millis, 0))?;
-
-    let class = module.define_class("HocrWord", ruby.class_object())?;
-    class.define_singleton_method("new", function!(HocrWord::new, 6))?;
-    class.define_method("text", method!(HocrWord::text, 0))?;
-    class.define_method("left", method!(HocrWord::left, 0))?;
-    class.define_method("top", method!(HocrWord::top, 0))?;
-    class.define_method("width", method!(HocrWord::width, 0))?;
-    class.define_method("height", method!(HocrWord::height, 0))?;
-    class.define_method("confidence", method!(HocrWord::confidence, 0))?;
-    class.define_method("right", method!(HocrWord::right, 0))?;
-    class.define_method("bottom", method!(HocrWord::bottom, 0))?;
-    class.define_method("y_center", method!(HocrWord::y_center, 0))?;
-    class.define_method("x_center", method!(HocrWord::x_center, 0))?;
-
-    let class = module.define_class("ExtractionService", ruby.class_object())?;
-    class.define_method("poll_ready", method!(ExtractionService::poll_ready, 1))?;
-    class.define_method("call", method!(ExtractionService::call, 1))?;
-
     let class = module.define_class("TracingLayer", ruby.class_object())?;
     class.define_method("layer", method!(TracingLayer::layer, 1))?;
 
     let class = module.define_class("MetricsLayer", ruby.class_object())?;
     class.define_method("layer", method!(MetricsLayer::layer, 1))?;
-
-    let class = module.define_class("ExtractionRequest", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ExtractionRequest::new, 3))?;
-    class.define_method("source", method!(ExtractionRequest::source, 0))?;
-    class.define_method("config", method!(ExtractionRequest::config, 0))?;
-    class.define_method("file_overrides", method!(ExtractionRequest::file_overrides, 0))?;
-    class.define_method("with_overrides", method!(ExtractionRequest::with_overrides, 1))?;
-
-    let class = module.define_class("ExtractionServiceBuilder", ruby.class_object())?;
-    class.define_method("with_timeout", method!(ExtractionServiceBuilder::with_timeout, 1))?;
-    class.define_method(
-        "with_concurrency_limit",
-        method!(ExtractionServiceBuilder::with_concurrency_limit, 1),
-    )?;
-    class.define_method("with_tracing", method!(ExtractionServiceBuilder::with_tracing, 0))?;
-    class.define_method("with_metrics", method!(ExtractionServiceBuilder::with_metrics, 0))?;
-    class.define_method("build", method!(ExtractionServiceBuilder::build, 0))?;
 
     let class = module.define_class("ApiError", ruby.class_object())?;
     class.define_singleton_method("new", function!(ApiError::new, 2))?;
@@ -34081,17 +24123,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("into_response", method!(ApiError::into_response, 0))?;
 
     let class = module.define_class("ApiDoc", ruby.class_object())?;
-
-    let class = module.define_class("ApiSizeLimits", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ApiSizeLimits::new, 2))?;
-    class.define_method(
-        "max_request_body_bytes",
-        method!(ApiSizeLimits::max_request_body_bytes, 0),
-    )?;
-    class.define_method(
-        "max_multipart_field_bytes",
-        method!(ApiSizeLimits::max_multipart_field_bytes, 0),
-    )?;
 
     let class = module.define_class("HealthResponse", ruby.class_object())?;
     class.define_singleton_method("new", function!(HealthResponse::new, 3))?;
@@ -34105,13 +24136,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("rust_backend", method!(InfoResponse::rust_backend, 0))?;
 
     let class = module.define_class("ExtractResponse", ruby.class_object())?;
-
-    let class = module.define_class("ErrorResponse", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ErrorResponse::new, 4))?;
-    class.define_method("error_type", method!(ErrorResponse::error_type, 0))?;
-    class.define_method("message", method!(ErrorResponse::message, 0))?;
-    class.define_method("traceback", method!(ErrorResponse::traceback, 0))?;
-    class.define_method("status_code", method!(ErrorResponse::status_code, 0))?;
 
     let class = module.define_class("ApiState", ruby.class_object())?;
     class.define_singleton_method("new", function!(ApiState::new, 2))?;
@@ -34213,18 +24237,10 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("page_content", method!(OpenWebDocumentResponse::page_content, 0))?;
     class.define_method("metadata", method!(OpenWebDocumentResponse::metadata, 0))?;
 
-    let class = module.define_class("OpenWebDocumentMetadata", ruby.class_object())?;
-    class.define_singleton_method("new", function!(OpenWebDocumentMetadata::new, 1))?;
-    class.define_method("source", method!(OpenWebDocumentMetadata::source, 0))?;
-
     let class = module.define_class("DoclingCompatResponse", ruby.class_object())?;
     class.define_singleton_method("new", function!(DoclingCompatResponse::new, 2))?;
     class.define_method("document", method!(DoclingCompatResponse::document, 0))?;
     class.define_method("status", method!(DoclingCompatResponse::status, 0))?;
-
-    let class = module.define_class("DoclingCompatDocument", ruby.class_object())?;
-    class.define_singleton_method("new", function!(DoclingCompatDocument::new, 1))?;
-    class.define_method("md_content", method!(DoclingCompatDocument::md_content, 0))?;
 
     let class = module.define_class("ExtractFileParams", ruby.class_object())?;
     class.define_singleton_method("new", function!(ExtractFileParams::new, 5))?;
@@ -34288,10 +24304,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("overlap", method!(ChunkTextParams::overlap, 0))?;
     class.define_method("chunker_type", method!(ChunkTextParams::chunker_type, 0))?;
 
-    let class = module.define_class("KreuzbergMcp", ruby.class_object())?;
-    class.define_method("clone", method!(KreuzbergMcp::clone, 0))?;
-    class.define_method("get_info", method!(KreuzbergMcp::get_info, 0))?;
-
     let class = module.define_class("ChunkingResult", ruby.class_object())?;
     class.define_singleton_method("new", function!(ChunkingResult::new, 2))?;
     class.define_method("chunks", method!(ChunkingResult::chunks, 0))?;
@@ -34349,43 +24361,10 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("algorithm", method!(Keyword::algorithm, 0))?;
     class.define_method("positions", method!(Keyword::positions, 0))?;
 
-    let class = module.define_class("OcrCache", ruby.class_object())?;
-    class.define_method("get_cached_result", method!(OcrCache::get_cached_result, 3))?;
-    class.define_method("set_cached_result", method!(OcrCache::set_cached_result, 4))?;
-    class.define_method("clear", method!(OcrCache::clear, 0))?;
-    class.define_method("get_stats", method!(OcrCache::get_stats, 0))?;
-
     let class = module.define_class("OcrCacheStats", ruby.class_object())?;
     class.define_singleton_method("new", function!(OcrCacheStats::new, 2))?;
     class.define_method("total_files", method!(OcrCacheStats::total_files, 0))?;
     class.define_method("total_size_mb", method!(OcrCacheStats::total_size_mb, 0))?;
-
-    let class = module.define_class("TsvRow", ruby.class_object())?;
-    class.define_singleton_method("new", function!(TsvRow::new, 12))?;
-    class.define_method("level", method!(TsvRow::level, 0))?;
-    class.define_method("page_num", method!(TsvRow::page_num, 0))?;
-    class.define_method("block_num", method!(TsvRow::block_num, 0))?;
-    class.define_method("par_num", method!(TsvRow::par_num, 0))?;
-    class.define_method("line_num", method!(TsvRow::line_num, 0))?;
-    class.define_method("word_num", method!(TsvRow::word_num, 0))?;
-    class.define_method("left", method!(TsvRow::left, 0))?;
-    class.define_method("top", method!(TsvRow::top, 0))?;
-    class.define_method("width", method!(TsvRow::width, 0))?;
-    class.define_method("height", method!(TsvRow::height, 0))?;
-    class.define_method("conf", method!(TsvRow::conf, 0))?;
-    class.define_method("text", method!(TsvRow::text, 0))?;
-
-    let class = module.define_class("LanguageRegistry", ruby.class_object())?;
-    class.define_method(
-        "get_supported_languages",
-        method!(LanguageRegistry::get_supported_languages, 1),
-    )?;
-    class.define_method(
-        "is_language_supported",
-        method!(LanguageRegistry::is_language_supported, 2),
-    )?;
-    class.define_method("get_backends", method!(LanguageRegistry::get_backends, 0))?;
-    class.define_method("get_language_count", method!(LanguageRegistry::get_language_count, 1))?;
 
     let class = module.define_class("RecognizedTable", ruby.class_object())?;
     class.define_singleton_method("new", function!(RecognizedTable::new, 3))?;
@@ -34393,45 +24372,9 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("cells", method!(RecognizedTable::cells, 0))?;
     class.define_method("markdown", method!(RecognizedTable::markdown, 0))?;
 
-    let class = module.define_class("OcrProcessor", ruby.class_object())?;
-    class.define_method("process_image", method!(OcrProcessor::process_image, 2))?;
-    class.define_method(
-        "process_image_with_format",
-        method!(OcrProcessor::process_image_with_format, 3),
-    )?;
-    class.define_method("clear_cache", method!(OcrProcessor::clear_cache, 0))?;
-    class.define_method("get_cache_stats", method!(OcrProcessor::get_cache_stats, 0))?;
-    class.define_method("process_image_file", method!(OcrProcessor::process_image_file, 2))?;
-    class.define_method(
-        "process_image_file_with_format",
-        method!(OcrProcessor::process_image_file_with_format, 3),
-    )?;
-    class.define_method(
-        "process_image_files_batch",
-        method!(OcrProcessor::process_image_files_batch, 2),
-    )?;
-
     let class = module.define_class("TessdataManager", ruby.class_object())?;
     class.define_method("cache_dir", method!(TessdataManager::cache_dir, 0))?;
     class.define_method("is_language_cached", method!(TessdataManager::is_language_cached, 1))?;
-
-    let class = module.define_class("TesseractBackend", ruby.class_object())?;
-    class.define_method("name", method!(TesseractBackend::name, 0))?;
-    class.define_method("version", method!(TesseractBackend::version, 0))?;
-    class.define_method("initialize", method!(TesseractBackend::initialize, 0))?;
-    class.define_method("shutdown", method!(TesseractBackend::shutdown, 0))?;
-    class.define_method("process_image_async", method!(TesseractBackend::process_image_async, 2))?;
-    class.define_method(
-        "process_image_file_async",
-        method!(TesseractBackend::process_image_file_async, 2),
-    )?;
-    class.define_method("supports_language", method!(TesseractBackend::supports_language, 1))?;
-    class.define_method("backend_type", method!(TesseractBackend::backend_type, 0))?;
-    class.define_method("supported_languages", method!(TesseractBackend::supported_languages, 0))?;
-    class.define_method(
-        "supports_table_detection",
-        method!(TesseractBackend::supports_table_detection, 0),
-    )?;
 
     let class = module.define_class("PaddleOcrConfig", ruby.class_object())?;
     class.define_singleton_method("new", function!(PaddleOcrConfig::new, 12))?;
@@ -34539,36 +24482,12 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("is_italic", method!(CharData::is_italic, 0))?;
     class.define_method("baseline_y", method!(CharData::baseline_y, 0))?;
 
-    let class = module.define_class("TextBlock", ruby.class_object())?;
-    class.define_singleton_method("new", function!(TextBlock::new, 3))?;
-    class.define_method("text", method!(TextBlock::text, 0))?;
-    class.define_method("bbox", method!(TextBlock::bbox, 0))?;
-    class.define_method("font_size", method!(TextBlock::font_size, 0))?;
-
-    let class = module.define_class("KMeansResult", ruby.class_object())?;
-    class.define_singleton_method("new", function!(KMeansResult::new, 1))?;
-    class.define_method("labels", method!(KMeansResult::labels, 0))?;
-
     let class = module.define_class("HierarchyBlock", ruby.class_object())?;
     class.define_singleton_method("new", function!(HierarchyBlock::new, 4))?;
     class.define_method("text", method!(HierarchyBlock::text, 0))?;
     class.define_method("bbox", method!(HierarchyBlock::bbox, 0))?;
     class.define_method("font_size", method!(HierarchyBlock::font_size, 0))?;
     class.define_method("hierarchy_level", method!(HierarchyBlock::hierarchy_level, 0))?;
-
-    let class = module.define_class("SegmentData", ruby.class_object())?;
-    class.define_singleton_method("new", function!(SegmentData::new, 11))?;
-    class.define_method("text", method!(SegmentData::text, 0))?;
-    class.define_method("x", method!(SegmentData::x, 0))?;
-    class.define_method("y", method!(SegmentData::y, 0))?;
-    class.define_method("width", method!(SegmentData::width, 0))?;
-    class.define_method("height", method!(SegmentData::height, 0))?;
-    class.define_method("font_size", method!(SegmentData::font_size, 0))?;
-    class.define_method("is_bold", method!(SegmentData::is_bold, 0))?;
-    class.define_method("is_italic", method!(SegmentData::is_italic, 0))?;
-    class.define_method("is_monospace", method!(SegmentData::is_monospace, 0))?;
-    class.define_method("baseline_y", method!(SegmentData::baseline_y, 0))?;
-    class.define_method("assigned_role", method!(SegmentData::assigned_role, 0))?;
 
     let class = module.define_class("PdfImage", ruby.class_object())?;
     class.define_singleton_method("new", function!(PdfImage::new, 9))?;
@@ -34581,23 +24500,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("filters", method!(PdfImage::filters, 0))?;
     class.define_method("data", method!(PdfImage::data, 0))?;
     class.define_method("decoded_format", method!(PdfImage::decoded_format, 0))?;
-
-    let class = module.define_class("PdfImageExtractor", ruby.class_object())?;
-    class.define_method("extract_images", method!(PdfImageExtractor::extract_images, 0))?;
-    class.define_method(
-        "extract_images_from_page",
-        method!(PdfImageExtractor::extract_images_from_page, 1),
-    )?;
-    class.define_method("get_image_count", method!(PdfImageExtractor::get_image_count, 0))?;
-
-    let class = module.define_class("PdfLayoutBBox", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PdfLayoutBBox::new, 4))?;
-    class.define_method("left", method!(PdfLayoutBBox::left, 0))?;
-    class.define_method("bottom", method!(PdfLayoutBBox::bottom, 0))?;
-    class.define_method("right", method!(PdfLayoutBBox::right, 0))?;
-    class.define_method("top", method!(PdfLayoutBBox::top, 0))?;
-    class.define_method("width", method!(PdfLayoutBBox::width, 0))?;
-    class.define_method("height", method!(PdfLayoutBBox::height, 0))?;
 
     let class = module.define_class("PageLayoutRegion", ruby.class_object())?;
     class.define_singleton_method("new", function!(PageLayoutRegion::new, 3))?;
@@ -34623,36 +24525,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("postprocess_ms", method!(PageTiming::postprocess_ms, 0))?;
     class.define_method("mapping_ms", method!(PageTiming::mapping_ms, 0))?;
 
-    let class = module.define_class("LayoutTimingReport", ruby.class_object())?;
-    class.define_singleton_method("new", function!(LayoutTimingReport::new, 2))?;
-    class.define_method("total_ms", method!(LayoutTimingReport::total_ms, 0))?;
-    class.define_method("per_page", method!(LayoutTimingReport::per_page, 0))?;
-    class.define_method("avg_render_ms", method!(LayoutTimingReport::avg_render_ms, 0))?;
-    class.define_method("avg_inference_ms", method!(LayoutTimingReport::avg_inference_ms, 0))?;
-    class.define_method("avg_preprocess_ms", method!(LayoutTimingReport::avg_preprocess_ms, 0))?;
-    class.define_method("avg_onnx_ms", method!(LayoutTimingReport::avg_onnx_ms, 0))?;
-    class.define_method("avg_postprocess_ms", method!(LayoutTimingReport::avg_postprocess_ms, 0))?;
-    class.define_method("total_inference_ms", method!(LayoutTimingReport::total_inference_ms, 0))?;
-    class.define_method("total_render_ms", method!(LayoutTimingReport::total_render_ms, 0))?;
-    class.define_method(
-        "total_preprocess_ms",
-        method!(LayoutTimingReport::total_preprocess_ms, 0),
-    )?;
-    class.define_method("total_onnx_ms", method!(LayoutTimingReport::total_onnx_ms, 0))?;
-    class.define_method(
-        "total_postprocess_ms",
-        method!(LayoutTimingReport::total_postprocess_ms, 0),
-    )?;
-
-    let class = module.define_class("PdfMetadata", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PdfMetadata::new, 6))?;
-    class.define_method("pdf_version", method!(PdfMetadata::pdf_version, 0))?;
-    class.define_method("producer", method!(PdfMetadata::producer, 0))?;
-    class.define_method("is_encrypted", method!(PdfMetadata::is_encrypted, 0))?;
-    class.define_method("width", method!(PdfMetadata::width, 0))?;
-    class.define_method("height", method!(PdfMetadata::height, 0))?;
-    class.define_method("page_count", method!(PdfMetadata::page_count, 0))?;
-
     let class = module.define_class("PdfExtractionMetadata", ruby.class_object())?;
     class.define_singleton_method("new", function!(PdfExtractionMetadata::new, 9))?;
     class.define_method("title", method!(PdfExtractionMetadata::title, 0))?;
@@ -34675,27 +24547,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("modified_at", method!(CommonPdfMetadata::modified_at, 0))?;
     class.define_method("created_by", method!(CommonPdfMetadata::created_by, 0))?;
 
-    let class = module.define_class("PageRenderOptions", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PageRenderOptions::new, 5))?;
-    class.define_method("target_dpi", method!(PageRenderOptions::target_dpi, 0))?;
-    class.define_method(
-        "max_image_dimension",
-        method!(PageRenderOptions::max_image_dimension, 0),
-    )?;
-    class.define_method("auto_adjust_dpi", method!(PageRenderOptions::auto_adjust_dpi, 0))?;
-    class.define_method("min_dpi", method!(PageRenderOptions::min_dpi, 0))?;
-    class.define_method("max_dpi", method!(PageRenderOptions::max_dpi, 0))?;
-
-    let class = module.define_class("PdfPageIterator", ruby.class_object())?;
-    class.define_method("page_count", method!(PdfPageIterator::page_count, 0))?;
-    class.define_method("next", method!(PdfPageIterator::next, 0))?;
-    class.define_method("size_hint", method!(PdfPageIterator::size_hint, 0))?;
-
-    let class = module.define_class("PdfRenderer", ruby.class_object())?;
-
     let class = module.define_class("PdfUnifiedExtractionResult", ruby.class_object())?;
-
-    let class = module.define_class("PdfTextExtractor", ruby.class_object())?;
 
     module.define_module_function("get_cache_metadata", function!(get_cache_metadata, 1))?;
     module.define_module_function("cleanup_cache", function!(cleanup_cache, 4))?;

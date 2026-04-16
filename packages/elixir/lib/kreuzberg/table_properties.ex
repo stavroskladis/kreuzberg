@@ -6,8 +6,8 @@ defmodule Kreuzberg.TableProperties do
             width: "",
             alignment: "",
             layout: "",
-            look: nil,
-            borders: nil,
+            look: "",
+            borders: "",
             cell_margins: "",
             indent: "",
             caption: ""

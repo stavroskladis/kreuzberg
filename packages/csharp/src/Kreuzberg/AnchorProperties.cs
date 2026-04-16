@@ -21,12 +21,12 @@ public sealed class AnchorProperties
     public long? RelativeHeight { get; set; } = null;
 
     [JsonPropertyName("position_h")]
-    public Position? PositionH { get; set; } = null;
+    public string? PositionH { get; set; } = null;
 
     [JsonPropertyName("position_v")]
-    public Position? PositionV { get; set; } = null;
+    public string? PositionV { get; set; } = null;
 
     [JsonPropertyName("wrap_type")]
-    public WrapType WrapType { get; set; } = default;
+    public string WrapType { get; set; } = "";
 
 }

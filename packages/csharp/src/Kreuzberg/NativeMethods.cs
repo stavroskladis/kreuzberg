@@ -7,218 +7,17 @@ internal static partial class NativeMethods
 {
     private const string LibName = "kreuzberg_ffi";
 
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_server_config_from_json")]
+    internal static extern IntPtr ServerConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_server_config_free")]
+    internal static extern void ServerConfigFree(IntPtr ptr);
+
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_formatted_block_from_json")]
     internal static extern IntPtr FormattedBlockFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_formatted_block_free")]
     internal static extern void FormattedBlockFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_json_extraction_config_from_json")]
-    internal static extern IntPtr JsonExtractionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_json_extraction_config_free")]
-    internal static extern void JsonExtractionConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_quality_thresholds_from_json")]
-    internal static extern IntPtr OcrQualityThresholdsFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_quality_thresholds_free")]
-    internal static extern void OcrQualityThresholdsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_from_json")]
-    internal static extern IntPtr DocumentFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_free")]
-    internal static extern void DocumentFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_record_from_json")]
-    internal static extern IntPtr RecordFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_record_free")]
-    internal static extern void RecordFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_node_from_json")]
-    internal static extern IntPtr DocumentNodeFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_node_free")]
-    internal static extern void DocumentNodeFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extraction_result_from_json")]
-    internal static extern IntPtr EmailExtractionResultFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extraction_result_free")]
-    internal static extern void EmailExtractionResultFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_render_options_from_json")]
-    internal static extern IntPtr PageRenderOptionsFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_render_options_free")]
-    internal static extern void PageRenderOptionsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_config_from_json")]
-    internal static extern IntPtr TesseractConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_config_free")]
-    internal static extern void TesseractConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_free")]
-    internal static extern void RendererFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_segment_data_from_json")]
-    internal static extern IntPtr SegmentDataFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_segment_data_free")]
-    internal static extern void SegmentDataFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_b_box_from_json")]
-    internal static extern IntPtr BBoxFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_b_box_free")]
-    internal static extern void BBoxFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tsv_row_from_json")]
-    internal static extern IntPtr TsvRowFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tsv_row_free")]
-    internal static extern void TsvRowFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_size_limits_from_json")]
-    internal static extern IntPtr ApiSizeLimitsFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_size_limits_free")]
-    internal static extern void ApiSizeLimitsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_heading_context_from_json")]
-    internal static extern IntPtr HeadingContextFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_heading_context_free")]
-    internal static extern void HeadingContextFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_free")]
-    internal static extern void OcrBackendFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_config_from_json")]
-    internal static extern IntPtr KeywordConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_config_free")]
-    internal static extern void KeywordConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_element_from_json")]
-    internal static extern IntPtr OcrElementFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_element_free")]
-    internal static extern void OcrElementFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_rotation_from_json")]
-    internal static extern IntPtr OcrRotationFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_rotation_free")]
-    internal static extern void OcrRotationFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_extraction_result_from_json")]
-    internal static extern IntPtr OcrExtractionResultFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_extraction_result_free")]
-    internal static extern void OcrExtractionResultFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_block_from_json")]
-    internal static extern IntPtr TextBlockFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_block_free")]
-    internal static extern void TextBlockFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_metadata_from_json")]
-    internal static extern IntPtr MetadataFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_metadata_free")]
-    internal static extern void MetadataFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extraction_options_from_json")]
-    internal static extern IntPtr PptxExtractionOptionsFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extraction_options_free")]
-    internal static extern void PptxExtractionOptionsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_token_reduction_config_from_json")]
-    internal static extern IntPtr TokenReductionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_token_reduction_config_free")]
-    internal static extern void TokenReductionConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_detection_result_from_json")]
-    internal static extern IntPtr DetectionResultFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_detection_result_free")]
-    internal static extern void DetectionResultFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_stream_reader_free")]
-    internal static extern void StreamReaderFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_detection_config_from_json")]
-    internal static extern IntPtr LayoutDetectionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_detection_config_free")]
-    internal static extern void LayoutDetectionConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_metadata_from_json")]
-    internal static extern IntPtr HtmlMetadataFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_metadata_free")]
-    internal static extern void HtmlMetadataFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_config_from_json")]
-    internal static extern IntPtr OcrConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_config_free")]
-    internal static extern void OcrConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_config_from_json")]
-    internal static extern IntPtr BatchProcessorConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_config_free")]
-    internal static extern void BatchProcessorConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_content_from_json")]
-    internal static extern IntPtr DjotContentFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_content_free")]
-    internal static extern void DjotContentFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_config_from_json")]
-    internal static extern IntPtr ExtractionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_config_free")]
-    internal static extern void ExtractionConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_extraction_config_from_json")]
-    internal static extern IntPtr FileExtractionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_extraction_config_free")]
-    internal static extern void FileExtractionConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_workbook_from_json")]
-    internal static extern IntPtr ExcelWorkbookFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_workbook_free")]
-    internal static extern void ExcelWorkbookFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_config_from_json")]
-    internal static extern IntPtr PageConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_config_free")]
-    internal static extern void PageConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_size_hint_from_json")]
-    internal static extern IntPtr PoolSizeHintFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_size_hint_free")]
-    internal static extern void PoolSizeHintFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extraction_config_from_json")]
-    internal static extern IntPtr StructuredExtractionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extraction_config_free")]
-    internal static extern void StructuredExtractionConfigFree(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_acceleration_config_from_json")]
     internal static extern IntPtr AccelerationConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
@@ -226,26 +25,26 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_acceleration_config_free")]
     internal static extern void AccelerationConfigFree(IntPtr ptr);
 
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_free")]
+    internal static extern void OcrBackendFree(IntPtr ptr);
+
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_result_from_json")]
     internal static extern IntPtr ExtractionResultFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_result_free")]
     internal static extern void ExtractionResultFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_k_means_result_from_json")]
-    internal static extern IntPtr KMeansResultFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extraction_result_from_json")]
+    internal static extern IntPtr EmailExtractionResultFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_k_means_result_free")]
-    internal static extern void KMeansResultFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extraction_result_free")]
+    internal static extern void EmailExtractionResultFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_interned_string_free")]
-    internal static extern void InternedStringFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_content_from_json")]
+    internal static extern IntPtr DjotContentFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_attributes_from_json")]
-    internal static extern IntPtr AttributesFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_attributes_free")]
-    internal static extern void AttributesFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_content_free")]
+    internal static extern void DjotContentFree(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_embedding_config_from_json")]
     internal static extern IntPtr EmbeddingConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
@@ -253,29 +52,17 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_embedding_config_free")]
     internal static extern void EmbeddingConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_request_from_json")]
-    internal static extern IntPtr ExtractionRequestFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_extraction_config_from_json")]
+    internal static extern IntPtr FileExtractionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_request_free")]
-    internal static extern void ExtractionRequestFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_extraction_config_free")]
+    internal static extern void FileExtractionConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_detection_config_from_json")]
-    internal static extern IntPtr LanguageDetectionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_rotation_from_json")]
+    internal static extern IntPtr OcrRotationFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_detection_config_free")]
-    internal static extern void LanguageDetectionConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_server_config_from_json")]
-    internal static extern IntPtr ServerConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_server_config_free")]
-    internal static extern void ServerConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_llm_config_from_json")]
-    internal static extern IntPtr LlmConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_llm_config_free")]
-    internal static extern void LlmConfigFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_rotation_free")]
+    internal static extern void OcrRotationFree(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_chunking_config_from_json")]
     internal static extern IntPtr ChunkingConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
@@ -283,434 +70,128 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_chunking_config_free")]
     internal static extern void ChunkingConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_free")]
-    internal static extern void GzipExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_config_from_json")]
+    internal static extern IntPtr PageConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_free")]
-    internal static extern void TarExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_config_free")]
+    internal static extern void PageConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_json_extraction_config_to_json")]
-    internal static extern IntPtr JsonExtractionConfigToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_detection_config_from_json")]
+    internal static extern IntPtr LanguageDetectionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_size_limits_to_json")]
-    internal static extern IntPtr ApiSizeLimitsToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_detection_config_free")]
+    internal static extern void LanguageDetectionConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_table_properties_to_json")]
-    internal static extern IntPtr TablePropertiesToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_config_from_json")]
+    internal static extern IntPtr ExtractionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_table_properties_free")]
-    internal static extern void TablePropertiesFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_config_free")]
+    internal static extern void ExtractionConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_table_grid_to_json")]
-    internal static extern IntPtr TableGridToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_llm_config_from_json")]
+    internal static extern IntPtr LlmConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_table_grid_free")]
-    internal static extern void TableGridFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_llm_config_free")]
+    internal static extern void LlmConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tree_sitter_process_config_to_json")]
-    internal static extern IntPtr TreeSitterProcessConfigToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_quality_thresholds_from_json")]
+    internal static extern IntPtr OcrQualityThresholdsFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tree_sitter_process_config_free")]
-    internal static extern void TreeSitterProcessConfigFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_quality_thresholds_free")]
+    internal static extern void OcrQualityThresholdsFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_config_to_json")]
-    internal static extern IntPtr PostProcessorConfigToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extraction_config_from_json")]
+    internal static extern IntPtr StructuredExtractionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_config_free")]
-    internal static extern void PostProcessorConfigFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extraction_config_free")]
+    internal static extern void StructuredExtractionConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_annotation_to_json")]
-    internal static extern IntPtr TextAnnotationToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_config_from_json")]
+    internal static extern IntPtr KeywordConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_annotation_free")]
-    internal static extern void TextAnnotationFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_config_free")]
+    internal static extern void KeywordConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_structure_to_json")]
-    internal static extern IntPtr DocumentStructureToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_metadata_from_json")]
+    internal static extern IntPtr HtmlMetadataFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_structure_free")]
-    internal static extern void DocumentStructureFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_metadata_free")]
+    internal static extern void HtmlMetadataFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_free")]
-    internal static extern void ZipExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_interned_string_free")]
+    internal static extern void InternedStringFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_element_to_json")]
-    internal static extern IntPtr OcrElementToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_config_from_json")]
+    internal static extern IntPtr OcrConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_free")]
-    internal static extern void RstExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_config_free")]
+    internal static extern void OcrConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_style_catalog_to_json")]
-    internal static extern IntPtr StyleCatalogToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_b_box_from_json")]
+    internal static extern IntPtr BBoxFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_style_catalog_free")]
-    internal static extern void StyleCatalogFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_b_box_free")]
+    internal static extern void BBoxFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_free")]
-    internal static extern void TesseractBackendFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_element_from_json")]
+    internal static extern IntPtr OcrElementFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_paddle_ocr_config_to_json")]
-    internal static extern IntPtr PaddleOcrConfigToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_element_free")]
+    internal static extern void OcrElementFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_paddle_ocr_config_free")]
-    internal static extern void PaddleOcrConfigFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_free")]
+    internal static extern void RendererFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_free")]
-    internal static extern void MdxExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_token_reduction_config_from_json")]
+    internal static extern IntPtr TokenReductionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_resolved_style_to_json")]
-    internal static extern IntPtr ResolvedStyleToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_token_reduction_config_free")]
+    internal static extern void TokenReductionConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_resolved_style_free")]
-    internal static extern void ResolvedStyleFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_workbook_from_json")]
+    internal static extern IntPtr ExcelWorkbookFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_detection_config_to_json")]
-    internal static extern IntPtr LayoutDetectionConfigToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_workbook_free")]
+    internal static extern void ExcelWorkbookFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hocr_word_to_json")]
-    internal static extern IntPtr HocrWordToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_attributes_from_json")]
+    internal static extern IntPtr AttributesFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hocr_word_free")]
-    internal static extern void HocrWordFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_attributes_free")]
+    internal static extern void AttributesFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_free")]
-    internal static extern void PstExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_detection_result_from_json")]
+    internal static extern IntPtr DetectionResultFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extraction_result_to_json")]
-    internal static extern IntPtr DocExtractionResultToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_detection_result_free")]
+    internal static extern void DetectionResultFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extraction_result_free")]
-    internal static extern void DocExtractionResultFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_heading_context_from_json")]
+    internal static extern IntPtr HeadingContextFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_free")]
-    internal static extern void OdtExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_heading_context_free")]
+    internal static extern void HeadingContextFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_uri_to_json")]
-    internal static extern IntPtr UriToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_node_from_json")]
+    internal static extern IntPtr DocumentNodeFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_uri_free")]
-    internal static extern void UriFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_node_free")]
+    internal static extern void DocumentNodeFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_quality_thresholds_to_json")]
-    internal static extern IntPtr OcrQualityThresholdsToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_metadata_from_json")]
+    internal static extern IntPtr MetadataFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_kreuzberg_mcp_free")]
-    internal static extern void KreuzbergMcpFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_metadata_free")]
+    internal static extern void MetadataFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_ocr_result_to_json")]
-    internal static extern IntPtr ImageOcrResultToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_detection_config_from_json")]
+    internal static extern IntPtr LayoutDetectionConfigFromJson([MarshalAs(UnmanagedType.LPStr)] string json);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_ocr_result_free")]
-    internal static extern void ImageOcrResultFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_free")]
-    internal static extern void CitationExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_config_to_json")]
-    internal static extern IntPtr TesseractConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_confidence_to_json")]
-    internal static extern IntPtr OcrConfidenceToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_confidence_free")]
-    internal static extern void OcrConfidenceFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_registry_free")]
-    internal static extern void RendererRegistryFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_metadata_to_json")]
-    internal static extern IntPtr ImageMetadataToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_metadata_free")]
-    internal static extern void ImageMetadataFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_detection_config_free")]
+    internal static extern void LayoutDetectionConfigFree(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_bytes_free")]
     internal static extern void FileBytesFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_margins_points_to_json")]
-    internal static extern IntPtr PageMarginsPointsToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_margins_points_free")]
-    internal static extern void PageMarginsPointsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_page_iterator_free")]
-    internal static extern void PdfPageIteratorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_unified_extraction_result_free")]
-    internal static extern void PdfUnifiedExtractionResultFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_extractor_registry_free")]
-    internal static extern void DocumentExtractorRegistryFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_extraction_result_to_json")]
-    internal static extern IntPtr OcrExtractionResultToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_free")]
-    internal static extern void SevenZExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jats_extractor_free")]
-    internal static extern void JatsExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_free")]
-    internal static extern void PptxExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_content_to_json")]
-    internal static extern IntPtr DjotContentToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pooled_string_free")]
-    internal static extern void PooledStringFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_content_filter_config_to_json")]
-    internal static extern IntPtr ContentFilterConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_content_filter_config_free")]
-    internal static extern void ContentFilterConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_free")]
-    internal static extern void ImageExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_free")]
-    internal static extern void HtmlExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extraction_metadata_to_json")]
-    internal static extern IntPtr PdfExtractionMetadataToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extraction_metadata_free")]
-    internal static extern void PdfExtractionMetadataFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_para_text_to_json")]
-    internal static extern IntPtr ParaTextToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_para_text_free")]
-    internal static extern void ParaTextFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_free")]
-    internal static extern void DjotExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_element_id_free")]
-    internal static extern void ElementIdFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_metrics_to_json")]
-    internal static extern IntPtr PoolMetricsToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_metrics_free")]
-    internal static extern void PoolMetricsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_render_options_to_json")]
-    internal static extern IntPtr PageRenderOptionsToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_free")]
-    internal static extern void EpubExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_config_to_json")]
-    internal static extern IntPtr ExtractionConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_config_to_json")]
-    internal static extern IntPtr PdfConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_config_free")]
-    internal static extern void PdfConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_record_to_json")]
-    internal static extern IntPtr RecordToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_free")]
-    internal static extern void TypstExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_yake_params_to_json")]
-    internal static extern IntPtr YakeParamsToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_yake_params_free")]
-    internal static extern void YakeParamsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_cache_stats_to_json")]
-    internal static extern IntPtr OcrCacheStatsToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_cache_stats_free")]
-    internal static extern void OcrCacheStatsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_metadata_to_json")]
-    internal static extern IntPtr MetadataToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_free")]
-    internal static extern void FictionBookExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_free")]
-    internal static extern void CsvExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_attributes_to_json")]
-    internal static extern IntPtr AttributesToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_to_json")]
-    internal static extern IntPtr DocumentToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_section_properties_to_json")]
-    internal static extern IntPtr SectionPropertiesToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_section_properties_free")]
-    internal static extern void SectionPropertiesFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_rotation_to_json")]
-    internal static extern IntPtr OcrRotationToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_free")]
-    internal static extern void GenericCacheFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_free")]
-    internal static extern void CodeExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extraction_result_to_json")]
-    internal static extern IntPtr EmailExtractionResultToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_metadata_to_json")]
-    internal static extern IntPtr PdfMetadataToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_metadata_free")]
-    internal static extern void PdfMetadataFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_free")]
-    internal static extern void BatchProcessorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_registry_free")]
-    internal static extern void PostProcessorRegistryFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_chunking_config_to_json")]
-    internal static extern IntPtr ChunkingConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rake_params_to_json")]
-    internal static extern IntPtr RakeParamsToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rake_params_free")]
-    internal static extern void RakeParamsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_theme_to_json")]
-    internal static extern IntPtr ThemeToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_theme_free")]
-    internal static extern void ThemeFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_free")]
-    internal static extern void OrgModeExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_result_to_json")]
-    internal static extern IntPtr ExtractionResultToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_size_hint_to_json")]
-    internal static extern IntPtr PoolSizeHintToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_cache_free")]
-    internal static extern void OcrCacheFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_registry_free")]
-    internal static extern void LanguageRegistryFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_free")]
-    internal static extern void PagesExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_metadata_to_json")]
-    internal static extern IntPtr HtmlMetadataToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_config_to_json")]
-    internal static extern IntPtr PageConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_free")]
-    internal static extern void LatexExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_free")]
-    internal static extern void PptExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_workbook_to_json")]
-    internal static extern IntPtr ExcelWorkbookToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_header_to_json")]
-    internal static extern IntPtr FileHeaderToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_header_free")]
-    internal static extern void FileHeaderFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extraction_result_to_json")]
-    internal static extern IntPtr XmlExtractionResultToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extraction_result_free")]
-    internal static extern void XmlExtractionResultFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_to_json")]
-    internal static extern IntPtr KeywordToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_free")]
-    internal static extern void KeywordFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hierarchy_config_to_json")]
-    internal static extern IntPtr HierarchyConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hierarchy_config_free")]
-    internal static extern void HierarchyConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_free")]
-    internal static extern void MarkdownExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extractor_free")]
-    internal static extern void PdfExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_free")]
-    internal static extern void RtfExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_instant_free")]
-    internal static extern void InstantFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_processor_free")]
-    internal static extern void OcrProcessorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_common_pdf_metadata_to_json")]
-    internal static extern IntPtr CommonPdfMetadataToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_common_pdf_metadata_free")]
-    internal static extern void CommonPdfMetadataFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tree_sitter_config_to_json")]
-    internal static extern IntPtr TreeSitterConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tree_sitter_config_free")]
-    internal static extern void TreeSitterConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_free")]
-    internal static extern void ExcelExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_free")]
-    internal static extern void OpmlExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_image_extractor_free")]
-    internal static extern void PdfImageExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_free")]
-    internal static extern void ExtractionServiceFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extractor_free")]
-    internal static extern void StructuredExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_cfb_reader_free")]
-    internal static extern void CfbReaderFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_free")]
-    internal static extern void DocxExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_native_text_stats_to_json")]
-    internal static extern IntPtr NativeTextStatsToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_native_text_stats_free")]
-    internal static extern void NativeTextStatsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_builder_free")]
-    internal static extern void ExtractionServiceBuilderFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_free")]
-    internal static extern void EmailExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_node_id_free")]
-    internal static extern void NodeIdFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_embedding_config_to_json")]
-    internal static extern IntPtr EmbeddingConfigToJson(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_preprocessing_config_to_json")]
     internal static extern IntPtr ImagePreprocessingConfigToJson(IntPtr ptr);
@@ -718,131 +199,29 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_preprocessing_config_free")]
     internal static extern void ImagePreprocessingConfigFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_fallback_decision_to_json")]
-    internal static extern IntPtr OcrFallbackDecisionToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_uri_to_json")]
+    internal static extern IntPtr UriToJson(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_fallback_decision_free")]
-    internal static extern void OcrFallbackDecisionFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_uri_free")]
+    internal static extern void UriFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docbook_extractor_free")]
-    internal static extern void DocbookExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_common_pdf_metadata_to_json")]
+    internal static extern IntPtr CommonPdfMetadataToJson(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_free")]
-    internal static extern void DocExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_common_pdf_metadata_free")]
+    internal static extern void CommonPdfMetadataFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extraction_result_to_json")]
-    internal static extern IntPtr PptExtractionResultToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_embedding_config_to_json")]
+    internal static extern IntPtr EmbeddingConfigToJson(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extraction_result_free")]
-    internal static extern void PptExtractionResultFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_to_json")]
+    internal static extern IntPtr KeywordToJson(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extraction_options_to_json")]
-    internal static extern IntPtr PptxExtractionOptionsToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_free")]
+    internal static extern void KeywordFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_extraction_result_to_json")]
-    internal static extern IntPtr TextExtractionResultToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_extraction_result_free")]
-    internal static extern void TextExtractionResultFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_metrics_to_json")]
-    internal static extern IntPtr ExtractionMetricsToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_metrics_free")]
-    internal static extern void ExtractionMetricsFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_renderer_free")]
-    internal static extern void PdfRendererFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_free")]
-    internal static extern void HwpExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_byte_buffer_pool_free")]
-    internal static extern void ByteBufferPoolFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_request_to_json")]
-    internal static extern IntPtr ExtractionRequestToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_config_to_json")]
-    internal static extern IntPtr BatchProcessorConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_free")]
-    internal static extern void PlainTextExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_free")]
-    internal static extern void KeynoteExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_config_to_json")]
-    internal static extern IntPtr PoolConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_config_free")]
-    internal static extern void PoolConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_text_extractor_free")]
-    internal static extern void PdfTextExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_config_to_json")]
-    internal static extern IntPtr KeywordConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_row_properties_to_json")]
-    internal static extern IntPtr RowPropertiesToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_row_properties_free")]
-    internal static extern void RowPropertiesFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_validator_registry_free")]
-    internal static extern void ValidatorRegistryFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_archive_metadata_to_json")]
-    internal static extern IntPtr ArchiveMetadataToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_archive_metadata_free")]
-    internal static extern void ArchiveMetadataFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_free")]
-    internal static extern void NumbersExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_token_reducer_free")]
-    internal static extern void TokenReducerFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_metrics_snapshot_to_json")]
-    internal static extern IntPtr PoolMetricsSnapshotToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_metrics_snapshot_free")]
-    internal static extern void PoolMetricsSnapshotFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_free")]
-    internal static extern void JupyterExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_string_buffer_pool_free")]
-    internal static extern void StringBufferPoolFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_output_config_to_json")]
-    internal static extern IntPtr HtmlOutputConfigToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_output_config_free")]
-    internal static extern void HtmlOutputConfigFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_free")]
-    internal static extern void BibtexExtractorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_error_to_json")]
-    internal static extern IntPtr ApiErrorToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_error_free")]
-    internal static extern void ApiErrorFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_drawing_to_json")]
-    internal static extern IntPtr DrawingToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_drawing_free")]
-    internal static extern void DrawingFree(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extraction_result_to_json")]
-    internal static extern IntPtr PptxExtractionResultToJson(IntPtr ptr);
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extraction_result_free")]
-    internal static extern void PptxExtractionResultFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_config_to_json")]
+    internal static extern IntPtr ExtractionConfigToJson(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_chunking_result_to_json")]
     internal static extern IntPtr ChunkingResultToJson(IntPtr ptr);
@@ -850,8 +229,77 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_chunking_result_free")]
     internal static extern void ChunkingResultFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_free")]
-    internal static extern void XmlExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rake_params_to_json")]
+    internal static extern IntPtr RakeParamsToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rake_params_free")]
+    internal static extern void RakeParamsFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_byte_buffer_pool_free")]
+    internal static extern void ByteBufferPoolFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_detection_config_to_json")]
+    internal static extern IntPtr LayoutDetectionConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_chunking_config_to_json")]
+    internal static extern IntPtr ChunkingConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_output_config_to_json")]
+    internal static extern IntPtr HtmlOutputConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_output_config_free")]
+    internal static extern void HtmlOutputConfigFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_structure_to_json")]
+    internal static extern IntPtr DocumentStructureToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_structure_free")]
+    internal static extern void DocumentStructureFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_config_to_json")]
+    internal static extern IntPtr TesseractConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_config_free")]
+    internal static extern void TesseractConfigFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_config_to_json")]
+    internal static extern IntPtr PageConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_annotation_to_json")]
+    internal static extern IntPtr TextAnnotationToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_annotation_free")]
+    internal static extern void TextAnnotationFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_fallback_decision_to_json")]
+    internal static extern IntPtr OcrFallbackDecisionToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_fallback_decision_free")]
+    internal static extern void OcrFallbackDecisionFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_server_config_to_json")]
+    internal static extern IntPtr ServerConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_node_id_free")]
+    internal static extern void NodeIdFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_metrics_to_json")]
+    internal static extern IntPtr ExtractionMetricsToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_metrics_free")]
+    internal static extern void ExtractionMetricsFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_yake_params_to_json")]
+    internal static extern IntPtr YakeParamsToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_yake_params_free")]
+    internal static extern void YakeParamsFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_table_grid_to_json")]
+    internal static extern IntPtr TableGridToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_table_grid_free")]
+    internal static extern void TableGridFree(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_data_result_to_json")]
     internal static extern IntPtr StructuredDataResultToJson(IntPtr ptr);
@@ -859,17 +307,173 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_data_result_free")]
     internal static extern void StructuredDataResultFree(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_server_config_to_json")]
-    internal static extern IntPtr ServerConfigToJson(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extraction_result_to_json")]
+    internal static extern IntPtr PptExtractionResultToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extraction_result_free")]
+    internal static extern void PptExtractionResultFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_element_id_free")]
+    internal static extern void ElementIdFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_attributes_to_json")]
+    internal static extern IntPtr AttributesToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_error_to_json")]
+    internal static extern IntPtr ApiErrorToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_error_free")]
+    internal static extern void ApiErrorFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extraction_result_to_json")]
+    internal static extern IntPtr DocExtractionResultToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extraction_result_free")]
+    internal static extern void DocExtractionResultFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pooled_string_free")]
+    internal static extern void PooledStringFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_ocr_result_to_json")]
+    internal static extern IntPtr ImageOcrResultToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_ocr_result_free")]
+    internal static extern void ImageOcrResultFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extraction_result_to_json")]
+    internal static extern IntPtr PptxExtractionResultToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extraction_result_free")]
+    internal static extern void PptxExtractionResultFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hierarchy_config_to_json")]
+    internal static extern IntPtr HierarchyConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hierarchy_config_free")]
+    internal static extern void HierarchyConfigFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_content_to_json")]
+    internal static extern IntPtr DjotContentToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_metadata_to_json")]
+    internal static extern IntPtr HtmlMetadataToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_result_to_json")]
+    internal static extern IntPtr ExtractionResultToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_quality_thresholds_to_json")]
+    internal static extern IntPtr OcrQualityThresholdsToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extraction_result_to_json")]
+    internal static extern IntPtr XmlExtractionResultToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extraction_result_free")]
+    internal static extern void XmlExtractionResultFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_archive_metadata_to_json")]
+    internal static extern IntPtr ArchiveMetadataToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_archive_metadata_free")]
+    internal static extern void ArchiveMetadataFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_metadata_to_json")]
+    internal static extern IntPtr MetadataToJson(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_config_to_json")]
     internal static extern IntPtr OcrConfigToJson(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_free")]
-    internal static extern void OcrBackendRegistryFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_config_to_json")]
+    internal static extern IntPtr PdfConfigToJson(IntPtr ptr);
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_free")]
-    internal static extern void DbfExtractorFree(IntPtr ptr);
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_config_free")]
+    internal static extern void PdfConfigFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extraction_result_to_json")]
+    internal static extern IntPtr EmailExtractionResultToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_content_filter_config_to_json")]
+    internal static extern IntPtr ContentFilterConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_content_filter_config_free")]
+    internal static extern void ContentFilterConfigFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_confidence_to_json")]
+    internal static extern IntPtr OcrConfidenceToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_confidence_free")]
+    internal static extern void OcrConfidenceFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_drawing_to_json")]
+    internal static extern IntPtr DrawingToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_drawing_free")]
+    internal static extern void DrawingFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_rotation_to_json")]
+    internal static extern IntPtr OcrRotationToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_table_properties_to_json")]
+    internal static extern IntPtr TablePropertiesToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_table_properties_free")]
+    internal static extern void TablePropertiesFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extraction_metadata_to_json")]
+    internal static extern IntPtr PdfExtractionMetadataToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extraction_metadata_free")]
+    internal static extern void PdfExtractionMetadataFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_workbook_to_json")]
+    internal static extern IntPtr ExcelWorkbookToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tree_sitter_process_config_to_json")]
+    internal static extern IntPtr TreeSitterProcessConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tree_sitter_process_config_free")]
+    internal static extern void TreeSitterProcessConfigFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_element_to_json")]
+    internal static extern IntPtr OcrElementToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_unified_extraction_result_free")]
+    internal static extern void PdfUnifiedExtractionResultFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_metadata_to_json")]
+    internal static extern IntPtr ImageMetadataToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_metadata_free")]
+    internal static extern void ImageMetadataFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_string_buffer_pool_free")]
+    internal static extern void StringBufferPoolFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_extraction_result_to_json")]
+    internal static extern IntPtr TextExtractionResultToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_extraction_result_free")]
+    internal static extern void TextExtractionResultFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keyword_config_to_json")]
+    internal static extern IntPtr KeywordConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_paddle_ocr_config_to_json")]
+    internal static extern IntPtr PaddleOcrConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_paddle_ocr_config_free")]
+    internal static extern void PaddleOcrConfigFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_config_to_json")]
+    internal static extern IntPtr PostProcessorConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_config_free")]
+    internal static extern void PostProcessorConfigFree(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tree_sitter_config_to_json")]
+    internal static extern IntPtr TreeSitterConfigToJson(IntPtr ptr);
+
+    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tree_sitter_config_free")]
+    internal static extern void TreeSitterConfigFree(IntPtr ptr);
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_get_cache_metadata")]
     internal static extern IntPtr GetCacheMetadata(
@@ -1242,13 +846,13 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_parse_json")]
     internal static extern IntPtr ParseJson(
         IntPtr data,
-        IntPtr config
+        [MarshalAs(UnmanagedType.LPStr)] string config
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_parse_jsonl")]
     internal static extern IntPtr ParseJsonl(
         IntPtr data,
-        IntPtr config
+        [MarshalAs(UnmanagedType.LPStr)] string config
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_parse_yaml")]
@@ -1633,13 +1237,13 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extract_pptx_from_path")]
     internal static extern IntPtr ExtractPptxFromPath(
         [MarshalAs(UnmanagedType.LPStr)] string path,
-        IntPtr options
+        [MarshalAs(UnmanagedType.LPStr)] string options
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extract_pptx_from_bytes")]
     internal static extern IntPtr ExtractPptxFromBytes(
         IntPtr data,
-        IntPtr options
+        [MarshalAs(UnmanagedType.LPStr)] string options
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_parse_xml_svg")]
@@ -2250,13 +1854,13 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_create_router_with_limits")]
     internal static extern IntPtr CreateRouterWithLimits(
         IntPtr config,
-        IntPtr limits
+        [MarshalAs(UnmanagedType.LPStr)] string limits
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_create_router_with_limits_and_server_config")]
     internal static extern IntPtr CreateRouterWithLimitsAndServerConfig(
         IntPtr config,
-        IntPtr limits,
+        [MarshalAs(UnmanagedType.LPStr)] string limits,
         IntPtr serverConfig
     );
 
@@ -2278,7 +1882,7 @@ internal static partial class NativeMethods
         [MarshalAs(UnmanagedType.LPStr)] string host,
         ushort port,
         IntPtr config,
-        IntPtr limits
+        [MarshalAs(UnmanagedType.LPStr)] string limits
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_serve_with_server_config")]
@@ -2495,13 +2099,13 @@ internal static partial class NativeMethods
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_text_block_to_element")]
     internal static extern IntPtr TextBlockToElement(
-        IntPtr block,
+        [MarshalAs(UnmanagedType.LPStr)] string block,
         ulong pageNumber
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tsv_row_to_element")]
     internal static extern IntPtr TsvRowToElement(
-        IntPtr row
+        [MarshalAs(UnmanagedType.LPStr)] string row
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_iterator_word_to_element")]
@@ -2684,7 +2288,7 @@ internal static partial class NativeMethods
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extract_bookmarks")]
     internal static extern IntPtr ExtractBookmarks(
-        IntPtr document
+        [MarshalAs(UnmanagedType.LPStr)] string document
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extract_bundled_pdfium")]
@@ -2692,7 +2296,7 @@ internal static partial class NativeMethods
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extract_embedded_files")]
     internal static extern IntPtr ExtractEmbeddedFiles(
-        IntPtr document
+        [MarshalAs(UnmanagedType.LPStr)] string document
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extract_and_process_embedded_files")]
@@ -2729,7 +2333,7 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_assign_hierarchy_levels")]
     internal static extern IntPtr AssignHierarchyLevels(
         IntPtr blocks,
-        IntPtr kmeansResult
+        [MarshalAs(UnmanagedType.LPStr)] string kmeansResult
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_assign_hierarchy_levels_from_clusters")]
@@ -2822,7 +2426,7 @@ internal static partial class NativeMethods
     internal static extern IntPtr RenderPageToImage(
         IntPtr pdfBytes,
         ulong pageIndex,
-        IntPtr options
+        [MarshalAs(UnmanagedType.LPStr)] string options
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_render_pdf_page_to_png")]
@@ -2841,13 +2445,13 @@ internal static partial class NativeMethods
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_segment_to_hocr_word")]
     internal static extern IntPtr SegmentToHocrWord(
-        IntPtr seg,
+        [MarshalAs(UnmanagedType.LPStr)] string seg,
         float pageHeight
     );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_split_segment_to_words")]
     internal static extern IntPtr SplitSegmentToWords(
-        IntPtr seg,
+        [MarshalAs(UnmanagedType.LPStr)] string seg,
         float pageHeight
     );
 
@@ -2908,116 +2512,6 @@ internal static partial class NativeMethods
     internal static extern IntPtr SerializeToJson(
         IntPtr result
     );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_new")]
-    internal static extern IntPtr GenericCacheNew(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheType,
-        [MarshalAs(UnmanagedType.LPStr)] string cacheDir,
-        double maxAgeDays,
-        double maxCacheSizeMb,
-        double minFreeSpaceMb
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_get")]
-    internal static extern IntPtr GenericCacheGet(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheKey,
-        [MarshalAs(UnmanagedType.LPStr)] string sourceFile,
-        [MarshalAs(UnmanagedType.LPStr)] string namespace,
-        ulong ttlOverrideSecs
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_get_default")]
-    internal static extern IntPtr GenericCacheGetDefault(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheKey,
-        [MarshalAs(UnmanagedType.LPStr)] string sourceFile
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_set")]
-    internal static extern void GenericCacheSet(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheKey,
-        IntPtr data,
-        [MarshalAs(UnmanagedType.LPStr)] string sourceFile,
-        [MarshalAs(UnmanagedType.LPStr)] string namespace,
-        ulong ttlSecs
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_set_default")]
-    internal static extern void GenericCacheSetDefault(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheKey,
-        IntPtr data,
-        [MarshalAs(UnmanagedType.LPStr)] string sourceFile
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_is_processing")]
-    internal static extern int GenericCacheIsProcessing(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheKey
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_mark_processing")]
-    internal static extern void GenericCacheMarkProcessing(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheKey
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_mark_complete")]
-    internal static extern void GenericCacheMarkComplete(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheKey
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_clear")]
-    internal static extern IntPtr GenericCacheClear();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_delete_namespace")]
-    internal static extern IntPtr GenericCacheDeleteNamespace(
-        [MarshalAs(UnmanagedType.LPStr)] string namespace
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_get_stats")]
-    internal static extern IntPtr GenericCacheGetStats();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_get_stats_filtered")]
-    internal static extern IntPtr GenericCacheGetStatsFiltered(
-        [MarshalAs(UnmanagedType.LPStr)] string namespace
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_cache_dir")]
-    internal static extern IntPtr GenericCacheCacheDir();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_generic_cache_cache_type")]
-    internal static extern IntPtr GenericCacheCacheType();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_config_default")]
-    internal static extern IntPtr BatchProcessorConfigDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_with_config")]
-    internal static extern IntPtr BatchProcessorWithConfig(
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_with_pool_hint")]
-    internal static extern IntPtr BatchProcessorWithPoolHint(
-        IntPtr hint
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_string_pool")]
-    internal static extern IntPtr BatchProcessorStringPool();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_byte_pool")]
-    internal static extern IntPtr BatchProcessorBytePool();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_config")]
-    internal static extern IntPtr BatchProcessorConfig();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_string_pool_size")]
-    internal static extern ulong BatchProcessorStringPoolSize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_byte_pool_size")]
-    internal static extern ulong BatchProcessorBytePoolSize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_clear_pools")]
-    internal static extern void BatchProcessorClearPools();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_batch_processor_default")]
-    internal static extern IntPtr BatchProcessorDefault();
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_content_filter_config_default")]
     internal static extern IntPtr ContentFilterConfigDefault();
@@ -3154,39 +2648,6 @@ internal static partial class NativeMethods
         [MarshalAs(UnmanagedType.LPStr)] string path
     );
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_json_extraction_config_default")]
-    internal static extern IntPtr JsonExtractionConfigDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_document_extract_text")]
-    internal static extern IntPtr HwpDocumentExtractText();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_para_text_from_record")]
-    internal static extern IntPtr ParaTextFromRecord(
-        IntPtr record
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_header_parse")]
-    internal static extern IntPtr FileHeaderParse(
-        IntPtr data
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_header_is_compressed")]
-    internal static extern int FileHeaderIsCompressed();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_header_is_encrypted")]
-    internal static extern int FileHeaderIsEncrypted();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_file_header_is_distribute")]
-    internal static extern int FileHeaderIsDistribute();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_record_parse")]
-    internal static extern IntPtr RecordParse(
-        IntPtr reader
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_record_data_reader")]
-    internal static extern IntPtr RecordDataReader();
-
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_stream_reader_read_u8")]
     internal static extern byte StreamReaderReadU8();
 
@@ -3206,243 +2667,6 @@ internal static partial class NativeMethods
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_stream_reader_remaining")]
     internal static extern ulong StreamReaderRemaining();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_cfb_reader_from_bytes")]
-    internal static extern IntPtr CfbReaderFromBytes(
-        IntPtr bytes
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extent_width_inches")]
-    internal static extern double ExtentWidthInches();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extent_height_inches")]
-    internal static extern double ExtentHeightInches();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_resolve_heading_level")]
-    internal static extern IntPtr DocumentResolveHeadingLevel(
-        [MarshalAs(UnmanagedType.LPStr)] string styleId
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_extract_text")]
-    internal static extern IntPtr DocumentExtractText();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_to_markdown")]
-    internal static extern IntPtr DocumentToMarkdown(
-        int injectPlaceholders
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_to_plain_text")]
-    internal static extern IntPtr DocumentToPlainText();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_margins_to_points")]
-    internal static extern IntPtr PageMarginsToPoints();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_section_properties_page_width_points")]
-    internal static extern IntPtr SectionPropertiesPageWidthPoints();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_section_properties_page_height_points")]
-    internal static extern IntPtr SectionPropertiesPageHeightPoints();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_style_catalog_resolve_style")]
-    internal static extern IntPtr StyleCatalogResolveStyle(
-        [MarshalAs(UnmanagedType.LPStr)] string styleId
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extraction_options_default")]
-    internal static extern IntPtr PptxExtractionOptionsDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_default")]
-    internal static extern IntPtr CodeExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_name")]
-    internal static extern IntPtr CodeExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_version")]
-    internal static extern IntPtr CodeExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_initialize")]
-    internal static extern void CodeExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_shutdown")]
-    internal static extern void CodeExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_description")]
-    internal static extern IntPtr CodeExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_author")]
-    internal static extern IntPtr CodeExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_extract_bytes")]
-    internal static extern IntPtr CodeExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_extract_file")]
-    internal static extern IntPtr CodeExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_supported_mime_types")]
-    internal static extern IntPtr CodeExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_priority")]
-    internal static extern int CodeExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_as_sync_extractor")]
-    internal static extern IntPtr CodeExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_code_extractor_extract_sync")]
-    internal static extern IntPtr CodeExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_default")]
-    internal static extern IntPtr CsvExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_name")]
-    internal static extern IntPtr CsvExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_version")]
-    internal static extern IntPtr CsvExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_initialize")]
-    internal static extern void CsvExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_shutdown")]
-    internal static extern void CsvExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_description")]
-    internal static extern IntPtr CsvExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_author")]
-    internal static extern IntPtr CsvExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_extract_bytes")]
-    internal static extern IntPtr CsvExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_supported_mime_types")]
-    internal static extern IntPtr CsvExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_csv_extractor_priority")]
-    internal static extern int CsvExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extractor_default")]
-    internal static extern IntPtr StructuredExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extractor_name")]
-    internal static extern IntPtr StructuredExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extractor_version")]
-    internal static extern IntPtr StructuredExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extractor_initialize")]
-    internal static extern void StructuredExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extractor_shutdown")]
-    internal static extern void StructuredExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extractor_extract_bytes")]
-    internal static extern IntPtr StructuredExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extractor_supported_mime_types")]
-    internal static extern IntPtr StructuredExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_structured_extractor_priority")]
-    internal static extern int StructuredExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_default")]
-    internal static extern IntPtr PlainTextExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_name")]
-    internal static extern IntPtr PlainTextExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_version")]
-    internal static extern IntPtr PlainTextExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_initialize")]
-    internal static extern void PlainTextExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_shutdown")]
-    internal static extern void PlainTextExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_description")]
-    internal static extern IntPtr PlainTextExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_author")]
-    internal static extern IntPtr PlainTextExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_extract_bytes")]
-    internal static extern IntPtr PlainTextExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_supported_mime_types")]
-    internal static extern IntPtr PlainTextExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_plain_text_extractor_priority")]
-    internal static extern int PlainTextExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_build_internal_document")]
-    internal static extern IntPtr DjotExtractorBuildInternalDocument(
-        IntPtr events
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_default")]
-    internal static extern IntPtr DjotExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_name")]
-    internal static extern IntPtr DjotExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_version")]
-    internal static extern IntPtr DjotExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_initialize")]
-    internal static extern void DjotExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_shutdown")]
-    internal static extern void DjotExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_description")]
-    internal static extern IntPtr DjotExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_author")]
-    internal static extern IntPtr DjotExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_extract_bytes")]
-    internal static extern IntPtr DjotExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_extract_file")]
-    internal static extern IntPtr DjotExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_supported_mime_types")]
-    internal static extern IntPtr DjotExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_djot_extractor_priority")]
-    internal static extern int DjotExtractorPriority();
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_string_growth_validator_check_append")]
     internal static extern void StringGrowthValidatorCheckAppend(
@@ -3480,1366 +2704,6 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_table_validator_current_cells")]
     internal static extern ulong TableValidatorCurrentCells();
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_default")]
-    internal static extern IntPtr ImageExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_name")]
-    internal static extern IntPtr ImageExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_version")]
-    internal static extern IntPtr ImageExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_initialize")]
-    internal static extern void ImageExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_shutdown")]
-    internal static extern void ImageExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_description")]
-    internal static extern IntPtr ImageExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_author")]
-    internal static extern IntPtr ImageExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_extract_bytes")]
-    internal static extern IntPtr ImageExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_supported_mime_types")]
-    internal static extern IntPtr ImageExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_image_extractor_priority")]
-    internal static extern int ImageExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_default")]
-    internal static extern IntPtr ZipExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_name")]
-    internal static extern IntPtr ZipExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_version")]
-    internal static extern IntPtr ZipExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_initialize")]
-    internal static extern void ZipExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_shutdown")]
-    internal static extern void ZipExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_description")]
-    internal static extern IntPtr ZipExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_author")]
-    internal static extern IntPtr ZipExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_extract_bytes")]
-    internal static extern IntPtr ZipExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_supported_mime_types")]
-    internal static extern IntPtr ZipExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_priority")]
-    internal static extern int ZipExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_as_sync_extractor")]
-    internal static extern IntPtr ZipExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_zip_extractor_extract_sync")]
-    internal static extern IntPtr ZipExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_default")]
-    internal static extern IntPtr TarExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_name")]
-    internal static extern IntPtr TarExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_version")]
-    internal static extern IntPtr TarExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_initialize")]
-    internal static extern void TarExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_shutdown")]
-    internal static extern void TarExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_description")]
-    internal static extern IntPtr TarExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_author")]
-    internal static extern IntPtr TarExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_extract_bytes")]
-    internal static extern IntPtr TarExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_supported_mime_types")]
-    internal static extern IntPtr TarExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_priority")]
-    internal static extern int TarExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_as_sync_extractor")]
-    internal static extern IntPtr TarExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tar_extractor_extract_sync")]
-    internal static extern IntPtr TarExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_default")]
-    internal static extern IntPtr SevenZExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_name")]
-    internal static extern IntPtr SevenZExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_version")]
-    internal static extern IntPtr SevenZExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_initialize")]
-    internal static extern void SevenZExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_shutdown")]
-    internal static extern void SevenZExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_description")]
-    internal static extern IntPtr SevenZExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_author")]
-    internal static extern IntPtr SevenZExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_extract_bytes")]
-    internal static extern IntPtr SevenZExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_supported_mime_types")]
-    internal static extern IntPtr SevenZExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_priority")]
-    internal static extern int SevenZExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_as_sync_extractor")]
-    internal static extern IntPtr SevenZExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_seven_z_extractor_extract_sync")]
-    internal static extern IntPtr SevenZExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_default")]
-    internal static extern IntPtr GzipExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_name")]
-    internal static extern IntPtr GzipExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_version")]
-    internal static extern IntPtr GzipExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_initialize")]
-    internal static extern void GzipExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_shutdown")]
-    internal static extern void GzipExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_description")]
-    internal static extern IntPtr GzipExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_author")]
-    internal static extern IntPtr GzipExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_extract_bytes")]
-    internal static extern IntPtr GzipExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_supported_mime_types")]
-    internal static extern IntPtr GzipExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_priority")]
-    internal static extern int GzipExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_as_sync_extractor")]
-    internal static extern IntPtr GzipExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_gzip_extractor_extract_sync")]
-    internal static extern IntPtr GzipExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_default")]
-    internal static extern IntPtr EmailExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_name")]
-    internal static extern IntPtr EmailExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_version")]
-    internal static extern IntPtr EmailExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_initialize")]
-    internal static extern void EmailExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_shutdown")]
-    internal static extern void EmailExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_extract_sync")]
-    internal static extern IntPtr EmailExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_extract_bytes")]
-    internal static extern IntPtr EmailExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_supported_mime_types")]
-    internal static extern IntPtr EmailExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_priority")]
-    internal static extern int EmailExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_email_extractor_as_sync_extractor")]
-    internal static extern IntPtr EmailExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_default")]
-    internal static extern IntPtr PstExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_name")]
-    internal static extern IntPtr PstExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_version")]
-    internal static extern IntPtr PstExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_initialize")]
-    internal static extern void PstExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_shutdown")]
-    internal static extern void PstExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_extract_sync")]
-    internal static extern IntPtr PstExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_extract_bytes")]
-    internal static extern IntPtr PstExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_supported_mime_types")]
-    internal static extern IntPtr PstExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_priority")]
-    internal static extern int PstExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pst_extractor_as_sync_extractor")]
-    internal static extern IntPtr PstExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_default")]
-    internal static extern IntPtr ExcelExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_name")]
-    internal static extern IntPtr ExcelExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_version")]
-    internal static extern IntPtr ExcelExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_initialize")]
-    internal static extern void ExcelExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_shutdown")]
-    internal static extern void ExcelExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_extract_sync")]
-    internal static extern IntPtr ExcelExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_extract_bytes")]
-    internal static extern IntPtr ExcelExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_extract_file")]
-    internal static extern IntPtr ExcelExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_supported_mime_types")]
-    internal static extern IntPtr ExcelExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_priority")]
-    internal static extern int ExcelExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_excel_extractor_as_sync_extractor")]
-    internal static extern IntPtr ExcelExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_default")]
-    internal static extern IntPtr HwpExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_name")]
-    internal static extern IntPtr HwpExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_version")]
-    internal static extern IntPtr HwpExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_initialize")]
-    internal static extern void HwpExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_shutdown")]
-    internal static extern void HwpExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_description")]
-    internal static extern IntPtr HwpExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_author")]
-    internal static extern IntPtr HwpExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_extract_bytes")]
-    internal static extern IntPtr HwpExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_supported_mime_types")]
-    internal static extern IntPtr HwpExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hwp_extractor_priority")]
-    internal static extern int HwpExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_default")]
-    internal static extern IntPtr KeynoteExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_name")]
-    internal static extern IntPtr KeynoteExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_version")]
-    internal static extern IntPtr KeynoteExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_initialize")]
-    internal static extern void KeynoteExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_shutdown")]
-    internal static extern void KeynoteExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_description")]
-    internal static extern IntPtr KeynoteExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_author")]
-    internal static extern IntPtr KeynoteExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_extract_bytes")]
-    internal static extern IntPtr KeynoteExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_supported_mime_types")]
-    internal static extern IntPtr KeynoteExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_keynote_extractor_priority")]
-    internal static extern int KeynoteExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_default")]
-    internal static extern IntPtr NumbersExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_name")]
-    internal static extern IntPtr NumbersExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_version")]
-    internal static extern IntPtr NumbersExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_initialize")]
-    internal static extern void NumbersExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_shutdown")]
-    internal static extern void NumbersExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_description")]
-    internal static extern IntPtr NumbersExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_author")]
-    internal static extern IntPtr NumbersExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_extract_bytes")]
-    internal static extern IntPtr NumbersExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_supported_mime_types")]
-    internal static extern IntPtr NumbersExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_numbers_extractor_priority")]
-    internal static extern int NumbersExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_default")]
-    internal static extern IntPtr PagesExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_name")]
-    internal static extern IntPtr PagesExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_version")]
-    internal static extern IntPtr PagesExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_initialize")]
-    internal static extern void PagesExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_shutdown")]
-    internal static extern void PagesExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_description")]
-    internal static extern IntPtr PagesExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_author")]
-    internal static extern IntPtr PagesExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_extract_bytes")]
-    internal static extern IntPtr PagesExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_supported_mime_types")]
-    internal static extern IntPtr PagesExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pages_extractor_priority")]
-    internal static extern int PagesExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_default")]
-    internal static extern IntPtr HtmlExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_name")]
-    internal static extern IntPtr HtmlExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_version")]
-    internal static extern IntPtr HtmlExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_initialize")]
-    internal static extern void HtmlExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_shutdown")]
-    internal static extern void HtmlExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_extract_sync")]
-    internal static extern IntPtr HtmlExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_extract_bytes")]
-    internal static extern IntPtr HtmlExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_supported_mime_types")]
-    internal static extern IntPtr HtmlExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_priority")]
-    internal static extern int HtmlExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_html_extractor_as_sync_extractor")]
-    internal static extern IntPtr HtmlExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_default")]
-    internal static extern IntPtr BibtexExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_name")]
-    internal static extern IntPtr BibtexExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_version")]
-    internal static extern IntPtr BibtexExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_initialize")]
-    internal static extern void BibtexExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_shutdown")]
-    internal static extern void BibtexExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_description")]
-    internal static extern IntPtr BibtexExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_author")]
-    internal static extern IntPtr BibtexExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_extract_bytes")]
-    internal static extern IntPtr BibtexExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_supported_mime_types")]
-    internal static extern IntPtr BibtexExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_bibtex_extractor_priority")]
-    internal static extern int BibtexExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_default")]
-    internal static extern IntPtr CitationExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_name")]
-    internal static extern IntPtr CitationExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_version")]
-    internal static extern IntPtr CitationExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_initialize")]
-    internal static extern void CitationExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_shutdown")]
-    internal static extern void CitationExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_description")]
-    internal static extern IntPtr CitationExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_author")]
-    internal static extern IntPtr CitationExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_extract_bytes")]
-    internal static extern IntPtr CitationExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_supported_mime_types")]
-    internal static extern IntPtr CitationExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_citation_extractor_priority")]
-    internal static extern int CitationExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_default")]
-    internal static extern IntPtr DocExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_name")]
-    internal static extern IntPtr DocExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_version")]
-    internal static extern IntPtr DocExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_initialize")]
-    internal static extern void DocExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_shutdown")]
-    internal static extern void DocExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_description")]
-    internal static extern IntPtr DocExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_author")]
-    internal static extern IntPtr DocExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_extract_bytes")]
-    internal static extern IntPtr DocExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_supported_mime_types")]
-    internal static extern IntPtr DocExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_doc_extractor_priority")]
-    internal static extern int DocExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_default")]
-    internal static extern IntPtr DbfExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_name")]
-    internal static extern IntPtr DbfExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_version")]
-    internal static extern IntPtr DbfExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_initialize")]
-    internal static extern void DbfExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_shutdown")]
-    internal static extern void DbfExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_description")]
-    internal static extern IntPtr DbfExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_author")]
-    internal static extern IntPtr DbfExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_extract_bytes")]
-    internal static extern IntPtr DbfExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_supported_mime_types")]
-    internal static extern IntPtr DbfExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_dbf_extractor_priority")]
-    internal static extern int DbfExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_default")]
-    internal static extern IntPtr DocxExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_name")]
-    internal static extern IntPtr DocxExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_version")]
-    internal static extern IntPtr DocxExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_initialize")]
-    internal static extern void DocxExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_shutdown")]
-    internal static extern void DocxExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_description")]
-    internal static extern IntPtr DocxExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_author")]
-    internal static extern IntPtr DocxExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_extract_bytes")]
-    internal static extern IntPtr DocxExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_supported_mime_types")]
-    internal static extern IntPtr DocxExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docx_extractor_priority")]
-    internal static extern int DocxExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_default")]
-    internal static extern IntPtr EpubExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_name")]
-    internal static extern IntPtr EpubExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_version")]
-    internal static extern IntPtr EpubExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_initialize")]
-    internal static extern void EpubExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_shutdown")]
-    internal static extern void EpubExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_description")]
-    internal static extern IntPtr EpubExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_author")]
-    internal static extern IntPtr EpubExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_extract_bytes")]
-    internal static extern IntPtr EpubExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_supported_mime_types")]
-    internal static extern IntPtr EpubExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_epub_extractor_priority")]
-    internal static extern int EpubExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_default")]
-    internal static extern IntPtr FictionBookExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_name")]
-    internal static extern IntPtr FictionBookExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_version")]
-    internal static extern IntPtr FictionBookExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_initialize")]
-    internal static extern void FictionBookExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_shutdown")]
-    internal static extern void FictionBookExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_description")]
-    internal static extern IntPtr FictionBookExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_author")]
-    internal static extern IntPtr FictionBookExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_extract_bytes")]
-    internal static extern IntPtr FictionBookExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_supported_mime_types")]
-    internal static extern IntPtr FictionBookExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_fiction_book_extractor_priority")]
-    internal static extern int FictionBookExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_build_internal_document")]
-    internal static extern IntPtr MarkdownExtractorBuildInternalDocument(
-        IntPtr events,
-        [MarshalAs(UnmanagedType.LPStr)] string yaml
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_default")]
-    internal static extern IntPtr MarkdownExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_name")]
-    internal static extern IntPtr MarkdownExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_version")]
-    internal static extern IntPtr MarkdownExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_initialize")]
-    internal static extern void MarkdownExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_shutdown")]
-    internal static extern void MarkdownExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_description")]
-    internal static extern IntPtr MarkdownExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_author")]
-    internal static extern IntPtr MarkdownExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_extract_bytes")]
-    internal static extern IntPtr MarkdownExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_extract_file")]
-    internal static extern IntPtr MarkdownExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_supported_mime_types")]
-    internal static extern IntPtr MarkdownExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_markdown_extractor_priority")]
-    internal static extern int MarkdownExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_build_internal_document")]
-    internal static extern IntPtr MdxExtractorBuildInternalDocument(
-        IntPtr events,
-        [MarshalAs(UnmanagedType.LPStr)] string yaml,
-        IntPtr rawJsxBlocks
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_default")]
-    internal static extern IntPtr MdxExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_name")]
-    internal static extern IntPtr MdxExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_version")]
-    internal static extern IntPtr MdxExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_initialize")]
-    internal static extern void MdxExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_shutdown")]
-    internal static extern void MdxExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_description")]
-    internal static extern IntPtr MdxExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_author")]
-    internal static extern IntPtr MdxExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_extract_bytes")]
-    internal static extern IntPtr MdxExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_extract_file")]
-    internal static extern IntPtr MdxExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_supported_mime_types")]
-    internal static extern IntPtr MdxExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_mdx_extractor_priority")]
-    internal static extern int MdxExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_build_internal_document")]
-    internal static extern IntPtr RstExtractorBuildInternalDocument(
-        [MarshalAs(UnmanagedType.LPStr)] string content,
-        int injectPlaceholders
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_default")]
-    internal static extern IntPtr RstExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_name")]
-    internal static extern IntPtr RstExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_version")]
-    internal static extern IntPtr RstExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_initialize")]
-    internal static extern void RstExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_shutdown")]
-    internal static extern void RstExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_description")]
-    internal static extern IntPtr RstExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_author")]
-    internal static extern IntPtr RstExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_extract_bytes")]
-    internal static extern IntPtr RstExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_extract_file")]
-    internal static extern IntPtr RstExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_supported_mime_types")]
-    internal static extern IntPtr RstExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rst_extractor_priority")]
-    internal static extern int RstExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_build_internal_document")]
-    internal static extern IntPtr LatexExtractorBuildInternalDocument(
-        [MarshalAs(UnmanagedType.LPStr)] string source,
-        int injectPlaceholders
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_default")]
-    internal static extern IntPtr LatexExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_name")]
-    internal static extern IntPtr LatexExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_version")]
-    internal static extern IntPtr LatexExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_initialize")]
-    internal static extern void LatexExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_shutdown")]
-    internal static extern void LatexExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_description")]
-    internal static extern IntPtr LatexExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_author")]
-    internal static extern IntPtr LatexExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_extract_bytes")]
-    internal static extern IntPtr LatexExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_extract_file")]
-    internal static extern IntPtr LatexExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_supported_mime_types")]
-    internal static extern IntPtr LatexExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_latex_extractor_priority")]
-    internal static extern int LatexExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_default")]
-    internal static extern IntPtr JupyterExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_name")]
-    internal static extern IntPtr JupyterExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_version")]
-    internal static extern IntPtr JupyterExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_initialize")]
-    internal static extern void JupyterExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_shutdown")]
-    internal static extern void JupyterExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_description")]
-    internal static extern IntPtr JupyterExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_author")]
-    internal static extern IntPtr JupyterExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_extract_bytes")]
-    internal static extern IntPtr JupyterExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_supported_mime_types")]
-    internal static extern IntPtr JupyterExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jupyter_extractor_priority")]
-    internal static extern int JupyterExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_build_internal_document")]
-    internal static extern IntPtr OrgModeExtractorBuildInternalDocument(
-        [MarshalAs(UnmanagedType.LPStr)] string orgText
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_default")]
-    internal static extern IntPtr OrgModeExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_name")]
-    internal static extern IntPtr OrgModeExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_version")]
-    internal static extern IntPtr OrgModeExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_initialize")]
-    internal static extern void OrgModeExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_shutdown")]
-    internal static extern void OrgModeExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_description")]
-    internal static extern IntPtr OrgModeExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_author")]
-    internal static extern IntPtr OrgModeExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_extract_bytes")]
-    internal static extern IntPtr OrgModeExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_extract_file")]
-    internal static extern IntPtr OrgModeExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_supported_mime_types")]
-    internal static extern IntPtr OrgModeExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_org_mode_extractor_priority")]
-    internal static extern int OrgModeExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_default")]
-    internal static extern IntPtr OdtExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_name")]
-    internal static extern IntPtr OdtExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_version")]
-    internal static extern IntPtr OdtExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_initialize")]
-    internal static extern void OdtExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_shutdown")]
-    internal static extern void OdtExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_description")]
-    internal static extern IntPtr OdtExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_author")]
-    internal static extern IntPtr OdtExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_extract_bytes")]
-    internal static extern IntPtr OdtExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_supported_mime_types")]
-    internal static extern IntPtr OdtExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_odt_extractor_priority")]
-    internal static extern int OdtExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_default")]
-    internal static extern IntPtr OpmlExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_name")]
-    internal static extern IntPtr OpmlExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_version")]
-    internal static extern IntPtr OpmlExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_initialize")]
-    internal static extern void OpmlExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_shutdown")]
-    internal static extern void OpmlExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_description")]
-    internal static extern IntPtr OpmlExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_author")]
-    internal static extern IntPtr OpmlExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_extract_bytes")]
-    internal static extern IntPtr OpmlExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_supported_mime_types")]
-    internal static extern IntPtr OpmlExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_opml_extractor_priority")]
-    internal static extern int OpmlExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_default")]
-    internal static extern IntPtr TypstExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_name")]
-    internal static extern IntPtr TypstExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_version")]
-    internal static extern IntPtr TypstExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_initialize")]
-    internal static extern void TypstExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_shutdown")]
-    internal static extern void TypstExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_description")]
-    internal static extern IntPtr TypstExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_author")]
-    internal static extern IntPtr TypstExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_extract_bytes")]
-    internal static extern IntPtr TypstExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_extract_file")]
-    internal static extern IntPtr TypstExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_supported_mime_types")]
-    internal static extern IntPtr TypstExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_typst_extractor_priority")]
-    internal static extern int TypstExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jats_extractor_default")]
-    internal static extern IntPtr JatsExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jats_extractor_name")]
-    internal static extern IntPtr JatsExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jats_extractor_version")]
-    internal static extern IntPtr JatsExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jats_extractor_initialize")]
-    internal static extern void JatsExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jats_extractor_shutdown")]
-    internal static extern void JatsExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jats_extractor_extract_bytes")]
-    internal static extern IntPtr JatsExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jats_extractor_supported_mime_types")]
-    internal static extern IntPtr JatsExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_jats_extractor_priority")]
-    internal static extern int JatsExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_native_text_stats_compute")]
-    internal static extern IntPtr NativeTextStatsCompute(
-        [MarshalAs(UnmanagedType.LPStr)] string text,
-        IntPtr thresholds
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_native_text_stats_from")]
-    internal static extern IntPtr NativeTextStatsFrom(
-        [MarshalAs(UnmanagedType.LPStr)] string text
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extractor_default")]
-    internal static extern IntPtr PdfExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extractor_name")]
-    internal static extern IntPtr PdfExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extractor_version")]
-    internal static extern IntPtr PdfExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extractor_initialize")]
-    internal static extern void PdfExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extractor_shutdown")]
-    internal static extern void PdfExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extractor_extract_bytes")]
-    internal static extern IntPtr PdfExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_extractor_supported_mime_types")]
-    internal static extern IntPtr PdfExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_default")]
-    internal static extern IntPtr PptExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_name")]
-    internal static extern IntPtr PptExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_version")]
-    internal static extern IntPtr PptExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_initialize")]
-    internal static extern void PptExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_shutdown")]
-    internal static extern void PptExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_description")]
-    internal static extern IntPtr PptExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_author")]
-    internal static extern IntPtr PptExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_extract_bytes")]
-    internal static extern IntPtr PptExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_supported_mime_types")]
-    internal static extern IntPtr PptExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ppt_extractor_priority")]
-    internal static extern int PptExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_default")]
-    internal static extern IntPtr PptxExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_name")]
-    internal static extern IntPtr PptxExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_version")]
-    internal static extern IntPtr PptxExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_initialize")]
-    internal static extern void PptxExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_shutdown")]
-    internal static extern void PptxExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_extract_bytes")]
-    internal static extern IntPtr PptxExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_extract_file")]
-    internal static extern IntPtr PptxExtractorExtractFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_supported_mime_types")]
-    internal static extern IntPtr PptxExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pptx_extractor_priority")]
-    internal static extern int PptxExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_default")]
-    internal static extern IntPtr RtfExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_name")]
-    internal static extern IntPtr RtfExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_version")]
-    internal static extern IntPtr RtfExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_initialize")]
-    internal static extern void RtfExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_shutdown")]
-    internal static extern void RtfExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_description")]
-    internal static extern IntPtr RtfExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_author")]
-    internal static extern IntPtr RtfExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_extract_bytes")]
-    internal static extern IntPtr RtfExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_supported_mime_types")]
-    internal static extern IntPtr RtfExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_rtf_extractor_priority")]
-    internal static extern int RtfExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_default")]
-    internal static extern IntPtr XmlExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_name")]
-    internal static extern IntPtr XmlExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_version")]
-    internal static extern IntPtr XmlExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_initialize")]
-    internal static extern void XmlExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_shutdown")]
-    internal static extern void XmlExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_description")]
-    internal static extern IntPtr XmlExtractorDescription();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_author")]
-    internal static extern IntPtr XmlExtractorAuthor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_extract_sync")]
-    internal static extern IntPtr XmlExtractorExtractSync(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_extract_bytes")]
-    internal static extern IntPtr XmlExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_supported_mime_types")]
-    internal static extern IntPtr XmlExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_priority")]
-    internal static extern int XmlExtractorPriority();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_xml_extractor_as_sync_extractor")]
-    internal static extern IntPtr XmlExtractorAsSyncExtractor();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docbook_extractor_default")]
-    internal static extern IntPtr DocbookExtractorDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docbook_extractor_name")]
-    internal static extern IntPtr DocbookExtractorName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docbook_extractor_version")]
-    internal static extern IntPtr DocbookExtractorVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docbook_extractor_initialize")]
-    internal static extern void DocbookExtractorInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docbook_extractor_shutdown")]
-    internal static extern void DocbookExtractorShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docbook_extractor_extract_bytes")]
-    internal static extern IntPtr DocbookExtractorExtractBytes(
-        IntPtr content,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docbook_extractor_supported_mime_types")]
-    internal static extern IntPtr DocbookExtractorSupportedMimeTypes();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_docbook_extractor_priority")]
-    internal static extern int DocbookExtractorPriority();
-
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_model_cache_put")]
     internal static extern void ModelCachePut(
         [MarshalAs(UnmanagedType.LPStr)] string model
@@ -4847,167 +2711,6 @@ internal static partial class NativeMethods
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_model_cache_take")]
     internal static extern IntPtr ModelCacheTake();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_panic_context_format")]
-    internal static extern IntPtr PanicContextFormat();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_extractor_registry_register")]
-    internal static extern void DocumentExtractorRegistryRegister(
-        [MarshalAs(UnmanagedType.LPStr)] string extractor
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_extractor_registry_get")]
-    internal static extern IntPtr DocumentExtractorRegistryGet(
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_extractor_registry_list")]
-    internal static extern IntPtr DocumentExtractorRegistryList();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_extractor_registry_remove")]
-    internal static extern void DocumentExtractorRegistryRemove(
-        [MarshalAs(UnmanagedType.LPStr)] string name
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_extractor_registry_shutdown_all")]
-    internal static extern void DocumentExtractorRegistryShutdownAll();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_document_extractor_registry_default")]
-    internal static extern IntPtr DocumentExtractorRegistryDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_new_empty")]
-    internal static extern IntPtr OcrBackendRegistryNewEmpty();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_register")]
-    internal static extern void OcrBackendRegistryRegister(
-        IntPtr backend
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_get")]
-    internal static extern IntPtr OcrBackendRegistryGet(
-        [MarshalAs(UnmanagedType.LPStr)] string name
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_get_for_language")]
-    internal static extern IntPtr OcrBackendRegistryGetForLanguage(
-        [MarshalAs(UnmanagedType.LPStr)] string language
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_list")]
-    internal static extern IntPtr OcrBackendRegistryList();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_remove")]
-    internal static extern void OcrBackendRegistryRemove(
-        [MarshalAs(UnmanagedType.LPStr)] string name
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_shutdown_all")]
-    internal static extern void OcrBackendRegistryShutdownAll();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_reset_to_defaults")]
-    internal static extern void OcrBackendRegistryResetToDefaults();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_backend_registry_default")]
-    internal static extern IntPtr OcrBackendRegistryDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_registry_register")]
-    internal static extern void PostProcessorRegistryRegister(
-        [MarshalAs(UnmanagedType.LPStr)] string processor,
-        int priority
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_registry_get_for_stage")]
-    internal static extern IntPtr PostProcessorRegistryGetForStage(
-        [MarshalAs(UnmanagedType.LPStr)] string stage
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_registry_list")]
-    internal static extern IntPtr PostProcessorRegistryList();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_registry_remove")]
-    internal static extern void PostProcessorRegistryRemove(
-        [MarshalAs(UnmanagedType.LPStr)] string name
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_registry_shutdown_all")]
-    internal static extern void PostProcessorRegistryShutdownAll();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_post_processor_registry_default")]
-    internal static extern IntPtr PostProcessorRegistryDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_registry_new_empty")]
-    internal static extern IntPtr RendererRegistryNewEmpty();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_registry_register")]
-    internal static extern void RendererRegistryRegister(
-        IntPtr renderer
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_registry_get")]
-    internal static extern IntPtr RendererRegistryGet(
-        [MarshalAs(UnmanagedType.LPStr)] string name
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_registry_render")]
-    internal static extern IntPtr RendererRegistryRender(
-        [MarshalAs(UnmanagedType.LPStr)] string name,
-        [MarshalAs(UnmanagedType.LPStr)] string doc
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_registry_list")]
-    internal static extern IntPtr RendererRegistryList();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_registry_remove")]
-    internal static extern void RendererRegistryRemove(
-        [MarshalAs(UnmanagedType.LPStr)] string name
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_registry_reset_to_defaults")]
-    internal static extern void RendererRegistryResetToDefaults();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_renderer_registry_default")]
-    internal static extern IntPtr RendererRegistryDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_validator_registry_register")]
-    internal static extern void ValidatorRegistryRegister(
-        [MarshalAs(UnmanagedType.LPStr)] string validator
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_validator_registry_get_all")]
-    internal static extern IntPtr ValidatorRegistryGetAll();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_validator_registry_list")]
-    internal static extern IntPtr ValidatorRegistryList();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_validator_registry_remove")]
-    internal static extern void ValidatorRegistryRemove(
-        [MarshalAs(UnmanagedType.LPStr)] string name
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_validator_registry_shutdown_all")]
-    internal static extern void ValidatorRegistryShutdownAll();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_validator_registry_default")]
-    internal static extern IntPtr ValidatorRegistryDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_token_reducer_new")]
-    internal static extern IntPtr TokenReducerNew(
-        IntPtr config,
-        [MarshalAs(UnmanagedType.LPStr)] string languageHint
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_token_reducer_language")]
-    internal static extern IntPtr TokenReducerLanguage();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_token_reducer_reduce")]
-    internal static extern IntPtr TokenReducerReduce(
-        [MarshalAs(UnmanagedType.LPStr)] string text
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_token_reducer_batch_reduce")]
-    internal static extern IntPtr TokenReducerBatchReduce(
-        IntPtr texts
-    );
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_quality_processor_name")]
     internal static extern IntPtr QualityProcessorName();
@@ -5212,18 +2915,6 @@ internal static partial class NativeMethods
         uint page
     );
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_metrics_hit_rate")]
-    internal static extern double PoolMetricsHitRate();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_metrics_snapshot")]
-    internal static extern IntPtr PoolMetricsSnapshot();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_metrics_reset")]
-    internal static extern void PoolMetricsReset();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_metrics_default")]
-    internal static extern IntPtr PoolMetricsDefault();
-
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_acquire")]
     internal static extern IntPtr PoolAcquire();
 
@@ -5232,18 +2923,6 @@ internal static partial class NativeMethods
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_clear")]
     internal static extern void PoolClear();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_size_hint_estimated_string_pool_memory")]
-    internal static extern ulong PoolSizeHintEstimatedStringPoolMemory();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_size_hint_estimated_byte_pool_memory")]
-    internal static extern ulong PoolSizeHintEstimatedBytePoolMemory();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_size_hint_total_pool_memory")]
-    internal static extern ulong PoolSizeHintTotalPoolMemory();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pool_config_default")]
-    internal static extern IntPtr PoolConfigDefault();
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pooled_string_buffer_mut")]
     internal static extern IntPtr PooledStringBufferMut();
@@ -5284,43 +2963,6 @@ internal static partial class NativeMethods
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_interned_string_deref")]
     internal static extern IntPtr InternedStringDeref();
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_instant_now")]
-    internal static extern IntPtr InstantNow();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_instant_elapsed_secs_f64")]
-    internal static extern double InstantElapsedSecsF64();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_instant_elapsed_ms")]
-    internal static extern double InstantElapsedMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_instant_elapsed_millis")]
-    internal static extern IntPtr InstantElapsedMillis();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hocr_word_right")]
-    internal static extern uint HocrWordRight();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hocr_word_bottom")]
-    internal static extern uint HocrWordBottom();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hocr_word_y_center")]
-    internal static extern double HocrWordYCenter();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_hocr_word_x_center")]
-    internal static extern double HocrWordXCenter();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_default")]
-    internal static extern IntPtr ExtractionServiceDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_poll_ready")]
-    internal static extern IntPtr ExtractionServicePollReady(
-        [MarshalAs(UnmanagedType.LPStr)] string cx
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_call")]
-    internal static extern IntPtr ExtractionServiceCall(
-        IntPtr req
-    );
-
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tracing_layer_layer")]
     internal static extern IntPtr TracingLayerLayer(
         [MarshalAs(UnmanagedType.LPStr)] string inner
@@ -5330,53 +2972,6 @@ internal static partial class NativeMethods
     internal static extern IntPtr MetricsLayerLayer(
         [MarshalAs(UnmanagedType.LPStr)] string inner
     );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_request_file")]
-    internal static extern IntPtr ExtractionRequestFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_request_file_with_mime")]
-    internal static extern IntPtr ExtractionRequestFileWithMime(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeHint,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_request_bytes")]
-    internal static extern IntPtr ExtractionRequestBytes(
-        IntPtr data,
-        [MarshalAs(UnmanagedType.LPStr)] string mimeType,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_request_with_overrides")]
-    internal static extern IntPtr ExtractionRequestWithOverrides(
-        IntPtr overrides
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_builder_default")]
-    internal static extern IntPtr ExtractionServiceBuilderDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_builder_with_timeout")]
-    internal static extern IntPtr ExtractionServiceBuilderWithTimeout(
-        ulong duration
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_builder_with_concurrency_limit")]
-    internal static extern IntPtr ExtractionServiceBuilderWithConcurrencyLimit(
-        ulong max
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_builder_with_tracing")]
-    internal static extern IntPtr ExtractionServiceBuilderWithTracing();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_builder_with_metrics")]
-    internal static extern IntPtr ExtractionServiceBuilderWithMetrics();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_extraction_service_builder_build")]
-    internal static extern IntPtr ExtractionServiceBuilderBuild();
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_error_validation")]
     internal static extern IntPtr ApiErrorValidation(
@@ -5405,32 +3000,6 @@ internal static partial class NativeMethods
     internal static extern IntPtr ApiErrorFrom(
         [MarshalAs(UnmanagedType.LPStr)] string error
     );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_size_limits_default")]
-    internal static extern IntPtr ApiSizeLimitsDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_api_size_limits_from_mb")]
-    internal static extern IntPtr ApiSizeLimitsFromMb(
-        ulong maxRequestBodyMb,
-        ulong maxMultipartFieldMb
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_kreuzberg_mcp_clone")]
-    internal static extern IntPtr KreuzbergMcpClone();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_kreuzberg_mcp_new")]
-    internal static extern IntPtr KreuzbergMcpNew();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_kreuzberg_mcp_with_config")]
-    internal static extern IntPtr KreuzbergMcpWithConfig(
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_kreuzberg_mcp_get_info")]
-    internal static extern IntPtr KreuzbergMcpGetInfo();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_kreuzberg_mcp_default")]
-    internal static extern IntPtr KreuzbergMcpDefault();
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_chunking_processor_name")]
     internal static extern IntPtr ChunkingProcessorName();
@@ -5528,100 +3097,6 @@ internal static partial class NativeMethods
         IntPtr positions
     );
 
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_cache_new")]
-    internal static extern IntPtr OcrCacheNew(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheDir
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_cache_get_cached_result")]
-    internal static extern IntPtr OcrCacheGetCachedResult(
-        [MarshalAs(UnmanagedType.LPStr)] string imageHash,
-        [MarshalAs(UnmanagedType.LPStr)] string backend,
-        [MarshalAs(UnmanagedType.LPStr)] string config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_cache_set_cached_result")]
-    internal static extern void OcrCacheSetCachedResult(
-        [MarshalAs(UnmanagedType.LPStr)] string imageHash,
-        [MarshalAs(UnmanagedType.LPStr)] string backend,
-        [MarshalAs(UnmanagedType.LPStr)] string config,
-        IntPtr result
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_cache_clear")]
-    internal static extern void OcrCacheClear();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_cache_get_stats")]
-    internal static extern IntPtr OcrCacheGetStats();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_registry_global")]
-    internal static extern IntPtr LanguageRegistryGlobal();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_registry_get_supported_languages")]
-    internal static extern IntPtr LanguageRegistryGetSupportedLanguages(
-        [MarshalAs(UnmanagedType.LPStr)] string backend
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_registry_is_language_supported")]
-    internal static extern int LanguageRegistryIsLanguageSupported(
-        [MarshalAs(UnmanagedType.LPStr)] string backend,
-        [MarshalAs(UnmanagedType.LPStr)] string language
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_registry_get_backends")]
-    internal static extern IntPtr LanguageRegistryGetBackends();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_registry_get_language_count")]
-    internal static extern ulong LanguageRegistryGetLanguageCount(
-        [MarshalAs(UnmanagedType.LPStr)] string backend
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_language_registry_default")]
-    internal static extern IntPtr LanguageRegistryDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_processor_new")]
-    internal static extern IntPtr OcrProcessorNew(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheDir
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_processor_process_image")]
-    internal static extern IntPtr OcrProcessorProcessImage(
-        IntPtr imageBytes,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_processor_process_image_with_format")]
-    internal static extern IntPtr OcrProcessorProcessImageWithFormat(
-        IntPtr imageBytes,
-        IntPtr config,
-        IntPtr outputFormat
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_processor_clear_cache")]
-    internal static extern void OcrProcessorClearCache();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_processor_get_cache_stats")]
-    internal static extern IntPtr OcrProcessorGetCacheStats();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_processor_process_image_file")]
-    internal static extern IntPtr OcrProcessorProcessImageFile(
-        [MarshalAs(UnmanagedType.LPStr)] string filePath,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_processor_process_image_file_with_format")]
-    internal static extern IntPtr OcrProcessorProcessImageFileWithFormat(
-        [MarshalAs(UnmanagedType.LPStr)] string filePath,
-        IntPtr config,
-        IntPtr outputFormat
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_ocr_processor_process_image_files_batch")]
-    internal static extern IntPtr OcrProcessorProcessImageFilesBatch(
-        IntPtr filePaths,
-        IntPtr config
-    );
-
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tessdata_manager_cache_dir")]
     internal static extern IntPtr TessdataManagerCacheDir();
 
@@ -5629,55 +3104,6 @@ internal static partial class NativeMethods
     internal static extern int TessdataManagerIsLanguageCached(
         [MarshalAs(UnmanagedType.LPStr)] string lang
     );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_new")]
-    internal static extern IntPtr TesseractBackendNew();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_with_cache_dir")]
-    internal static extern IntPtr TesseractBackendWithCacheDir(
-        [MarshalAs(UnmanagedType.LPStr)] string cacheDir
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_default")]
-    internal static extern IntPtr TesseractBackendDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_name")]
-    internal static extern IntPtr TesseractBackendName();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_version")]
-    internal static extern IntPtr TesseractBackendVersion();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_initialize")]
-    internal static extern void TesseractBackendInitialize();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_shutdown")]
-    internal static extern void TesseractBackendShutdown();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_process_image")]
-    internal static extern IntPtr TesseractBackendProcessImage(
-        IntPtr imageBytes,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_process_image_file")]
-    internal static extern IntPtr TesseractBackendProcessImageFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        IntPtr config
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_supports_language")]
-    internal static extern int TesseractBackendSupportsLanguage(
-        [MarshalAs(UnmanagedType.LPStr)] string lang
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_backend_type")]
-    internal static extern IntPtr TesseractBackendBackendType();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_supported_languages")]
-    internal static extern IntPtr TesseractBackendSupportedLanguages();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_tesseract_backend_supports_table_detection")]
-    internal static extern int TesseractBackendSupportsTableDetection();
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_paddle_ocr_config_with_cache_dir")]
     internal static extern IntPtr PaddleOcrConfigWithCacheDir(
@@ -5787,96 +3213,6 @@ internal static partial class NativeMethods
     internal static extern IntPtr LayoutDetectionFmt(
         [MarshalAs(UnmanagedType.LPStr)] string f
     );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_image_extractor_new")]
-    internal static extern IntPtr PdfImageExtractorNew(
-        IntPtr pdfBytes
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_image_extractor_new_with_password")]
-    internal static extern IntPtr PdfImageExtractorNewWithPassword(
-        IntPtr pdfBytes,
-        [MarshalAs(UnmanagedType.LPStr)] string password
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_image_extractor_extract_images")]
-    internal static extern IntPtr PdfImageExtractorExtractImages();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_image_extractor_extract_images_from_page")]
-    internal static extern IntPtr PdfImageExtractorExtractImagesFromPage(
-        uint pageNumber
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_image_extractor_get_image_count")]
-    internal static extern ulong PdfImageExtractorGetImageCount();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_layout_b_box_width")]
-    internal static extern float PdfLayoutBBoxWidth();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_layout_b_box_height")]
-    internal static extern float PdfLayoutBBoxHeight();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_avg_render_ms")]
-    internal static extern double LayoutTimingReportAvgRenderMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_avg_inference_ms")]
-    internal static extern double LayoutTimingReportAvgInferenceMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_avg_preprocess_ms")]
-    internal static extern double LayoutTimingReportAvgPreprocessMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_avg_onnx_ms")]
-    internal static extern double LayoutTimingReportAvgOnnxMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_avg_postprocess_ms")]
-    internal static extern double LayoutTimingReportAvgPostprocessMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_total_inference_ms")]
-    internal static extern double LayoutTimingReportTotalInferenceMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_total_render_ms")]
-    internal static extern double LayoutTimingReportTotalRenderMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_total_preprocess_ms")]
-    internal static extern double LayoutTimingReportTotalPreprocessMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_total_onnx_ms")]
-    internal static extern double LayoutTimingReportTotalOnnxMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_layout_timing_report_total_postprocess_ms")]
-    internal static extern double LayoutTimingReportTotalPostprocessMs();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_page_render_options_default")]
-    internal static extern IntPtr PageRenderOptionsDefault();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_page_iterator_new")]
-    internal static extern IntPtr PdfPageIteratorNew(
-        IntPtr pdfBytes,
-        int dpi,
-        [MarshalAs(UnmanagedType.LPStr)] string password
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_page_iterator_from_file")]
-    internal static extern IntPtr PdfPageIteratorFromFile(
-        [MarshalAs(UnmanagedType.LPStr)] string path,
-        int dpi,
-        [MarshalAs(UnmanagedType.LPStr)] string password
-    );
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_page_iterator_page_count")]
-    internal static extern ulong PdfPageIteratorPageCount();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_page_iterator_next")]
-    internal static extern IntPtr PdfPageIteratorNext();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_page_iterator_size_hint")]
-    internal static extern IntPtr PdfPageIteratorSizeHint();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_renderer_new")]
-    internal static extern IntPtr PdfRendererNew();
-
-    [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_pdf_text_extractor_new")]
-    internal static extern IntPtr PdfTextExtractorNew();
 
     [DllImport(LibName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "kreuzberg_last_error_code")]
     internal static extern int LastErrorCode();

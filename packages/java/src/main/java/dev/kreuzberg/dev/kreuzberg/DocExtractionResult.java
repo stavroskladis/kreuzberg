@@ -2,5 +2,5 @@
 package dev.kreuzberg;
 
 
-public record DocExtractionResult(String text, DocMetadata metadata) {
+public record DocExtractionResult(String text, String metadata) {
 }

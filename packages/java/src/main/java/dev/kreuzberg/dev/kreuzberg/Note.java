@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record Note(
     String id,
-    @JsonProperty("note_type") NoteType noteType,
+    @JsonProperty("note_type") String noteType,
     List<String> paragraphs
 ) {
 }

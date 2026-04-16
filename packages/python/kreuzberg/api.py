@@ -9,7 +9,7 @@ import kreuzberg._kreuzberg as _rust
 
 if TYPE_CHECKING:
     from ._kreuzberg import OcrBackend, Renderer
-    from .options import AccelerationConfig, ApiSizeLimits, Attributes, CharData, Chunk, ChunkerType, ChunkingConfig, ColorScheme, ContentFilterConfig, DetectionResult, DjotContent, Document, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractedImage, ExtractionConfig, ExtractionResult, FontScheme, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HocrWord, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, JsonExtractionConfig, KMeansResult, KeywordConfig, LanguageDetectionConfig, LayoutDetection, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PageRenderOptions, PdfConfig, PdfImage, PostProcessorConfig, PptxExtractionOptions, RakeParams, RecognizedTable, RunProperties, SegmentData, ServerConfig, StructuredExtractionConfig, StyleCatalog, Table, TesseractConfig, TextBlock, Theme, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, TsvRow, YakeParams
+    from .options import AccelerationConfig, Attributes, CharData, Chunk, ChunkerType, ChunkingConfig, ContentFilterConfig, DetectionResult, DjotContent, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractedImage, ExtractionConfig, ExtractionResult, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, KeywordConfig, LanguageDetectionConfig, LayoutDetection, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PdfConfig, PdfImage, PostProcessorConfig, RakeParams, RecognizedTable, ServerConfig, StructuredExtractionConfig, Table, TesseractConfig, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, YakeParams
 
 
 _TO_RUST_CHUNKERTYPE_MAP = {
@@ -497,37 +497,6 @@ def _to_rust_extraction_result(value: ExtractionResult | None) -> _rust.Extracti
     )
 
 
-def _to_rust_json_extraction_config(
-    value: JsonExtractionConfig | None,
-) -> _rust.JsonExtractionConfig | None:
-    """Convert Python JsonExtractionConfig to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.JsonExtractionConfig(
-        extract_schema=value.extract_schema,
-        max_depth=value.max_depth,
-        array_item_limit=value.array_item_limit,
-        include_type_info=value.include_type_info,
-        flatten_nested_objects=value.flatten_nested_objects,
-        custom_text_field_patterns=value.custom_text_field_patterns,
-    )
-
-
-def _to_rust_pptx_extraction_options(
-    value: PptxExtractionOptions | None,
-) -> _rust.PptxExtractionOptions | None:
-    """Convert Python PptxExtractionOptions to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.PptxExtractionOptions(
-        extract_images=value.extract_images,
-        page_config=_to_rust_page_config(value.page_config),
-        plain=value.plain,
-        include_structure=value.include_structure,
-        inject_placeholders=value.inject_placeholders,
-    )
-
-
 def _to_rust_attributes(value: Attributes | None) -> _rust.Attributes | None:
     """Convert Python Attributes to Rust binding type."""
     if value is None:
@@ -536,16 +505,6 @@ def _to_rust_attributes(value: Attributes | None) -> _rust.Attributes | None:
         id=value.id,
         classes=value.classes,
         key_values=value.key_values,
-    )
-
-
-def _to_rust_api_size_limits(value: ApiSizeLimits | None) -> _rust.ApiSizeLimits | None:
-    """Convert Python ApiSizeLimits to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.ApiSizeLimits(
-        max_request_body_bytes=value.max_request_body_bytes,
-        max_multipart_field_bytes=value.max_multipart_field_bytes,
     )
 
 
@@ -593,131 +552,6 @@ def _to_rust_keyword_config(value: KeywordConfig | None) -> _rust.KeywordConfig 
         language=value.language,
         yake_params=_to_rust_yake_params(value.yake_params),
         rake_params=_to_rust_rake_params(value.rake_params),
-    )
-
-
-def _to_rust_run_properties(value: RunProperties | None) -> _rust.RunProperties | None:
-    """Convert Python RunProperties to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.RunProperties(
-        bold=value.bold,
-        italic=value.italic,
-        underline=value.underline,
-        strikethrough=value.strikethrough,
-        color=value.color,
-        font_size_half_points=value.font_size_half_points,
-        font_ascii=value.font_ascii,
-        font_ascii_theme=value.font_ascii_theme,
-        vert_align=value.vert_align,
-        font_h_ansi=value.font_h_ansi,
-        font_cs=value.font_cs,
-        font_east_asia=value.font_east_asia,
-        highlight=value.highlight,
-        caps=value.caps,
-        small_caps=value.small_caps,
-        shadow=value.shadow,
-        outline=value.outline,
-        emboss=value.emboss,
-        imprint=value.imprint,
-        char_spacing=value.char_spacing,
-        position=value.position,
-        kern=value.kern,
-        theme_color=value.theme_color,
-        theme_tint=value.theme_tint,
-        theme_shade=value.theme_shade,
-    )
-
-
-def _to_rust_style_catalog(value: StyleCatalog | None) -> _rust.StyleCatalog | None:
-    """Convert Python StyleCatalog to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.StyleCatalog(
-        styles=value.styles,
-        default_paragraph_properties=value.default_paragraph_properties,
-        default_run_properties=_to_rust_run_properties(value.default_run_properties),  # type: ignore[arg-type]
-    )
-
-
-def _to_rust_color_scheme(value: ColorScheme | None) -> _rust.ColorScheme | None:
-    """Convert Python ColorScheme to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.ColorScheme(
-        name=value.name,
-        dk1=_rust.ThemeColor(value.dk1) if value.dk1 is not None else None,
-        lt1=_rust.ThemeColor(value.lt1) if value.lt1 is not None else None,
-        dk2=_rust.ThemeColor(value.dk2) if value.dk2 is not None else None,
-        lt2=_rust.ThemeColor(value.lt2) if value.lt2 is not None else None,
-        accent1=_rust.ThemeColor(value.accent1) if value.accent1 is not None else None,
-        accent2=_rust.ThemeColor(value.accent2) if value.accent2 is not None else None,
-        accent3=_rust.ThemeColor(value.accent3) if value.accent3 is not None else None,
-        accent4=_rust.ThemeColor(value.accent4) if value.accent4 is not None else None,
-        accent5=_rust.ThemeColor(value.accent5) if value.accent5 is not None else None,
-        accent6=_rust.ThemeColor(value.accent6) if value.accent6 is not None else None,
-        hlink=_rust.ThemeColor(value.hlink) if value.hlink is not None else None,
-        fol_hlink=_rust.ThemeColor(value.fol_hlink) if value.fol_hlink is not None else None,
-    )
-
-
-def _to_rust_font_scheme(value: FontScheme | None) -> _rust.FontScheme | None:
-    """Convert Python FontScheme to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.FontScheme(
-        name=value.name,
-        major_latin=value.major_latin,
-        major_east_asian=value.major_east_asian,
-        major_complex_script=value.major_complex_script,
-        minor_latin=value.minor_latin,
-        minor_east_asian=value.minor_east_asian,
-        minor_complex_script=value.minor_complex_script,
-    )
-
-
-def _to_rust_theme(value: Theme | None) -> _rust.Theme | None:
-    """Convert Python Theme to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.Theme(
-        name=value.name,
-        color_scheme=_to_rust_color_scheme(value.color_scheme),
-        font_scheme=_to_rust_font_scheme(value.font_scheme),
-    )
-
-
-def _to_rust_document(value: Document | None) -> _rust.Document | None:
-    """Convert Python Document to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.Document(
-        paragraphs=value.paragraphs,
-        tables=value.tables,
-        headers=value.headers,
-        footers=value.footers,
-        footnotes=value.footnotes,
-        endnotes=value.endnotes,
-        numbering_defs=value.numbering_defs,
-        elements=[_rust.DocumentElement(v) for v in value.elements],
-        style_catalog=_to_rust_style_catalog(value.style_catalog),
-        theme=_to_rust_theme(value.theme),
-        sections=value.sections,
-        drawings=value.drawings,
-        image_relationships=value.image_relationships,
-    )
-
-
-def _to_rust_page_render_options(value: PageRenderOptions | None) -> _rust.PageRenderOptions | None:
-    """Convert Python PageRenderOptions to Rust binding type."""
-    if value is None:
-        return None
-    return _rust.PageRenderOptions(
-        target_dpi=value.target_dpi,
-        max_image_dimension=value.max_image_dimension,
-        auto_adjust_dpi=value.auto_adjust_dpi,
-        min_dpi=value.min_dpi,
-        max_dpi=value.max_dpi,
     )
 
 
@@ -910,7 +744,7 @@ def extract_file(path: str, mime_type: str | None = None, config: ExtractionConf
     return _rust.extract_file(path, mime_type, _rust_config)
 
 
-def get_pool_sizing_hint(file_size: int, mime_type: str) -> _rust.PoolSizeHint:
+def get_pool_sizing_hint(file_size: int, mime_type: str) -> str:
     return _rust.get_pool_sizing_hint(file_size, mime_type)
 
 
@@ -1058,15 +892,13 @@ def derive_extraction_result(doc: str, include_document_structure: bool, output_
     return _rust.derive_extraction_result(doc, include_document_structure, output_format)
 
 
-def parse_json(data: bytes, config: JsonExtractionConfig | None = None) -> _rust.StructuredDataResult:
-    _rust_config = _to_rust_json_extraction_config(config)
-    return _rust.parse_json(data, _rust_config)
+def parse_json(data: bytes, config: str | None = None) -> _rust.StructuredDataResult:
+    return _rust.parse_json(data, config)
 
 
-def parse_jsonl(data: bytes, config: JsonExtractionConfig | None = None) -> _rust.StructuredDataResult:
+def parse_jsonl(data: bytes, config: str | None = None) -> _rust.StructuredDataResult:
     """Parse JSONL (newline-delimited JSON) into a structured data result."""
-    _rust_config = _to_rust_json_extraction_config(config)
-    return _rust.parse_jsonl(data, _rust_config)
+    return _rust.parse_jsonl(data, config)
 
 
 def parse_yaml(data: bytes) -> _rust.StructuredDataResult:
@@ -1311,7 +1143,7 @@ def collect_and_convert_omath(reader: str) -> str:
     return _rust.collect_and_convert_omath(reader)
 
 
-def parse_document(bytes: bytes) -> _rust.Document:
+def parse_document(bytes: bytes) -> str:
     """Parse a DOCX document from bytes and return the structured document."""
     return _rust.parse_document(bytes)
 
@@ -1321,17 +1153,17 @@ def extract_text_from_bytes(bytes: bytes) -> str:
     return _rust.extract_text_from_bytes(bytes)
 
 
-def parse_section_properties(node: str) -> _rust.SectionProperties:
+def parse_section_properties(node: str) -> str:
     """Parse a `w:sectPr` XML element (roxmltree node) into `SectionProperties`."""
     return _rust.parse_section_properties(node)
 
 
-def parse_section_properties_streaming(reader: str) -> _rust.SectionProperties:
+def parse_section_properties_streaming(reader: str) -> str:
     """Parse section properties from a quick_xml event stream."""
     return _rust.parse_section_properties_streaming(reader)
 
 
-def parse_styles_xml(xml: str) -> _rust.StyleCatalog:
+def parse_styles_xml(xml: str) -> str:
     """Parse `word/styles.xml` content into a `StyleCatalog`."""
     return _rust.parse_styles_xml(xml)
 
@@ -1341,7 +1173,7 @@ def parse_table_properties(reader: str) -> _rust.TableProperties:
     return _rust.parse_table_properties(reader)
 
 
-def parse_row_properties(reader: str) -> _rust.RowProperties:
+def parse_row_properties(reader: str) -> str:
     """Parse row-level properties from streaming XML reader."""
     return _rust.parse_row_properties(reader)
 
@@ -1356,7 +1188,7 @@ def parse_table_grid(reader: str) -> _rust.TableGrid:
     return _rust.parse_table_grid(reader)
 
 
-def parse_theme_xml(xml: str) -> _rust.Theme:
+def parse_theme_xml(xml: str) -> str:
     """Parse `word/theme/theme1.xml` content into a `Theme`."""
     return _rust.parse_theme_xml(xml)
 
@@ -1408,16 +1240,14 @@ def extract_ppt_text_with_options(content: bytes, include_master_slides: bool) -
     return _rust.extract_ppt_text_with_options(content, include_master_slides)
 
 
-def extract_pptx_from_path(path: str, options: PptxExtractionOptions) -> _rust.PptxExtractionResult:
+def extract_pptx_from_path(path: str, options: str) -> _rust.PptxExtractionResult:
     """Extract PPTX content from a file path."""
-    _rust_options = _to_rust_pptx_extraction_options(options)
-    return _rust.extract_pptx_from_path(path, _rust_options)
+    return _rust.extract_pptx_from_path(path, options)
 
 
-def extract_pptx_from_bytes(data: bytes, options: PptxExtractionOptions) -> _rust.PptxExtractionResult:
+def extract_pptx_from_bytes(data: bytes, options: str) -> _rust.PptxExtractionResult:
     """Extract PPTX content from a byte buffer."""
-    _rust_options = _to_rust_pptx_extraction_options(options)
-    return _rust.extract_pptx_from_bytes(data, _rust_options)
+    return _rust.extract_pptx_from_bytes(data, options)
 
 
 def parse_xml_svg(xml_bytes: bytes, preserve_whitespace: bool) -> _rust.XmlExtractionResult:
@@ -1945,7 +1775,7 @@ def create_byte_buffer_pool(pool_size: int, buffer_capacity: int) -> _rust.ByteB
     return _rust.create_byte_buffer_pool(pool_size, buffer_capacity)
 
 
-def estimate_pool_size(file_size: int, mime_type: str) -> _rust.PoolSizeHint:
+def estimate_pool_size(file_size: int, mime_type: str) -> str:
     """Estimate optimal pool sizing based on file size and document type."""
     return _rust.estimate_pool_size(file_size, mime_type)
 
@@ -1975,17 +1805,17 @@ def escape_html_entities(text: str) -> str:
     return _rust.escape_html_entities(text)
 
 
-def detect_columns(words: list[HocrWord], column_threshold: int) -> list[int]:
+def detect_columns(words: list[str], column_threshold: int) -> list[int]:
     """Detect column positions from word x-coordinates."""
     return _rust.detect_columns(words, column_threshold)
 
 
-def detect_rows(words: list[HocrWord], row_threshold_ratio: float) -> list[int]:
+def detect_rows(words: list[str], row_threshold_ratio: float) -> list[int]:
     """Detect row positions from word y-coordinates."""
     return _rust.detect_rows(words, row_threshold_ratio)
 
 
-def reconstruct_table(words: list[HocrWord], column_threshold: int, row_threshold_ratio: float) -> list[list[str]]:
+def reconstruct_table(words: list[str], column_threshold: int, row_threshold_ratio: float) -> list[list[str]]:
     """Reconstruct a table grid from words with bounding box positions."""
     return _rust.reconstruct_table(words, column_threshold, row_threshold_ratio)
 
@@ -2011,19 +1841,17 @@ def create_router(config: ExtractionConfig) -> str:
     return _rust.create_router(_rust_config)
 
 
-def create_router_with_limits(config: ExtractionConfig, limits: ApiSizeLimits) -> str:
+def create_router_with_limits(config: ExtractionConfig, limits: str) -> str:
     """Create the API router with custom size limits."""
     _rust_config = _to_rust_extraction_config(config)
-    _rust_limits = _to_rust_api_size_limits(limits)
-    return _rust.create_router_with_limits(_rust_config, _rust_limits)
+    return _rust.create_router_with_limits(_rust_config, limits)
 
 
-def create_router_with_limits_and_server_config(config: ExtractionConfig, limits: ApiSizeLimits, server_config: ServerConfig) -> str:
+def create_router_with_limits_and_server_config(config: ExtractionConfig, limits: str, server_config: ServerConfig) -> str:
     """Create the API router with custom size limits and server configuration."""
     _rust_config = _to_rust_extraction_config(config)
-    _rust_limits = _to_rust_api_size_limits(limits)
     _rust_server_config = _to_rust_server_config(server_config)
-    return _rust.create_router_with_limits_and_server_config(_rust_config, _rust_limits, _rust_server_config)
+    return _rust.create_router_with_limits_and_server_config(_rust_config, limits, _rust_server_config)
 
 
 def serve(host: str, port: int) -> None:
@@ -2037,11 +1865,10 @@ def serve_with_config(host: str, port: int, config: ExtractionConfig) -> None:
     return _rust.serve_with_config(host, port, _rust_config)
 
 
-def serve_with_config_and_limits(host: str, port: int, config: ExtractionConfig, limits: ApiSizeLimits) -> None:
+def serve_with_config_and_limits(host: str, port: int, config: ExtractionConfig, limits: str) -> None:
     """Start the API server with explicit config and size limits."""
     _rust_config = _to_rust_extraction_config(config)
-    _rust_limits = _to_rust_api_size_limits(limits)
-    return _rust.serve_with_config_and_limits(host, port, _rust_config, _rust_limits)
+    return _rust.serve_with_config_and_limits(host, port, _rust_config, limits)
 
 
 def serve_with_server_config(extraction_config: ExtractionConfig, server_config: ServerConfig) -> None:
@@ -2231,12 +2058,12 @@ def extract_keywords(text: str, config: KeywordConfig) -> list[_rust.Keyword]:
     return _rust.extract_keywords(text, _rust_config)
 
 
-def text_block_to_element(block: TextBlock, page_number: int) -> _rust.OcrElement | None:
+def text_block_to_element(block: str, page_number: int) -> _rust.OcrElement | None:
     """Convert a PaddleOCR TextBlock to a unified OcrElement."""
     return _rust.text_block_to_element(block, page_number)
 
 
-def tsv_row_to_element(row: TsvRow) -> _rust.OcrElement:
+def tsv_row_to_element(row: str) -> _rust.OcrElement:
     """Convert a Tesseract TSV row to a unified OcrElement."""
     return _rust.tsv_row_to_element(row)
 
@@ -2246,12 +2073,12 @@ def iterator_word_to_element(word: str, block_type: str | None = None, para_info
     return _rust.iterator_word_to_element(word, block_type, para_info, page_number)
 
 
-def element_to_hocr_word(element: OcrElement) -> _rust.HocrWord:
+def element_to_hocr_word(element: OcrElement) -> str:
     """Convert an OcrElement to an HocrWord for table reconstruction."""
     return _rust.element_to_hocr_word(element)
 
 
-def elements_to_hocr_words(elements: list[OcrElement], min_confidence: float) -> list[_rust.HocrWord]:
+def elements_to_hocr_words(elements: list[OcrElement], min_confidence: float) -> list[str]:
     """Convert a vector of OcrElements to HocrWords for batch table processing."""
     return _rust.elements_to_hocr_words(elements, min_confidence)
 
@@ -2271,7 +2098,7 @@ def recognize_page_tables(page_image: str, detection: DetectionResult, elements:
     return _rust.recognize_page_tables(page_image, detection, elements, tatr_model)
 
 
-def extract_words_from_tsv(tsv_data: str, min_confidence: float) -> list[_rust.HocrWord]:
+def extract_words_from_tsv(tsv_data: str, min_confidence: float) -> list[str]:
     """Extract words from Tesseract TSV output and convert to HocrWord format."""
     return _rust.extract_words_from_tsv(tsv_data, min_confidence)
 
@@ -2404,10 +2231,9 @@ def extract_annotations_from_document(document: str) -> list[_rust.PdfAnnotation
     return _rust.extract_annotations_from_document(document)
 
 
-def extract_bookmarks(document: Document) -> list[_rust.Uri]:
+def extract_bookmarks(document: str) -> list[_rust.Uri]:
     """Extract bookmarks (outlines) from a PDF document loaded via lopdf."""
-    _rust_document = _to_rust_document(document)
-    return _rust.extract_bookmarks(_rust_document)
+    return _rust.extract_bookmarks(document)
 
 
 def extract_bundled_pdfium() -> str:
@@ -2415,10 +2241,9 @@ def extract_bundled_pdfium() -> str:
     return _rust.extract_bundled_pdfium()
 
 
-def extract_embedded_files(document: Document) -> list[_rust.EmbeddedFile]:
+def extract_embedded_files(document: str) -> list[_rust.EmbeddedFile]:
     """Extract embedded file descriptors from a PDF document loaded via lopdf."""
-    _rust_document = _to_rust_document(document)
-    return _rust.extract_embedded_files(_rust_document)
+    return _rust.extract_embedded_files(document)
 
 
 def extract_and_process_embedded_files(pdf_bytes: bytes, config: ExtractionConfig) -> str:
@@ -2447,7 +2272,7 @@ def clear_font_cache() -> None:
     return _rust.clear_font_cache()
 
 
-def cluster_font_sizes(blocks: list[TextBlock], k: int) -> list[_rust.FontSizeCluster]:
+def cluster_font_sizes(blocks: list[str], k: int) -> list[_rust.FontSizeCluster]:
     """Cluster text blocks by font size using k-means algorithm."""
     return _rust.cluster_font_sizes(blocks, k)
 
@@ -2457,12 +2282,12 @@ def assign_heading_levels_smart(clusters: list[FontSizeCluster], min_heading_rat
     return _rust.assign_heading_levels_smart(clusters, min_heading_ratio, min_heading_gap)
 
 
-def assign_hierarchy_levels(blocks: list[TextBlock], kmeans_result: KMeansResult) -> list[_rust.HierarchyBlock]:
+def assign_hierarchy_levels(blocks: list[str], kmeans_result: str) -> list[_rust.HierarchyBlock]:
     """Assign hierarchy levels to text blocks based on KMeans clustering results."""
     return _rust.assign_hierarchy_levels(blocks, kmeans_result)
 
 
-def assign_hierarchy_levels_from_clusters(blocks: list[TextBlock], clusters: list[FontSizeCluster]) -> list[str]:
+def assign_hierarchy_levels_from_clusters(blocks: list[str], clusters: list[FontSizeCluster]) -> list[str]:
     """Assign hierarchy levels to text blocks based on font size clusters."""
     return _rust.assign_hierarchy_levels_from_clusters(blocks, clusters)
 
@@ -2472,17 +2297,17 @@ def extract_chars_with_fonts(page: str) -> list[_rust.CharData]:
     return _rust.extract_chars_with_fonts(page)
 
 
-def extract_segments_from_page(page: str) -> list[_rust.SegmentData]:
+def extract_segments_from_page(page: str) -> list[str]:
     """Extract text segments from a PDF page using pdfium's segment merging."""
     return _rust.extract_segments_from_page(page)
 
 
-def merge_chars_into_blocks(chars: list[CharData]) -> list[_rust.TextBlock]:
+def merge_chars_into_blocks(chars: list[CharData]) -> list[str]:
     """Merge characters into text blocks using a greedy clustering algorithm."""
     return _rust.merge_chars_into_blocks(chars)
 
 
-def should_trigger_ocr(page: str, blocks: list[TextBlock], config: ExtractionConfig) -> bool:
+def should_trigger_ocr(page: str, blocks: list[str], config: ExtractionConfig) -> bool:
     """Determine whether OCR should be triggered based on text block coverage."""
     _rust_config = _to_rust_extraction_config(config)
     return _rust.should_trigger_ocr(page, blocks, _rust_config)
@@ -2511,17 +2336,17 @@ def detect_layout_for_images(images: list[str], engine: str) -> list[_rust.Detec
     return _rust.detect_layout_for_images(images, engine)
 
 
-def extract_metadata(pdf_bytes: bytes) -> _rust.PdfMetadata:
+def extract_metadata(pdf_bytes: bytes) -> str:
     """Extract PDF-specific metadata from raw bytes."""
     return _rust.extract_metadata(pdf_bytes)
 
 
-def extract_metadata_with_password(pdf_bytes: bytes, password: str | None = None) -> _rust.PdfMetadata:
+def extract_metadata_with_password(pdf_bytes: bytes, password: str | None = None) -> str:
     """Extract PDF-specific metadata from raw bytes with optional password."""
     return _rust.extract_metadata_with_password(pdf_bytes, password)
 
 
-def extract_metadata_with_passwords(pdf_bytes: bytes, passwords: list[str]) -> _rust.PdfMetadata:
+def extract_metadata_with_passwords(pdf_bytes: bytes, passwords: list[str]) -> str:
     return _rust.extract_metadata_with_passwords(pdf_bytes, passwords)
 
 
@@ -2535,9 +2360,8 @@ def extract_common_metadata_from_document(document: str) -> _rust.CommonPdfMetad
     return _rust.extract_common_metadata_from_document(document)
 
 
-def render_page_to_image(pdf_bytes: bytes, page_index: int, options: PageRenderOptions) -> str:
-    _rust_options = _to_rust_page_render_options(options)
-    return _rust.render_page_to_image(pdf_bytes, page_index, _rust_options)
+def render_page_to_image(pdf_bytes: bytes, page_index: int, options: str) -> str:
+    return _rust.render_page_to_image(pdf_bytes, page_index, options)
 
 
 def render_pdf_page_to_png(pdf_bytes: bytes, page_index: int, dpi: int | None = None, password: str | None = None) -> bytes:
@@ -2545,22 +2369,22 @@ def render_pdf_page_to_png(pdf_bytes: bytes, page_index: int, dpi: int | None = 
     return _rust.render_pdf_page_to_png(pdf_bytes, page_index, dpi, password)
 
 
-def extract_words_from_page(page: str, min_confidence: float) -> list[_rust.HocrWord]:
+def extract_words_from_page(page: str, min_confidence: float) -> list[str]:
     """Extract words with positions from PDF page for table detection."""
     return _rust.extract_words_from_page(page, min_confidence)
 
 
-def segment_to_hocr_word(seg: SegmentData, page_height: float) -> _rust.HocrWord:
+def segment_to_hocr_word(seg: str, page_height: float) -> str:
     """Convert a PDF `SegmentData` to an `HocrWord` for table reconstruction."""
     return _rust.segment_to_hocr_word(seg, page_height)
 
 
-def split_segment_to_words(seg: SegmentData, page_height: float) -> list[_rust.HocrWord]:
+def split_segment_to_words(seg: str, page_height: float) -> list[str]:
     """Split a `SegmentData` into word-level `HocrWord`s for table reconstruction."""
     return _rust.split_segment_to_words(seg, page_height)
 
 
-def segments_to_words(segments: list[SegmentData], page_height: float) -> list[_rust.HocrWord]:
+def segments_to_words(segments: list[str], page_height: float) -> list[str]:
     """Convert a page's segments to word-level `HocrWord`s for table extraction."""
     return _rust.segments_to_words(segments, page_height)
 

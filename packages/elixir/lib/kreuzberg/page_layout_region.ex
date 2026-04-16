@@ -4,5 +4,5 @@ defmodule Kreuzberg.PageLayoutRegion do
 
   defstruct class: :caption,
             confidence: 0.0,
-            bbox: nil
+            bbox: ""
 end

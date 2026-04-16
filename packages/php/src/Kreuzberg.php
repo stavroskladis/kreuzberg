@@ -1021,9 +1021,9 @@ final class Kreuzberg
      *
      * @param int $file_size
      * @param string $mime_type
-     * @return PoolSizeHint
+     * @return string
      */
-    public static function getPoolSizingHint(int $file_size, string $mime_type): PoolSizeHint
+    public static function getPoolSizingHint(int $file_size, string $mime_type): string
     {
         return \Kreuzberg\KreuzbergApi::getPoolSizingHint($file_size, $mime_type); // delegate to native extension class
     }
@@ -1843,11 +1843,11 @@ final class Kreuzberg
      * parseJson.
      *
      * @param string $data
-     * @param ?JsonExtractionConfig $config
+     * @param ?string $config
      * @return StructuredDataResult
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function parseJson(string $data, ?JsonExtractionConfig $config = null): StructuredDataResult
+    public static function parseJson(string $data, ?string $config = null): StructuredDataResult
     {
         return \Kreuzberg\KreuzbergApi::parseJson($data, $config); // delegate to native extension class
     }
@@ -1879,11 +1879,11 @@ final class Kreuzberg
      * ```
      *
      * @param string $data
-     * @param ?JsonExtractionConfig $config
+     * @param ?string $config
      * @return StructuredDataResult
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function parseJsonl(string $data, ?JsonExtractionConfig $config = null): StructuredDataResult
+    public static function parseJsonl(string $data, ?string $config = null): StructuredDataResult
     {
         return \Kreuzberg\KreuzbergApi::parseJsonl($data, $config); // delegate to native extension class
     }
@@ -2924,10 +2924,10 @@ final class Kreuzberg
      * Parse a DOCX document from bytes and return the structured document.
      *
      * @param string $bytes
-     * @return Document
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function parseDocument(string $bytes): Document
+    public static function parseDocument(string $bytes): string
     {
         return \Kreuzberg\KreuzbergApi::parseDocument($bytes); // delegate to native extension class
     }
@@ -2948,9 +2948,9 @@ final class Kreuzberg
      * Parse a `w:sectPr` XML element (roxmltree node) into `SectionProperties`.
      *
      * @param string $node
-     * @return SectionProperties
+     * @return string
      */
-    public static function parseSectionProperties(string $node): SectionProperties
+    public static function parseSectionProperties(string $node): string
     {
         return \Kreuzberg\KreuzbergApi::parseSectionProperties($node); // delegate to native extension class
     }
@@ -2965,9 +2965,9 @@ final class Kreuzberg
      * The caller must not attempt to process the `w:sectPr` end event again.
      *
      * @param string $reader
-     * @return SectionProperties
+     * @return string
      */
-    public static function parseSectionPropertiesStreaming(string $reader): SectionProperties
+    public static function parseSectionPropertiesStreaming(string $reader): string
     {
         return \Kreuzberg\KreuzbergApi::parseSectionPropertiesStreaming($reader); // delegate to native extension class
     }
@@ -2979,10 +2979,10 @@ final class Kreuzberg
      * office metadata parsing approach used elsewhere in the codebase.
      *
      * @param string $xml
-     * @return StyleCatalog
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function parseStylesXml(string $xml): StyleCatalog
+    public static function parseStylesXml(string $xml): string
     {
         return \Kreuzberg\KreuzbergApi::parseStylesXml($xml); // delegate to native extension class
     }
@@ -3007,9 +3007,9 @@ final class Kreuzberg
      * Expects the reader to be positioned just after the `<w:trPr>` start tag.
      *
      * @param string $reader
-     * @return RowProperties
+     * @return string
      */
-    public static function parseRowProperties(string $reader): RowProperties
+    public static function parseRowProperties(string $reader): string
     {
         return \Kreuzberg\KreuzbergApi::parseRowProperties($reader); // delegate to native extension class
     }
@@ -3053,10 +3053,10 @@ final class Kreuzberg
      * * `Err(KreuzbergError)` - If parsing fails
      *
      * @param string $xml
-     * @return Theme
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function parseThemeXml(string $xml): Theme
+    public static function parseThemeXml(string $xml): string
     {
         return \Kreuzberg\KreuzbergApi::parseThemeXml($xml); // delegate to native extension class
     }
@@ -3267,11 +3267,11 @@ final class Kreuzberg
      * A `PptxExtractionResult` containing extracted content, metadata, and images.
      *
      * @param string $path
-     * @param PptxExtractionOptions $options
+     * @param string $options
      * @return PptxExtractionResult
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function extractPptxFromPath(string $path, PptxExtractionOptions $options): PptxExtractionResult
+    public static function extractPptxFromPath(string $path, string $options): PptxExtractionResult
     {
         return \Kreuzberg\KreuzbergApi::extractPptxFromPath($path, $options); // delegate to native extension class
     }
@@ -3289,11 +3289,11 @@ final class Kreuzberg
      * A `PptxExtractionResult` containing extracted content, metadata, and images.
      *
      * @param string $data
-     * @param PptxExtractionOptions $options
+     * @param string $options
      * @return PptxExtractionResult
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function extractPptxFromBytes(string $data, PptxExtractionOptions $options): PptxExtractionResult
+    public static function extractPptxFromBytes(string $data, string $options): PptxExtractionResult
     {
         return \Kreuzberg\KreuzbergApi::extractPptxFromBytes($data, $options); // delegate to native extension class
     }
@@ -5520,9 +5520,9 @@ final class Kreuzberg
      *
      * @param int $file_size
      * @param string $mime_type
-     * @return PoolSizeHint
+     * @return string
      */
-    public static function estimatePoolSize(int $file_size, string $mime_type): PoolSizeHint
+    public static function estimatePoolSize(int $file_size, string $mime_type): string
     {
         return \Kreuzberg\KreuzbergApi::estimatePoolSize($file_size, $mime_type); // delegate to native extension class
     }
@@ -5643,7 +5643,7 @@ final class Kreuzberg
      * Groups words by approximate x-position (within `column_threshold` pixels)
      * and returns the median x-position for each detected column, sorted left to right.
      *
-     * @param array<HocrWord> $words
+     * @param array<string> $words
      * @param int $column_threshold
      * @return array<int>
      */
@@ -5659,7 +5659,7 @@ final class Kreuzberg
      * y-position for each detected row. The `row_threshold_ratio` is multiplied
      * by the median word height to determine the grouping threshold.
      *
-     * @param array<HocrWord> $words
+     * @param array<string> $words
      * @param float $row_threshold_ratio
      * @return array<int>
      */
@@ -5679,7 +5679,7 @@ final class Kreuzberg
      *
      * Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
      *
-     * @param array<HocrWord> $words
+     * @param array<string> $words
      * @param int $column_threshold
      * @param float $row_threshold_ratio
      * @return array<array<string>>
@@ -5843,10 +5843,10 @@ final class Kreuzberg
      * ```
      *
      * @param ExtractionConfig $config
-     * @param ApiSizeLimits $limits
+     * @param string $limits
      * @return string
      */
-    public static function createRouterWithLimits(ExtractionConfig $config, ApiSizeLimits $limits): string
+    public static function createRouterWithLimits(ExtractionConfig $config, string $limits): string
     {
         return \Kreuzberg\KreuzbergApi::createRouterWithLimits($config, $limits); // delegate to native extension class
     }
@@ -5882,11 +5882,11 @@ final class Kreuzberg
      * ```
      *
      * @param ExtractionConfig $config
-     * @param ApiSizeLimits $limits
+     * @param string $limits
      * @param ServerConfig $server_config
      * @return string
      */
-    public static function createRouterWithLimitsAndServerConfig(ExtractionConfig $config, ApiSizeLimits $limits, ServerConfig $server_config): string
+    public static function createRouterWithLimitsAndServerConfig(ExtractionConfig $config, string $limits, ServerConfig $server_config): string
     {
         return \Kreuzberg\KreuzbergApi::createRouterWithLimitsAndServerConfig($config, $limits, $server_config); // delegate to native extension class
     }
@@ -6018,11 +6018,11 @@ final class Kreuzberg
      * @param string $host
      * @param int $port
      * @param ExtractionConfig $config
-     * @param ApiSizeLimits $limits
+     * @param string $limits
      * @return void
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function serveWithConfigAndLimits(string $host, int $port, ExtractionConfig $config, ApiSizeLimits $limits): void
+    public static function serveWithConfigAndLimits(string $host, int $port, ExtractionConfig $config, string $limits): void
     {
         return \Kreuzberg\KreuzbergApi::serveWithConfigAndLimitsAsync($host, $port, $config, $limits); // delegate to native extension class
     }
@@ -7114,12 +7114,12 @@ final class Kreuzberg
      *
      * Returns `Ok(None)` if the detection is filtered out due to low `box_score`.
      *
-     * @param TextBlock $block
+     * @param string $block
      * @param int $page_number
      * @return ?OcrElement
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function textBlockToElement(TextBlock $block, int $page_number): ?OcrElement
+    public static function textBlockToElement(string $block, int $page_number): ?OcrElement
     {
         return \Kreuzberg\KreuzbergApi::textBlockToElement($block, $page_number); // delegate to native extension class
     }
@@ -7140,10 +7140,10 @@ final class Kreuzberg
      *
      * An `OcrElement` with rectangle geometry and Tesseract metadata.
      *
-     * @param TsvRow $row
+     * @param string $row
      * @return OcrElement
      */
-    public static function tsvRowToElement(TsvRow $row): OcrElement
+    public static function tsvRowToElement(string $row): OcrElement
     {
         return \Kreuzberg\KreuzbergApi::tsvRowToElement($row); // delegate to native extension class
     }
@@ -7192,9 +7192,9 @@ final class Kreuzberg
      * An `HocrWord` suitable for table reconstruction algorithms.
      *
      * @param OcrElement $element
-     * @return HocrWord
+     * @return string
      */
-    public static function elementToHocrWord(OcrElement $element): HocrWord
+    public static function elementToHocrWord(OcrElement $element): string
     {
         return \Kreuzberg\KreuzbergApi::elementToHocrWord($element); // delegate to native extension class
     }
@@ -7216,7 +7216,7 @@ final class Kreuzberg
      *
      * @param array<OcrElement> $elements
      * @param float $min_confidence
-     * @return array<HocrWord>
+     * @return array<string>
      */
     public static function elementsToHocrWords(array $elements, float $min_confidence): array
     {
@@ -7300,7 +7300,7 @@ final class Kreuzberg
      *
      * @param string $tsv_data
      * @param float $min_confidence
-     * @return array<HocrWord>
+     * @return array<string>
      * @throws \Kreuzberg\KreuzbergException
      */
     public static function extractWordsFromTsv(string $tsv_data, float $min_confidence): array
@@ -7708,10 +7708,10 @@ final class Kreuzberg
      * Walks the `/Outlines` tree in the document catalog, collecting each bookmark's
      * title and destination. Returns an empty `Vec` if the document has no outlines.
      *
-     * @param Document $document
+     * @param string $document
      * @return array<Uri>
      */
-    public static function extractBookmarks(Document $document): array
+    public static function extractBookmarks(string $document): array
     {
         return \Kreuzberg\KreuzbergApi::extractBookmarks($document); // delegate to native extension class
     }
@@ -7768,10 +7768,10 @@ final class Kreuzberg
      * Walks the `/Names` → `/EmbeddedFiles` name tree in the catalog.
      * Returns an empty `Vec` if the document has no embedded files.
      *
-     * @param Document $document
+     * @param string $document
      * @return array<EmbeddedFile>
      */
-    public static function extractEmbeddedFiles(Document $document): array
+    public static function extractEmbeddedFiles(string $document): array
     {
         return \Kreuzberg\KreuzbergApi::extractEmbeddedFiles($document); // delegate to native extension class
     }
@@ -7914,7 +7914,7 @@ final class Kreuzberg
      * # }
      * ```
      *
-     * @param array<TextBlock> $blocks
+     * @param array<string> $blocks
      * @param int $k
      * @return array<FontSizeCluster>
      * @throws \Kreuzberg\KreuzbergException
@@ -8003,11 +8003,11 @@ final class Kreuzberg
      * # }
      * ```
      *
-     * @param array<TextBlock> $blocks
-     * @param KMeansResult $kmeans_result
+     * @param array<string> $blocks
+     * @param string $kmeans_result
      * @return array<HierarchyBlock>
      */
-    public static function assignHierarchyLevels(array $blocks, KMeansResult $kmeans_result): array
+    public static function assignHierarchyLevels(array $blocks, string $kmeans_result): array
     {
         return \Kreuzberg\KreuzbergApi::assignHierarchyLevels($blocks, $kmeans_result); // delegate to native extension class
     }
@@ -8029,7 +8029,7 @@ final class Kreuzberg
      * If blocks is empty or clusters is empty, returns empty vector.
      * All blocks get Body level if only one cluster exists.
      *
-     * @param array<TextBlock> $blocks
+     * @param array<string> $blocks
      * @param array<FontSizeCluster> $clusters
      * @return array<string>
      */
@@ -8094,7 +8094,7 @@ final class Kreuzberg
      * per item (one segment.text() + one segment.chars() sample vs N chars with 4+ FFI calls each).
      *
      * @param string $page
-     * @return array<SegmentData>
+     * @return array<string>
      * @throws \Kreuzberg\KreuzbergException
      */
     public static function extractSegmentsFromPage(string $page): array
@@ -8127,7 +8127,7 @@ final class Kreuzberg
      * 5. Return sorted blocks by position (top to bottom, left to right)
      *
      * @param array<CharData> $chars
-     * @return array<TextBlock>
+     * @return array<string>
      */
     public static function mergeCharsIntoBlocks(array $chars): array
     {
@@ -8152,7 +8152,7 @@ final class Kreuzberg
      * `true` if OCR should be triggered (coverage below threshold), `false` otherwise.
      *
      * @param string $page
-     * @param array<TextBlock> $blocks
+     * @param array<string> $blocks
      * @param ExtractionConfig $config
      * @return bool
      */
@@ -8242,10 +8242,10 @@ final class Kreuzberg
      * Returns only PDF-specific metadata (version, producer, encryption status, dimensions).
      *
      * @param string $pdf_bytes
-     * @return PdfMetadata
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function extractMetadata(string $pdf_bytes): PdfMetadata
+    public static function extractMetadata(string $pdf_bytes): string
     {
         return \Kreuzberg\KreuzbergApi::extractMetadata($pdf_bytes); // delegate to native extension class
     }
@@ -8257,10 +8257,10 @@ final class Kreuzberg
      *
      * @param string $pdf_bytes
      * @param ?string $password
-     * @return PdfMetadata
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function extractMetadataWithPassword(string $pdf_bytes, ?string $password = null): PdfMetadata
+    public static function extractMetadataWithPassword(string $pdf_bytes, ?string $password = null): string
     {
         return \Kreuzberg\KreuzbergApi::extractMetadataWithPassword($pdf_bytes, $password); // delegate to native extension class
     }
@@ -8270,10 +8270,10 @@ final class Kreuzberg
      *
      * @param string $pdf_bytes
      * @param array<string> $passwords
-     * @return PdfMetadata
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function extractMetadataWithPasswords(string $pdf_bytes, array $passwords): PdfMetadata
+    public static function extractMetadataWithPasswords(string $pdf_bytes, array $passwords): string
     {
         return \Kreuzberg\KreuzbergApi::extractMetadataWithPasswords($pdf_bytes, $passwords); // delegate to native extension class
     }
@@ -8333,11 +8333,11 @@ final class Kreuzberg
      *
      * @param string $pdf_bytes
      * @param int $page_index
-     * @param PageRenderOptions $options
+     * @param string $options
      * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function renderPageToImage(string $pdf_bytes, int $page_index, PageRenderOptions $options): string
+    public static function renderPageToImage(string $pdf_bytes, int $page_index, string $options): string
     {
         return \Kreuzberg\KreuzbergApi::renderPageToImage($pdf_bytes, $page_index, $options); // delegate to native extension class
     }
@@ -8413,7 +8413,7 @@ final class Kreuzberg
      *
      * @param string $page
      * @param float $min_confidence
-     * @return array<HocrWord>
+     * @return array<string>
      * @throws \Kreuzberg\KreuzbergException
      */
     public static function extractWordsFromPage(string $page, float $min_confidence): array
@@ -8427,11 +8427,11 @@ final class Kreuzberg
      * `SegmentData` uses PDF coordinates (y=0 at bottom, increases upward).
      * `HocrWord` uses image coordinates (y=0 at top, increases downward).
      *
-     * @param SegmentData $seg
+     * @param string $seg
      * @param float $page_height
-     * @return HocrWord
+     * @return string
      */
-    public static function segmentToHocrWord(SegmentData $seg, float $page_height): HocrWord
+    public static function segmentToHocrWord(string $seg, float $page_height): string
     {
         return \Kreuzberg\KreuzbergApi::segmentToHocrWord($seg, $page_height); // delegate to native extension class
     }
@@ -8447,11 +8447,11 @@ final class Kreuzberg
      * Multi-word segments get proportional bbox estimation per word based on
      * byte offset within the segment text.
      *
-     * @param SegmentData $seg
+     * @param string $seg
      * @param float $page_height
-     * @return array<HocrWord>
+     * @return array<string>
      */
-    public static function splitSegmentToWords(SegmentData $seg, float $page_height): array
+    public static function splitSegmentToWords(string $seg, float $page_height): array
     {
         return \Kreuzberg\KreuzbergApi::splitSegmentToWords($seg, $page_height); // delegate to native extension class
     }
@@ -8462,9 +8462,9 @@ final class Kreuzberg
      * Splits multi-word segments into individual words with proportional bounding
      * boxes, ensuring each word can be independently matched to table cells.
      *
-     * @param array<SegmentData> $segments
+     * @param array<string> $segments
      * @param float $page_height
-     * @return array<HocrWord>
+     * @return array<string>
      */
     public static function segmentsToWords(array $segments, float $page_height): array
     {

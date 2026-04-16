@@ -4,7 +4,7 @@ package dev.kreuzberg;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record ListItemMetadata(
-    @JsonProperty("list_type") ListType listType,
+    @JsonProperty("list_type") String listType,
     @JsonProperty("byte_start") long byteStart,
     @JsonProperty("byte_end") long byteEnd,
     @JsonProperty("indent_level") int indentLevel

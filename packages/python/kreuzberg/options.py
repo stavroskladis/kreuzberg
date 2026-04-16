@@ -63,30 +63,6 @@ class CodeContentMode(str, Enum):
     STRUCTURE = "structure"
 
 
-class WrapType(str, Enum):
-    """Text wrapping type."""
-
-    NONE = "none"
-    SQUARE = "square"
-    TIGHT = "tight"
-    TOP_AND_BOTTOM = "top_and_bottom"
-    THROUGH = "through"
-
-
-class HeaderFooterType(str, Enum):
-    DEFAULT = "default"
-    FIRST = "first"
-    EVEN = "even"
-    ODD = "odd"
-
-
-class Orientation(str, Enum):
-    """Page orientation."""
-
-    PORTRAIT = "portrait"
-    LANDSCAPE = "landscape"
-
-
 class TextDirection(str, Enum):
     """Text direction enumeration for HTML documents."""
 
@@ -111,64 +87,40 @@ class KeywordAlgorithm(str, Enum):
     RAKE = "rake"
 
 
-class YearRange:
-    """Placeholder for YearRange type."""
-
-
 class PageStructure:
     """Placeholder for PageStructure type."""
-
-
-class OcrPipelineConfig:
-    """Placeholder for OcrPipelineConfig type."""
-
-
-class Position:
-    """Placeholder for Position type."""
-
-
-class DjotContent:
-    """Placeholder for DjotContent type."""
-
-
-class ErrorMetadata:
-    """Placeholder for ErrorMetadata type."""
 
 
 class TokenReductionConfig:
     """Placeholder for TokenReductionConfig type."""
 
 
-class StructuredExtractionConfig:
-    """Placeholder for StructuredExtractionConfig type."""
-
-
-class ImagePreprocessingMetadata:
-    """Placeholder for ImagePreprocessingMetadata type."""
+class DjotContent:
+    """Placeholder for DjotContent type."""
 
 
 class LanguageDetectionConfig:
     """Placeholder for LanguageDetectionConfig type."""
 
 
-@dataclass
-class BatchProcessorConfig:
-    """Configuration for batch processing with pooling optimizations."""
+class StructuredExtractionConfig:
+    """Placeholder for StructuredExtractionConfig type."""
 
-    string_pool_size: int = 10
-    """Maximum number of string buffers to maintain in the pool"""
 
-    string_buffer_capacity: int = 8192
-    """Initial capacity for pooled string buffers in bytes"""
+class OcrPipelineConfig:
+    """Placeholder for OcrPipelineConfig type."""
 
-    byte_pool_size: int = 10
-    """Maximum number of byte buffers to maintain in the pool"""
 
-    byte_buffer_capacity: int = 65536
-    """Initial capacity for pooled byte buffers in bytes"""
+class ImagePreprocessingMetadata:
+    """Placeholder for ImagePreprocessingMetadata type."""
 
-    max_concurrent: int | None = None
-    """Maximum concurrent extractions (for concurrency control)"""
+
+class ErrorMetadata:
+    """Placeholder for ErrorMetadata type."""
+
+
+class YearRange:
+    """Placeholder for YearRange type."""
 
 
 @dataclass
@@ -760,54 +712,10 @@ class ServerConfig(TypedDict, total=False):
 
 
 @dataclass
-class JsonExtractionConfig:
-    extract_schema: bool = False
-    max_depth: int = 20
-    array_item_limit: int = 500
-    include_type_info: bool = False
-    flatten_nested_objects: bool = True
-    custom_text_field_patterns: list[str] = field(default_factory=list)
-
-@dataclass
-class HwpDocument:
-    """An extracted HWP document, consisting of one or more body-text sections."""
-
-    sections: list[Any] = field(default_factory=list)
-    """All sections from all BodyText/SectionN streams."""
-
-
-@dataclass
 class Section:
     """A body-text section containing a flat list of paragraphs."""
 
     paragraphs: list[str] = field(default_factory=list)
-
-@dataclass
-class DocMetadata:
-    """Metadata extracted from DOC files."""
-
-    title: str | None = None
-    subject: str | None = None
-    author: str | None = None
-    last_author: str | None = None
-    created: str | None = None
-    modified: str | None = None
-    revision_number: str | None = None
-
-@dataclass
-class Extent:
-    """Size in EMUs (English Metric Units, 1 inch = 914400 EMU)."""
-
-    cx: int = 0
-    cy: int = 0
-
-@dataclass
-class DocProperties:
-    """Document properties from `<wp:docPr>`."""
-
-    id: str | None = None
-    name: str | None = None
-    description: str | None = None
 
 @dataclass
 class AnchorProperties:
@@ -816,73 +724,20 @@ class AnchorProperties:
     behind_doc: bool = False
     layout_in_cell: bool = False
     relative_height: int | None = None
-    position_h: Any | None = None
-    position_v: Any | None = None
-    wrap_type: str = "none"
-
-class Document(TypedDict, total=False):
-    paragraphs: list[str]
-    tables: list[Any]
-    headers: list[Any]
-    footers: list[Any]
-    footnotes: list[Any]
-    endnotes: list[Any]
-    numbering_defs: str
-    elements: list[dict]
-    """Document elements in their original order."""
-
-    style_catalog: Any | None
-    """Parsed style catalog from `word/styles.xml`, if available."""
-
-    theme: Any | None
-    """Parsed theme from `word/theme/theme1.xml`, if available."""
-
-    sections: list[Any]
-    """Section properties parsed from `w:sectPr` elements."""
-
-    drawings: list[Any]
-    """Drawing objects parsed from `w:drawing` elements."""
-
-    image_relationships: str
-    """Image relationships (rId → target path) for image extraction."""
-
+    position_h: str | None = None
+    position_v: str | None = None
+    wrap_type: str = ""
 
 @dataclass
 class TableRow:
     cells: list[Any] = field(default_factory=list)
-    properties: Any | None = None
+    properties: str | None = None
 
 @dataclass
 class HeaderFooter:
     paragraphs: list[str] = field(default_factory=list)
     tables: list[Any] = field(default_factory=list)
-    header_type: str = "default"
-
-@dataclass
-class PageMargins:
-    """Page margins in twips (twentieths of a point)."""
-
-    top: int | None = None
-    """Top margin in twips."""
-
-    right: int | None = None
-    """Right margin in twips."""
-
-    bottom: int | None = None
-    """Bottom margin in twips."""
-
-    left: int | None = None
-    """Left margin in twips."""
-
-    header: int | None = None
-    """Header offset in twips."""
-
-    footer: int | None = None
-    """Footer offset in twips."""
-
-    gutter: int | None = None
-    """Gutter margin in twips."""
-
+    header_type: str = ""
 
 @dataclass
 class PageMarginsPoints:
@@ -897,126 +752,11 @@ class PageMarginsPoints:
     gutter: float | None = None
 
 @dataclass
-class ColumnLayout:
-    """Column layout configuration."""
-
-    count: int | None = None
-    """Number of columns."""
-
-    space_twips: int | None = None
-    """Space between columns in twips."""
-
-    equal_width: bool | None = None
-    """Whether columns have equal width."""
-
-
-class SectionProperties(TypedDict, total=False):
-    """DOCX section properties parsed from `w:sectPr` element."""
-
-    page_width_twips: int | None
-    """Page width in twips (from `w:pgSz w:w`)."""
-
-    page_height_twips: int | None
-    """Page height in twips (from `w:pgSz w:h`)."""
-
-    orientation: str | None
-    """Page orientation (from `w:pgSz w:orient`)."""
-
-    margins: Any
-    """Page margins (from `w:pgMar`)."""
-
-    columns: Any
-    """Column layout (from `w:cols`)."""
-
-    doc_grid_line_pitch: int | None
-    """Document grid line pitch in twips (from `w:docGrid w:linePitch`)."""
-
-
-@dataclass
-class RunProperties:
-    """Run-level formatting properties (bold, italic, font, size, color, etc.)."""
-
-    bold: bool | None = None
-    italic: bool | None = None
-    underline: bool | None = None
-    strikethrough: bool | None = None
-    color: str | None = None
-    """Hex RGB color, e.g. `"2F5496"`."""
-
-    font_size_half_points: int | None = None
-    """Font size in half-points (`w:sz` val). Divide by 2 to get points."""
-
-    font_ascii: str | None = None
-    """ASCII font family (`w:rFonts w:ascii`)."""
-
-    font_ascii_theme: str | None = None
-    """ASCII theme font (`w:rFonts w:asciiTheme`)."""
-
-    vert_align: str | None = None
-    """Vertical alignment: "superscript", "subscript", or "baseline"."""
-
-    font_h_ansi: str | None = None
-    """High ANSI font family (w:rFonts w:hAnsi)."""
-
-    font_cs: str | None = None
-    """Complex script font family (w:rFonts w:cs)."""
-
-    font_east_asia: str | None = None
-    """East Asian font family (w:rFonts w:eastAsia)."""
-
-    highlight: str | None = None
-    """Highlight color name (e.g., "yellow", "green", "cyan")."""
-
-    caps: bool | None = None
-    """All caps text transformation."""
-
-    small_caps: bool | None = None
-    """Small caps text transformation."""
-
-    shadow: bool | None = None
-    """Text shadow effect."""
-
-    outline: bool | None = None
-    """Text outline effect."""
-
-    emboss: bool | None = None
-    """Text emboss effect."""
-
-    imprint: bool | None = None
-    """Text imprint (engrave) effect."""
-
-    char_spacing: int | None = None
-    """Character spacing in twips (from w:spacing w:val)."""
-
-    position: int | None = None
-    """Vertical position offset in half-points (from w:position w:val)."""
-
-    kern: int | None = None
-    """Kerning threshold in half-points (from w:kern w:val)."""
-
-    theme_color: str | None = None
-    """Theme color reference (e.g., "accent1", "dk1")."""
-
-    theme_tint: str | None = None
-    """Theme color tint modification (hex value)."""
-
-    theme_shade: str | None = None
-    """Theme color shade modification (hex value)."""
-
-
-@dataclass
 class ResolvedStyle:
     """Fully resolved (flattened) style after walking the inheritance chain."""
 
     paragraph_properties: str = ""
-    run_properties: Any | None = None
-
-class StyleCatalog(TypedDict, total=False):
-    """Catalog of all styles parsed from `word/styles.xml`, plus document defaults."""
-
-    styles: str
-    default_paragraph_properties: str
-    default_run_properties: Any
+    run_properties: str = ""
 
 class TableProperties(TypedDict, total=False):
     """Table-level properties from `<w:tblPr>`."""
@@ -1025,124 +765,11 @@ class TableProperties(TypedDict, total=False):
     width: str | None
     alignment: str | None
     layout: str | None
-    look: Any | None
-    borders: Any | None
+    look: str | None
+    borders: str | None
     cell_margins: str | None
     indent: str | None
     caption: str | None
-
-@dataclass
-class TableLook:
-    """Table look bitmask/flags controlling conditional formatting bands."""
-
-    first_row: bool = False
-    last_row: bool = False
-    first_column: bool = False
-    last_column: bool = False
-    no_h_band: bool = False
-    no_v_band: bool = False
-
-@dataclass
-class TableBorders:
-    """Borders for a table (6 borders: top, bottom, left, right, insideH, insideV)."""
-
-    top: str | None = None
-    bottom: str | None = None
-    left: str | None = None
-    right: str | None = None
-    inside_h: str | None = None
-    inside_v: str | None = None
-
-class RowProperties(TypedDict, total=False):
-    """Row-level properties from `<w:trPr>`."""
-
-    height: int | None
-    height_rule: str | None
-    is_header: bool
-    cant_split: bool
-
-@dataclass
-class ColorScheme:
-    """Color scheme containing all 12 standard Office theme colors."""
-
-    name: str = ""
-    """Color scheme name."""
-
-    dk1: dict | None = None
-    """Dark 1 (dark background) color."""
-
-    lt1: dict | None = None
-    """Light 1 (light background) color."""
-
-    dk2: dict | None = None
-    """Dark 2 color."""
-
-    lt2: dict | None = None
-    """Light 2 color."""
-
-    accent1: dict | None = None
-    """Accent color 1."""
-
-    accent2: dict | None = None
-    """Accent color 2."""
-
-    accent3: dict | None = None
-    """Accent color 3."""
-
-    accent4: dict | None = None
-    """Accent color 4."""
-
-    accent5: dict | None = None
-    """Accent color 5."""
-
-    accent6: dict | None = None
-    """Accent color 6."""
-
-    hlink: dict | None = None
-    """Hyperlink color."""
-
-    fol_hlink: dict | None = None
-    """Followed hyperlink color."""
-
-
-@dataclass
-class FontScheme:
-    """Font scheme containing major (heading) and minor (body) fonts."""
-
-    name: str = ""
-    """Font scheme name."""
-
-    major_latin: str | None = None
-    """Major (heading) font - Latin script."""
-
-    major_east_asian: str | None = None
-    """Major (heading) font - East Asian script."""
-
-    major_complex_script: str | None = None
-    """Major (heading) font - Complex script."""
-
-    minor_latin: str | None = None
-    """Minor (body) font - Latin script."""
-
-    minor_east_asian: str | None = None
-    """Minor (body) font - East Asian script."""
-
-    minor_complex_script: str | None = None
-    """Minor (body) font - Complex script."""
-
-
-class Theme(TypedDict, total=False):
-    """Complete theme with color scheme and font scheme."""
-
-    name: str
-    """Theme name (e.g., "Office Theme")."""
-
-    color_scheme: Any | None
-    """Color scheme (12 standard colors)."""
-
-    font_scheme: Any | None
-    """Font scheme (major and minor fonts)."""
-
 
 @dataclass
 class XlsxAppProperties:
@@ -1283,35 +910,6 @@ class OdtProperties:
 
     image_count: int | None = None
     """Document statistics - image count (meta:image-count)"""
-
-
-@dataclass
-class PptMetadata:
-    """Metadata extracted from PPT files."""
-
-    title: str | None = None
-    subject: str | None = None
-    author: str | None = None
-    last_author: str | None = None
-
-@dataclass
-class PptxExtractionOptions:
-    """Options for PPTX content extraction."""
-
-    extract_images: bool = True
-    """Whether to extract embedded images."""
-
-    page_config: Any | None = None
-    """Optional page configuration for boundary tracking."""
-
-    plain: bool = False
-    """Whether to output plain text (no markdown)."""
-
-    include_structure: bool = False
-    """Whether to build the `DocumentStructure` tree."""
-
-    inject_placeholders: bool = True
-    """Whether to emit `![alt](target)` references in markdown output."""
 
 
 class Attributes(TypedDict, total=False):
@@ -1728,48 +1326,6 @@ class OcrElementConfig:
 
 
 @dataclass
-class PoolMetrics:
-    """Metrics tracking for pool allocations and reuse patterns."""
-
-    total_acquires: str = ""
-    """Total number of acquire calls on this pool"""
-
-    total_cache_hits: str = ""
-    """Total number of cache hits (reused objects from pool)"""
-
-    peak_items_stored: str = ""
-    """Peak number of objects stored simultaneously in this pool"""
-
-    total_creations: str = ""
-    """Total number of objects created by the factory function"""
-
-
-@dataclass
-class PoolConfig:
-    """Configuration for the string buffer pool."""
-
-    max_buffers_per_size: int = 4
-    """Maximum buffers per size bucket"""
-
-    initial_capacity: int = 4096
-    """Initial capacity for new buffers"""
-
-    max_capacity_before_discard: int = 65536
-    """Maximum capacity before discarding"""
-
-
-@dataclass
-class ApiSizeLimits:
-    """API server size limit configuration."""
-
-    max_request_body_bytes: int = 0
-    """Maximum size of the entire request body in bytes."""
-
-    max_multipart_field_bytes: int = 0
-    """Maximum size of a single multipart field in bytes."""
-
-
-@dataclass
 class WarmRequest:
     """Cache warm request."""
 
@@ -1870,34 +1426,4 @@ class PaddleOcrConfig:
     model_tier: str = ""
     """Model tier controlling detection/recognition model size and accuracy trade-off."""
 
-
-class PdfMetadata(TypedDict, total=False):
-    """PDF-specific metadata."""
-
-    pdf_version: str | None
-    """PDF version (e.g., "1.7", "2.0")"""
-
-    producer: str | None
-    """PDF producer (application that created the PDF)"""
-
-    is_encrypted: bool | None
-    """Whether the PDF is encrypted/password-protected"""
-
-    width: int | None
-    """First page width in points (1/72 inch)"""
-
-    height: int | None
-    """First page height in points (1/72 inch)"""
-
-    page_count: int | None
-    """Total number of pages in the PDF document"""
-
-
-@dataclass
-class PageRenderOptions:
-    target_dpi: int = 300
-    max_image_dimension: int = 65536
-    auto_adjust_dpi: bool = True
-    min_dpi: int = 72
-    max_dpi: int = 600
 

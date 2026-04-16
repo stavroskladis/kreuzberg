@@ -5,6 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record OpenWebDocumentResponse(
     @JsonProperty("page_content") String pageContent,
-    OpenWebDocumentMetadata metadata
+    String metadata
 ) {
 }

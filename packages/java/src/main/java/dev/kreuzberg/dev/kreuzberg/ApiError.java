@@ -2,5 +2,5 @@
 package dev.kreuzberg;
 
 
-public record ApiError(String status, ErrorResponse body) {
+public record ApiError(String status, String body) {
 }

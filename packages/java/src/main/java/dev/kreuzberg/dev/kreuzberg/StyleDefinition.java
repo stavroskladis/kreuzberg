@@ -7,11 +7,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record StyleDefinition(
     String id,
     Optional<String> name,
-    @JsonProperty("style_type") StyleType styleType,
+    @JsonProperty("style_type") String styleType,
     @JsonProperty("based_on") Optional<String> basedOn,
     @JsonProperty("next_style") Optional<String> nextStyle,
     @JsonProperty("is_default") boolean isDefault,
     @JsonProperty("paragraph_properties") String paragraphProperties,
-    @JsonProperty("run_properties") RunProperties runProperties
+    @JsonProperty("run_properties") String runProperties
 ) {
 }

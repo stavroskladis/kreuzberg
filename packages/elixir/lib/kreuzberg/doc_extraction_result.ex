@@ -3,5 +3,5 @@ defmodule Kreuzberg.DocExtractionResult do
   @moduledoc "Result of DOC text extraction."
 
   defstruct text: "",
-            metadata: nil
+            metadata: ""
 end

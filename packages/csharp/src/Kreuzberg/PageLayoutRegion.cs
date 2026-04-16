@@ -18,6 +18,6 @@ public sealed class PageLayoutRegion
     public float Confidence { get; set; } = 0.0;
 
     [JsonPropertyName("bbox")]
-    public PdfLayoutBBox Bbox { get; set; } = default!;
+    public string Bbox { get; set; } = "";
 
 }

@@ -208,43 +208,10 @@ const (
 )
 
 
-// Type of list detection.
-type ListType string
-
-const (
-    // Bullet points (-, *, •, etc.)
-    ListTypeBullet ListType = "bullet"
-    // Numbered lists (1., 2., etc.)
-    ListTypeNumbered ListType = "numbered"
-    // Lettered lists (a., b., A., B., etc.)
-    ListTypeLettered ListType = "lettered"
-    // Indented items
-    ListTypeIndented ListType = "indented"
-)
-
-
 // Error type for HWP parsing.
 // Variants: InvalidFormat, UnsupportedVersion, Io, Cfb, CompressionError, ParseError, EncodingError, NotFound
 type HwpError struct {
 }
-
-
-// Whether the drawing is inline or anchored.
-// Variants: Inline, Anchored
-type DrawingType struct {
-}
-
-
-// Text wrapping type.
-type WrapType string
-
-const (
-    WrapTypeNone WrapType = "none"
-    WrapTypeSquare WrapType = "square"
-    WrapTypeTight WrapType = "tight"
-    WrapTypeTopAndBottom WrapType = "top_and_bottom"
-    WrapTypeThrough WrapType = "through"
-)
 
 
 // FracType is an enumeration type.
@@ -288,54 +255,6 @@ type MathNode struct {
 // Tracks document element ordering (paragraphs, tables, and drawings interleaved).
 // Variants: Paragraph, Table, Drawing
 type DocumentElement struct {
-}
-
-
-// HeaderFooterType is an enumeration type.
-type HeaderFooterType string
-
-const (
-    HeaderFooterTypeDefault HeaderFooterType = "default"
-    HeaderFooterTypeFirst HeaderFooterType = "first"
-    HeaderFooterTypeEven HeaderFooterType = "even"
-    HeaderFooterTypeOdd HeaderFooterType = "odd"
-)
-
-
-// NoteType is an enumeration type.
-type NoteType string
-
-const (
-    NoteTypeFootnote NoteType = "footnote"
-    NoteTypeEndnote NoteType = "endnote"
-)
-
-
-// Page orientation.
-type Orientation string
-
-const (
-    OrientationPortrait Orientation = "portrait"
-    OrientationLandscape Orientation = "landscape"
-)
-
-
-// The type of a style definition in DOCX.
-type StyleType string
-
-const (
-    StyleTypeParagraph StyleType = "paragraph"
-    StyleTypeCharacter StyleType = "character"
-    StyleTypeTable StyleType = "table"
-    StyleTypeNumbering StyleType = "numbering"
-)
-
-
-// A theme color definition, either direct RGB or a system color with fallback.
-// Variants: Rgb, System
-type ThemeColor struct {
-    Name *string `json:"name,omitempty"`
-    LastColor *string `json:"last_color,omitempty"`
 }
 
 
@@ -754,16 +673,6 @@ const (
 )
 
 
-// The source of a document to extract.
-// Variants: File, Bytes
-type ExtractionSource struct {
-    Path *string `json:"path,omitempty"`
-    MimeHint *string `json:"mime_hint,omitempty"`
-    Data *[]byte `json:"data,omitempty"`
-    MimeType *string `json:"mime_type,omitempty"`
-}
-
-
 // Keyword algorithm selection.
 type KeywordAlgorithm string
 
@@ -871,123 +780,6 @@ const (
 // PdfError is a tagged union type (discriminated by JSON tag).
 // Variants: InvalidPdf, PasswordRequired, InvalidPassword, EncryptionNotSupported, PageNotFound, TextExtractionFailed, RenderingFailed, MetadataExtractionFailed, ExtractionFailed, FontLoadingFailed, IOError
 type PdfError struct {
-}
-
-
-// Hierarchy level assignment result.
-type HierarchyLevel string
-
-const (
-    // H1 - Top-level heading
-    HierarchyLevelH1 HierarchyLevel = "h1"
-    // H2 - Secondary heading
-    HierarchyLevelH2 HierarchyLevel = "h2"
-    // H3 - Tertiary heading
-    HierarchyLevelH3 HierarchyLevel = "h3"
-    // H4 - Quaternary heading
-    HierarchyLevelH4 HierarchyLevel = "h4"
-    // H5 - Quinary heading
-    HierarchyLevelH5 HierarchyLevel = "h5"
-    // H6 - Senary heading
-    HierarchyLevelH6 HierarchyLevel = "h6"
-    // Body text
-    HierarchyLevelBody HierarchyLevel = "body"
-)
-
-
-// GenericCache is an opaque handle type.
-type GenericCache struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *GenericCache) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_generic_cache_free((*C.KREUZBERGGenericCache)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Configuration for batch processing with pooling optimizations.
-type BatchProcessorConfig struct {
-    // Maximum number of string buffers to maintain in the pool
-    StringPoolSize *uint `json:"string_pool_size,omitempty"`
-    // Initial capacity for pooled string buffers in bytes
-    StringBufferCapacity *uint `json:"string_buffer_capacity,omitempty"`
-    // Maximum number of byte buffers to maintain in the pool
-    BytePoolSize *uint `json:"byte_pool_size,omitempty"`
-    // Initial capacity for pooled byte buffers in bytes
-    ByteBufferCapacity *uint `json:"byte_buffer_capacity,omitempty"`
-    // Maximum concurrent extractions (for concurrency control)
-    MaxConcurrent *uint `json:"max_concurrent,omitempty"`
-}
-
-
-// BatchProcessorConfig option function
-type BatchProcessorConfigOption func(*BatchProcessorConfig)
-
-// WithBatchProcessorConfigStringPoolSize sets the string_pool_size field.
-func WithBatchProcessorConfigStringPoolSize(v uint) BatchProcessorConfigOption {
-    return func(c *BatchProcessorConfig) { c.StringPoolSize = &v }
-}
-
-// WithBatchProcessorConfigStringBufferCapacity sets the string_buffer_capacity field.
-func WithBatchProcessorConfigStringBufferCapacity(v uint) BatchProcessorConfigOption {
-    return func(c *BatchProcessorConfig) { c.StringBufferCapacity = &v }
-}
-
-// WithBatchProcessorConfigBytePoolSize sets the byte_pool_size field.
-func WithBatchProcessorConfigBytePoolSize(v uint) BatchProcessorConfigOption {
-    return func(c *BatchProcessorConfig) { c.BytePoolSize = &v }
-}
-
-// WithBatchProcessorConfigByteBufferCapacity sets the byte_buffer_capacity field.
-func WithBatchProcessorConfigByteBufferCapacity(v uint) BatchProcessorConfigOption {
-    return func(c *BatchProcessorConfig) { c.ByteBufferCapacity = &v }
-}
-
-// WithBatchProcessorConfigMaxConcurrent sets the max_concurrent field.
-func WithBatchProcessorConfigMaxConcurrent(v uint) BatchProcessorConfigOption {
-    return func(c *BatchProcessorConfig) { c.MaxConcurrent = &v }
-}
-
-// NewBatchProcessorConfig creates a BatchProcessorConfig with optional parameters.
-func NewBatchProcessorConfig(opts ...BatchProcessorConfigOption) *BatchProcessorConfig {
-    c := &BatchProcessorConfig {
-        StringPoolSize: nil,
-        StringBufferCapacity: nil,
-        BytePoolSize: nil,
-        ByteBufferCapacity: nil,
-        MaxConcurrent: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Batch processor that manages object pools for optimized extraction.
-//
-// This struct manages the lifecycle of reusable object pools used during
-// batch extraction. Pools are created lazily on first use and reused across
-// all documents processed by this batch processor.
-//
-// # Lazy Initialization
-//
-// Pools are initialized on demand to reduce memory usage for applications
-// that may not use batch processing immediately or at all.
-type BatchProcessor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *BatchProcessor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_batch_processor_free((*C.KREUZBERGBatchProcessor)(h.ptr))
-        h.ptr = nil
-    }
 }
 
 
@@ -3197,104 +2989,16 @@ type StructuredDataResult struct {
 }
 
 
-// JsonExtractionConfig is a type.
-type JsonExtractionConfig struct {
-    ExtractSchema bool `json:"extract_schema"`
-    MaxDepth *uint `json:"max_depth,omitempty"`
-    ArrayItemLimit *uint `json:"array_item_limit,omitempty"`
-    IncludeTypeInfo bool `json:"include_type_info"`
-    FlattenNestedObjects *bool `json:"flatten_nested_objects,omitempty"`
-    CustomTextFieldPatterns []string `json:"custom_text_field_patterns,omitempty"`
-}
-
-
-// JsonExtractionConfig option function
-type JsonExtractionConfigOption func(*JsonExtractionConfig)
-
-// WithJsonExtractionConfigExtractSchema sets the extract_schema field.
-func WithJsonExtractionConfigExtractSchema(v bool) JsonExtractionConfigOption {
-    return func(c *JsonExtractionConfig) { c.ExtractSchema = v }
-}
-
-// WithJsonExtractionConfigMaxDepth sets the max_depth field.
-func WithJsonExtractionConfigMaxDepth(v uint) JsonExtractionConfigOption {
-    return func(c *JsonExtractionConfig) { c.MaxDepth = &v }
-}
-
-// WithJsonExtractionConfigArrayItemLimit sets the array_item_limit field.
-func WithJsonExtractionConfigArrayItemLimit(v uint) JsonExtractionConfigOption {
-    return func(c *JsonExtractionConfig) { c.ArrayItemLimit = &v }
-}
-
-// WithJsonExtractionConfigIncludeTypeInfo sets the include_type_info field.
-func WithJsonExtractionConfigIncludeTypeInfo(v bool) JsonExtractionConfigOption {
-    return func(c *JsonExtractionConfig) { c.IncludeTypeInfo = v }
-}
-
-// WithJsonExtractionConfigFlattenNestedObjects sets the flatten_nested_objects field.
-func WithJsonExtractionConfigFlattenNestedObjects(v bool) JsonExtractionConfigOption {
-    return func(c *JsonExtractionConfig) { c.FlattenNestedObjects = &v }
-}
-
-// WithJsonExtractionConfigCustomTextFieldPatterns sets the custom_text_field_patterns field.
-func WithJsonExtractionConfigCustomTextFieldPatterns(v []string) JsonExtractionConfigOption {
-    return func(c *JsonExtractionConfig) { c.CustomTextFieldPatterns = v }
-}
-
-// NewJsonExtractionConfig creates a JsonExtractionConfig with optional parameters.
-func NewJsonExtractionConfig(opts ...JsonExtractionConfigOption) *JsonExtractionConfig {
-    c := &JsonExtractionConfig {
-        ExtractSchema: false,
-        MaxDepth: nil,
-        ArrayItemLimit: nil,
-        IncludeTypeInfo: false,
-        FlattenNestedObjects: nil,
-        CustomTextFieldPatterns: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
 // Metadata about a detected list item.
 type ListItemMetadata struct {
     // Type of list (Bullet, Numbered, etc.)
-    ListType ListType `json:"list_type"`
+    ListType string `json:"list_type"`
     // Starting byte offset in the content string
     ByteStart uint `json:"byte_start"`
     // Ending byte offset in the content string
     ByteEnd uint `json:"byte_end"`
     // List item indent level
     IndentLevel uint32 `json:"indent_level"`
-}
-
-
-// An extracted HWP document, consisting of one or more body-text sections.
-type HwpDocument struct {
-    // All sections from all BodyText/SectionN streams.
-    Sections []Section `json:"sections,omitempty"`
-}
-
-
-// HwpDocument option function
-type HwpDocumentOption func(*HwpDocument)
-
-// WithHwpDocumentSections sets the sections field.
-func WithHwpDocumentSections(v []Section) HwpDocumentOption {
-    return func(c *HwpDocument) { c.Sections = v }
-}
-
-// NewHwpDocument creates a HwpDocument with optional parameters.
-func NewHwpDocument(opts ...HwpDocumentOption) *HwpDocument {
-    c := &HwpDocument {
-        Sections: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
 }
 
 
@@ -3324,25 +3028,6 @@ func NewSection(opts ...SectionOption) *Section {
 }
 
 
-// Plain text content decoded from a ParaText record (tag 0x43).
-type ParaText struct {
-    Content string `json:"content"`
-}
-
-
-// FileHeader is a type.
-type FileHeader struct {
-    Flags uint32 `json:"flags"`
-}
-
-
-// Record is a type.
-type Record struct {
-    TagId uint16 `json:"tag_id"`
-    Data []byte `json:"data"`
-}
-
-
 // StreamReader is an opaque handle type.
 type StreamReader struct {
     ptr unsafe.Pointer
@@ -3352,20 +3037,6 @@ type StreamReader struct {
 func (h *StreamReader) Free() {
     if h.ptr != nil {
         C.kreuzberg_stream_reader_free((*C.KREUZBERGStreamReader)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// CfbReader is an opaque handle type.
-type CfbReader struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *CfbReader) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_cfb_reader_free((*C.KREUZBERGCfbReader)(h.ptr))
         h.ptr = nil
     }
 }
@@ -3407,157 +3078,16 @@ type DocExtractionResult struct {
     // Extracted text content.
     Text string `json:"text"`
     // Document metadata.
-    Metadata DocMetadata `json:"metadata"`
-}
-
-
-// Metadata extracted from DOC files.
-type DocMetadata struct {
-    Title *string `json:"title,omitempty"`
-    Subject *string `json:"subject,omitempty"`
-    Author *string `json:"author,omitempty"`
-    LastAuthor *string `json:"last_author,omitempty"`
-    Created *string `json:"created,omitempty"`
-    Modified *string `json:"modified,omitempty"`
-    RevisionNumber *string `json:"revision_number,omitempty"`
-}
-
-
-// DocMetadata option function
-type DocMetadataOption func(*DocMetadata)
-
-// WithDocMetadataTitle sets the title field.
-func WithDocMetadataTitle(v string) DocMetadataOption {
-    return func(c *DocMetadata) { c.Title = &v }
-}
-
-// WithDocMetadataSubject sets the subject field.
-func WithDocMetadataSubject(v string) DocMetadataOption {
-    return func(c *DocMetadata) { c.Subject = &v }
-}
-
-// WithDocMetadataAuthor sets the author field.
-func WithDocMetadataAuthor(v string) DocMetadataOption {
-    return func(c *DocMetadata) { c.Author = &v }
-}
-
-// WithDocMetadataLastAuthor sets the last_author field.
-func WithDocMetadataLastAuthor(v string) DocMetadataOption {
-    return func(c *DocMetadata) { c.LastAuthor = &v }
-}
-
-// WithDocMetadataCreated sets the created field.
-func WithDocMetadataCreated(v string) DocMetadataOption {
-    return func(c *DocMetadata) { c.Created = &v }
-}
-
-// WithDocMetadataModified sets the modified field.
-func WithDocMetadataModified(v string) DocMetadataOption {
-    return func(c *DocMetadata) { c.Modified = &v }
-}
-
-// WithDocMetadataRevisionNumber sets the revision_number field.
-func WithDocMetadataRevisionNumber(v string) DocMetadataOption {
-    return func(c *DocMetadata) { c.RevisionNumber = &v }
-}
-
-// NewDocMetadata creates a DocMetadata with optional parameters.
-func NewDocMetadata(opts ...DocMetadataOption) *DocMetadata {
-    c := &DocMetadata {
-        Title: nil,
-        Subject: nil,
-        Author: nil,
-        LastAuthor: nil,
-        Created: nil,
-        Modified: nil,
-        RevisionNumber: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
+    Metadata string `json:"metadata"`
 }
 
 
 // A drawing object extracted from `<w:drawing>`.
 type Drawing struct {
-    DrawingType DrawingType `json:"drawing_type"`
-    Extent *Extent `json:"extent,omitempty"`
-    DocProperties *DocProperties `json:"doc_properties,omitempty"`
+    DrawingType string `json:"drawing_type"`
+    Extent *string `json:"extent,omitempty"`
+    DocProperties *string `json:"doc_properties,omitempty"`
     ImageRef *string `json:"image_ref,omitempty"`
-}
-
-
-// Size in EMUs (English Metric Units, 1 inch = 914400 EMU).
-type Extent struct {
-    Cx int64 `json:"cx"`
-    Cy int64 `json:"cy"`
-}
-
-
-// Extent option function
-type ExtentOption func(*Extent)
-
-// WithExtentCx sets the cx field.
-func WithExtentCx(v int64) ExtentOption {
-    return func(c *Extent) { c.Cx = v }
-}
-
-// WithExtentCy sets the cy field.
-func WithExtentCy(v int64) ExtentOption {
-    return func(c *Extent) { c.Cy = v }
-}
-
-// NewExtent creates a Extent with optional parameters.
-func NewExtent(opts ...ExtentOption) *Extent {
-    c := &Extent {
-        Cx: 0,
-        Cy: 0,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Document properties from `<wp:docPr>`.
-type DocProperties struct {
-    Id *string `json:"id,omitempty"`
-    Name *string `json:"name,omitempty"`
-    Description *string `json:"description,omitempty"`
-}
-
-
-// DocProperties option function
-type DocPropertiesOption func(*DocProperties)
-
-// WithDocPropertiesId sets the id field.
-func WithDocPropertiesId(v string) DocPropertiesOption {
-    return func(c *DocProperties) { c.Id = &v }
-}
-
-// WithDocPropertiesName sets the name field.
-func WithDocPropertiesName(v string) DocPropertiesOption {
-    return func(c *DocProperties) { c.Name = &v }
-}
-
-// WithDocPropertiesDescription sets the description field.
-func WithDocPropertiesDescription(v string) DocPropertiesOption {
-    return func(c *DocProperties) { c.Description = &v }
-}
-
-// NewDocProperties creates a DocProperties with optional parameters.
-func NewDocProperties(opts ...DocPropertiesOption) *DocProperties {
-    c := &DocProperties {
-        Id: nil,
-        Name: nil,
-        Description: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
 }
 
 
@@ -3566,9 +3096,9 @@ type AnchorProperties struct {
     BehindDoc bool `json:"behind_doc"`
     LayoutInCell bool `json:"layout_in_cell"`
     RelativeHeight *int64 `json:"relative_height,omitempty"`
-    PositionH *Position `json:"position_h,omitempty"`
-    PositionV *Position `json:"position_v,omitempty"`
-    WrapType WrapType `json:"wrap_type,omitempty"`
+    PositionH *string `json:"position_h,omitempty"`
+    PositionV *string `json:"position_v,omitempty"`
+    WrapType string `json:"wrap_type"`
 }
 
 
@@ -3591,17 +3121,17 @@ func WithAnchorPropertiesRelativeHeight(v int64) AnchorPropertiesOption {
 }
 
 // WithAnchorPropertiesPositionH sets the position_h field.
-func WithAnchorPropertiesPositionH(v Position) AnchorPropertiesOption {
+func WithAnchorPropertiesPositionH(v string) AnchorPropertiesOption {
     return func(c *AnchorProperties) { c.PositionH = &v }
 }
 
 // WithAnchorPropertiesPositionV sets the position_v field.
-func WithAnchorPropertiesPositionV(v Position) AnchorPropertiesOption {
+func WithAnchorPropertiesPositionV(v string) AnchorPropertiesOption {
     return func(c *AnchorProperties) { c.PositionV = &v }
 }
 
 // WithAnchorPropertiesWrapType sets the wrap_type field.
-func WithAnchorPropertiesWrapType(v WrapType) AnchorPropertiesOption {
+func WithAnchorPropertiesWrapType(v string) AnchorPropertiesOption {
     return func(c *AnchorProperties) { c.WrapType = v }
 }
 
@@ -3622,133 +3152,10 @@ func NewAnchorProperties(opts ...AnchorPropertiesOption) *AnchorProperties {
 }
 
 
-// Horizontal or vertical position.
-type Position struct {
-    RelativeFrom string `json:"relative_from"`
-    Offset *int64 `json:"offset,omitempty"`
-}
-
-
-// Document is a type.
-type Document struct {
-    Paragraphs []string `json:"paragraphs,omitempty"`
-    Tables []Table `json:"tables,omitempty"`
-    Headers []HeaderFooter `json:"headers,omitempty"`
-    Footers []HeaderFooter `json:"footers,omitempty"`
-    Footnotes []Note `json:"footnotes,omitempty"`
-    Endnotes []Note `json:"endnotes,omitempty"`
-    NumberingDefs string `json:"numbering_defs"`
-    // Document elements in their original order.
-    Elements []DocumentElement `json:"elements,omitempty"`
-    // Parsed style catalog from `word/styles.xml`, if available.
-    StyleCatalog *StyleCatalog `json:"style_catalog,omitempty"`
-    // Parsed theme from `word/theme/theme1.xml`, if available.
-    Theme *Theme `json:"theme,omitempty"`
-    // Section properties parsed from `w:sectPr` elements.
-    Sections []SectionProperties `json:"sections,omitempty"`
-    // Drawing objects parsed from `w:drawing` elements.
-    Drawings []Drawing `json:"drawings,omitempty"`
-    // Image relationships (rId → target path) for image extraction.
-    ImageRelationships string `json:"image_relationships"`
-}
-
-
-// Document option function
-type DocumentOption func(*Document)
-
-// WithDocumentParagraphs sets the paragraphs field.
-func WithDocumentParagraphs(v []string) DocumentOption {
-    return func(c *Document) { c.Paragraphs = v }
-}
-
-// WithDocumentTables sets the tables field.
-func WithDocumentTables(v []Table) DocumentOption {
-    return func(c *Document) { c.Tables = v }
-}
-
-// WithDocumentHeaders sets the headers field.
-func WithDocumentHeaders(v []HeaderFooter) DocumentOption {
-    return func(c *Document) { c.Headers = v }
-}
-
-// WithDocumentFooters sets the footers field.
-func WithDocumentFooters(v []HeaderFooter) DocumentOption {
-    return func(c *Document) { c.Footers = v }
-}
-
-// WithDocumentFootnotes sets the footnotes field.
-func WithDocumentFootnotes(v []Note) DocumentOption {
-    return func(c *Document) { c.Footnotes = v }
-}
-
-// WithDocumentEndnotes sets the endnotes field.
-func WithDocumentEndnotes(v []Note) DocumentOption {
-    return func(c *Document) { c.Endnotes = v }
-}
-
-// WithDocumentNumberingDefs sets the numbering_defs field.
-func WithDocumentNumberingDefs(v string) DocumentOption {
-    return func(c *Document) { c.NumberingDefs = v }
-}
-
-// WithDocumentElements sets the elements field.
-func WithDocumentElements(v []DocumentElement) DocumentOption {
-    return func(c *Document) { c.Elements = v }
-}
-
-// WithDocumentStyleCatalog sets the style_catalog field.
-func WithDocumentStyleCatalog(v StyleCatalog) DocumentOption {
-    return func(c *Document) { c.StyleCatalog = &v }
-}
-
-// WithDocumentTheme sets the theme field.
-func WithDocumentTheme(v Theme) DocumentOption {
-    return func(c *Document) { c.Theme = &v }
-}
-
-// WithDocumentSections sets the sections field.
-func WithDocumentSections(v []SectionProperties) DocumentOption {
-    return func(c *Document) { c.Sections = v }
-}
-
-// WithDocumentDrawings sets the drawings field.
-func WithDocumentDrawings(v []Drawing) DocumentOption {
-    return func(c *Document) { c.Drawings = v }
-}
-
-// WithDocumentImageRelationships sets the image_relationships field.
-func WithDocumentImageRelationships(v string) DocumentOption {
-    return func(c *Document) { c.ImageRelationships = v }
-}
-
-// NewDocument creates a Document with optional parameters.
-func NewDocument(opts ...DocumentOption) *Document {
-    c := &Document {
-        Paragraphs: nil,
-        Tables: nil,
-        Headers: nil,
-        Footers: nil,
-        Footnotes: nil,
-        Endnotes: nil,
-        NumberingDefs: "",
-        Elements: nil,
-        StyleCatalog: nil,
-        Theme: nil,
-        Sections: nil,
-        Drawings: nil,
-        ImageRelationships: "",
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
 // TableRow is a type.
 type TableRow struct {
     Cells []TableCell `json:"cells,omitempty"`
-    Properties *RowProperties `json:"properties,omitempty"`
+    Properties *string `json:"properties,omitempty"`
 }
 
 
@@ -3761,7 +3168,7 @@ func WithTableRowCells(v []TableCell) TableRowOption {
 }
 
 // WithTableRowProperties sets the properties field.
-func WithTableRowProperties(v RowProperties) TableRowOption {
+func WithTableRowProperties(v string) TableRowOption {
     return func(c *TableRow) { c.Properties = &v }
 }
 
@@ -3782,7 +3189,7 @@ func NewTableRow(opts ...TableRowOption) *TableRow {
 type HeaderFooter struct {
     Paragraphs []string `json:"paragraphs,omitempty"`
     Tables []Table `json:"tables,omitempty"`
-    HeaderType HeaderFooterType `json:"header_type,omitempty"`
+    HeaderType string `json:"header_type"`
 }
 
 
@@ -3800,7 +3207,7 @@ func WithHeaderFooterTables(v []Table) HeaderFooterOption {
 }
 
 // WithHeaderFooterHeaderType sets the header_type field.
-func WithHeaderFooterHeaderType(v HeaderFooterType) HeaderFooterOption {
+func WithHeaderFooterHeaderType(v string) HeaderFooterOption {
     return func(c *HeaderFooter) { c.HeaderType = v }
 }
 
@@ -3821,83 +3228,8 @@ func NewHeaderFooter(opts ...HeaderFooterOption) *HeaderFooter {
 // Note is a type.
 type Note struct {
     Id string `json:"id"`
-    NoteType NoteType `json:"note_type"`
+    NoteType string `json:"note_type"`
     Paragraphs []string `json:"paragraphs,omitempty"`
-}
-
-
-// Page margins in twips (twentieths of a point).
-type PageMargins struct {
-    // Top margin in twips.
-    Top *int32 `json:"top,omitempty"`
-    // Right margin in twips.
-    Right *int32 `json:"right,omitempty"`
-    // Bottom margin in twips.
-    Bottom *int32 `json:"bottom,omitempty"`
-    // Left margin in twips.
-    Left *int32 `json:"left,omitempty"`
-    // Header offset in twips.
-    Header *int32 `json:"header,omitempty"`
-    // Footer offset in twips.
-    Footer *int32 `json:"footer,omitempty"`
-    // Gutter margin in twips.
-    Gutter *int32 `json:"gutter,omitempty"`
-}
-
-
-// PageMargins option function
-type PageMarginsOption func(*PageMargins)
-
-// WithPageMarginsTop sets the top field.
-func WithPageMarginsTop(v int32) PageMarginsOption {
-    return func(c *PageMargins) { c.Top = &v }
-}
-
-// WithPageMarginsRight sets the right field.
-func WithPageMarginsRight(v int32) PageMarginsOption {
-    return func(c *PageMargins) { c.Right = &v }
-}
-
-// WithPageMarginsBottom sets the bottom field.
-func WithPageMarginsBottom(v int32) PageMarginsOption {
-    return func(c *PageMargins) { c.Bottom = &v }
-}
-
-// WithPageMarginsLeft sets the left field.
-func WithPageMarginsLeft(v int32) PageMarginsOption {
-    return func(c *PageMargins) { c.Left = &v }
-}
-
-// WithPageMarginsHeader sets the header field.
-func WithPageMarginsHeader(v int32) PageMarginsOption {
-    return func(c *PageMargins) { c.Header = &v }
-}
-
-// WithPageMarginsFooter sets the footer field.
-func WithPageMarginsFooter(v int32) PageMarginsOption {
-    return func(c *PageMargins) { c.Footer = &v }
-}
-
-// WithPageMarginsGutter sets the gutter field.
-func WithPageMarginsGutter(v int32) PageMarginsOption {
-    return func(c *PageMargins) { c.Gutter = &v }
-}
-
-// NewPageMargins creates a PageMargins with optional parameters.
-func NewPageMargins(opts ...PageMarginsOption) *PageMargins {
-    c := &PageMargins {
-        Top: nil,
-        Right: nil,
-        Bottom: nil,
-        Left: nil,
-        Header: nil,
-        Footer: nil,
-        Gutter: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
 }
 
 
@@ -3969,334 +3301,6 @@ func NewPageMarginsPoints(opts ...PageMarginsPointsOption) *PageMarginsPoints {
 }
 
 
-// Column layout configuration.
-type ColumnLayout struct {
-    // Number of columns.
-    Count *int32 `json:"count,omitempty"`
-    // Space between columns in twips.
-    SpaceTwips *int32 `json:"space_twips,omitempty"`
-    // Whether columns have equal width.
-    EqualWidth *bool `json:"equal_width,omitempty"`
-}
-
-
-// ColumnLayout option function
-type ColumnLayoutOption func(*ColumnLayout)
-
-// WithColumnLayoutCount sets the count field.
-func WithColumnLayoutCount(v int32) ColumnLayoutOption {
-    return func(c *ColumnLayout) { c.Count = &v }
-}
-
-// WithColumnLayoutSpaceTwips sets the space_twips field.
-func WithColumnLayoutSpaceTwips(v int32) ColumnLayoutOption {
-    return func(c *ColumnLayout) { c.SpaceTwips = &v }
-}
-
-// WithColumnLayoutEqualWidth sets the equal_width field.
-func WithColumnLayoutEqualWidth(v bool) ColumnLayoutOption {
-    return func(c *ColumnLayout) { c.EqualWidth = &v }
-}
-
-// NewColumnLayout creates a ColumnLayout with optional parameters.
-func NewColumnLayout(opts ...ColumnLayoutOption) *ColumnLayout {
-    c := &ColumnLayout {
-        Count: nil,
-        SpaceTwips: nil,
-        EqualWidth: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// DOCX section properties parsed from `w:sectPr` element.
-type SectionProperties struct {
-    // Page width in twips (from `w:pgSz w:w`).
-    PageWidthTwips *int32 `json:"page_width_twips,omitempty"`
-    // Page height in twips (from `w:pgSz w:h`).
-    PageHeightTwips *int32 `json:"page_height_twips,omitempty"`
-    // Page orientation (from `w:pgSz w:orient`).
-    Orientation *Orientation `json:"orientation,omitempty"`
-    // Page margins (from `w:pgMar`).
-    Margins PageMargins `json:"margins"`
-    // Column layout (from `w:cols`).
-    Columns ColumnLayout `json:"columns"`
-    // Document grid line pitch in twips (from `w:docGrid w:linePitch`).
-    DocGridLinePitch *int32 `json:"doc_grid_line_pitch,omitempty"`
-}
-
-
-// SectionProperties option function
-type SectionPropertiesOption func(*SectionProperties)
-
-// WithSectionPropertiesPageWidthTwips sets the page_width_twips field.
-func WithSectionPropertiesPageWidthTwips(v int32) SectionPropertiesOption {
-    return func(c *SectionProperties) { c.PageWidthTwips = &v }
-}
-
-// WithSectionPropertiesPageHeightTwips sets the page_height_twips field.
-func WithSectionPropertiesPageHeightTwips(v int32) SectionPropertiesOption {
-    return func(c *SectionProperties) { c.PageHeightTwips = &v }
-}
-
-// WithSectionPropertiesOrientation sets the orientation field.
-func WithSectionPropertiesOrientation(v Orientation) SectionPropertiesOption {
-    return func(c *SectionProperties) { c.Orientation = &v }
-}
-
-// WithSectionPropertiesMargins sets the margins field.
-func WithSectionPropertiesMargins(v PageMargins) SectionPropertiesOption {
-    return func(c *SectionProperties) { c.Margins = v }
-}
-
-// WithSectionPropertiesColumns sets the columns field.
-func WithSectionPropertiesColumns(v ColumnLayout) SectionPropertiesOption {
-    return func(c *SectionProperties) { c.Columns = v }
-}
-
-// WithSectionPropertiesDocGridLinePitch sets the doc_grid_line_pitch field.
-func WithSectionPropertiesDocGridLinePitch(v int32) SectionPropertiesOption {
-    return func(c *SectionProperties) { c.DocGridLinePitch = &v }
-}
-
-// NewSectionProperties creates a SectionProperties with optional parameters.
-func NewSectionProperties(opts ...SectionPropertiesOption) *SectionProperties {
-    c := &SectionProperties {
-        PageWidthTwips: nil,
-        PageHeightTwips: nil,
-        Orientation: nil,
-        Margins: PageMargins{},
-        Columns: ColumnLayout{},
-        DocGridLinePitch: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Run-level formatting properties (bold, italic, font, size, color, etc.).
-//
-// All fields are `Option` so that inheritance resolution can distinguish
-// "not set" (`None`) from "explicitly set" (`Some`).
-type RunProperties struct {
-    Bold *bool `json:"bold,omitempty"`
-    Italic *bool `json:"italic,omitempty"`
-    Underline *bool `json:"underline,omitempty"`
-    Strikethrough *bool `json:"strikethrough,omitempty"`
-    // Hex RGB color, e.g. `"2F5496"`.
-    Color *string `json:"color,omitempty"`
-    // Font size in half-points (`w:sz` val). Divide by 2 to get points.
-    FontSizeHalfPoints *int32 `json:"font_size_half_points,omitempty"`
-    // ASCII font family (`w:rFonts w:ascii`).
-    FontAscii *string `json:"font_ascii,omitempty"`
-    // ASCII theme font (`w:rFonts w:asciiTheme`).
-    FontAsciiTheme *string `json:"font_ascii_theme,omitempty"`
-    // Vertical alignment: "superscript", "subscript", or "baseline".
-    VertAlign *string `json:"vert_align,omitempty"`
-    // High ANSI font family (w:rFonts w:hAnsi).
-    FontHAnsi *string `json:"font_h_ansi,omitempty"`
-    // Complex script font family (w:rFonts w:cs).
-    FontCs *string `json:"font_cs,omitempty"`
-    // East Asian font family (w:rFonts w:eastAsia).
-    FontEastAsia *string `json:"font_east_asia,omitempty"`
-    // Highlight color name (e.g., "yellow", "green", "cyan").
-    Highlight *string `json:"highlight,omitempty"`
-    // All caps text transformation.
-    Caps *bool `json:"caps,omitempty"`
-    // Small caps text transformation.
-    SmallCaps *bool `json:"small_caps,omitempty"`
-    // Text shadow effect.
-    Shadow *bool `json:"shadow,omitempty"`
-    // Text outline effect.
-    Outline *bool `json:"outline,omitempty"`
-    // Text emboss effect.
-    Emboss *bool `json:"emboss,omitempty"`
-    // Text imprint (engrave) effect.
-    Imprint *bool `json:"imprint,omitempty"`
-    // Character spacing in twips (from w:spacing w:val).
-    CharSpacing *int32 `json:"char_spacing,omitempty"`
-    // Vertical position offset in half-points (from w:position w:val).
-    Position *int32 `json:"position,omitempty"`
-    // Kerning threshold in half-points (from w:kern w:val).
-    Kern *int32 `json:"kern,omitempty"`
-    // Theme color reference (e.g., "accent1", "dk1").
-    ThemeColor *string `json:"theme_color,omitempty"`
-    // Theme color tint modification (hex value).
-    ThemeTint *string `json:"theme_tint,omitempty"`
-    // Theme color shade modification (hex value).
-    ThemeShade *string `json:"theme_shade,omitempty"`
-}
-
-
-// RunProperties option function
-type RunPropertiesOption func(*RunProperties)
-
-// WithRunPropertiesBold sets the bold field.
-func WithRunPropertiesBold(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.Bold = &v }
-}
-
-// WithRunPropertiesItalic sets the italic field.
-func WithRunPropertiesItalic(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.Italic = &v }
-}
-
-// WithRunPropertiesUnderline sets the underline field.
-func WithRunPropertiesUnderline(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.Underline = &v }
-}
-
-// WithRunPropertiesStrikethrough sets the strikethrough field.
-func WithRunPropertiesStrikethrough(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.Strikethrough = &v }
-}
-
-// WithRunPropertiesColor sets the color field.
-func WithRunPropertiesColor(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.Color = &v }
-}
-
-// WithRunPropertiesFontSizeHalfPoints sets the font_size_half_points field.
-func WithRunPropertiesFontSizeHalfPoints(v int32) RunPropertiesOption {
-    return func(c *RunProperties) { c.FontSizeHalfPoints = &v }
-}
-
-// WithRunPropertiesFontAscii sets the font_ascii field.
-func WithRunPropertiesFontAscii(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.FontAscii = &v }
-}
-
-// WithRunPropertiesFontAsciiTheme sets the font_ascii_theme field.
-func WithRunPropertiesFontAsciiTheme(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.FontAsciiTheme = &v }
-}
-
-// WithRunPropertiesVertAlign sets the vert_align field.
-func WithRunPropertiesVertAlign(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.VertAlign = &v }
-}
-
-// WithRunPropertiesFontHAnsi sets the font_h_ansi field.
-func WithRunPropertiesFontHAnsi(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.FontHAnsi = &v }
-}
-
-// WithRunPropertiesFontCs sets the font_cs field.
-func WithRunPropertiesFontCs(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.FontCs = &v }
-}
-
-// WithRunPropertiesFontEastAsia sets the font_east_asia field.
-func WithRunPropertiesFontEastAsia(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.FontEastAsia = &v }
-}
-
-// WithRunPropertiesHighlight sets the highlight field.
-func WithRunPropertiesHighlight(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.Highlight = &v }
-}
-
-// WithRunPropertiesCaps sets the caps field.
-func WithRunPropertiesCaps(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.Caps = &v }
-}
-
-// WithRunPropertiesSmallCaps sets the small_caps field.
-func WithRunPropertiesSmallCaps(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.SmallCaps = &v }
-}
-
-// WithRunPropertiesShadow sets the shadow field.
-func WithRunPropertiesShadow(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.Shadow = &v }
-}
-
-// WithRunPropertiesOutline sets the outline field.
-func WithRunPropertiesOutline(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.Outline = &v }
-}
-
-// WithRunPropertiesEmboss sets the emboss field.
-func WithRunPropertiesEmboss(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.Emboss = &v }
-}
-
-// WithRunPropertiesImprint sets the imprint field.
-func WithRunPropertiesImprint(v bool) RunPropertiesOption {
-    return func(c *RunProperties) { c.Imprint = &v }
-}
-
-// WithRunPropertiesCharSpacing sets the char_spacing field.
-func WithRunPropertiesCharSpacing(v int32) RunPropertiesOption {
-    return func(c *RunProperties) { c.CharSpacing = &v }
-}
-
-// WithRunPropertiesPosition sets the position field.
-func WithRunPropertiesPosition(v int32) RunPropertiesOption {
-    return func(c *RunProperties) { c.Position = &v }
-}
-
-// WithRunPropertiesKern sets the kern field.
-func WithRunPropertiesKern(v int32) RunPropertiesOption {
-    return func(c *RunProperties) { c.Kern = &v }
-}
-
-// WithRunPropertiesThemeColor sets the theme_color field.
-func WithRunPropertiesThemeColor(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.ThemeColor = &v }
-}
-
-// WithRunPropertiesThemeTint sets the theme_tint field.
-func WithRunPropertiesThemeTint(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.ThemeTint = &v }
-}
-
-// WithRunPropertiesThemeShade sets the theme_shade field.
-func WithRunPropertiesThemeShade(v string) RunPropertiesOption {
-    return func(c *RunProperties) { c.ThemeShade = &v }
-}
-
-// NewRunProperties creates a RunProperties with optional parameters.
-func NewRunProperties(opts ...RunPropertiesOption) *RunProperties {
-    c := &RunProperties {
-        Bold: nil,
-        Italic: nil,
-        Underline: nil,
-        Strikethrough: nil,
-        Color: nil,
-        FontSizeHalfPoints: nil,
-        FontAscii: nil,
-        FontAsciiTheme: nil,
-        VertAlign: nil,
-        FontHAnsi: nil,
-        FontCs: nil,
-        FontEastAsia: nil,
-        Highlight: nil,
-        Caps: nil,
-        SmallCaps: nil,
-        Shadow: nil,
-        Outline: nil,
-        Emboss: nil,
-        Imprint: nil,
-        CharSpacing: nil,
-        Position: nil,
-        Kern: nil,
-        ThemeColor: nil,
-        ThemeTint: nil,
-        ThemeShade: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
 // A single style definition parsed from `<w:style>` in `word/styles.xml`.
 type StyleDefinition struct {
     // The style ID (`w:styleId` attribute).
@@ -4304,7 +3308,7 @@ type StyleDefinition struct {
     // Human-readable name (`<w:name w:val="..."/>`).
     Name *string `json:"name,omitempty"`
     // Style type: paragraph, character, table, or numbering.
-    StyleType StyleType `json:"style_type"`
+    StyleType string `json:"style_type"`
     // ID of the parent style (`<w:basedOn w:val="..."/>`).
     BasedOn *string `json:"based_on,omitempty"`
     // ID of the style to apply to the next paragraph (`<w:next w:val="..."/>`).
@@ -4314,14 +3318,14 @@ type StyleDefinition struct {
     // Paragraph properties defined directly on this style.
     ParagraphProperties string `json:"paragraph_properties"`
     // Run properties defined directly on this style.
-    RunProperties RunProperties `json:"run_properties"`
+    RunProperties string `json:"run_properties"`
 }
 
 
 // Fully resolved (flattened) style after walking the inheritance chain.
 type ResolvedStyle struct {
     ParagraphProperties string `json:"paragraph_properties"`
-    RunProperties RunProperties `json:"run_properties"`
+    RunProperties string `json:"run_properties"`
 }
 
 
@@ -4334,7 +3338,7 @@ func WithResolvedStyleParagraphProperties(v string) ResolvedStyleOption {
 }
 
 // WithResolvedStyleRunProperties sets the run_properties field.
-func WithResolvedStyleRunProperties(v RunProperties) ResolvedStyleOption {
+func WithResolvedStyleRunProperties(v string) ResolvedStyleOption {
     return func(c *ResolvedStyle) { c.RunProperties = v }
 }
 
@@ -4342,47 +3346,7 @@ func WithResolvedStyleRunProperties(v RunProperties) ResolvedStyleOption {
 func NewResolvedStyle(opts ...ResolvedStyleOption) *ResolvedStyle {
     c := &ResolvedStyle {
         ParagraphProperties: "",
-        RunProperties: RunProperties{},
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Catalog of all styles parsed from `word/styles.xml`, plus document defaults.
-type StyleCatalog struct {
-    Styles string `json:"styles"`
-    DefaultParagraphProperties string `json:"default_paragraph_properties"`
-    DefaultRunProperties RunProperties `json:"default_run_properties"`
-}
-
-
-// StyleCatalog option function
-type StyleCatalogOption func(*StyleCatalog)
-
-// WithStyleCatalogStyles sets the styles field.
-func WithStyleCatalogStyles(v string) StyleCatalogOption {
-    return func(c *StyleCatalog) { c.Styles = v }
-}
-
-// WithStyleCatalogDefaultParagraphProperties sets the default_paragraph_properties field.
-func WithStyleCatalogDefaultParagraphProperties(v string) StyleCatalogOption {
-    return func(c *StyleCatalog) { c.DefaultParagraphProperties = v }
-}
-
-// WithStyleCatalogDefaultRunProperties sets the default_run_properties field.
-func WithStyleCatalogDefaultRunProperties(v RunProperties) StyleCatalogOption {
-    return func(c *StyleCatalog) { c.DefaultRunProperties = v }
-}
-
-// NewStyleCatalog creates a StyleCatalog with optional parameters.
-func NewStyleCatalog(opts ...StyleCatalogOption) *StyleCatalog {
-    c := &StyleCatalog {
-        Styles: "",
-        DefaultParagraphProperties: "",
-        DefaultRunProperties: RunProperties{},
+        RunProperties: "",
     }
     for _, opt := range opts {
         opt(c)
@@ -4397,8 +3361,8 @@ type TableProperties struct {
     Width *string `json:"width,omitempty"`
     Alignment *string `json:"alignment,omitempty"`
     Layout *string `json:"layout,omitempty"`
-    Look *TableLook `json:"look,omitempty"`
-    Borders *TableBorders `json:"borders,omitempty"`
+    Look *string `json:"look,omitempty"`
+    Borders *string `json:"borders,omitempty"`
     CellMargins *string `json:"cell_margins,omitempty"`
     Indent *string `json:"indent,omitempty"`
     Caption *string `json:"caption,omitempty"`
@@ -4429,12 +3393,12 @@ func WithTablePropertiesLayout(v string) TablePropertiesOption {
 }
 
 // WithTablePropertiesLook sets the look field.
-func WithTablePropertiesLook(v TableLook) TablePropertiesOption {
+func WithTablePropertiesLook(v string) TablePropertiesOption {
     return func(c *TableProperties) { c.Look = &v }
 }
 
 // WithTablePropertiesBorders sets the borders field.
-func WithTablePropertiesBorders(v TableBorders) TablePropertiesOption {
+func WithTablePropertiesBorders(v string) TablePropertiesOption {
     return func(c *TableProperties) { c.Borders = &v }
 }
 
@@ -4465,416 +3429,6 @@ func NewTableProperties(opts ...TablePropertiesOption) *TableProperties {
         CellMargins: nil,
         Indent: nil,
         Caption: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Table look bitmask/flags controlling conditional formatting bands.
-type TableLook struct {
-    FirstRow bool `json:"first_row"`
-    LastRow bool `json:"last_row"`
-    FirstColumn bool `json:"first_column"`
-    LastColumn bool `json:"last_column"`
-    NoHBand bool `json:"no_h_band"`
-    NoVBand bool `json:"no_v_band"`
-}
-
-
-// TableLook option function
-type TableLookOption func(*TableLook)
-
-// WithTableLookFirstRow sets the first_row field.
-func WithTableLookFirstRow(v bool) TableLookOption {
-    return func(c *TableLook) { c.FirstRow = v }
-}
-
-// WithTableLookLastRow sets the last_row field.
-func WithTableLookLastRow(v bool) TableLookOption {
-    return func(c *TableLook) { c.LastRow = v }
-}
-
-// WithTableLookFirstColumn sets the first_column field.
-func WithTableLookFirstColumn(v bool) TableLookOption {
-    return func(c *TableLook) { c.FirstColumn = v }
-}
-
-// WithTableLookLastColumn sets the last_column field.
-func WithTableLookLastColumn(v bool) TableLookOption {
-    return func(c *TableLook) { c.LastColumn = v }
-}
-
-// WithTableLookNoHBand sets the no_h_band field.
-func WithTableLookNoHBand(v bool) TableLookOption {
-    return func(c *TableLook) { c.NoHBand = v }
-}
-
-// WithTableLookNoVBand sets the no_v_band field.
-func WithTableLookNoVBand(v bool) TableLookOption {
-    return func(c *TableLook) { c.NoVBand = v }
-}
-
-// NewTableLook creates a TableLook with optional parameters.
-func NewTableLook(opts ...TableLookOption) *TableLook {
-    c := &TableLook {
-        FirstRow: false,
-        LastRow: false,
-        FirstColumn: false,
-        LastColumn: false,
-        NoHBand: false,
-        NoVBand: false,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Borders for a table (6 borders: top, bottom, left, right, insideH, insideV).
-type TableBorders struct {
-    Top *string `json:"top,omitempty"`
-    Bottom *string `json:"bottom,omitempty"`
-    Left *string `json:"left,omitempty"`
-    Right *string `json:"right,omitempty"`
-    InsideH *string `json:"inside_h,omitempty"`
-    InsideV *string `json:"inside_v,omitempty"`
-}
-
-
-// TableBorders option function
-type TableBordersOption func(*TableBorders)
-
-// WithTableBordersTop sets the top field.
-func WithTableBordersTop(v string) TableBordersOption {
-    return func(c *TableBorders) { c.Top = &v }
-}
-
-// WithTableBordersBottom sets the bottom field.
-func WithTableBordersBottom(v string) TableBordersOption {
-    return func(c *TableBorders) { c.Bottom = &v }
-}
-
-// WithTableBordersLeft sets the left field.
-func WithTableBordersLeft(v string) TableBordersOption {
-    return func(c *TableBorders) { c.Left = &v }
-}
-
-// WithTableBordersRight sets the right field.
-func WithTableBordersRight(v string) TableBordersOption {
-    return func(c *TableBorders) { c.Right = &v }
-}
-
-// WithTableBordersInsideH sets the inside_h field.
-func WithTableBordersInsideH(v string) TableBordersOption {
-    return func(c *TableBorders) { c.InsideH = &v }
-}
-
-// WithTableBordersInsideV sets the inside_v field.
-func WithTableBordersInsideV(v string) TableBordersOption {
-    return func(c *TableBorders) { c.InsideV = &v }
-}
-
-// NewTableBorders creates a TableBorders with optional parameters.
-func NewTableBorders(opts ...TableBordersOption) *TableBorders {
-    c := &TableBorders {
-        Top: nil,
-        Bottom: nil,
-        Left: nil,
-        Right: nil,
-        InsideH: nil,
-        InsideV: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Row-level properties from `<w:trPr>`.
-type RowProperties struct {
-    Height *int32 `json:"height,omitempty"`
-    HeightRule *string `json:"height_rule,omitempty"`
-    IsHeader bool `json:"is_header"`
-    CantSplit bool `json:"cant_split"`
-}
-
-
-// RowProperties option function
-type RowPropertiesOption func(*RowProperties)
-
-// WithRowPropertiesHeight sets the height field.
-func WithRowPropertiesHeight(v int32) RowPropertiesOption {
-    return func(c *RowProperties) { c.Height = &v }
-}
-
-// WithRowPropertiesHeightRule sets the height_rule field.
-func WithRowPropertiesHeightRule(v string) RowPropertiesOption {
-    return func(c *RowProperties) { c.HeightRule = &v }
-}
-
-// WithRowPropertiesIsHeader sets the is_header field.
-func WithRowPropertiesIsHeader(v bool) RowPropertiesOption {
-    return func(c *RowProperties) { c.IsHeader = v }
-}
-
-// WithRowPropertiesCantSplit sets the cant_split field.
-func WithRowPropertiesCantSplit(v bool) RowPropertiesOption {
-    return func(c *RowProperties) { c.CantSplit = v }
-}
-
-// NewRowProperties creates a RowProperties with optional parameters.
-func NewRowProperties(opts ...RowPropertiesOption) *RowProperties {
-    c := &RowProperties {
-        Height: nil,
-        HeightRule: nil,
-        IsHeader: false,
-        CantSplit: false,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Color scheme containing all 12 standard Office theme colors.
-type ColorScheme struct {
-    // Color scheme name.
-    Name string `json:"name"`
-    // Dark 1 (dark background) color.
-    Dk1 *ThemeColor `json:"dk1,omitempty"`
-    // Light 1 (light background) color.
-    Lt1 *ThemeColor `json:"lt1,omitempty"`
-    // Dark 2 color.
-    Dk2 *ThemeColor `json:"dk2,omitempty"`
-    // Light 2 color.
-    Lt2 *ThemeColor `json:"lt2,omitempty"`
-    // Accent color 1.
-    Accent1 *ThemeColor `json:"accent1,omitempty"`
-    // Accent color 2.
-    Accent2 *ThemeColor `json:"accent2,omitempty"`
-    // Accent color 3.
-    Accent3 *ThemeColor `json:"accent3,omitempty"`
-    // Accent color 4.
-    Accent4 *ThemeColor `json:"accent4,omitempty"`
-    // Accent color 5.
-    Accent5 *ThemeColor `json:"accent5,omitempty"`
-    // Accent color 6.
-    Accent6 *ThemeColor `json:"accent6,omitempty"`
-    // Hyperlink color.
-    Hlink *ThemeColor `json:"hlink,omitempty"`
-    // Followed hyperlink color.
-    FolHlink *ThemeColor `json:"fol_hlink,omitempty"`
-}
-
-
-// ColorScheme option function
-type ColorSchemeOption func(*ColorScheme)
-
-// WithColorSchemeName sets the name field.
-func WithColorSchemeName(v string) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Name = v }
-}
-
-// WithColorSchemeDk1 sets the dk1 field.
-func WithColorSchemeDk1(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Dk1 = &v }
-}
-
-// WithColorSchemeLt1 sets the lt1 field.
-func WithColorSchemeLt1(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Lt1 = &v }
-}
-
-// WithColorSchemeDk2 sets the dk2 field.
-func WithColorSchemeDk2(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Dk2 = &v }
-}
-
-// WithColorSchemeLt2 sets the lt2 field.
-func WithColorSchemeLt2(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Lt2 = &v }
-}
-
-// WithColorSchemeAccent1 sets the accent1 field.
-func WithColorSchemeAccent1(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Accent1 = &v }
-}
-
-// WithColorSchemeAccent2 sets the accent2 field.
-func WithColorSchemeAccent2(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Accent2 = &v }
-}
-
-// WithColorSchemeAccent3 sets the accent3 field.
-func WithColorSchemeAccent3(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Accent3 = &v }
-}
-
-// WithColorSchemeAccent4 sets the accent4 field.
-func WithColorSchemeAccent4(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Accent4 = &v }
-}
-
-// WithColorSchemeAccent5 sets the accent5 field.
-func WithColorSchemeAccent5(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Accent5 = &v }
-}
-
-// WithColorSchemeAccent6 sets the accent6 field.
-func WithColorSchemeAccent6(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Accent6 = &v }
-}
-
-// WithColorSchemeHlink sets the hlink field.
-func WithColorSchemeHlink(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.Hlink = &v }
-}
-
-// WithColorSchemeFolHlink sets the fol_hlink field.
-func WithColorSchemeFolHlink(v ThemeColor) ColorSchemeOption {
-    return func(c *ColorScheme) { c.FolHlink = &v }
-}
-
-// NewColorScheme creates a ColorScheme with optional parameters.
-func NewColorScheme(opts ...ColorSchemeOption) *ColorScheme {
-    c := &ColorScheme {
-        Name: "",
-        Dk1: nil,
-        Lt1: nil,
-        Dk2: nil,
-        Lt2: nil,
-        Accent1: nil,
-        Accent2: nil,
-        Accent3: nil,
-        Accent4: nil,
-        Accent5: nil,
-        Accent6: nil,
-        Hlink: nil,
-        FolHlink: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Font scheme containing major (heading) and minor (body) fonts.
-type FontScheme struct {
-    // Font scheme name.
-    Name string `json:"name"`
-    // Major (heading) font - Latin script.
-    MajorLatin *string `json:"major_latin,omitempty"`
-    // Major (heading) font - East Asian script.
-    MajorEastAsian *string `json:"major_east_asian,omitempty"`
-    // Major (heading) font - Complex script.
-    MajorComplexScript *string `json:"major_complex_script,omitempty"`
-    // Minor (body) font - Latin script.
-    MinorLatin *string `json:"minor_latin,omitempty"`
-    // Minor (body) font - East Asian script.
-    MinorEastAsian *string `json:"minor_east_asian,omitempty"`
-    // Minor (body) font - Complex script.
-    MinorComplexScript *string `json:"minor_complex_script,omitempty"`
-}
-
-
-// FontScheme option function
-type FontSchemeOption func(*FontScheme)
-
-// WithFontSchemeName sets the name field.
-func WithFontSchemeName(v string) FontSchemeOption {
-    return func(c *FontScheme) { c.Name = v }
-}
-
-// WithFontSchemeMajorLatin sets the major_latin field.
-func WithFontSchemeMajorLatin(v string) FontSchemeOption {
-    return func(c *FontScheme) { c.MajorLatin = &v }
-}
-
-// WithFontSchemeMajorEastAsian sets the major_east_asian field.
-func WithFontSchemeMajorEastAsian(v string) FontSchemeOption {
-    return func(c *FontScheme) { c.MajorEastAsian = &v }
-}
-
-// WithFontSchemeMajorComplexScript sets the major_complex_script field.
-func WithFontSchemeMajorComplexScript(v string) FontSchemeOption {
-    return func(c *FontScheme) { c.MajorComplexScript = &v }
-}
-
-// WithFontSchemeMinorLatin sets the minor_latin field.
-func WithFontSchemeMinorLatin(v string) FontSchemeOption {
-    return func(c *FontScheme) { c.MinorLatin = &v }
-}
-
-// WithFontSchemeMinorEastAsian sets the minor_east_asian field.
-func WithFontSchemeMinorEastAsian(v string) FontSchemeOption {
-    return func(c *FontScheme) { c.MinorEastAsian = &v }
-}
-
-// WithFontSchemeMinorComplexScript sets the minor_complex_script field.
-func WithFontSchemeMinorComplexScript(v string) FontSchemeOption {
-    return func(c *FontScheme) { c.MinorComplexScript = &v }
-}
-
-// NewFontScheme creates a FontScheme with optional parameters.
-func NewFontScheme(opts ...FontSchemeOption) *FontScheme {
-    c := &FontScheme {
-        Name: "",
-        MajorLatin: nil,
-        MajorEastAsian: nil,
-        MajorComplexScript: nil,
-        MinorLatin: nil,
-        MinorEastAsian: nil,
-        MinorComplexScript: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Complete theme with color scheme and font scheme.
-type Theme struct {
-    // Theme name (e.g., "Office Theme").
-    Name string `json:"name"`
-    // Color scheme (12 standard colors).
-    ColorScheme *ColorScheme `json:"color_scheme,omitempty"`
-    // Font scheme (major and minor fonts).
-    FontScheme *FontScheme `json:"font_scheme,omitempty"`
-}
-
-
-// Theme option function
-type ThemeOption func(*Theme)
-
-// WithThemeName sets the name field.
-func WithThemeName(v string) ThemeOption {
-    return func(c *Theme) { c.Name = v }
-}
-
-// WithThemeColorScheme sets the color_scheme field.
-func WithThemeColorScheme(v ColorScheme) ThemeOption {
-    return func(c *Theme) { c.ColorScheme = &v }
-}
-
-// WithThemeFontScheme sets the font_scheme field.
-func WithThemeFontScheme(v FontScheme) ThemeOption {
-    return func(c *Theme) { c.FontScheme = &v }
-}
-
-// NewTheme creates a Theme with optional parameters.
-func NewTheme(opts ...ThemeOption) *Theme {
-    c := &Theme {
-        Name: "",
-        ColorScheme: nil,
-        FontScheme: nil,
     }
     for _, opt := range opts {
         opt(c)
@@ -5307,199 +3861,9 @@ type PptExtractionResult struct {
     // Number of slides found.
     SlideCount uint `json:"slide_count"`
     // Document metadata.
-    Metadata PptMetadata `json:"metadata"`
+    Metadata string `json:"metadata"`
     // Speaker notes text per slide (if available).
     SpeakerNotes []string `json:"speaker_notes,omitempty"`
-}
-
-
-// Metadata extracted from PPT files.
-type PptMetadata struct {
-    Title *string `json:"title,omitempty"`
-    Subject *string `json:"subject,omitempty"`
-    Author *string `json:"author,omitempty"`
-    LastAuthor *string `json:"last_author,omitempty"`
-}
-
-
-// PptMetadata option function
-type PptMetadataOption func(*PptMetadata)
-
-// WithPptMetadataTitle sets the title field.
-func WithPptMetadataTitle(v string) PptMetadataOption {
-    return func(c *PptMetadata) { c.Title = &v }
-}
-
-// WithPptMetadataSubject sets the subject field.
-func WithPptMetadataSubject(v string) PptMetadataOption {
-    return func(c *PptMetadata) { c.Subject = &v }
-}
-
-// WithPptMetadataAuthor sets the author field.
-func WithPptMetadataAuthor(v string) PptMetadataOption {
-    return func(c *PptMetadata) { c.Author = &v }
-}
-
-// WithPptMetadataLastAuthor sets the last_author field.
-func WithPptMetadataLastAuthor(v string) PptMetadataOption {
-    return func(c *PptMetadata) { c.LastAuthor = &v }
-}
-
-// NewPptMetadata creates a PptMetadata with optional parameters.
-func NewPptMetadata(opts ...PptMetadataOption) *PptMetadata {
-    c := &PptMetadata {
-        Title: nil,
-        Subject: nil,
-        Author: nil,
-        LastAuthor: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Options for PPTX content extraction.
-type PptxExtractionOptions struct {
-    // Whether to extract embedded images.
-    ExtractImages *bool `json:"extract_images,omitempty"`
-    // Optional page configuration for boundary tracking.
-    PageConfig *PageConfig `json:"page_config,omitempty"`
-    // Whether to output plain text (no markdown).
-    Plain bool `json:"plain"`
-    // Whether to build the `DocumentStructure` tree.
-    IncludeStructure bool `json:"include_structure"`
-    // Whether to emit `![alt](target)` references in markdown output.
-    InjectPlaceholders *bool `json:"inject_placeholders,omitempty"`
-}
-
-
-// PptxExtractionOptions option function
-type PptxExtractionOptionsOption func(*PptxExtractionOptions)
-
-// WithPptxExtractionOptionsExtractImages sets the extract_images field.
-func WithPptxExtractionOptionsExtractImages(v bool) PptxExtractionOptionsOption {
-    return func(c *PptxExtractionOptions) { c.ExtractImages = &v }
-}
-
-// WithPptxExtractionOptionsPageConfig sets the page_config field.
-func WithPptxExtractionOptionsPageConfig(v PageConfig) PptxExtractionOptionsOption {
-    return func(c *PptxExtractionOptions) { c.PageConfig = &v }
-}
-
-// WithPptxExtractionOptionsPlain sets the plain field.
-func WithPptxExtractionOptionsPlain(v bool) PptxExtractionOptionsOption {
-    return func(c *PptxExtractionOptions) { c.Plain = v }
-}
-
-// WithPptxExtractionOptionsIncludeStructure sets the include_structure field.
-func WithPptxExtractionOptionsIncludeStructure(v bool) PptxExtractionOptionsOption {
-    return func(c *PptxExtractionOptions) { c.IncludeStructure = v }
-}
-
-// WithPptxExtractionOptionsInjectPlaceholders sets the inject_placeholders field.
-func WithPptxExtractionOptionsInjectPlaceholders(v bool) PptxExtractionOptionsOption {
-    return func(c *PptxExtractionOptions) { c.InjectPlaceholders = &v }
-}
-
-// NewPptxExtractionOptions creates a PptxExtractionOptions with optional parameters.
-func NewPptxExtractionOptions(opts ...PptxExtractionOptionsOption) *PptxExtractionOptions {
-    c := &PptxExtractionOptions {
-        ExtractImages: nil,
-        PageConfig: nil,
-        Plain: false,
-        IncludeStructure: false,
-        InjectPlaceholders: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Source code extractor using tree-sitter language pack.
-//
-// Detects the programming language from the file extension or shebang line,
-// then uses tree-sitter to parse and extract structural information.
-type CodeExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *CodeExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_code_extractor_free((*C.KREUZBERGCodeExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// CSV/TSV extractor with proper field parsing.
-//
-// Replaces raw text passthrough with structured CSV parsing,
-// producing space-separated text output and populated `tables` field.
-type CsvExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *CsvExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_csv_extractor_free((*C.KREUZBERGCsvExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Structured data extractor supporting JSON, JSONL/NDJSON, YAML, and TOML.
-type StructuredExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *StructuredExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_structured_extractor_free((*C.KREUZBERGStructuredExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Plain text extractor.
-//
-// Extracts content from plain text files (.txt).
-type PlainTextExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PlainTextExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_plain_text_extractor_free((*C.KREUZBERGPlainTextExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Djot markup extractor with metadata and table support.
-//
-// Parses Djot documents with YAML frontmatter, extracting:
-// - Metadata from YAML frontmatter
-// - Plain text content
-// - Tables as structured data
-// - Document structure (headings, links, code blocks)
-type DjotExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *DjotExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_djot_extractor_free((*C.KREUZBERGDjotExtractor)(h.ptr))
-        h.ptr = nil
-    }
 }
 
 
@@ -5587,653 +3951,12 @@ func (h *TableValidator) Free() {
 }
 
 
-// Image extractor for various image formats.
-//
-// Supports: PNG, JPEG, WebP, BMP, TIFF, GIF.
-// Extracts dimensions, format, and EXIF metadata.
-// Optionally runs OCR when configured.
-// When layout detection is also enabled, uses per-region OCR with
-// markdown formatting based on detected layout classes.
-type ImageExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *ImageExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_image_extractor_free((*C.KREUZBERGImageExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// ZIP archive extractor.
-//
-// Extracts file lists and text content from ZIP archives.
-type ZipExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *ZipExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_zip_extractor_free((*C.KREUZBERGZipExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// TAR archive extractor.
-//
-// Extracts file lists and text content from TAR archives.
-type TarExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *TarExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_tar_extractor_free((*C.KREUZBERGTarExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// 7z archive extractor.
-//
-// Extracts file lists and text content from 7z archives.
-type SevenZExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *SevenZExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_seven_z_extractor_free((*C.KREUZBERGSevenZExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Gzip archive extractor.
-//
-// Decompresses gzip files and extracts text content from the compressed data.
-type GzipExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *GzipExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_gzip_extractor_free((*C.KREUZBERGGzipExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Email message extractor.
-//
-// Supports: .eml, .msg
-type EmailExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *EmailExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_email_extractor_free((*C.KREUZBERGEmailExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// PST file extractor.
-//
-// Supports: .pst (Microsoft Outlook Personal Folders)
-type PstExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PstExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_pst_extractor_free((*C.KREUZBERGPstExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Excel spreadsheet extractor using calamine.
-//
-// Supports: .xlsx, .xlsm, .xlam, .xltm, .xls, .xla, .xlsb, .ods
-//
-// # Limitations
-//
-// - **Hyperlinks**: calamine (v0.34) does not expose cell hyperlink data in its
-// public API. Excel files may contain hyperlinks via the `HYPERLINK()` formula
-// or via the relationships XML, but neither is accessible through the crate.
-// This would require either a calamine upstream change or manual OOXML parsing.
-type ExcelExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *ExcelExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_excel_extractor_free((*C.KREUZBERGExcelExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Extractor for Hangul Word Processor (.hwp) files.
-//
-// Supports HWP 5.0 format, the standard document format in South Korea.
-type HwpExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *HwpExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_hwp_extractor_free((*C.KREUZBERGHwpExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Apple Keynote presentation extractor.
-//
-// Supports `.key` files (modern iWork format, 2013+).
-//
-// Extracts slide text and speaker notes from the IWA container:
-// ZIP → Snappy → protobuf text fields.
-type KeynoteExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *KeynoteExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_keynote_extractor_free((*C.KREUZBERGKeynoteExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Apple Numbers spreadsheet extractor.
-//
-// Supports `.numbers` files (modern iWork format, 2013+).
-//
-// Extracts cell string values and sheet names from the IWA container:
-// ZIP → Snappy → protobuf text fields. Output is formatted as plain text
-// with one text token per line (representing cell values and labels).
-type NumbersExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *NumbersExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_numbers_extractor_free((*C.KREUZBERGNumbersExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Apple Pages document extractor.
-//
-// Supports `.pages` files (modern iWork format, 2013+).
-//
-// Extracts all text content from the document by parsing the IWA
-// (iWork Archive) container: ZIP → Snappy → protobuf text fields.
-type PagesExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PagesExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_pages_extractor_free((*C.KREUZBERGPagesExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// HTML document extractor using html-to-markdown.
-type HtmlExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *HtmlExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_html_extractor_free((*C.KREUZBERGHtmlExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// BibTeX bibliography extractor.
-//
-// Parses BibTeX files and extracts structured bibliography data including
-// entries, authors, publication years, and entry type distribution.
-type BibtexExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *BibtexExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_bibtex_extractor_free((*C.KREUZBERGBibtexExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Citation format extractor for RIS, PubMed/MEDLINE, and EndNote XML formats.
-//
-// Parses citation files and extracts structured bibliography data including
-// entries, authors, publication years, and format-specific metadata.
-type CitationExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *CitationExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_citation_extractor_free((*C.KREUZBERGCitationExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Native DOC extractor using OLE/CFB parsing.
-//
-// This extractor handles Word 97-2003 binary (.doc) files without
-// requiring LibreOffice, providing ~50x faster extraction.
-type DocExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *DocExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_doc_extractor_free((*C.KREUZBERGDocExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Extractor for dBASE (.dbf) files.
-//
-// Reads all records and formats them as a markdown table with
-// column headers derived from field names.
-type DbfExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *DbfExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_dbf_extractor_free((*C.KREUZBERGDbfExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// High-performance DOCX extractor.
-//
-// This extractor provides:
-// - Fast text extraction via streaming XML parsing
-// - Comprehensive metadata extraction (core.xml, app.xml, custom.xml)
-type DocxExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *DocxExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_docx_extractor_free((*C.KREUZBERGDocxExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// EPUB format extractor using permissive-licensed dependencies.
-//
-// Extracts content and metadata from EPUB files (both EPUB2 and EPUB3)
-// using native Rust parsing without GPL-licensed dependencies.
-type EpubExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *EpubExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_epub_extractor_free((*C.KREUZBERGEpubExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// FictionBook document extractor.
-//
-// Supports FictionBook 2.0 format with proper section hierarchy and inline formatting.
-type FictionBookExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *FictionBookExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_fiction_book_extractor_free((*C.KREUZBERGFictionBookExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Markdown extractor with metadata and table support.
-//
-// Parses markdown documents with YAML frontmatter, extracting:
-// - Metadata from YAML frontmatter
-// - Plain text content
-// - Tables as structured data
-// - Document structure (headings, links, code blocks)
-// - Images from data URIs
-type MarkdownExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *MarkdownExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_markdown_extractor_free((*C.KREUZBERGMarkdownExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// MDX extractor with JSX stripping and Markdown processing.
-//
-// Strips MDX-specific syntax (imports, exports, JSX component tags,
-// inline expressions) and processes the remaining content as Markdown,
-// extracting metadata from YAML frontmatter and tables.
-type MdxExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *MdxExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_mdx_extractor_free((*C.KREUZBERGMdxExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Native Rust reStructuredText extractor.
-//
-// Parses RST documents using document tree parsing and extracts:
-// - Metadata from field lists
-// - Document structure (headings, sections)
-// - Text content and inline formatting
-// - Code blocks and directives
-// - Tables and lists
-type RstExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *RstExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_rst_extractor_free((*C.KREUZBERGRstExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// LaTeX document extractor
-type LatexExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *LatexExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_latex_extractor_free((*C.KREUZBERGLatexExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Jupyter Notebook extractor.
-//
-// Extracts content from Jupyter notebook JSON files, including:
-// - Notebook metadata (kernel, language, nbformat version)
-// - Cell content (code and markdown)
-// - Cell outputs (text, HTML, etc.)
-// - Cell-level metadata (tags, execution counts)
-type JupyterExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *JupyterExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_jupyter_extractor_free((*C.KREUZBERGJupyterExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Org Mode document extractor.
-//
-// Provides native Rust-based Org Mode extraction using the `org` library,
-// extracting structured content and metadata.
-type OrgModeExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *OrgModeExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_org_mode_extractor_free((*C.KREUZBERGOrgModeExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// High-performance ODT extractor using native Rust XML parsing.
-//
-// This extractor provides:
-// - Fast text extraction via roxmltree XML parsing
-// - Comprehensive metadata extraction from meta.xml
-// - Table extraction with row and cell support
-// - Formatting preservation (bold, italic, strikeout)
-// - Support for headings, paragraphs, and special elements
-type OdtExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *OdtExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_odt_extractor_free((*C.KREUZBERGOdtExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// OPML format extractor.
-//
-// Extracts outline structure and metadata from OPML documents using native Rust parsing.
-type OpmlExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *OpmlExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_opml_extractor_free((*C.KREUZBERGOpmlExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Typst document extractor
-type TypstExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *TypstExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_typst_extractor_free((*C.KREUZBERGTypstExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// JATS document extractor.
-//
-// Supports JATS (Journal Article Tag Suite) XML documents in various versions,
-// handling both the full article structure and minimal JATS subsets.
-type JatsExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *JatsExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_jats_extractor_free((*C.KREUZBERGJatsExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// NativeTextStats is a type.
-type NativeTextStats struct {
-    NonWhitespace uint `json:"non_whitespace"`
-    Alnum uint `json:"alnum"`
-    MeaningfulWords uint `json:"meaningful_words"`
-    AlnumRatio float64 `json:"alnum_ratio"`
-    // Count of Unicode replacement characters (U+FFFD) indicating encoding failures.
-    GarbageCharCount uint `json:"garbage_char_count"`
-    // Fraction of whitespace-delimited words that are 1-2 characters (0.0-1.0).
-    // High values indicate fragmented/garbled text extraction.
-    FragmentedWordRatio float64 `json:"fragmented_word_ratio"`
-    // Fraction of consecutive word pairs that are identical (0.0-1.0).
-    // High values indicate column scrambling where text is duplicated.
-    ConsecutiveRepeatRatio float64 `json:"consecutive_repeat_ratio"`
-    // Average word length (by chars). Very low values indicate garbled extraction.
-    AvgWordLength float64 `json:"avg_word_length"`
-    // Total word count (whitespace-delimited).
-    WordCount uint `json:"word_count"`
-}
-
-
 // OcrFallbackDecision is a type.
 type OcrFallbackDecision struct {
-    Stats NativeTextStats `json:"stats"`
+    Stats string `json:"stats"`
     AvgNonWhitespace float64 `json:"avg_non_whitespace"`
     AvgAlnum float64 `json:"avg_alnum"`
     Fallback bool `json:"fallback"`
-}
-
-
-// PDF document extractor using pypdfium2 and playa-pdf.
-type PdfExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PdfExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_pdf_extractor_free((*C.KREUZBERGPdfExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Native PPT extractor using OLE/CFB parsing.
-//
-// This extractor handles PowerPoint 97-2003 binary (.ppt) files without
-// requiring LibreOffice, providing ~50x faster extraction.
-type PptExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PptExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_ppt_extractor_free((*C.KREUZBERGPptExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// PowerPoint presentation extractor.
-//
-// Supports: .pptx, .pptm, .ppsx
-type PptxExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PptxExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_pptx_extractor_free((*C.KREUZBERGPptxExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Native Rust RTF extractor.
-//
-// Extracts text content, metadata, and structure from RTF documents
-type RtfExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *RtfExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_rtf_extractor_free((*C.KREUZBERGRtfExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// XML extractor.
-//
-// Extracts text content from XML files, preserving element structure information.
-type XmlExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *XmlExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_xml_extractor_free((*C.KREUZBERGXmlExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// DocBook document extractor.
-//
-// Supports both DocBook 4.x (no namespace) and 5.x (with namespace) formats.
-type DocbookExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *DocbookExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_docbook_extractor_free((*C.KREUZBERGDocbookExtractor)(h.ptr))
-        h.ptr = nil
-    }
 }
 
 
@@ -6246,138 +3969,6 @@ type ModelCache struct {
 func (h *ModelCache) Free() {
     if h.ptr != nil {
         C.kreuzberg_model_cache_free((*C.KREUZBERGModelCache)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Context information captured when a panic occurs.
-//
-// This struct stores detailed information about where and when a panic happened,
-// enabling better error reporting across FFI boundaries.
-type PanicContext struct {
-    // Source file where the panic occurred
-    File string `json:"file"`
-    // Line number where the panic occurred
-    Line uint32 `json:"line"`
-    // Function name where the panic occurred
-    Function string `json:"function"`
-    // Panic message extracted from the panic payload
-    Message string `json:"message"`
-    // Timestamp when the panic was captured
-    Timestamp string `json:"timestamp"`
-}
-
-
-// Registry for document extractor plugins.
-//
-// Manages extractors with MIME type and priority-based selection.
-//
-// # Thread Safety
-//
-// The registry is thread-safe and can be accessed concurrently from multiple threads.
-type DocumentExtractorRegistry struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *DocumentExtractorRegistry) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_document_extractor_registry_free((*C.KREUZBERGDocumentExtractorRegistry)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Registry for OCR backend plugins.
-//
-// Manages OCR backends with backend type and language-based selection.
-//
-// # Thread Safety
-//
-// The registry is thread-safe and can be accessed concurrently from multiple threads.
-//
-// # Example
-//
-// ```rust,no_run
-// use kreuzberg::plugins::registry::OcrBackendRegistry;
-// use std::sync::Arc;
-//
-// let registry = OcrBackendRegistry::new();
-// // Register OCR backends
-// // registry.register(Arc::new(TesseractBackend::new()));
-// ```
-type OcrBackendRegistry struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *OcrBackendRegistry) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_ocr_backend_registry_free((*C.KREUZBERGOcrBackendRegistry)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Registry for post-processor plugins.
-//
-// Manages post-processors organized by processing stage.
-type PostProcessorRegistry struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PostProcessorRegistry) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_post_processor_registry_free((*C.KREUZBERGPostProcessorRegistry)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Registry for document renderer plugins.
-//
-// Manages renderers that convert [`InternalDocument`] to output format strings.
-//
-// # Thread Safety
-//
-// The registry is thread-safe and can be accessed concurrently from multiple threads.
-//
-// # Example
-//
-// ```rust,no_run
-// use kreuzberg::plugins::registry::RendererRegistry;
-// use std::sync::Arc;
-//
-// let registry = RendererRegistry::new();
-// let available = registry.list();
-// // Built-in renderers: "markdown", "html", "djot", "plain"
-// ```
-type RendererRegistry struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *RendererRegistry) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_renderer_registry_free((*C.KREUZBERGRendererRegistry)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Registry for validator plugins.
-//
-// Manages validators with priority-based execution order.
-type ValidatorRegistry struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *ValidatorRegistry) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_validator_registry_free((*C.KREUZBERGValidatorRegistry)(h.ptr))
         h.ptr = nil
     }
 }
@@ -6407,20 +3998,6 @@ type ExtractionMetrics struct {
     BatchDurationMs string `json:"batch_duration_ms"`
     // Currently in-flight extractions.
     ConcurrentExtractions string `json:"concurrent_extractions"`
-}
-
-
-// TokenReducer is an opaque handle type.
-type TokenReducer struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *TokenReducer) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_token_reducer_free((*C.KREUZBERGTokenReducer)(h.ptr))
-        h.ptr = nil
-    }
 }
 
 
@@ -9147,69 +6724,6 @@ type Uri struct {
 }
 
 
-// Metrics tracking for pool allocations and reuse patterns.
-//
-// These metrics help identify pool efficiency and allocation patterns.
-// Only available when the `pool-metrics` feature is enabled.
-type PoolMetrics struct {
-    // Total number of acquire calls on this pool
-    TotalAcquires string `json:"total_acquires"`
-    // Total number of cache hits (reused objects from pool)
-    TotalCacheHits string `json:"total_cache_hits"`
-    // Peak number of objects stored simultaneously in this pool
-    PeakItemsStored string `json:"peak_items_stored"`
-    // Total number of objects created by the factory function
-    TotalCreations string `json:"total_creations"`
-}
-
-
-// PoolMetrics option function
-type PoolMetricsOption func(*PoolMetrics)
-
-// WithPoolMetricsTotalAcquires sets the total_acquires field.
-func WithPoolMetricsTotalAcquires(v string) PoolMetricsOption {
-    return func(c *PoolMetrics) { c.TotalAcquires = v }
-}
-
-// WithPoolMetricsTotalCacheHits sets the total_cache_hits field.
-func WithPoolMetricsTotalCacheHits(v string) PoolMetricsOption {
-    return func(c *PoolMetrics) { c.TotalCacheHits = v }
-}
-
-// WithPoolMetricsPeakItemsStored sets the peak_items_stored field.
-func WithPoolMetricsPeakItemsStored(v string) PoolMetricsOption {
-    return func(c *PoolMetrics) { c.PeakItemsStored = v }
-}
-
-// WithPoolMetricsTotalCreations sets the total_creations field.
-func WithPoolMetricsTotalCreations(v string) PoolMetricsOption {
-    return func(c *PoolMetrics) { c.TotalCreations = v }
-}
-
-// NewPoolMetrics creates a PoolMetrics with optional parameters.
-func NewPoolMetrics(opts ...PoolMetricsOption) *PoolMetrics {
-    c := &PoolMetrics {
-        TotalAcquires: "",
-        TotalCacheHits: "",
-        PeakItemsStored: "",
-        TotalCreations: "",
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// PoolMetricsSnapshot is a type.
-type PoolMetricsSnapshot struct {
-    TotalAcquires uint `json:"total_acquires"`
-    TotalCacheHits uint `json:"total_cache_hits"`
-    PeakItemsStored uint `json:"peak_items_stored"`
-    TotalCreations uint `json:"total_creations"`
-}
-
-
 // Convenience type alias for a pooled String.
 type StringBufferPool struct {
     ptr unsafe.Pointer
@@ -9252,79 +6766,6 @@ func (h *Pool) Free() {
 }
 
 
-// Hint for optimal pool sizing based on document characteristics.
-//
-// This struct contains the estimated sizes for string and byte buffers
-// that should be allocated in the pool to handle extraction without
-// excessive reallocation.
-type PoolSizeHint struct {
-    // Estimated total string buffer pool size in bytes
-    EstimatedTotalSize uint `json:"estimated_total_size"`
-    // Recommended number of string buffers
-    StringBufferCount uint `json:"string_buffer_count"`
-    // Recommended capacity per string buffer in bytes
-    StringBufferCapacity uint `json:"string_buffer_capacity"`
-    // Recommended number of byte buffers
-    ByteBufferCount uint `json:"byte_buffer_count"`
-    // Recommended capacity per byte buffer in bytes
-    ByteBufferCapacity uint `json:"byte_buffer_capacity"`
-}
-
-
-// Configuration for the string buffer pool.
-type PoolConfig struct {
-    // Maximum buffers per size bucket
-    MaxBuffersPerSize *uint `json:"max_buffers_per_size,omitempty"`
-    // Initial capacity for new buffers
-    InitialCapacity *uint `json:"initial_capacity,omitempty"`
-    // Maximum capacity before discarding
-    MaxCapacityBeforeDiscard *uint `json:"max_capacity_before_discard,omitempty"`
-}
-
-
-// PoolConfig option function
-type PoolConfigOption func(*PoolConfig)
-
-// WithPoolConfigMaxBuffersPerSize sets the max_buffers_per_size field.
-func WithPoolConfigMaxBuffersPerSize(v uint) PoolConfigOption {
-    return func(c *PoolConfig) { c.MaxBuffersPerSize = &v }
-}
-
-// WithPoolConfigInitialCapacity sets the initial_capacity field.
-func WithPoolConfigInitialCapacity(v uint) PoolConfigOption {
-    return func(c *PoolConfig) { c.InitialCapacity = &v }
-}
-
-// WithPoolConfigMaxCapacityBeforeDiscard sets the max_capacity_before_discard field.
-func WithPoolConfigMaxCapacityBeforeDiscard(v uint) PoolConfigOption {
-    return func(c *PoolConfig) { c.MaxCapacityBeforeDiscard = &v }
-}
-
-// NewPoolConfig creates a PoolConfig with optional parameters.
-func NewPoolConfig(opts ...PoolConfigOption) *PoolConfig {
-    c := &PoolConfig {
-        MaxBuffersPerSize: nil,
-        InitialCapacity: nil,
-        MaxCapacityBeforeDiscard: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Metrics for StringBufferPool (only available with `pool-metrics` feature).
-type StringBufferPoolMetrics struct {
-    // Total number of acquire calls
-    TotalAcquires uint `json:"total_acquires"`
-    // Total number of buffer reuses from pool
-    TotalReuses uint `json:"total_reuses"`
-    // Hit rate as percentage (0.0-100.0)
-    HitRate float64 `json:"hit_rate"`
-}
-
-
 // RAII wrapper for a pooled string buffer.
 //
 // Automatically returns the buffer to the pool when dropped.
@@ -9358,65 +6799,6 @@ func (h *InternedString) Free() {
 }
 
 
-// A platform-aware instant for measuring elapsed time.
-//
-// On native targets this delegates to [`std::time::Instant`].
-// On `wasm32` targets it is a zero-cost no-op to avoid the `unreachable` trap.
-type Instant struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *Instant) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_instant_free((*C.KREUZBERGInstant)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Represents a word extracted from hOCR (or any source) with position and confidence information.
-type HocrWord struct {
-    Text string `json:"text"`
-    Left uint32 `json:"left"`
-    Top uint32 `json:"top"`
-    Width uint32 `json:"width"`
-    Height uint32 `json:"height"`
-    Confidence float64 `json:"confidence"`
-}
-
-
-// A [`tower::Service`] that dispatches extraction requests to the kreuzberg
-// core library.
-//
-// This service is cheap to clone and can be shared across handlers.
-// Concurrency and timeouts are managed by composing Tower layers on top
-// (see [`super::ExtractionServiceBuilder`]).
-//
-// # Example
-//
-// ```rust,ignore
-// use kreuzberg::service::{ExtractionService, ExtractionRequest};
-// use kreuzberg::ExtractionConfig;
-// use tower::Service;
-//
-// let mut svc = ExtractionService::new();
-// let req = ExtractionRequest::file("doc.pdf", ExtractionConfig::default());
-// let result = svc.call(req).await?;
-// ```
-type ExtractionService struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *ExtractionService) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_extraction_service_free((*C.KREUZBERGExtractionService)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
 // A [`tower::Layer`] that wraps each extraction in a semantic tracing span.
 type TracingLayer struct {
     ptr unsafe.Pointer
@@ -9445,39 +6827,12 @@ func (h *MetricsLayer) Free() {
 }
 
 
-// A request to extract content from a single document.
-type ExtractionRequest struct {
-    // Where to read the document from.
-    Source ExtractionSource `json:"source"`
-    // Base extraction configuration.
-    Config ExtractionConfig `json:"config"`
-    // Optional per-file overrides (merged on top of `config`).
-    FileOverrides *FileExtractionConfig `json:"file_overrides,omitempty"`
-}
-
-
-// Builder for composing an extraction service with Tower middleware layers.
-//
-// Layers are applied in the order: Tracing → Metrics → Timeout → ConcurrencyLimit → Service.
-type ExtractionServiceBuilder struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *ExtractionServiceBuilder) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_extraction_service_builder_free((*C.KREUZBERGExtractionServiceBuilder)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
 // API-specific error wrapper.
 type ApiError struct {
     // HTTP status code
     Status string `json:"status"`
     // Error response body
-    Body ErrorResponse `json:"body"`
+    Body string `json:"body"`
 }
 
 
@@ -9495,86 +6850,6 @@ func (h *ApiDoc) Free() {
         C.kreuzberg_api_doc_free((*C.KREUZBERGApiDoc)(h.ptr))
         h.ptr = nil
     }
-}
-
-
-// API server size limit configuration.
-//
-// Controls maximum sizes for request bodies and multipart uploads.
-// Default limits are set to 100 MB to accommodate typical document processing workloads.
-//
-// # Default Values
-//
-// - `max_request_body_bytes`: 100 MB (104,857,600 bytes)
-// - `max_multipart_field_bytes`: 100 MB (104,857,600 bytes)
-//
-// # Configuration via Environment Variables
-//
-// You can override the defaults using these environment variables:
-//
-// ```bash
-// # Modern approach (in bytes):
-// export KREUZBERG_MAX_REQUEST_BODY_BYTES=104857600     # 100 MB
-// export KREUZBERG_MAX_MULTIPART_FIELD_BYTES=104857600  # 100 MB
-// ```
-//
-// # Examples
-//
-// ```
-// use kreuzberg::api::ApiSizeLimits;
-//
-// // Default limits (100 MB)
-// let limits = ApiSizeLimits::default();
-//
-// // Custom limits (5 GB for both)
-// let limits = ApiSizeLimits {
-// max_request_body_bytes: 5 * 1024 * 1024 * 1024,
-// max_multipart_field_bytes: 5 * 1024 * 1024 * 1024,
-// };
-//
-// // Very large documents (100 GB total, 50 GB per file)
-// let limits = ApiSizeLimits {
-// max_request_body_bytes: 100 * 1024 * 1024 * 1024,
-// max_multipart_field_bytes: 50 * 1024 * 1024 * 1024,
-// };
-// ```
-type ApiSizeLimits struct {
-    // Maximum size of the entire request body in bytes.
-    //
-    // This applies to the total size of all uploaded files and form data
-    // in a single request. Default: 100 MB (104,857,600 bytes).
-    MaxRequestBodyBytes uint `json:"max_request_body_bytes"`
-    // Maximum size of a single multipart field in bytes.
-    //
-    // This applies to individual files in a multipart upload.
-    // Default: 100 MB (104,857,600 bytes).
-    MaxMultipartFieldBytes uint `json:"max_multipart_field_bytes"`
-}
-
-
-// ApiSizeLimits option function
-type ApiSizeLimitsOption func(*ApiSizeLimits)
-
-// WithApiSizeLimitsMaxRequestBodyBytes sets the max_request_body_bytes field.
-func WithApiSizeLimitsMaxRequestBodyBytes(v uint) ApiSizeLimitsOption {
-    return func(c *ApiSizeLimits) { c.MaxRequestBodyBytes = v }
-}
-
-// WithApiSizeLimitsMaxMultipartFieldBytes sets the max_multipart_field_bytes field.
-func WithApiSizeLimitsMaxMultipartFieldBytes(v uint) ApiSizeLimitsOption {
-    return func(c *ApiSizeLimits) { c.MaxMultipartFieldBytes = v }
-}
-
-// NewApiSizeLimits creates a ApiSizeLimits with optional parameters.
-func NewApiSizeLimits(opts ...ApiSizeLimitsOption) *ApiSizeLimits {
-    c := &ApiSizeLimits {
-        MaxRequestBodyBytes: 0,
-        MaxMultipartFieldBytes: 0,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
 }
 
 
@@ -9609,19 +6884,6 @@ func (h *ExtractResponse) Free() {
         C.kreuzberg_extract_response_free((*C.KREUZBERGExtractResponse)(h.ptr))
         h.ptr = nil
     }
-}
-
-
-// Error response.
-type ErrorResponse struct {
-    // Error type name
-    ErrorType string `json:"error_type"`
-    // Error message
-    Message string `json:"message"`
-    // Stack trace (if available)
-    Traceback *string `json:"traceback,omitempty"`
-    // HTTP status code
-    StatusCode uint16 `json:"status_code"`
 }
 
 
@@ -9823,14 +7085,7 @@ type OpenWebDocumentResponse struct {
     // Extracted text content
     PageContent string `json:"page_content"`
     // Document metadata
-    Metadata OpenWebDocumentMetadata `json:"metadata"`
-}
-
-
-// Metadata for the OpenWebUI external document loader response.
-type OpenWebDocumentMetadata struct {
-    // Original filename
-    Source string `json:"source"`
+    Metadata string `json:"metadata"`
 }
 
 
@@ -9839,16 +7094,9 @@ type OpenWebDocumentMetadata struct {
 // Returned by `POST /v1/convert/file` for docling-serve compatibility.
 type DoclingCompatResponse struct {
     // Converted document content
-    Document DoclingCompatDocument `json:"document"`
+    Document string `json:"document"`
     // Processing status
     Status string `json:"status"`
-}
-
-
-// Document content in the docling-serve response format.
-type DoclingCompatDocument struct {
-    // Markdown content of the converted document
-    MdContent string `json:"md_content"`
 }
 
 
@@ -9961,25 +7209,6 @@ type ChunkTextParams struct {
     Overlap *uint `json:"overlap,omitempty"`
     // Chunker type: "text" or "markdown" (default: "text")
     ChunkerType *string `json:"chunker_type,omitempty"`
-}
-
-
-// Kreuzberg MCP server.
-//
-// Provides document extraction capabilities via MCP tools.
-//
-// The server loads a default extraction configuration from kreuzberg.toml/yaml/json
-// via discovery. Per-request OCR settings override the defaults.
-type KreuzbergMcp struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *KreuzbergMcp) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_kreuzberg_mcp_free((*C.KREUZBERGKreuzbergMcp)(h.ptr))
-        h.ptr = nil
-    }
 }
 
 
@@ -10202,20 +7431,6 @@ type Keyword struct {
 }
 
 
-// OcrCache is an opaque handle type.
-type OcrCache struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *OcrCache) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_ocr_cache_free((*C.KREUZBERGOcrCache)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
 // OcrCacheStats is a type.
 type OcrCacheStats struct {
     TotalFiles uint `json:"total_files"`
@@ -10249,56 +7464,6 @@ func NewOcrCacheStats(opts ...OcrCacheStatsOption) *OcrCacheStats {
 }
 
 
-// Tesseract TSV row data for conversion.
-//
-// This struct represents a single row from Tesseract's TSV output format.
-// TSV format includes hierarchical information (block, paragraph, line, word)
-// along with bounding boxes and confidence scores.
-type TsvRow struct {
-    // Hierarchical level (1=block, 2=para, 3=line, 4=word, 5=symbol)
-    Level int32 `json:"level"`
-    // Page number (1-indexed)
-    PageNum int32 `json:"page_num"`
-    // Block number within page
-    BlockNum int32 `json:"block_num"`
-    // Paragraph number within block
-    ParNum int32 `json:"par_num"`
-    // Line number within paragraph
-    LineNum int32 `json:"line_num"`
-    // Word number within line
-    WordNum int32 `json:"word_num"`
-    // Left x-coordinate in pixels
-    Left uint32 `json:"left"`
-    // Top y-coordinate in pixels
-    Top uint32 `json:"top"`
-    // Width in pixels
-    Width uint32 `json:"width"`
-    // Height in pixels
-    Height uint32 `json:"height"`
-    // Confidence score (0-100)
-    Conf float64 `json:"conf"`
-    // Recognized text
-    Text string `json:"text"`
-}
-
-
-// Language support registry for OCR backends.
-//
-// Maintains a mapping of OCR backend names to their supported language codes.
-// This is the single source of truth for language support across all bindings.
-type LanguageRegistry struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *LanguageRegistry) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_language_registry_free((*C.KREUZBERGLanguageRegistry)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
 // Pre-computed table markdown for a table detection region.
 type RecognizedTable struct {
     // Detection bbox that this table corresponds to (for matching).
@@ -10307,20 +7472,6 @@ type RecognizedTable struct {
     Cells [][]string `json:"cells,omitempty"`
     // Rendered markdown table.
     Markdown string `json:"markdown"`
-}
-
-
-// OcrProcessor is an opaque handle type.
-type OcrProcessor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *OcrProcessor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_ocr_processor_free((*C.KREUZBERGOcrProcessor)(h.ptr))
-        h.ptr = nil
-    }
 }
 
 
@@ -10333,27 +7484,6 @@ type TessdataManager struct {
 func (h *TessdataManager) Free() {
     if h.ptr != nil {
         C.kreuzberg_tessdata_manager_free((*C.KREUZBERGTessdataManager)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Native Tesseract OCR backend.
-//
-// This backend wraps the OcrProcessor and implements the OcrBackend trait,
-// allowing it to be used through the plugin system.
-//
-// # Thread Safety
-//
-// Uses Arc for shared ownership and is thread-safe (Send + Sync).
-type TesseractBackend struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *TesseractBackend) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_tesseract_backend_free((*C.KREUZBERGTesseractBackend)(h.ptr))
         h.ptr = nil
     }
 }
@@ -10569,7 +7699,7 @@ type FontSizeCluster struct {
     // The centroid (mean) font size of this cluster
     Centroid float32 `json:"centroid"`
     // The text blocks that belong to this cluster
-    Members []TextBlock `json:"members,omitempty"`
+    Members []string `json:"members,omitempty"`
 }
 
 
@@ -10596,27 +7726,6 @@ type CharData struct {
 }
 
 
-// A block of text with spatial and semantic information.
-type TextBlock struct {
-    // The text content
-    Text string `json:"text"`
-    // The bounding box of the block
-    Bbox BoundingBox `json:"bbox"`
-    // The font size of the text in this block
-    FontSize float32 `json:"font_size"`
-}
-
-
-// Result of KMeans clustering on font sizes.
-//
-// Contains cluster labels for each block, where cluster index indicates
-// the hierarchy level: 0=H1, 1=H2, ..., 5=H6, 6+=Body.
-type KMeansResult struct {
-    // Cluster label for each block (0-indexed)
-    Labels []uint32 `json:"labels,omitempty"`
-}
-
-
 // A TextBlock with hierarchy level assignment.
 type HierarchyBlock struct {
     // The text content
@@ -10626,39 +7735,7 @@ type HierarchyBlock struct {
     // The font size of the text in this block
     FontSize float32 `json:"font_size"`
     // The hierarchy level of this block (H1-H6 or Body)
-    HierarchyLevel HierarchyLevel `json:"hierarchy_level"`
-}
-
-
-// Text segment data extracted from PDF using pdfium's pre-merged segments.
-//
-// Pdfium merges characters sharing the same baseline and font settings into segments,
-// providing correct word boundaries without gap-based heuristics. Each segment contains
-// the full text run, bounding box, and font metadata sampled from the first character.
-type SegmentData struct {
-    // The segment text content (may contain spaces / multiple words)
-    Text string `json:"text"`
-    // Left x position in PDF units
-    X float32 `json:"x"`
-    // Bottom y position in PDF units (PDF coordinate system, y=0 at bottom)
-    Y float32 `json:"y"`
-    // Width of the segment bounding box
-    Width float32 `json:"width"`
-    // Height of the segment bounding box
-    Height float32 `json:"height"`
-    // Font size in points (from first character)
-    FontSize float32 `json:"font_size"`
-    // Whether the font is bold
-    IsBold bool `json:"is_bold"`
-    // Whether the font is italic
-    IsItalic bool `json:"is_italic"`
-    // Whether the font is monospace (e.g. Courier, Consolas)
-    IsMonospace bool `json:"is_monospace"`
-    // Baseline Y position (from first character origin, falls back to bounds bottom)
-    BaselineY float32 `json:"baseline_y"`
-    // Pre-assigned heading level from the PDF structure tree (1-6), or `None`
-    // when the heading level is unknown and must be inferred via font-size clustering.
-    AssignedRole *uint8 `json:"assigned_role,omitempty"`
+    HierarchyLevel string `json:"hierarchy_level"`
 }
 
 
@@ -10679,34 +7756,11 @@ type PdfImage struct {
 }
 
 
-// PdfImageExtractor is an opaque handle type.
-type PdfImageExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PdfImageExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_pdf_image_extractor_free((*C.KREUZBERGPdfImageExtractor)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// Bounding box in PDF coordinate space (points, y=0 at bottom of page).
-type PdfLayoutBBox struct {
-    Left float32 `json:"left"`
-    Bottom float32 `json:"bottom"`
-    Right float32 `json:"right"`
-    Top float32 `json:"top"`
-}
-
-
 // A detected layout region mapped to PDF coordinate space.
 type PageLayoutRegion struct {
     Class LayoutClass `json:"class"`
     Confidence float32 `json:"confidence"`
-    Bbox PdfLayoutBBox `json:"bbox"`
+    Bbox string `json:"bbox"`
 }
 
 
@@ -10740,84 +7794,6 @@ type PageTiming struct {
 }
 
 
-// Timing breakdown for the entire layout detection run.
-type LayoutTimingReport struct {
-    TotalMs float64 `json:"total_ms"`
-    PerPage []PageTiming `json:"per_page,omitempty"`
-}
-
-
-// PDF-specific metadata.
-//
-// Contains metadata fields specific to PDF documents that are not in the common
-// `Metadata` structure. Common fields like title, authors, keywords, and dates
-// are now at the `Metadata` level.
-type PdfMetadata struct {
-    // PDF version (e.g., "1.7", "2.0")
-    PdfVersion *string `json:"pdf_version,omitempty"`
-    // PDF producer (application that created the PDF)
-    Producer *string `json:"producer,omitempty"`
-    // Whether the PDF is encrypted/password-protected
-    IsEncrypted *bool `json:"is_encrypted,omitempty"`
-    // First page width in points (1/72 inch)
-    Width *int64 `json:"width,omitempty"`
-    // First page height in points (1/72 inch)
-    Height *int64 `json:"height,omitempty"`
-    // Total number of pages in the PDF document
-    PageCount *uint `json:"page_count,omitempty"`
-}
-
-
-// PdfMetadata option function
-type PdfMetadataOption func(*PdfMetadata)
-
-// WithPdfMetadataPdfVersion sets the pdf_version field.
-func WithPdfMetadataPdfVersion(v string) PdfMetadataOption {
-    return func(c *PdfMetadata) { c.PdfVersion = &v }
-}
-
-// WithPdfMetadataProducer sets the producer field.
-func WithPdfMetadataProducer(v string) PdfMetadataOption {
-    return func(c *PdfMetadata) { c.Producer = &v }
-}
-
-// WithPdfMetadataIsEncrypted sets the is_encrypted field.
-func WithPdfMetadataIsEncrypted(v bool) PdfMetadataOption {
-    return func(c *PdfMetadata) { c.IsEncrypted = &v }
-}
-
-// WithPdfMetadataWidth sets the width field.
-func WithPdfMetadataWidth(v int64) PdfMetadataOption {
-    return func(c *PdfMetadata) { c.Width = &v }
-}
-
-// WithPdfMetadataHeight sets the height field.
-func WithPdfMetadataHeight(v int64) PdfMetadataOption {
-    return func(c *PdfMetadata) { c.Height = &v }
-}
-
-// WithPdfMetadataPageCount sets the page_count field.
-func WithPdfMetadataPageCount(v uint) PdfMetadataOption {
-    return func(c *PdfMetadata) { c.PageCount = &v }
-}
-
-// NewPdfMetadata creates a PdfMetadata with optional parameters.
-func NewPdfMetadata(opts ...PdfMetadataOption) *PdfMetadata {
-    c := &PdfMetadata {
-        PdfVersion: nil,
-        Producer: nil,
-        IsEncrypted: nil,
-        Width: nil,
-        Height: nil,
-        PageCount: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
 // Complete PDF extraction metadata including common and PDF-specific fields.
 //
 // This struct combines common document fields (title, authors, dates) with
@@ -10839,7 +7815,7 @@ type PdfExtractionMetadata struct {
     // Application or user that created the document
     CreatedBy *string `json:"created_by,omitempty"`
     // PDF-specific metadata
-    PdfSpecific PdfMetadata `json:"pdf_specific"`
+    PdfSpecific string `json:"pdf_specific"`
     // Page structure with boundaries and optional per-page metadata
     PageStructure *PageStructure `json:"page_structure,omitempty"`
 }
@@ -10857,115 +7833,6 @@ type CommonPdfMetadata struct {
 }
 
 
-// PageRenderOptions is a type.
-type PageRenderOptions struct {
-    TargetDpi *int32 `json:"target_dpi,omitempty"`
-    MaxImageDimension *int32 `json:"max_image_dimension,omitempty"`
-    AutoAdjustDpi *bool `json:"auto_adjust_dpi,omitempty"`
-    MinDpi *int32 `json:"min_dpi,omitempty"`
-    MaxDpi *int32 `json:"max_dpi,omitempty"`
-}
-
-
-// PageRenderOptions option function
-type PageRenderOptionsOption func(*PageRenderOptions)
-
-// WithPageRenderOptionsTargetDpi sets the target_dpi field.
-func WithPageRenderOptionsTargetDpi(v int32) PageRenderOptionsOption {
-    return func(c *PageRenderOptions) { c.TargetDpi = &v }
-}
-
-// WithPageRenderOptionsMaxImageDimension sets the max_image_dimension field.
-func WithPageRenderOptionsMaxImageDimension(v int32) PageRenderOptionsOption {
-    return func(c *PageRenderOptions) { c.MaxImageDimension = &v }
-}
-
-// WithPageRenderOptionsAutoAdjustDpi sets the auto_adjust_dpi field.
-func WithPageRenderOptionsAutoAdjustDpi(v bool) PageRenderOptionsOption {
-    return func(c *PageRenderOptions) { c.AutoAdjustDpi = &v }
-}
-
-// WithPageRenderOptionsMinDpi sets the min_dpi field.
-func WithPageRenderOptionsMinDpi(v int32) PageRenderOptionsOption {
-    return func(c *PageRenderOptions) { c.MinDpi = &v }
-}
-
-// WithPageRenderOptionsMaxDpi sets the max_dpi field.
-func WithPageRenderOptionsMaxDpi(v int32) PageRenderOptionsOption {
-    return func(c *PageRenderOptions) { c.MaxDpi = &v }
-}
-
-// NewPageRenderOptions creates a PageRenderOptions with optional parameters.
-func NewPageRenderOptions(opts ...PageRenderOptionsOption) *PageRenderOptions {
-    c := &PageRenderOptions {
-        TargetDpi: nil,
-        MaxImageDimension: nil,
-        AutoAdjustDpi: nil,
-        MinDpi: nil,
-        MaxDpi: nil,
-    }
-    for _, opt := range opts {
-        opt(c)
-    }
-    return c
-}
-
-
-// Lazy page-by-page PDF renderer.
-//
-// Reads the file once at construction and yields one PNG-encoded page per
-// `next()` call. Only one rendered page is held in memory at a time.
-//
-// The PDFium mutex is acquired and released per page, so other PDF
-// operations can proceed between iterations. This makes the iterator
-// safe to use in long-running loops (e.g., sending each page to a vision
-// model for OCR) without blocking all PDF processing.
-//
-// Use the iterator when memory is a concern or when you want to process
-// pages as they are rendered.
-//
-// # Example
-//
-// ```rust,no_run
-// use kreuzberg::pdf::PdfPageIterator;
-//
-// # fn example() -> kreuzberg::pdf::error::Result<()> {
-// let iter = PdfPageIterator::from_file("document.pdf", Some(150), None)?;
-// println!("Rendering {} pages", iter.page_count());
-// for result in iter {
-// let (page_index, png) = result?;
-// std::fs::write(format!("page_{page_index}.png"), png)?;
-// }
-// # Ok(())
-// # }
-// ```
-type PdfPageIterator struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PdfPageIterator) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_pdf_page_iterator_free((*C.KREUZBERGPdfPageIterator)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// PdfRenderer is an opaque handle type.
-type PdfRenderer struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PdfRenderer) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_pdf_renderer_free((*C.KREUZBERGPdfRenderer)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
 // Result type for unified PDF text and metadata extraction.
 //
 // Contains text, optional page boundaries, optional per-page content, and metadata.
@@ -10977,20 +7844,6 @@ type PdfUnifiedExtractionResult struct {
 func (h *PdfUnifiedExtractionResult) Free() {
     if h.ptr != nil {
         C.kreuzberg_pdf_unified_extraction_result_free((*C.KREUZBERGPdfUnifiedExtractionResult)(h.ptr))
-        h.ptr = nil
-    }
-}
-
-
-// PdfTextExtractor is an opaque handle type.
-type PdfTextExtractor struct {
-    ptr unsafe.Pointer
-}
-
-// Free releases the resources held by this handle.
-func (h *PdfTextExtractor) Free() {
-    if h.ptr != nil {
-        C.kreuzberg_pdf_text_extractor_free((*C.KREUZBERGPdfTextExtractor)(h.ptr))
         h.ptr = nil
     }
 }
@@ -12079,20 +8932,13 @@ func ExtractFile(path string, mime_type *string, config ExtractionConfig) (*Extr
 
 
 // GetPoolSizingHint calls the FFI function.
-func GetPoolSizingHint(file_size uint64, mime_type string) *PoolSizeHint {
+func GetPoolSizingHint(file_size uint64, mime_type string) *string {
     cMimeType := C.CString(mime_type)
     defer C.free(unsafe.Pointer(cMimeType))
 
     ptr := C.kreuzberg_get_pool_sizing_hint(cFileSize, cMimeType)
-    defer C.kreuzberg_pool_size_hint_free(ptr)
-    return func() *PoolSizeHint {
-	jsonPtr := C.kreuzberg_pool_size_hint_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result PoolSizeHint
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}()
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -13145,21 +9991,15 @@ func DeriveExtractionResult(doc string, include_document_structure bool, output_
 
 
 // ParseJson calls the FFI function.
-func ParseJson(data []byte, config ...*JsonExtractionConfig) (*StructuredDataResult, error) {
-    var configVal *JsonExtractionConfig
+func ParseJson(data []byte, config ...*string) (*StructuredDataResult, error) {
+    var configVal *string
     if len(config) > 0 {
         configVal = config[0]
     }
     cData := (*C.uchar)(unsafe.Pointer(&data[0]))
 
-    jsonBytescConfigVal, err := json.Marshal(configVal)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfigVal := C.CString(string(jsonBytescConfigVal))
-    cConfigVal := C.kreuzberg_json_extraction_config_from_json(tmpStrcConfigVal)
-    C.free(unsafe.Pointer(tmpStrcConfigVal))
-    defer C.kreuzberg_json_extraction_config_free(cConfigVal)
+    cConfigVal := C.CString(configVal)
+    defer C.free(unsafe.Pointer(cConfigVal))
 
     ptr := C.kreuzberg_parse_json(cData, cConfigVal)
     if err := lastError(); err != nil {
@@ -13204,21 +10044,15 @@ func ParseJson(data []byte, config ...*JsonExtractionConfig) (*StructuredDataRes
 // # Ok(())
 // # }
 // ```
-func ParseJsonl(data []byte, config ...*JsonExtractionConfig) (*StructuredDataResult, error) {
-    var configVal *JsonExtractionConfig
+func ParseJsonl(data []byte, config ...*string) (*StructuredDataResult, error) {
+    var configVal *string
     if len(config) > 0 {
         configVal = config[0]
     }
     cData := (*C.uchar)(unsafe.Pointer(&data[0]))
 
-    jsonBytescConfigVal, err := json.Marshal(configVal)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfigVal := C.CString(string(jsonBytescConfigVal))
-    cConfigVal := C.kreuzberg_json_extraction_config_from_json(tmpStrcConfigVal)
-    C.free(unsafe.Pointer(tmpStrcConfigVal))
-    defer C.kreuzberg_json_extraction_config_free(cConfigVal)
+    cConfigVal := C.CString(configVal)
+    defer C.free(unsafe.Pointer(cConfigVal))
 
     ptr := C.kreuzberg_parse_jsonl(cData, cConfigVal)
     if err := lastError(); err != nil {
@@ -14649,25 +11483,18 @@ func CollectAndConvertOmath(reader string) *string {
 
 
 // Parse a DOCX document from bytes and return the structured document.
-func ParseDocument(bytes []byte) (*Document, error) {
+func ParseDocument(bytes []byte) (*string, error) {
     cBytes := (*C.uchar)(unsafe.Pointer(&bytes[0]))
 
     ptr := C.kreuzberg_parse_document(cBytes)
     if err := lastError(); err != nil {
         if ptr != nil {
-            C.kreuzberg_document_free(ptr)
+            C.kreuzberg_free_string(ptr)
         }
         return nil, err
     }
-    defer C.kreuzberg_document_free(ptr)
-    return func() *Document {
-	jsonPtr := C.kreuzberg_document_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result Document
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}(), nil
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
 }
 
 
@@ -14688,20 +11515,13 @@ func ExtractTextFromBytes(bytes []byte) (*string, error) {
 
 
 // Parse a `w:sectPr` XML element (roxmltree node) into `SectionProperties`.
-func ParseSectionProperties(node string) *SectionProperties {
+func ParseSectionProperties(node string) *string {
     cNode := C.CString(node)
     defer C.free(unsafe.Pointer(cNode))
 
     ptr := C.kreuzberg_parse_section_properties(cNode)
-    defer C.kreuzberg_section_properties_free(ptr)
-    return func() *SectionProperties {
-	jsonPtr := C.kreuzberg_section_properties_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result SectionProperties
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}()
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -14712,20 +11532,13 @@ func ParseSectionProperties(node string) *SectionProperties {
 //
 // **Important:** This function advances the reader past the closing `</w:sectPr>` tag.
 // The caller must not attempt to process the `w:sectPr` end event again.
-func ParseSectionPropertiesStreaming(reader string) *SectionProperties {
+func ParseSectionPropertiesStreaming(reader string) *string {
     cReader := C.CString(reader)
     defer C.free(unsafe.Pointer(cReader))
 
     ptr := C.kreuzberg_parse_section_properties_streaming(cReader)
-    defer C.kreuzberg_section_properties_free(ptr)
-    return func() *SectionProperties {
-	jsonPtr := C.kreuzberg_section_properties_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result SectionProperties
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}()
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -14733,26 +11546,19 @@ func ParseSectionPropertiesStreaming(reader string) *SectionProperties {
 //
 // Uses `roxmltree` for tree-based XML parsing, consistent with the
 // office metadata parsing approach used elsewhere in the codebase.
-func ParseStylesXml(xml string) (*StyleCatalog, error) {
+func ParseStylesXml(xml string) (*string, error) {
     cXml := C.CString(xml)
     defer C.free(unsafe.Pointer(cXml))
 
     ptr := C.kreuzberg_parse_styles_xml(cXml)
     if err := lastError(); err != nil {
         if ptr != nil {
-            C.kreuzberg_style_catalog_free(ptr)
+            C.kreuzberg_free_string(ptr)
         }
         return nil, err
     }
-    defer C.kreuzberg_style_catalog_free(ptr)
-    return func() *StyleCatalog {
-	jsonPtr := C.kreuzberg_style_catalog_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result StyleCatalog
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}(), nil
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
 }
 
 
@@ -14780,20 +11586,13 @@ func ParseTableProperties(reader string) *TableProperties {
 // Parse row-level properties from streaming XML reader.
 //
 // Expects the reader to be positioned just after the `<w:trPr>` start tag.
-func ParseRowProperties(reader string) *RowProperties {
+func ParseRowProperties(reader string) *string {
     cReader := C.CString(reader)
     defer C.free(unsafe.Pointer(cReader))
 
     ptr := C.kreuzberg_parse_row_properties(cReader)
-    defer C.kreuzberg_row_properties_free(ptr)
-    return func() *RowProperties {
-	jsonPtr := C.kreuzberg_row_properties_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result RowProperties
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}()
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -14840,26 +11639,19 @@ func ParseTableGrid(reader string) *TableGrid {
 // # Returns
 // * `Ok(Theme)` - The parsed theme
 // * `Err(KreuzbergError)` - If parsing fails
-func ParseThemeXml(xml string) (*Theme, error) {
+func ParseThemeXml(xml string) (*string, error) {
     cXml := C.CString(xml)
     defer C.free(unsafe.Pointer(cXml))
 
     ptr := C.kreuzberg_parse_theme_xml(cXml)
     if err := lastError(); err != nil {
         if ptr != nil {
-            C.kreuzberg_theme_free(ptr)
+            C.kreuzberg_free_string(ptr)
         }
         return nil, err
     }
-    defer C.kreuzberg_theme_free(ptr)
-    return func() *Theme {
-	jsonPtr := C.kreuzberg_theme_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result Theme
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}(), nil
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
 }
 
 
@@ -15136,18 +11928,12 @@ func ExtractPptTextWithOptions(content []byte, include_master_slides bool) (*Ppt
 // # Returns
 //
 // A `PptxExtractionResult` containing extracted content, metadata, and images.
-func ExtractPptxFromPath(path string, options PptxExtractionOptions) (*PptxExtractionResult, error) {
+func ExtractPptxFromPath(path string, options string) (*PptxExtractionResult, error) {
     cPath := C.CString(path)
     defer C.free(unsafe.Pointer(cPath))
 
-    jsonBytescOptions, err := json.Marshal(options)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcOptions := C.CString(string(jsonBytescOptions))
-    cOptions := C.kreuzberg_pptx_extraction_options_from_json(tmpStrcOptions)
-    C.free(unsafe.Pointer(tmpStrcOptions))
-    defer C.kreuzberg_pptx_extraction_options_free(cOptions)
+    cOptions := C.CString(options)
+    defer C.free(unsafe.Pointer(cOptions))
 
     ptr := C.kreuzberg_extract_pptx_from_path(cPath, cOptions)
     if err := lastError(); err != nil {
@@ -15178,17 +11964,11 @@ func ExtractPptxFromPath(path string, options PptxExtractionOptions) (*PptxExtra
 // # Returns
 //
 // A `PptxExtractionResult` containing extracted content, metadata, and images.
-func ExtractPptxFromBytes(data []byte, options PptxExtractionOptions) (*PptxExtractionResult, error) {
+func ExtractPptxFromBytes(data []byte, options string) (*PptxExtractionResult, error) {
     cData := (*C.uchar)(unsafe.Pointer(&data[0]))
 
-    jsonBytescOptions, err := json.Marshal(options)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcOptions := C.CString(string(jsonBytescOptions))
-    cOptions := C.kreuzberg_pptx_extraction_options_from_json(tmpStrcOptions)
-    C.free(unsafe.Pointer(tmpStrcOptions))
-    defer C.kreuzberg_pptx_extraction_options_free(cOptions)
+    cOptions := C.CString(options)
+    defer C.free(unsafe.Pointer(cOptions))
 
     ptr := C.kreuzberg_extract_pptx_from_bytes(cData, cOptions)
     if err := lastError(); err != nil {
@@ -17726,20 +14506,13 @@ func CreateByteBufferPool(pool_size uint, buffer_capacity uint) *ByteBufferPool 
 // // PDF at 5MB gets 10 string buffers (base 6 + 4 for size)
 // // of 65KB each (for 1-10MB files)
 // ```
-func EstimatePoolSize(file_size uint64, mime_type string) *PoolSizeHint {
+func EstimatePoolSize(file_size uint64, mime_type string) *string {
     cMimeType := C.CString(mime_type)
     defer C.free(unsafe.Pointer(cMimeType))
 
     ptr := C.kreuzberg_estimate_pool_size(cFileSize, cMimeType)
-    defer C.kreuzberg_pool_size_hint_free(ptr)
-    return func() *PoolSizeHint {
-	jsonPtr := C.kreuzberg_pool_size_hint_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result PoolSizeHint
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}()
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -17851,7 +14624,7 @@ func EscapeHtmlEntities(text string) *string {
 //
 // Groups words by approximate x-position (within `column_threshold` pixels)
 // and returns the median x-position for each detected column, sorted left to right.
-func DetectColumns(words []HocrWord, column_threshold uint32) *[]uint32 {
+func DetectColumns(words []string, column_threshold uint32) *[]uint32 {
     jsonBytescWords, err := json.Marshal(words)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -17875,7 +14648,7 @@ func DetectColumns(words []HocrWord, column_threshold uint32) *[]uint32 {
 // Groups words by their vertical center position and returns the median
 // y-position for each detected row. The `row_threshold_ratio` is multiplied
 // by the median word height to determine the grouping threshold.
-func DetectRows(words []HocrWord, row_threshold_ratio float64) *[]uint32 {
+func DetectRows(words []string, row_threshold_ratio float64) *[]uint32 {
     jsonBytescWords, err := json.Marshal(words)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -17903,7 +14676,7 @@ func DetectRows(words []HocrWord, row_threshold_ratio float64) *[]uint32 {
 // 4. Combining words within the same cell
 //
 // Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
-func ReconstructTable(words []HocrWord, column_threshold uint32, row_threshold_ratio float64) *[][]string {
+func ReconstructTable(words []string, column_threshold uint32, row_threshold_ratio float64) *[][]string {
     jsonBytescWords, err := json.Marshal(words)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -18097,7 +14870,7 @@ func CreateRouter(config ExtractionConfig) *string {
 // let router = create_router_with_limits(config, limits);
 // # }
 // ```
-func CreateRouterWithLimits(config ExtractionConfig, limits ApiSizeLimits) *string {
+func CreateRouterWithLimits(config ExtractionConfig, limits string) *string {
     jsonBytescConfig, err := json.Marshal(config)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -18107,14 +14880,8 @@ func CreateRouterWithLimits(config ExtractionConfig, limits ApiSizeLimits) *stri
     C.free(unsafe.Pointer(tmpStrcConfig))
     defer C.kreuzberg_extraction_config_free(cConfig)
 
-    jsonBytescLimits, err := json.Marshal(limits)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcLimits := C.CString(string(jsonBytescLimits))
-    cLimits := C.kreuzberg_api_size_limits_from_json(tmpStrcLimits)
-    C.free(unsafe.Pointer(tmpStrcLimits))
-    defer C.kreuzberg_api_size_limits_free(cLimits)
+    cLimits := C.CString(limits)
+    defer C.free(unsafe.Pointer(cLimits))
 
     ptr := C.kreuzberg_create_router_with_limits(cConfig, cLimits)
     defer C.kreuzberg_free_string(ptr)
@@ -18150,7 +14917,7 @@ func CreateRouterWithLimits(config ExtractionConfig, limits ApiSizeLimits) *stri
 // # Ok(())
 // # }
 // ```
-func CreateRouterWithLimitsAndServerConfig(config ExtractionConfig, limits ApiSizeLimits, server_config ServerConfig) *string {
+func CreateRouterWithLimitsAndServerConfig(config ExtractionConfig, limits string, server_config ServerConfig) *string {
     jsonBytescConfig, err := json.Marshal(config)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -18160,14 +14927,8 @@ func CreateRouterWithLimitsAndServerConfig(config ExtractionConfig, limits ApiSi
     C.free(unsafe.Pointer(tmpStrcConfig))
     defer C.kreuzberg_extraction_config_free(cConfig)
 
-    jsonBytescLimits, err := json.Marshal(limits)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcLimits := C.CString(string(jsonBytescLimits))
-    cLimits := C.kreuzberg_api_size_limits_from_json(tmpStrcLimits)
-    C.free(unsafe.Pointer(tmpStrcLimits))
-    defer C.kreuzberg_api_size_limits_free(cLimits)
+    cLimits := C.CString(limits)
+    defer C.free(unsafe.Pointer(cLimits))
 
     jsonBytescServerConfig, err := json.Marshal(server_config)
     if err != nil {
@@ -18308,7 +15069,7 @@ func ServeWithConfig(host string, port uint16, config ExtractionConfig) error {
 // Ok(())
 // }
 // ```
-func ServeWithConfigAndLimits(host string, port uint16, config ExtractionConfig, limits ApiSizeLimits) error {
+func ServeWithConfigAndLimits(host string, port uint16, config ExtractionConfig, limits string) error {
     cHost := C.CString(host)
     defer C.free(unsafe.Pointer(cHost))
 
@@ -18321,14 +15082,8 @@ func ServeWithConfigAndLimits(host string, port uint16, config ExtractionConfig,
     C.free(unsafe.Pointer(tmpStrcConfig))
     defer C.kreuzberg_extraction_config_free(cConfig)
 
-    jsonBytescLimits, err := json.Marshal(limits)
-    if err != nil {
-        return fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcLimits := C.CString(string(jsonBytescLimits))
-    cLimits := C.kreuzberg_api_size_limits_from_json(tmpStrcLimits)
-    C.free(unsafe.Pointer(tmpStrcLimits))
-    defer C.kreuzberg_api_size_limits_free(cLimits)
+    cLimits := C.CString(limits)
+    defer C.free(unsafe.Pointer(cLimits))
 
     C.kreuzberg_serve_with_config_and_limits(cHost, cPort, cConfig, cLimits)
     return lastError()
@@ -19672,15 +16427,9 @@ func ExtractKeywords(text string, config KeywordConfig) (*[]Keyword, error) {
 // - `angle_index` is outside the valid range (0-3)
 //
 // Returns `Ok(None)` if the detection is filtered out due to low `box_score`.
-func TextBlockToElement(block TextBlock, page_number uint) (**OcrElement, error) {
-    jsonBytescBlock, err := json.Marshal(block)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcBlock := C.CString(string(jsonBytescBlock))
-    cBlock := C.kreuzberg_text_block_from_json(tmpStrcBlock)
-    C.free(unsafe.Pointer(tmpStrcBlock))
-    defer C.kreuzberg_text_block_free(cBlock)
+func TextBlockToElement(block string, page_number uint) (**OcrElement, error) {
+    cBlock := C.CString(block)
+    defer C.free(unsafe.Pointer(cBlock))
 
     ptr := C.kreuzberg_text_block_to_element(cBlock, cPageNumber)
     if err := lastError(); err != nil {
@@ -19711,15 +16460,9 @@ func TextBlockToElement(block TextBlock, page_number uint) (**OcrElement, error)
 // # Returns
 //
 // An `OcrElement` with rectangle geometry and Tesseract metadata.
-func TsvRowToElement(row TsvRow) *OcrElement {
-    jsonBytescRow, err := json.Marshal(row)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcRow := C.CString(string(jsonBytescRow))
-    cRow := C.kreuzberg_tsv_row_from_json(tmpStrcRow)
-    C.free(unsafe.Pointer(tmpStrcRow))
-    defer C.kreuzberg_tsv_row_free(cRow)
+func TsvRowToElement(row string) *OcrElement {
+    cRow := C.CString(row)
+    defer C.free(unsafe.Pointer(cRow))
 
     ptr := C.kreuzberg_tsv_row_to_element(cRow)
     defer C.kreuzberg_ocr_element_free(ptr)
@@ -19785,7 +16528,7 @@ func IteratorWordToElement(word string, block_type *string, para_info *string, p
 // # Returns
 //
 // An `HocrWord` suitable for table reconstruction algorithms.
-func ElementToHocrWord(element OcrElement) *HocrWord {
+func ElementToHocrWord(element OcrElement) *string {
     jsonBytescElement, err := json.Marshal(element)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -19796,15 +16539,8 @@ func ElementToHocrWord(element OcrElement) *HocrWord {
     defer C.kreuzberg_ocr_element_free(cElement)
 
     ptr := C.kreuzberg_element_to_hocr_word(cElement)
-    defer C.kreuzberg_hocr_word_free(ptr)
-    return func() *HocrWord {
-	jsonPtr := C.kreuzberg_hocr_word_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result HocrWord
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}()
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -19821,7 +16557,7 @@ func ElementToHocrWord(element OcrElement) *HocrWord {
 // # Returns
 //
 // A vector of HocrWords filtered by confidence and element level.
-func ElementsToHocrWords(elements []OcrElement, min_confidence float64) *[]HocrWord {
+func ElementsToHocrWords(elements []OcrElement, min_confidence float64) *[]string {
     jsonBytescElements, err := json.Marshal(elements)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -19830,10 +16566,10 @@ func ElementsToHocrWords(elements []OcrElement, min_confidence float64) *[]HocrW
     defer C.free(unsafe.Pointer(cElements))
 
     ptr := C.kreuzberg_elements_to_hocr_words(cElements, cMinConfidence)
-    return func() *[]HocrWord {
+    return func() *[]string {
 	if ptr == nil { return nil }
 	defer C.kreuzberg_free_string(ptr)
-	var result []HocrWord
+	var result []string
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }()
@@ -19950,7 +16686,7 @@ func RecognizePageTables(page_image string, detection DetectionResult, elements 
 //
 // This parses Tesseract's TSV format (level, page_num, block_num, ...) and
 // converts it to the HocrWord format used for table reconstruction.
-func ExtractWordsFromTsv(tsv_data string, min_confidence float64) (*[]HocrWord, error) {
+func ExtractWordsFromTsv(tsv_data string, min_confidence float64) (*[]string, error) {
     cTsvData := C.CString(tsv_data)
     defer C.free(unsafe.Pointer(cTsvData))
 
@@ -19958,10 +16694,10 @@ func ExtractWordsFromTsv(tsv_data string, min_confidence float64) (*[]HocrWord, 
     if err := lastError(); err != nil {
         return nil, err
     }
-    return func() *[]HocrWord {
+    return func() *[]string {
 	if ptr == nil { return nil }
 	defer C.kreuzberg_free_string(ptr)
-	var result []HocrWord
+	var result []string
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }(), nil
@@ -20394,15 +17130,9 @@ func ExtractAnnotationsFromDocument(document string) *[]PdfAnnotation {
 //
 // Walks the `/Outlines` tree in the document catalog, collecting each bookmark's
 // title and destination. Returns an empty `Vec` if the document has no outlines.
-func ExtractBookmarks(document Document) *[]Uri {
-    jsonBytescDocument, err := json.Marshal(document)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcDocument := C.CString(string(jsonBytescDocument))
-    cDocument := C.kreuzberg_document_from_json(tmpStrcDocument)
-    C.free(unsafe.Pointer(tmpStrcDocument))
-    defer C.kreuzberg_document_free(cDocument)
+func ExtractBookmarks(document string) *[]Uri {
+    cDocument := C.CString(document)
+    defer C.free(unsafe.Pointer(cDocument))
 
     ptr := C.kreuzberg_extract_bookmarks(cDocument)
     return func() *[]Uri {
@@ -20468,15 +17198,9 @@ func ExtractBundledPdfium() (*string, error) {
 //
 // Walks the `/Names` → `/EmbeddedFiles` name tree in the catalog.
 // Returns an empty `Vec` if the document has no embedded files.
-func ExtractEmbeddedFiles(document Document) *[]EmbeddedFile {
-    jsonBytescDocument, err := json.Marshal(document)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcDocument := C.CString(string(jsonBytescDocument))
-    cDocument := C.kreuzberg_document_from_json(tmpStrcDocument)
-    C.free(unsafe.Pointer(tmpStrcDocument))
-    defer C.kreuzberg_document_free(cDocument)
+func ExtractEmbeddedFiles(document string) *[]EmbeddedFile {
+    cDocument := C.CString(document)
+    defer C.free(unsafe.Pointer(cDocument))
 
     ptr := C.kreuzberg_extract_embedded_files(cDocument)
     return func() *[]EmbeddedFile {
@@ -20626,7 +17350,7 @@ func ClearFontCache() {
 // assert_eq!(clusters[0].centroid, 24.0); // Largest is first
 // # }
 // ```
-func ClusterFontSizes(blocks []TextBlock, k uint) (*[]FontSizeCluster, error) {
+func ClusterFontSizes(blocks []string, k uint) (*[]FontSizeCluster, error) {
     jsonBytescBlocks, err := json.Marshal(blocks)
     if err != nil {
         return nil, fmt.Errorf("failed to marshal: %w", err)
@@ -20732,7 +17456,7 @@ func AssignHeadingLevelsSmart(clusters []FontSizeCluster, min_heading_ratio floa
 // assert_eq!(results[1].hierarchy_level, HierarchyLevel::Body);
 // # }
 // ```
-func AssignHierarchyLevels(blocks []TextBlock, kmeans_result KMeansResult) *[]HierarchyBlock {
+func AssignHierarchyLevels(blocks []string, kmeans_result string) *[]HierarchyBlock {
     jsonBytescBlocks, err := json.Marshal(blocks)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -20740,14 +17464,8 @@ func AssignHierarchyLevels(blocks []TextBlock, kmeans_result KMeansResult) *[]Hi
     cBlocks := C.CString(string(jsonBytescBlocks))
     defer C.free(unsafe.Pointer(cBlocks))
 
-    jsonBytescKmeansResult, err := json.Marshal(kmeans_result)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcKmeansResult := C.CString(string(jsonBytescKmeansResult))
-    cKmeansResult := C.kreuzberg_k_means_result_from_json(tmpStrcKmeansResult)
-    C.free(unsafe.Pointer(tmpStrcKmeansResult))
-    defer C.kreuzberg_k_means_result_free(cKmeansResult)
+    cKmeansResult := C.CString(kmeans_result)
+    defer C.free(unsafe.Pointer(cKmeansResult))
 
     ptr := C.kreuzberg_assign_hierarchy_levels(cBlocks, cKmeansResult)
     return func() *[]HierarchyBlock {
@@ -20775,7 +17493,7 @@ func AssignHierarchyLevels(blocks []TextBlock, kmeans_result KMeansResult) *[]Hi
 // Vector of tuples containing (TextBlock, HierarchyLevel).
 // If blocks is empty or clusters is empty, returns empty vector.
 // All blocks get Body level if only one cluster exists.
-func AssignHierarchyLevelsFromClusters(blocks []TextBlock, clusters []FontSizeCluster) *[]string {
+func AssignHierarchyLevelsFromClusters(blocks []string, clusters []FontSizeCluster) *[]string {
     jsonBytescBlocks, err := json.Marshal(blocks)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -20861,7 +17579,7 @@ func ExtractCharsWithFonts(page string) (*[]CharData, error) {
 //
 // Typically 10-50x fewer items than character-level extraction, with far fewer FFI calls
 // per item (one segment.text() + one segment.chars() sample vs N chars with 4+ FFI calls each).
-func ExtractSegmentsFromPage(page string) (*[]SegmentData, error) {
+func ExtractSegmentsFromPage(page string) (*[]string, error) {
     cPage := C.CString(page)
     defer C.free(unsafe.Pointer(cPage))
 
@@ -20869,10 +17587,10 @@ func ExtractSegmentsFromPage(page string) (*[]SegmentData, error) {
     if err := lastError(); err != nil {
         return nil, err
     }
-    return func() *[]SegmentData {
+    return func() *[]string {
 	if ptr == nil { return nil }
 	defer C.kreuzberg_free_string(ptr)
-	var result []SegmentData
+	var result []string
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }(), nil
@@ -20901,7 +17619,7 @@ func ExtractSegmentsFromPage(page string) (*[]SegmentData, error) {
 // 3. Use intersection_ratio to detect overlapping or very close characters
 // 4. Merge characters into blocks based on proximity thresholds
 // 5. Return sorted blocks by position (top to bottom, left to right)
-func MergeCharsIntoBlocks(chars []CharData) *[]TextBlock {
+func MergeCharsIntoBlocks(chars []CharData) *[]string {
     jsonBytescChars, err := json.Marshal(chars)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -20910,10 +17628,10 @@ func MergeCharsIntoBlocks(chars []CharData) *[]TextBlock {
     defer C.free(unsafe.Pointer(cChars))
 
     ptr := C.kreuzberg_merge_chars_into_blocks(cChars)
-    return func() *[]TextBlock {
+    return func() *[]string {
 	if ptr == nil { return nil }
 	defer C.kreuzberg_free_string(ptr)
-	var result []TextBlock
+	var result []string
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }()
@@ -20935,7 +17653,7 @@ func MergeCharsIntoBlocks(chars []CharData) *[]TextBlock {
 // # Returns
 //
 // `true` if OCR should be triggered (coverage below threshold), `false` otherwise.
-func ShouldTriggerOcr(page string, blocks []TextBlock, config ExtractionConfig) *bool {
+func ShouldTriggerOcr(page string, blocks []string, config ExtractionConfig) *bool {
     cPage := C.CString(page)
     defer C.free(unsafe.Pointer(cPage))
 
@@ -21077,32 +17795,25 @@ func DetectLayoutForImages(images []string, engine string) (*[]DetectionResult, 
 // Extract PDF-specific metadata from raw bytes.
 //
 // Returns only PDF-specific metadata (version, producer, encryption status, dimensions).
-func ExtractMetadata(pdf_bytes []byte) (*PdfMetadata, error) {
+func ExtractMetadata(pdf_bytes []byte) (*string, error) {
     cPdfBytes := (*C.uchar)(unsafe.Pointer(&pdf_bytes[0]))
 
     ptr := C.kreuzberg_extract_metadata(cPdfBytes)
     if err := lastError(); err != nil {
         if ptr != nil {
-            C.kreuzberg_pdf_metadata_free(ptr)
+            C.kreuzberg_free_string(ptr)
         }
         return nil, err
     }
-    defer C.kreuzberg_pdf_metadata_free(ptr)
-    return func() *PdfMetadata {
-	jsonPtr := C.kreuzberg_pdf_metadata_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result PdfMetadata
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}(), nil
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
 }
 
 
 // Extract PDF-specific metadata from raw bytes with optional password.
 //
 // Returns only PDF-specific metadata (version, producer, encryption status, dimensions).
-func ExtractMetadataWithPassword(pdf_bytes []byte, password ...*string) (*PdfMetadata, error) {
+func ExtractMetadataWithPassword(pdf_bytes []byte, password ...*string) (*string, error) {
     var passwordVal *string
     if len(password) > 0 {
         passwordVal = password[0]
@@ -21115,24 +17826,17 @@ func ExtractMetadataWithPassword(pdf_bytes []byte, password ...*string) (*PdfMet
     ptr := C.kreuzberg_extract_metadata_with_password(cPdfBytes, cPasswordVal)
     if err := lastError(); err != nil {
         if ptr != nil {
-            C.kreuzberg_pdf_metadata_free(ptr)
+            C.kreuzberg_free_string(ptr)
         }
         return nil, err
     }
-    defer C.kreuzberg_pdf_metadata_free(ptr)
-    return func() *PdfMetadata {
-	jsonPtr := C.kreuzberg_pdf_metadata_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result PdfMetadata
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}(), nil
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
 }
 
 
 // ExtractMetadataWithPasswords calls the FFI function.
-func ExtractMetadataWithPasswords(pdf_bytes []byte, passwords []string) (*PdfMetadata, error) {
+func ExtractMetadataWithPasswords(pdf_bytes []byte, passwords []string) (*string, error) {
     cPdfBytes := (*C.uchar)(unsafe.Pointer(&pdf_bytes[0]))
 
     jsonBytescPasswords, err := json.Marshal(passwords)
@@ -21145,19 +17849,12 @@ func ExtractMetadataWithPasswords(pdf_bytes []byte, passwords []string) (*PdfMet
     ptr := C.kreuzberg_extract_metadata_with_passwords(cPdfBytes, cPasswords)
     if err := lastError(); err != nil {
         if ptr != nil {
-            C.kreuzberg_pdf_metadata_free(ptr)
+            C.kreuzberg_free_string(ptr)
         }
         return nil, err
     }
-    defer C.kreuzberg_pdf_metadata_free(ptr)
-    return func() *PdfMetadata {
-	jsonPtr := C.kreuzberg_pdf_metadata_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result PdfMetadata
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}(), nil
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
 }
 
 
@@ -21248,17 +17945,11 @@ func ExtractCommonMetadataFromDocument(document string) (*CommonPdfMetadata, err
 
 
 // RenderPageToImage calls the FFI function.
-func RenderPageToImage(pdf_bytes []byte, page_index uint, options PageRenderOptions) (*string, error) {
+func RenderPageToImage(pdf_bytes []byte, page_index uint, options string) (*string, error) {
     cPdfBytes := (*C.uchar)(unsafe.Pointer(&pdf_bytes[0]))
 
-    jsonBytescOptions, err := json.Marshal(options)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcOptions := C.CString(string(jsonBytescOptions))
-    cOptions := C.kreuzberg_page_render_options_from_json(tmpStrcOptions)
-    C.free(unsafe.Pointer(tmpStrcOptions))
-    defer C.kreuzberg_page_render_options_free(cOptions)
+    cOptions := C.CString(options)
+    defer C.free(unsafe.Pointer(cOptions))
 
     ptr := C.kreuzberg_render_page_to_image(cPdfBytes, cPageIndex, cOptions)
     if err := lastError(); err != nil {
@@ -21347,7 +18038,7 @@ func RenderPdfPageToPng(pdf_bytes []byte, page_index uint, dpi ...*int32) (*[]by
 // # }
 // # }
 // ```
-func ExtractWordsFromPage(page string, min_confidence float64) (*[]HocrWord, error) {
+func ExtractWordsFromPage(page string, min_confidence float64) (*[]string, error) {
     cPage := C.CString(page)
     defer C.free(unsafe.Pointer(cPage))
 
@@ -21355,10 +18046,10 @@ func ExtractWordsFromPage(page string, min_confidence float64) (*[]HocrWord, err
     if err := lastError(); err != nil {
         return nil, err
     }
-    return func() *[]HocrWord {
+    return func() *[]string {
 	if ptr == nil { return nil }
 	defer C.kreuzberg_free_string(ptr)
-	var result []HocrWord
+	var result []string
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }(), nil
@@ -21369,26 +18060,13 @@ func ExtractWordsFromPage(page string, min_confidence float64) (*[]HocrWord, err
 //
 // `SegmentData` uses PDF coordinates (y=0 at bottom, increases upward).
 // `HocrWord` uses image coordinates (y=0 at top, increases downward).
-func SegmentToHocrWord(seg SegmentData, page_height float32) *HocrWord {
-    jsonBytescSeg, err := json.Marshal(seg)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcSeg := C.CString(string(jsonBytescSeg))
-    cSeg := C.kreuzberg_segment_data_from_json(tmpStrcSeg)
-    C.free(unsafe.Pointer(tmpStrcSeg))
-    defer C.kreuzberg_segment_data_free(cSeg)
+func SegmentToHocrWord(seg string, page_height float32) *string {
+    cSeg := C.CString(seg)
+    defer C.free(unsafe.Pointer(cSeg))
 
     ptr := C.kreuzberg_segment_to_hocr_word(cSeg, cPageHeight)
-    defer C.kreuzberg_hocr_word_free(ptr)
-    return func() *HocrWord {
-	jsonPtr := C.kreuzberg_hocr_word_to_json(ptr)
-	if jsonPtr == nil { return nil }
-	defer C.kreuzberg_free_string(jsonPtr)
-	var result HocrWord
-	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
-	return &result
-}()
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -21401,21 +18079,15 @@ func SegmentToHocrWord(seg SegmentData, page_height float32) *HocrWord {
 // Single-word segments use `segment_to_hocr_word` directly (fast path).
 // Multi-word segments get proportional bbox estimation per word based on
 // byte offset within the segment text.
-func SplitSegmentToWords(seg SegmentData, page_height float32) *[]HocrWord {
-    jsonBytescSeg, err := json.Marshal(seg)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcSeg := C.CString(string(jsonBytescSeg))
-    cSeg := C.kreuzberg_segment_data_from_json(tmpStrcSeg)
-    C.free(unsafe.Pointer(tmpStrcSeg))
-    defer C.kreuzberg_segment_data_free(cSeg)
+func SplitSegmentToWords(seg string, page_height float32) *[]string {
+    cSeg := C.CString(seg)
+    defer C.free(unsafe.Pointer(cSeg))
 
     ptr := C.kreuzberg_split_segment_to_words(cSeg, cPageHeight)
-    return func() *[]HocrWord {
+    return func() *[]string {
 	if ptr == nil { return nil }
 	defer C.kreuzberg_free_string(ptr)
-	var result []HocrWord
+	var result []string
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }()
@@ -21426,7 +18098,7 @@ func SplitSegmentToWords(seg SegmentData, page_height float32) *[]HocrWord {
 //
 // Splits multi-word segments into individual words with proportional bounding
 // boxes, ensuring each word can be independently matched to table cells.
-func SegmentsToWords(segments []SegmentData, page_height float32) *[]HocrWord {
+func SegmentsToWords(segments []string, page_height float32) *[]string {
     jsonBytescSegments, err := json.Marshal(segments)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -21435,10 +18107,10 @@ func SegmentsToWords(segments []SegmentData, page_height float32) *[]HocrWord {
     defer C.free(unsafe.Pointer(cSegments))
 
     ptr := C.kreuzberg_segments_to_words(cSegments, cPageHeight)
-    return func() *[]HocrWord {
+    return func() *[]string {
 	if ptr == nil { return nil }
 	defer C.kreuzberg_free_string(ptr)
-	var result []HocrWord
+	var result []string
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }()
@@ -21720,239 +18392,6 @@ func SerializeToJson(result ExtractionResult) (*string, error) {
     }
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Get is a method.
-func (r *GenericCache) Get(cache_key string, source_file *string, namespace *string, ttl_override_secs *uint64) (**[]byte, error) {
-    cCacheKey := C.CString(cache_key)
-    defer C.free(unsafe.Pointer(cCacheKey))
-
-    cSourceFile := C.CString(source_file)
-    defer C.free(unsafe.Pointer(cSourceFile))
-
-    cNamespace := C.CString(namespace)
-    defer C.free(unsafe.Pointer(cNamespace))
-
-    ptr := C.kreuzberg_generic_cache_get ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)), cCacheKey, cSourceFile, cNamespace, cTtlOverrideSecs)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return unmarshalBytes(ptr), nil
-}
-
-
-// Backward-compatible get without namespace/TTL.
-func (r *GenericCache) GetDefault(cache_key string, source_file *string) (**[]byte, error) {
-    cCacheKey := C.CString(cache_key)
-    defer C.free(unsafe.Pointer(cCacheKey))
-
-    cSourceFile := C.CString(source_file)
-    defer C.free(unsafe.Pointer(cSourceFile))
-
-    ptr := C.kreuzberg_generic_cache_get_default ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)), cCacheKey, cSourceFile)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return unmarshalBytes(ptr), nil
-}
-
-
-// Set is a method.
-func (r *GenericCache) Set(cache_key string, data []byte, source_file *string, namespace *string, ttl_secs *uint64) error {
-    cCacheKey := C.CString(cache_key)
-    defer C.free(unsafe.Pointer(cCacheKey))
-
-    cData := (*C.uchar)(unsafe.Pointer(&data[0]))
-
-    cSourceFile := C.CString(source_file)
-    defer C.free(unsafe.Pointer(cSourceFile))
-
-    cNamespace := C.CString(namespace)
-    defer C.free(unsafe.Pointer(cNamespace))
-
-    C.kreuzberg_generic_cache_set ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)), cCacheKey, cData, cSourceFile, cNamespace, cTtlSecs)
-    return lastError()
-}
-
-
-// Backward-compatible set without namespace/TTL.
-func (r *GenericCache) SetDefault(cache_key string, data []byte, source_file *string) error {
-    cCacheKey := C.CString(cache_key)
-    defer C.free(unsafe.Pointer(cCacheKey))
-
-    cData := (*C.uchar)(unsafe.Pointer(&data[0]))
-
-    cSourceFile := C.CString(source_file)
-    defer C.free(unsafe.Pointer(cSourceFile))
-
-    C.kreuzberg_generic_cache_set_default ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)), cCacheKey, cData, cSourceFile)
-    return lastError()
-}
-
-
-// IsProcessing is a method.
-func (r *GenericCache) IsProcessing(cache_key string) (*bool, error) {
-    cCacheKey := C.CString(cache_key)
-    defer C.free(unsafe.Pointer(cCacheKey))
-
-    ptr := C.kreuzberg_generic_cache_is_processing ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)), cCacheKey)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return func() *bool { v := ptr != 0; return &v }(), nil
-}
-
-
-// MarkProcessing is a method.
-func (r *GenericCache) MarkProcessing(cache_key string) error {
-    cCacheKey := C.CString(cache_key)
-    defer C.free(unsafe.Pointer(cCacheKey))
-
-    C.kreuzberg_generic_cache_mark_processing ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)), cCacheKey)
-    return lastError()
-}
-
-
-// MarkComplete is a method.
-func (r *GenericCache) MarkComplete(cache_key string) error {
-    cCacheKey := C.CString(cache_key)
-    defer C.free(unsafe.Pointer(cCacheKey))
-
-    C.kreuzberg_generic_cache_mark_complete ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)), cCacheKey)
-    return lastError()
-}
-
-
-// Clear is a method.
-func (r *GenericCache) Clear() (*string, error) {
-    ptr := C.kreuzberg_generic_cache_clear ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)))
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Delete all cache entries under a namespace.
-//
-// Removes the namespace subdirectory and all its contents.
-// Returns (files_removed, mb_freed).
-func (r *GenericCache) DeleteNamespace(namespace string) (*string, error) {
-    cNamespace := C.CString(namespace)
-    defer C.free(unsafe.Pointer(cNamespace))
-
-    ptr := C.kreuzberg_generic_cache_delete_namespace ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)), cNamespace)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// GetStats is a method.
-func (r *GenericCache) GetStats() (*string, error) {
-    ptr := C.kreuzberg_generic_cache_get_stats ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)))
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Get cache stats, optionally filtered to a specific namespace.
-func (r *GenericCache) GetStatsFiltered(namespace *string) (*string, error) {
-    cNamespace := C.CString(namespace)
-    defer C.free(unsafe.Pointer(cNamespace))
-
-    ptr := C.kreuzberg_generic_cache_get_stats_filtered ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)), cNamespace)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// CacheDir is a method.
-func (r *GenericCache) CacheDir() *string {
-    ptr := C.kreuzberg_generic_cache_cache_dir ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// CacheType is a method.
-func (r *GenericCache) CacheType() *string {
-    ptr := C.kreuzberg_generic_cache_cache_type ((*C.KREUZBERGGenericCache)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Get a reference to the string buffer pool.
-//
-// Creates the pool lazily on first access.
-// Useful for custom pooling implementations that need direct pool access.
-func (r *BatchProcessor) StringPool() *StringBufferPool {
-    ptr := C.kreuzberg_batch_processor_string_pool ((*C.KREUZBERGBatchProcessor)(unsafe.Pointer(r)))
-    return &StringBufferPool{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Get a reference to the byte buffer pool.
-//
-// Creates the pool lazily on first access.
-// Useful for custom pooling implementations that need direct pool access.
-func (r *BatchProcessor) BytePool() *ByteBufferPool {
-    ptr := C.kreuzberg_batch_processor_byte_pool ((*C.KREUZBERGBatchProcessor)(unsafe.Pointer(r)))
-    return &ByteBufferPool{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Get the current configuration.
-func (r *BatchProcessor) Config() *BatchProcessorConfig {
-    ptr := C.kreuzberg_batch_processor_config ((*C.KREUZBERGBatchProcessor)(unsafe.Pointer(r)))
-    return (*BatchProcessorConfig)(unsafe.Pointer(ptr))
-}
-
-
-// Get the number of pooled string buffers currently available.
-func (r *BatchProcessor) StringPoolSize() *uint {
-    ptr := C.kreuzberg_batch_processor_string_pool_size ((*C.KREUZBERGBatchProcessor)(unsafe.Pointer(r)))
-    return func() *uint { v := uint(ptr); return &v }()
-}
-
-
-// Get the number of pooled byte buffers currently available.
-func (r *BatchProcessor) BytePoolSize() *uint {
-    ptr := C.kreuzberg_batch_processor_byte_pool_size ((*C.KREUZBERGBatchProcessor)(unsafe.Pointer(r)))
-    return func() *uint { v := uint(ptr); return &v }()
-}
-
-
-// Clear all pooled objects, forcing new allocations on next acquire.
-//
-// Useful for memory-constrained environments or to reclaim memory
-// after processing large batches.
-func (r *BatchProcessor) ClearPools() error {
-    C.kreuzberg_batch_processor_clear_pools ((*C.KREUZBERGBatchProcessor)(unsafe.Pointer(r)))
-    return lastError()
 }
 
 
@@ -22289,43 +18728,6 @@ func (r *ServerConfig) ApplyEnvOverrides() error {
 }
 
 
-// Concatenate the text of every paragraph in every section, separated by
-// newlines.
-func (r *HwpDocument) ExtractText() *string {
-    ptr := C.kreuzberg_hwp_document_extract_text ((*C.KREUZBERGHwpDocument)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Whether section streams are zlib/deflate-compressed.
-func (r *FileHeader) IsCompressed() *bool {
-    ptr := C.kreuzberg_file_header_is_compressed ((*C.KREUZBERGFileHeader)(unsafe.Pointer(r)))
-    return func() *bool { v := ptr != 0; return &v }()
-}
-
-
-// Whether the document is password-encrypted.
-func (r *FileHeader) IsEncrypted() *bool {
-    ptr := C.kreuzberg_file_header_is_encrypted ((*C.KREUZBERGFileHeader)(unsafe.Pointer(r)))
-    return func() *bool { v := ptr != 0; return &v }()
-}
-
-
-// Whether the document is a distribution document (text in ViewText/).
-func (r *FileHeader) IsDistribute() *bool {
-    ptr := C.kreuzberg_file_header_is_distribute ((*C.KREUZBERGFileHeader)(unsafe.Pointer(r)))
-    return func() *bool { v := ptr != 0; return &v }()
-}
-
-
-// Return a fresh `StreamReader` over this record's data bytes.
-func (r *Record) DataReader() *StreamReader {
-    ptr := C.kreuzberg_record_data_reader ((*C.KREUZBERGRecord)(unsafe.Pointer(r)))
-    return &StreamReader{ptr: unsafe.Pointer(ptr)}
-}
-
-
 // ReadU8 is a method.
 func (r *StreamReader) ReadU8() (*uint8, error) {
     ptr := C.kreuzberg_stream_reader_read_u8 ((*C.KREUZBERGStreamReader)(unsafe.Pointer(r)))
@@ -22381,582 +18783,6 @@ func (r *StreamReader) Position() *uint64 {
 func (r *StreamReader) Remaining() *uint {
     ptr := C.kreuzberg_stream_reader_remaining ((*C.KREUZBERGStreamReader)(unsafe.Pointer(r)))
     return func() *uint { v := uint(ptr); return &v }()
-}
-
-
-// Convert width to inches.
-func (r *Extent) WidthInches() *float64 {
-    ptr := C.kreuzberg_extent_width_inches ((*C.KREUZBERGExtent)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// Convert height to inches.
-func (r *Extent) HeightInches() *float64 {
-    ptr := C.kreuzberg_extent_height_inches ((*C.KREUZBERGExtent)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// Resolve heading level for a paragraph style using the StyleCatalog.
-//
-// Walks the style inheritance chain to find `outline_level`.
-// Falls back to string-matching on style name/ID if no StyleCatalog is available.
-// Returns 1-6 (markdown heading levels).
-func (r *Document) ResolveHeadingLevel(style_id string) **uint8 {
-    cStyleId := C.CString(style_id)
-    defer C.free(unsafe.Pointer(cStyleId))
-
-    ptr := C.kreuzberg_document_resolve_heading_level ((*C.KREUZBERGDocument)(unsafe.Pointer(r)), cStyleId)
-    return func() *uint8 { v := uint8(ptr); return &v }()
-}
-
-
-// ExtractText is a method.
-func (r *Document) ExtractText() *string {
-    ptr := C.kreuzberg_document_extract_text ((*C.KREUZBERGDocument)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Render the document as markdown.
-//
-// When `inject_placeholders` is `true`, drawings that reference an image
-// emit `![alt](image)` placeholders. When `false` they are silently
-// skipped, which is useful when the caller only wants text.
-func (r *Document) ToMarkdown(inject_placeholders bool) *string {
-    ptr := C.kreuzberg_document_to_markdown ((*C.KREUZBERGDocument)(unsafe.Pointer(r)), cInjectPlaceholders)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Render the document as plain text (no markdown formatting).
-func (r *Document) ToPlainText() *string {
-    ptr := C.kreuzberg_document_to_plain_text ((*C.KREUZBERGDocument)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Convert all margins from twips to points.
-//
-// Conversion factor: 1 twip = 1/20 point, or equivalently divide by 20.
-func (r *PageMargins) ToPoints() *PageMarginsPoints {
-    ptr := C.kreuzberg_page_margins_to_points ((*C.KREUZBERGPageMargins)(unsafe.Pointer(r)))
-    return (*PageMarginsPoints)(unsafe.Pointer(ptr))
-}
-
-
-// Convert page width from twips to points.
-func (r *SectionProperties) PageWidthPoints() **float64 {
-    ptr := C.kreuzberg_section_properties_page_width_points ((*C.KREUZBERGSectionProperties)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// Convert page height from twips to points.
-func (r *SectionProperties) PageHeightPoints() **float64 {
-    ptr := C.kreuzberg_section_properties_page_height_points ((*C.KREUZBERGSectionProperties)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// Resolve a style by walking its `basedOn` inheritance chain.
-//
-// The resolution order is:
-// 1. Document defaults (`<w:docDefaults>`)
-// 2. Base style chain (walking `basedOn` from root to leaf)
-// 3. The style itself
-//
-// For `Option` fields, a child value of `Some(x)` overrides the parent.
-// A value of `None` inherits from the parent. For boolean toggle properties,
-// `Some(false)` explicitly disables the property.
-//
-// The chain depth is limited to 20 to prevent infinite loops from circular references.
-func (r *StyleCatalog) ResolveStyle(style_id string) *ResolvedStyle {
-    cStyleId := C.CString(style_id)
-    defer C.free(unsafe.Pointer(cStyleId))
-
-    ptr := C.kreuzberg_style_catalog_resolve_style ((*C.KREUZBERGStyleCatalog)(unsafe.Pointer(r)), cStyleId)
-    return (*ResolvedStyle)(unsafe.Pointer(ptr))
-}
-
-
-// Name is a method.
-func (r *CodeExtractor) Name() *string {
-    ptr := C.kreuzberg_code_extractor_name ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *CodeExtractor) Version() *string {
-    ptr := C.kreuzberg_code_extractor_version ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *CodeExtractor) Initialize() error {
-    C.kreuzberg_code_extractor_initialize ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *CodeExtractor) Shutdown() error {
-    C.kreuzberg_code_extractor_shutdown ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *CodeExtractor) Description() *string {
-    ptr := C.kreuzberg_code_extractor_description ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *CodeExtractor) Author() *string {
-    ptr := C.kreuzberg_code_extractor_author ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *CodeExtractor) ExtractBytes(content []byte, _mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, _mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *CodeExtractor) ExtractFile(path string, _mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, _mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *CodeExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_code_extractor_supported_mime_types ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *CodeExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_code_extractor_priority ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *CodeExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_code_extractor_as_sync_extractor ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// ExtractSync is a method.
-func (r *CodeExtractor) ExtractSync(content []byte, _mime_type string, config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(_mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_code_extractor_extract_sync ((*C.KREUZBERGCodeExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Name is a method.
-func (r *CsvExtractor) Name() *string {
-    ptr := C.kreuzberg_csv_extractor_name ((*C.KREUZBERGCsvExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *CsvExtractor) Version() *string {
-    ptr := C.kreuzberg_csv_extractor_version ((*C.KREUZBERGCsvExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *CsvExtractor) Initialize() error {
-    C.kreuzberg_csv_extractor_initialize ((*C.KREUZBERGCsvExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *CsvExtractor) Shutdown() error {
-    C.kreuzberg_csv_extractor_shutdown ((*C.KREUZBERGCsvExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *CsvExtractor) Description() *string {
-    ptr := C.kreuzberg_csv_extractor_description ((*C.KREUZBERGCsvExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *CsvExtractor) Author() *string {
-    ptr := C.kreuzberg_csv_extractor_author ((*C.KREUZBERGCsvExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *CsvExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *CsvExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_csv_extractor_supported_mime_types ((*C.KREUZBERGCsvExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *CsvExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_csv_extractor_priority ((*C.KREUZBERGCsvExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *StructuredExtractor) Name() *string {
-    ptr := C.kreuzberg_structured_extractor_name ((*C.KREUZBERGStructuredExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *StructuredExtractor) Version() *string {
-    ptr := C.kreuzberg_structured_extractor_version ((*C.KREUZBERGStructuredExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *StructuredExtractor) Initialize() error {
-    C.kreuzberg_structured_extractor_initialize ((*C.KREUZBERGStructuredExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *StructuredExtractor) Shutdown() error {
-    C.kreuzberg_structured_extractor_shutdown ((*C.KREUZBERGStructuredExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ExtractBytes is a method.
-func (r *StructuredExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *StructuredExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_structured_extractor_supported_mime_types ((*C.KREUZBERGStructuredExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *StructuredExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_structured_extractor_priority ((*C.KREUZBERGStructuredExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *PlainTextExtractor) Name() *string {
-    ptr := C.kreuzberg_plain_text_extractor_name ((*C.KREUZBERGPlainTextExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *PlainTextExtractor) Version() *string {
-    ptr := C.kreuzberg_plain_text_extractor_version ((*C.KREUZBERGPlainTextExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *PlainTextExtractor) Initialize() error {
-    C.kreuzberg_plain_text_extractor_initialize ((*C.KREUZBERGPlainTextExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *PlainTextExtractor) Shutdown() error {
-    C.kreuzberg_plain_text_extractor_shutdown ((*C.KREUZBERGPlainTextExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *PlainTextExtractor) Description() *string {
-    ptr := C.kreuzberg_plain_text_extractor_description ((*C.KREUZBERGPlainTextExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *PlainTextExtractor) Author() *string {
-    ptr := C.kreuzberg_plain_text_extractor_author ((*C.KREUZBERGPlainTextExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *PlainTextExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *PlainTextExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_plain_text_extractor_supported_mime_types ((*C.KREUZBERGPlainTextExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *PlainTextExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_plain_text_extractor_priority ((*C.KREUZBERGPlainTextExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Build an `InternalDocument` from jotdown events.
-func DjotExtractorBuildInternalDocument(events []string) *string {
-    jsonBytescEvents, err := json.Marshal(events)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    cEvents := C.CString(string(jsonBytescEvents))
-    defer C.free(unsafe.Pointer(cEvents))
-
-    ptr := C.kreuzberg_djot_extractor_build_internal_document (cEvents)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *DjotExtractor) Name() *string {
-    ptr := C.kreuzberg_djot_extractor_name ((*C.KREUZBERGDjotExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *DjotExtractor) Version() *string {
-    ptr := C.kreuzberg_djot_extractor_version ((*C.KREUZBERGDjotExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *DjotExtractor) Initialize() error {
-    C.kreuzberg_djot_extractor_initialize ((*C.KREUZBERGDjotExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *DjotExtractor) Shutdown() error {
-    C.kreuzberg_djot_extractor_shutdown ((*C.KREUZBERGDjotExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *DjotExtractor) Description() *string {
-    ptr := C.kreuzberg_djot_extractor_description ((*C.KREUZBERGDjotExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *DjotExtractor) Author() *string {
-    ptr := C.kreuzberg_djot_extractor_author ((*C.KREUZBERGDjotExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *DjotExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *DjotExtractor) ExtractFile(path string, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *DjotExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_djot_extractor_supported_mime_types ((*C.KREUZBERGDjotExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *DjotExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_djot_extractor_priority ((*C.KREUZBERGDjotExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
 }
 
 
@@ -23052,3353 +18878,6 @@ func (r *TableValidator) CurrentCells() *uint {
 }
 
 
-// Name is a method.
-func (r *ImageExtractor) Name() *string {
-    ptr := C.kreuzberg_image_extractor_name ((*C.KREUZBERGImageExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *ImageExtractor) Version() *string {
-    ptr := C.kreuzberg_image_extractor_version ((*C.KREUZBERGImageExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *ImageExtractor) Initialize() error {
-    C.kreuzberg_image_extractor_initialize ((*C.KREUZBERGImageExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *ImageExtractor) Shutdown() error {
-    C.kreuzberg_image_extractor_shutdown ((*C.KREUZBERGImageExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *ImageExtractor) Description() *string {
-    ptr := C.kreuzberg_image_extractor_description ((*C.KREUZBERGImageExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *ImageExtractor) Author() *string {
-    ptr := C.kreuzberg_image_extractor_author ((*C.KREUZBERGImageExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *ImageExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *ImageExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_image_extractor_supported_mime_types ((*C.KREUZBERGImageExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *ImageExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_image_extractor_priority ((*C.KREUZBERGImageExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *ZipExtractor) Name() *string {
-    ptr := C.kreuzberg_zip_extractor_name ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *ZipExtractor) Version() *string {
-    ptr := C.kreuzberg_zip_extractor_version ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *ZipExtractor) Initialize() error {
-    C.kreuzberg_zip_extractor_initialize ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *ZipExtractor) Shutdown() error {
-    C.kreuzberg_zip_extractor_shutdown ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *ZipExtractor) Description() *string {
-    ptr := C.kreuzberg_zip_extractor_description ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *ZipExtractor) Author() *string {
-    ptr := C.kreuzberg_zip_extractor_author ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *ZipExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *ZipExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_zip_extractor_supported_mime_types ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *ZipExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_zip_extractor_priority ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *ZipExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_zip_extractor_as_sync_extractor ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// ExtractSync is a method.
-func (r *ZipExtractor) ExtractSync(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_zip_extractor_extract_sync ((*C.KREUZBERGZipExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Name is a method.
-func (r *TarExtractor) Name() *string {
-    ptr := C.kreuzberg_tar_extractor_name ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *TarExtractor) Version() *string {
-    ptr := C.kreuzberg_tar_extractor_version ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *TarExtractor) Initialize() error {
-    C.kreuzberg_tar_extractor_initialize ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *TarExtractor) Shutdown() error {
-    C.kreuzberg_tar_extractor_shutdown ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *TarExtractor) Description() *string {
-    ptr := C.kreuzberg_tar_extractor_description ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *TarExtractor) Author() *string {
-    ptr := C.kreuzberg_tar_extractor_author ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *TarExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *TarExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_tar_extractor_supported_mime_types ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *TarExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_tar_extractor_priority ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *TarExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_tar_extractor_as_sync_extractor ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// ExtractSync is a method.
-func (r *TarExtractor) ExtractSync(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(_config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_tar_extractor_extract_sync ((*C.KREUZBERGTarExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Name is a method.
-func (r *SevenZExtractor) Name() *string {
-    ptr := C.kreuzberg_seven_z_extractor_name ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *SevenZExtractor) Version() *string {
-    ptr := C.kreuzberg_seven_z_extractor_version ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *SevenZExtractor) Initialize() error {
-    C.kreuzberg_seven_z_extractor_initialize ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *SevenZExtractor) Shutdown() error {
-    C.kreuzberg_seven_z_extractor_shutdown ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *SevenZExtractor) Description() *string {
-    ptr := C.kreuzberg_seven_z_extractor_description ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *SevenZExtractor) Author() *string {
-    ptr := C.kreuzberg_seven_z_extractor_author ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *SevenZExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *SevenZExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_seven_z_extractor_supported_mime_types ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *SevenZExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_seven_z_extractor_priority ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *SevenZExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_seven_z_extractor_as_sync_extractor ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// ExtractSync is a method.
-func (r *SevenZExtractor) ExtractSync(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(_config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_seven_z_extractor_extract_sync ((*C.KREUZBERGSevenZExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Name is a method.
-func (r *GzipExtractor) Name() *string {
-    ptr := C.kreuzberg_gzip_extractor_name ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *GzipExtractor) Version() *string {
-    ptr := C.kreuzberg_gzip_extractor_version ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *GzipExtractor) Initialize() error {
-    C.kreuzberg_gzip_extractor_initialize ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *GzipExtractor) Shutdown() error {
-    C.kreuzberg_gzip_extractor_shutdown ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *GzipExtractor) Description() *string {
-    ptr := C.kreuzberg_gzip_extractor_description ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *GzipExtractor) Author() *string {
-    ptr := C.kreuzberg_gzip_extractor_author ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *GzipExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *GzipExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_gzip_extractor_supported_mime_types ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *GzipExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_gzip_extractor_priority ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *GzipExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_gzip_extractor_as_sync_extractor ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// ExtractSync is a method.
-func (r *GzipExtractor) ExtractSync(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(_config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_gzip_extractor_extract_sync ((*C.KREUZBERGGzipExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Name is a method.
-func (r *EmailExtractor) Name() *string {
-    ptr := C.kreuzberg_email_extractor_name ((*C.KREUZBERGEmailExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *EmailExtractor) Version() *string {
-    ptr := C.kreuzberg_email_extractor_version ((*C.KREUZBERGEmailExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *EmailExtractor) Initialize() error {
-    C.kreuzberg_email_extractor_initialize ((*C.KREUZBERGEmailExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *EmailExtractor) Shutdown() error {
-    C.kreuzberg_email_extractor_shutdown ((*C.KREUZBERGEmailExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ExtractSync is a method.
-func (r *EmailExtractor) ExtractSync(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_email_extractor_extract_sync ((*C.KREUZBERGEmailExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// ExtractBytes is a method.
-func (r *EmailExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *EmailExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_email_extractor_supported_mime_types ((*C.KREUZBERGEmailExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *EmailExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_email_extractor_priority ((*C.KREUZBERGEmailExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *EmailExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_email_extractor_as_sync_extractor ((*C.KREUZBERGEmailExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Name is a method.
-func (r *PstExtractor) Name() *string {
-    ptr := C.kreuzberg_pst_extractor_name ((*C.KREUZBERGPstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *PstExtractor) Version() *string {
-    ptr := C.kreuzberg_pst_extractor_version ((*C.KREUZBERGPstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *PstExtractor) Initialize() error {
-    C.kreuzberg_pst_extractor_initialize ((*C.KREUZBERGPstExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *PstExtractor) Shutdown() error {
-    C.kreuzberg_pst_extractor_shutdown ((*C.KREUZBERGPstExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ExtractSync is a method.
-func (r *PstExtractor) ExtractSync(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(_config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_pst_extractor_extract_sync ((*C.KREUZBERGPstExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// ExtractBytes is a method.
-func (r *PstExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *PstExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_pst_extractor_supported_mime_types ((*C.KREUZBERGPstExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *PstExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_pst_extractor_priority ((*C.KREUZBERGPstExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *PstExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_pst_extractor_as_sync_extractor ((*C.KREUZBERGPstExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Name is a method.
-func (r *ExcelExtractor) Name() *string {
-    ptr := C.kreuzberg_excel_extractor_name ((*C.KREUZBERGExcelExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *ExcelExtractor) Version() *string {
-    ptr := C.kreuzberg_excel_extractor_version ((*C.KREUZBERGExcelExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *ExcelExtractor) Initialize() error {
-    C.kreuzberg_excel_extractor_initialize ((*C.KREUZBERGExcelExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *ExcelExtractor) Shutdown() error {
-    C.kreuzberg_excel_extractor_shutdown ((*C.KREUZBERGExcelExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ExtractSync is a method.
-func (r *ExcelExtractor) ExtractSync(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(_config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_excel_extractor_extract_sync ((*C.KREUZBERGExcelExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// ExtractBytes is a method.
-func (r *ExcelExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *ExcelExtractor) ExtractFile(path string, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *ExcelExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_excel_extractor_supported_mime_types ((*C.KREUZBERGExcelExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *ExcelExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_excel_extractor_priority ((*C.KREUZBERGExcelExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *ExcelExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_excel_extractor_as_sync_extractor ((*C.KREUZBERGExcelExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Name is a method.
-func (r *HwpExtractor) Name() *string {
-    ptr := C.kreuzberg_hwp_extractor_name ((*C.KREUZBERGHwpExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *HwpExtractor) Version() *string {
-    ptr := C.kreuzberg_hwp_extractor_version ((*C.KREUZBERGHwpExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *HwpExtractor) Initialize() error {
-    C.kreuzberg_hwp_extractor_initialize ((*C.KREUZBERGHwpExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *HwpExtractor) Shutdown() error {
-    C.kreuzberg_hwp_extractor_shutdown ((*C.KREUZBERGHwpExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *HwpExtractor) Description() *string {
-    ptr := C.kreuzberg_hwp_extractor_description ((*C.KREUZBERGHwpExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *HwpExtractor) Author() *string {
-    ptr := C.kreuzberg_hwp_extractor_author ((*C.KREUZBERGHwpExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *HwpExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *HwpExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_hwp_extractor_supported_mime_types ((*C.KREUZBERGHwpExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *HwpExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_hwp_extractor_priority ((*C.KREUZBERGHwpExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *KeynoteExtractor) Name() *string {
-    ptr := C.kreuzberg_keynote_extractor_name ((*C.KREUZBERGKeynoteExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *KeynoteExtractor) Version() *string {
-    ptr := C.kreuzberg_keynote_extractor_version ((*C.KREUZBERGKeynoteExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *KeynoteExtractor) Initialize() error {
-    C.kreuzberg_keynote_extractor_initialize ((*C.KREUZBERGKeynoteExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *KeynoteExtractor) Shutdown() error {
-    C.kreuzberg_keynote_extractor_shutdown ((*C.KREUZBERGKeynoteExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *KeynoteExtractor) Description() *string {
-    ptr := C.kreuzberg_keynote_extractor_description ((*C.KREUZBERGKeynoteExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *KeynoteExtractor) Author() *string {
-    ptr := C.kreuzberg_keynote_extractor_author ((*C.KREUZBERGKeynoteExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *KeynoteExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *KeynoteExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_keynote_extractor_supported_mime_types ((*C.KREUZBERGKeynoteExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *KeynoteExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_keynote_extractor_priority ((*C.KREUZBERGKeynoteExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *NumbersExtractor) Name() *string {
-    ptr := C.kreuzberg_numbers_extractor_name ((*C.KREUZBERGNumbersExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *NumbersExtractor) Version() *string {
-    ptr := C.kreuzberg_numbers_extractor_version ((*C.KREUZBERGNumbersExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *NumbersExtractor) Initialize() error {
-    C.kreuzberg_numbers_extractor_initialize ((*C.KREUZBERGNumbersExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *NumbersExtractor) Shutdown() error {
-    C.kreuzberg_numbers_extractor_shutdown ((*C.KREUZBERGNumbersExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *NumbersExtractor) Description() *string {
-    ptr := C.kreuzberg_numbers_extractor_description ((*C.KREUZBERGNumbersExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *NumbersExtractor) Author() *string {
-    ptr := C.kreuzberg_numbers_extractor_author ((*C.KREUZBERGNumbersExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *NumbersExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *NumbersExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_numbers_extractor_supported_mime_types ((*C.KREUZBERGNumbersExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *NumbersExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_numbers_extractor_priority ((*C.KREUZBERGNumbersExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *PagesExtractor) Name() *string {
-    ptr := C.kreuzberg_pages_extractor_name ((*C.KREUZBERGPagesExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *PagesExtractor) Version() *string {
-    ptr := C.kreuzberg_pages_extractor_version ((*C.KREUZBERGPagesExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *PagesExtractor) Initialize() error {
-    C.kreuzberg_pages_extractor_initialize ((*C.KREUZBERGPagesExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *PagesExtractor) Shutdown() error {
-    C.kreuzberg_pages_extractor_shutdown ((*C.KREUZBERGPagesExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *PagesExtractor) Description() *string {
-    ptr := C.kreuzberg_pages_extractor_description ((*C.KREUZBERGPagesExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *PagesExtractor) Author() *string {
-    ptr := C.kreuzberg_pages_extractor_author ((*C.KREUZBERGPagesExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *PagesExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *PagesExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_pages_extractor_supported_mime_types ((*C.KREUZBERGPagesExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *PagesExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_pages_extractor_priority ((*C.KREUZBERGPagesExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *HtmlExtractor) Name() *string {
-    ptr := C.kreuzberg_html_extractor_name ((*C.KREUZBERGHtmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *HtmlExtractor) Version() *string {
-    ptr := C.kreuzberg_html_extractor_version ((*C.KREUZBERGHtmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *HtmlExtractor) Initialize() error {
-    C.kreuzberg_html_extractor_initialize ((*C.KREUZBERGHtmlExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *HtmlExtractor) Shutdown() error {
-    C.kreuzberg_html_extractor_shutdown ((*C.KREUZBERGHtmlExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ExtractSync is a method.
-func (r *HtmlExtractor) ExtractSync(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_html_extractor_extract_sync ((*C.KREUZBERGHtmlExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// ExtractBytes is a method.
-func (r *HtmlExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *HtmlExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_html_extractor_supported_mime_types ((*C.KREUZBERGHtmlExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *HtmlExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_html_extractor_priority ((*C.KREUZBERGHtmlExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *HtmlExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_html_extractor_as_sync_extractor ((*C.KREUZBERGHtmlExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Name is a method.
-func (r *BibtexExtractor) Name() *string {
-    ptr := C.kreuzberg_bibtex_extractor_name ((*C.KREUZBERGBibtexExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *BibtexExtractor) Version() *string {
-    ptr := C.kreuzberg_bibtex_extractor_version ((*C.KREUZBERGBibtexExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *BibtexExtractor) Initialize() error {
-    C.kreuzberg_bibtex_extractor_initialize ((*C.KREUZBERGBibtexExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *BibtexExtractor) Shutdown() error {
-    C.kreuzberg_bibtex_extractor_shutdown ((*C.KREUZBERGBibtexExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *BibtexExtractor) Description() *string {
-    ptr := C.kreuzberg_bibtex_extractor_description ((*C.KREUZBERGBibtexExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *BibtexExtractor) Author() *string {
-    ptr := C.kreuzberg_bibtex_extractor_author ((*C.KREUZBERGBibtexExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *BibtexExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *BibtexExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_bibtex_extractor_supported_mime_types ((*C.KREUZBERGBibtexExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *BibtexExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_bibtex_extractor_priority ((*C.KREUZBERGBibtexExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *CitationExtractor) Name() *string {
-    ptr := C.kreuzberg_citation_extractor_name ((*C.KREUZBERGCitationExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *CitationExtractor) Version() *string {
-    ptr := C.kreuzberg_citation_extractor_version ((*C.KREUZBERGCitationExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *CitationExtractor) Initialize() error {
-    C.kreuzberg_citation_extractor_initialize ((*C.KREUZBERGCitationExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *CitationExtractor) Shutdown() error {
-    C.kreuzberg_citation_extractor_shutdown ((*C.KREUZBERGCitationExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *CitationExtractor) Description() *string {
-    ptr := C.kreuzberg_citation_extractor_description ((*C.KREUZBERGCitationExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *CitationExtractor) Author() *string {
-    ptr := C.kreuzberg_citation_extractor_author ((*C.KREUZBERGCitationExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *CitationExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *CitationExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_citation_extractor_supported_mime_types ((*C.KREUZBERGCitationExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *CitationExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_citation_extractor_priority ((*C.KREUZBERGCitationExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *DocExtractor) Name() *string {
-    ptr := C.kreuzberg_doc_extractor_name ((*C.KREUZBERGDocExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *DocExtractor) Version() *string {
-    ptr := C.kreuzberg_doc_extractor_version ((*C.KREUZBERGDocExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *DocExtractor) Initialize() error {
-    C.kreuzberg_doc_extractor_initialize ((*C.KREUZBERGDocExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *DocExtractor) Shutdown() error {
-    C.kreuzberg_doc_extractor_shutdown ((*C.KREUZBERGDocExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *DocExtractor) Description() *string {
-    ptr := C.kreuzberg_doc_extractor_description ((*C.KREUZBERGDocExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *DocExtractor) Author() *string {
-    ptr := C.kreuzberg_doc_extractor_author ((*C.KREUZBERGDocExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *DocExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *DocExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_doc_extractor_supported_mime_types ((*C.KREUZBERGDocExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *DocExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_doc_extractor_priority ((*C.KREUZBERGDocExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *DbfExtractor) Name() *string {
-    ptr := C.kreuzberg_dbf_extractor_name ((*C.KREUZBERGDbfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *DbfExtractor) Version() *string {
-    ptr := C.kreuzberg_dbf_extractor_version ((*C.KREUZBERGDbfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *DbfExtractor) Initialize() error {
-    C.kreuzberg_dbf_extractor_initialize ((*C.KREUZBERGDbfExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *DbfExtractor) Shutdown() error {
-    C.kreuzberg_dbf_extractor_shutdown ((*C.KREUZBERGDbfExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *DbfExtractor) Description() *string {
-    ptr := C.kreuzberg_dbf_extractor_description ((*C.KREUZBERGDbfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *DbfExtractor) Author() *string {
-    ptr := C.kreuzberg_dbf_extractor_author ((*C.KREUZBERGDbfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *DbfExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *DbfExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_dbf_extractor_supported_mime_types ((*C.KREUZBERGDbfExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *DbfExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_dbf_extractor_priority ((*C.KREUZBERGDbfExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *DocxExtractor) Name() *string {
-    ptr := C.kreuzberg_docx_extractor_name ((*C.KREUZBERGDocxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *DocxExtractor) Version() *string {
-    ptr := C.kreuzberg_docx_extractor_version ((*C.KREUZBERGDocxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *DocxExtractor) Initialize() error {
-    C.kreuzberg_docx_extractor_initialize ((*C.KREUZBERGDocxExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *DocxExtractor) Shutdown() error {
-    C.kreuzberg_docx_extractor_shutdown ((*C.KREUZBERGDocxExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *DocxExtractor) Description() *string {
-    ptr := C.kreuzberg_docx_extractor_description ((*C.KREUZBERGDocxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *DocxExtractor) Author() *string {
-    ptr := C.kreuzberg_docx_extractor_author ((*C.KREUZBERGDocxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *DocxExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *DocxExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_docx_extractor_supported_mime_types ((*C.KREUZBERGDocxExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *DocxExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_docx_extractor_priority ((*C.KREUZBERGDocxExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *EpubExtractor) Name() *string {
-    ptr := C.kreuzberg_epub_extractor_name ((*C.KREUZBERGEpubExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *EpubExtractor) Version() *string {
-    ptr := C.kreuzberg_epub_extractor_version ((*C.KREUZBERGEpubExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *EpubExtractor) Initialize() error {
-    C.kreuzberg_epub_extractor_initialize ((*C.KREUZBERGEpubExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *EpubExtractor) Shutdown() error {
-    C.kreuzberg_epub_extractor_shutdown ((*C.KREUZBERGEpubExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *EpubExtractor) Description() *string {
-    ptr := C.kreuzberg_epub_extractor_description ((*C.KREUZBERGEpubExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *EpubExtractor) Author() *string {
-    ptr := C.kreuzberg_epub_extractor_author ((*C.KREUZBERGEpubExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *EpubExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *EpubExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_epub_extractor_supported_mime_types ((*C.KREUZBERGEpubExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *EpubExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_epub_extractor_priority ((*C.KREUZBERGEpubExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *FictionBookExtractor) Name() *string {
-    ptr := C.kreuzberg_fiction_book_extractor_name ((*C.KREUZBERGFictionBookExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *FictionBookExtractor) Version() *string {
-    ptr := C.kreuzberg_fiction_book_extractor_version ((*C.KREUZBERGFictionBookExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *FictionBookExtractor) Initialize() error {
-    C.kreuzberg_fiction_book_extractor_initialize ((*C.KREUZBERGFictionBookExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *FictionBookExtractor) Shutdown() error {
-    C.kreuzberg_fiction_book_extractor_shutdown ((*C.KREUZBERGFictionBookExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *FictionBookExtractor) Description() *string {
-    ptr := C.kreuzberg_fiction_book_extractor_description ((*C.KREUZBERGFictionBookExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *FictionBookExtractor) Author() *string {
-    ptr := C.kreuzberg_fiction_book_extractor_author ((*C.KREUZBERGFictionBookExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *FictionBookExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *FictionBookExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_fiction_book_extractor_supported_mime_types ((*C.KREUZBERGFictionBookExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *FictionBookExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_fiction_book_extractor_priority ((*C.KREUZBERGFictionBookExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Build an `InternalDocument` from pulldown-cmark events and optional YAML frontmatter.
-func MarkdownExtractorBuildInternalDocument(events []string, yaml *string) *string {
-    jsonBytescEvents, err := json.Marshal(events)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    cEvents := C.CString(string(jsonBytescEvents))
-    defer C.free(unsafe.Pointer(cEvents))
-
-    cYaml := C.CString(yaml)
-    defer C.free(unsafe.Pointer(cYaml))
-
-    ptr := C.kreuzberg_markdown_extractor_build_internal_document (cEvents, cYaml)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *MarkdownExtractor) Name() *string {
-    ptr := C.kreuzberg_markdown_extractor_name ((*C.KREUZBERGMarkdownExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *MarkdownExtractor) Version() *string {
-    ptr := C.kreuzberg_markdown_extractor_version ((*C.KREUZBERGMarkdownExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *MarkdownExtractor) Initialize() error {
-    C.kreuzberg_markdown_extractor_initialize ((*C.KREUZBERGMarkdownExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *MarkdownExtractor) Shutdown() error {
-    C.kreuzberg_markdown_extractor_shutdown ((*C.KREUZBERGMarkdownExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *MarkdownExtractor) Description() *string {
-    ptr := C.kreuzberg_markdown_extractor_description ((*C.KREUZBERGMarkdownExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *MarkdownExtractor) Author() *string {
-    ptr := C.kreuzberg_markdown_extractor_author ((*C.KREUZBERGMarkdownExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *MarkdownExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *MarkdownExtractor) ExtractFile(path string, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *MarkdownExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_markdown_extractor_supported_mime_types ((*C.KREUZBERGMarkdownExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *MarkdownExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_markdown_extractor_priority ((*C.KREUZBERGMarkdownExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Build an `InternalDocument` from pulldown-cmark events after JSX stripping.
-//
-// JSX blocks that were stripped are recorded as raw blocks in the internal document.
-func MdxExtractorBuildInternalDocument(events []string, yaml *string, raw_jsx_blocks []string) *string {
-    jsonBytescEvents, err := json.Marshal(events)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    cEvents := C.CString(string(jsonBytescEvents))
-    defer C.free(unsafe.Pointer(cEvents))
-
-    cYaml := C.CString(yaml)
-    defer C.free(unsafe.Pointer(cYaml))
-
-    jsonBytescRawJsxBlocks, err := json.Marshal(raw_jsx_blocks)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    cRawJsxBlocks := C.CString(string(jsonBytescRawJsxBlocks))
-    defer C.free(unsafe.Pointer(cRawJsxBlocks))
-
-    ptr := C.kreuzberg_mdx_extractor_build_internal_document (cEvents, cYaml, cRawJsxBlocks)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *MdxExtractor) Name() *string {
-    ptr := C.kreuzberg_mdx_extractor_name ((*C.KREUZBERGMdxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *MdxExtractor) Version() *string {
-    ptr := C.kreuzberg_mdx_extractor_version ((*C.KREUZBERGMdxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *MdxExtractor) Initialize() error {
-    C.kreuzberg_mdx_extractor_initialize ((*C.KREUZBERGMdxExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *MdxExtractor) Shutdown() error {
-    C.kreuzberg_mdx_extractor_shutdown ((*C.KREUZBERGMdxExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *MdxExtractor) Description() *string {
-    ptr := C.kreuzberg_mdx_extractor_description ((*C.KREUZBERGMdxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *MdxExtractor) Author() *string {
-    ptr := C.kreuzberg_mdx_extractor_author ((*C.KREUZBERGMdxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *MdxExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *MdxExtractor) ExtractFile(path string, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *MdxExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_mdx_extractor_supported_mime_types ((*C.KREUZBERGMdxExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *MdxExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_mdx_extractor_priority ((*C.KREUZBERGMdxExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Build an `InternalDocument` from RST content.
-//
-// Handles sections, paragraphs, code blocks, tables, footnotes, citations,
-// and cross-references.
-func RstExtractorBuildInternalDocument(content string, inject_placeholders bool) *string {
-    cContent := C.CString(content)
-    defer C.free(unsafe.Pointer(cContent))
-
-    ptr := C.kreuzberg_rst_extractor_build_internal_document (cContent, cInjectPlaceholders)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *RstExtractor) Name() *string {
-    ptr := C.kreuzberg_rst_extractor_name ((*C.KREUZBERGRstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *RstExtractor) Version() *string {
-    ptr := C.kreuzberg_rst_extractor_version ((*C.KREUZBERGRstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *RstExtractor) Initialize() error {
-    C.kreuzberg_rst_extractor_initialize ((*C.KREUZBERGRstExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *RstExtractor) Shutdown() error {
-    C.kreuzberg_rst_extractor_shutdown ((*C.KREUZBERGRstExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *RstExtractor) Description() *string {
-    ptr := C.kreuzberg_rst_extractor_description ((*C.KREUZBERGRstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *RstExtractor) Author() *string {
-    ptr := C.kreuzberg_rst_extractor_author ((*C.KREUZBERGRstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *RstExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *RstExtractor) ExtractFile(path string, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *RstExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_rst_extractor_supported_mime_types ((*C.KREUZBERGRstExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *RstExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_rst_extractor_priority ((*C.KREUZBERGRstExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Build an `InternalDocument` from LaTeX source.
-//
-// Captures `\label{}` as anchors, `\ref{}` as CrossReference relationships,
-// `\cite{}` as CitationReference relationships, and footnotes.
-func LatexExtractorBuildInternalDocument(source string, inject_placeholders bool) *string {
-    cSource := C.CString(source)
-    defer C.free(unsafe.Pointer(cSource))
-
-    ptr := C.kreuzberg_latex_extractor_build_internal_document (cSource, cInjectPlaceholders)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *LatexExtractor) Name() *string {
-    ptr := C.kreuzberg_latex_extractor_name ((*C.KREUZBERGLatexExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *LatexExtractor) Version() *string {
-    ptr := C.kreuzberg_latex_extractor_version ((*C.KREUZBERGLatexExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *LatexExtractor) Initialize() error {
-    C.kreuzberg_latex_extractor_initialize ((*C.KREUZBERGLatexExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *LatexExtractor) Shutdown() error {
-    C.kreuzberg_latex_extractor_shutdown ((*C.KREUZBERGLatexExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *LatexExtractor) Description() *string {
-    ptr := C.kreuzberg_latex_extractor_description ((*C.KREUZBERGLatexExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *LatexExtractor) Author() *string {
-    ptr := C.kreuzberg_latex_extractor_author ((*C.KREUZBERGLatexExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *LatexExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *LatexExtractor) ExtractFile(path string, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *LatexExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_latex_extractor_supported_mime_types ((*C.KREUZBERGLatexExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *LatexExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_latex_extractor_priority ((*C.KREUZBERGLatexExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *JupyterExtractor) Name() *string {
-    ptr := C.kreuzberg_jupyter_extractor_name ((*C.KREUZBERGJupyterExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *JupyterExtractor) Version() *string {
-    ptr := C.kreuzberg_jupyter_extractor_version ((*C.KREUZBERGJupyterExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *JupyterExtractor) Initialize() error {
-    C.kreuzberg_jupyter_extractor_initialize ((*C.KREUZBERGJupyterExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *JupyterExtractor) Shutdown() error {
-    C.kreuzberg_jupyter_extractor_shutdown ((*C.KREUZBERGJupyterExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *JupyterExtractor) Description() *string {
-    ptr := C.kreuzberg_jupyter_extractor_description ((*C.KREUZBERGJupyterExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *JupyterExtractor) Author() *string {
-    ptr := C.kreuzberg_jupyter_extractor_author ((*C.KREUZBERGJupyterExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *JupyterExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *JupyterExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_jupyter_extractor_supported_mime_types ((*C.KREUZBERGJupyterExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *JupyterExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_jupyter_extractor_priority ((*C.KREUZBERGJupyterExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Build an `InternalDocument` from Org Mode source text.
-//
-// Handles headings, paragraphs, lists, code blocks, tables, inline links,
-// and footnote references.
-func OrgModeExtractorBuildInternalDocument(org_text string) *string {
-    cOrgText := C.CString(org_text)
-    defer C.free(unsafe.Pointer(cOrgText))
-
-    ptr := C.kreuzberg_org_mode_extractor_build_internal_document (cOrgText)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *OrgModeExtractor) Name() *string {
-    ptr := C.kreuzberg_org_mode_extractor_name ((*C.KREUZBERGOrgModeExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *OrgModeExtractor) Version() *string {
-    ptr := C.kreuzberg_org_mode_extractor_version ((*C.KREUZBERGOrgModeExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *OrgModeExtractor) Initialize() error {
-    C.kreuzberg_org_mode_extractor_initialize ((*C.KREUZBERGOrgModeExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *OrgModeExtractor) Shutdown() error {
-    C.kreuzberg_org_mode_extractor_shutdown ((*C.KREUZBERGOrgModeExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *OrgModeExtractor) Description() *string {
-    ptr := C.kreuzberg_org_mode_extractor_description ((*C.KREUZBERGOrgModeExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *OrgModeExtractor) Author() *string {
-    ptr := C.kreuzberg_org_mode_extractor_author ((*C.KREUZBERGOrgModeExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *OrgModeExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *OrgModeExtractor) ExtractFile(path string, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *OrgModeExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_org_mode_extractor_supported_mime_types ((*C.KREUZBERGOrgModeExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *OrgModeExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_org_mode_extractor_priority ((*C.KREUZBERGOrgModeExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *OdtExtractor) Name() *string {
-    ptr := C.kreuzberg_odt_extractor_name ((*C.KREUZBERGOdtExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *OdtExtractor) Version() *string {
-    ptr := C.kreuzberg_odt_extractor_version ((*C.KREUZBERGOdtExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *OdtExtractor) Initialize() error {
-    C.kreuzberg_odt_extractor_initialize ((*C.KREUZBERGOdtExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *OdtExtractor) Shutdown() error {
-    C.kreuzberg_odt_extractor_shutdown ((*C.KREUZBERGOdtExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *OdtExtractor) Description() *string {
-    ptr := C.kreuzberg_odt_extractor_description ((*C.KREUZBERGOdtExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *OdtExtractor) Author() *string {
-    ptr := C.kreuzberg_odt_extractor_author ((*C.KREUZBERGOdtExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *OdtExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *OdtExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_odt_extractor_supported_mime_types ((*C.KREUZBERGOdtExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *OdtExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_odt_extractor_priority ((*C.KREUZBERGOdtExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *OpmlExtractor) Name() *string {
-    ptr := C.kreuzberg_opml_extractor_name ((*C.KREUZBERGOpmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *OpmlExtractor) Version() *string {
-    ptr := C.kreuzberg_opml_extractor_version ((*C.KREUZBERGOpmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *OpmlExtractor) Initialize() error {
-    C.kreuzberg_opml_extractor_initialize ((*C.KREUZBERGOpmlExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *OpmlExtractor) Shutdown() error {
-    C.kreuzberg_opml_extractor_shutdown ((*C.KREUZBERGOpmlExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *OpmlExtractor) Description() *string {
-    ptr := C.kreuzberg_opml_extractor_description ((*C.KREUZBERGOpmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *OpmlExtractor) Author() *string {
-    ptr := C.kreuzberg_opml_extractor_author ((*C.KREUZBERGOpmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *OpmlExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *OpmlExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_opml_extractor_supported_mime_types ((*C.KREUZBERGOpmlExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *OpmlExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_opml_extractor_priority ((*C.KREUZBERGOpmlExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *TypstExtractor) Name() *string {
-    ptr := C.kreuzberg_typst_extractor_name ((*C.KREUZBERGTypstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *TypstExtractor) Version() *string {
-    ptr := C.kreuzberg_typst_extractor_version ((*C.KREUZBERGTypstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *TypstExtractor) Initialize() error {
-    C.kreuzberg_typst_extractor_initialize ((*C.KREUZBERGTypstExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *TypstExtractor) Shutdown() error {
-    C.kreuzberg_typst_extractor_shutdown ((*C.KREUZBERGTypstExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *TypstExtractor) Description() *string {
-    ptr := C.kreuzberg_typst_extractor_description ((*C.KREUZBERGTypstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *TypstExtractor) Author() *string {
-    ptr := C.kreuzberg_typst_extractor_author ((*C.KREUZBERGTypstExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *TypstExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *TypstExtractor) ExtractFile(path string, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *TypstExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_typst_extractor_supported_mime_types ((*C.KREUZBERGTypstExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *TypstExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_typst_extractor_priority ((*C.KREUZBERGTypstExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *JatsExtractor) Name() *string {
-    ptr := C.kreuzberg_jats_extractor_name ((*C.KREUZBERGJatsExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *JatsExtractor) Version() *string {
-    ptr := C.kreuzberg_jats_extractor_version ((*C.KREUZBERGJatsExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *JatsExtractor) Initialize() error {
-    C.kreuzberg_jats_extractor_initialize ((*C.KREUZBERGJatsExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *JatsExtractor) Shutdown() error {
-    C.kreuzberg_jats_extractor_shutdown ((*C.KREUZBERGJatsExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ExtractBytes is a method.
-func (r *JatsExtractor) ExtractBytes(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, _config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *JatsExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_jats_extractor_supported_mime_types ((*C.KREUZBERGJatsExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *JatsExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_jats_extractor_priority ((*C.KREUZBERGJatsExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *PdfExtractor) Name() *string {
-    ptr := C.kreuzberg_pdf_extractor_name ((*C.KREUZBERGPdfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *PdfExtractor) Version() *string {
-    ptr := C.kreuzberg_pdf_extractor_version ((*C.KREUZBERGPdfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *PdfExtractor) Initialize() error {
-    C.kreuzberg_pdf_extractor_initialize ((*C.KREUZBERGPdfExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *PdfExtractor) Shutdown() error {
-    C.kreuzberg_pdf_extractor_shutdown ((*C.KREUZBERGPdfExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ExtractBytes is a method.
-func (r *PdfExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *PdfExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_pdf_extractor_supported_mime_types ((*C.KREUZBERGPdfExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Name is a method.
-func (r *PptExtractor) Name() *string {
-    ptr := C.kreuzberg_ppt_extractor_name ((*C.KREUZBERGPptExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *PptExtractor) Version() *string {
-    ptr := C.kreuzberg_ppt_extractor_version ((*C.KREUZBERGPptExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *PptExtractor) Initialize() error {
-    C.kreuzberg_ppt_extractor_initialize ((*C.KREUZBERGPptExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *PptExtractor) Shutdown() error {
-    C.kreuzberg_ppt_extractor_shutdown ((*C.KREUZBERGPptExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *PptExtractor) Description() *string {
-    ptr := C.kreuzberg_ppt_extractor_description ((*C.KREUZBERGPptExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *PptExtractor) Author() *string {
-    ptr := C.kreuzberg_ppt_extractor_author ((*C.KREUZBERGPptExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *PptExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *PptExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_ppt_extractor_supported_mime_types ((*C.KREUZBERGPptExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *PptExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_ppt_extractor_priority ((*C.KREUZBERGPptExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *PptxExtractor) Name() *string {
-    ptr := C.kreuzberg_pptx_extractor_name ((*C.KREUZBERGPptxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *PptxExtractor) Version() *string {
-    ptr := C.kreuzberg_pptx_extractor_version ((*C.KREUZBERGPptxExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *PptxExtractor) Initialize() error {
-    C.kreuzberg_pptx_extractor_initialize ((*C.KREUZBERGPptxExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *PptxExtractor) Shutdown() error {
-    C.kreuzberg_pptx_extractor_shutdown ((*C.KREUZBERGPptxExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ExtractBytes is a method.
-func (r *PptxExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ExtractFile is a method.
-func (r *PptxExtractor) ExtractFile(path string, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_fileSync(path, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *PptxExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_pptx_extractor_supported_mime_types ((*C.KREUZBERGPptxExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *PptxExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_pptx_extractor_priority ((*C.KREUZBERGPptxExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *RtfExtractor) Name() *string {
-    ptr := C.kreuzberg_rtf_extractor_name ((*C.KREUZBERGRtfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *RtfExtractor) Version() *string {
-    ptr := C.kreuzberg_rtf_extractor_version ((*C.KREUZBERGRtfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *RtfExtractor) Initialize() error {
-    C.kreuzberg_rtf_extractor_initialize ((*C.KREUZBERGRtfExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *RtfExtractor) Shutdown() error {
-    C.kreuzberg_rtf_extractor_shutdown ((*C.KREUZBERGRtfExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *RtfExtractor) Description() *string {
-    ptr := C.kreuzberg_rtf_extractor_description ((*C.KREUZBERGRtfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *RtfExtractor) Author() *string {
-    ptr := C.kreuzberg_rtf_extractor_author ((*C.KREUZBERGRtfExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractBytes is a method.
-func (r *RtfExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *RtfExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_rtf_extractor_supported_mime_types ((*C.KREUZBERGRtfExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *RtfExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_rtf_extractor_priority ((*C.KREUZBERGRtfExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// Name is a method.
-func (r *XmlExtractor) Name() *string {
-    ptr := C.kreuzberg_xml_extractor_name ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *XmlExtractor) Version() *string {
-    ptr := C.kreuzberg_xml_extractor_version ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *XmlExtractor) Initialize() error {
-    C.kreuzberg_xml_extractor_initialize ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *XmlExtractor) Shutdown() error {
-    C.kreuzberg_xml_extractor_shutdown ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Description is a method.
-func (r *XmlExtractor) Description() *string {
-    ptr := C.kreuzberg_xml_extractor_description ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Author is a method.
-func (r *XmlExtractor) Author() *string {
-    ptr := C.kreuzberg_xml_extractor_author ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractSync is a method.
-func (r *XmlExtractor) ExtractSync(content []byte, mime_type string, _config ExtractionConfig) (*string, error) {
-    cContent := (*C.uchar)(unsafe.Pointer(&content[0]))
-
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    jsonBytescConfig, err := json.Marshal(_config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_xml_extractor_extract_sync ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)), cContent, cMimeType, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// ExtractBytes is a method.
-func (r *XmlExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *XmlExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_xml_extractor_supported_mime_types ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *XmlExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_xml_extractor_priority ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
-// AsSyncExtractor is a method.
-func (r *XmlExtractor) AsSyncExtractor() **SyncExtractor {
-    ptr := C.kreuzberg_xml_extractor_as_sync_extractor ((*C.KREUZBERGXmlExtractor)(unsafe.Pointer(r)))
-    return &SyncExtractor{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Name is a method.
-func (r *DocbookExtractor) Name() *string {
-    ptr := C.kreuzberg_docbook_extractor_name ((*C.KREUZBERGDocbookExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *DocbookExtractor) Version() *string {
-    ptr := C.kreuzberg_docbook_extractor_version ((*C.KREUZBERGDocbookExtractor)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *DocbookExtractor) Initialize() error {
-    C.kreuzberg_docbook_extractor_initialize ((*C.KREUZBERGDocbookExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *DocbookExtractor) Shutdown() error {
-    C.kreuzberg_docbook_extractor_shutdown ((*C.KREUZBERGDocbookExtractor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ExtractBytes is a method.
-func (r *DocbookExtractor) ExtractBytes(content []byte, mime_type string, config ExtractionConfig) (*string, error) {
-    resultCh := make(chan *string, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.extract_bytesSync(content, mime_type, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportedMimeTypes is a method.
-func (r *DocbookExtractor) SupportedMimeTypes() *[]string {
-    ptr := C.kreuzberg_docbook_extractor_supported_mime_types ((*C.KREUZBERGDocbookExtractor)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Priority is a method.
-func (r *DocbookExtractor) Priority() *int32 {
-    ptr := C.kreuzberg_docbook_extractor_priority ((*C.KREUZBERGDocbookExtractor)(unsafe.Pointer(r)))
-    return func() *int32 { v := int32(ptr); return &v }()
-}
-
-
 // Return a model to the cache for reuse.
 //
 // If the cache already holds a model (e.g. from a concurrent caller),
@@ -26415,481 +18894,6 @@ func (r *ModelCache) Put(model string) {
 func (r *ModelCache) Take() **string {
     ptr := C.kreuzberg_model_cache_take ((*C.KREUZBERGModelCache)(unsafe.Pointer(r)))
     return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Formats the panic context as a human-readable string.
-func (r *PanicContext) Format() *string {
-    ptr := C.kreuzberg_panic_context_format ((*C.KREUZBERGPanicContext)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Register a document extractor.
-//
-// The extractor is registered for all MIME types it supports.
-//
-// # Arguments
-//
-// * `extractor` - The extractor to register
-//
-// # Returns
-//
-// - `Ok(())` if registration succeeded
-// - `Err(...)` if initialization failed
-func (r *DocumentExtractorRegistry) Register(extractor string) error {
-    cExtractor := C.CString(extractor)
-    defer C.free(unsafe.Pointer(cExtractor))
-
-    C.kreuzberg_document_extractor_registry_register ((*C.KREUZBERGDocumentExtractorRegistry)(unsafe.Pointer(r)), cExtractor)
-    return lastError()
-}
-
-
-// Get the highest priority extractor for a MIME type.
-//
-// # Arguments
-//
-// * `mime_type` - MIME type to look up
-//
-// # Returns
-//
-// The highest priority extractor, or an error if none found.
-func (r *DocumentExtractorRegistry) Get(mime_type string) (*string, error) {
-    cMimeType := C.CString(mime_type)
-    defer C.free(unsafe.Pointer(cMimeType))
-
-    ptr := C.kreuzberg_document_extractor_registry_get ((*C.KREUZBERGDocumentExtractorRegistry)(unsafe.Pointer(r)), cMimeType)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// List all registered extractors.
-func (r *DocumentExtractorRegistry) List() *[]string {
-    ptr := C.kreuzberg_document_extractor_registry_list ((*C.KREUZBERGDocumentExtractorRegistry)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Remove an extractor from the registry.
-func (r *DocumentExtractorRegistry) Remove(name string) error {
-    cName := C.CString(name)
-    defer C.free(unsafe.Pointer(cName))
-
-    C.kreuzberg_document_extractor_registry_remove ((*C.KREUZBERGDocumentExtractorRegistry)(unsafe.Pointer(r)), cName)
-    return lastError()
-}
-
-
-// Shutdown all extractors and clear the registry.
-func (r *DocumentExtractorRegistry) ShutdownAll() error {
-    C.kreuzberg_document_extractor_registry_shutdown_all ((*C.KREUZBERGDocumentExtractorRegistry)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Register an OCR backend.
-//
-// # Arguments
-//
-// * `backend` - The OCR backend to register
-//
-// # Returns
-//
-// - `Ok(())` if registration succeeded
-// - `Err(...)` if initialization failed
-//
-// # Example
-//
-// ```rust,no_run
-// # use kreuzberg::plugins::registry::OcrBackendRegistry;
-// # use std::sync::Arc;
-// let mut registry = OcrBackendRegistry::new();
-// // let backend = Arc::new(MyOcrBackend::new());
-// // registry.register(backend)?;
-// # Ok::<(), kreuzberg::KreuzbergError>(())
-// ```
-func (r *OcrBackendRegistry) Register(backend *OcrBackend) error {
-    cBackend := (*C.KREUZBERGOcrBackend)(unsafe.Pointer(backend.ptr))
-
-    C.kreuzberg_ocr_backend_registry_register ((*C.KREUZBERGOcrBackendRegistry)(unsafe.Pointer(r)), cBackend)
-    return lastError()
-}
-
-
-// Get an OCR backend by name.
-//
-// # Arguments
-//
-// * `name` - Backend name
-//
-// # Returns
-//
-// The backend if found, or an error if not registered.
-func (r *OcrBackendRegistry) Get(name string) (*OcrBackend, error) {
-    cName := C.CString(name)
-    defer C.free(unsafe.Pointer(cName))
-
-    ptr := C.kreuzberg_ocr_backend_registry_get ((*C.KREUZBERGOcrBackendRegistry)(unsafe.Pointer(r)), cName)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return &OcrBackend{ptr: unsafe.Pointer(ptr)}, nil
-}
-
-
-// Get an OCR backend that supports a specific language.
-//
-// Returns the first backend that supports the language.
-//
-// # Arguments
-//
-// * `language` - Language code (e.g., "eng", "deu")
-//
-// # Returns
-//
-// The first backend supporting the language, or an error if none found.
-func (r *OcrBackendRegistry) GetForLanguage(language string) (*OcrBackend, error) {
-    cLanguage := C.CString(language)
-    defer C.free(unsafe.Pointer(cLanguage))
-
-    ptr := C.kreuzberg_ocr_backend_registry_get_for_language ((*C.KREUZBERGOcrBackendRegistry)(unsafe.Pointer(r)), cLanguage)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return &OcrBackend{ptr: unsafe.Pointer(ptr)}, nil
-}
-
-
-// List all registered backend names.
-func (r *OcrBackendRegistry) List() *[]string {
-    ptr := C.kreuzberg_ocr_backend_registry_list ((*C.KREUZBERGOcrBackendRegistry)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Remove a backend from the registry.
-//
-// Calls `shutdown()` on the backend before removing.
-func (r *OcrBackendRegistry) Remove(name string) error {
-    cName := C.CString(name)
-    defer C.free(unsafe.Pointer(cName))
-
-    C.kreuzberg_ocr_backend_registry_remove ((*C.KREUZBERGOcrBackendRegistry)(unsafe.Pointer(r)), cName)
-    return lastError()
-}
-
-
-// Shutdown all backends and clear the registry.
-func (r *OcrBackendRegistry) ShutdownAll() error {
-    C.kreuzberg_ocr_backend_registry_shutdown_all ((*C.KREUZBERGOcrBackendRegistry)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown all backends and re-register the built-in defaults.
-func (r *OcrBackendRegistry) ResetToDefaults() error {
-    C.kreuzberg_ocr_backend_registry_reset_to_defaults ((*C.KREUZBERGOcrBackendRegistry)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Register a post-processor.
-//
-// # Arguments
-//
-// * `processor` - The post-processor to register
-// * `priority` - Execution priority (higher = runs first within stage)
-func (r *PostProcessorRegistry) Register(processor string, priority int32) error {
-    cProcessor := C.CString(processor)
-    defer C.free(unsafe.Pointer(cProcessor))
-
-    C.kreuzberg_post_processor_registry_register ((*C.KREUZBERGPostProcessorRegistry)(unsafe.Pointer(r)), cProcessor, cPriority)
-    return lastError()
-}
-
-
-// Get all processors for a specific stage, in priority order.
-//
-// # Arguments
-//
-// * `stage` - The processing stage
-//
-// # Returns
-//
-// Vector of processors in priority order (highest first).
-func (r *PostProcessorRegistry) GetForStage(stage string) *[]string {
-    cStage := C.CString(stage)
-    defer C.free(unsafe.Pointer(cStage))
-
-    ptr := C.kreuzberg_post_processor_registry_get_for_stage ((*C.KREUZBERGPostProcessorRegistry)(unsafe.Pointer(r)), cStage)
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// List all registered processor names.
-func (r *PostProcessorRegistry) List() *[]string {
-    ptr := C.kreuzberg_post_processor_registry_list ((*C.KREUZBERGPostProcessorRegistry)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Remove a processor from the registry.
-func (r *PostProcessorRegistry) Remove(name string) error {
-    cName := C.CString(name)
-    defer C.free(unsafe.Pointer(cName))
-
-    C.kreuzberg_post_processor_registry_remove ((*C.KREUZBERGPostProcessorRegistry)(unsafe.Pointer(r)), cName)
-    return lastError()
-}
-
-
-// Shutdown all processors and clear the registry.
-func (r *PostProcessorRegistry) ShutdownAll() error {
-    C.kreuzberg_post_processor_registry_shutdown_all ((*C.KREUZBERGPostProcessorRegistry)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Register a renderer.
-//
-// # Arguments
-//
-// * `renderer` - The renderer to register
-//
-// # Returns
-//
-// - `Ok(())` if registration succeeded
-// - `Err(...)` if the renderer name is invalid
-//
-// # Example
-//
-// ```rust,no_run
-// # use kreuzberg::plugins::registry::RendererRegistry;
-// # use std::sync::Arc;
-// let mut registry = RendererRegistry::new();
-// // let renderer = Arc::new(MyRenderer);
-// // registry.register(renderer)?;
-// # Ok::<(), kreuzberg::KreuzbergError>(())
-// ```
-func (r *RendererRegistry) Register(renderer *Renderer) error {
-    cRenderer := (*C.KREUZBERGRenderer)(unsafe.Pointer(renderer.ptr))
-
-    C.kreuzberg_renderer_registry_register ((*C.KREUZBERGRendererRegistry)(unsafe.Pointer(r)), cRenderer)
-    return lastError()
-}
-
-
-// Get a renderer by name.
-//
-// # Arguments
-//
-// * `name` - Renderer name (e.g., "markdown", "html")
-//
-// # Returns
-//
-// The renderer if found, or an error if not registered.
-func (r *RendererRegistry) Get(name string) (*Renderer, error) {
-    cName := C.CString(name)
-    defer C.free(unsafe.Pointer(cName))
-
-    ptr := C.kreuzberg_renderer_registry_get ((*C.KREUZBERGRendererRegistry)(unsafe.Pointer(r)), cName)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return &Renderer{ptr: unsafe.Pointer(ptr)}, nil
-}
-
-
-// Render a document using the named renderer.
-//
-// Convenience method that looks up the renderer by name and renders the document.
-//
-// # Arguments
-//
-// * `name` - Renderer name (e.g., "markdown", "html")
-// * `doc` - The internal document to render
-//
-// # Returns
-//
-// The rendered output string, or an error if the renderer is not found or rendering fails.
-func (r *RendererRegistry) Render(name string, doc string) (*string, error) {
-    cName := C.CString(name)
-    defer C.free(unsafe.Pointer(cName))
-
-    cDoc := C.CString(doc)
-    defer C.free(unsafe.Pointer(cDoc))
-
-    ptr := C.kreuzberg_renderer_registry_render ((*C.KREUZBERGRendererRegistry)(unsafe.Pointer(r)), cName, cDoc)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// List all registered renderer names.
-func (r *RendererRegistry) List() *[]string {
-    ptr := C.kreuzberg_renderer_registry_list ((*C.KREUZBERGRendererRegistry)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Remove a renderer from the registry.
-func (r *RendererRegistry) Remove(name string) {
-    cName := C.CString(name)
-    defer C.free(unsafe.Pointer(cName))
-
-    C.kreuzberg_renderer_registry_remove ((*C.KREUZBERGRendererRegistry)(unsafe.Pointer(r)), cName)
-}
-
-
-// Clear all renderers and re-register the built-in defaults.
-func (r *RendererRegistry) ResetToDefaults() error {
-    C.kreuzberg_renderer_registry_reset_to_defaults ((*C.KREUZBERGRendererRegistry)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Register a validator.
-//
-// # Arguments
-//
-// * `validator` - The validator to register
-func (r *ValidatorRegistry) Register(validator string) error {
-    cValidator := C.CString(validator)
-    defer C.free(unsafe.Pointer(cValidator))
-
-    C.kreuzberg_validator_registry_register ((*C.KREUZBERGValidatorRegistry)(unsafe.Pointer(r)), cValidator)
-    return lastError()
-}
-
-
-// Get all validators in priority order.
-//
-// # Returns
-//
-// Vector of validators in priority order (highest first).
-func (r *ValidatorRegistry) GetAll() *[]string {
-    ptr := C.kreuzberg_validator_registry_get_all ((*C.KREUZBERGValidatorRegistry)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// List all registered validator names.
-func (r *ValidatorRegistry) List() *[]string {
-    ptr := C.kreuzberg_validator_registry_list ((*C.KREUZBERGValidatorRegistry)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Remove a validator from the registry.
-func (r *ValidatorRegistry) Remove(name string) error {
-    cName := C.CString(name)
-    defer C.free(unsafe.Pointer(cName))
-
-    C.kreuzberg_validator_registry_remove ((*C.KREUZBERGValidatorRegistry)(unsafe.Pointer(r)), cName)
-    return lastError()
-}
-
-
-// Shutdown all validators and clear the registry.
-func (r *ValidatorRegistry) ShutdownAll() error {
-    C.kreuzberg_validator_registry_shutdown_all ((*C.KREUZBERGValidatorRegistry)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Get the language code being used for stopwords and semantic analysis.
-func (r *TokenReducer) Language() *string {
-    ptr := C.kreuzberg_token_reducer_language ((*C.KREUZBERGTokenReducer)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Reduce is a method.
-func (r *TokenReducer) Reduce(text string) *string {
-    cText := C.CString(text)
-    defer C.free(unsafe.Pointer(cText))
-
-    ptr := C.kreuzberg_token_reducer_reduce ((*C.KREUZBERGTokenReducer)(unsafe.Pointer(r)), cText)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// BatchReduce is a method.
-func (r *TokenReducer) BatchReduce(texts []string) *[]string {
-    jsonBytescTexts, err := json.Marshal(texts)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    cTexts := C.CString(string(jsonBytescTexts))
-    defer C.free(unsafe.Pointer(cTexts))
-
-    ptr := C.kreuzberg_token_reducer_batch_reduce ((*C.KREUZBERGTokenReducer)(unsafe.Pointer(r)), cTexts)
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
 }
 
 
@@ -27192,26 +19196,6 @@ func (r *Uri) WithPage(page uint32) *Uri {
 }
 
 
-// Calculate the cache hit rate as a percentage (0.0-100.0).
-func (r *PoolMetrics) HitRate() *float64 {
-    ptr := C.kreuzberg_pool_metrics_hit_rate ((*C.KREUZBERGPoolMetrics)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// Get all metrics as a struct for reporting.
-func (r *PoolMetrics) Snapshot() *PoolMetricsSnapshot {
-    ptr := C.kreuzberg_pool_metrics_snapshot ((*C.KREUZBERGPoolMetrics)(unsafe.Pointer(r)))
-    return (*PoolMetricsSnapshot)(unsafe.Pointer(ptr))
-}
-
-
-// Reset all metrics to zero.
-func (r *PoolMetrics) Reset() {
-    C.kreuzberg_pool_metrics_reset ((*C.KREUZBERGPoolMetrics)(unsafe.Pointer(r)))
-}
-
-
 // Acquire an object from the pool or create a new one if empty.
 //
 // # Returns
@@ -27246,33 +19230,6 @@ func (r *Pool) Size() *uint {
 func (r *Pool) Clear() error {
     C.kreuzberg_pool_clear ((*C.KREUZBERGPool)(unsafe.Pointer(r)))
     return lastError()
-}
-
-
-// Calculate the estimated string pool memory in bytes.
-//
-// This is the total estimated memory for all string buffers.
-func (r *PoolSizeHint) EstimatedStringPoolMemory() *uint {
-    ptr := C.kreuzberg_pool_size_hint_estimated_string_pool_memory ((*C.KREUZBERGPoolSizeHint)(unsafe.Pointer(r)))
-    return func() *uint { v := uint(ptr); return &v }()
-}
-
-
-// Calculate the estimated byte pool memory in bytes.
-//
-// This is the total estimated memory for all byte buffers.
-func (r *PoolSizeHint) EstimatedBytePoolMemory() *uint {
-    ptr := C.kreuzberg_pool_size_hint_estimated_byte_pool_memory ((*C.KREUZBERGPoolSizeHint)(unsafe.Pointer(r)))
-    return func() *uint { v := uint(ptr); return &v }()
-}
-
-
-// Calculate the total estimated pool memory in bytes.
-//
-// This includes both string and byte buffer pools.
-func (r *PoolSizeHint) TotalPoolMemory() *uint {
-    ptr := C.kreuzberg_pool_size_hint_total_pool_memory ((*C.KREUZBERGPoolSizeHint)(unsafe.Pointer(r)))
-    return func() *uint { v := uint(ptr); return &v }()
 }
 
 
@@ -27369,84 +19326,6 @@ func (r *InternedString) Deref() *string {
 }
 
 
-// Seconds elapsed since this instant was captured (as `f64`).
-func (r *Instant) ElapsedSecsF64() *float64 {
-    ptr := C.kreuzberg_instant_elapsed_secs_f64 ((*C.KREUZBERGInstant)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// Milliseconds elapsed since this instant was captured (as `f64`).
-func (r *Instant) ElapsedMs() *float64 {
-    ptr := C.kreuzberg_instant_elapsed_ms ((*C.KREUZBERGInstant)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// Milliseconds elapsed as `u128` (mirrors `Duration::as_millis`).
-func (r *Instant) ElapsedMillis() *string {
-    ptr := C.kreuzberg_instant_elapsed_millis ((*C.KREUZBERGInstant)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Get the right edge position.
-func (r *HocrWord) Right() *uint32 {
-    ptr := C.kreuzberg_hocr_word_right ((*C.KREUZBERGHocrWord)(unsafe.Pointer(r)))
-    return func() *uint32 { v := uint32(ptr); return &v }()
-}
-
-
-// Get the bottom edge position.
-func (r *HocrWord) Bottom() *uint32 {
-    ptr := C.kreuzberg_hocr_word_bottom ((*C.KREUZBERGHocrWord)(unsafe.Pointer(r)))
-    return func() *uint32 { v := uint32(ptr); return &v }()
-}
-
-
-// Get the vertical center position.
-func (r *HocrWord) YCenter() *float64 {
-    ptr := C.kreuzberg_hocr_word_y_center ((*C.KREUZBERGHocrWord)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// Get the horizontal center position.
-func (r *HocrWord) XCenter() *float64 {
-    ptr := C.kreuzberg_hocr_word_x_center ((*C.KREUZBERGHocrWord)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// PollReady is a method.
-func (r *ExtractionService) PollReady(_cx string) *string {
-    cCx := C.CString(_cx)
-    defer C.free(unsafe.Pointer(cCx))
-
-    ptr := C.kreuzberg_extraction_service_poll_ready ((*C.KREUZBERGExtractionService)(unsafe.Pointer(r)), cCx)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Call is a method.
-func (r *ExtractionService) Call(req ExtractionRequest) *string {
-    jsonBytescReq, err := json.Marshal(req)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcReq := C.CString(string(jsonBytescReq))
-    cReq := C.kreuzberg_extraction_request_from_json(tmpStrcReq)
-    C.free(unsafe.Pointer(tmpStrcReq))
-    defer C.kreuzberg_extraction_request_free(cReq)
-
-    ptr := C.kreuzberg_extraction_service_call ((*C.KREUZBERGExtractionService)(unsafe.Pointer(r)), cReq)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
 // Layer is a method.
 func (r *TracingLayer) Layer(inner string) *string {
     cInner := C.CString(inner)
@@ -27469,81 +19348,9 @@ func (r *MetricsLayer) Layer(inner string) *string {
 }
 
 
-// Set per-file overrides on this request.
-func (r *ExtractionRequest) WithOverrides(overrides FileExtractionConfig) *ExtractionRequest {
-    jsonBytescOverrides, err := json.Marshal(overrides)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcOverrides := C.CString(string(jsonBytescOverrides))
-    cOverrides := C.kreuzberg_file_extraction_config_from_json(tmpStrcOverrides)
-    C.free(unsafe.Pointer(tmpStrcOverrides))
-    defer C.kreuzberg_file_extraction_config_free(cOverrides)
-
-    ptr := C.kreuzberg_extraction_request_with_overrides ((*C.KREUZBERGExtractionRequest)(unsafe.Pointer(r)), cOverrides)
-    return (*ExtractionRequest)(unsafe.Pointer(ptr))
-}
-
-
-// Add a per-request timeout.
-func (r *ExtractionServiceBuilder) WithTimeout(duration uint64) *ExtractionServiceBuilder {
-    ptr := C.kreuzberg_extraction_service_builder_with_timeout ((*C.KREUZBERGExtractionServiceBuilder)(unsafe.Pointer(r)), cDuration)
-    return &ExtractionServiceBuilder{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Limit concurrent in-flight extractions.
-func (r *ExtractionServiceBuilder) WithConcurrencyLimit(max uint) *ExtractionServiceBuilder {
-    ptr := C.kreuzberg_extraction_service_builder_with_concurrency_limit ((*C.KREUZBERGExtractionServiceBuilder)(unsafe.Pointer(r)), cMax)
-    return &ExtractionServiceBuilder{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Add a tracing span to each extraction request.
-func (r *ExtractionServiceBuilder) WithTracing() *ExtractionServiceBuilder {
-    ptr := C.kreuzberg_extraction_service_builder_with_tracing ((*C.KREUZBERGExtractionServiceBuilder)(unsafe.Pointer(r)))
-    return &ExtractionServiceBuilder{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Add metrics recording to each extraction request.
-//
-// Requires the `otel` feature. This is a no-op when `otel` is not enabled.
-func (r *ExtractionServiceBuilder) WithMetrics() *ExtractionServiceBuilder {
-    ptr := C.kreuzberg_extraction_service_builder_with_metrics ((*C.KREUZBERGExtractionServiceBuilder)(unsafe.Pointer(r)))
-    return &ExtractionServiceBuilder{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// Build the service stack, returning a type-erased cloneable service.
-//
-// Layer order (outermost to innermost):
-// `Tracing → Metrics → Timeout → ConcurrencyLimit → ExtractionService`
-func (r *ExtractionServiceBuilder) Build() *string {
-    ptr := C.kreuzberg_extraction_service_builder_build ((*C.KREUZBERGExtractionServiceBuilder)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
 // IntoResponse is a method.
 func (r *ApiError) IntoResponse() *string {
     ptr := C.kreuzberg_api_error_into_response ((*C.KREUZBERGApiError)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Clone is a method.
-func (r *KreuzbergMcp) Clone() *KreuzbergMcp {
-    ptr := C.kreuzberg_kreuzberg_mcp_clone ((*C.KREUZBERGKreuzbergMcp)(unsafe.Pointer(r)))
-    return &KreuzbergMcp{ptr: unsafe.Pointer(ptr)}
-}
-
-
-// GetInfo is a method.
-func (r *KreuzbergMcp) GetInfo() *string {
-    ptr := C.kreuzberg_kreuzberg_mcp_get_info ((*C.KREUZBERGKreuzbergMcp)(unsafe.Pointer(r)))
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }()
 }
@@ -27738,318 +19545,6 @@ func (r *KeywordConfig) WithLanguage(lang string) *KeywordConfig {
 }
 
 
-// GetCachedResult is a method.
-func (r *OcrCache) GetCachedResult(image_hash string, backend string, config string) (**OcrExtractionResult, error) {
-    cImageHash := C.CString(image_hash)
-    defer C.free(unsafe.Pointer(cImageHash))
-
-    cBackend := C.CString(backend)
-    defer C.free(unsafe.Pointer(cBackend))
-
-    cConfig := C.CString(config)
-    defer C.free(unsafe.Pointer(cConfig))
-
-    ptr := C.kreuzberg_ocr_cache_get_cached_result ((*C.KREUZBERGOcrCache)(unsafe.Pointer(r)), cImageHash, cBackend, cConfig)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return (*OcrExtractionResult)(unsafe.Pointer(ptr)), nil
-}
-
-
-// SetCachedResult is a method.
-func (r *OcrCache) SetCachedResult(image_hash string, backend string, config string, result OcrExtractionResult) error {
-    cImageHash := C.CString(image_hash)
-    defer C.free(unsafe.Pointer(cImageHash))
-
-    cBackend := C.CString(backend)
-    defer C.free(unsafe.Pointer(cBackend))
-
-    cConfig := C.CString(config)
-    defer C.free(unsafe.Pointer(cConfig))
-
-    jsonBytescResult, err := json.Marshal(result)
-    if err != nil {
-        return fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcResult := C.CString(string(jsonBytescResult))
-    cResult := C.kreuzberg_ocr_extraction_result_from_json(tmpStrcResult)
-    C.free(unsafe.Pointer(tmpStrcResult))
-    defer C.kreuzberg_ocr_extraction_result_free(cResult)
-
-    C.kreuzberg_ocr_cache_set_cached_result ((*C.KREUZBERGOcrCache)(unsafe.Pointer(r)), cImageHash, cBackend, cConfig, cResult)
-    return lastError()
-}
-
-
-// Clear is a method.
-func (r *OcrCache) Clear() error {
-    C.kreuzberg_ocr_cache_clear ((*C.KREUZBERGOcrCache)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// GetStats is a method.
-func (r *OcrCache) GetStats() (*OcrCacheStats, error) {
-    ptr := C.kreuzberg_ocr_cache_get_stats ((*C.KREUZBERGOcrCache)(unsafe.Pointer(r)))
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return (*OcrCacheStats)(unsafe.Pointer(ptr)), nil
-}
-
-
-// Get supported languages for a specific OCR backend.
-//
-// # Arguments
-//
-// * `backend` - Backend name (e.g., "easyocr", "paddleocr", "tesseract")
-//
-// # Returns
-//
-// `Some(&[String])` if the backend is registered, `None` otherwise.
-//
-// # Example
-//
-// ```rust
-// use kreuzberg::ocr::LanguageRegistry;
-//
-// let registry = LanguageRegistry::new();
-// if let Some(languages) = registry.get_supported_languages("easyocr") {
-// assert!(languages.contains(&"en".to_string()));
-// }
-// ```
-func (r *LanguageRegistry) GetSupportedLanguages(backend string) **[]string {
-    cBackend := C.CString(backend)
-    defer C.free(unsafe.Pointer(cBackend))
-
-    ptr := C.kreuzberg_language_registry_get_supported_languages ((*C.KREUZBERGLanguageRegistry)(unsafe.Pointer(r)), cBackend)
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Check if a language is supported by a specific backend.
-//
-// # Arguments
-//
-// * `backend` - Backend name
-// * `language` - Language code to check
-//
-// # Returns
-//
-// `true` if the language is supported, `false` otherwise.
-func (r *LanguageRegistry) IsLanguageSupported(backend string, language string) *bool {
-    cBackend := C.CString(backend)
-    defer C.free(unsafe.Pointer(cBackend))
-
-    cLanguage := C.CString(language)
-    defer C.free(unsafe.Pointer(cLanguage))
-
-    ptr := C.kreuzberg_language_registry_is_language_supported ((*C.KREUZBERGLanguageRegistry)(unsafe.Pointer(r)), cBackend, cLanguage)
-    return func() *bool { v := ptr != 0; return &v }()
-}
-
-
-// Get all registered backend names.
-//
-// # Returns
-//
-// A vector of backend names in the registry.
-func (r *LanguageRegistry) GetBackends() *[]string {
-    ptr := C.kreuzberg_language_registry_get_backends ((*C.KREUZBERGLanguageRegistry)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// Get language count for a specific backend.
-//
-// # Arguments
-//
-// * `backend` - Backend name
-//
-// # Returns
-//
-// Number of supported languages for the backend, or 0 if backend not found.
-func (r *LanguageRegistry) GetLanguageCount(backend string) *uint {
-    cBackend := C.CString(backend)
-    defer C.free(unsafe.Pointer(cBackend))
-
-    ptr := C.kreuzberg_language_registry_get_language_count ((*C.KREUZBERGLanguageRegistry)(unsafe.Pointer(r)), cBackend)
-    return func() *uint { v := uint(ptr); return &v }()
-}
-
-
-// ProcessImage is a method.
-func (r *OcrProcessor) ProcessImage(image_bytes []byte, config TesseractConfig) (*OcrExtractionResult, error) {
-    cImageBytes := (*C.uchar)(unsafe.Pointer(&image_bytes[0]))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_tesseract_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_tesseract_config_free(cConfig)
-
-    ptr := C.kreuzberg_ocr_processor_process_image ((*C.KREUZBERGOcrProcessor)(unsafe.Pointer(r)), cImageBytes, cConfig)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return (*OcrExtractionResult)(unsafe.Pointer(ptr)), nil
-}
-
-
-// Process an image with OCR and respect the output format from ExtractionConfig.
-//
-// This variant allows specifying an output format (Plain, Markdown, Djot) which
-// affects how the OCR result's mime_type is set when markdown output is requested.
-func (r *OcrProcessor) ProcessImageWithFormat(image_bytes []byte, config TesseractConfig, output_format OutputFormat) (*OcrExtractionResult, error) {
-    cImageBytes := (*C.uchar)(unsafe.Pointer(&image_bytes[0]))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_tesseract_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_tesseract_config_free(cConfig)
-
-    jsonBytescOutputFormat, err := json.Marshal(output_format)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcOutputFormat := C.CString(string(jsonBytescOutputFormat))
-    cOutputFormat := C.kreuzberg_output_format_from_json(tmpStrcOutputFormat)
-    C.free(unsafe.Pointer(tmpStrcOutputFormat))
-    defer C.kreuzberg_output_format_free(cOutputFormat)
-
-    ptr := C.kreuzberg_ocr_processor_process_image_with_format ((*C.KREUZBERGOcrProcessor)(unsafe.Pointer(r)), cImageBytes, cConfig, cOutputFormat)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return (*OcrExtractionResult)(unsafe.Pointer(ptr)), nil
-}
-
-
-// ClearCache is a method.
-func (r *OcrProcessor) ClearCache() error {
-    C.kreuzberg_ocr_processor_clear_cache ((*C.KREUZBERGOcrProcessor)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// GetCacheStats is a method.
-func (r *OcrProcessor) GetCacheStats() (*OcrCacheStats, error) {
-    ptr := C.kreuzberg_ocr_processor_get_cache_stats ((*C.KREUZBERGOcrProcessor)(unsafe.Pointer(r)))
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return (*OcrCacheStats)(unsafe.Pointer(ptr)), nil
-}
-
-
-// ProcessImageFile is a method.
-func (r *OcrProcessor) ProcessImageFile(file_path string, config TesseractConfig) (*OcrExtractionResult, error) {
-    cFilePath := C.CString(file_path)
-    defer C.free(unsafe.Pointer(cFilePath))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_tesseract_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_tesseract_config_free(cConfig)
-
-    ptr := C.kreuzberg_ocr_processor_process_image_file ((*C.KREUZBERGOcrProcessor)(unsafe.Pointer(r)), cFilePath, cConfig)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return (*OcrExtractionResult)(unsafe.Pointer(ptr)), nil
-}
-
-
-// Process a file with OCR and respect the output format from ExtractionConfig.
-//
-// This variant allows specifying an output format (Plain, Markdown, Djot) which
-// affects how the OCR result's mime_type is set when markdown output is requested.
-func (r *OcrProcessor) ProcessImageFileWithFormat(file_path string, config TesseractConfig, output_format OutputFormat) (*OcrExtractionResult, error) {
-    cFilePath := C.CString(file_path)
-    defer C.free(unsafe.Pointer(cFilePath))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_tesseract_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_tesseract_config_free(cConfig)
-
-    jsonBytescOutputFormat, err := json.Marshal(output_format)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcOutputFormat := C.CString(string(jsonBytescOutputFormat))
-    cOutputFormat := C.kreuzberg_output_format_from_json(tmpStrcOutputFormat)
-    C.free(unsafe.Pointer(tmpStrcOutputFormat))
-    defer C.kreuzberg_output_format_free(cOutputFormat)
-
-    ptr := C.kreuzberg_ocr_processor_process_image_file_with_format ((*C.KREUZBERGOcrProcessor)(unsafe.Pointer(r)), cFilePath, cConfig, cOutputFormat)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return (*OcrExtractionResult)(unsafe.Pointer(ptr)), nil
-}
-
-
-// Process multiple image files in parallel using Rayon.
-//
-// This method processes OCR operations in parallel across CPU cores for improved throughput.
-// Results are returned in the same order as the input file paths.
-func (r *OcrProcessor) ProcessImageFilesBatch(file_paths []string, config TesseractConfig) *[]string {
-    jsonBytescFilePaths, err := json.Marshal(file_paths)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    cFilePaths := C.CString(string(jsonBytescFilePaths))
-    defer C.free(unsafe.Pointer(cFilePaths))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_tesseract_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_tesseract_config_free(cConfig)
-
-    ptr := C.kreuzberg_ocr_processor_process_image_files_batch ((*C.KREUZBERGOcrProcessor)(unsafe.Pointer(r)), cFilePaths, cConfig)
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
 // Get the cache directory path.
 func (r *TessdataManager) CacheDir() *string {
     ptr := C.kreuzberg_tessdata_manager_cache_dir ((*C.KREUZBERGTessdataManager)(unsafe.Pointer(r)))
@@ -28064,105 +19559,6 @@ func (r *TessdataManager) IsLanguageCached(lang string) *bool {
     defer C.free(unsafe.Pointer(cLang))
 
     ptr := C.kreuzberg_tessdata_manager_is_language_cached ((*C.KREUZBERGTessdataManager)(unsafe.Pointer(r)), cLang)
-    return func() *bool { v := ptr != 0; return &v }()
-}
-
-
-// Name is a method.
-func (r *TesseractBackend) Name() *string {
-    ptr := C.kreuzberg_tesseract_backend_name ((*C.KREUZBERGTesseractBackend)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Version is a method.
-func (r *TesseractBackend) Version() *string {
-    ptr := C.kreuzberg_tesseract_backend_version ((*C.KREUZBERGTesseractBackend)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Initialize is a method.
-func (r *TesseractBackend) Initialize() error {
-    C.kreuzberg_tesseract_backend_initialize ((*C.KREUZBERGTesseractBackend)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// Shutdown is a method.
-func (r *TesseractBackend) Shutdown() error {
-    C.kreuzberg_tesseract_backend_shutdown ((*C.KREUZBERGTesseractBackend)(unsafe.Pointer(r)))
-    return lastError()
-}
-
-
-// ProcessImage is a method.
-func (r *TesseractBackend) ProcessImage(image_bytes []byte, config OcrConfig) (*ExtractionResult, error) {
-    resultCh := make(chan *ExtractionResult, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.process_imageSync(image_bytes, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// ProcessImageFile is a method.
-func (r *TesseractBackend) ProcessImageFile(path string, config OcrConfig) (*ExtractionResult, error) {
-    resultCh := make(chan *ExtractionResult, 1)
-    errCh := make(chan error, 1)
-    go func() {
-        result, err := r.process_image_fileSync(path, config)
-        if err != nil {
-            errCh <- err
-        } else {
-            resultCh <- result
-        }
-    }()
-    return resultCh, errCh
-}
-
-
-// SupportsLanguage is a method.
-func (r *TesseractBackend) SupportsLanguage(lang string) *bool {
-    cLang := C.CString(lang)
-    defer C.free(unsafe.Pointer(cLang))
-
-    ptr := C.kreuzberg_tesseract_backend_supports_language ((*C.KREUZBERGTesseractBackend)(unsafe.Pointer(r)), cLang)
-    return func() *bool { v := ptr != 0; return &v }()
-}
-
-
-// BackendType is a method.
-func (r *TesseractBackend) BackendType() *OcrBackendType {
-    ptr := C.kreuzberg_tesseract_backend_backend_type ((*C.KREUZBERGTesseractBackend)(unsafe.Pointer(r)))
-    return (*OcrBackendType)(unsafe.Pointer(ptr))
-}
-
-
-// SupportedLanguages is a method.
-func (r *TesseractBackend) SupportedLanguages() *[]string {
-    ptr := C.kreuzberg_tesseract_backend_supported_languages ((*C.KREUZBERGTesseractBackend)(unsafe.Pointer(r)))
-    return func() *[]string {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []string
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}()
-}
-
-
-// SupportsTableDetection is a method.
-func (r *TesseractBackend) SupportsTableDetection() *bool {
-    ptr := C.kreuzberg_tesseract_backend_supports_table_detection ((*C.KREUZBERGTesseractBackend)(unsafe.Pointer(r)))
     return func() *bool { v := ptr != 0; return &v }()
 }
 
@@ -28453,154 +19849,6 @@ func (r *LayoutDetection) Fmt(f string) *string {
     defer C.free(unsafe.Pointer(cF))
 
     ptr := C.kreuzberg_layout_detection_fmt ((*C.KREUZBERGLayoutDetection)(unsafe.Pointer(r)), cF)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// ExtractImages is a method.
-func (r *PdfImageExtractor) ExtractImages() (*[]PdfImage, error) {
-    ptr := C.kreuzberg_pdf_image_extractor_extract_images ((*C.KREUZBERGPdfImageExtractor)(unsafe.Pointer(r)))
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return func() *[]PdfImage {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []PdfImage
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}(), nil
-}
-
-
-// ExtractImagesFromPage is a method.
-func (r *PdfImageExtractor) ExtractImagesFromPage(page_number uint32) (*[]PdfImage, error) {
-    ptr := C.kreuzberg_pdf_image_extractor_extract_images_from_page ((*C.KREUZBERGPdfImageExtractor)(unsafe.Pointer(r)), cPageNumber)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return func() *[]PdfImage {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []PdfImage
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}(), nil
-}
-
-
-// GetImageCount is a method.
-func (r *PdfImageExtractor) GetImageCount() (*uint, error) {
-    ptr := C.kreuzberg_pdf_image_extractor_get_image_count ((*C.KREUZBERGPdfImageExtractor)(unsafe.Pointer(r)))
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return func() *uint { v := uint(ptr); return &v }(), nil
-}
-
-
-// Width is a method.
-func (r *PdfLayoutBBox) Width() *float32 {
-    ptr := C.kreuzberg_pdf_layout_b_box_width ((*C.KREUZBERGPdfLayoutBBox)(unsafe.Pointer(r)))
-    return func() *float32 { v := float32(ptr); return &v }()
-}
-
-
-// Height is a method.
-func (r *PdfLayoutBBox) Height() *float32 {
-    ptr := C.kreuzberg_pdf_layout_b_box_height ((*C.KREUZBERGPdfLayoutBBox)(unsafe.Pointer(r)))
-    return func() *float32 { v := float32(ptr); return &v }()
-}
-
-
-// AvgRenderMs is a method.
-func (r *LayoutTimingReport) AvgRenderMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_avg_render_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// AvgInferenceMs is a method.
-func (r *LayoutTimingReport) AvgInferenceMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_avg_inference_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// AvgPreprocessMs is a method.
-func (r *LayoutTimingReport) AvgPreprocessMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_avg_preprocess_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// AvgOnnxMs is a method.
-func (r *LayoutTimingReport) AvgOnnxMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_avg_onnx_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// AvgPostprocessMs is a method.
-func (r *LayoutTimingReport) AvgPostprocessMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_avg_postprocess_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// TotalInferenceMs is a method.
-func (r *LayoutTimingReport) TotalInferenceMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_total_inference_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// TotalRenderMs is a method.
-func (r *LayoutTimingReport) TotalRenderMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_total_render_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// TotalPreprocessMs is a method.
-func (r *LayoutTimingReport) TotalPreprocessMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_total_preprocess_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// TotalOnnxMs is a method.
-func (r *LayoutTimingReport) TotalOnnxMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_total_onnx_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// TotalPostprocessMs is a method.
-func (r *LayoutTimingReport) TotalPostprocessMs() *float64 {
-    ptr := C.kreuzberg_layout_timing_report_total_postprocess_ms ((*C.KREUZBERGLayoutTimingReport)(unsafe.Pointer(r)))
-    return func() *float64 { v := float64(ptr); return &v }()
-}
-
-
-// Number of pages in the PDF.
-func (r *PdfPageIterator) PageCount() *uint {
-    ptr := C.kreuzberg_pdf_page_iterator_page_count ((*C.KREUZBERGPdfPageIterator)(unsafe.Pointer(r)))
-    return func() *uint { v := uint(ptr); return &v }()
-}
-
-
-// Next is a method.
-func (r *PdfPageIterator) Next() **string {
-    ptr := C.kreuzberg_pdf_page_iterator_next ((*C.KREUZBERGPdfPageIterator)(unsafe.Pointer(r)))
-    return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// SizeHint is a method.
-func (r *PdfPageIterator) SizeHint() *string {
-    ptr := C.kreuzberg_pdf_page_iterator_size_hint ((*C.KREUZBERGPdfPageIterator)(unsafe.Pointer(r)))
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }()
 }

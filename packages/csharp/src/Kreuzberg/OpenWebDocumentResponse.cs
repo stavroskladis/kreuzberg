@@ -23,6 +23,6 @@ public sealed class OpenWebDocumentResponse
     /// Document metadata
     /// </summary>
     [JsonPropertyName("metadata")]
-    public OpenWebDocumentMetadata Metadata { get; set; } = default!;
+    public string Metadata { get; set; } = "";
 
 }

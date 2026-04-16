@@ -13,7 +13,7 @@ public record PdfExtractionMetadata(
     @JsonProperty("created_at") Optional<String> createdAt,
     @JsonProperty("modified_at") Optional<String> modifiedAt,
     @JsonProperty("created_by") Optional<String> createdBy,
-    @JsonProperty("pdf_specific") PdfMetadata pdfSpecific,
+    @JsonProperty("pdf_specific") String pdfSpecific,
     @JsonProperty("page_structure") Optional<PageStructure> pageStructure
 ) {
 }
