@@ -159,11 +159,27 @@ def _to_rust_ocr_quality_thresholds(
     )
 
 
+def _to_rust_llm_config(value: LlmConfig | None) -> _rust.LlmConfig | None:
+    """Convert Python LlmConfig to Rust binding type."""
+    if value is None:
+        return None
+    return _rust.LlmConfig(
+        model=value.model,
+        api_key=value.api_key,
+        base_url=value.base_url,
+        timeout_secs=value.timeout_secs,
+        max_retries=value.max_retries,
+        temperature=value.temperature,
+        max_tokens=value.max_tokens,
+    )
+
+
 def _to_rust_ocr_config(value: OcrConfig | None) -> _rust.OcrConfig | None:
     """Convert Python OcrConfig to Rust binding type."""
     if value is None:
         return None
     return _rust.OcrConfig(
+        enabled=value.enabled,
         backend=value.backend,
         language=value.language,
         tesseract_config=_to_rust_tesseract_config(value.tesseract_config),
@@ -173,7 +189,7 @@ def _to_rust_ocr_config(value: OcrConfig | None) -> _rust.OcrConfig | None:
         quality_thresholds=_to_rust_ocr_quality_thresholds(value.quality_thresholds),
         pipeline=value.pipeline,
         auto_rotate=value.auto_rotate,
-        vlm_config=value.vlm_config,
+        vlm_config=_to_rust_llm_config(value.vlm_config),
         vlm_prompt=value.vlm_prompt,
     )
 
@@ -873,7 +889,8 @@ def validate_llm_config_model(model: str) -> None:
 
 def validate_vlm_backend_config(backend: str, vlm_config: LlmConfig | None = None) -> None:
     """Validate that a VLM OCR backend has the required `vlm_config`."""
-    return _rust.validate_vlm_backend_config(backend, vlm_config)
+    _rust_vlm_config = _to_rust_llm_config(vlm_config)
+    return _rust.validate_vlm_backend_config(backend, _rust_vlm_config)
 
 
 def validate_structured_extraction_schema(schema: dict[str, Any], llm_model: str) -> None:
@@ -1362,6 +1379,11 @@ def extract_text_with_page_breaks(bytes: bytes) -> str:
 def detect_page_breaks_from_docx(bytes: bytes) -> list[_rust.PageBoundary] | None:
     """Detect explicit page break positions in document.xml and extract full text with page boun."""
     return _rust.detect_page_breaks_from_docx(bytes)
+
+
+def detect_table_page_numbers(bytes: bytes) -> list[int]:
+    """Compute the 1-based page number for each top-level table in the document."""
+    return _rust.detect_table_page_numbers(bytes)
 
 
 def extract_ooxml_embedded_objects(zip_bytes: bytes, embeddings_prefix: str, source_label: str, config: ExtractionConfig) -> str:
@@ -2137,7 +2159,8 @@ def validate_utf8_boundaries(text: str, boundaries: list[PageBoundary]) -> None:
 
 def create_client(config: LlmConfig) -> str:
     """Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`]."""
-    return _rust.create_client(config)
+    _rust_config = _to_rust_llm_config(config)
+    return _rust.create_client(_rust_config)
 
 
 def render_template(template: str, context: str) -> str:
@@ -2152,7 +2175,8 @@ def extract_structured(content: str, config: StructuredExtractionConfig) -> str:
 
 def vlm_ocr(image_bytes: bytes, image_mime_type: str, language: str, config: LlmConfig) -> str:
     """Perform OCR on an image using a vision language model."""
-    return _rust.vlm_ocr(image_bytes, image_mime_type, language, config)
+    _rust_config = _to_rust_llm_config(config)
+    return _rust.vlm_ocr(image_bytes, image_mime_type, language, _rust_config)
 
 
 def normalize(v: list[float]) -> list[float]:

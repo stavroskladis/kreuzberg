@@ -231,7 +231,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Validate that a VLM OCR backend has the required `vlm_config`."
-  @spec validate_vlm_backend_config(String.t(), map() | nil) :: {:ok, nil} | {:error, String.t()}
+  @spec validate_vlm_backend_config(String.t(), String.t() | nil | nil) :: {:ok, nil} | {:error, String.t()}
   def validate_vlm_backend_config(backend, vlm_config) do
     Kreuzberg.Native.validate_vlm_backend_config(backend, vlm_config)
   end
@@ -900,6 +900,12 @@ defmodule Kreuzberg do
   @spec detect_page_breaks_from_docx(binary()) :: {:ok, [map()] | nil} | {:error, String.t()}
   def detect_page_breaks_from_docx(bytes) do
     Kreuzberg.Native.detect_page_breaks_from_docx(bytes)
+  end
+
+  @doc "Compute the 1-based page number for each top-level table in the document."
+  @spec detect_table_page_numbers(binary()) :: {:ok, [non_neg_integer()]} | {:error, String.t()}
+  def detect_table_page_numbers(bytes) do
+    Kreuzberg.Native.detect_table_page_numbers(bytes)
   end
 
   @doc "Extract embedded objects from an OOXML ZIP archive and recursively process them."
@@ -1863,7 +1869,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`]."
-  @spec create_client(map()) :: {:ok, String.t()} | {:error, String.t()}
+  @spec create_client(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
   def create_client(config) do
     Kreuzberg.Native.create_client(config)
   end
@@ -1881,7 +1887,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Perform OCR on an image using a vision language model."
-  @spec vlm_ocr_async(binary(), String.t(), String.t(), map()) :: {:ok, String.t()} | {:error, String.t()}
+  @spec vlm_ocr_async(binary(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
   def vlm_ocr_async(image_bytes, image_mime_type, language, config) do
     Kreuzberg.Native.vlm_ocr_async(image_bytes, image_mime_type, language, config)
   end
@@ -2670,6 +2676,12 @@ defmodule Kreuzberg do
   @spec extractionconfig_validate(map()) :: {:ok, nil} | {:error, String.t()}
   def extractionconfig_validate(obj) do
     Kreuzberg.Native.extractionconfig_validate(obj)
+  end
+
+  @doc "Returns the effective disable-OCR value, accounting for both the top-level"
+  @spec extractionconfig_effective_disable_ocr(map()) :: boolean()
+  def extractionconfig_effective_disable_ocr(obj) do
+    Kreuzberg.Native.extractionconfig_effective_disable_ocr(obj)
   end
 
   @doc "Check if image processing is needed by examining OCR and image extraction settings."

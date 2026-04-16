@@ -5,6 +5,7 @@ import java.util.Optional;
 
 public class OcrConfigBuilder {
 
+    private boolean enabled = false;
     private String backend = "";
     private String language = "";
     private Optional<TesseractConfig> tesseractConfig = Optional.empty();
@@ -16,6 +17,11 @@ public class OcrConfigBuilder {
     private boolean autoRotate = false;
     private Optional<LlmConfig> vlmConfig = Optional.empty();
     private Optional<String> vlmPrompt = Optional.empty();
+
+    public OcrConfigBuilder withEnabled(boolean value) {
+        this.enabled = value;
+        return this;
+    }
 
     public OcrConfigBuilder withBackend(String value) {
         this.backend = value;
@@ -74,6 +80,7 @@ public class OcrConfigBuilder {
 
     public OcrConfig build() {
         return new OcrConfig(
+            enabled,
             backend,
             language,
             tesseractConfig,

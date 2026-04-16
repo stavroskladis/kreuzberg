@@ -1130,6 +1130,19 @@ KREUZBERGExtractionConfig *kreuzberg_extraction_config_normalized(const KREUZBER
 int32_t kreuzberg_extraction_config_validate(const KREUZBERGExtractionConfig *this_);
 
 /**
+ * Returns the effective disable-OCR value, accounting for both the top-level
+ * `disable_ocr` flag and the `ocr.enabled` shorthand on [`OcrConfig`].
+ *
+ * Setting `ocr.enabled = false` in configuration is treated as equivalent to
+ * `disable_ocr = true`. This method is the single source of truth for whether
+ * OCR should be skipped.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+int32_t kreuzberg_extraction_config_effective_disable_ocr(const KREUZBERGExtractionConfig *this_);
+
+/**
  * Check if image processing is needed by examining OCR and image extraction settings.
  *
  * Returns `true` if either OCR is enabled or image extraction is configured,
@@ -1966,6 +1979,13 @@ char *kreuzberg_ocr_config_to_json(const KREUZBERGOcrConfig *ptr);
  * Pointer must have been returned by this library, or be null.
  */
 void kreuzberg_ocr_config_free(KREUZBERGOcrConfig *ptr);
+
+/**
+ * Get the `enabled` field from a `OcrConfig`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_ocr_config_enabled(const KREUZBERGOcrConfig *ptr);
 
 /**
  * Get the `backend` field from a `OcrConfig`.
@@ -23452,6 +23472,26 @@ char *kreuzberg_extract_text_with_page_breaks(const uint8_t *_bytes,
  */
 char *kreuzberg_detect_page_breaks_from_docx(const uint8_t *bytes,
                                              uintptr_t bytes_len);
+
+/**
+ * Compute the 1-based page number for each top-level table in the document.
+ *
+ * Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
+ * top-level table opens (`<w:tbl>`), walking them in document order. Nested tables
+ * (tables inside table cells) are skipped by tracking the nesting depth.
+ *
+ * Returns a `Vec<usize>` with one entry per top-level table in document order.
+ * If the document cannot be read or parsed, returns an empty Vec (callers should
+ * fall back to page 1 for all tables).
+ *
+ * # Limitations
+ * - Only detects explicit page breaks, not reflowed/automatic pagination.
+ * # Safety
+ * Caller must ensure all pointer arguments are valid or null.
+ * Returned pointers must be freed with the appropriate free function.
+ */
+char *kreuzberg_detect_table_page_numbers(const uint8_t *bytes,
+                                          uintptr_t bytes_len);
 
 /**
  * Extract embedded objects from an OOXML ZIP archive and recursively process them.

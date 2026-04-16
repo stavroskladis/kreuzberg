@@ -1798,6 +1798,7 @@ class OcrPipelineConfig
  */
 class OcrConfig
 {
+    public bool $enabled;
     public string $backend;
     public string $language;
     public ?TesseractConfig $tesseract_config;
@@ -1811,6 +1812,7 @@ class OcrConfig
     public ?string $vlm_prompt;
 
     public function __construct(
+        bool $enabled,
         string $backend,
         string $language,
         bool $auto_rotate,
@@ -1824,6 +1826,7 @@ class OcrConfig
         ?string $vlm_prompt = null
     ) { }
 
+    public function getEnabled(): bool { }
     public function getBackend(): string { }
     public function getLanguage(): string { }
     public function getTesseractConfig(): ?TesseractConfig { }
@@ -9083,6 +9086,7 @@ class KreuzbergApi
     public static function extractText(string $bytes): string { }
     public static function extractTextWithPageBreaks(string $bytes): string { }
     public static function detectPageBreaksFromDocx(string $bytes): ?array { }
+    public static function detectTablePageNumbers(string $bytes): array { }
     public static function extractOoxmlEmbeddedObjectsAsync(string $zip_bytes, string $embeddings_prefix, string $source_label, \Kreuzberg\ExtractionConfig $config): string { }
     public static function detectImageFormat(string $data): string { }
     /**

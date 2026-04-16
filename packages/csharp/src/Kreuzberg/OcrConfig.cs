@@ -12,6 +12,18 @@ namespace Kreuzberg;
 public sealed class OcrConfig
 {
     /// <summary>
+    /// Whether OCR is enabled.
+    ///
+    /// Setting `enabled: false` is a shorthand for `disable_ocr: true` on the parent
+    /// [`ExtractionConfig`](crate::core::config::ExtractionConfig). Images return
+    /// metadata only; PDFs use native text extraction without OCR fallback.
+    ///
+    /// Defaults to `true`. When `false`, all other OCR settings are ignored.
+    /// </summary>
+    [JsonPropertyName("enabled")]
+    public bool Enabled { get; set; } = true;
+
+    /// <summary>
     /// OCR backend: tesseract, easyocr, paddleocr
     /// </summary>
     [JsonPropertyName("backend")]

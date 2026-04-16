@@ -3151,6 +3151,29 @@ final class Kreuzberg
     }
 
     /**
+     * Compute the 1-based page number for each top-level table in the document.
+     *
+     * Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
+     * top-level table opens (`<w:tbl>`), walking them in document order. Nested tables
+     * (tables inside table cells) are skipped by tracking the nesting depth.
+     *
+     * Returns a `Vec<usize>` with one entry per top-level table in document order.
+     * If the document cannot be read or parsed, returns an empty Vec (callers should
+     * fall back to page 1 for all tables).
+     *
+     * # Limitations
+     * - Only detects explicit page breaks, not reflowed/automatic pagination.
+     *
+     * @param string $bytes
+     * @return array<int>
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function detectTablePageNumbers(string $bytes): array
+    {
+        return \Kreuzberg\KreuzbergApi::detectTablePageNumbers($bytes); // delegate to native extension class
+    }
+
+    /**
      * Extract embedded objects from an OOXML ZIP archive and recursively process them.
      *
      * Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or

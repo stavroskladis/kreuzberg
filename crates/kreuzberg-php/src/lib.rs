@@ -763,6 +763,65 @@ impl ExtractionConfig {
         Ok(result)
     }
 
+    pub fn effective_disable_ocr(&self) -> bool {
+        let core_self = kreuzberg::ExtractionConfig {
+            use_cache: self.use_cache,
+            enable_quality_processing: self.enable_quality_processing,
+            ocr: self.ocr.clone().map(Into::into),
+            force_ocr: self.force_ocr,
+            force_ocr_pages: self
+                .force_ocr_pages
+                .clone()
+                .map(|v| v.into_iter().map(|x| x as usize).collect()),
+            disable_ocr: self.disable_ocr,
+            chunking: self.chunking.clone().map(Into::into),
+            content_filter: self.content_filter.clone().map(Into::into),
+            images: self.images.clone().map(Into::into),
+            pdf_options: self.pdf_options.clone().map(Into::into),
+            token_reduction: self.token_reduction.clone().map(Into::into),
+            language_detection: self.language_detection.clone().map(Into::into),
+            pages: self.pages.clone().map(Into::into),
+            postprocessor: self.postprocessor.clone().map(Into::into),
+            html_options: Default::default(),
+            html_output: self.html_output.clone().map(Into::into),
+            extraction_timeout_secs: self.extraction_timeout_secs.map(|v| v as u64),
+            max_concurrent_extractions: self.max_concurrent_extractions.map(|v| v as usize),
+            result_format: match self.result_format.as_str() {
+                "Plain" => kreuzberg::OutputFormat::Plain,
+                "Markdown" => kreuzberg::OutputFormat::Markdown,
+                "Djot" => kreuzberg::OutputFormat::Djot,
+                "Html" => kreuzberg::OutputFormat::Html,
+                "Json" => kreuzberg::OutputFormat::Json,
+                "Structured" => kreuzberg::OutputFormat::Structured,
+                "Custom" => kreuzberg::OutputFormat::Custom(Default::default()),
+                _ => kreuzberg::OutputFormat::Plain,
+            },
+            security_limits: Default::default(),
+            output_format: match self.output_format.as_str() {
+                "Plain" => kreuzberg::OutputFormat::Plain,
+                "Markdown" => kreuzberg::OutputFormat::Markdown,
+                "Djot" => kreuzberg::OutputFormat::Djot,
+                "Html" => kreuzberg::OutputFormat::Html,
+                "Json" => kreuzberg::OutputFormat::Json,
+                "Structured" => kreuzberg::OutputFormat::Structured,
+                "Custom" => kreuzberg::OutputFormat::Custom(Default::default()),
+                _ => kreuzberg::OutputFormat::Plain,
+            },
+            layout: self.layout.clone().map(Into::into),
+            include_document_structure: self.include_document_structure,
+            acceleration: self.acceleration.clone().map(Into::into),
+            cache_namespace: self.cache_namespace.clone(),
+            cache_ttl_secs: self.cache_ttl_secs.map(|v| v as u64),
+            email: self.email.clone().map(Into::into),
+            concurrency: Default::default(),
+            max_archive_depth: self.max_archive_depth as usize,
+            tree_sitter: self.tree_sitter.clone().map(Into::into),
+            structured_extraction: self.structured_extraction.clone().map(Into::into),
+            ..Default::default()
+        };
+        core_self.effective_disable_ocr()
+    }
+
     pub fn needs_image_processing(&self) -> bool {
         let core_self = kreuzberg::ExtractionConfig {
             use_cache: self.use_cache,
@@ -1134,7 +1193,7 @@ impl LayoutDetectionConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\LlmConfig")]
 pub struct LlmConfig {
@@ -1168,7 +1227,7 @@ pub struct LlmConfig {
 #[php_impl]
 impl LlmConfig {
     pub fn __construct(
-        model: String,
+        model: Option<String>,
         api_key: Option<String>,
         base_url: Option<String>,
         timeout_secs: Option<i64>,
@@ -1177,7 +1236,7 @@ impl LlmConfig {
         max_tokens: Option<i64>,
     ) -> Self {
         Self {
-            model,
+            model: model.unwrap_or_default(),
             api_key,
             base_url,
             timeout_secs,
@@ -1409,6 +1468,15 @@ impl OcrPipelineConfig {
 #[php_class]
 #[php(name = "Kreuzberg\\OcrConfig")]
 pub struct OcrConfig {
+    /// Whether OCR is enabled.
+    ///
+    /// Setting `enabled: false` is a shorthand for `disable_ocr: true` on the parent
+    /// [`ExtractionConfig`](crate::core::config::ExtractionConfig). Images return
+    /// metadata only; PDFs use native text extraction without OCR fallback.
+    ///
+    /// Defaults to `true`. When `false`, all other OCR settings are ignored.
+    #[php(prop, name = "enabled")]
+    pub enabled: bool,
     /// OCR backend: tesseract, easyocr, paddleocr
     #[php(prop, name = "backend")]
     pub backend: String,
@@ -1490,6 +1558,7 @@ impl OcrConfig {
 
     pub fn validate(&self) -> PhpResult<()> {
         let core_self = kreuzberg::OcrConfig {
+            enabled: self.enabled,
             backend: self.backend.clone(),
             language: self.language.clone(),
             tesseract_config: self.tesseract_config.clone().map(Into::into),
@@ -1519,6 +1588,7 @@ impl OcrConfig {
 
     pub fn effective_thresholds(&self) -> OcrQualityThresholds {
         let core_self = kreuzberg::OcrConfig {
+            enabled: self.enabled,
             backend: self.backend.clone(),
             language: self.language.clone(),
             tesseract_config: self.tesseract_config.clone().map(Into::into),
@@ -1545,6 +1615,7 @@ impl OcrConfig {
 
     pub fn effective_pipeline(&self) -> Option<OcrPipelineConfig> {
         let core_self = kreuzberg::OcrConfig {
+            enabled: self.enabled,
             backend: self.backend.clone(),
             language: self.language.clone(),
             tesseract_config: self.tesseract_config.clone().map(Into::into),
@@ -16616,6 +16687,12 @@ impl KreuzbergApi {
         Ok(result)
     }
 
+    pub fn detect_table_page_numbers(bytes: Vec<u8>) -> PhpResult<Vec<i64>> {
+        let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes)
+            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
+        Ok(result)
+    }
+
     pub fn extract_ooxml_embedded_objects_async(
         zip_bytes: Vec<u8>,
         embeddings_prefix: String,
@@ -18459,6 +18536,7 @@ impl From<OcrConfig> for kreuzberg::OcrConfig {
 impl From<kreuzberg::OcrConfig> for OcrConfig {
     fn from(val: kreuzberg::OcrConfig) -> Self {
         Self {
+            enabled: val.enabled,
             backend: val.backend,
             language: val.language,
             tesseract_config: val.tesseract_config.map(Into::into),
@@ -18666,6 +18744,15 @@ impl From<kreuzberg::TreeSitterProcessConfig> for TreeSitterProcessConfig {
     }
 }
 
+impl From<SupportedFormat> for kreuzberg::SupportedFormat {
+    fn from(val: SupportedFormat) -> Self {
+        Self {
+            extension: val.extension,
+            mime_type: val.mime_type,
+        }
+    }
+}
+
 impl From<kreuzberg::SupportedFormat> for SupportedFormat {
     fn from(val: kreuzberg::SupportedFormat) -> Self {
         Self {
@@ -18695,6 +18782,17 @@ impl From<kreuzberg::ServerConfig> for ServerConfig {
             cors_origins: val.cors_origins,
             max_request_body_bytes: val.max_request_body_bytes as i64,
             max_multipart_field_bytes: val.max_multipart_field_bytes as i64,
+        }
+    }
+}
+
+impl From<StructuredDataResult> for kreuzberg::extraction::StructuredDataResult {
+    fn from(val: StructuredDataResult) -> Self {
+        Self {
+            content: val.content,
+            format: Default::default(),
+            metadata: val.metadata.into_iter().collect(),
+            text_fields: val.text_fields,
         }
     }
 }
@@ -18736,6 +18834,13 @@ impl From<kreuzberg::extraction::JsonExtractionConfig> for JsonExtractionConfig 
     }
 }
 
+impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
+    fn from(val: ListItemMetadata) -> Self {
+        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
+        serde_json::from_str(&json).expect("alef: deserialize to core type")
+    }
+}
+
 impl From<kreuzberg::extraction::ListItemMetadata> for ListItemMetadata {
     fn from(val: kreuzberg::extraction::ListItemMetadata) -> Self {
         Self {
@@ -18774,9 +18879,21 @@ impl From<kreuzberg::extraction::hwp::model::Section> for Section {
     }
 }
 
+impl From<ParaText> for kreuzberg::extraction::hwp::model::ParaText {
+    fn from(val: ParaText) -> Self {
+        Self { content: val.content }
+    }
+}
+
 impl From<kreuzberg::extraction::hwp::model::ParaText> for ParaText {
     fn from(val: kreuzberg::extraction::hwp::model::ParaText) -> Self {
         Self { content: val.content }
+    }
+}
+
+impl From<FileHeader> for kreuzberg::extraction::hwp::parser::FileHeader {
+    fn from(val: FileHeader) -> Self {
+        Self { flags: val.flags }
     }
 }
 
@@ -18801,6 +18918,13 @@ impl From<kreuzberg::extraction::hwp::parser::Record> for Record {
             tag_id: val.tag_id,
             data: val.data.to_vec(),
         }
+    }
+}
+
+impl From<ImageOcrResult> for kreuzberg::extraction::image::ImageOcrResult {
+    fn from(val: ImageOcrResult) -> Self {
+        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
+        serde_json::from_str(&json).expect("alef: deserialize to core type")
     }
 }
 
@@ -18837,11 +18961,34 @@ impl From<kreuzberg::extraction::html::ExtractedInlineImage> for ExtractedInline
     }
 }
 
+impl From<DocExtractionResult> for kreuzberg::extraction::doc::DocExtractionResult {
+    fn from(val: DocExtractionResult) -> Self {
+        Self {
+            text: val.text,
+            metadata: val.metadata.into(),
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::doc::DocExtractionResult> for DocExtractionResult {
     fn from(val: kreuzberg::extraction::doc::DocExtractionResult) -> Self {
         Self {
             text: val.text,
             metadata: val.metadata.into(),
+        }
+    }
+}
+
+impl From<DocMetadata> for kreuzberg::extraction::doc::DocMetadata {
+    fn from(val: DocMetadata) -> Self {
+        Self {
+            title: val.title,
+            subject: val.subject,
+            author: val.author,
+            last_author: val.last_author,
+            created: val.created,
+            modified: val.modified,
+            revision_number: val.revision_number,
         }
     }
 }
@@ -19051,6 +19198,20 @@ impl From<kreuzberg::extraction::docx::section::PageMargins> for PageMargins {
     }
 }
 
+impl From<PageMarginsPoints> for kreuzberg::extraction::docx::section::PageMarginsPoints {
+    fn from(val: PageMarginsPoints) -> Self {
+        Self {
+            top: val.top,
+            right: val.right,
+            bottom: val.bottom,
+            left: val.left,
+            header: val.header,
+            footer: val.footer,
+            gutter: val.gutter,
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::docx::section::PageMarginsPoints> for PageMarginsPoints {
     fn from(val: kreuzberg::extraction::docx::section::PageMarginsPoints) -> Self {
         Self {
@@ -19192,6 +19353,15 @@ impl From<kreuzberg::extraction::docx::styles::StyleDefinition> for StyleDefinit
     }
 }
 
+impl From<ResolvedStyle> for kreuzberg::extraction::docx::styles::ResolvedStyle {
+    fn from(val: ResolvedStyle) -> Self {
+        Self {
+            paragraph_properties: Default::default(),
+            run_properties: val.run_properties.into(),
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::docx::styles::ResolvedStyle> for ResolvedStyle {
     fn from(val: kreuzberg::extraction::docx::styles::ResolvedStyle) -> Self {
         Self {
@@ -19221,6 +19391,22 @@ impl From<kreuzberg::extraction::docx::styles::StyleCatalog> for StyleCatalog {
     }
 }
 
+impl From<TableProperties> for kreuzberg::extraction::docx::table::TableProperties {
+    fn from(val: TableProperties) -> Self {
+        Self {
+            style_id: val.style_id,
+            width: Default::default(),
+            alignment: val.alignment,
+            layout: val.layout,
+            look: val.look.map(Into::into),
+            borders: val.borders.map(Into::into),
+            cell_margins: Default::default(),
+            indent: Default::default(),
+            caption: val.caption,
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::docx::table::TableProperties> for TableProperties {
     fn from(val: kreuzberg::extraction::docx::table::TableProperties) -> Self {
         Self {
@@ -19233,6 +19419,19 @@ impl From<kreuzberg::extraction::docx::table::TableProperties> for TableProperti
             cell_margins: val.cell_margins.as_ref().map(|v| format!("{:?}", v)),
             indent: val.indent.as_ref().map(|v| format!("{:?}", v)),
             caption: val.caption,
+        }
+    }
+}
+
+impl From<TableLook> for kreuzberg::extraction::docx::table::TableLook {
+    fn from(val: TableLook) -> Self {
+        Self {
+            first_row: val.first_row,
+            last_row: val.last_row,
+            first_column: val.first_column,
+            last_column: val.last_column,
+            no_h_band: val.no_h_band,
+            no_v_band: val.no_v_band,
         }
     }
 }
@@ -19250,6 +19449,19 @@ impl From<kreuzberg::extraction::docx::table::TableLook> for TableLook {
     }
 }
 
+impl From<TableBorders> for kreuzberg::extraction::docx::table::TableBorders {
+    fn from(val: TableBorders) -> Self {
+        Self {
+            top: Default::default(),
+            bottom: Default::default(),
+            left: Default::default(),
+            right: Default::default(),
+            inside_h: Default::default(),
+            inside_v: Default::default(),
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::docx::table::TableBorders> for TableBorders {
     fn from(val: kreuzberg::extraction::docx::table::TableBorders) -> Self {
         Self {
@@ -19259,6 +19471,17 @@ impl From<kreuzberg::extraction::docx::table::TableBorders> for TableBorders {
             right: val.right.as_ref().map(|v| format!("{:?}", v)),
             inside_h: val.inside_h.as_ref().map(|v| format!("{:?}", v)),
             inside_v: val.inside_v.as_ref().map(|v| format!("{:?}", v)),
+        }
+    }
+}
+
+impl From<RowProperties> for kreuzberg::extraction::docx::table::RowProperties {
+    fn from(val: RowProperties) -> Self {
+        Self {
+            height: val.height,
+            height_rule: val.height_rule,
+            is_header: val.is_header,
+            cant_split: val.cant_split,
         }
     }
 }
@@ -19469,6 +19692,17 @@ impl From<kreuzberg::extraction::OdtProperties> for OdtProperties {
     }
 }
 
+impl From<PptExtractionResult> for kreuzberg::extraction::ppt::PptExtractionResult {
+    fn from(val: PptExtractionResult) -> Self {
+        Self {
+            text: val.text,
+            slide_count: val.slide_count as usize,
+            metadata: val.metadata.into(),
+            speaker_notes: val.speaker_notes,
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::ppt::PptExtractionResult> for PptExtractionResult {
     fn from(val: kreuzberg::extraction::ppt::PptExtractionResult) -> Self {
         Self {
@@ -19476,6 +19710,17 @@ impl From<kreuzberg::extraction::ppt::PptExtractionResult> for PptExtractionResu
             slide_count: val.slide_count as i64,
             metadata: val.metadata.into(),
             speaker_notes: val.speaker_notes,
+        }
+    }
+}
+
+impl From<PptMetadata> for kreuzberg::extraction::ppt::PptMetadata {
+    fn from(val: PptMetadata) -> Self {
+        Self {
+            title: val.title,
+            subject: val.subject,
+            author: val.author,
+            last_author: val.last_author,
         }
     }
 }
@@ -19515,6 +19760,22 @@ impl From<kreuzberg::extraction::PptxExtractionOptions> for PptxExtractionOption
     }
 }
 
+impl From<NativeTextStats> for kreuzberg::extractors::pdf::NativeTextStats {
+    fn from(val: NativeTextStats) -> Self {
+        Self {
+            non_whitespace: val.non_whitespace as usize,
+            alnum: val.alnum as usize,
+            meaningful_words: val.meaningful_words as usize,
+            alnum_ratio: val.alnum_ratio,
+            garbage_char_count: val.garbage_char_count as usize,
+            fragmented_word_ratio: val.fragmented_word_ratio,
+            consecutive_repeat_ratio: val.consecutive_repeat_ratio,
+            avg_word_length: val.avg_word_length,
+            word_count: val.word_count as usize,
+        }
+    }
+}
+
 impl From<kreuzberg::extractors::pdf::NativeTextStats> for NativeTextStats {
     fn from(val: kreuzberg::extractors::pdf::NativeTextStats) -> Self {
         Self {
@@ -19527,6 +19788,17 @@ impl From<kreuzberg::extractors::pdf::NativeTextStats> for NativeTextStats {
             consecutive_repeat_ratio: val.consecutive_repeat_ratio,
             avg_word_length: val.avg_word_length,
             word_count: val.word_count as i64,
+        }
+    }
+}
+
+impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecision {
+    fn from(val: OcrFallbackDecision) -> Self {
+        Self {
+            stats: val.stats.into(),
+            avg_non_whitespace: val.avg_non_whitespace,
+            avg_alnum: val.avg_alnum,
+            fallback: val.fallback,
         }
     }
 }
@@ -19613,6 +19885,24 @@ impl From<kreuzberg::panic_context::PanicContext> for PanicContext {
             function: val.function,
             message: val.message,
             timestamp: format!("{:?}", val.timestamp),
+        }
+    }
+}
+
+impl From<ExtractionMetrics> for kreuzberg::telemetry::metrics::ExtractionMetrics {
+    fn from(val: ExtractionMetrics) -> Self {
+        Self {
+            extraction_total: Default::default(),
+            cache_hits: Default::default(),
+            cache_misses: Default::default(),
+            batch_total: Default::default(),
+            extraction_duration_ms: Default::default(),
+            extraction_input_bytes: Default::default(),
+            extraction_output_bytes: Default::default(),
+            pipeline_duration_ms: Default::default(),
+            ocr_duration_ms: Default::default(),
+            batch_duration_ms: Default::default(),
+            concurrent_extractions: Default::default(),
         }
     }
 }
@@ -19872,12 +20162,36 @@ impl From<kreuzberg::DocumentNode> for DocumentNode {
     }
 }
 
+impl From<TableGrid> for kreuzberg::TableGrid {
+    fn from(val: TableGrid) -> Self {
+        Self {
+            rows: val.rows,
+            cols: val.cols,
+            cells: val.cells.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
 impl From<kreuzberg::TableGrid> for TableGrid {
     fn from(val: kreuzberg::TableGrid) -> Self {
         Self {
             rows: val.rows,
             cols: val.cols,
             cells: val.cells.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<GridCell> for kreuzberg::GridCell {
+    fn from(val: GridCell) -> Self {
+        Self {
+            content: val.content,
+            row: val.row,
+            col: val.col,
+            row_span: val.row_span,
+            col_span: val.col_span,
+            is_header: val.is_header,
+            bbox: val.bbox.map(Into::into),
         }
     }
 }
@@ -20240,12 +20554,36 @@ impl From<kreuzberg::ExcelSheet> for ExcelSheet {
     }
 }
 
+impl From<XmlExtractionResult> for kreuzberg::XmlExtractionResult {
+    fn from(val: XmlExtractionResult) -> Self {
+        Self {
+            content: val.content,
+            element_count: val.element_count as usize,
+            unique_elements: val.unique_elements,
+        }
+    }
+}
+
 impl From<kreuzberg::XmlExtractionResult> for XmlExtractionResult {
     fn from(val: kreuzberg::XmlExtractionResult) -> Self {
         Self {
             content: val.content,
             element_count: val.element_count as i64,
             unique_elements: val.unique_elements,
+        }
+    }
+}
+
+impl From<TextExtractionResult> for kreuzberg::TextExtractionResult {
+    fn from(val: TextExtractionResult) -> Self {
+        Self {
+            content: val.content,
+            line_count: val.line_count as usize,
+            word_count: val.word_count as usize,
+            character_count: val.character_count as usize,
+            headers: val.headers,
+            links: Default::default(),
+            code_blocks: Default::default(),
         }
     }
 }
@@ -20267,6 +20605,13 @@ impl From<kreuzberg::TextExtractionResult> for TextExtractionResult {
                 .as_ref()
                 .map(|v| v.iter().map(|i| format!("{:?}", i)).collect()),
         }
+    }
+}
+
+impl From<PptxExtractionResult> for kreuzberg::PptxExtractionResult {
+    fn from(val: PptxExtractionResult) -> Self {
+        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
+        serde_json::from_str(&json).expect("alef: deserialize to core type")
     }
 }
 
@@ -20601,6 +20946,18 @@ impl From<kreuzberg::EmailMetadata> for EmailMetadata {
     }
 }
 
+impl From<ArchiveMetadata> for kreuzberg::ArchiveMetadata {
+    fn from(val: ArchiveMetadata) -> Self {
+        Self {
+            format: Default::default(),
+            file_count: val.file_count as usize,
+            file_list: val.file_list,
+            total_size: val.total_size as usize,
+            compressed_size: val.compressed_size.map(|v| v as usize),
+        }
+    }
+}
+
 impl From<kreuzberg::ArchiveMetadata> for ArchiveMetadata {
     fn from(val: kreuzberg::ArchiveMetadata) -> Self {
         Self {
@@ -20609,6 +20966,17 @@ impl From<kreuzberg::ArchiveMetadata> for ArchiveMetadata {
             file_list: val.file_list,
             total_size: val.total_size as i64,
             compressed_size: val.compressed_size.map(|v| v as i64),
+        }
+    }
+}
+
+impl From<ImageMetadata> for kreuzberg::ImageMetadata {
+    fn from(val: ImageMetadata) -> Self {
+        Self {
+            width: val.width,
+            height: val.height,
+            format: val.format,
+            exif: val.exif.into_iter().collect(),
         }
     }
 }
@@ -20803,6 +21171,17 @@ impl From<kreuzberg::ErrorMetadata> for ErrorMetadata {
         Self {
             error_type: val.error_type,
             message: val.message,
+        }
+    }
+}
+
+impl From<PptxMetadata> for kreuzberg::PptxMetadata {
+    fn from(val: PptxMetadata) -> Self {
+        Self {
+            slide_count: val.slide_count as usize,
+            slide_names: val.slide_names,
+            image_count: val.image_count.map(|v| v as usize),
+            table_count: val.table_count.map(|v| v as usize),
         }
     }
 }
@@ -21219,6 +21598,17 @@ impl From<kreuzberg::Uri> for Uri {
     }
 }
 
+impl From<PoolMetrics> for kreuzberg::utils::pool::PoolMetrics {
+    fn from(val: PoolMetrics) -> Self {
+        Self {
+            total_acquires: Default::default(),
+            total_cache_hits: Default::default(),
+            peak_items_stored: Default::default(),
+            total_creations: Default::default(),
+        }
+    }
+}
+
 impl From<kreuzberg::utils::pool::PoolMetrics> for PoolMetrics {
     fn from(val: kreuzberg::utils::pool::PoolMetrics) -> Self {
         Self {
@@ -21226,6 +21616,17 @@ impl From<kreuzberg::utils::pool::PoolMetrics> for PoolMetrics {
             total_cache_hits: format!("{:?}", val.total_cache_hits),
             peak_items_stored: format!("{:?}", val.peak_items_stored),
             total_creations: format!("{:?}", val.total_creations),
+        }
+    }
+}
+
+impl From<PoolMetricsSnapshot> for kreuzberg::utils::pool::PoolMetricsSnapshot {
+    fn from(val: PoolMetricsSnapshot) -> Self {
+        Self {
+            total_acquires: val.total_acquires as usize,
+            total_cache_hits: val.total_cache_hits as usize,
+            peak_items_stored: val.peak_items_stored as usize,
+            total_creations: val.total_creations as usize,
         }
     }
 }
@@ -21261,6 +21662,16 @@ impl From<kreuzberg::utils::PoolSizeHint> for PoolSizeHint {
             string_buffer_capacity: val.string_buffer_capacity as i64,
             byte_buffer_count: val.byte_buffer_count as i64,
             byte_buffer_capacity: val.byte_buffer_capacity as i64,
+        }
+    }
+}
+
+impl From<PoolConfig> for kreuzberg::utils::string_pool::PoolConfig {
+    fn from(val: PoolConfig) -> Self {
+        Self {
+            max_buffers_per_size: val.max_buffers_per_size as usize,
+            initial_capacity: val.initial_capacity as usize,
+            max_capacity_before_discard: val.max_capacity_before_discard as usize,
         }
     }
 }
@@ -21331,9 +21742,24 @@ impl From<kreuzberg::service::ExtractionRequest> for ExtractionRequest {
     }
 }
 
+impl From<MultipartApi> for kreuzberg::api::error::MultipartApi {
+    fn from(val: MultipartApi) -> Self {
+        Self(val._0)
+    }
+}
+
 impl From<kreuzberg::api::error::MultipartApi> for MultipartApi {
     fn from(val: kreuzberg::api::error::MultipartApi) -> Self {
         Self { _0: val.0 }
+    }
+}
+
+impl From<ApiError> for kreuzberg::api::ApiError {
+    fn from(val: ApiError) -> Self {
+        Self {
+            status: Default::default(),
+            body: val.body.into(),
+        }
     }
 }
 
@@ -21733,6 +22159,13 @@ impl From<kreuzberg::mcp::params::ListGrammarsParams> for ListGrammarsParams {
     }
 }
 
+impl From<ChunkingResult> for kreuzberg::chunking::ChunkingResult {
+    fn from(val: ChunkingResult) -> Self {
+        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
+        serde_json::from_str(&json).expect("alef: deserialize to core type")
+    }
+}
+
 impl From<kreuzberg::chunking::ChunkingResult> for ChunkingResult {
     fn from(val: kreuzberg::chunking::ChunkingResult) -> Self {
         Self {
@@ -21800,6 +22233,13 @@ impl From<kreuzberg::KeywordConfig> for KeywordConfig {
     }
 }
 
+impl From<Keyword> for kreuzberg::Keyword {
+    fn from(val: Keyword) -> Self {
+        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
+        serde_json::from_str(&json).expect("alef: deserialize to core type")
+    }
+}
+
 impl From<kreuzberg::Keyword> for Keyword {
     fn from(val: kreuzberg::Keyword) -> Self {
         Self {
@@ -21810,6 +22250,15 @@ impl From<kreuzberg::Keyword> for Keyword {
                 .and_then(|s| s.as_str().map(String::from))
                 .unwrap_or_default(),
             positions: val.positions.as_ref().map(|v| v.iter().map(|&x| x as i64).collect()),
+        }
+    }
+}
+
+impl From<OcrCacheStats> for kreuzberg::ocr::OcrCacheStats {
+    fn from(val: OcrCacheStats) -> Self {
+        Self {
+            total_files: val.total_files as usize,
+            total_size_mb: val.total_size_mb,
         }
     }
 }
@@ -21877,6 +22326,25 @@ impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for RecognizedTable 
             detection_bbox: val.detection_bbox.into(),
             cells: val.cells,
             markdown: val.markdown,
+        }
+    }
+}
+
+impl From<PaddleOcrConfig> for kreuzberg::PaddleOcrConfig {
+    fn from(val: PaddleOcrConfig) -> Self {
+        Self {
+            language: val.language,
+            cache_dir: val.cache_dir.map(Into::into),
+            use_angle_cls: val.use_angle_cls,
+            enable_table_detection: val.enable_table_detection,
+            det_db_thresh: val.det_db_thresh,
+            det_db_box_thresh: val.det_db_box_thresh,
+            det_db_unclip_ratio: val.det_db_unclip_ratio,
+            det_limit_side_len: val.det_limit_side_len,
+            rec_batch_num: val.rec_batch_num,
+            padding: val.padding,
+            drop_score: val.drop_score,
+            model_tier: val.model_tier,
         }
     }
 }
@@ -21979,6 +22447,16 @@ impl From<kreuzberg::DetectionResult> for DetectionResult {
     }
 }
 
+impl From<EmbeddedFile> for kreuzberg::pdf::embedded_files::EmbeddedFile {
+    fn from(val: EmbeddedFile) -> Self {
+        Self {
+            name: val.name,
+            data: val.data,
+            mime_type: val.mime_type,
+        }
+    }
+}
+
 impl From<kreuzberg::pdf::embedded_files::EmbeddedFile> for EmbeddedFile {
     fn from(val: kreuzberg::pdf::embedded_files::EmbeddedFile) -> Self {
         Self {
@@ -22068,6 +22546,13 @@ impl From<KMeansResult> for kreuzberg::pdf::hierarchy::KMeansResult {
 impl From<kreuzberg::pdf::hierarchy::KMeansResult> for KMeansResult {
     fn from(val: kreuzberg::pdf::hierarchy::KMeansResult) -> Self {
         Self { labels: val.labels }
+    }
+}
+
+impl From<HierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
+    fn from(val: HierarchyBlock) -> Self {
+        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
+        serde_json::from_str(&json).expect("alef: deserialize to core type")
     }
 }
 
@@ -22225,6 +22710,19 @@ impl From<kreuzberg::pdf::layout_runner::LayoutTimingReport> for LayoutTimingRep
     }
 }
 
+impl From<PdfMetadata> for kreuzberg::pdf::metadata::PdfMetadata {
+    fn from(val: PdfMetadata) -> Self {
+        Self {
+            pdf_version: val.pdf_version,
+            producer: val.producer,
+            is_encrypted: val.is_encrypted,
+            width: val.width,
+            height: val.height,
+            page_count: val.page_count.map(|v| v as usize),
+        }
+    }
+}
+
 impl From<kreuzberg::pdf::metadata::PdfMetadata> for PdfMetadata {
     fn from(val: kreuzberg::pdf::metadata::PdfMetadata) -> Self {
         Self {
@@ -22235,6 +22733,13 @@ impl From<kreuzberg::pdf::metadata::PdfMetadata> for PdfMetadata {
             height: val.height,
             page_count: val.page_count.map(|v| v as i64),
         }
+    }
+}
+
+impl From<PdfExtractionMetadata> for kreuzberg::pdf::metadata::PdfExtractionMetadata {
+    fn from(val: PdfExtractionMetadata) -> Self {
+        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
+        serde_json::from_str(&json).expect("alef: deserialize to core type")
     }
 }
 
@@ -22250,6 +22755,20 @@ impl From<kreuzberg::pdf::metadata::PdfExtractionMetadata> for PdfExtractionMeta
             created_by: val.created_by,
             pdf_specific: val.pdf_specific.into(),
             page_structure: val.page_structure.map(Into::into),
+        }
+    }
+}
+
+impl From<CommonPdfMetadata> for kreuzberg::pdf::metadata::CommonPdfMetadata {
+    fn from(val: CommonPdfMetadata) -> Self {
+        Self {
+            title: val.title,
+            subject: val.subject,
+            authors: val.authors,
+            keywords: val.keywords,
+            created_at: val.created_at,
+            modified_at: val.modified_at,
+            created_by: val.created_by,
         }
     }
 }

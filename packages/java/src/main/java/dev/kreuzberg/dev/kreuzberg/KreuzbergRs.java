@@ -2303,6 +2303,20 @@ public final class KreuzbergRs {
         }
     }
 
+    public static List<Long> detectTablePageNumbers(byte[] bytes) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_DETECT_TABLE_PAGE_NUMBERS.invoke(bytes);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<long>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static String extractOoxmlEmbeddedObjects(byte[] zipBytes, String embeddingsPrefix, String sourceLabel, ExtractionConfig config) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cembeddingsPrefix = arena.allocateFrom(embeddingsPrefix);

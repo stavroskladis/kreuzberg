@@ -461,6 +461,7 @@ export {
   detectOrValidate,
   detectPageBreaksFromDocx,
   detectRows,
+  detectTablePageNumbers,
   djotContentToDjot,
   djotToHtml,
   downloadModel,

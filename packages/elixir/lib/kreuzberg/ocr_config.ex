@@ -2,7 +2,8 @@
 defmodule Kreuzberg.OcrConfig do
   @moduledoc "OCR configuration."
 
-  defstruct backend: "",
+  defstruct enabled: true,
+            backend: "",
             language: "",
             tesseract_config: nil,
             output_format: nil,

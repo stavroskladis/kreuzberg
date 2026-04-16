@@ -13,4 +13,7 @@ public record LlmConfig(
     Optional<Double> temperature,
     @JsonProperty("max_tokens") Optional<Long> maxTokens
 ) {
+    public static LlmConfigBuilder builder() {
+        return new LlmConfigBuilder();
+    }
 }

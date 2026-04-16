@@ -3863,6 +3863,34 @@ public static class KreuzbergLib
     }
 
     /// <summary>
+    /// Compute the 1-based page number for each top-level table in the document.
+    ///
+    /// Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
+    /// top-level table opens (`<w:tbl>`), walking them in document order. Nested tables
+    /// (tables inside table cells) are skipped by tracking the nesting depth.
+    ///
+    /// Returns a `Vec<usize>` with one entry per top-level table in document order.
+    /// If the document cannot be read or parsed, returns an empty Vec (callers should
+    /// fall back to page 1 for all tables).
+    ///
+    /// # Limitations
+    /// - Only detects explicit page breaks, not reflowed/automatic pagination.
+    /// </summary>
+    /// <param name="bytes"></param>
+    public static List<ulong> DetectTablePageNumbers(byte[] bytes)
+    {
+        ArgumentNullException.ThrowIfNull(bytes);
+        var result = NativeMethods.DetectTablePageNumbers(
+            bytes
+        );
+        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+        var json = Marshal.PtrToStringUTF8(result);
+        NativeMethods.FreeString(result);
+        var returnValue = JsonSerializer.Deserialize<List<ulong>>(json ?? "null", JsonOptions)!;
+        return returnValue;
+    }
+
+    /// <summary>
     /// Extract embedded objects from an OOXML ZIP archive and recursively process them.
     ///
     /// Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
@@ -11032,6 +11060,21 @@ public static class KreuzbergLib
     public static void ExtractionConfigValidate()
     {
         NativeMethods.ExtractionConfigValidate();
+    }
+
+    /// <summary>
+    /// Returns the effective disable-OCR value, accounting for both the top-level
+    /// `disable_ocr` flag and the `ocr.enabled` shorthand on [`OcrConfig`].
+    ///
+    /// Setting `ocr.enabled = false` in configuration is treated as equivalent to
+    /// `disable_ocr = true`. This method is the single source of truth for whether
+    /// OCR should be skipped.
+    /// </summary>
+    public static bool ExtractionConfigEffectiveDisableOcr()
+    {
+        var result = NativeMethods.ExtractionConfigEffectiveDisableOcr();
+        var returnValue = result != 0;
+        return returnValue;
     }
 
     /// <summary>

@@ -2043,6 +2043,62 @@ type LlmConfig struct {
 }
 
 
+// LlmConfig option function
+type LlmConfigOption func(*LlmConfig)
+
+// WithLlmConfigModel sets the model field.
+func WithLlmConfigModel(v string) LlmConfigOption {
+    return func(c *LlmConfig) { c.Model = v }
+}
+
+// WithLlmConfigApiKey sets the api_key field.
+func WithLlmConfigApiKey(v string) LlmConfigOption {
+    return func(c *LlmConfig) { c.ApiKey = &v }
+}
+
+// WithLlmConfigBaseUrl sets the base_url field.
+func WithLlmConfigBaseUrl(v string) LlmConfigOption {
+    return func(c *LlmConfig) { c.BaseUrl = &v }
+}
+
+// WithLlmConfigTimeoutSecs sets the timeout_secs field.
+func WithLlmConfigTimeoutSecs(v uint64) LlmConfigOption {
+    return func(c *LlmConfig) { c.TimeoutSecs = &v }
+}
+
+// WithLlmConfigMaxRetries sets the max_retries field.
+func WithLlmConfigMaxRetries(v uint32) LlmConfigOption {
+    return func(c *LlmConfig) { c.MaxRetries = &v }
+}
+
+// WithLlmConfigTemperature sets the temperature field.
+func WithLlmConfigTemperature(v float64) LlmConfigOption {
+    return func(c *LlmConfig) { c.Temperature = &v }
+}
+
+// WithLlmConfigMaxTokens sets the max_tokens field.
+func WithLlmConfigMaxTokens(v uint64) LlmConfigOption {
+    return func(c *LlmConfig) { c.MaxTokens = &v }
+}
+
+// NewLlmConfig creates a LlmConfig with optional parameters.
+func NewLlmConfig(opts ...LlmConfigOption) *LlmConfig {
+    c := &LlmConfig {
+        Model: "",
+        ApiKey: nil,
+        BaseUrl: nil,
+        TimeoutSecs: nil,
+        MaxRetries: nil,
+        Temperature: nil,
+        MaxTokens: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Configuration for LLM-based structured data extraction.
 //
 // Sends extracted document content to a VLM with a JSON schema,
@@ -2270,6 +2326,14 @@ type OcrPipelineConfig struct {
 
 // OCR configuration.
 type OcrConfig struct {
+    // Whether OCR is enabled.
+    //
+    // Setting `enabled: false` is a shorthand for `disable_ocr: true` on the parent
+    // [`ExtractionConfig`](crate::core::config::ExtractionConfig). Images return
+    // metadata only; PDFs use native text extraction without OCR fallback.
+    //
+    // Defaults to `true`. When `false`, all other OCR settings are ignored.
+    Enabled *bool `json:"enabled,omitempty"`
     // OCR backend: tesseract, easyocr, paddleocr
     Backend string `json:"backend"`
     // Language code (e.g., "eng", "deu")
@@ -2311,6 +2375,11 @@ type OcrConfig struct {
 
 // OcrConfig option function
 type OcrConfigOption func(*OcrConfig)
+
+// WithOcrConfigEnabled sets the enabled field.
+func WithOcrConfigEnabled(v bool) OcrConfigOption {
+    return func(c *OcrConfig) { c.Enabled = &v }
+}
 
 // WithOcrConfigBackend sets the backend field.
 func WithOcrConfigBackend(v string) OcrConfigOption {
@@ -2370,6 +2439,7 @@ func WithOcrConfigVlmPrompt(v string) OcrConfigOption {
 // NewOcrConfig creates a OcrConfig with optional parameters.
 func NewOcrConfig(opts ...OcrConfigOption) *OcrConfig {
     c := &OcrConfig {
+        Enabled: nil,
         Backend: "",
         Language: "",
         TesseractConfig: nil,
@@ -15319,6 +15389,35 @@ func DetectPageBreaksFromDocx(bytes []byte) (**[]PageBoundary, error) {
 }
 
 
+// Compute the 1-based page number for each top-level table in the document.
+//
+// Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
+// top-level table opens (`<w:tbl>`), walking them in document order. Nested tables
+// (tables inside table cells) are skipped by tracking the nesting depth.
+//
+// Returns a `Vec<usize>` with one entry per top-level table in document order.
+// If the document cannot be read or parsed, returns an empty Vec (callers should
+// fall back to page 1 for all tables).
+//
+// # Limitations
+// - Only detects explicit page breaks, not reflowed/automatic pagination.
+func DetectTablePageNumbers(bytes []byte) (*[]uint, error) {
+    cBytes := (*C.uchar)(unsafe.Pointer(&bytes[0]))
+
+    ptr := C.kreuzberg_detect_table_page_numbers(cBytes)
+    if err := lastError(); err != nil {
+        return nil, err
+    }
+    return func() *[]uint {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []uint
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
 // Extract embedded objects from an OOXML ZIP archive and recursively process them.
 //
 // Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
@@ -22434,6 +22533,18 @@ func (r *ExtractionConfig) Normalized() *ExtractionConfig {
 func (r *ExtractionConfig) Validate() error {
     C.kreuzberg_extraction_config_validate ((*C.KREUZBERGExtractionConfig)(unsafe.Pointer(r)))
     return lastError()
+}
+
+
+// Returns the effective disable-OCR value, accounting for both the top-level
+// `disable_ocr` flag and the `ocr.enabled` shorthand on [`OcrConfig`].
+//
+// Setting `ocr.enabled = false` in configuration is treated as equivalent to
+// `disable_ocr = true`. This method is the single source of truth for whether
+// OCR should be skipped.
+func (r *ExtractionConfig) EffectiveDisableOcr() *bool {
+    ptr := C.kreuzberg_extraction_config_effective_disable_ocr ((*C.KREUZBERGExtractionConfig)(unsafe.Pointer(r)))
+    return func() *bool { v := ptr != 0; return &v }()
 }
 
 

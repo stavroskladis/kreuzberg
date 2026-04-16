@@ -111,48 +111,44 @@ class KeywordAlgorithm(str, Enum):
     RAKE = "rake"
 
 
-class LanguageDetectionConfig:
-    """Placeholder for LanguageDetectionConfig type."""
-
-
-class ImagePreprocessingMetadata:
-    """Placeholder for ImagePreprocessingMetadata type."""
-
-
-class PageStructure:
-    """Placeholder for PageStructure type."""
-
-
-class LlmConfig:
-    """Placeholder for LlmConfig type."""
-
-
-class OcrPipelineConfig:
-    """Placeholder for OcrPipelineConfig type."""
-
-
-class ErrorMetadata:
-    """Placeholder for ErrorMetadata type."""
-
-
-class TokenReductionConfig:
-    """Placeholder for TokenReductionConfig type."""
-
-
-class StructuredExtractionConfig:
-    """Placeholder for StructuredExtractionConfig type."""
+class YearRange:
+    """Placeholder for YearRange type."""
 
 
 class Position:
     """Placeholder for Position type."""
 
 
-class YearRange:
-    """Placeholder for YearRange type."""
+class ErrorMetadata:
+    """Placeholder for ErrorMetadata type."""
+
+
+class OcrPipelineConfig:
+    """Placeholder for OcrPipelineConfig type."""
 
 
 class DjotContent:
     """Placeholder for DjotContent type."""
+
+
+class LanguageDetectionConfig:
+    """Placeholder for LanguageDetectionConfig type."""
+
+
+class StructuredExtractionConfig:
+    """Placeholder for StructuredExtractionConfig type."""
+
+
+class ImagePreprocessingMetadata:
+    """Placeholder for ImagePreprocessingMetadata type."""
+
+
+class TokenReductionConfig:
+    """Placeholder for TokenReductionConfig type."""
+
+
+class PageStructure:
+    """Placeholder for PageStructure type."""
 
 
 @dataclass
@@ -437,6 +433,32 @@ class LayoutDetectionConfig:
 
 
 @dataclass
+class LlmConfig:
+    """Configuration for an LLM provider/model via liter-llm."""
+
+    model: str = ""
+    """Provider/model string using liter-llm routing format."""
+
+    api_key: str | None = None
+    """API key for the provider. When `None`, liter-llm falls back to"""
+
+    base_url: str | None = None
+    """Custom base URL override for the provider endpoint."""
+
+    timeout_secs: int | None = None
+    """Request timeout in seconds (default: 60)."""
+
+    max_retries: int | None = None
+    """Maximum retry attempts (default: 3)."""
+
+    temperature: float | None = None
+    """Sampling temperature for generation tasks."""
+
+    max_tokens: int | None = None
+    """Maximum tokens to generate."""
+
+
+@dataclass
 class OcrQualityThresholds:
     """Quality thresholds for OCR fallback decisions and pipeline quality gating."""
 
@@ -492,6 +514,9 @@ class OcrQualityThresholds:
 @dataclass
 class OcrConfig:
     """OCR configuration."""
+
+    enabled: bool = True
+    """Whether OCR is enabled."""
 
     backend: str = ""
     """OCR backend: tesseract, easyocr, paddleocr"""

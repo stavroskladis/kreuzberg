@@ -544,6 +544,10 @@ final class NativeLib {
         LIB.find("kreuzberg_detect_page_breaks_from_docx").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
+    static final MethodHandle KREUZBERG_DETECT_TABLE_PAGE_NUMBERS = LINKER.downcallHandle(
+        LIB.find("kreuzberg_detect_table_page_numbers").orElseThrow(),
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+    );
     static final MethodHandle KREUZBERG_EXTRACT_OOXML_EMBEDDED_OBJECTS = LINKER.downcallHandle(
         LIB.find("kreuzberg_extract_ooxml_embedded_objects").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)

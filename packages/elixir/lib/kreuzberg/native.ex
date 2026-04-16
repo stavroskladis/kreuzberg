@@ -177,6 +177,7 @@ defmodule Kreuzberg.Native do
   def extract_text(_bytes), do: :erlang.nif_error(:nif_not_loaded)
   def extract_text_with_page_breaks(_bytes), do: :erlang.nif_error(:nif_not_loaded)
   def detect_page_breaks_from_docx(_bytes), do: :erlang.nif_error(:nif_not_loaded)
+  def detect_table_page_numbers(_bytes), do: :erlang.nif_error(:nif_not_loaded)
 
   def extract_ooxml_embedded_objects_async(_zip_bytes, _embeddings_prefix, _source_label, _config),
     do: :erlang.nif_error(:nif_not_loaded)
@@ -574,6 +575,7 @@ defmodule Kreuzberg.Native do
 
   def extractionconfig_normalized(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def extractionconfig_validate(_obj), do: :erlang.nif_error(:nif_not_loaded)
+  def extractionconfig_effective_disable_ocr(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def extractionconfig_needs_image_processing(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def htmloutputconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def layoutdetectionconfig_default, do: :erlang.nif_error(:nif_not_loaded)

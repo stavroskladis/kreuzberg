@@ -6,15 +6,70 @@ use kreuzberg::plugins::OcrBackend;
 use kreuzberg::plugins::Plugin;
 use kreuzberg::plugins::Renderer;
 use kreuzberg::utils::Recyclable;
-use kreuzberg::*;
+use kreuzberg::{
+    AccelerationConfig, AnchorProperties, AnnotationKind, ApiDoc, ApiError, ApiSizeLimits, ApiState, ArchiveEntry,
+    ArchiveMetadata, Attributes, BBox, BatchExtractFilesParams, BatchProcessor, BatchProcessorConfig, BibtexExtractor,
+    BibtexMetadata, BlockType, BoundingBox, ByteBufferPool, CacheClearResponse, CacheStatsResponse, CacheWarmParams,
+    CfbReader, CharData, Chunk, ChunkItem, ChunkMetadata, ChunkRequest, ChunkResponse, ChunkSizing, ChunkTextParams,
+    ChunkType, ChunkerType, ChunkingConfig, ChunkingConfigRequest, ChunkingConfigResponse, ChunkingProcessor,
+    ChunkingResult, CitationExtractor, CitationMetadata, CodeContentMode, CodeExtractor, ColorScheme, ColumnLayout,
+    CommonPdfMetadata, ContentFilterConfig, ContentLayer, ContributorRole, CsvExtractor, CsvMetadata, CustomProperties,
+    DbfExtractor, DbfFieldInfo, DbfMetadata, DepthValidator, DetectMimeTypeParams, DetectResponse, DetectionResult,
+    DjotContent, DjotExtractor, DjotImage, DjotLink, DocExtractionResult, DocExtractor, DocMetadata, DocProperties,
+    DocbookExtractor, DoclingCompatDocument, DoclingCompatResponse, Document, DocumentElement,
+    DocumentExtractorRegistry, DocumentNode, DocumentRelationship, DocumentStructure, DocxExtractor, DocxMetadata,
+    DownloadGrammarsParams, Drawing, DrawingType, Element, ElementId, ElementMetadata, ElementType, EmailAttachment,
+    EmailConfig, EmailExtractionResult, EmailExtractor, EmailMetadata, EmbedRequest, EmbedResponse, EmbedTextParams,
+    EmbeddedFile, EmbeddingConfig, EmbeddingModelType, EmptyParams, EntityValidator, EpubExtractor, EpubMetadata,
+    ErrorMetadata, ErrorResponse, ExcelExtractor, ExcelMetadata, ExcelSheet, ExcelWorkbook, ExecutionProviderType,
+    Extent, ExtractBytesParams, ExtractFileParams, ExtractResponse, ExtractStructuredParams, ExtractedImage,
+    ExtractedInlineImage, ExtractionConfig, ExtractionMetrics, ExtractionRequest, ExtractionResult, ExtractionService,
+    ExtractionServiceBuilder, ExtractionSource, FictionBookExtractor, FictionBookMetadata, FileBytes,
+    FileExtractionConfig, FileHeader, FontScheme, FontSizeCluster, Footnote, FormatMetadata, FormattedBlock, FracType,
+    GenericCache, GridCell, GzipExtractor, HeaderFooter, HeaderFooterType, HeaderMetadata, HeadingContext,
+    HeadingLevel, HealthResponse, HierarchicalBlock, HierarchyBlock, HierarchyConfig, HierarchyLevel, HocrWord,
+    HtmlExtractionResult, HtmlExtractor, HtmlMetadata, HtmlOutputConfig, HtmlTheme, HwpDocument, HwpError,
+    HwpExtractor, ImageExtractionConfig, ImageExtractor, ImageMetadata, ImageMetadataType, ImageOcrResult,
+    ImagePreprocessingConfig, ImagePreprocessingMetadata, ImageType, InfoResponse, InlineElement, InlineType, Instant,
+    InternedString, IterationValidator, JatsExtractor, JatsMetadata, JsonExtractionConfig, JupyterExtractor,
+    KMeansResult, KeynoteExtractor, Keyword, KeywordAlgorithm, KeywordConfig, KreuzbergMcp, LanguageDetectionConfig,
+    LanguageRegistry, LatexExtractor, LayoutClass, LayoutDetection, LayoutDetectionConfig, LayoutModel,
+    LayoutTimingReport, LinkMetadata, LinkType, ListGrammarsParams, ListItemMetadata, ListType, LlmConfig, LlmUsage,
+    ManifestEntryResponse, ManifestResponse, MarkdownExtractor, MathNode, MdxExtractor, Metadata, MetricsLayer,
+    ModelCache, ModelPaths, MultipartApi, NativeTextStats, NodeContent, NodeId, Note, NoteType, NumbersExtractor,
+    OcrBackend, OcrBackendRegistry, OcrBackendType, OcrBoundingGeometry, OcrCache, OcrCacheStats, OcrConfidence,
+    OcrConfig, OcrElement, OcrElementConfig, OcrElementLevel, OcrError, OcrExtractionResult, OcrFallbackDecision,
+    OcrMetadata, OcrPipelineConfig, OcrPipelineStage, OcrProcessor, OcrQualityThresholds, OcrRotation, OcrTable,
+    OcrTableBoundingBox, OdtExtractor, OdtProperties, OpenWebDocumentMetadata, OpenWebDocumentResponse, OpmlExtractor,
+    OrgModeExtractor, Orientation, OrientationResult, OutputFormat, PSMMode, PaddleLanguage, PaddleOcrConfig,
+    PageBoundary, PageConfig, PageContent, PageHierarchy, PageInfo, PageLayoutRegion, PageLayoutResult, PageMargins,
+    PageMarginsPoints, PageRenderOptions, PageStructure, PageTiming, PageUnitType, PagesExtractor, PanicContext,
+    ParaText, PdfAnnotation, PdfAnnotationType, PdfBackend, PdfConfig, PdfError, PdfExtractionMetadata, PdfExtractor,
+    PdfImage, PdfImageExtractor, PdfLayoutBBox, PdfMetadata, PdfPageIterator, PdfRenderer, PdfTextExtractor,
+    PdfUnifiedExtractionResult, PlainTextExtractor, Plugin, PluginStatus, Pool, PoolConfig, PoolError, PoolMetrics,
+    PoolMetricsSnapshot, PoolSizeHint, PooledString, Position, PostProcessorConfig, PostProcessorRegistry,
+    PptExtractionResult, PptExtractor, PptMetadata, PptxAppProperties, PptxExtractionOptions, PptxExtractionResult,
+    PptxExtractor, PptxMetadata, ProcessingWarning, PstExtractor, PstMetadata, QualityProcessor, RakeParams,
+    RecognizedTable, Record, Recyclable, ReductionLevel, RelationshipKind, Renderer, RendererRegistry, ResolvedStyle,
+    RowProperties, RstExtractor, RtfExtractor, RtfFormattingData, RtfFormattingSpan, RtfImage, RunProperties, Section,
+    SectionProperties, SecurityError, SegmentData, ServerConfig, SevenZExtractor, StreamReader, StringBufferPool,
+    StringBufferPoolMetrics, StringGrowthValidator, StructuredData, StructuredDataResult, StructuredDataType,
+    StructuredExtractionConfig, StructuredExtractionResponse, StructuredExtractor, StyleCatalog, StyleDefinition,
+    StyleType, SupportedFormat, SyncExtractor, Table, TableBorders, TableCell, TableGrid, TableLook, TableModel,
+    TableProperties, TableRow, TableValidator, TarExtractor, TessdataManager, TesseractBackend, TesseractConfig,
+    TextAnnotation, TextBlock, TextDirection, TextExtractionResult, TextMetadata, Theme, ThemeColor, TokenReducer,
+    TokenReductionConfig, TracingLayer, TreeSitterConfig, TreeSitterProcessConfig, TsvRow, TypstExtractor, Uri,
+    UriKind, ValidatorRegistry, VersionResponse, VlmOcrBackend, WarmRequest, WarmResponse, WrapType, XlsxAppProperties,
+    XmlExtractionResult, XmlExtractor, XmlMetadata, YakeParams, YearRange, ZipBombValidator, ZipExtractor,
+};
 use std::cell::RefCell;
 use std::ffi::{CStr, CString, c_char};
 use std::ops::Deref;
 use std::ops::DerefMut;
 
 thread_local! {
-    static LAST_ERROR_CODE: RefCell<i32> = const { RefCell::new(0) };
-    static LAST_ERROR_CONTEXT: RefCell<Option<CString>> = const { RefCell::new(None) };
+    static LAST_ERROR_CODE: RefCell<i32> = RefCell::new(0);
+    static LAST_ERROR_CONTEXT: RefCell<Option<CString>> = RefCell::new(None);
 }
 
 fn set_last_error(code: i32, message: &str) {
@@ -610,7 +665,7 @@ pub unsafe extern "C" fn kreuzberg_batch_processor_config_free(ptr: *mut kreuzbe
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_batch_processor_config_string_pool_size(
+pub unsafe extern "C" fn kreuzberg_batch_processor_config_string_pool_size(
     ptr: *const kreuzberg::core::BatchProcessorConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -624,7 +679,7 @@ pub const unsafe extern "C" fn kreuzberg_batch_processor_config_string_pool_size
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_batch_processor_config_string_buffer_capacity(
+pub unsafe extern "C" fn kreuzberg_batch_processor_config_string_buffer_capacity(
     ptr: *const kreuzberg::core::BatchProcessorConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -638,7 +693,7 @@ pub const unsafe extern "C" fn kreuzberg_batch_processor_config_string_buffer_ca
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_batch_processor_config_byte_pool_size(
+pub unsafe extern "C" fn kreuzberg_batch_processor_config_byte_pool_size(
     ptr: *const kreuzberg::core::BatchProcessorConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -652,7 +707,7 @@ pub const unsafe extern "C" fn kreuzberg_batch_processor_config_byte_pool_size(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_batch_processor_config_byte_buffer_capacity(
+pub unsafe extern "C" fn kreuzberg_batch_processor_config_byte_buffer_capacity(
     ptr: *const kreuzberg::core::BatchProcessorConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -1005,9 +1060,7 @@ pub unsafe extern "C" fn kreuzberg_acceleration_config_provider(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_acceleration_config_device_id(
-    ptr: *const kreuzberg::AccelerationConfig,
-) -> u32 {
+pub unsafe extern "C" fn kreuzberg_acceleration_config_device_id(ptr: *const kreuzberg::AccelerationConfig) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1089,7 +1142,7 @@ pub unsafe extern "C" fn kreuzberg_content_filter_config_free(ptr: *mut kreuzber
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_content_filter_config_include_headers(
+pub unsafe extern "C" fn kreuzberg_content_filter_config_include_headers(
     ptr: *const kreuzberg::ContentFilterConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -1103,7 +1156,7 @@ pub const unsafe extern "C" fn kreuzberg_content_filter_config_include_headers(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_content_filter_config_include_footers(
+pub unsafe extern "C" fn kreuzberg_content_filter_config_include_footers(
     ptr: *const kreuzberg::ContentFilterConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -1117,7 +1170,7 @@ pub const unsafe extern "C" fn kreuzberg_content_filter_config_include_footers(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_content_filter_config_strip_repeating_text(
+pub unsafe extern "C" fn kreuzberg_content_filter_config_strip_repeating_text(
     ptr: *const kreuzberg::ContentFilterConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -1131,7 +1184,7 @@ pub const unsafe extern "C" fn kreuzberg_content_filter_config_strip_repeating_t
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_content_filter_config_include_watermarks(
+pub unsafe extern "C" fn kreuzberg_content_filter_config_include_watermarks(
     ptr: *const kreuzberg::ContentFilterConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -1248,7 +1301,7 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_free(ptr: *mut kreuzberg::E
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extraction_config_use_cache(ptr: *const kreuzberg::ExtractionConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_extraction_config_use_cache(ptr: *const kreuzberg::ExtractionConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1260,7 +1313,7 @@ pub const unsafe extern "C" fn kreuzberg_extraction_config_use_cache(ptr: *const
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extraction_config_enable_quality_processing(
+pub unsafe extern "C" fn kreuzberg_extraction_config_enable_quality_processing(
     ptr: *const kreuzberg::ExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -1291,7 +1344,7 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_ocr(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extraction_config_force_ocr(ptr: *const kreuzberg::ExtractionConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_extraction_config_force_ocr(ptr: *const kreuzberg::ExtractionConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1326,7 +1379,7 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_force_ocr_pages(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extraction_config_disable_ocr(ptr: *const kreuzberg::ExtractionConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_extraction_config_disable_ocr(ptr: *const kreuzberg::ExtractionConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -1570,7 +1623,7 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_layout(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extraction_config_include_document_structure(
+pub unsafe extern "C" fn kreuzberg_extraction_config_include_document_structure(
     ptr: *const kreuzberg::ExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -1653,7 +1706,7 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_email(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extraction_config_max_archive_depth(
+pub unsafe extern "C" fn kreuzberg_extraction_config_max_archive_depth(
     ptr: *const kreuzberg::ExtractionConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -1804,6 +1857,30 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_validate(this: *const kreuz
             -1
         }
     }
+}
+
+/// Returns the effective disable-OCR value, accounting for both the top-level
+/// `disable_ocr` flag and the `ocr.enabled` shorthand on [`OcrConfig`].
+///
+/// Setting `ocr.enabled = false` in configuration is treated as equivalent to
+/// `disable_ocr = true`. This method is the single source of truth for whether
+/// OCR should be skipped.
+/// # Safety
+/// Caller must ensure all pointer arguments are valid or null.
+/// Returned pointers must be freed with the appropriate free function.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kreuzberg_extraction_config_effective_disable_ocr(
+    this: *const kreuzberg::ExtractionConfig,
+) -> i32 {
+    clear_last_error();
+    if this.is_null() {
+        set_last_error(1, "Null pointer passed for self");
+        return 0;
+    }
+    // SAFETY: null check above guarantees this is a valid pointer.
+    let obj = unsafe { &*this };
+    let result = obj.effective_disable_ocr();
+    if result { 1 } else { 0 }
 }
 
 /// Check if image processing is needed by examining OCR and image extraction settings.
@@ -2267,7 +2344,7 @@ pub unsafe extern "C" fn kreuzberg_image_extraction_config_free(ptr: *mut kreuzb
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_extraction_config_extract_images(
+pub unsafe extern "C" fn kreuzberg_image_extraction_config_extract_images(
     ptr: *const kreuzberg::ImageExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2281,7 +2358,7 @@ pub const unsafe extern "C" fn kreuzberg_image_extraction_config_extract_images(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_extraction_config_target_dpi(
+pub unsafe extern "C" fn kreuzberg_image_extraction_config_target_dpi(
     ptr: *const kreuzberg::ImageExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2295,7 +2372,7 @@ pub const unsafe extern "C" fn kreuzberg_image_extraction_config_target_dpi(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_extraction_config_max_image_dimension(
+pub unsafe extern "C" fn kreuzberg_image_extraction_config_max_image_dimension(
     ptr: *const kreuzberg::ImageExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2309,7 +2386,7 @@ pub const unsafe extern "C" fn kreuzberg_image_extraction_config_max_image_dimen
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_extraction_config_inject_placeholders(
+pub unsafe extern "C" fn kreuzberg_image_extraction_config_inject_placeholders(
     ptr: *const kreuzberg::ImageExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2323,7 +2400,7 @@ pub const unsafe extern "C" fn kreuzberg_image_extraction_config_inject_placehol
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_extraction_config_auto_adjust_dpi(
+pub unsafe extern "C" fn kreuzberg_image_extraction_config_auto_adjust_dpi(
     ptr: *const kreuzberg::ImageExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2337,7 +2414,7 @@ pub const unsafe extern "C" fn kreuzberg_image_extraction_config_auto_adjust_dpi
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_extraction_config_min_dpi(
+pub unsafe extern "C" fn kreuzberg_image_extraction_config_min_dpi(
     ptr: *const kreuzberg::ImageExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2351,7 +2428,7 @@ pub const unsafe extern "C" fn kreuzberg_image_extraction_config_min_dpi(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_extraction_config_max_dpi(
+pub unsafe extern "C" fn kreuzberg_image_extraction_config_max_dpi(
     ptr: *const kreuzberg::ImageExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2452,7 +2529,7 @@ pub unsafe extern "C" fn kreuzberg_token_reduction_config_mode(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_token_reduction_config_preserve_important_words(
+pub unsafe extern "C" fn kreuzberg_token_reduction_config_preserve_important_words(
     ptr: *const kreuzberg::TokenReductionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2536,7 +2613,7 @@ pub unsafe extern "C" fn kreuzberg_language_detection_config_free(ptr: *mut kreu
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_language_detection_config_enabled(
+pub unsafe extern "C" fn kreuzberg_language_detection_config_enabled(
     ptr: *const kreuzberg::LanguageDetectionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2550,7 +2627,7 @@ pub const unsafe extern "C" fn kreuzberg_language_detection_config_enabled(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_language_detection_config_min_confidence(
+pub unsafe extern "C" fn kreuzberg_language_detection_config_min_confidence(
     ptr: *const kreuzberg::LanguageDetectionConfig,
 ) -> f64 {
     if ptr.is_null() {
@@ -2564,7 +2641,7 @@ pub const unsafe extern "C" fn kreuzberg_language_detection_config_min_confidenc
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_language_detection_config_detect_multiple(
+pub unsafe extern "C" fn kreuzberg_language_detection_config_detect_multiple(
     ptr: *const kreuzberg::LanguageDetectionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -2717,7 +2794,7 @@ pub unsafe extern "C" fn kreuzberg_html_output_config_class_prefix(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_html_output_config_embed_css(ptr: *const kreuzberg::HtmlOutputConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_html_output_config_embed_css(ptr: *const kreuzberg::HtmlOutputConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -2826,7 +2903,7 @@ pub unsafe extern "C" fn kreuzberg_layout_detection_config_confidence_threshold(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_layout_detection_config_apply_heuristics(
+pub unsafe extern "C" fn kreuzberg_layout_detection_config_apply_heuristics(
     ptr: *const kreuzberg::LayoutDetectionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -3168,7 +3245,7 @@ pub unsafe extern "C" fn kreuzberg_structured_extraction_config_schema_descripti
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_structured_extraction_config_strict(
+pub unsafe extern "C" fn kreuzberg_structured_extraction_config_strict(
     ptr: *const kreuzberg::StructuredExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -3286,7 +3363,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_free(ptr: *mut kreuzbe
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_total_non_whitespace(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_total_non_whitespace(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> usize {
     if ptr.is_null() {
@@ -3300,7 +3377,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_total_non_wh
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_non_whitespace_per_page(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_non_whitespace_per_page(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> f64 {
     if ptr.is_null() {
@@ -3314,7 +3391,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_non_whitespa
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_meaningful_word_len(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_meaningful_word_len(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> usize {
     if ptr.is_null() {
@@ -3328,7 +3405,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_meaningful_w
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_meaningful_words(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_meaningful_words(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> usize {
     if ptr.is_null() {
@@ -3342,7 +3419,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_meaningful_w
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_alnum_ratio(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_alnum_ratio(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> f64 {
     if ptr.is_null() {
@@ -3356,7 +3433,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_alnum_ratio(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_garbage_chars(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_garbage_chars(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> usize {
     if ptr.is_null() {
@@ -3370,7 +3447,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_garbage_char
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_max_fragmented_word_ratio(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_max_fragmented_word_ratio(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> f64 {
     if ptr.is_null() {
@@ -3384,7 +3461,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_max_fragmented_w
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_critical_fragmented_word_ratio(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_critical_fragmented_word_ratio(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> f64 {
     if ptr.is_null() {
@@ -3398,7 +3475,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_critical_fragmen
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_avg_word_length(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_avg_word_length(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> f64 {
     if ptr.is_null() {
@@ -3412,7 +3489,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_avg_word_len
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_words_for_avg_length_check(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_words_for_avg_length_check(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> usize {
     if ptr.is_null() {
@@ -3426,7 +3503,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_words_for_av
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_consecutive_repeat_ratio(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_consecutive_repeat_ratio(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> f64 {
     if ptr.is_null() {
@@ -3440,7 +3517,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_consecutive_
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_words_for_repeat_check(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_words_for_repeat_check(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> usize {
     if ptr.is_null() {
@@ -3454,7 +3531,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_min_words_for_re
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_substantive_min_chars(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_substantive_min_chars(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> usize {
     if ptr.is_null() {
@@ -3468,7 +3545,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_substantive_min_
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_non_text_min_chars(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_non_text_min_chars(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> usize {
     if ptr.is_null() {
@@ -3482,7 +3559,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_non_text_min_cha
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_alnum_ws_ratio_threshold(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_alnum_ws_ratio_threshold(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> f64 {
     if ptr.is_null() {
@@ -3496,7 +3573,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_alnum_ws_ratio_t
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_pipeline_min_quality(
+pub unsafe extern "C" fn kreuzberg_ocr_quality_thresholds_pipeline_min_quality(
     ptr: *const kreuzberg::OcrQualityThresholds,
 ) -> f64 {
     if ptr.is_null() {
@@ -3605,7 +3682,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_pipeline_stage_backend(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_pipeline_stage_priority(ptr: *const kreuzberg::OcrPipelineStage) -> u32 {
+pub unsafe extern "C" fn kreuzberg_ocr_pipeline_stage_priority(ptr: *const kreuzberg::OcrPipelineStage) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -3860,6 +3937,18 @@ pub unsafe extern "C" fn kreuzberg_ocr_config_free(ptr: *mut kreuzberg::OcrConfi
     }
 }
 
+/// Get the `enabled` field from a `OcrConfig`.
+/// # Safety
+/// Pointer must be a valid handle returned by this library.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kreuzberg_ocr_config_enabled(ptr: *const kreuzberg::OcrConfig) -> i32 {
+    if ptr.is_null() {
+        return 0;
+    }
+    let obj = unsafe { &*ptr };
+    obj.enabled as i32
+}
+
 /// Get the `backend` field from a `OcrConfig`.
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
@@ -4002,7 +4091,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_config_pipeline(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_config_auto_rotate(ptr: *const kreuzberg::OcrConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_ocr_config_auto_rotate(ptr: *const kreuzberg::OcrConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4202,7 +4291,7 @@ pub unsafe extern "C" fn kreuzberg_page_config_free(ptr: *mut kreuzberg::PageCon
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_config_extract_pages(ptr: *const kreuzberg::PageConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_page_config_extract_pages(ptr: *const kreuzberg::PageConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4214,7 +4303,7 @@ pub const unsafe extern "C" fn kreuzberg_page_config_extract_pages(ptr: *const k
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_config_insert_page_markers(ptr: *const kreuzberg::PageConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_page_config_insert_page_markers(ptr: *const kreuzberg::PageConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4331,7 +4420,7 @@ pub unsafe extern "C" fn kreuzberg_pdf_config_backend(ptr: *const kreuzberg::Pdf
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_config_extract_images(ptr: *const kreuzberg::PdfConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_pdf_config_extract_images(ptr: *const kreuzberg::PdfConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4364,7 +4453,7 @@ pub unsafe extern "C" fn kreuzberg_pdf_config_passwords(ptr: *const kreuzberg::P
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_config_extract_metadata(ptr: *const kreuzberg::PdfConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_pdf_config_extract_metadata(ptr: *const kreuzberg::PdfConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4393,7 +4482,7 @@ pub unsafe extern "C" fn kreuzberg_pdf_config_hierarchy(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_config_extract_annotations(ptr: *const kreuzberg::PdfConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_pdf_config_extract_annotations(ptr: *const kreuzberg::PdfConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4435,9 +4524,7 @@ pub unsafe extern "C" fn kreuzberg_pdf_config_bottom_margin_fraction(ptr: *const
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_config_allow_single_column_tables(
-    ptr: *const kreuzberg::PdfConfig,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_pdf_config_allow_single_column_tables(ptr: *const kreuzberg::PdfConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4525,7 +4612,7 @@ pub unsafe extern "C" fn kreuzberg_hierarchy_config_free(ptr: *mut kreuzberg::Hi
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hierarchy_config_enabled(ptr: *const kreuzberg::HierarchyConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_hierarchy_config_enabled(ptr: *const kreuzberg::HierarchyConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4537,7 +4624,7 @@ pub const unsafe extern "C" fn kreuzberg_hierarchy_config_enabled(ptr: *const kr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hierarchy_config_k_clusters(ptr: *const kreuzberg::HierarchyConfig) -> usize {
+pub unsafe extern "C" fn kreuzberg_hierarchy_config_k_clusters(ptr: *const kreuzberg::HierarchyConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -4549,7 +4636,7 @@ pub const unsafe extern "C" fn kreuzberg_hierarchy_config_k_clusters(ptr: *const
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hierarchy_config_include_bbox(ptr: *const kreuzberg::HierarchyConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_hierarchy_config_include_bbox(ptr: *const kreuzberg::HierarchyConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4600,9 +4687,7 @@ pub unsafe extern "C" fn kreuzberg_post_processor_config_free(ptr: *mut kreuzber
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_post_processor_config_enabled(
-    ptr: *const kreuzberg::PostProcessorConfig,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_post_processor_config_enabled(ptr: *const kreuzberg::PostProcessorConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4755,9 +4840,7 @@ pub unsafe extern "C" fn kreuzberg_chunking_config_free(ptr: *mut kreuzberg::Chu
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunking_config_max_characters(
-    ptr: *const kreuzberg::ChunkingConfig,
-) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunking_config_max_characters(ptr: *const kreuzberg::ChunkingConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -4769,7 +4852,7 @@ pub const unsafe extern "C" fn kreuzberg_chunking_config_max_characters(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunking_config_overlap(ptr: *const kreuzberg::ChunkingConfig) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunking_config_overlap(ptr: *const kreuzberg::ChunkingConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -4781,7 +4864,7 @@ pub const unsafe extern "C" fn kreuzberg_chunking_config_overlap(ptr: *const kre
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunking_config_trim(ptr: *const kreuzberg::ChunkingConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_chunking_config_trim(ptr: *const kreuzberg::ChunkingConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -4858,7 +4941,7 @@ pub unsafe extern "C" fn kreuzberg_chunking_config_sizing(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunking_config_prepend_heading_context(
+pub unsafe extern "C" fn kreuzberg_chunking_config_prepend_heading_context(
     ptr: *const kreuzberg::ChunkingConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -5033,7 +5116,7 @@ pub unsafe extern "C" fn kreuzberg_embedding_config_model(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_embedding_config_normalize(ptr: *const kreuzberg::EmbeddingConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_embedding_config_normalize(ptr: *const kreuzberg::EmbeddingConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -5045,7 +5128,7 @@ pub const unsafe extern "C" fn kreuzberg_embedding_config_normalize(ptr: *const 
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_embedding_config_batch_size(ptr: *const kreuzberg::EmbeddingConfig) -> usize {
+pub unsafe extern "C" fn kreuzberg_embedding_config_batch_size(ptr: *const kreuzberg::EmbeddingConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -5057,7 +5140,7 @@ pub const unsafe extern "C" fn kreuzberg_embedding_config_batch_size(ptr: *const
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_embedding_config_show_download_progress(
+pub unsafe extern "C" fn kreuzberg_embedding_config_show_download_progress(
     ptr: *const kreuzberg::EmbeddingConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -5169,7 +5252,7 @@ pub unsafe extern "C" fn kreuzberg_tree_sitter_config_free(ptr: *mut kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tree_sitter_config_enabled(ptr: *const kreuzberg::TreeSitterConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tree_sitter_config_enabled(ptr: *const kreuzberg::TreeSitterConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -5341,7 +5424,7 @@ pub unsafe extern "C" fn kreuzberg_tree_sitter_process_config_free(ptr: *mut kre
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_structure(
+pub unsafe extern "C" fn kreuzberg_tree_sitter_process_config_structure(
     ptr: *const kreuzberg::TreeSitterProcessConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -5355,7 +5438,7 @@ pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_structure(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_imports(
+pub unsafe extern "C" fn kreuzberg_tree_sitter_process_config_imports(
     ptr: *const kreuzberg::TreeSitterProcessConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -5369,7 +5452,7 @@ pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_imports(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_exports(
+pub unsafe extern "C" fn kreuzberg_tree_sitter_process_config_exports(
     ptr: *const kreuzberg::TreeSitterProcessConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -5383,7 +5466,7 @@ pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_exports(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_comments(
+pub unsafe extern "C" fn kreuzberg_tree_sitter_process_config_comments(
     ptr: *const kreuzberg::TreeSitterProcessConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -5397,7 +5480,7 @@ pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_comments(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_docstrings(
+pub unsafe extern "C" fn kreuzberg_tree_sitter_process_config_docstrings(
     ptr: *const kreuzberg::TreeSitterProcessConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -5411,7 +5494,7 @@ pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_docstrings(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_symbols(
+pub unsafe extern "C" fn kreuzberg_tree_sitter_process_config_symbols(
     ptr: *const kreuzberg::TreeSitterProcessConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -5425,7 +5508,7 @@ pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_symbols(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tree_sitter_process_config_diagnostics(
+pub unsafe extern "C" fn kreuzberg_tree_sitter_process_config_diagnostics(
     ptr: *const kreuzberg::TreeSitterProcessConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -5705,7 +5788,7 @@ pub unsafe extern "C" fn kreuzberg_server_config_host(ptr: *const kreuzberg::Ser
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_server_config_port(ptr: *const kreuzberg::ServerConfig) -> u16 {
+pub unsafe extern "C" fn kreuzberg_server_config_port(ptr: *const kreuzberg::ServerConfig) -> u16 {
     if ptr.is_null() {
         return 0;
     }
@@ -5737,9 +5820,7 @@ pub unsafe extern "C" fn kreuzberg_server_config_cors_origins(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_server_config_max_request_body_bytes(
-    ptr: *const kreuzberg::ServerConfig,
-) -> usize {
+pub unsafe extern "C" fn kreuzberg_server_config_max_request_body_bytes(ptr: *const kreuzberg::ServerConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -5751,7 +5832,7 @@ pub const unsafe extern "C" fn kreuzberg_server_config_max_request_body_bytes(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_server_config_max_multipart_field_bytes(
+pub unsafe extern "C" fn kreuzberg_server_config_max_multipart_field_bytes(
     ptr: *const kreuzberg::ServerConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -6257,7 +6338,7 @@ pub unsafe extern "C" fn kreuzberg_json_extraction_config_free(ptr: *mut kreuzbe
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_json_extraction_config_extract_schema(
+pub unsafe extern "C" fn kreuzberg_json_extraction_config_extract_schema(
     ptr: *const kreuzberg::extraction::JsonExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -6271,7 +6352,7 @@ pub const unsafe extern "C" fn kreuzberg_json_extraction_config_extract_schema(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_json_extraction_config_max_depth(
+pub unsafe extern "C" fn kreuzberg_json_extraction_config_max_depth(
     ptr: *const kreuzberg::extraction::JsonExtractionConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -6285,7 +6366,7 @@ pub const unsafe extern "C" fn kreuzberg_json_extraction_config_max_depth(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_json_extraction_config_array_item_limit(
+pub unsafe extern "C" fn kreuzberg_json_extraction_config_array_item_limit(
     ptr: *const kreuzberg::extraction::JsonExtractionConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -6299,7 +6380,7 @@ pub const unsafe extern "C" fn kreuzberg_json_extraction_config_array_item_limit
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_json_extraction_config_include_type_info(
+pub unsafe extern "C" fn kreuzberg_json_extraction_config_include_type_info(
     ptr: *const kreuzberg::extraction::JsonExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -6313,7 +6394,7 @@ pub const unsafe extern "C" fn kreuzberg_json_extraction_config_include_type_inf
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_json_extraction_config_flatten_nested_objects(
+pub unsafe extern "C" fn kreuzberg_json_extraction_config_flatten_nested_objects(
     ptr: *const kreuzberg::extraction::JsonExtractionConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -6384,7 +6465,7 @@ pub unsafe extern "C" fn kreuzberg_list_item_metadata_list_type(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_list_item_metadata_byte_start(
+pub unsafe extern "C" fn kreuzberg_list_item_metadata_byte_start(
     ptr: *const kreuzberg::extraction::ListItemMetadata,
 ) -> usize {
     if ptr.is_null() {
@@ -6398,7 +6479,7 @@ pub const unsafe extern "C" fn kreuzberg_list_item_metadata_byte_start(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_list_item_metadata_byte_end(
+pub unsafe extern "C" fn kreuzberg_list_item_metadata_byte_end(
     ptr: *const kreuzberg::extraction::ListItemMetadata,
 ) -> usize {
     if ptr.is_null() {
@@ -6412,7 +6493,7 @@ pub const unsafe extern "C" fn kreuzberg_list_item_metadata_byte_end(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_list_item_metadata_indent_level(
+pub unsafe extern "C" fn kreuzberg_list_item_metadata_indent_level(
     ptr: *const kreuzberg::extraction::ListItemMetadata,
 ) -> u32 {
     if ptr.is_null() {
@@ -6563,7 +6644,7 @@ pub unsafe extern "C" fn kreuzberg_file_header_free(ptr: *mut kreuzberg::extract
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_file_header_flags(
+pub unsafe extern "C" fn kreuzberg_file_header_flags(
     ptr: *const kreuzberg::extraction::hwp::parser::FileHeader,
 ) -> u32 {
     if ptr.is_null() {
@@ -6670,7 +6751,7 @@ pub unsafe extern "C" fn kreuzberg_record_free(ptr: *mut kreuzberg::extraction::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_record_tag_id(ptr: *const kreuzberg::extraction::hwp::parser::Record) -> u16 {
+pub unsafe extern "C" fn kreuzberg_record_tag_id(ptr: *const kreuzberg::extraction::hwp::parser::Record) -> u16 {
     if ptr.is_null() {
         return 0;
     }
@@ -7631,7 +7712,7 @@ pub unsafe extern "C" fn kreuzberg_extent_free(ptr: *mut kreuzberg::extraction::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extent_cx(ptr: *const kreuzberg::extraction::docx::drawing::Extent) -> i64 {
+pub unsafe extern "C" fn kreuzberg_extent_cx(ptr: *const kreuzberg::extraction::docx::drawing::Extent) -> i64 {
     if ptr.is_null() {
         return 0;
     }
@@ -7643,7 +7724,7 @@ pub const unsafe extern "C" fn kreuzberg_extent_cx(ptr: *const kreuzberg::extrac
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extent_cy(ptr: *const kreuzberg::extraction::docx::drawing::Extent) -> i64 {
+pub unsafe extern "C" fn kreuzberg_extent_cy(ptr: *const kreuzberg::extraction::docx::drawing::Extent) -> i64 {
     if ptr.is_null() {
         return 0;
     }
@@ -7895,7 +7976,7 @@ pub unsafe extern "C" fn kreuzberg_anchor_properties_free(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_anchor_properties_behind_doc(
+pub unsafe extern "C" fn kreuzberg_anchor_properties_behind_doc(
     ptr: *const kreuzberg::extraction::docx::drawing::AnchorProperties,
 ) -> i32 {
     if ptr.is_null() {
@@ -7909,7 +7990,7 @@ pub const unsafe extern "C" fn kreuzberg_anchor_properties_behind_doc(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_anchor_properties_layout_in_cell(
+pub unsafe extern "C" fn kreuzberg_anchor_properties_layout_in_cell(
     ptr: *const kreuzberg::extraction::docx::drawing::AnchorProperties,
 ) -> i32 {
     if ptr.is_null() {
@@ -9620,7 +9701,7 @@ pub unsafe extern "C" fn kreuzberg_style_definition_next_style(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_style_definition_is_default(
+pub unsafe extern "C" fn kreuzberg_style_definition_is_default(
     ptr: *const kreuzberg::extraction::docx::styles::StyleDefinition,
 ) -> i32 {
     if ptr.is_null() {
@@ -9940,7 +10021,7 @@ pub unsafe extern "C" fn kreuzberg_table_look_free(ptr: *mut kreuzberg::extracti
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_look_first_row(
+pub unsafe extern "C" fn kreuzberg_table_look_first_row(
     ptr: *const kreuzberg::extraction::docx::table::TableLook,
 ) -> i32 {
     if ptr.is_null() {
@@ -9954,7 +10035,7 @@ pub const unsafe extern "C" fn kreuzberg_table_look_first_row(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_look_last_row(
+pub unsafe extern "C" fn kreuzberg_table_look_last_row(
     ptr: *const kreuzberg::extraction::docx::table::TableLook,
 ) -> i32 {
     if ptr.is_null() {
@@ -9968,7 +10049,7 @@ pub const unsafe extern "C" fn kreuzberg_table_look_last_row(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_look_first_column(
+pub unsafe extern "C" fn kreuzberg_table_look_first_column(
     ptr: *const kreuzberg::extraction::docx::table::TableLook,
 ) -> i32 {
     if ptr.is_null() {
@@ -9982,7 +10063,7 @@ pub const unsafe extern "C" fn kreuzberg_table_look_first_column(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_look_last_column(
+pub unsafe extern "C" fn kreuzberg_table_look_last_column(
     ptr: *const kreuzberg::extraction::docx::table::TableLook,
 ) -> i32 {
     if ptr.is_null() {
@@ -9996,7 +10077,7 @@ pub const unsafe extern "C" fn kreuzberg_table_look_last_column(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_look_no_h_band(
+pub unsafe extern "C" fn kreuzberg_table_look_no_h_band(
     ptr: *const kreuzberg::extraction::docx::table::TableLook,
 ) -> i32 {
     if ptr.is_null() {
@@ -10010,7 +10091,7 @@ pub const unsafe extern "C" fn kreuzberg_table_look_no_h_band(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_look_no_v_band(
+pub unsafe extern "C" fn kreuzberg_table_look_no_v_band(
     ptr: *const kreuzberg::extraction::docx::table::TableLook,
 ) -> i32 {
     if ptr.is_null() {
@@ -10143,7 +10224,7 @@ pub unsafe extern "C" fn kreuzberg_row_properties_height_rule(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_row_properties_is_header(
+pub unsafe extern "C" fn kreuzberg_row_properties_is_header(
     ptr: *const kreuzberg::extraction::docx::table::RowProperties,
 ) -> i32 {
     if ptr.is_null() {
@@ -10157,7 +10238,7 @@ pub const unsafe extern "C" fn kreuzberg_row_properties_is_header(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_row_properties_cant_split(
+pub unsafe extern "C" fn kreuzberg_row_properties_cant_split(
     ptr: *const kreuzberg::extraction::docx::table::RowProperties,
 ) -> i32 {
     if ptr.is_null() {
@@ -11464,7 +11545,7 @@ pub unsafe extern "C" fn kreuzberg_ppt_extraction_result_text(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ppt_extraction_result_slide_count(
+pub unsafe extern "C" fn kreuzberg_ppt_extraction_result_slide_count(
     ptr: *const kreuzberg::extraction::ppt::PptExtractionResult,
 ) -> usize {
     if ptr.is_null() {
@@ -11618,7 +11699,7 @@ pub unsafe extern "C" fn kreuzberg_pptx_extraction_options_free(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pptx_extraction_options_extract_images(
+pub unsafe extern "C" fn kreuzberg_pptx_extraction_options_extract_images(
     ptr: *const kreuzberg::extraction::PptxExtractionOptions,
 ) -> i32 {
     if ptr.is_null() {
@@ -11649,7 +11730,7 @@ pub unsafe extern "C" fn kreuzberg_pptx_extraction_options_page_config(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pptx_extraction_options_plain(
+pub unsafe extern "C" fn kreuzberg_pptx_extraction_options_plain(
     ptr: *const kreuzberg::extraction::PptxExtractionOptions,
 ) -> i32 {
     if ptr.is_null() {
@@ -11663,7 +11744,7 @@ pub const unsafe extern "C" fn kreuzberg_pptx_extraction_options_plain(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pptx_extraction_options_include_structure(
+pub unsafe extern "C" fn kreuzberg_pptx_extraction_options_include_structure(
     ptr: *const kreuzberg::extraction::PptxExtractionOptions,
 ) -> i32 {
     if ptr.is_null() {
@@ -11677,7 +11758,7 @@ pub const unsafe extern "C" fn kreuzberg_pptx_extraction_options_include_structu
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pptx_extraction_options_inject_placeholders(
+pub unsafe extern "C" fn kreuzberg_pptx_extraction_options_inject_placeholders(
     ptr: *const kreuzberg::extraction::PptxExtractionOptions,
 ) -> i32 {
     if ptr.is_null() {
@@ -19695,7 +19776,7 @@ pub unsafe extern "C" fn kreuzberg_native_text_stats_free(ptr: *mut kreuzberg::e
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_native_text_stats_non_whitespace(
+pub unsafe extern "C" fn kreuzberg_native_text_stats_non_whitespace(
     ptr: *const kreuzberg::extractors::pdf::NativeTextStats,
 ) -> usize {
     if ptr.is_null() {
@@ -19709,7 +19790,7 @@ pub const unsafe extern "C" fn kreuzberg_native_text_stats_non_whitespace(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_native_text_stats_alnum(
+pub unsafe extern "C" fn kreuzberg_native_text_stats_alnum(
     ptr: *const kreuzberg::extractors::pdf::NativeTextStats,
 ) -> usize {
     if ptr.is_null() {
@@ -19723,7 +19804,7 @@ pub const unsafe extern "C" fn kreuzberg_native_text_stats_alnum(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_native_text_stats_meaningful_words(
+pub unsafe extern "C" fn kreuzberg_native_text_stats_meaningful_words(
     ptr: *const kreuzberg::extractors::pdf::NativeTextStats,
 ) -> usize {
     if ptr.is_null() {
@@ -19737,7 +19818,7 @@ pub const unsafe extern "C" fn kreuzberg_native_text_stats_meaningful_words(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_native_text_stats_alnum_ratio(
+pub unsafe extern "C" fn kreuzberg_native_text_stats_alnum_ratio(
     ptr: *const kreuzberg::extractors::pdf::NativeTextStats,
 ) -> f64 {
     if ptr.is_null() {
@@ -19751,7 +19832,7 @@ pub const unsafe extern "C" fn kreuzberg_native_text_stats_alnum_ratio(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_native_text_stats_garbage_char_count(
+pub unsafe extern "C" fn kreuzberg_native_text_stats_garbage_char_count(
     ptr: *const kreuzberg::extractors::pdf::NativeTextStats,
 ) -> usize {
     if ptr.is_null() {
@@ -19765,7 +19846,7 @@ pub const unsafe extern "C" fn kreuzberg_native_text_stats_garbage_char_count(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_native_text_stats_fragmented_word_ratio(
+pub unsafe extern "C" fn kreuzberg_native_text_stats_fragmented_word_ratio(
     ptr: *const kreuzberg::extractors::pdf::NativeTextStats,
 ) -> f64 {
     if ptr.is_null() {
@@ -19779,7 +19860,7 @@ pub const unsafe extern "C" fn kreuzberg_native_text_stats_fragmented_word_ratio
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_native_text_stats_consecutive_repeat_ratio(
+pub unsafe extern "C" fn kreuzberg_native_text_stats_consecutive_repeat_ratio(
     ptr: *const kreuzberg::extractors::pdf::NativeTextStats,
 ) -> f64 {
     if ptr.is_null() {
@@ -19793,7 +19874,7 @@ pub const unsafe extern "C" fn kreuzberg_native_text_stats_consecutive_repeat_ra
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_native_text_stats_avg_word_length(
+pub unsafe extern "C" fn kreuzberg_native_text_stats_avg_word_length(
     ptr: *const kreuzberg::extractors::pdf::NativeTextStats,
 ) -> f64 {
     if ptr.is_null() {
@@ -19807,7 +19888,7 @@ pub const unsafe extern "C" fn kreuzberg_native_text_stats_avg_word_length(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_native_text_stats_word_count(
+pub unsafe extern "C" fn kreuzberg_native_text_stats_word_count(
     ptr: *const kreuzberg::extractors::pdf::NativeTextStats,
 ) -> usize {
     if ptr.is_null() {
@@ -19902,7 +19983,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_fallback_decision_stats(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_fallback_decision_avg_non_whitespace(
+pub unsafe extern "C" fn kreuzberg_ocr_fallback_decision_avg_non_whitespace(
     ptr: *const kreuzberg::extractors::pdf::OcrFallbackDecision,
 ) -> f64 {
     if ptr.is_null() {
@@ -19916,7 +19997,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_fallback_decision_avg_non_whitespac
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_fallback_decision_avg_alnum(
+pub unsafe extern "C" fn kreuzberg_ocr_fallback_decision_avg_alnum(
     ptr: *const kreuzberg::extractors::pdf::OcrFallbackDecision,
 ) -> f64 {
     if ptr.is_null() {
@@ -19930,7 +20011,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_fallback_decision_avg_alnum(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_fallback_decision_fallback(
+pub unsafe extern "C" fn kreuzberg_ocr_fallback_decision_fallback(
     ptr: *const kreuzberg::extractors::pdf::OcrFallbackDecision,
 ) -> i32 {
     if ptr.is_null() {
@@ -20575,7 +20656,7 @@ pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_free(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_start(
+pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_start(
     ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
 ) -> usize {
     if ptr.is_null() {
@@ -20589,7 +20670,7 @@ pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_start(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_end(
+pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_end(
     ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
 ) -> usize {
     if ptr.is_null() {
@@ -20603,7 +20684,7 @@ pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_end(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_bold(
+pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_bold(
     ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
 ) -> i32 {
     if ptr.is_null() {
@@ -20617,7 +20698,7 @@ pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_bold(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_italic(
+pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_italic(
     ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
 ) -> i32 {
     if ptr.is_null() {
@@ -20631,7 +20712,7 @@ pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_italic(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_underline(
+pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_underline(
     ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
 ) -> i32 {
     if ptr.is_null() {
@@ -20645,7 +20726,7 @@ pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_underline(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_strikethrough(
+pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_strikethrough(
     ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
 ) -> i32 {
     if ptr.is_null() {
@@ -20659,7 +20740,7 @@ pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_strikethrough(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_rtf_formatting_span_color_index(
+pub unsafe extern "C" fn kreuzberg_rtf_formatting_span_color_index(
     ptr: *const kreuzberg::extractors::rtf::parser::RtfFormattingSpan,
 ) -> u16 {
     if ptr.is_null() {
@@ -21457,7 +21538,7 @@ pub unsafe extern "C" fn kreuzberg_panic_context_file(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_panic_context_line(ptr: *const kreuzberg::panic_context::PanicContext) -> u32 {
+pub unsafe extern "C" fn kreuzberg_panic_context_line(ptr: *const kreuzberg::panic_context::PanicContext) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -23682,7 +23763,7 @@ pub unsafe extern "C" fn kreuzberg_pdf_annotation_content(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_annotation_page_number(ptr: *const kreuzberg::PdfAnnotation) -> usize {
+pub unsafe extern "C" fn kreuzberg_pdf_annotation_page_number(ptr: *const kreuzberg::PdfAnnotation) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -25063,9 +25144,7 @@ pub unsafe extern "C" fn kreuzberg_document_relationship_free(ptr: *mut kreuzber
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_document_relationship_source(
-    ptr: *const kreuzberg::DocumentRelationship,
-) -> u32 {
+pub unsafe extern "C" fn kreuzberg_document_relationship_source(ptr: *const kreuzberg::DocumentRelationship) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25077,9 +25156,7 @@ pub const unsafe extern "C" fn kreuzberg_document_relationship_source(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_document_relationship_target(
-    ptr: *const kreuzberg::DocumentRelationship,
-) -> u32 {
+pub unsafe extern "C" fn kreuzberg_document_relationship_target(ptr: *const kreuzberg::DocumentRelationship) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25402,7 +25479,7 @@ pub unsafe extern "C" fn kreuzberg_table_grid_free(ptr: *mut kreuzberg::TableGri
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_grid_rows(ptr: *const kreuzberg::TableGrid) -> u32 {
+pub unsafe extern "C" fn kreuzberg_table_grid_rows(ptr: *const kreuzberg::TableGrid) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25414,7 +25491,7 @@ pub const unsafe extern "C" fn kreuzberg_table_grid_rows(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_grid_cols(ptr: *const kreuzberg::TableGrid) -> u32 {
+pub unsafe extern "C" fn kreuzberg_table_grid_cols(ptr: *const kreuzberg::TableGrid) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25525,7 +25602,7 @@ pub unsafe extern "C" fn kreuzberg_grid_cell_content(ptr: *const kreuzberg::Grid
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_grid_cell_row(ptr: *const kreuzberg::GridCell) -> u32 {
+pub unsafe extern "C" fn kreuzberg_grid_cell_row(ptr: *const kreuzberg::GridCell) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25537,7 +25614,7 @@ pub const unsafe extern "C" fn kreuzberg_grid_cell_row(ptr: *const kreuzberg::Gr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_grid_cell_col(ptr: *const kreuzberg::GridCell) -> u32 {
+pub unsafe extern "C" fn kreuzberg_grid_cell_col(ptr: *const kreuzberg::GridCell) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25549,7 +25626,7 @@ pub const unsafe extern "C" fn kreuzberg_grid_cell_col(ptr: *const kreuzberg::Gr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_grid_cell_row_span(ptr: *const kreuzberg::GridCell) -> u32 {
+pub unsafe extern "C" fn kreuzberg_grid_cell_row_span(ptr: *const kreuzberg::GridCell) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25561,7 +25638,7 @@ pub const unsafe extern "C" fn kreuzberg_grid_cell_row_span(ptr: *const kreuzber
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_grid_cell_col_span(ptr: *const kreuzberg::GridCell) -> u32 {
+pub unsafe extern "C" fn kreuzberg_grid_cell_col_span(ptr: *const kreuzberg::GridCell) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25573,7 +25650,7 @@ pub const unsafe extern "C" fn kreuzberg_grid_cell_col_span(ptr: *const kreuzber
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_grid_cell_is_header(ptr: *const kreuzberg::GridCell) -> i32 {
+pub unsafe extern "C" fn kreuzberg_grid_cell_is_header(ptr: *const kreuzberg::GridCell) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25666,7 +25743,7 @@ pub unsafe extern "C" fn kreuzberg_text_annotation_free(ptr: *mut kreuzberg::Tex
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_text_annotation_start(ptr: *const kreuzberg::TextAnnotation) -> u32 {
+pub unsafe extern "C" fn kreuzberg_text_annotation_start(ptr: *const kreuzberg::TextAnnotation) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -25678,7 +25755,7 @@ pub const unsafe extern "C" fn kreuzberg_text_annotation_start(ptr: *const kreuz
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_text_annotation_end(ptr: *const kreuzberg::TextAnnotation) -> u32 {
+pub unsafe extern "C" fn kreuzberg_text_annotation_end(ptr: *const kreuzberg::TextAnnotation) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -26685,7 +26762,7 @@ pub unsafe extern "C" fn kreuzberg_heading_level_free(ptr: *mut kreuzberg::Headi
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_heading_level_level(ptr: *const kreuzberg::HeadingLevel) -> u8 {
+pub unsafe extern "C" fn kreuzberg_heading_level_level(ptr: *const kreuzberg::HeadingLevel) -> u8 {
     if ptr.is_null() {
         return 0;
     }
@@ -26778,7 +26855,7 @@ pub unsafe extern "C" fn kreuzberg_chunk_metadata_free(ptr: *mut kreuzberg::Chun
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_metadata_byte_start(ptr: *const kreuzberg::ChunkMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_metadata_byte_start(ptr: *const kreuzberg::ChunkMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -26790,7 +26867,7 @@ pub const unsafe extern "C" fn kreuzberg_chunk_metadata_byte_start(ptr: *const k
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_metadata_byte_end(ptr: *const kreuzberg::ChunkMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_metadata_byte_end(ptr: *const kreuzberg::ChunkMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -26817,7 +26894,7 @@ pub unsafe extern "C" fn kreuzberg_chunk_metadata_token_count(ptr: *const kreuzb
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_metadata_chunk_index(ptr: *const kreuzberg::ChunkMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_metadata_chunk_index(ptr: *const kreuzberg::ChunkMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -26829,7 +26906,7 @@ pub const unsafe extern "C" fn kreuzberg_chunk_metadata_chunk_index(ptr: *const 
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_metadata_total_chunks(ptr: *const kreuzberg::ChunkMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_metadata_total_chunks(ptr: *const kreuzberg::ChunkMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -26921,7 +26998,7 @@ pub unsafe extern "C" fn kreuzberg_extracted_image_data(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extracted_image_image_index(ptr: *const kreuzberg::ExtractedImage) -> usize {
+pub unsafe extern "C" fn kreuzberg_extracted_image_image_index(ptr: *const kreuzberg::ExtractedImage) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -27013,7 +27090,7 @@ pub unsafe extern "C" fn kreuzberg_extracted_image_bits_per_component(ptr: *cons
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extracted_image_is_mask(ptr: *const kreuzberg::ExtractedImage) -> i32 {
+pub unsafe extern "C" fn kreuzberg_extracted_image_is_mask(ptr: *const kreuzberg::ExtractedImage) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -27241,7 +27318,7 @@ pub unsafe extern "C" fn kreuzberg_bounding_box_free(ptr: *mut kreuzberg::Boundi
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_bounding_box_x0(ptr: *const kreuzberg::BoundingBox) -> f64 {
+pub unsafe extern "C" fn kreuzberg_bounding_box_x0(ptr: *const kreuzberg::BoundingBox) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -27253,7 +27330,7 @@ pub const unsafe extern "C" fn kreuzberg_bounding_box_x0(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_bounding_box_y0(ptr: *const kreuzberg::BoundingBox) -> f64 {
+pub unsafe extern "C" fn kreuzberg_bounding_box_y0(ptr: *const kreuzberg::BoundingBox) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -27265,7 +27342,7 @@ pub const unsafe extern "C" fn kreuzberg_bounding_box_y0(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_bounding_box_x1(ptr: *const kreuzberg::BoundingBox) -> f64 {
+pub unsafe extern "C" fn kreuzberg_bounding_box_x1(ptr: *const kreuzberg::BoundingBox) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -27277,7 +27354,7 @@ pub const unsafe extern "C" fn kreuzberg_bounding_box_x1(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_bounding_box_y1(ptr: *const kreuzberg::BoundingBox) -> f64 {
+pub unsafe extern "C" fn kreuzberg_bounding_box_y1(ptr: *const kreuzberg::BoundingBox) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -27761,7 +27838,7 @@ pub unsafe extern "C" fn kreuzberg_excel_sheet_markdown(ptr: *const kreuzberg::E
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_excel_sheet_row_count(ptr: *const kreuzberg::ExcelSheet) -> usize {
+pub unsafe extern "C" fn kreuzberg_excel_sheet_row_count(ptr: *const kreuzberg::ExcelSheet) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -27773,7 +27850,7 @@ pub const unsafe extern "C" fn kreuzberg_excel_sheet_row_count(ptr: *const kreuz
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_excel_sheet_col_count(ptr: *const kreuzberg::ExcelSheet) -> usize {
+pub unsafe extern "C" fn kreuzberg_excel_sheet_col_count(ptr: *const kreuzberg::ExcelSheet) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -27785,7 +27862,7 @@ pub const unsafe extern "C" fn kreuzberg_excel_sheet_col_count(ptr: *const kreuz
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_excel_sheet_cell_count(ptr: *const kreuzberg::ExcelSheet) -> usize {
+pub unsafe extern "C" fn kreuzberg_excel_sheet_cell_count(ptr: *const kreuzberg::ExcelSheet) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -27905,7 +27982,7 @@ pub unsafe extern "C" fn kreuzberg_xml_extraction_result_content(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_xml_extraction_result_element_count(
+pub unsafe extern "C" fn kreuzberg_xml_extraction_result_element_count(
     ptr: *const kreuzberg::XmlExtractionResult,
 ) -> usize {
     if ptr.is_null() {
@@ -27968,7 +28045,7 @@ pub unsafe extern "C" fn kreuzberg_text_extraction_result_content(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_text_extraction_result_line_count(
+pub unsafe extern "C" fn kreuzberg_text_extraction_result_line_count(
     ptr: *const kreuzberg::TextExtractionResult,
 ) -> usize {
     if ptr.is_null() {
@@ -27982,7 +28059,7 @@ pub const unsafe extern "C" fn kreuzberg_text_extraction_result_line_count(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_text_extraction_result_word_count(
+pub unsafe extern "C" fn kreuzberg_text_extraction_result_word_count(
     ptr: *const kreuzberg::TextExtractionResult,
 ) -> usize {
     if ptr.is_null() {
@@ -27996,7 +28073,7 @@ pub const unsafe extern "C" fn kreuzberg_text_extraction_result_word_count(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_text_extraction_result_character_count(
+pub unsafe extern "C" fn kreuzberg_text_extraction_result_character_count(
     ptr: *const kreuzberg::TextExtractionResult,
 ) -> usize {
     if ptr.is_null() {
@@ -28076,7 +28153,7 @@ pub unsafe extern "C" fn kreuzberg_pptx_extraction_result_metadata(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pptx_extraction_result_slide_count(
+pub unsafe extern "C" fn kreuzberg_pptx_extraction_result_slide_count(
     ptr: *const kreuzberg::PptxExtractionResult,
 ) -> usize {
     if ptr.is_null() {
@@ -28090,7 +28167,7 @@ pub const unsafe extern "C" fn kreuzberg_pptx_extraction_result_slide_count(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pptx_extraction_result_image_count(
+pub unsafe extern "C" fn kreuzberg_pptx_extraction_result_image_count(
     ptr: *const kreuzberg::PptxExtractionResult,
 ) -> usize {
     if ptr.is_null() {
@@ -28104,7 +28181,7 @@ pub const unsafe extern "C" fn kreuzberg_pptx_extraction_result_image_count(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pptx_extraction_result_table_count(
+pub unsafe extern "C" fn kreuzberg_pptx_extraction_result_table_count(
     ptr: *const kreuzberg::PptxExtractionResult,
 ) -> usize {
     if ptr.is_null() {
@@ -28663,7 +28740,7 @@ pub unsafe extern "C" fn kreuzberg_email_attachment_size(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_email_attachment_is_image(ptr: *const kreuzberg::EmailAttachment) -> i32 {
+pub unsafe extern "C" fn kreuzberg_email_attachment_is_image(ptr: *const kreuzberg::EmailAttachment) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -28898,7 +28975,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_table_markdown(ptr: *const kreuzberg::Ocr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_table_page_number(ptr: *const kreuzberg::OcrTable) -> usize {
+pub unsafe extern "C" fn kreuzberg_ocr_table_page_number(ptr: *const kreuzberg::OcrTable) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -28997,9 +29074,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_free(ptr: *mut kreuzbe
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_left(
-    ptr: *const kreuzberg::OcrTableBoundingBox,
-) -> u32 {
+pub unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_left(ptr: *const kreuzberg::OcrTableBoundingBox) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -29011,7 +29086,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_left(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_top(ptr: *const kreuzberg::OcrTableBoundingBox) -> u32 {
+pub unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_top(ptr: *const kreuzberg::OcrTableBoundingBox) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -29023,9 +29098,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_top(ptr: *const 
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_right(
-    ptr: *const kreuzberg::OcrTableBoundingBox,
-) -> u32 {
+pub unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_right(ptr: *const kreuzberg::OcrTableBoundingBox) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -29037,9 +29110,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_right(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_bottom(
-    ptr: *const kreuzberg::OcrTableBoundingBox,
-) -> u32 {
+pub unsafe extern "C" fn kreuzberg_ocr_table_bounding_box_bottom(ptr: *const kreuzberg::OcrTableBoundingBox) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -29121,7 +29192,7 @@ pub unsafe extern "C" fn kreuzberg_image_preprocessing_config_free(ptr: *mut kre
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_target_dpi(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_config_target_dpi(
     ptr: *const kreuzberg::ImagePreprocessingConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29135,7 +29206,7 @@ pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_target_dpi(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_auto_rotate(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_config_auto_rotate(
     ptr: *const kreuzberg::ImagePreprocessingConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29149,7 +29220,7 @@ pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_auto_rotate(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_deskew(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_config_deskew(
     ptr: *const kreuzberg::ImagePreprocessingConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29163,7 +29234,7 @@ pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_deskew(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_denoise(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_config_denoise(
     ptr: *const kreuzberg::ImagePreprocessingConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29177,7 +29248,7 @@ pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_denoise(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_contrast_enhance(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_config_contrast_enhance(
     ptr: *const kreuzberg::ImagePreprocessingConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29208,7 +29279,7 @@ pub unsafe extern "C" fn kreuzberg_image_preprocessing_config_binarization_metho
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_config_invert_colors(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_config_invert_colors(
     ptr: *const kreuzberg::ImagePreprocessingConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29315,7 +29386,7 @@ pub unsafe extern "C" fn kreuzberg_tesseract_config_language(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_psm(ptr: *const kreuzberg::TesseractConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tesseract_config_psm(ptr: *const kreuzberg::TesseractConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -29344,7 +29415,7 @@ pub unsafe extern "C" fn kreuzberg_tesseract_config_output_format(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_oem(ptr: *const kreuzberg::TesseractConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tesseract_config_oem(ptr: *const kreuzberg::TesseractConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -29356,9 +29427,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_oem(ptr: *const kreuzb
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_min_confidence(
-    ptr: *const kreuzberg::TesseractConfig,
-) -> f64 {
+pub unsafe extern "C" fn kreuzberg_tesseract_config_min_confidence(ptr: *const kreuzberg::TesseractConfig) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -29387,7 +29456,7 @@ pub unsafe extern "C" fn kreuzberg_tesseract_config_preprocessing(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_enable_table_detection(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_enable_table_detection(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29401,7 +29470,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_enable_table_detection
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_table_min_confidence(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_table_min_confidence(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> f64 {
     if ptr.is_null() {
@@ -29415,7 +29484,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_table_min_confidence(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_table_column_threshold(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_table_column_threshold(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29429,7 +29498,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_table_column_threshold
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_table_row_threshold_ratio(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_table_row_threshold_ratio(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> f64 {
     if ptr.is_null() {
@@ -29443,7 +29512,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_table_row_threshold_ra
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_use_cache(ptr: *const kreuzberg::TesseractConfig) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tesseract_config_use_cache(ptr: *const kreuzberg::TesseractConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -29455,7 +29524,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_use_cache(ptr: *const 
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_classify_use_pre_adapted_templates(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_classify_use_pre_adapted_templates(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29469,7 +29538,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_classify_use_pre_adapt
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_language_model_ngram_on(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_language_model_ngram_on(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29483,7 +29552,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_language_model_ngram_o
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_dont_blkrej_good_wds(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_dont_blkrej_good_wds(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29497,7 +29566,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_dont_blkrej_g
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_dont_rowrej_good_wds(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_dont_rowrej_good_wds(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29511,7 +29580,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_dont_rowrej_g
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_enable_dict_correction(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_enable_dict_correction(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29559,7 +29628,7 @@ pub unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_char_blacklist(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_use_primary_params_model(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_use_primary_params_model(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29573,7 +29642,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_tessedit_use_primary_p
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_textord_space_size_is_variable(
+pub unsafe extern "C" fn kreuzberg_tesseract_config_textord_space_size_is_variable(
     ptr: *const kreuzberg::TesseractConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -29587,9 +29656,7 @@ pub const unsafe extern "C" fn kreuzberg_tesseract_config_textord_space_size_is_
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tesseract_config_thresholding_method(
-    ptr: *const kreuzberg::TesseractConfig,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tesseract_config_thresholding_method(ptr: *const kreuzberg::TesseractConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -29623,7 +29690,7 @@ pub unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_free(ptr: *mut k
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_target_dpi(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_target_dpi(
     ptr: *const kreuzberg::ImagePreprocessingMetadata,
 ) -> i32 {
     if ptr.is_null() {
@@ -29637,7 +29704,7 @@ pub const unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_target_dpi
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_scale_factor(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_scale_factor(
     ptr: *const kreuzberg::ImagePreprocessingMetadata,
 ) -> f64 {
     if ptr.is_null() {
@@ -29651,7 +29718,7 @@ pub const unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_scale_fact
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_auto_adjusted(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_auto_adjusted(
     ptr: *const kreuzberg::ImagePreprocessingMetadata,
 ) -> i32 {
     if ptr.is_null() {
@@ -29665,7 +29732,7 @@ pub const unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_auto_adjus
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_final_dpi(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_final_dpi(
     ptr: *const kreuzberg::ImagePreprocessingMetadata,
 ) -> i32 {
     if ptr.is_null() {
@@ -29696,7 +29763,7 @@ pub unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_resample_method(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_dimension_clamped(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_dimension_clamped(
     ptr: *const kreuzberg::ImagePreprocessingMetadata,
 ) -> i32 {
     if ptr.is_null() {
@@ -29727,7 +29794,7 @@ pub unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_calculated_dpi(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_skipped_resize(
+pub unsafe extern "C" fn kreuzberg_image_preprocessing_metadata_skipped_resize(
     ptr: *const kreuzberg::ImagePreprocessingMetadata,
 ) -> i32 {
     if ptr.is_null() {
@@ -30198,7 +30265,7 @@ pub unsafe extern "C" fn kreuzberg_excel_metadata_free(ptr: *mut kreuzberg::Exce
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_excel_metadata_sheet_count(ptr: *const kreuzberg::ExcelMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_excel_metadata_sheet_count(ptr: *const kreuzberg::ExcelMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -30448,7 +30515,7 @@ pub unsafe extern "C" fn kreuzberg_archive_metadata_free(ptr: *mut kreuzberg::Ar
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_archive_metadata_file_count(ptr: *const kreuzberg::ArchiveMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_archive_metadata_file_count(ptr: *const kreuzberg::ArchiveMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -30480,7 +30547,7 @@ pub unsafe extern "C" fn kreuzberg_archive_metadata_file_list(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_archive_metadata_total_size(ptr: *const kreuzberg::ArchiveMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_archive_metadata_total_size(ptr: *const kreuzberg::ArchiveMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -30573,7 +30640,7 @@ pub unsafe extern "C" fn kreuzberg_image_metadata_free(ptr: *mut kreuzberg::Imag
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_metadata_width(ptr: *const kreuzberg::ImageMetadata) -> u32 {
+pub unsafe extern "C" fn kreuzberg_image_metadata_width(ptr: *const kreuzberg::ImageMetadata) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -30585,7 +30652,7 @@ pub const unsafe extern "C" fn kreuzberg_image_metadata_width(ptr: *const kreuzb
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_image_metadata_height(ptr: *const kreuzberg::ImageMetadata) -> u32 {
+pub unsafe extern "C" fn kreuzberg_image_metadata_height(ptr: *const kreuzberg::ImageMetadata) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -30698,7 +30765,7 @@ pub unsafe extern "C" fn kreuzberg_xml_metadata_free(ptr: *mut kreuzberg::XmlMet
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_xml_metadata_element_count(ptr: *const kreuzberg::XmlMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_xml_metadata_element_count(ptr: *const kreuzberg::XmlMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -30742,7 +30809,7 @@ pub unsafe extern "C" fn kreuzberg_text_metadata_free(ptr: *mut kreuzberg::TextM
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_text_metadata_line_count(ptr: *const kreuzberg::TextMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_text_metadata_line_count(ptr: *const kreuzberg::TextMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -30754,7 +30821,7 @@ pub const unsafe extern "C" fn kreuzberg_text_metadata_line_count(ptr: *const kr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_text_metadata_word_count(ptr: *const kreuzberg::TextMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_text_metadata_word_count(ptr: *const kreuzberg::TextMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -30766,7 +30833,7 @@ pub const unsafe extern "C" fn kreuzberg_text_metadata_word_count(ptr: *const kr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_text_metadata_character_count(ptr: *const kreuzberg::TextMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_text_metadata_character_count(ptr: *const kreuzberg::TextMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -30865,7 +30932,7 @@ pub unsafe extern "C" fn kreuzberg_header_metadata_free(ptr: *mut kreuzberg::Hea
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_header_metadata_level(ptr: *const kreuzberg::HeaderMetadata) -> u8 {
+pub unsafe extern "C" fn kreuzberg_header_metadata_level(ptr: *const kreuzberg::HeaderMetadata) -> u8 {
     if ptr.is_null() {
         return 0;
     }
@@ -30912,7 +30979,7 @@ pub unsafe extern "C" fn kreuzberg_header_metadata_id(ptr: *const kreuzberg::Hea
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_header_metadata_depth(ptr: *const kreuzberg::HeaderMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_header_metadata_depth(ptr: *const kreuzberg::HeaderMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -30924,7 +30991,7 @@ pub const unsafe extern "C" fn kreuzberg_header_metadata_depth(ptr: *const kreuz
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_header_metadata_html_offset(ptr: *const kreuzberg::HeaderMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_header_metadata_html_offset(ptr: *const kreuzberg::HeaderMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -31696,7 +31763,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_metadata_language(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_metadata_psm(ptr: *const kreuzberg::OcrMetadata) -> i32 {
+pub unsafe extern "C" fn kreuzberg_ocr_metadata_psm(ptr: *const kreuzberg::OcrMetadata) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -31725,7 +31792,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_metadata_output_format(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_metadata_table_count(ptr: *const kreuzberg::OcrMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_ocr_metadata_table_count(ptr: *const kreuzberg::OcrMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -31933,7 +32000,7 @@ pub unsafe extern "C" fn kreuzberg_pptx_metadata_free(ptr: *mut kreuzberg::PptxM
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pptx_metadata_slide_count(ptr: *const kreuzberg::PptxMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_pptx_metadata_slide_count(ptr: *const kreuzberg::PptxMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -32096,7 +32163,7 @@ pub unsafe extern "C" fn kreuzberg_csv_metadata_free(ptr: *mut kreuzberg::CsvMet
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_csv_metadata_row_count(ptr: *const kreuzberg::CsvMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_csv_metadata_row_count(ptr: *const kreuzberg::CsvMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -32108,7 +32175,7 @@ pub const unsafe extern "C" fn kreuzberg_csv_metadata_row_count(ptr: *const kreu
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_csv_metadata_column_count(ptr: *const kreuzberg::CsvMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_csv_metadata_column_count(ptr: *const kreuzberg::CsvMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -32138,7 +32205,7 @@ pub unsafe extern "C" fn kreuzberg_csv_metadata_delimiter(ptr: *const kreuzberg:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_csv_metadata_has_header(ptr: *const kreuzberg::CsvMetadata) -> i32 {
+pub unsafe extern "C" fn kreuzberg_csv_metadata_has_header(ptr: *const kreuzberg::CsvMetadata) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -32239,7 +32306,7 @@ pub unsafe extern "C" fn kreuzberg_bibtex_metadata_free(ptr: *mut kreuzberg::Bib
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_bibtex_metadata_entry_count(ptr: *const kreuzberg::BibtexMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_bibtex_metadata_entry_count(ptr: *const kreuzberg::BibtexMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -32399,9 +32466,7 @@ pub unsafe extern "C" fn kreuzberg_citation_metadata_free(ptr: *mut kreuzberg::C
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_citation_metadata_citation_count(
-    ptr: *const kreuzberg::CitationMetadata,
-) -> usize {
+pub unsafe extern "C" fn kreuzberg_citation_metadata_citation_count(ptr: *const kreuzberg::CitationMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -32820,7 +32885,7 @@ pub unsafe extern "C" fn kreuzberg_dbf_metadata_free(ptr: *mut kreuzberg::DbfMet
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_dbf_metadata_record_count(ptr: *const kreuzberg::DbfMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_dbf_metadata_record_count(ptr: *const kreuzberg::DbfMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -32832,7 +32897,7 @@ pub const unsafe extern "C" fn kreuzberg_dbf_metadata_record_count(ptr: *const k
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_dbf_metadata_field_count(ptr: *const kreuzberg::DbfMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_dbf_metadata_field_count(ptr: *const kreuzberg::DbfMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -33455,7 +33520,7 @@ pub unsafe extern "C" fn kreuzberg_pst_metadata_free(ptr: *mut kreuzberg::PstMet
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pst_metadata_message_count(ptr: *const kreuzberg::PstMetadata) -> usize {
+pub unsafe extern "C" fn kreuzberg_pst_metadata_message_count(ptr: *const kreuzberg::PstMetadata) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -33548,7 +33613,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_confidence_detection(ptr: *const kreuzber
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_confidence_recognition(ptr: *const kreuzberg::OcrConfidence) -> f64 {
+pub unsafe extern "C" fn kreuzberg_ocr_confidence_recognition(ptr: *const kreuzberg::OcrConfidence) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -33660,7 +33725,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_rotation_free(ptr: *mut kreuzberg::OcrRot
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_rotation_angle_degrees(ptr: *const kreuzberg::OcrRotation) -> f64 {
+pub unsafe extern "C" fn kreuzberg_ocr_rotation_angle_degrees(ptr: *const kreuzberg::OcrRotation) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -33860,7 +33925,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_element_rotation(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_element_page_number(ptr: *const kreuzberg::OcrElement) -> usize {
+pub unsafe extern "C" fn kreuzberg_ocr_element_page_number(ptr: *const kreuzberg::OcrElement) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -34154,9 +34219,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_element_config_free(ptr: *mut kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_element_config_include_elements(
-    ptr: *const kreuzberg::OcrElementConfig,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_ocr_element_config_include_elements(ptr: *const kreuzberg::OcrElementConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -34182,9 +34245,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_element_config_min_level(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_element_config_min_confidence(
-    ptr: *const kreuzberg::OcrElementConfig,
-) -> f64 {
+pub unsafe extern "C" fn kreuzberg_ocr_element_config_min_confidence(ptr: *const kreuzberg::OcrElementConfig) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -34196,9 +34257,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_element_config_min_confidence(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_element_config_build_hierarchy(
-    ptr: *const kreuzberg::OcrElementConfig,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_ocr_element_config_build_hierarchy(ptr: *const kreuzberg::OcrElementConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -34276,7 +34335,7 @@ pub unsafe extern "C" fn kreuzberg_page_structure_free(ptr: *mut kreuzberg::Page
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_structure_total_count(ptr: *const kreuzberg::PageStructure) -> usize {
+pub unsafe extern "C" fn kreuzberg_page_structure_total_count(ptr: *const kreuzberg::PageStructure) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -34412,7 +34471,7 @@ pub unsafe extern "C" fn kreuzberg_page_boundary_free(ptr: *mut kreuzberg::PageB
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_boundary_byte_start(ptr: *const kreuzberg::PageBoundary) -> usize {
+pub unsafe extern "C" fn kreuzberg_page_boundary_byte_start(ptr: *const kreuzberg::PageBoundary) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -34424,7 +34483,7 @@ pub const unsafe extern "C" fn kreuzberg_page_boundary_byte_start(ptr: *const kr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_boundary_byte_end(ptr: *const kreuzberg::PageBoundary) -> usize {
+pub unsafe extern "C" fn kreuzberg_page_boundary_byte_end(ptr: *const kreuzberg::PageBoundary) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -34436,7 +34495,7 @@ pub const unsafe extern "C" fn kreuzberg_page_boundary_byte_end(ptr: *const kreu
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_boundary_page_number(ptr: *const kreuzberg::PageBoundary) -> usize {
+pub unsafe extern "C" fn kreuzberg_page_boundary_page_number(ptr: *const kreuzberg::PageBoundary) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -34460,7 +34519,7 @@ pub unsafe extern "C" fn kreuzberg_page_info_free(ptr: *mut kreuzberg::PageInfo)
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_info_number(ptr: *const kreuzberg::PageInfo) -> usize {
+pub unsafe extern "C" fn kreuzberg_page_info_number(ptr: *const kreuzberg::PageInfo) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -34616,7 +34675,7 @@ pub unsafe extern "C" fn kreuzberg_page_content_free(ptr: *mut kreuzberg::PageCo
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_content_page_number(ptr: *const kreuzberg::PageContent) -> usize {
+pub unsafe extern "C" fn kreuzberg_page_content_page_number(ptr: *const kreuzberg::PageContent) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -34777,7 +34836,7 @@ pub unsafe extern "C" fn kreuzberg_page_hierarchy_free(ptr: *mut kreuzberg::Page
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_hierarchy_block_count(ptr: *const kreuzberg::PageHierarchy) -> usize {
+pub unsafe extern "C" fn kreuzberg_page_hierarchy_block_count(ptr: *const kreuzberg::PageHierarchy) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -34838,7 +34897,7 @@ pub unsafe extern "C" fn kreuzberg_hierarchical_block_text(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hierarchical_block_font_size(ptr: *const kreuzberg::HierarchicalBlock) -> f32 {
+pub unsafe extern "C" fn kreuzberg_hierarchical_block_font_size(ptr: *const kreuzberg::HierarchicalBlock) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -34966,7 +35025,7 @@ pub unsafe extern "C" fn kreuzberg_table_markdown(ptr: *const kreuzberg::Table) 
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_page_number(ptr: *const kreuzberg::Table) -> usize {
+pub unsafe extern "C" fn kreuzberg_table_page_number(ptr: *const kreuzberg::Table) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -35074,7 +35133,7 @@ pub unsafe extern "C" fn kreuzberg_table_cell_content(ptr: *const kreuzberg::Tab
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_cell_row_span(ptr: *const kreuzberg::TableCell) -> usize {
+pub unsafe extern "C" fn kreuzberg_table_cell_row_span(ptr: *const kreuzberg::TableCell) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -35086,7 +35145,7 @@ pub const unsafe extern "C" fn kreuzberg_table_cell_row_span(ptr: *const kreuzbe
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_cell_col_span(ptr: *const kreuzberg::TableCell) -> usize {
+pub unsafe extern "C" fn kreuzberg_table_cell_col_span(ptr: *const kreuzberg::TableCell) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -35098,7 +35157,7 @@ pub const unsafe extern "C" fn kreuzberg_table_cell_col_span(ptr: *const kreuzbe
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_table_cell_is_header(ptr: *const kreuzberg::TableCell) -> i32 {
+pub unsafe extern "C" fn kreuzberg_table_cell_is_header(ptr: *const kreuzberg::TableCell) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -35556,7 +35615,7 @@ pub unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_free(ptr: *mut kreuzber
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_total_acquires(
+pub unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_total_acquires(
     ptr: *const kreuzberg::utils::pool::PoolMetricsSnapshot,
 ) -> usize {
     if ptr.is_null() {
@@ -35570,7 +35629,7 @@ pub const unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_total_acquires(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_total_cache_hits(
+pub unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_total_cache_hits(
     ptr: *const kreuzberg::utils::pool::PoolMetricsSnapshot,
 ) -> usize {
     if ptr.is_null() {
@@ -35584,7 +35643,7 @@ pub const unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_total_cache_hits(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_peak_items_stored(
+pub unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_peak_items_stored(
     ptr: *const kreuzberg::utils::pool::PoolMetricsSnapshot,
 ) -> usize {
     if ptr.is_null() {
@@ -35598,7 +35657,7 @@ pub const unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_peak_items_stored
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_total_creations(
+pub unsafe extern "C" fn kreuzberg_pool_metrics_snapshot_total_creations(
     ptr: *const kreuzberg::utils::pool::PoolMetricsSnapshot,
 ) -> usize {
     if ptr.is_null() {
@@ -35751,7 +35810,7 @@ pub unsafe extern "C" fn kreuzberg_pool_size_hint_free(ptr: *mut kreuzberg::util
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_size_hint_estimated_total_size(
+pub unsafe extern "C" fn kreuzberg_pool_size_hint_estimated_total_size(
     ptr: *const kreuzberg::utils::PoolSizeHint,
 ) -> usize {
     if ptr.is_null() {
@@ -35765,7 +35824,7 @@ pub const unsafe extern "C" fn kreuzberg_pool_size_hint_estimated_total_size(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_size_hint_string_buffer_count(
+pub unsafe extern "C" fn kreuzberg_pool_size_hint_string_buffer_count(
     ptr: *const kreuzberg::utils::PoolSizeHint,
 ) -> usize {
     if ptr.is_null() {
@@ -35779,7 +35838,7 @@ pub const unsafe extern "C" fn kreuzberg_pool_size_hint_string_buffer_count(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_size_hint_string_buffer_capacity(
+pub unsafe extern "C" fn kreuzberg_pool_size_hint_string_buffer_capacity(
     ptr: *const kreuzberg::utils::PoolSizeHint,
 ) -> usize {
     if ptr.is_null() {
@@ -35793,7 +35852,7 @@ pub const unsafe extern "C" fn kreuzberg_pool_size_hint_string_buffer_capacity(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_size_hint_byte_buffer_count(
+pub unsafe extern "C" fn kreuzberg_pool_size_hint_byte_buffer_count(
     ptr: *const kreuzberg::utils::PoolSizeHint,
 ) -> usize {
     if ptr.is_null() {
@@ -35807,7 +35866,7 @@ pub const unsafe extern "C" fn kreuzberg_pool_size_hint_byte_buffer_count(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_size_hint_byte_buffer_capacity(
+pub unsafe extern "C" fn kreuzberg_pool_size_hint_byte_buffer_capacity(
     ptr: *const kreuzberg::utils::PoolSizeHint,
 ) -> usize {
     if ptr.is_null() {
@@ -35896,7 +35955,7 @@ pub unsafe extern "C" fn kreuzberg_pool_config_free(ptr: *mut kreuzberg::utils::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_config_max_buffers_per_size(
+pub unsafe extern "C" fn kreuzberg_pool_config_max_buffers_per_size(
     ptr: *const kreuzberg::utils::string_pool::PoolConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -35910,7 +35969,7 @@ pub const unsafe extern "C" fn kreuzberg_pool_config_max_buffers_per_size(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_config_initial_capacity(
+pub unsafe extern "C" fn kreuzberg_pool_config_initial_capacity(
     ptr: *const kreuzberg::utils::string_pool::PoolConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -35924,7 +35983,7 @@ pub const unsafe extern "C" fn kreuzberg_pool_config_initial_capacity(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pool_config_max_capacity_before_discard(
+pub unsafe extern "C" fn kreuzberg_pool_config_max_capacity_before_discard(
     ptr: *const kreuzberg::utils::string_pool::PoolConfig,
 ) -> usize {
     if ptr.is_null() {
@@ -35962,7 +36021,7 @@ pub unsafe extern "C" fn kreuzberg_string_buffer_pool_metrics_free(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_string_buffer_pool_metrics_total_acquires(
+pub unsafe extern "C" fn kreuzberg_string_buffer_pool_metrics_total_acquires(
     ptr: *const kreuzberg::utils::string_pool::StringBufferPoolMetrics,
 ) -> usize {
     if ptr.is_null() {
@@ -35976,7 +36035,7 @@ pub const unsafe extern "C" fn kreuzberg_string_buffer_pool_metrics_total_acquir
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_string_buffer_pool_metrics_total_reuses(
+pub unsafe extern "C" fn kreuzberg_string_buffer_pool_metrics_total_reuses(
     ptr: *const kreuzberg::utils::string_pool::StringBufferPoolMetrics,
 ) -> usize {
     if ptr.is_null() {
@@ -35990,7 +36049,7 @@ pub const unsafe extern "C" fn kreuzberg_string_buffer_pool_metrics_total_reuses
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_string_buffer_pool_metrics_hit_rate(
+pub unsafe extern "C" fn kreuzberg_string_buffer_pool_metrics_hit_rate(
     ptr: *const kreuzberg::utils::string_pool::StringBufferPoolMetrics,
 ) -> f64 {
     if ptr.is_null() {
@@ -36315,7 +36374,7 @@ pub unsafe extern "C" fn kreuzberg_hocr_word_text(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hocr_word_left(ptr: *const kreuzberg::table_core::HocrWord) -> u32 {
+pub unsafe extern "C" fn kreuzberg_hocr_word_left(ptr: *const kreuzberg::table_core::HocrWord) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -36327,7 +36386,7 @@ pub const unsafe extern "C" fn kreuzberg_hocr_word_left(ptr: *const kreuzberg::t
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hocr_word_top(ptr: *const kreuzberg::table_core::HocrWord) -> u32 {
+pub unsafe extern "C" fn kreuzberg_hocr_word_top(ptr: *const kreuzberg::table_core::HocrWord) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -36339,7 +36398,7 @@ pub const unsafe extern "C" fn kreuzberg_hocr_word_top(ptr: *const kreuzberg::ta
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hocr_word_width(ptr: *const kreuzberg::table_core::HocrWord) -> u32 {
+pub unsafe extern "C" fn kreuzberg_hocr_word_width(ptr: *const kreuzberg::table_core::HocrWord) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -36351,7 +36410,7 @@ pub const unsafe extern "C" fn kreuzberg_hocr_word_width(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hocr_word_height(ptr: *const kreuzberg::table_core::HocrWord) -> u32 {
+pub unsafe extern "C" fn kreuzberg_hocr_word_height(ptr: *const kreuzberg::table_core::HocrWord) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -36363,7 +36422,7 @@ pub const unsafe extern "C" fn kreuzberg_hocr_word_height(ptr: *const kreuzberg:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hocr_word_confidence(ptr: *const kreuzberg::table_core::HocrWord) -> f64 {
+pub unsafe extern "C" fn kreuzberg_hocr_word_confidence(ptr: *const kreuzberg::table_core::HocrWord) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -37006,7 +37065,7 @@ pub unsafe extern "C" fn kreuzberg_api_size_limits_free(ptr: *mut kreuzberg::api
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_api_size_limits_max_request_body_bytes(
+pub unsafe extern "C" fn kreuzberg_api_size_limits_max_request_body_bytes(
     ptr: *const kreuzberg::api::ApiSizeLimits,
 ) -> usize {
     if ptr.is_null() {
@@ -37020,7 +37079,7 @@ pub const unsafe extern "C" fn kreuzberg_api_size_limits_max_request_body_bytes(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_api_size_limits_max_multipart_field_bytes(
+pub unsafe extern "C" fn kreuzberg_api_size_limits_max_multipart_field_bytes(
     ptr: *const kreuzberg::api::ApiSizeLimits,
 ) -> usize {
     if ptr.is_null() {
@@ -37144,7 +37203,7 @@ pub unsafe extern "C" fn kreuzberg_plugin_status_free(ptr: *mut kreuzberg::api::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_plugin_status_ocr_backends_count(
+pub unsafe extern "C" fn kreuzberg_plugin_status_ocr_backends_count(
     ptr: *const kreuzberg::api::types::PluginStatus,
 ) -> usize {
     if ptr.is_null() {
@@ -37178,7 +37237,7 @@ pub unsafe extern "C" fn kreuzberg_plugin_status_ocr_backends(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_plugin_status_extractors_count(
+pub unsafe extern "C" fn kreuzberg_plugin_status_extractors_count(
     ptr: *const kreuzberg::api::types::PluginStatus,
 ) -> usize {
     if ptr.is_null() {
@@ -37192,7 +37251,7 @@ pub const unsafe extern "C" fn kreuzberg_plugin_status_extractors_count(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_plugin_status_post_processors_count(
+pub unsafe extern "C" fn kreuzberg_plugin_status_post_processors_count(
     ptr: *const kreuzberg::api::types::PluginStatus,
 ) -> usize {
     if ptr.is_null() {
@@ -37408,7 +37467,7 @@ pub unsafe extern "C" fn kreuzberg_info_response_version(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_info_response_rust_backend(ptr: *const kreuzberg::api::InfoResponse) -> i32 {
+pub unsafe extern "C" fn kreuzberg_info_response_rust_backend(ptr: *const kreuzberg::api::InfoResponse) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -37552,7 +37611,7 @@ pub unsafe extern "C" fn kreuzberg_error_response_traceback(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_error_response_status_code(ptr: *const kreuzberg::api::ErrorResponse) -> u16 {
+pub unsafe extern "C" fn kreuzberg_error_response_status_code(ptr: *const kreuzberg::api::ErrorResponse) -> u16 {
     if ptr.is_null() {
         return 0;
     }
@@ -37677,7 +37736,7 @@ pub unsafe extern "C" fn kreuzberg_cache_stats_response_directory(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_cache_stats_response_total_files(
+pub unsafe extern "C" fn kreuzberg_cache_stats_response_total_files(
     ptr: *const kreuzberg::api::CacheStatsResponse,
 ) -> usize {
     if ptr.is_null() {
@@ -37691,7 +37750,7 @@ pub const unsafe extern "C" fn kreuzberg_cache_stats_response_total_files(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_cache_stats_response_total_size_mb(
+pub unsafe extern "C" fn kreuzberg_cache_stats_response_total_size_mb(
     ptr: *const kreuzberg::api::CacheStatsResponse,
 ) -> f64 {
     if ptr.is_null() {
@@ -37705,7 +37764,7 @@ pub const unsafe extern "C" fn kreuzberg_cache_stats_response_total_size_mb(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_cache_stats_response_available_space_mb(
+pub unsafe extern "C" fn kreuzberg_cache_stats_response_available_space_mb(
     ptr: *const kreuzberg::api::CacheStatsResponse,
 ) -> f64 {
     if ptr.is_null() {
@@ -37719,7 +37778,7 @@ pub const unsafe extern "C" fn kreuzberg_cache_stats_response_available_space_mb
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_cache_stats_response_oldest_file_age_days(
+pub unsafe extern "C" fn kreuzberg_cache_stats_response_oldest_file_age_days(
     ptr: *const kreuzberg::api::CacheStatsResponse,
 ) -> f64 {
     if ptr.is_null() {
@@ -37733,7 +37792,7 @@ pub const unsafe extern "C" fn kreuzberg_cache_stats_response_oldest_file_age_da
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_cache_stats_response_newest_file_age_days(
+pub unsafe extern "C" fn kreuzberg_cache_stats_response_newest_file_age_days(
     ptr: *const kreuzberg::api::CacheStatsResponse,
 ) -> f64 {
     if ptr.is_null() {
@@ -37834,7 +37893,7 @@ pub unsafe extern "C" fn kreuzberg_cache_clear_response_directory(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_cache_clear_response_removed_files(
+pub unsafe extern "C" fn kreuzberg_cache_clear_response_removed_files(
     ptr: *const kreuzberg::api::CacheClearResponse,
 ) -> usize {
     if ptr.is_null() {
@@ -37848,7 +37907,7 @@ pub const unsafe extern "C" fn kreuzberg_cache_clear_response_removed_files(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_cache_clear_response_freed_mb(
+pub unsafe extern "C" fn kreuzberg_cache_clear_response_freed_mb(
     ptr: *const kreuzberg::api::CacheClearResponse,
 ) -> f64 {
     if ptr.is_null() {
@@ -38068,7 +38127,7 @@ pub unsafe extern "C" fn kreuzberg_embed_response_model(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_embed_response_dimensions(ptr: *const kreuzberg::api::EmbedResponse) -> usize {
+pub unsafe extern "C" fn kreuzberg_embed_response_dimensions(ptr: *const kreuzberg::api::EmbedResponse) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -38080,7 +38139,7 @@ pub const unsafe extern "C" fn kreuzberg_embed_response_dimensions(ptr: *const k
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_embed_response_count(ptr: *const kreuzberg::api::EmbedResponse) -> usize {
+pub unsafe extern "C" fn kreuzberg_embed_response_count(ptr: *const kreuzberg::api::EmbedResponse) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -38418,9 +38477,7 @@ pub unsafe extern "C" fn kreuzberg_chunk_response_chunks(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_response_chunk_count(
-    ptr: *const kreuzberg::api::ChunkResponse,
-) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_response_chunk_count(ptr: *const kreuzberg::api::ChunkResponse) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -38446,9 +38503,7 @@ pub unsafe extern "C" fn kreuzberg_chunk_response_config(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_response_input_size_bytes(
-    ptr: *const kreuzberg::api::ChunkResponse,
-) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_response_input_size_bytes(ptr: *const kreuzberg::api::ChunkResponse) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -38560,7 +38615,7 @@ pub unsafe extern "C" fn kreuzberg_chunk_item_content(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_item_byte_start(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_item_byte_start(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -38572,7 +38627,7 @@ pub const unsafe extern "C" fn kreuzberg_chunk_item_byte_start(ptr: *const kreuz
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_item_byte_end(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_item_byte_end(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -38584,7 +38639,7 @@ pub const unsafe extern "C" fn kreuzberg_chunk_item_byte_end(ptr: *const kreuzbe
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_item_chunk_index(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_item_chunk_index(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -38596,9 +38651,7 @@ pub const unsafe extern "C" fn kreuzberg_chunk_item_chunk_index(ptr: *const kreu
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunk_item_total_chunks(
-    ptr: *const kreuzberg::api::types::ChunkItem,
-) -> usize {
+pub unsafe extern "C" fn kreuzberg_chunk_item_total_chunks(ptr: *const kreuzberg::api::types::ChunkItem) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -38936,7 +38989,7 @@ pub unsafe extern "C" fn kreuzberg_manifest_entry_response_sha256(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_manifest_entry_response_size_bytes(
+pub unsafe extern "C" fn kreuzberg_manifest_entry_response_size_bytes(
     ptr: *const kreuzberg::api::ManifestEntryResponse,
 ) -> u64 {
     if ptr.is_null() {
@@ -39054,7 +39107,7 @@ pub unsafe extern "C" fn kreuzberg_manifest_response_kreuzberg_version(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_manifest_response_total_size_bytes(
+pub unsafe extern "C" fn kreuzberg_manifest_response_total_size_bytes(
     ptr: *const kreuzberg::api::ManifestResponse,
 ) -> u64 {
     if ptr.is_null() {
@@ -39068,7 +39121,7 @@ pub const unsafe extern "C" fn kreuzberg_manifest_response_total_size_bytes(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_manifest_response_model_count(
+pub unsafe extern "C" fn kreuzberg_manifest_response_model_count(
     ptr: *const kreuzberg::api::ManifestResponse,
 ) -> usize {
     if ptr.is_null() {
@@ -39168,7 +39221,7 @@ pub unsafe extern "C" fn kreuzberg_warm_request_free(ptr: *mut kreuzberg::api::W
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_warm_request_all_embeddings(ptr: *const kreuzberg::api::WarmRequest) -> i32 {
+pub unsafe extern "C" fn kreuzberg_warm_request_all_embeddings(ptr: *const kreuzberg::api::WarmRequest) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -39897,7 +39950,7 @@ pub unsafe extern "C" fn kreuzberg_chunking_config_response_free(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunking_config_response_max_characters(
+pub unsafe extern "C" fn kreuzberg_chunking_config_response_max_characters(
     ptr: *const kreuzberg::api::types::ChunkingConfigResponse,
 ) -> usize {
     if ptr.is_null() {
@@ -39911,7 +39964,7 @@ pub const unsafe extern "C" fn kreuzberg_chunking_config_response_max_characters
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunking_config_response_overlap(
+pub unsafe extern "C" fn kreuzberg_chunking_config_response_overlap(
     ptr: *const kreuzberg::api::types::ChunkingConfigResponse,
 ) -> usize {
     if ptr.is_null() {
@@ -39925,7 +39978,7 @@ pub const unsafe extern "C" fn kreuzberg_chunking_config_response_overlap(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunking_config_response_trim(
+pub unsafe extern "C" fn kreuzberg_chunking_config_response_trim(
     ptr: *const kreuzberg::api::types::ChunkingConfigResponse,
 ) -> i32 {
     if ptr.is_null() {
@@ -40327,7 +40380,7 @@ pub unsafe extern "C" fn kreuzberg_detect_mime_type_params_path(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_detect_mime_type_params_use_content(
+pub unsafe extern "C" fn kreuzberg_detect_mime_type_params_use_content(
     ptr: *const kreuzberg::mcp::DetectMimeTypeParams,
 ) -> i32 {
     if ptr.is_null() {
@@ -40365,7 +40418,7 @@ pub unsafe extern "C" fn kreuzberg_cache_warm_params_free(ptr: *mut kreuzberg::m
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_cache_warm_params_all_embeddings(
+pub unsafe extern "C" fn kreuzberg_cache_warm_params_all_embeddings(
     ptr: *const kreuzberg::mcp::CacheWarmParams,
 ) -> i32 {
     if ptr.is_null() {
@@ -40634,7 +40687,7 @@ pub unsafe extern "C" fn kreuzberg_extract_structured_params_api_key(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_extract_structured_params_strict(
+pub unsafe extern "C" fn kreuzberg_extract_structured_params_strict(
     ptr: *const kreuzberg::mcp::ExtractStructuredParams,
 ) -> i32 {
     if ptr.is_null() {
@@ -40818,7 +40871,7 @@ pub unsafe extern "C" fn kreuzberg_list_grammars_params_free(ptr: *mut kreuzberg
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_list_grammars_params_downloaded_only(
+pub unsafe extern "C" fn kreuzberg_list_grammars_params_downloaded_only(
     ptr: *const kreuzberg::mcp::params::ListGrammarsParams,
 ) -> i32 {
     if ptr.is_null() {
@@ -41037,7 +41090,7 @@ pub unsafe extern "C" fn kreuzberg_chunking_result_chunks(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_chunking_result_chunk_count(
+pub unsafe extern "C" fn kreuzberg_chunking_result_chunk_count(
     ptr: *const kreuzberg::chunking::ChunkingResult,
 ) -> usize {
     if ptr.is_null() {
@@ -41508,7 +41561,7 @@ pub unsafe extern "C" fn kreuzberg_yake_params_free(ptr: *mut kreuzberg::YakePar
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_yake_params_window_size(ptr: *const kreuzberg::YakeParams) -> usize {
+pub unsafe extern "C" fn kreuzberg_yake_params_window_size(ptr: *const kreuzberg::YakeParams) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -41596,7 +41649,7 @@ pub unsafe extern "C" fn kreuzberg_rake_params_free(ptr: *mut kreuzberg::RakePar
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_rake_params_min_word_length(ptr: *const kreuzberg::RakeParams) -> usize {
+pub unsafe extern "C" fn kreuzberg_rake_params_min_word_length(ptr: *const kreuzberg::RakeParams) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -41608,7 +41661,7 @@ pub const unsafe extern "C" fn kreuzberg_rake_params_min_word_length(ptr: *const
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_rake_params_max_words_per_phrase(ptr: *const kreuzberg::RakeParams) -> usize {
+pub unsafe extern "C" fn kreuzberg_rake_params_max_words_per_phrase(ptr: *const kreuzberg::RakeParams) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -41656,7 +41709,7 @@ pub unsafe extern "C" fn kreuzberg_keyword_config_algorithm(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_keyword_config_max_keywords(ptr: *const kreuzberg::KeywordConfig) -> usize {
+pub unsafe extern "C" fn kreuzberg_keyword_config_max_keywords(ptr: *const kreuzberg::KeywordConfig) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -41668,7 +41721,7 @@ pub const unsafe extern "C" fn kreuzberg_keyword_config_max_keywords(ptr: *const
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_keyword_config_min_score(ptr: *const kreuzberg::KeywordConfig) -> f32 {
+pub unsafe extern "C" fn kreuzberg_keyword_config_min_score(ptr: *const kreuzberg::KeywordConfig) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -41921,7 +41974,7 @@ pub unsafe extern "C" fn kreuzberg_keyword_text(ptr: *const kreuzberg::Keyword) 
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_keyword_score(ptr: *const kreuzberg::Keyword) -> f32 {
+pub unsafe extern "C" fn kreuzberg_keyword_score(ptr: *const kreuzberg::Keyword) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -42245,9 +42298,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_cache_stats_free(ptr: *mut kreuzberg::ocr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_cache_stats_total_files(
-    ptr: *const kreuzberg::ocr::OcrCacheStats,
-) -> usize {
+pub unsafe extern "C" fn kreuzberg_ocr_cache_stats_total_files(ptr: *const kreuzberg::ocr::OcrCacheStats) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -42259,9 +42310,7 @@ pub const unsafe extern "C" fn kreuzberg_ocr_cache_stats_total_files(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_ocr_cache_stats_total_size_mb(
-    ptr: *const kreuzberg::ocr::OcrCacheStats,
-) -> f64 {
+pub unsafe extern "C" fn kreuzberg_ocr_cache_stats_total_size_mb(ptr: *const kreuzberg::ocr::OcrCacheStats) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -42285,7 +42334,7 @@ pub unsafe extern "C" fn kreuzberg_tsv_row_free(ptr: *mut kreuzberg::ocr::TsvRow
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_level(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_level(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42297,7 +42346,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_level(ptr: *const kreuzberg::oc
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_page_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_page_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42309,7 +42358,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_page_num(ptr: *const kreuzberg:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_block_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_block_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42321,7 +42370,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_block_num(ptr: *const kreuzberg
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_par_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_par_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42333,7 +42382,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_par_num(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_line_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_line_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42345,7 +42394,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_line_num(ptr: *const kreuzberg:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_word_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_word_num(ptr: *const kreuzberg::ocr::TsvRow) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42357,7 +42406,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_word_num(ptr: *const kreuzberg:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_left(ptr: *const kreuzberg::ocr::TsvRow) -> u32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_left(ptr: *const kreuzberg::ocr::TsvRow) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42369,7 +42418,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_left(ptr: *const kreuzberg::ocr
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_top(ptr: *const kreuzberg::ocr::TsvRow) -> u32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_top(ptr: *const kreuzberg::ocr::TsvRow) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42381,7 +42430,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_top(ptr: *const kreuzberg::ocr:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_width(ptr: *const kreuzberg::ocr::TsvRow) -> u32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_width(ptr: *const kreuzberg::ocr::TsvRow) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42393,7 +42442,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_width(ptr: *const kreuzberg::oc
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_height(ptr: *const kreuzberg::ocr::TsvRow) -> u32 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_height(ptr: *const kreuzberg::ocr::TsvRow) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -42405,7 +42454,7 @@ pub const unsafe extern "C" fn kreuzberg_tsv_row_height(ptr: *const kreuzberg::o
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_tsv_row_conf(ptr: *const kreuzberg::ocr::TsvRow) -> f64 {
+pub unsafe extern "C" fn kreuzberg_tsv_row_conf(ptr: *const kreuzberg::ocr::TsvRow) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -43488,9 +43537,7 @@ pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_cache_dir(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_use_angle_cls(
-    ptr: *const kreuzberg::PaddleOcrConfig,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_use_angle_cls(ptr: *const kreuzberg::PaddleOcrConfig) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -43502,7 +43549,7 @@ pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_use_angle_cls(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_enable_table_detection(
+pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_enable_table_detection(
     ptr: *const kreuzberg::PaddleOcrConfig,
 ) -> i32 {
     if ptr.is_null() {
@@ -43516,9 +43563,7 @@ pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_enable_table_detectio
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_db_thresh(
-    ptr: *const kreuzberg::PaddleOcrConfig,
-) -> f32 {
+pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_db_thresh(ptr: *const kreuzberg::PaddleOcrConfig) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -43530,9 +43575,7 @@ pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_db_thresh(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_db_box_thresh(
-    ptr: *const kreuzberg::PaddleOcrConfig,
-) -> f32 {
+pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_db_box_thresh(ptr: *const kreuzberg::PaddleOcrConfig) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -43544,7 +43587,7 @@ pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_db_box_thresh(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_db_unclip_ratio(
+pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_db_unclip_ratio(
     ptr: *const kreuzberg::PaddleOcrConfig,
 ) -> f32 {
     if ptr.is_null() {
@@ -43558,9 +43601,7 @@ pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_db_unclip_ratio(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_limit_side_len(
-    ptr: *const kreuzberg::PaddleOcrConfig,
-) -> u32 {
+pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_limit_side_len(ptr: *const kreuzberg::PaddleOcrConfig) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -43572,9 +43613,7 @@ pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_det_limit_side_len(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_rec_batch_num(
-    ptr: *const kreuzberg::PaddleOcrConfig,
-) -> u32 {
+pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_rec_batch_num(ptr: *const kreuzberg::PaddleOcrConfig) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -43586,7 +43625,7 @@ pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_rec_batch_num(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_padding(ptr: *const kreuzberg::PaddleOcrConfig) -> u32 {
+pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_padding(ptr: *const kreuzberg::PaddleOcrConfig) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -43598,7 +43637,7 @@ pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_padding(ptr: *const k
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_paddle_ocr_config_drop_score(ptr: *const kreuzberg::PaddleOcrConfig) -> f32 {
+pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_drop_score(ptr: *const kreuzberg::PaddleOcrConfig) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44075,7 +44114,7 @@ pub unsafe extern "C" fn kreuzberg_orientation_result_free(ptr: *mut kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_orientation_result_degrees(ptr: *const kreuzberg::OrientationResult) -> u32 {
+pub unsafe extern "C" fn kreuzberg_orientation_result_degrees(ptr: *const kreuzberg::OrientationResult) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -44087,9 +44126,7 @@ pub const unsafe extern "C" fn kreuzberg_orientation_result_degrees(ptr: *const 
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_orientation_result_confidence(
-    ptr: *const kreuzberg::OrientationResult,
-) -> f32 {
+pub unsafe extern "C" fn kreuzberg_orientation_result_confidence(ptr: *const kreuzberg::OrientationResult) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44251,7 +44288,7 @@ pub unsafe extern "C" fn kreuzberg_b_box_free(ptr: *mut kreuzberg::BBox) {
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_b_box_x1(ptr: *const kreuzberg::BBox) -> f32 {
+pub unsafe extern "C" fn kreuzberg_b_box_x1(ptr: *const kreuzberg::BBox) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44263,7 +44300,7 @@ pub const unsafe extern "C" fn kreuzberg_b_box_x1(ptr: *const kreuzberg::BBox) -
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_b_box_y1(ptr: *const kreuzberg::BBox) -> f32 {
+pub unsafe extern "C" fn kreuzberg_b_box_y1(ptr: *const kreuzberg::BBox) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44275,7 +44312,7 @@ pub const unsafe extern "C" fn kreuzberg_b_box_y1(ptr: *const kreuzberg::BBox) -
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_b_box_x2(ptr: *const kreuzberg::BBox) -> f32 {
+pub unsafe extern "C" fn kreuzberg_b_box_x2(ptr: *const kreuzberg::BBox) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44287,7 +44324,7 @@ pub const unsafe extern "C" fn kreuzberg_b_box_x2(ptr: *const kreuzberg::BBox) -
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_b_box_y2(ptr: *const kreuzberg::BBox) -> f32 {
+pub unsafe extern "C" fn kreuzberg_b_box_y2(ptr: *const kreuzberg::BBox) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44546,7 +44583,7 @@ pub unsafe extern "C" fn kreuzberg_layout_detection_class(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_layout_detection_confidence(ptr: *const kreuzberg::LayoutDetection) -> f32 {
+pub unsafe extern "C" fn kreuzberg_layout_detection_confidence(ptr: *const kreuzberg::LayoutDetection) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44679,7 +44716,7 @@ pub unsafe extern "C" fn kreuzberg_detection_result_free(ptr: *mut kreuzberg::De
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_detection_result_page_width(ptr: *const kreuzberg::DetectionResult) -> u32 {
+pub unsafe extern "C" fn kreuzberg_detection_result_page_width(ptr: *const kreuzberg::DetectionResult) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -44691,7 +44728,7 @@ pub const unsafe extern "C" fn kreuzberg_detection_result_page_width(ptr: *const
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_detection_result_page_height(ptr: *const kreuzberg::DetectionResult) -> u32 {
+pub unsafe extern "C" fn kreuzberg_detection_result_page_height(ptr: *const kreuzberg::DetectionResult) -> u32 {
     if ptr.is_null() {
         return 0;
     }
@@ -44805,9 +44842,7 @@ pub unsafe extern "C" fn kreuzberg_font_size_cluster_free(ptr: *mut kreuzberg::p
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_font_size_cluster_centroid(
-    ptr: *const kreuzberg::pdf::FontSizeCluster,
-) -> f32 {
+pub unsafe extern "C" fn kreuzberg_font_size_cluster_centroid(ptr: *const kreuzberg::pdf::FontSizeCluster) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44866,7 +44901,7 @@ pub unsafe extern "C" fn kreuzberg_char_data_text(ptr: *const kreuzberg::pdf::Ch
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_char_data_x(ptr: *const kreuzberg::pdf::CharData) -> f32 {
+pub unsafe extern "C" fn kreuzberg_char_data_x(ptr: *const kreuzberg::pdf::CharData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44878,7 +44913,7 @@ pub const unsafe extern "C" fn kreuzberg_char_data_x(ptr: *const kreuzberg::pdf:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_char_data_y(ptr: *const kreuzberg::pdf::CharData) -> f32 {
+pub unsafe extern "C" fn kreuzberg_char_data_y(ptr: *const kreuzberg::pdf::CharData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44890,7 +44925,7 @@ pub const unsafe extern "C" fn kreuzberg_char_data_y(ptr: *const kreuzberg::pdf:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_char_data_font_size(ptr: *const kreuzberg::pdf::CharData) -> f32 {
+pub unsafe extern "C" fn kreuzberg_char_data_font_size(ptr: *const kreuzberg::pdf::CharData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44902,7 +44937,7 @@ pub const unsafe extern "C" fn kreuzberg_char_data_font_size(ptr: *const kreuzbe
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_char_data_width(ptr: *const kreuzberg::pdf::CharData) -> f32 {
+pub unsafe extern "C" fn kreuzberg_char_data_width(ptr: *const kreuzberg::pdf::CharData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44914,7 +44949,7 @@ pub const unsafe extern "C" fn kreuzberg_char_data_width(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_char_data_height(ptr: *const kreuzberg::pdf::CharData) -> f32 {
+pub unsafe extern "C" fn kreuzberg_char_data_height(ptr: *const kreuzberg::pdf::CharData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -44926,7 +44961,7 @@ pub const unsafe extern "C" fn kreuzberg_char_data_height(ptr: *const kreuzberg:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_char_data_is_bold(ptr: *const kreuzberg::pdf::CharData) -> i32 {
+pub unsafe extern "C" fn kreuzberg_char_data_is_bold(ptr: *const kreuzberg::pdf::CharData) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -44938,7 +44973,7 @@ pub const unsafe extern "C" fn kreuzberg_char_data_is_bold(ptr: *const kreuzberg
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_char_data_is_italic(ptr: *const kreuzberg::pdf::CharData) -> i32 {
+pub unsafe extern "C" fn kreuzberg_char_data_is_italic(ptr: *const kreuzberg::pdf::CharData) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -44950,7 +44985,7 @@ pub const unsafe extern "C" fn kreuzberg_char_data_is_italic(ptr: *const kreuzbe
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_char_data_baseline_y(ptr: *const kreuzberg::pdf::CharData) -> f32 {
+pub unsafe extern "C" fn kreuzberg_char_data_baseline_y(ptr: *const kreuzberg::pdf::CharData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45003,7 +45038,7 @@ pub unsafe extern "C" fn kreuzberg_text_block_bbox(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_text_block_font_size(ptr: *const kreuzberg::pdf::TextBlock) -> f32 {
+pub unsafe extern "C" fn kreuzberg_text_block_font_size(ptr: *const kreuzberg::pdf::TextBlock) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45090,7 +45125,7 @@ pub unsafe extern "C" fn kreuzberg_hierarchy_block_bbox(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_hierarchy_block_font_size(
+pub unsafe extern "C" fn kreuzberg_hierarchy_block_font_size(
     ptr: *const kreuzberg::pdf::hierarchy::HierarchyBlock,
 ) -> f32 {
     if ptr.is_null() {
@@ -45147,7 +45182,7 @@ pub unsafe extern "C" fn kreuzberg_segment_data_text(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_segment_data_x(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> f32 {
+pub unsafe extern "C" fn kreuzberg_segment_data_x(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45159,7 +45194,7 @@ pub const unsafe extern "C" fn kreuzberg_segment_data_x(ptr: *const kreuzberg::p
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_segment_data_y(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> f32 {
+pub unsafe extern "C" fn kreuzberg_segment_data_y(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45171,7 +45206,7 @@ pub const unsafe extern "C" fn kreuzberg_segment_data_y(ptr: *const kreuzberg::p
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_segment_data_width(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> f32 {
+pub unsafe extern "C" fn kreuzberg_segment_data_width(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45183,9 +45218,7 @@ pub const unsafe extern "C" fn kreuzberg_segment_data_width(ptr: *const kreuzber
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_segment_data_height(
-    ptr: *const kreuzberg::pdf::hierarchy::SegmentData,
-) -> f32 {
+pub unsafe extern "C" fn kreuzberg_segment_data_height(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45197,9 +45230,7 @@ pub const unsafe extern "C" fn kreuzberg_segment_data_height(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_segment_data_font_size(
-    ptr: *const kreuzberg::pdf::hierarchy::SegmentData,
-) -> f32 {
+pub unsafe extern "C" fn kreuzberg_segment_data_font_size(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45211,9 +45242,7 @@ pub const unsafe extern "C" fn kreuzberg_segment_data_font_size(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_segment_data_is_bold(
-    ptr: *const kreuzberg::pdf::hierarchy::SegmentData,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_segment_data_is_bold(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -45225,9 +45254,7 @@ pub const unsafe extern "C" fn kreuzberg_segment_data_is_bold(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_segment_data_is_italic(
-    ptr: *const kreuzberg::pdf::hierarchy::SegmentData,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_segment_data_is_italic(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -45239,7 +45266,7 @@ pub const unsafe extern "C" fn kreuzberg_segment_data_is_italic(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_segment_data_is_monospace(
+pub unsafe extern "C" fn kreuzberg_segment_data_is_monospace(
     ptr: *const kreuzberg::pdf::hierarchy::SegmentData,
 ) -> i32 {
     if ptr.is_null() {
@@ -45253,9 +45280,7 @@ pub const unsafe extern "C" fn kreuzberg_segment_data_is_monospace(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_segment_data_baseline_y(
-    ptr: *const kreuzberg::pdf::hierarchy::SegmentData,
-) -> f32 {
+pub unsafe extern "C" fn kreuzberg_segment_data_baseline_y(ptr: *const kreuzberg::pdf::hierarchy::SegmentData) -> f32 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45350,7 +45375,7 @@ pub unsafe extern "C" fn kreuzberg_pdf_image_free(ptr: *mut kreuzberg::pdf::PdfI
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_image_page_number(ptr: *const kreuzberg::pdf::PdfImage) -> usize {
+pub unsafe extern "C" fn kreuzberg_pdf_image_page_number(ptr: *const kreuzberg::pdf::PdfImage) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -45362,7 +45387,7 @@ pub const unsafe extern "C" fn kreuzberg_pdf_image_page_number(ptr: *const kreuz
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_image_image_index(ptr: *const kreuzberg::pdf::PdfImage) -> usize {
+pub unsafe extern "C" fn kreuzberg_pdf_image_image_index(ptr: *const kreuzberg::pdf::PdfImage) -> usize {
     if ptr.is_null() {
         return 0;
     }
@@ -45374,7 +45399,7 @@ pub const unsafe extern "C" fn kreuzberg_pdf_image_image_index(ptr: *const kreuz
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_image_width(ptr: *const kreuzberg::pdf::PdfImage) -> i64 {
+pub unsafe extern "C" fn kreuzberg_pdf_image_width(ptr: *const kreuzberg::pdf::PdfImage) -> i64 {
     if ptr.is_null() {
         return 0;
     }
@@ -45386,7 +45411,7 @@ pub const unsafe extern "C" fn kreuzberg_pdf_image_width(ptr: *const kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_image_height(ptr: *const kreuzberg::pdf::PdfImage) -> i64 {
+pub unsafe extern "C" fn kreuzberg_pdf_image_height(ptr: *const kreuzberg::pdf::PdfImage) -> i64 {
     if ptr.is_null() {
         return 0;
     }
@@ -45659,7 +45684,7 @@ pub unsafe extern "C" fn kreuzberg_pdf_layout_b_box_free(ptr: *mut kreuzberg::pd
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_layout_b_box_left(
+pub unsafe extern "C" fn kreuzberg_pdf_layout_b_box_left(
     ptr: *const kreuzberg::pdf::layout_runner::PdfLayoutBBox,
 ) -> f32 {
     if ptr.is_null() {
@@ -45673,7 +45698,7 @@ pub const unsafe extern "C" fn kreuzberg_pdf_layout_b_box_left(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_layout_b_box_bottom(
+pub unsafe extern "C" fn kreuzberg_pdf_layout_b_box_bottom(
     ptr: *const kreuzberg::pdf::layout_runner::PdfLayoutBBox,
 ) -> f32 {
     if ptr.is_null() {
@@ -45687,7 +45712,7 @@ pub const unsafe extern "C" fn kreuzberg_pdf_layout_b_box_bottom(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_layout_b_box_right(
+pub unsafe extern "C" fn kreuzberg_pdf_layout_b_box_right(
     ptr: *const kreuzberg::pdf::layout_runner::PdfLayoutBBox,
 ) -> f32 {
     if ptr.is_null() {
@@ -45701,7 +45726,7 @@ pub const unsafe extern "C" fn kreuzberg_pdf_layout_b_box_right(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_pdf_layout_b_box_top(
+pub unsafe extern "C" fn kreuzberg_pdf_layout_b_box_top(
     ptr: *const kreuzberg::pdf::layout_runner::PdfLayoutBBox,
 ) -> f32 {
     if ptr.is_null() {
@@ -45777,7 +45802,7 @@ pub unsafe extern "C" fn kreuzberg_page_layout_region_class(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_layout_region_confidence(
+pub unsafe extern "C" fn kreuzberg_page_layout_region_confidence(
     ptr: *const kreuzberg::pdf::layout_runner::PageLayoutRegion,
 ) -> f32 {
     if ptr.is_null() {
@@ -45817,7 +45842,7 @@ pub unsafe extern "C" fn kreuzberg_page_layout_result_free(ptr: *mut kreuzberg::
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_layout_result_page_index(
+pub unsafe extern "C" fn kreuzberg_page_layout_result_page_index(
     ptr: *const kreuzberg::pdf::layout_runner::PageLayoutResult,
 ) -> usize {
     if ptr.is_null() {
@@ -45851,7 +45876,7 @@ pub unsafe extern "C" fn kreuzberg_page_layout_result_regions(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_layout_result_page_width_pts(
+pub unsafe extern "C" fn kreuzberg_page_layout_result_page_width_pts(
     ptr: *const kreuzberg::pdf::layout_runner::PageLayoutResult,
 ) -> f32 {
     if ptr.is_null() {
@@ -45865,7 +45890,7 @@ pub const unsafe extern "C" fn kreuzberg_page_layout_result_page_width_pts(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_layout_result_page_height_pts(
+pub unsafe extern "C" fn kreuzberg_page_layout_result_page_height_pts(
     ptr: *const kreuzberg::pdf::layout_runner::PageLayoutResult,
 ) -> f32 {
     if ptr.is_null() {
@@ -45879,7 +45904,7 @@ pub const unsafe extern "C" fn kreuzberg_page_layout_result_page_height_pts(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_layout_result_render_width_px(
+pub unsafe extern "C" fn kreuzberg_page_layout_result_render_width_px(
     ptr: *const kreuzberg::pdf::layout_runner::PageLayoutResult,
 ) -> u32 {
     if ptr.is_null() {
@@ -45893,7 +45918,7 @@ pub const unsafe extern "C" fn kreuzberg_page_layout_result_render_width_px(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_layout_result_render_height_px(
+pub unsafe extern "C" fn kreuzberg_page_layout_result_render_height_px(
     ptr: *const kreuzberg::pdf::layout_runner::PageLayoutResult,
 ) -> u32 {
     if ptr.is_null() {
@@ -45919,9 +45944,7 @@ pub unsafe extern "C" fn kreuzberg_page_timing_free(ptr: *mut kreuzberg::pdf::la
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_timing_render_ms(
-    ptr: *const kreuzberg::pdf::layout_runner::PageTiming,
-) -> f64 {
+pub unsafe extern "C" fn kreuzberg_page_timing_render_ms(ptr: *const kreuzberg::pdf::layout_runner::PageTiming) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45933,7 +45956,7 @@ pub const unsafe extern "C" fn kreuzberg_page_timing_render_ms(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_timing_preprocess_ms(
+pub unsafe extern "C" fn kreuzberg_page_timing_preprocess_ms(
     ptr: *const kreuzberg::pdf::layout_runner::PageTiming,
 ) -> f64 {
     if ptr.is_null() {
@@ -45947,9 +45970,7 @@ pub const unsafe extern "C" fn kreuzberg_page_timing_preprocess_ms(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_timing_onnx_ms(
-    ptr: *const kreuzberg::pdf::layout_runner::PageTiming,
-) -> f64 {
+pub unsafe extern "C" fn kreuzberg_page_timing_onnx_ms(ptr: *const kreuzberg::pdf::layout_runner::PageTiming) -> f64 {
     if ptr.is_null() {
         return 0.0;
     }
@@ -45961,7 +45982,7 @@ pub const unsafe extern "C" fn kreuzberg_page_timing_onnx_ms(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_timing_inference_ms(
+pub unsafe extern "C" fn kreuzberg_page_timing_inference_ms(
     ptr: *const kreuzberg::pdf::layout_runner::PageTiming,
 ) -> f64 {
     if ptr.is_null() {
@@ -45975,7 +45996,7 @@ pub const unsafe extern "C" fn kreuzberg_page_timing_inference_ms(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_timing_postprocess_ms(
+pub unsafe extern "C" fn kreuzberg_page_timing_postprocess_ms(
     ptr: *const kreuzberg::pdf::layout_runner::PageTiming,
 ) -> f64 {
     if ptr.is_null() {
@@ -45989,7 +46010,7 @@ pub const unsafe extern "C" fn kreuzberg_page_timing_postprocess_ms(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_timing_mapping_ms(
+pub unsafe extern "C" fn kreuzberg_page_timing_mapping_ms(
     ptr: *const kreuzberg::pdf::layout_runner::PageTiming,
 ) -> f64 {
     if ptr.is_null() {
@@ -46017,7 +46038,7 @@ pub unsafe extern "C" fn kreuzberg_layout_timing_report_free(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_layout_timing_report_total_ms(
+pub unsafe extern "C" fn kreuzberg_layout_timing_report_total_ms(
     ptr: *const kreuzberg::pdf::layout_runner::LayoutTimingReport,
 ) -> f64 {
     if ptr.is_null() {
@@ -46878,7 +46899,7 @@ pub unsafe extern "C" fn kreuzberg_page_render_options_free(ptr: *mut kreuzberg:
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_render_options_target_dpi(
+pub unsafe extern "C" fn kreuzberg_page_render_options_target_dpi(
     ptr: *const kreuzberg::pdf::PageRenderOptions,
 ) -> i32 {
     if ptr.is_null() {
@@ -46892,7 +46913,7 @@ pub const unsafe extern "C" fn kreuzberg_page_render_options_target_dpi(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_render_options_max_image_dimension(
+pub unsafe extern "C" fn kreuzberg_page_render_options_max_image_dimension(
     ptr: *const kreuzberg::pdf::PageRenderOptions,
 ) -> i32 {
     if ptr.is_null() {
@@ -46906,7 +46927,7 @@ pub const unsafe extern "C" fn kreuzberg_page_render_options_max_image_dimension
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_render_options_auto_adjust_dpi(
+pub unsafe extern "C" fn kreuzberg_page_render_options_auto_adjust_dpi(
     ptr: *const kreuzberg::pdf::PageRenderOptions,
 ) -> i32 {
     if ptr.is_null() {
@@ -46920,9 +46941,7 @@ pub const unsafe extern "C" fn kreuzberg_page_render_options_auto_adjust_dpi(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_render_options_min_dpi(
-    ptr: *const kreuzberg::pdf::PageRenderOptions,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_page_render_options_min_dpi(ptr: *const kreuzberg::pdf::PageRenderOptions) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -46934,9 +46953,7 @@ pub const unsafe extern "C" fn kreuzberg_page_render_options_min_dpi(
 /// # Safety
 /// Pointer must be a valid handle returned by this library.
 #[unsafe(no_mangle)]
-pub const unsafe extern "C" fn kreuzberg_page_render_options_max_dpi(
-    ptr: *const kreuzberg::pdf::PageRenderOptions,
-) -> i32 {
+pub unsafe extern "C" fn kreuzberg_page_render_options_max_dpi(ptr: *const kreuzberg::pdf::PageRenderOptions) -> i32 {
     if ptr.is_null() {
         return 0;
     }
@@ -54085,6 +54102,48 @@ pub unsafe extern "C" fn kreuzberg_detect_page_breaks_from_docx(
                 Err(_) => std::ptr::null_mut(),
             },
             None => std::ptr::null_mut(),
+        },
+        Err(e) => {
+            set_last_error(2, &e.to_string());
+            std::ptr::null_mut()
+        }
+    }
+}
+
+/// Compute the 1-based page number for each top-level table in the document.
+///
+/// Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
+/// top-level table opens (`<w:tbl>`), walking them in document order. Nested tables
+/// (tables inside table cells) are skipped by tracking the nesting depth.
+///
+/// Returns a `Vec<usize>` with one entry per top-level table in document order.
+/// If the document cannot be read or parsed, returns an empty Vec (callers should
+/// fall back to page 1 for all tables).
+///
+/// # Limitations
+/// - Only detects explicit page breaks, not reflowed/automatic pagination.
+/// # Safety
+/// Caller must ensure all pointer arguments are valid or null.
+/// Returned pointers must be freed with the appropriate free function.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn kreuzberg_detect_table_page_numbers(
+    bytes: *const u8,
+    bytes_len: usize,
+) -> *mut std::ffi::c_char {
+    clear_last_error();
+    if bytes.is_null() {
+        set_last_error(1, "Null pointer passed for parameter 'bytes'");
+        return std::ptr::null_mut();
+    }
+    let bytes_rs = unsafe { std::slice::from_raw_parts(bytes, bytes_len) }.to_vec();
+    let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes_rs);
+    match result {
+        Ok(val) => match serde_json::to_string(&val) {
+            Ok(s) => match CString::new(s) {
+                Ok(cs) => cs.into_raw(),
+                Err(_) => std::ptr::null_mut(),
+            },
+            Err(_) => std::ptr::null_mut(),
         },
         Err(e) => {
             set_last_error(2, &e.to_string());

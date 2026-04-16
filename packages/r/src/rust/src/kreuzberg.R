@@ -795,6 +795,12 @@ detect_page_breaks_from_docx <- function(bytes) {
   .Call("kreuzberg_detect_page_breaks_from_docx", bytes)
 }
 
+#' Compute the 1-based page number for each top-level table in the document.
+#' @export
+detect_table_page_numbers <- function(bytes) {
+  .Call("kreuzberg_detect_table_page_numbers", bytes)
+}
+
 #' Extract embedded objects from an OOXML ZIP archive and recursively process them.
 #' @export
 extract_ooxml_embedded_objects <- function(zip_bytes, embeddings_prefix, source_label, config) {

@@ -755,6 +755,44 @@ impl ExtractionConfig {
         Ok(result)
     }
 
+    pub fn effective_disable_ocr(&self) -> bool {
+        let core_self = kreuzberg::ExtractionConfig {
+            use_cache: self.use_cache,
+            enable_quality_processing: self.enable_quality_processing,
+            ocr: self.ocr.clone().map(Into::into),
+            force_ocr: self.force_ocr,
+            force_ocr_pages: self.force_ocr_pages.clone(),
+            disable_ocr: self.disable_ocr,
+            chunking: self.chunking.clone().map(Into::into),
+            content_filter: self.content_filter.clone().map(Into::into),
+            images: self.images.clone().map(Into::into),
+            pdf_options: self.pdf_options.clone().map(Into::into),
+            token_reduction: self.token_reduction.clone().map(Into::into),
+            language_detection: self.language_detection.clone().map(Into::into),
+            pages: self.pages.clone().map(Into::into),
+            postprocessor: self.postprocessor.clone().map(Into::into),
+            html_options: Default::default(),
+            html_output: self.html_output.clone().map(Into::into),
+            extraction_timeout_secs: self.extraction_timeout_secs,
+            max_concurrent_extractions: self.max_concurrent_extractions,
+            result_format: self.result_format.clone().into(),
+            security_limits: Default::default(),
+            output_format: self.output_format.clone().into(),
+            layout: self.layout.clone().map(Into::into),
+            include_document_structure: self.include_document_structure,
+            acceleration: self.acceleration.clone().map(Into::into),
+            cache_namespace: self.cache_namespace.clone(),
+            cache_ttl_secs: self.cache_ttl_secs,
+            email: self.email.clone().map(Into::into),
+            concurrency: Default::default(),
+            max_archive_depth: self.max_archive_depth,
+            tree_sitter: self.tree_sitter.clone().map(Into::into),
+            structured_extraction: self.structured_extraction.clone().map(Into::into),
+            ..Default::default()
+        };
+        core_self.effective_disable_ocr()
+    }
+
     pub fn needs_image_processing(&self) -> bool {
         let core_self = kreuzberg::ExtractionConfig {
             use_cache: self.use_cache,
@@ -1262,7 +1300,7 @@ pub fn new_layoutdetectionconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize)]
 pub struct LlmConfig {
     /// Provider/model string using liter-llm routing format.
     /// 
@@ -1284,11 +1322,25 @@ pub struct LlmConfig {
     pub max_tokens: Option<f64>,
 }
 
+impl Default for LlmConfig {
+    fn default() -> Self {
+        Self {
+            model: Default::default(),
+            api_key: Default::default(),
+            base_url: Default::default(),
+            timeout_secs: Default::default(),
+            max_retries: Default::default(),
+            temperature: Default::default(),
+            max_tokens: Default::default(),
+        }
+    }
+}
+
 impl LlmConfig {
     #[must_use]
     
     pub fn new(
-        model: String,
+        model: Option<String>,
         api_key: Option<String>,
         base_url: Option<String>,
         timeout_secs: Option<f64>,
@@ -1296,9 +1348,31 @@ impl LlmConfig {
         temperature: Option<f64>,
         max_tokens: Option<f64>,
     ) -> Self {
-        Self { model, api_key, base_url, timeout_secs, max_retries, temperature, max_tokens }
+        Self { model: model.unwrap_or_default(), api_key: api_key, base_url: base_url, timeout_secs: timeout_secs, max_retries: max_retries, temperature: temperature, max_tokens: max_tokens }
     }
 }
+
+#[extendr]
+pub fn new_llmconfig(
+    model: String = "",
+    api_key: String = "",
+    base_url: String = "",
+    timeout_secs: f64 = 0,
+    max_retries: i32 = 0,
+    temperature: f64 = 0.0,
+    max_tokens: f64 = 0
+) -> LlmConfig {
+    LlmConfig {
+        model,
+        api_key,
+        base_url,
+        timeout_secs,
+        max_retries,
+        temperature,
+        max_tokens,
+    }
+}
+
 
 #[derive(Clone, serde::Serialize)]
 pub struct StructuredExtractionConfig {
@@ -1518,6 +1592,14 @@ impl OcrPipelineConfig {
 
 #[derive(Clone, Default, serde::Serialize)]
 pub struct OcrConfig {
+    /// Whether OCR is enabled.
+    /// 
+    /// Setting `enabled: false` is a shorthand for `disable_ocr: true` on the parent
+    /// [`ExtractionConfig`](crate::core::config::ExtractionConfig). Images return
+    /// metadata only; PDFs use native text extraction without OCR fallback.
+    /// 
+    /// Defaults to `true`. When `false`, all other OCR settings are ignored.
+    pub enabled: bool,
     /// OCR backend: tesseract, easyocr, paddleocr
     pub backend: String,
     /// Language code (e.g., "eng", "deu")
@@ -1559,6 +1641,7 @@ pub struct OcrConfig {
 impl Default for OcrConfig {
     fn default() -> Self {
         Self {
+            enabled: Default::default(),
             backend: Default::default(),
             language: Default::default(),
             tesseract_config: Default::default(),
@@ -1579,6 +1662,7 @@ impl OcrConfig {
     #[must_use]
     
     pub fn new(
+        enabled: Option<bool>,
         backend: Option<String>,
         language: Option<String>,
         auto_rotate: Option<bool>,
@@ -1591,12 +1675,13 @@ impl OcrConfig {
         vlm_config: Option<LlmConfig>,
         vlm_prompt: Option<String>,
     ) -> Self {
-        Self { backend: backend.unwrap_or_default(), language: language.unwrap_or_default(), tesseract_config: tesseract_config, output_format: output_format, paddle_ocr_config: paddle_ocr_config, element_config: element_config, quality_thresholds: quality_thresholds, pipeline: pipeline, auto_rotate: auto_rotate.unwrap_or(false), vlm_config: vlm_config, vlm_prompt: vlm_prompt }
+        Self { enabled: enabled.unwrap_or(true), backend: backend.unwrap_or_default(), language: language.unwrap_or_default(), tesseract_config: tesseract_config, output_format: output_format, paddle_ocr_config: paddle_ocr_config, element_config: element_config, quality_thresholds: quality_thresholds, pipeline: pipeline, auto_rotate: auto_rotate.unwrap_or(false), vlm_config: vlm_config, vlm_prompt: vlm_prompt }
     }
 
     #[allow(clippy::missing_errors_doc)]
     pub fn validate(&self) -> Result<()> {
         let core_self = kreuzberg::OcrConfig {
+            enabled: self.enabled,
             backend: self.backend.clone(),
             language: self.language.clone(),
             tesseract_config: self.tesseract_config.clone().map(Into::into),
@@ -1615,6 +1700,7 @@ impl OcrConfig {
 
     pub fn effective_thresholds(&self) -> OcrQualityThresholds {
         let core_self = kreuzberg::OcrConfig {
+            enabled: self.enabled,
             backend: self.backend.clone(),
             language: self.language.clone(),
             tesseract_config: self.tesseract_config.clone().map(Into::into),
@@ -1632,6 +1718,7 @@ impl OcrConfig {
 
     pub fn effective_pipeline(&self) -> Option<OcrPipelineConfig> {
         let core_self = kreuzberg::OcrConfig {
+            enabled: self.enabled,
             backend: self.backend.clone(),
             language: self.language.clone(),
             tesseract_config: self.tesseract_config.clone().map(Into::into),
@@ -1655,6 +1742,7 @@ impl OcrConfig {
 
 #[extendr]
 pub fn new_ocrconfig(
+    enabled: bool = TRUE,
     backend: String = "",
     language: String = "",
     tesseract_config: TesseractConfig = NULL,
@@ -1668,6 +1756,7 @@ pub fn new_ocrconfig(
     vlm_prompt: String = NULL
 ) -> OcrConfig {
     OcrConfig {
+        enabled,
         backend,
         language,
         tesseract_config,
@@ -17507,6 +17596,12 @@ pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<PageBou
     kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes).map_err(|e| e.to_string())
 }
 
+#[allow(clippy::missing_errors_doc)]
+#[extendr]
+pub fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<f64>> {
+    kreuzberg::extraction::docx::detect_table_page_numbers(&bytes).map_err(|e| e.to_string())
+}
+
 #[extendr]
 pub async fn extract_ooxml_embedded_objects(zip_bytes: Vec<u8>, embeddings_prefix: String, source_label: String, config: ExtractionConfig) -> String {
     let _ = (zip_bytes, embeddings_prefix, source_label, config);
@@ -19453,6 +19548,7 @@ extendr_module! {
     fn extract_text;
     fn extract_text_with_page_breaks;
     fn detect_page_breaks_from_docx;
+    fn detect_table_page_numbers;
     fn extract_ooxml_embedded_objects;
     fn detect_image_format;
     fn process_images_with_ocr;

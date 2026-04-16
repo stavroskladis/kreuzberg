@@ -905,6 +905,11 @@ impl JsExtractionConfig {
         Ok(result)
     }
 
+    #[wasm_bindgen(js_name = "effectiveDisableOcr")]
+    pub fn effective_disable_ocr(&self) -> bool {
+        kreuzberg::ExtractionConfig::from(self.clone()).effective_disable_ocr()
+    }
+
     #[wasm_bindgen(js_name = "needsImageProcessing")]
     pub fn needs_image_processing(&self) -> bool {
         kreuzberg::ExtractionConfig::from(self.clone()).needs_image_processing()
@@ -1540,7 +1545,7 @@ impl JsLayoutDetectionConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsLlmConfig {
     model: String,
@@ -1556,7 +1561,7 @@ pub struct JsLlmConfig {
 impl JsLlmConfig {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        model: String,
+        model: Option<String>,
         api_key: Option<String>,
         base_url: Option<String>,
         timeout_secs: Option<u64>,
@@ -1565,7 +1570,7 @@ impl JsLlmConfig {
         max_tokens: Option<u64>,
     ) -> JsLlmConfig {
         JsLlmConfig {
-            model,
+            model: model.unwrap_or_default(),
             api_key,
             base_url,
             timeout_secs,
@@ -2103,6 +2108,7 @@ impl JsOcrPipelineConfig {
 #[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct JsOcrConfig {
+    enabled: bool,
     backend: String,
     language: String,
     tesseract_config: Option<JsTesseractConfig>,
@@ -2121,6 +2127,7 @@ impl JsOcrConfig {
     #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
+        enabled: Option<bool>,
         backend: Option<String>,
         language: Option<String>,
         auto_rotate: Option<bool>,
@@ -2134,6 +2141,7 @@ impl JsOcrConfig {
         vlm_prompt: Option<String>,
     ) -> JsOcrConfig {
         JsOcrConfig {
+            enabled: enabled.unwrap_or(true),
             backend: backend.unwrap_or_default(),
             language: language.unwrap_or_default(),
             tesseract_config,
@@ -2146,6 +2154,16 @@ impl JsOcrConfig {
             vlm_config,
             vlm_prompt,
         }
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn enabled(&self) -> bool {
+        self.enabled
+    }
+
+    #[wasm_bindgen(setter)]
+    pub fn set_enabled(&mut self, value: bool) {
+        self.enabled = value;
     }
 
     #[wasm_bindgen(getter)]
@@ -26774,6 +26792,14 @@ pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<JsPageB
     Ok(result)
 }
 
+#[allow(clippy::missing_errors_doc)]
+#[wasm_bindgen(js_name = "detectTablePageNumbers")]
+pub fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<usize>, JsValue> {
+    let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes)
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
+}
+
 #[wasm_bindgen(js_name = "extractOoxmlEmbeddedObjects")]
 pub async fn extract_ooxml_embedded_objects(
     zip_bytes: Vec<u8>,
@@ -28916,6 +28942,7 @@ impl From<kreuzberg::OcrPipelineConfig> for JsOcrPipelineConfig {
 impl From<JsOcrConfig> for kreuzberg::OcrConfig {
     fn from(val: JsOcrConfig) -> Self {
         Self {
+            enabled: val.enabled,
             backend: val.backend,
             language: val.language,
             tesseract_config: val.tesseract_config.map(Into::into),
@@ -28937,6 +28964,7 @@ impl From<JsOcrConfig> for kreuzberg::OcrConfig {
 impl From<kreuzberg::OcrConfig> for JsOcrConfig {
     fn from(val: kreuzberg::OcrConfig) -> Self {
         Self {
+            enabled: val.enabled,
             backend: val.backend,
             language: val.language,
             tesseract_config: val.tesseract_config.map(Into::into),
@@ -29163,6 +29191,15 @@ impl From<kreuzberg::TreeSitterProcessConfig> for JsTreeSitterProcessConfig {
     }
 }
 
+impl From<JsSupportedFormat> for kreuzberg::SupportedFormat {
+    fn from(val: JsSupportedFormat) -> Self {
+        Self {
+            extension: val.extension,
+            mime_type: val.mime_type,
+        }
+    }
+}
+
 impl From<kreuzberg::SupportedFormat> for JsSupportedFormat {
     fn from(val: kreuzberg::SupportedFormat) -> Self {
         Self {
@@ -29192,6 +29229,17 @@ impl From<kreuzberg::ServerConfig> for JsServerConfig {
             cors_origins: val.cors_origins,
             max_request_body_bytes: val.max_request_body_bytes,
             max_multipart_field_bytes: val.max_multipart_field_bytes,
+        }
+    }
+}
+
+impl From<JsStructuredDataResult> for kreuzberg::extraction::StructuredDataResult {
+    fn from(val: JsStructuredDataResult) -> Self {
+        Self {
+            content: val.content,
+            format: Default::default(),
+            metadata: serde_wasm_bindgen::from_value(val.metadata.clone()).unwrap_or_default(),
+            text_fields: val.text_fields,
         }
     }
 }
@@ -29233,6 +29281,17 @@ impl From<kreuzberg::extraction::JsonExtractionConfig> for JsJsonExtractionConfi
     }
 }
 
+impl From<JsListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
+    fn from(val: JsListItemMetadata) -> Self {
+        Self {
+            list_type: val.list_type.into(),
+            byte_start: val.byte_start,
+            byte_end: val.byte_end,
+            indent_level: val.indent_level,
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::ListItemMetadata> for JsListItemMetadata {
     fn from(val: kreuzberg::extraction::ListItemMetadata) -> Self {
         Self {
@@ -29268,9 +29327,21 @@ impl From<kreuzberg::extraction::hwp::model::Section> for JsSection {
     }
 }
 
+impl From<JsParaText> for kreuzberg::extraction::hwp::model::ParaText {
+    fn from(val: JsParaText) -> Self {
+        Self { content: val.content }
+    }
+}
+
 impl From<kreuzberg::extraction::hwp::model::ParaText> for JsParaText {
     fn from(val: kreuzberg::extraction::hwp::model::ParaText) -> Self {
         Self { content: val.content }
+    }
+}
+
+impl From<JsFileHeader> for kreuzberg::extraction::hwp::parser::FileHeader {
+    fn from(val: JsFileHeader) -> Self {
+        Self { flags: val.flags }
     }
 }
 
@@ -29294,6 +29365,16 @@ impl From<kreuzberg::extraction::hwp::parser::Record> for JsRecord {
         Self {
             tag_id: val.tag_id,
             data: val.data.to_vec(),
+        }
+    }
+}
+
+impl From<JsImageOcrResult> for kreuzberg::extraction::image::ImageOcrResult {
+    fn from(val: JsImageOcrResult) -> Self {
+        Self {
+            content: val.content,
+            boundaries: val.boundaries.map(|v| v.into_iter().map(Into::into).collect()),
+            page_contents: val.page_contents.map(|v| v.into_iter().map(Into::into).collect()),
         }
     }
 }
@@ -29331,11 +29412,34 @@ impl From<kreuzberg::extraction::html::ExtractedInlineImage> for JsExtractedInli
     }
 }
 
+impl From<JsDocExtractionResult> for kreuzberg::extraction::doc::DocExtractionResult {
+    fn from(val: JsDocExtractionResult) -> Self {
+        Self {
+            text: val.text,
+            metadata: val.metadata.into(),
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::doc::DocExtractionResult> for JsDocExtractionResult {
     fn from(val: kreuzberg::extraction::doc::DocExtractionResult) -> Self {
         Self {
             text: val.text,
             metadata: val.metadata.into(),
+        }
+    }
+}
+
+impl From<JsDocMetadata> for kreuzberg::extraction::doc::DocMetadata {
+    fn from(val: JsDocMetadata) -> Self {
+        Self {
+            title: val.title,
+            subject: val.subject,
+            author: val.author,
+            last_author: val.last_author,
+            created: val.created,
+            modified: val.modified,
+            revision_number: val.revision_number,
         }
     }
 }
@@ -29547,6 +29651,20 @@ impl From<kreuzberg::extraction::docx::section::PageMargins> for JsPageMargins {
     }
 }
 
+impl From<JsPageMarginsPoints> for kreuzberg::extraction::docx::section::PageMarginsPoints {
+    fn from(val: JsPageMarginsPoints) -> Self {
+        Self {
+            top: val.top,
+            right: val.right,
+            bottom: val.bottom,
+            left: val.left,
+            header: val.header,
+            footer: val.footer,
+            gutter: val.gutter,
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::docx::section::PageMarginsPoints> for JsPageMarginsPoints {
     fn from(val: kreuzberg::extraction::docx::section::PageMarginsPoints) -> Self {
         Self {
@@ -29686,6 +29804,15 @@ impl From<kreuzberg::extraction::docx::styles::StyleDefinition> for JsStyleDefin
     }
 }
 
+impl From<JsResolvedStyle> for kreuzberg::extraction::docx::styles::ResolvedStyle {
+    fn from(val: JsResolvedStyle) -> Self {
+        Self {
+            paragraph_properties: Default::default(),
+            run_properties: val.run_properties.into(),
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::docx::styles::ResolvedStyle> for JsResolvedStyle {
     fn from(val: kreuzberg::extraction::docx::styles::ResolvedStyle) -> Self {
         Self {
@@ -29715,6 +29842,22 @@ impl From<kreuzberg::extraction::docx::styles::StyleCatalog> for JsStyleCatalog 
     }
 }
 
+impl From<JsTableProperties> for kreuzberg::extraction::docx::table::TableProperties {
+    fn from(val: JsTableProperties) -> Self {
+        Self {
+            style_id: val.style_id,
+            width: Default::default(),
+            alignment: val.alignment,
+            layout: val.layout,
+            look: val.look.map(Into::into),
+            borders: val.borders.map(Into::into),
+            cell_margins: Default::default(),
+            indent: Default::default(),
+            caption: val.caption,
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::docx::table::TableProperties> for JsTableProperties {
     fn from(val: kreuzberg::extraction::docx::table::TableProperties) -> Self {
         Self {
@@ -29727,6 +29870,19 @@ impl From<kreuzberg::extraction::docx::table::TableProperties> for JsTableProper
             cell_margins: val.cell_margins.as_ref().map(|v| format!("{:?}", v)),
             indent: val.indent.as_ref().map(|v| format!("{:?}", v)),
             caption: val.caption,
+        }
+    }
+}
+
+impl From<JsTableLook> for kreuzberg::extraction::docx::table::TableLook {
+    fn from(val: JsTableLook) -> Self {
+        Self {
+            first_row: val.first_row,
+            last_row: val.last_row,
+            first_column: val.first_column,
+            last_column: val.last_column,
+            no_h_band: val.no_h_band,
+            no_v_band: val.no_v_band,
         }
     }
 }
@@ -29744,6 +29900,19 @@ impl From<kreuzberg::extraction::docx::table::TableLook> for JsTableLook {
     }
 }
 
+impl From<JsTableBorders> for kreuzberg::extraction::docx::table::TableBorders {
+    fn from(val: JsTableBorders) -> Self {
+        Self {
+            top: Default::default(),
+            bottom: Default::default(),
+            left: Default::default(),
+            right: Default::default(),
+            inside_h: Default::default(),
+            inside_v: Default::default(),
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::docx::table::TableBorders> for JsTableBorders {
     fn from(val: kreuzberg::extraction::docx::table::TableBorders) -> Self {
         Self {
@@ -29753,6 +29922,17 @@ impl From<kreuzberg::extraction::docx::table::TableBorders> for JsTableBorders {
             right: val.right.as_ref().map(|v| format!("{:?}", v)),
             inside_h: val.inside_h.as_ref().map(|v| format!("{:?}", v)),
             inside_v: val.inside_v.as_ref().map(|v| format!("{:?}", v)),
+        }
+    }
+}
+
+impl From<JsRowProperties> for kreuzberg::extraction::docx::table::RowProperties {
+    fn from(val: JsRowProperties) -> Self {
+        Self {
+            height: val.height,
+            height_rule: val.height_rule,
+            is_header: val.is_header,
+            cant_split: val.cant_split,
         }
     }
 }
@@ -29919,6 +30099,17 @@ impl From<kreuzberg::extraction::OdtProperties> for JsOdtProperties {
     }
 }
 
+impl From<JsPptExtractionResult> for kreuzberg::extraction::ppt::PptExtractionResult {
+    fn from(val: JsPptExtractionResult) -> Self {
+        Self {
+            text: val.text,
+            slide_count: val.slide_count,
+            metadata: val.metadata.into(),
+            speaker_notes: val.speaker_notes,
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::ppt::PptExtractionResult> for JsPptExtractionResult {
     fn from(val: kreuzberg::extraction::ppt::PptExtractionResult) -> Self {
         Self {
@@ -29926,6 +30117,17 @@ impl From<kreuzberg::extraction::ppt::PptExtractionResult> for JsPptExtractionRe
             slide_count: val.slide_count,
             metadata: val.metadata.into(),
             speaker_notes: val.speaker_notes,
+        }
+    }
+}
+
+impl From<JsPptMetadata> for kreuzberg::extraction::ppt::PptMetadata {
+    fn from(val: JsPptMetadata) -> Self {
+        Self {
+            title: val.title,
+            subject: val.subject,
+            author: val.author,
+            last_author: val.last_author,
         }
     }
 }
@@ -29965,6 +30167,22 @@ impl From<kreuzberg::extraction::PptxExtractionOptions> for JsPptxExtractionOpti
     }
 }
 
+impl From<JsNativeTextStats> for kreuzberg::extractors::pdf::NativeTextStats {
+    fn from(val: JsNativeTextStats) -> Self {
+        Self {
+            non_whitespace: val.non_whitespace,
+            alnum: val.alnum,
+            meaningful_words: val.meaningful_words,
+            alnum_ratio: val.alnum_ratio,
+            garbage_char_count: val.garbage_char_count,
+            fragmented_word_ratio: val.fragmented_word_ratio,
+            consecutive_repeat_ratio: val.consecutive_repeat_ratio,
+            avg_word_length: val.avg_word_length,
+            word_count: val.word_count,
+        }
+    }
+}
+
 impl From<kreuzberg::extractors::pdf::NativeTextStats> for JsNativeTextStats {
     fn from(val: kreuzberg::extractors::pdf::NativeTextStats) -> Self {
         Self {
@@ -29977,6 +30195,17 @@ impl From<kreuzberg::extractors::pdf::NativeTextStats> for JsNativeTextStats {
             consecutive_repeat_ratio: val.consecutive_repeat_ratio,
             avg_word_length: val.avg_word_length,
             word_count: val.word_count,
+        }
+    }
+}
+
+impl From<JsOcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecision {
+    fn from(val: JsOcrFallbackDecision) -> Self {
+        Self {
+            stats: val.stats.into(),
+            avg_non_whitespace: val.avg_non_whitespace,
+            avg_alnum: val.avg_alnum,
+            fallback: val.fallback,
         }
     }
 }
@@ -30063,6 +30292,24 @@ impl From<kreuzberg::panic_context::PanicContext> for JsPanicContext {
             function: val.function,
             message: val.message,
             timestamp: format!("{:?}", val.timestamp),
+        }
+    }
+}
+
+impl From<JsExtractionMetrics> for kreuzberg::telemetry::metrics::ExtractionMetrics {
+    fn from(val: JsExtractionMetrics) -> Self {
+        Self {
+            extraction_total: Default::default(),
+            cache_hits: Default::default(),
+            cache_misses: Default::default(),
+            batch_total: Default::default(),
+            extraction_duration_ms: Default::default(),
+            extraction_input_bytes: Default::default(),
+            extraction_output_bytes: Default::default(),
+            pipeline_duration_ms: Default::default(),
+            ocr_duration_ms: Default::default(),
+            batch_duration_ms: Default::default(),
+            concurrent_extractions: Default::default(),
         }
     }
 }
@@ -30354,12 +30601,36 @@ impl From<kreuzberg::DocumentNode> for JsDocumentNode {
     }
 }
 
+impl From<JsTableGrid> for kreuzberg::TableGrid {
+    fn from(val: JsTableGrid) -> Self {
+        Self {
+            rows: val.rows,
+            cols: val.cols,
+            cells: val.cells.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
 impl From<kreuzberg::TableGrid> for JsTableGrid {
     fn from(val: kreuzberg::TableGrid) -> Self {
         Self {
             rows: val.rows,
             cols: val.cols,
             cells: val.cells.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl From<JsGridCell> for kreuzberg::GridCell {
+    fn from(val: JsGridCell) -> Self {
+        Self {
+            content: val.content,
+            row: val.row,
+            col: val.col,
+            row_span: val.row_span,
+            col_span: val.col_span,
+            is_header: val.is_header,
+            bbox: val.bbox.map(Into::into),
         }
     }
 }
@@ -30776,12 +31047,36 @@ impl From<kreuzberg::ExcelSheet> for JsExcelSheet {
     }
 }
 
+impl From<JsXmlExtractionResult> for kreuzberg::XmlExtractionResult {
+    fn from(val: JsXmlExtractionResult) -> Self {
+        Self {
+            content: val.content,
+            element_count: val.element_count,
+            unique_elements: val.unique_elements,
+        }
+    }
+}
+
 impl From<kreuzberg::XmlExtractionResult> for JsXmlExtractionResult {
     fn from(val: kreuzberg::XmlExtractionResult) -> Self {
         Self {
             content: val.content,
             element_count: val.element_count,
             unique_elements: val.unique_elements,
+        }
+    }
+}
+
+impl From<JsTextExtractionResult> for kreuzberg::TextExtractionResult {
+    fn from(val: JsTextExtractionResult) -> Self {
+        Self {
+            content: val.content,
+            line_count: val.line_count,
+            word_count: val.word_count,
+            character_count: val.character_count,
+            headers: val.headers,
+            links: Default::default(),
+            code_blocks: Default::default(),
         }
     }
 }
@@ -30802,6 +31097,24 @@ impl From<kreuzberg::TextExtractionResult> for JsTextExtractionResult {
                 .code_blocks
                 .as_ref()
                 .map(|v| v.iter().map(|i| format!("{:?}", i)).collect()),
+        }
+    }
+}
+
+impl From<JsPptxExtractionResult> for kreuzberg::PptxExtractionResult {
+    fn from(val: JsPptxExtractionResult) -> Self {
+        Self {
+            content: val.content,
+            metadata: val.metadata.into(),
+            slide_count: val.slide_count,
+            image_count: val.image_count,
+            table_count: val.table_count,
+            images: val.images.into_iter().map(Into::into).collect(),
+            page_structure: val.page_structure.map(Into::into),
+            page_contents: val.page_contents.map(|v| v.into_iter().map(Into::into).collect()),
+            document: val.document.map(Into::into),
+            hyperlinks: Default::default(),
+            office_metadata: serde_wasm_bindgen::from_value(val.office_metadata.clone()).unwrap_or_default(),
         }
     }
 }
@@ -31165,6 +31478,18 @@ impl From<kreuzberg::EmailMetadata> for JsEmailMetadata {
     }
 }
 
+impl From<JsArchiveMetadata> for kreuzberg::ArchiveMetadata {
+    fn from(val: JsArchiveMetadata) -> Self {
+        Self {
+            format: Default::default(),
+            file_count: val.file_count,
+            file_list: val.file_list,
+            total_size: val.total_size,
+            compressed_size: val.compressed_size,
+        }
+    }
+}
+
 impl From<kreuzberg::ArchiveMetadata> for JsArchiveMetadata {
     fn from(val: kreuzberg::ArchiveMetadata) -> Self {
         Self {
@@ -31173,6 +31498,17 @@ impl From<kreuzberg::ArchiveMetadata> for JsArchiveMetadata {
             file_list: val.file_list,
             total_size: val.total_size,
             compressed_size: val.compressed_size,
+        }
+    }
+}
+
+impl From<JsImageMetadata> for kreuzberg::ImageMetadata {
+    fn from(val: JsImageMetadata) -> Self {
+        Self {
+            width: val.width,
+            height: val.height,
+            format: val.format,
+            exif: serde_wasm_bindgen::from_value(val.exif.clone()).unwrap_or_default(),
         }
     }
 }
@@ -31383,6 +31719,17 @@ impl From<kreuzberg::ErrorMetadata> for JsErrorMetadata {
         Self {
             error_type: val.error_type,
             message: val.message,
+        }
+    }
+}
+
+impl From<JsPptxMetadata> for kreuzberg::PptxMetadata {
+    fn from(val: JsPptxMetadata) -> Self {
+        Self {
+            slide_count: val.slide_count,
+            slide_names: val.slide_names,
+            image_count: val.image_count,
+            table_count: val.table_count,
         }
     }
 }
@@ -31810,6 +32157,17 @@ impl From<kreuzberg::Uri> for JsUri {
     }
 }
 
+impl From<JsPoolMetrics> for kreuzberg::utils::pool::PoolMetrics {
+    fn from(val: JsPoolMetrics) -> Self {
+        Self {
+            total_acquires: Default::default(),
+            total_cache_hits: Default::default(),
+            peak_items_stored: Default::default(),
+            total_creations: Default::default(),
+        }
+    }
+}
+
 impl From<kreuzberg::utils::pool::PoolMetrics> for JsPoolMetrics {
     fn from(val: kreuzberg::utils::pool::PoolMetrics) -> Self {
         Self {
@@ -31817,6 +32175,17 @@ impl From<kreuzberg::utils::pool::PoolMetrics> for JsPoolMetrics {
             total_cache_hits: format!("{:?}", val.total_cache_hits),
             peak_items_stored: format!("{:?}", val.peak_items_stored),
             total_creations: format!("{:?}", val.total_creations),
+        }
+    }
+}
+
+impl From<JsPoolMetricsSnapshot> for kreuzberg::utils::pool::PoolMetricsSnapshot {
+    fn from(val: JsPoolMetricsSnapshot) -> Self {
+        Self {
+            total_acquires: val.total_acquires,
+            total_cache_hits: val.total_cache_hits,
+            peak_items_stored: val.peak_items_stored,
+            total_creations: val.total_creations,
         }
     }
 }
@@ -31852,6 +32221,16 @@ impl From<kreuzberg::utils::PoolSizeHint> for JsPoolSizeHint {
             string_buffer_capacity: val.string_buffer_capacity,
             byte_buffer_count: val.byte_buffer_count,
             byte_buffer_capacity: val.byte_buffer_capacity,
+        }
+    }
+}
+
+impl From<JsPoolConfig> for kreuzberg::utils::string_pool::PoolConfig {
+    fn from(val: JsPoolConfig) -> Self {
+        Self {
+            max_buffers_per_size: val.max_buffers_per_size,
+            initial_capacity: val.initial_capacity,
+            max_capacity_before_discard: val.max_capacity_before_discard,
         }
     }
 }
@@ -31922,9 +32301,24 @@ impl From<kreuzberg::service::ExtractionRequest> for JsExtractionRequest {
     }
 }
 
+impl From<JsMultipartApi> for kreuzberg::api::error::MultipartApi {
+    fn from(val: JsMultipartApi) -> Self {
+        Self(val._0)
+    }
+}
+
 impl From<kreuzberg::api::error::MultipartApi> for JsMultipartApi {
     fn from(val: kreuzberg::api::error::MultipartApi) -> Self {
         Self { _0: val.0 }
+    }
+}
+
+impl From<JsApiError> for kreuzberg::api::ApiError {
+    fn from(val: JsApiError) -> Self {
+        Self {
+            status: Default::default(),
+            body: val.body.into(),
+        }
     }
 }
 
@@ -32324,6 +32718,15 @@ impl From<kreuzberg::mcp::params::ListGrammarsParams> for JsListGrammarsParams {
     }
 }
 
+impl From<JsChunkingResult> for kreuzberg::chunking::ChunkingResult {
+    fn from(val: JsChunkingResult) -> Self {
+        Self {
+            chunks: val.chunks.into_iter().map(Into::into).collect(),
+            chunk_count: val.chunk_count,
+        }
+    }
+}
+
 impl From<kreuzberg::chunking::ChunkingResult> for JsChunkingResult {
     fn from(val: kreuzberg::chunking::ChunkingResult) -> Self {
         Self {
@@ -32397,6 +32800,17 @@ impl From<kreuzberg::KeywordConfig> for JsKeywordConfig {
     }
 }
 
+impl From<JsKeyword> for kreuzberg::Keyword {
+    fn from(val: JsKeyword) -> Self {
+        Self {
+            text: val.text,
+            score: val.score,
+            algorithm: val.algorithm.into(),
+            positions: val.positions,
+        }
+    }
+}
+
 impl From<kreuzberg::Keyword> for JsKeyword {
     fn from(val: kreuzberg::Keyword) -> Self {
         Self {
@@ -32404,6 +32818,15 @@ impl From<kreuzberg::Keyword> for JsKeyword {
             score: val.score,
             algorithm: val.algorithm.into(),
             positions: val.positions,
+        }
+    }
+}
+
+impl From<JsOcrCacheStats> for kreuzberg::ocr::OcrCacheStats {
+    fn from(val: JsOcrCacheStats) -> Self {
+        Self {
+            total_files: val.total_files,
+            total_size_mb: val.total_size_mb,
         }
     }
 }
@@ -32471,6 +32894,25 @@ impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for JsRecognizedTabl
             detection_bbox: val.detection_bbox.into(),
             cells: serde_wasm_bindgen::to_value(&val.cells).unwrap_or(JsValue::NULL),
             markdown: val.markdown,
+        }
+    }
+}
+
+impl From<JsPaddleOcrConfig> for kreuzberg::PaddleOcrConfig {
+    fn from(val: JsPaddleOcrConfig) -> Self {
+        Self {
+            language: val.language,
+            cache_dir: val.cache_dir.map(Into::into),
+            use_angle_cls: val.use_angle_cls,
+            enable_table_detection: val.enable_table_detection,
+            det_db_thresh: val.det_db_thresh,
+            det_db_box_thresh: val.det_db_box_thresh,
+            det_db_unclip_ratio: val.det_db_unclip_ratio,
+            det_limit_side_len: val.det_limit_side_len,
+            rec_batch_num: val.rec_batch_num,
+            padding: val.padding,
+            drop_score: val.drop_score,
+            model_tier: val.model_tier,
         }
     }
 }
@@ -32576,6 +33018,16 @@ impl From<kreuzberg::DetectionResult> for JsDetectionResult {
     }
 }
 
+impl From<JsEmbeddedFile> for kreuzberg::pdf::embedded_files::EmbeddedFile {
+    fn from(val: JsEmbeddedFile) -> Self {
+        Self {
+            name: val.name,
+            data: val.data,
+            mime_type: val.mime_type,
+        }
+    }
+}
+
 impl From<kreuzberg::pdf::embedded_files::EmbeddedFile> for JsEmbeddedFile {
     fn from(val: kreuzberg::pdf::embedded_files::EmbeddedFile) -> Self {
         Self {
@@ -32665,6 +33117,17 @@ impl From<JsKMeansResult> for kreuzberg::pdf::hierarchy::KMeansResult {
 impl From<kreuzberg::pdf::hierarchy::KMeansResult> for JsKMeansResult {
     fn from(val: kreuzberg::pdf::hierarchy::KMeansResult) -> Self {
         Self { labels: val.labels }
+    }
+}
+
+impl From<JsHierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
+    fn from(val: JsHierarchyBlock) -> Self {
+        Self {
+            text: val.text,
+            bbox: val.bbox.into(),
+            font_size: val.font_size,
+            hierarchy_level: val.hierarchy_level.into(),
+        }
     }
 }
 
@@ -32816,6 +33279,19 @@ impl From<kreuzberg::pdf::layout_runner::LayoutTimingReport> for JsLayoutTimingR
     }
 }
 
+impl From<JsPdfMetadata> for kreuzberg::pdf::metadata::PdfMetadata {
+    fn from(val: JsPdfMetadata) -> Self {
+        Self {
+            pdf_version: val.pdf_version,
+            producer: val.producer,
+            is_encrypted: val.is_encrypted,
+            width: val.width,
+            height: val.height,
+            page_count: val.page_count,
+        }
+    }
+}
+
 impl From<kreuzberg::pdf::metadata::PdfMetadata> for JsPdfMetadata {
     fn from(val: kreuzberg::pdf::metadata::PdfMetadata) -> Self {
         Self {
@@ -32825,6 +33301,22 @@ impl From<kreuzberg::pdf::metadata::PdfMetadata> for JsPdfMetadata {
             width: val.width,
             height: val.height,
             page_count: val.page_count,
+        }
+    }
+}
+
+impl From<JsPdfExtractionMetadata> for kreuzberg::pdf::metadata::PdfExtractionMetadata {
+    fn from(val: JsPdfExtractionMetadata) -> Self {
+        Self {
+            title: val.title,
+            subject: val.subject,
+            authors: val.authors,
+            keywords: val.keywords,
+            created_at: val.created_at,
+            modified_at: val.modified_at,
+            created_by: val.created_by,
+            pdf_specific: val.pdf_specific.into(),
+            page_structure: val.page_structure.map(Into::into),
         }
     }
 }
@@ -32841,6 +33333,20 @@ impl From<kreuzberg::pdf::metadata::PdfExtractionMetadata> for JsPdfExtractionMe
             created_by: val.created_by,
             pdf_specific: val.pdf_specific.into(),
             page_structure: val.page_structure.map(Into::into),
+        }
+    }
+}
+
+impl From<JsCommonPdfMetadata> for kreuzberg::pdf::metadata::CommonPdfMetadata {
+    fn from(val: JsCommonPdfMetadata) -> Self {
+        Self {
+            title: val.title,
+            subject: val.subject,
+            authors: val.authors,
+            keywords: val.keywords,
+            created_at: val.created_at,
+            modified_at: val.modified_at,
+            created_by: val.created_by,
         }
     }
 }
@@ -33093,6 +33599,17 @@ impl From<kreuzberg::CodeContentMode> for JsCodeContentMode {
     }
 }
 
+impl From<JsListType> for kreuzberg::extraction::ListType {
+    fn from(val: JsListType) -> Self {
+        match val {
+            JsListType::Bullet => Self::Bullet,
+            JsListType::Numbered => Self::Numbered,
+            JsListType::Lettered => Self::Lettered,
+            JsListType::Indented => Self::Indented,
+        }
+    }
+}
+
 impl From<kreuzberg::extraction::ListType> for JsListType {
     fn from(val: kreuzberg::extraction::ListType) -> Self {
         match val {
@@ -33307,6 +33824,17 @@ impl From<kreuzberg::extractors::security::SecurityError> for JsSecurityError {
             kreuzberg::extractors::security::SecurityError::TooManyIterations { .. } => Self::TooManyIterations,
             kreuzberg::extractors::security::SecurityError::XmlDepthExceeded { .. } => Self::XmlDepthExceeded,
             kreuzberg::extractors::security::SecurityError::TooManyCells { .. } => Self::TooManyCells,
+        }
+    }
+}
+
+impl From<JsOcrBackendType> for kreuzberg::plugins::OcrBackendType {
+    fn from(val: JsOcrBackendType) -> Self {
+        match val {
+            JsOcrBackendType::Tesseract => Self::Tesseract,
+            JsOcrBackendType::EasyOCR => Self::EasyOCR,
+            JsOcrBackendType::PaddleOCR => Self::PaddleOCR,
+            JsOcrBackendType::Custom => Self::Custom,
         }
     }
 }
@@ -34130,6 +34658,20 @@ impl From<kreuzberg::pdf::PdfError> for JsPdfError {
             kreuzberg::pdf::PdfError::ExtractionFailed(..) => Self::ExtractionFailed,
             kreuzberg::pdf::PdfError::FontLoadingFailed(..) => Self::FontLoadingFailed,
             kreuzberg::pdf::PdfError::IOError(..) => Self::IOError,
+        }
+    }
+}
+
+impl From<JsHierarchyLevel> for kreuzberg::pdf::HierarchyLevel {
+    fn from(val: JsHierarchyLevel) -> Self {
+        match val {
+            JsHierarchyLevel::H1 => Self::H1,
+            JsHierarchyLevel::H2 => Self::H2,
+            JsHierarchyLevel::H3 => Self::H3,
+            JsHierarchyLevel::H4 => Self::H4,
+            JsHierarchyLevel::H5 => Self::H5,
+            JsHierarchyLevel::H6 => Self::H6,
+            JsHierarchyLevel::Body => Self::Body,
         }
     }
 }

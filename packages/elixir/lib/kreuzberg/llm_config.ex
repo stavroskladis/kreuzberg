@@ -3,10 +3,10 @@ defmodule Kreuzberg.LlmConfig do
   @moduledoc "Configuration for an LLM provider/model via liter-llm."
 
   defstruct model: "",
-            api_key: nil,
-            base_url: nil,
-            timeout_secs: nil,
-            max_retries: nil,
-            temperature: nil,
-            max_tokens: nil
+            api_key: "",
+            base_url: "",
+            timeout_secs: 0,
+            max_retries: 0,
+            temperature: 0.0,
+            max_tokens: 0
 end

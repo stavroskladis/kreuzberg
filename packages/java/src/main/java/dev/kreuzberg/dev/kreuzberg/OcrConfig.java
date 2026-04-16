@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record OcrConfig(
+    boolean enabled,
     String backend,
     String language,
     @JsonProperty("tesseract_config") Optional<TesseractConfig> tesseractConfig,
