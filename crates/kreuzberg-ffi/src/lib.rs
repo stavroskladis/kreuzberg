@@ -6,64 +6,8 @@ use kreuzberg::plugins::OcrBackend;
 use kreuzberg::plugins::Plugin;
 use kreuzberg::plugins::Renderer;
 use kreuzberg::utils::Recyclable;
-use kreuzberg::{
-    AccelerationConfig, AnchorProperties, AnnotationKind, ApiDoc, ApiError, ApiSizeLimits, ApiState, ArchiveEntry,
-    ArchiveMetadata, Attributes, BBox, BatchExtractFilesParams, BatchProcessor, BatchProcessorConfig, BibtexExtractor,
-    BibtexMetadata, BlockType, BoundingBox, ByteBufferPool, CacheClearResponse, CacheStatsResponse, CacheWarmParams,
-    CfbReader, CharData, Chunk, ChunkItem, ChunkMetadata, ChunkRequest, ChunkResponse, ChunkSizing, ChunkTextParams,
-    ChunkType, ChunkerType, ChunkingConfig, ChunkingConfigRequest, ChunkingConfigResponse, ChunkingProcessor,
-    ChunkingResult, CitationExtractor, CitationMetadata, CodeContentMode, CodeExtractor, ColorScheme, ColumnLayout,
-    CommonPdfMetadata, ContentFilterConfig, ContentLayer, ContributorRole, CsvExtractor, CsvMetadata, CustomProperties,
-    DbfExtractor, DbfFieldInfo, DbfMetadata, DepthValidator, DetectMimeTypeParams, DetectResponse, DetectionResult,
-    DjotContent, DjotExtractor, DjotImage, DjotLink, DocExtractionResult, DocExtractor, DocMetadata, DocProperties,
-    DocbookExtractor, DoclingCompatDocument, DoclingCompatResponse, Document, DocumentElement,
-    DocumentExtractorRegistry, DocumentNode, DocumentRelationship, DocumentStructure, DocxExtractor, DocxMetadata,
-    DownloadGrammarsParams, Drawing, DrawingType, Element, ElementId, ElementMetadata, ElementType, EmailAttachment,
-    EmailConfig, EmailExtractionResult, EmailExtractor, EmailMetadata, EmbedRequest, EmbedResponse, EmbedTextParams,
-    EmbeddedFile, EmbeddingConfig, EmbeddingModelType, EmptyParams, EntityValidator, EpubExtractor, EpubMetadata,
-    ErrorMetadata, ErrorResponse, ExcelExtractor, ExcelMetadata, ExcelSheet, ExcelWorkbook, ExecutionProviderType,
-    Extent, ExtractBytesParams, ExtractFileParams, ExtractResponse, ExtractStructuredParams, ExtractedImage,
-    ExtractedInlineImage, ExtractionConfig, ExtractionMetrics, ExtractionRequest, ExtractionResult, ExtractionService,
-    ExtractionServiceBuilder, ExtractionSource, FictionBookExtractor, FictionBookMetadata, FileBytes,
-    FileExtractionConfig, FileHeader, FontScheme, FontSizeCluster, Footnote, FormatMetadata, FormattedBlock, FracType,
-    GenericCache, GridCell, GzipExtractor, HeaderFooter, HeaderFooterType, HeaderMetadata, HeadingContext,
-    HeadingLevel, HealthResponse, HierarchicalBlock, HierarchyBlock, HierarchyConfig, HierarchyLevel, HocrWord,
-    HtmlExtractionResult, HtmlExtractor, HtmlMetadata, HtmlOutputConfig, HtmlTheme, HwpDocument, HwpError,
-    HwpExtractor, ImageExtractionConfig, ImageExtractor, ImageMetadata, ImageMetadataType, ImageOcrResult,
-    ImagePreprocessingConfig, ImagePreprocessingMetadata, ImageType, InfoResponse, InlineElement, InlineType, Instant,
-    InternedString, IterationValidator, JatsExtractor, JatsMetadata, JsonExtractionConfig, JupyterExtractor,
-    KMeansResult, KeynoteExtractor, Keyword, KeywordAlgorithm, KeywordConfig, KreuzbergMcp, LanguageDetectionConfig,
-    LanguageRegistry, LatexExtractor, LayoutClass, LayoutDetection, LayoutDetectionConfig, LayoutModel,
-    LayoutTimingReport, LinkMetadata, LinkType, ListGrammarsParams, ListItemMetadata, ListType, LlmConfig, LlmUsage,
-    ManifestEntryResponse, ManifestResponse, MarkdownExtractor, MathNode, MdxExtractor, Metadata, MetricsLayer,
-    ModelCache, ModelPaths, MultipartApi, NativeTextStats, NodeContent, NodeId, Note, NoteType, NumbersExtractor,
-    OcrBackend, OcrBackendRegistry, OcrBackendType, OcrBoundingGeometry, OcrCache, OcrCacheStats, OcrConfidence,
-    OcrConfig, OcrElement, OcrElementConfig, OcrElementLevel, OcrError, OcrExtractionResult, OcrFallbackDecision,
-    OcrMetadata, OcrPipelineConfig, OcrPipelineStage, OcrProcessor, OcrQualityThresholds, OcrRotation, OcrTable,
-    OcrTableBoundingBox, OdtExtractor, OdtProperties, OpenWebDocumentMetadata, OpenWebDocumentResponse, OpmlExtractor,
-    OrgModeExtractor, Orientation, OrientationResult, OutputFormat, PSMMode, PaddleLanguage, PaddleOcrConfig,
-    PageBoundary, PageConfig, PageContent, PageHierarchy, PageInfo, PageLayoutRegion, PageLayoutResult, PageMargins,
-    PageMarginsPoints, PageRenderOptions, PageStructure, PageTiming, PageUnitType, PagesExtractor, PanicContext,
-    ParaText, PdfAnnotation, PdfAnnotationType, PdfBackend, PdfConfig, PdfError, PdfExtractionMetadata, PdfExtractor,
-    PdfImage, PdfImageExtractor, PdfLayoutBBox, PdfMetadata, PdfPageIterator, PdfRenderer, PdfTextExtractor,
-    PdfUnifiedExtractionResult, PlainTextExtractor, Plugin, PluginStatus, Pool, PoolConfig, PoolError, PoolMetrics,
-    PoolMetricsSnapshot, PoolSizeHint, PooledString, Position, PostProcessorConfig, PostProcessorRegistry,
-    PptExtractionResult, PptExtractor, PptMetadata, PptxAppProperties, PptxExtractionOptions, PptxExtractionResult,
-    PptxExtractor, PptxMetadata, ProcessingWarning, PstExtractor, PstMetadata, QualityProcessor, RakeParams,
-    RecognizedTable, Record, Recyclable, ReductionLevel, RelationshipKind, Renderer, RendererRegistry, ResolvedStyle,
-    RowProperties, RstExtractor, RtfExtractor, RtfFormattingData, RtfFormattingSpan, RtfImage, RunProperties, Section,
-    SectionProperties, SecurityError, SegmentData, ServerConfig, SevenZExtractor, StreamReader, StringBufferPool,
-    StringBufferPoolMetrics, StringGrowthValidator, StructuredData, StructuredDataResult, StructuredDataType,
-    StructuredExtractionConfig, StructuredExtractionResponse, StructuredExtractor, StyleCatalog, StyleDefinition,
-    StyleType, SupportedFormat, SyncExtractor, Table, TableBorders, TableCell, TableGrid, TableLook, TableModel,
-    TableProperties, TableRow, TableValidator, TarExtractor, TessdataManager, TesseractBackend, TesseractConfig,
-    TextAnnotation, TextBlock, TextDirection, TextExtractionResult, TextMetadata, Theme, ThemeColor, TokenReducer,
-    TokenReductionConfig, TracingLayer, TreeSitterConfig, TreeSitterProcessConfig, TsvRow, TypstExtractor, Uri,
-    UriKind, ValidatorRegistry, VersionResponse, VlmOcrBackend, WarmRequest, WarmResponse, WrapType, XlsxAppProperties,
-    XmlExtractionResult, XmlExtractor, XmlMetadata, YakeParams, YearRange, ZipBombValidator, ZipExtractor,
-};
 use std::cell::RefCell;
-use std::ffi::{CStr, CString, c_char};
+use std::ffi::{c_char, CStr, CString};
 use std::ops::Deref;
 use std::ops::DerefMut;
 
@@ -1880,7 +1824,11 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_effective_disable_ocr(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.effective_disable_ocr();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Check if image processing is needed by examining OCR and image extraction settings.
@@ -1909,7 +1857,11 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_needs_image_processing(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.needs_image_processing();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Free a `FileExtractionConfig` handle.
@@ -5912,7 +5864,11 @@ pub unsafe extern "C" fn kreuzberg_server_config_cors_allows_all(this: *const kr
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.cors_allows_all();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Check if a given origin is allowed by CORS configuration.
@@ -5964,7 +5920,11 @@ pub unsafe extern "C" fn kreuzberg_server_config_is_origin_allowed(
         }
     };
     let result = obj.is_origin_allowed(&origin_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Get maximum request body size in megabytes (rounded up).
@@ -6694,7 +6654,11 @@ pub unsafe extern "C" fn kreuzberg_file_header_is_compressed(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.is_compressed();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Whether the document is password-encrypted.
@@ -6713,7 +6677,11 @@ pub unsafe extern "C" fn kreuzberg_file_header_is_encrypted(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.is_encrypted();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Whether the document is a distribution document (text in ViewText/).
@@ -6732,7 +6700,11 @@ pub unsafe extern "C" fn kreuzberg_file_header_is_distribute(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.is_distribute();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Free a `Record` handle.
@@ -21828,7 +21800,11 @@ pub unsafe extern "C" fn kreuzberg_ocr_backend_supports_language(
         }
     };
     let result = obj.supports_language(&lang_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Get the backend type identifier.
@@ -21925,7 +21901,11 @@ pub unsafe extern "C" fn kreuzberg_ocr_backend_supports_table_detection(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.supports_table_detection();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Check if the backend supports direct document-level processing (e.g. for PDFs).
@@ -21946,7 +21926,11 @@ pub unsafe extern "C" fn kreuzberg_ocr_backend_supports_document_processing(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.supports_document_processing();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Process a document file directly via OCR.
@@ -22151,8 +22135,8 @@ pub unsafe extern "C" fn kreuzberg_document_extractor_registry_shutdown_all(
 /// Caller must ensure all pointer arguments are valid or null.
 /// Returned pointers must be freed with the appropriate free function.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_document_extractor_registry_default()
--> *mut kreuzberg::plugins::DocumentExtractorRegistry {
+pub unsafe extern "C" fn kreuzberg_document_extractor_registry_default(
+) -> *mut kreuzberg::plugins::DocumentExtractorRegistry {
     clear_last_error();
     let result = kreuzberg::plugins::DocumentExtractorRegistry::default();
     Box::into_raw(Box::new(result))
@@ -23632,7 +23616,11 @@ pub unsafe extern "C" fn kreuzberg_quality_processor_should_process(
     }
     let config_rs = unsafe { &*config }.clone();
     let result = obj.should_process(&_result_rs, &config_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -25057,7 +25045,11 @@ pub unsafe extern "C" fn kreuzberg_document_structure_is_empty(this: *const kreu
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.is_empty();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -31658,7 +31650,11 @@ pub unsafe extern "C" fn kreuzberg_html_metadata_is_empty(this: *const kreuzberg
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.is_empty();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -36256,7 +36252,11 @@ pub unsafe extern "C" fn kreuzberg_interned_string_eq(
     }
     let other_rs = unsafe { &*other }.clone();
     let result = obj.eq(&other_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -36805,8 +36805,8 @@ pub unsafe extern "C" fn kreuzberg_extraction_service_builder_free(
 /// Caller must ensure all pointer arguments are valid or null.
 /// Returned pointers must be freed with the appropriate free function.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_extraction_service_builder_default()
--> *mut kreuzberg::service::ExtractionServiceBuilder {
+pub unsafe extern "C" fn kreuzberg_extraction_service_builder_default(
+) -> *mut kreuzberg::service::ExtractionServiceBuilder {
     clear_last_error();
     let result = kreuzberg::service::ExtractionServiceBuilder::default();
     Box::into_raw(Box::new(result))
@@ -41277,7 +41277,11 @@ pub unsafe extern "C" fn kreuzberg_chunking_processor_should_process(
     }
     let config_rs = unsafe { &*config }.clone();
     let result = obj.should_process(&_result_rs, &config_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -41470,7 +41474,11 @@ pub unsafe extern "C" fn kreuzberg_vlm_ocr_backend_supports_language(
         }
     };
     let result = obj.supports_language(&_lang_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -42614,7 +42622,11 @@ pub unsafe extern "C" fn kreuzberg_language_registry_is_language_supported(
         }
     };
     let result = obj.is_language_supported(&backend_rs, &language_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Get all registered backend names.
@@ -43103,7 +43115,11 @@ pub unsafe extern "C" fn kreuzberg_tessdata_manager_is_language_cached(
         }
     };
     let result = obj.is_language_cached(&lang_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Free a `TesseractBackend` handle.
@@ -43367,7 +43383,11 @@ pub unsafe extern "C" fn kreuzberg_tesseract_backend_supports_language(
         }
     };
     let result = obj.supports_language(&lang_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -43427,7 +43447,11 @@ pub unsafe extern "C" fn kreuzberg_tesseract_backend_supports_table_detection(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.supports_table_detection();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Create a `PaddleOcrConfig` from a JSON string. Returns null on failure.
@@ -49856,7 +49880,11 @@ pub unsafe extern "C" fn kreuzberg_is_cache_valid(cache_path: *const std::ffi::c
     };
     let max_age_days_rs = max_age_days;
     let result = kreuzberg::cache::is_cache_valid(&cache_path_rs, max_age_days_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -50025,7 +50053,11 @@ pub unsafe extern "C" fn kreuzberg_validate_cache_key(key: *const std::ffi::c_ch
         }
     };
     let result = kreuzberg::cache::validate_cache_key(&key_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -50121,7 +50153,11 @@ pub unsafe extern "C" fn kreuzberg_sanitize_namespace(namespace: *const std::ffi
 pub unsafe extern "C" fn kreuzberg_is_batch_mode() -> i32 {
     clear_last_error();
     let result = kreuzberg::core::batch_mode::is_batch_mode();
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Resolve the effective thread budget from config or auto-detection.
@@ -51611,7 +51647,11 @@ pub unsafe extern "C" fn kreuzberg_is_valid_format_field(field: *const std::ffi:
         }
     };
     let result = kreuzberg::is_valid_format_field(&field_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Open a file and return its bytes with zero-copy for large files.
@@ -52189,7 +52229,11 @@ pub unsafe extern "C" fn kreuzberg_is_page_text_blank(text: *const std::ffi::c_c
         }
     };
     let result = kreuzberg::extraction::blank_detection::is_page_text_blank(&text_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Resolve `RelationshipTarget::Key` entries to `RelationshipTarget::Index`.
@@ -56989,7 +57033,11 @@ pub unsafe extern "C" fn kreuzberg_is_valid_utf8(bytes: *const u8, bytes_len: us
     }
     let bytes_rs = unsafe { std::slice::from_raw_parts(bytes, bytes_len) }.to_vec();
     let result = kreuzberg::text::utf8_validation::is_valid_utf8(&bytes_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
@@ -60357,7 +60405,11 @@ pub unsafe extern "C" fn kreuzberg_is_language_supported(lang: *const std::ffi::
         }
     };
     let result = kreuzberg::paddle_ocr::is_language_supported(&lang_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// Map a PaddleOCR language code to its script family.
@@ -62016,7 +62068,11 @@ pub unsafe extern "C" fn kreuzberg_is_well_formed_table(grid: *const std::ffi::c
         }
     };
     let result = kreuzberg::pdf::table_reconstruct::is_well_formed_table(grid_rs);
-    if result { 1 } else { 0 }
+    if result {
+        1
+    } else {
+        0
+    }
 }
 
 /// # Safety
