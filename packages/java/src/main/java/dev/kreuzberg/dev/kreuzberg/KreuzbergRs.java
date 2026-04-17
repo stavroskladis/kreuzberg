@@ -736,6 +736,43 @@ public final class KreuzbergRs {
         }
     }
 
+    public static ExtractionResult applyOutputFormat(ExtractionResult result, OutputFormat outputFormat) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cresultJson = result != null ? createObjectMapper().writeValueAsString(result) : null;
+            var cresultJsonSeg = cresultJson != null ? arena.allocateFrom(cresultJson) : MemorySegment.NULL;
+            var cresult = cresultJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_EXTRACTION_RESULT_FROM_JSON.invoke(cresultJsonSeg)
+                : MemorySegment.NULL;
+            var coutputFormatJson = outputFormat != null ? createObjectMapper().writeValueAsString(outputFormat) : null;
+            var coutputFormatJsonSeg = coutputFormatJson != null ? arena.allocateFrom(coutputFormatJson) : MemorySegment.NULL;
+            var coutputFormat = coutputFormatJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_OUTPUT_FORMAT_FROM_JSON.invoke(coutputFormatJsonSeg)
+                : MemorySegment.NULL;
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_APPLY_OUTPUT_FORMAT.invoke(cresult, coutputFormat);
+            if (!cresult.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_EXTRACTION_RESULT_FREE.invoke(cresult);
+            }
+            if (!coutputFormat.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_OUTPUT_FORMAT_FREE.invoke(coutputFormat);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            var jsonPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACTION_RESULT_TO_JSON.invoke(resultPtr);
+            NativeLib.KREUZBERG_EXTRACTION_RESULT_FREE.invoke(resultPtr);
+            if (jsonPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(jsonPtr);
+            return createObjectMapper().readValue(json, ExtractionResult.class);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static boolean isPageTextBlank(String text) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var ctext = arena.allocateFrom(text);
@@ -1743,6 +1780,15 @@ public final class KreuzbergRs {
         }
     }
 
+    public static List<PageBoundary> detectPageBreaksFromDocx(byte[] bytes) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var primitiveResult = (MemorySegment) NativeLib.KREUZBERG_DETECT_PAGE_BREAKS_FROM_DOCX.invoke(bytes);
+            return primitiveResult;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static List<Long> detectTablePageNumbers(byte[] bytes) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var resultPtr = (MemorySegment) NativeLib.KREUZBERG_DETECT_TABLE_PAGE_NUMBERS.invoke(bytes);
@@ -1755,6 +1801,41 @@ public final class KreuzbergRs {
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
+    }
+
+    public static String extractOoxmlEmbeddedObjects(byte[] zipBytes, String embeddingsPrefix, String sourceLabel, ExtractionConfig config) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cembeddingsPrefix = arena.allocateFrom(embeddingsPrefix);
+            var csourceLabel = arena.allocateFrom(sourceLabel);
+            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
+            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
+            var cconfig = cconfigJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_EXTRACTION_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
+                : MemorySegment.NULL;
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACT_OOXML_EMBEDDED_OBJECTS.invoke(zipBytes, cembeddingsPrefix, csourceLabel, cconfig);
+            if (!cconfig.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_EXTRACTION_CONFIG_FREE.invoke(cconfig);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static CompletableFuture<String> extractOoxmlEmbeddedObjectsAsync(byte[] zipBytes, String embeddingsPrefix, String sourceLabel, ExtractionConfig config) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return extractOoxmlEmbeddedObjects(zipBytes, embeddingsPrefix, sourceLabel, config);
+            } catch (Throwable e) {
+                throw new CompletionException(e);
+            }
+        });
     }
 
     public static String detectImageFormat(byte[] data) throws KreuzbergRsException {
@@ -1884,6 +1965,40 @@ public final class KreuzbergRs {
             String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KREUZBERG_FREE_STRING.invoke(jsonPtr);
             return createObjectMapper().readValue(json, XmlExtractionResult.class);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static String cellsToText(List<List<String>> cells) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ccellsJson = createObjectMapper().writeValueAsString(cells);
+            var ccells = arena.allocateFrom(ccellsJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CELLS_TO_TEXT.invoke(ccells);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static String cellsToMarkdown(List<List<String>> cells) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ccellsJson = createObjectMapper().writeValueAsString(cells);
+            var ccells = arena.allocateFrom(ccellsJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CELLS_TO_MARKDOWN.invoke(ccells);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
@@ -2052,6 +2167,23 @@ public final class KreuzbergRs {
             if (!citem.equals(MemorySegment.NULL)) {
                 NativeLib.KREUZBERG_FORMATTED_BLOCK_FREE.invoke(citem);
             }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static String renderInlineContent(List<InlineElement> elements) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var celementsJson = createObjectMapper().writeValueAsString(elements);
+            var celements = arena.allocateFrom(celementsJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_RENDER_INLINE_CONTENT.invoke(celements);
             if (resultPtr.equals(MemorySegment.NULL)) {
                 checkLastError();
                 return null;
@@ -2879,6 +3011,17 @@ public final class KreuzbergRs {
         }
     }
 
+    public static double calculateQualityScore(String text, String metadata) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ctext = arena.allocateFrom(text);
+            var cmetadata = arena.allocateFrom(metadata);
+            var primitiveResult = (double) NativeLib.KREUZBERG_CALCULATE_QUALITY_SCORE.invoke(ctext, cmetadata);
+            return primitiveResult;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static String cleanExtractedText(String text) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var ctext = arena.allocateFrom(text);
@@ -3213,6 +3356,28 @@ public final class KreuzbergRs {
         }
     }
 
+    public static UriKind classifyUri(String url) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var curl = arena.allocateFrom(url);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CLASSIFY_URI.invoke(curl);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            var jsonPtr = (MemorySegment) NativeLib.KREUZBERG_URI_KIND_TO_JSON.invoke(resultPtr);
+            NativeLib.KREUZBERG_URI_KIND_FREE.invoke(resultPtr);
+            if (jsonPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(jsonPtr);
+            return createObjectMapper().readValue(json, UriKind.class);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static String safeDecode(byte[] byteData, String encoding) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cencoding = arena.allocateFrom(encoding);
@@ -3329,16 +3494,14 @@ public final class KreuzbergRs {
         }
     }
 
-    public static String acquireStringBuffer() throws KreuzbergRsException {
+    public static PooledString acquireStringBuffer() throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var resultPtr = (MemorySegment) NativeLib.KREUZBERG_ACQUIRE_STRING_BUFFER.invoke();
             if (resultPtr.equals(MemorySegment.NULL)) {
                 checkLastError();
                 return null;
             }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
+            return new PooledString(resultPtr);
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
@@ -3434,6 +3597,39 @@ public final class KreuzbergRs {
             String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
             return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<int>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static List<List<String>> reconstructTable(List<String> words, int columnThreshold, double rowThresholdRatio) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cwordsJson = createObjectMapper().writeValueAsString(words);
+            var cwords = arena.allocateFrom(cwordsJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_RECONSTRUCT_TABLE.invoke(cwords, columnThreshold, rowThresholdRatio);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<List<String>>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static String tableToMarkdown(List<List<String>> table) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ctableJson = createObjectMapper().writeValueAsString(table);
+            var ctable = arena.allocateFrom(ctableJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_TABLE_TO_MARKDOWN.invoke(ctable);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
@@ -3698,6 +3894,141 @@ public final class KreuzbergRs {
         });
     }
 
+    public static void validatePageBoundaries(List<PageBoundary> boundaries) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cboundariesJson = createObjectMapper().writeValueAsString(boundaries);
+            var cboundaries = arena.allocateFrom(cboundariesJson);
+            NativeLib.KREUZBERG_VALIDATE_PAGE_BOUNDARIES.invoke(cboundaries);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static ChunkType classifyChunk(String content, HeadingContext headingContext) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ccontent = arena.allocateFrom(content);
+            var cheadingContextJson = headingContext != null ? createObjectMapper().writeValueAsString(headingContext) : null;
+            var cheadingContextJsonSeg = cheadingContextJson != null ? arena.allocateFrom(cheadingContextJson) : MemorySegment.NULL;
+            var cheadingContext = cheadingContextJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_HEADING_CONTEXT_FROM_JSON.invoke(cheadingContextJsonSeg)
+                : MemorySegment.NULL;
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CLASSIFY_CHUNK.invoke(ccontent, cheadingContext);
+            if (!cheadingContext.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_HEADING_CONTEXT_FREE.invoke(cheadingContext);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            var jsonPtr = (MemorySegment) NativeLib.KREUZBERG_CHUNK_TYPE_TO_JSON.invoke(resultPtr);
+            NativeLib.KREUZBERG_CHUNK_TYPE_FREE.invoke(resultPtr);
+            if (jsonPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(jsonPtr);
+            return createObjectMapper().readValue(json, ChunkType.class);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static ChunkingResult chunkText(String text, ChunkingConfig config, List<PageBoundary> pageBoundaries) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ctext = arena.allocateFrom(text);
+            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
+            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
+            var cconfig = cconfigJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_CHUNKING_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
+                : MemorySegment.NULL;
+            var cpageBoundariesJson = createObjectMapper().writeValueAsString(pageBoundaries);
+            var cpageBoundaries = arena.allocateFrom(cpageBoundariesJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CHUNK_TEXT.invoke(ctext, cconfig, cpageBoundaries);
+            if (!cconfig.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_CHUNKING_CONFIG_FREE.invoke(cconfig);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            var jsonPtr = (MemorySegment) NativeLib.KREUZBERG_CHUNKING_RESULT_TO_JSON.invoke(resultPtr);
+            NativeLib.KREUZBERG_CHUNKING_RESULT_FREE.invoke(resultPtr);
+            if (jsonPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(jsonPtr);
+            return createObjectMapper().readValue(json, ChunkingResult.class);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static ChunkingResult chunkTextWithHeadingSource(String text, ChunkingConfig config, List<PageBoundary> pageBoundaries, String headingSource) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ctext = arena.allocateFrom(text);
+            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
+            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
+            var cconfig = cconfigJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_CHUNKING_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
+                : MemorySegment.NULL;
+            var cpageBoundariesJson = createObjectMapper().writeValueAsString(pageBoundaries);
+            var cpageBoundaries = arena.allocateFrom(cpageBoundariesJson);
+            var cheadingSource = arena.allocateFrom(headingSource);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CHUNK_TEXT_WITH_HEADING_SOURCE.invoke(ctext, cconfig, cpageBoundaries, cheadingSource);
+            if (!cconfig.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_CHUNKING_CONFIG_FREE.invoke(cconfig);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            var jsonPtr = (MemorySegment) NativeLib.KREUZBERG_CHUNKING_RESULT_TO_JSON.invoke(resultPtr);
+            NativeLib.KREUZBERG_CHUNKING_RESULT_FREE.invoke(resultPtr);
+            if (jsonPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(jsonPtr);
+            return createObjectMapper().readValue(json, ChunkingResult.class);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static ChunkingResult chunkTextWithType(String text, long maxCharacters, long overlap, boolean trim, ChunkerType chunkerType) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ctext = arena.allocateFrom(text);
+            var cchunkerTypeJson = chunkerType != null ? createObjectMapper().writeValueAsString(chunkerType) : null;
+            var cchunkerTypeJsonSeg = cchunkerTypeJson != null ? arena.allocateFrom(cchunkerTypeJson) : MemorySegment.NULL;
+            var cchunkerType = cchunkerTypeJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_CHUNKER_TYPE_FROM_JSON.invoke(cchunkerTypeJsonSeg)
+                : MemorySegment.NULL;
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CHUNK_TEXT_WITH_TYPE.invoke(ctext, maxCharacters, overlap, trim, cchunkerType);
+            if (!cchunkerType.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_CHUNKER_TYPE_FREE.invoke(cchunkerType);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            var jsonPtr = (MemorySegment) NativeLib.KREUZBERG_CHUNKING_RESULT_TO_JSON.invoke(resultPtr);
+            NativeLib.KREUZBERG_CHUNKING_RESULT_FREE.invoke(resultPtr);
+            if (jsonPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String json = jsonPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(jsonPtr);
+            return createObjectMapper().readValue(json, ChunkingResult.class);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static List<ChunkingResult> chunkTextsBatch(List<String> texts, ChunkingConfig config) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var ctextsJson = createObjectMapper().writeValueAsString(texts);
@@ -3738,6 +4069,17 @@ public final class KreuzbergRs {
         }
     }
 
+    public static void validateUtf8Boundaries(String text, List<PageBoundary> boundaries) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ctext = arena.allocateFrom(text);
+            var cboundariesJson = createObjectMapper().writeValueAsString(boundaries);
+            var cboundaries = arena.allocateFrom(cboundariesJson);
+            NativeLib.KREUZBERG_VALIDATE_UTF8_BOUNDARIES.invoke(ctext, cboundaries);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static String renderTemplate(String template, String context) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var ctemplate = arena.allocateFrom(template);
@@ -3753,6 +4095,40 @@ public final class KreuzbergRs {
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
+    }
+
+    public static String extractStructured(String content, StructuredExtractionConfig config) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ccontent = arena.allocateFrom(content);
+            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
+            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
+            var cconfig = cconfigJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
+                : MemorySegment.NULL;
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACT_STRUCTURED.invoke(ccontent, cconfig);
+            if (!cconfig.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FREE.invoke(cconfig);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static CompletableFuture<String> extractStructuredAsync(String content, StructuredExtractionConfig config) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return extractStructured(content, config);
+            } catch (Throwable e) {
+                throw new CompletionException(e);
+            }
+        });
     }
 
     public static List<Float> normalize(List<Float> v) throws KreuzbergRsException {
@@ -3796,6 +4172,58 @@ public final class KreuzbergRs {
             String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
             return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<String>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static void warmModel(EmbeddingModelType modelType, String cacheDir) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cmodelTypeJson = modelType != null ? createObjectMapper().writeValueAsString(modelType) : null;
+            var cmodelTypeJsonSeg = cmodelTypeJson != null ? arena.allocateFrom(cmodelTypeJson) : MemorySegment.NULL;
+            var cmodelType = cmodelTypeJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_EMBEDDING_MODEL_TYPE_FROM_JSON.invoke(cmodelTypeJsonSeg)
+                : MemorySegment.NULL;
+            var ccacheDir = arena.allocateFrom(cacheDir);
+            NativeLib.KREUZBERG_WARM_MODEL.invoke(cmodelType, ccacheDir);
+            if (!cmodelType.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_EMBEDDING_MODEL_TYPE_FREE.invoke(cmodelType);
+            }
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static void downloadModel(EmbeddingModelType modelType, String cacheDir) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cmodelTypeJson = modelType != null ? createObjectMapper().writeValueAsString(modelType) : null;
+            var cmodelTypeJsonSeg = cmodelTypeJson != null ? arena.allocateFrom(cmodelTypeJson) : MemorySegment.NULL;
+            var cmodelType = cmodelTypeJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_EMBEDDING_MODEL_TYPE_FROM_JSON.invoke(cmodelTypeJsonSeg)
+                : MemorySegment.NULL;
+            var ccacheDir = arena.allocateFrom(cacheDir);
+            NativeLib.KREUZBERG_DOWNLOAD_MODEL.invoke(cmodelType, ccacheDir);
+            if (!cmodelType.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_EMBEDDING_MODEL_TYPE_FREE.invoke(cmodelType);
+            }
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static void generateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cchunksJson = createObjectMapper().writeValueAsString(chunks);
+            var cchunks = arena.allocateFrom(cchunksJson);
+            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
+            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
+            var cconfig = cconfigJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_EMBEDDING_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
+                : MemorySegment.NULL;
+            NativeLib.KREUZBERG_GENERATE_EMBEDDINGS_FOR_CHUNKS.invoke(cchunks, cconfig);
+            if (!cconfig.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_EMBEDDING_CONFIG_FREE.invoke(cconfig);
+            }
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
@@ -3940,6 +4368,22 @@ public final class KreuzbergRs {
         }
     }
 
+    public static List<String> elementsToHocrWords(List<OcrElement> elements, double minConfidence) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var celementsJson = createObjectMapper().writeValueAsString(elements);
+            var celements = arena.allocateFrom(celementsJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_ELEMENTS_TO_HOCR_WORDS.invoke(celements, minConfidence);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<String>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static String parseHocrToInternalDocument(String hocrHtml) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var chocrHtml = arena.allocateFrom(hocrHtml);
@@ -3951,6 +4395,59 @@ public final class KreuzbergRs {
             String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
             return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static String assembleOcrMarkdown(List<OcrElement> elements, DetectionResult detection, int imgWidth, int imgHeight, List<RecognizedTable> recognizedTables) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var celementsJson = createObjectMapper().writeValueAsString(elements);
+            var celements = arena.allocateFrom(celementsJson);
+            var cdetectionJson = detection != null ? createObjectMapper().writeValueAsString(detection) : null;
+            var cdetectionJsonSeg = cdetectionJson != null ? arena.allocateFrom(cdetectionJson) : MemorySegment.NULL;
+            var cdetection = cdetectionJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_DETECTION_RESULT_FROM_JSON.invoke(cdetectionJsonSeg)
+                : MemorySegment.NULL;
+            var crecognizedTablesJson = createObjectMapper().writeValueAsString(recognizedTables);
+            var crecognizedTables = arena.allocateFrom(crecognizedTablesJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_ASSEMBLE_OCR_MARKDOWN.invoke(celements, cdetection, imgWidth, imgHeight, crecognizedTables);
+            if (!cdetection.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_DETECTION_RESULT_FREE.invoke(cdetection);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static List<RecognizedTable> recognizePageTables(String pageImage, DetectionResult detection, List<OcrElement> elements, String tatrModel) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cpageImage = arena.allocateFrom(pageImage);
+            var cdetectionJson = detection != null ? createObjectMapper().writeValueAsString(detection) : null;
+            var cdetectionJsonSeg = cdetectionJson != null ? arena.allocateFrom(cdetectionJson) : MemorySegment.NULL;
+            var cdetection = cdetectionJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_DETECTION_RESULT_FROM_JSON.invoke(cdetectionJsonSeg)
+                : MemorySegment.NULL;
+            var celementsJson = createObjectMapper().writeValueAsString(elements);
+            var celements = arena.allocateFrom(celementsJson);
+            var ctatrModel = arena.allocateFrom(tatrModel);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_RECOGNIZE_PAGE_TABLES.invoke(cpageImage, cdetection, celements, ctatrModel);
+            if (!cdetection.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_DETECTION_RESULT_FREE.invoke(cdetection);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<RecognizedTable>>() { });
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
@@ -4045,6 +4542,48 @@ public final class KreuzbergRs {
         }
     }
 
+    public static List<List<String>> buildCellGrid(String result, String tableBbox) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cresult = arena.allocateFrom(result);
+            var ctableBbox = arena.allocateFrom(tableBbox);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_BUILD_CELL_GRID.invoke(cresult, ctableBbox);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<List<String>>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static List<LayoutDetection> applyHeuristics(List<LayoutDetection> detections, float pageWidth, float pageHeight) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cdetectionsJson = createObjectMapper().writeValueAsString(detections);
+            var cdetections = arena.allocateFrom(cdetectionsJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_APPLY_HEURISTICS.invoke(cdetections, pageWidth, pageHeight);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<LayoutDetection>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static void greedyNms(List<LayoutDetection> detections, float iouThreshold) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cdetectionsJson = createObjectMapper().writeValueAsString(detections);
+            var cdetections = arena.allocateFrom(cdetectionsJson);
+            NativeLib.KREUZBERG_GREEDY_NMS.invoke(cdetections, iouThreshold);
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static String preprocessImagenet(String img, int targetSize) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cimg = arena.allocateFrom(img);
@@ -4109,6 +4648,30 @@ public final class KreuzbergRs {
         }
     }
 
+    public static String buildSession(String path, AccelerationConfig accel, long threadBudget) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cpath = arena.allocateFrom(path);
+            var caccelJson = accel != null ? createObjectMapper().writeValueAsString(accel) : null;
+            var caccelJsonSeg = caccelJson != null ? arena.allocateFrom(caccelJson) : MemorySegment.NULL;
+            var caccel = caccelJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_ACCELERATION_CONFIG_FROM_JSON.invoke(caccelJsonSeg)
+                : MemorySegment.NULL;
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_BUILD_SESSION.invoke(cpath, caccel, threadBudget);
+            if (!caccel.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_ACCELERATION_CONFIG_FREE.invoke(caccel);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static String configFromExtraction(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var clayoutConfigJson = layoutConfig != null ? createObjectMapper().writeValueAsString(layoutConfig) : null;
@@ -4127,6 +4690,61 @@ public final class KreuzbergRs {
             String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
             return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static String createEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var clayoutConfigJson = layoutConfig != null ? createObjectMapper().writeValueAsString(layoutConfig) : null;
+            var clayoutConfigJsonSeg = clayoutConfigJson != null ? arena.allocateFrom(clayoutConfigJson) : MemorySegment.NULL;
+            var clayoutConfig = clayoutConfigJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_LAYOUT_DETECTION_CONFIG_FROM_JSON.invoke(clayoutConfigJsonSeg)
+                : MemorySegment.NULL;
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CREATE_ENGINE.invoke(clayoutConfig);
+            if (!clayoutConfig.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_LAYOUT_DETECTION_CONFIG_FREE.invoke(clayoutConfig);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static String takeOrCreateEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var clayoutConfigJson = layoutConfig != null ? createObjectMapper().writeValueAsString(layoutConfig) : null;
+            var clayoutConfigJsonSeg = clayoutConfigJson != null ? arena.allocateFrom(clayoutConfigJson) : MemorySegment.NULL;
+            var clayoutConfig = clayoutConfigJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_LAYOUT_DETECTION_CONFIG_FROM_JSON.invoke(clayoutConfigJsonSeg)
+                : MemorySegment.NULL;
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_TAKE_OR_CREATE_ENGINE.invoke(clayoutConfig);
+            if (!clayoutConfig.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_LAYOUT_DETECTION_CONFIG_FREE.invoke(clayoutConfig);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static void returnEngine(String engine) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cengine = arena.allocateFrom(engine);
+            NativeLib.KREUZBERG_RETURN_ENGINE.invoke(cengine);
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
@@ -4251,6 +4869,39 @@ public final class KreuzbergRs {
         }
     }
 
+    public static String extractAndProcessEmbeddedFiles(byte[] pdfBytes, ExtractionConfig config) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
+            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
+            var cconfig = cconfigJson != null
+                ? (MemorySegment) NativeLib.KREUZBERG_EXTRACTION_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
+                : MemorySegment.NULL;
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACT_AND_PROCESS_EMBEDDED_FILES.invoke(pdfBytes, cconfig);
+            if (!cconfig.equals(MemorySegment.NULL)) {
+                NativeLib.KREUZBERG_EXTRACTION_CONFIG_FREE.invoke(cconfig);
+            }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                checkLastError();
+                return null;
+            }
+            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return result;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static CompletableFuture<String> extractAndProcessEmbeddedFilesAsync(byte[] pdfBytes, ExtractionConfig config) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return extractAndProcessEmbeddedFiles(pdfBytes, config);
+            } catch (Throwable e) {
+                throw new CompletionException(e);
+            }
+        });
+    }
+
     public static void initializeFontCache() throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             NativeLib.KREUZBERG_INITIALIZE_FONT_CACHE.invoke();
@@ -4282,6 +4933,73 @@ public final class KreuzbergRs {
         }
     }
 
+    public static List<FontSizeCluster> clusterFontSizes(List<String> blocks, long k) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cblocksJson = createObjectMapper().writeValueAsString(blocks);
+            var cblocks = arena.allocateFrom(cblocksJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CLUSTER_FONT_SIZES.invoke(cblocks, k);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<FontSizeCluster>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static List<String> assignHeadingLevelsSmart(List<FontSizeCluster> clusters, float minHeadingRatio, float minHeadingGap) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cclustersJson = createObjectMapper().writeValueAsString(clusters);
+            var cclusters = arena.allocateFrom(cclustersJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_ASSIGN_HEADING_LEVELS_SMART.invoke(cclusters, minHeadingRatio, minHeadingGap);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<String>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static List<HierarchyBlock> assignHierarchyLevels(List<String> blocks, String kmeansResult) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cblocksJson = createObjectMapper().writeValueAsString(blocks);
+            var cblocks = arena.allocateFrom(cblocksJson);
+            var ckmeansResult = arena.allocateFrom(kmeansResult);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_ASSIGN_HIERARCHY_LEVELS.invoke(cblocks, ckmeansResult);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<HierarchyBlock>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static List<String> assignHierarchyLevelsFromClusters(List<String> blocks, List<FontSizeCluster> clusters) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cblocksJson = createObjectMapper().writeValueAsString(blocks);
+            var cblocks = arena.allocateFrom(cblocksJson);
+            var cclustersJson = createObjectMapper().writeValueAsString(clusters);
+            var cclusters = arena.allocateFrom(cclustersJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_ASSIGN_HIERARCHY_LEVELS_FROM_CLUSTERS.invoke(cblocks, cclusters);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<String>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
     public static List<CharData> extractCharsWithFonts(String page) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cpage = arena.allocateFrom(page);
@@ -4301,6 +5019,22 @@ public final class KreuzbergRs {
         try (var arena = Arena.ofConfined()) {
             var cpage = arena.allocateFrom(page);
             var resultPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACT_SEGMENTS_FROM_PAGE.invoke(cpage);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<String>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static List<String> mergeCharsIntoBlocks(List<CharData> chars) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ccharsJson = createObjectMapper().writeValueAsString(chars);
+            var cchars = arena.allocateFrom(ccharsJson);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_MERGE_CHARS_INTO_BLOCKS.invoke(cchars);
             if (resultPtr.equals(MemorySegment.NULL)) {
                 return java.util.List.of();
             }
@@ -4547,6 +5281,28 @@ public final class KreuzbergRs {
             String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
             return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<String>>() { });
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static List<List<String>> postProcessTable(List<List<String>> table, boolean layoutGuided, boolean allowSingleColumn) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var ctableJson = createObjectMapper().writeValueAsString(table);
+            var ctable = arena.allocateFrom(ctableJson);
+            var primitiveResult = (MemorySegment) NativeLib.KREUZBERG_POST_PROCESS_TABLE.invoke(ctable, layoutGuided, allowSingleColumn);
+            return primitiveResult;
+        } catch (Throwable e) {
+            throw new KreuzbergRsException("FFI call failed", e);
+        }
+    }
+
+    public static boolean isWellFormedTable(List<List<String>> grid) throws KreuzbergRsException {
+        try (var arena = Arena.ofConfined()) {
+            var cgridJson = createObjectMapper().writeValueAsString(grid);
+            var cgrid = arena.allocateFrom(cgridJson);
+            var primitiveResult = (boolean) NativeLib.KREUZBERG_IS_WELL_FORMED_TABLE.invoke(cgrid);
+            return primitiveResult;
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }

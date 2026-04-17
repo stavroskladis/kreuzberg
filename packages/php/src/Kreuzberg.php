@@ -1353,6 +1353,29 @@ final class Kreuzberg
     }
 
     /**
+     * Apply output format conversion to the extraction result.
+     *
+     * Records the output format in metadata and swaps in pre-rendered content
+     * (produced during `derive_extraction_result`) if available.
+     *
+     * This runs as the final pipeline step, after post-processors have operated
+     * on the plain-text `content` field.
+     *
+     * # Arguments
+     *
+     * * `result` - The extraction result to modify
+     * * `output_format` - The desired output format
+     *
+     * @param ExtractionResult $result
+     * @param OutputFormat $output_format
+     * @return ExtractionResult
+     */
+    public static function applyOutputFormat(ExtractionResult $result, OutputFormat $output_format): ExtractionResult
+    {
+        return \Kreuzberg\KreuzbergApi::applyOutputFormat($result, $output_format); // delegate to native extension class
+    }
+
+    /**
      * Determine if a page's text content indicates a blank page.
      *
      * A page is blank if it has fewer than [`MIN_NON_WHITESPACE_CHARS`] non-whitespace characters.
@@ -2540,6 +2563,32 @@ final class Kreuzberg
     }
 
     /**
+     * Detect explicit page break positions in document.xml and extract full text with page boundaries.
+     *
+     * This is a convenience function for the extractor that combines text extraction with page
+     * break detection. It returns the extracted text along with page boundaries.
+     *
+     * # Arguments
+     * * `bytes` - The DOCX file contents (ZIP archive)
+     *
+     * # Returns
+     * * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
+     * * `Err(KreuzbergError)` - If extraction fails
+     *
+     * # Limitations
+     * - Only detects explicit page breaks, not reflowed content
+     * - Page numbers are estimates based on detected breaks
+     *
+     * @param string $bytes
+     * @return ?array<PageBoundary>
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function detectPageBreaksFromDocx(string $bytes): ?array
+    {
+        return \Kreuzberg\KreuzbergApi::detectPageBreaksFromDocx($bytes); // delegate to native extension class
+    }
+
+    /**
      * Compute the 1-based page number for each top-level table in the document.
      *
      * Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
@@ -2560,6 +2609,28 @@ final class Kreuzberg
     public static function detectTablePageNumbers(string $bytes): array
     {
         return \Kreuzberg\KreuzbergApi::detectTablePageNumbers($bytes); // delegate to native extension class
+    }
+
+    /**
+     * Extract embedded objects from an OOXML ZIP archive and recursively process them.
+     *
+     * Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
+     * `ppt/embeddings/`) inside the ZIP archive for embedded files. Known formats
+     * (.xlsx, .pdf, .docx, .pptx, etc.) are recursively extracted. OLE compound
+     * files (oleObject*.bin) are skipped with a warning unless their format can be
+     * identified.
+     *
+     * Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
+     *
+     * @param string $zip_bytes
+     * @param string $embeddings_prefix
+     * @param string $source_label
+     * @param ExtractionConfig $config
+     * @return string
+     */
+    public static function extractOoxmlEmbeddedObjects(string $zip_bytes, string $embeddings_prefix, string $source_label, ExtractionConfig $config): string
+    {
+        return \Kreuzberg\KreuzbergApi::extractOoxmlEmbeddedObjectsAsync($zip_bytes, $embeddings_prefix, $source_label, $config); // delegate to native extension class
     }
 
     /**
@@ -2681,6 +2752,76 @@ final class Kreuzberg
     public static function parseXml(string $xml_bytes, bool $preserve_whitespace): XmlExtractionResult
     {
         return \Kreuzberg\KreuzbergApi::parseXml($xml_bytes, $preserve_whitespace); // delegate to native extension class
+    }
+
+    /**
+     * Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table.
+     *
+     * # Behavior
+     *
+     * - The first row is treated as the header row
+     * - A separator row is inserted after the header
+     * - Pipe characters (`|`) in cell content are automatically escaped with backslash
+     * - Irregular tables (rows with varying column counts) are padded with empty cells to match the header
+     * - Returns an empty string for empty input
+     *
+     * # Arguments
+     *
+     * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+     *
+     * # Returns
+     *
+     * A `String` containing the GFM markdown table representation
+     *
+     * # Examples
+     *
+     * ```
+     * # use kreuzberg::extraction::cells_to_markdown;
+     * let cells = vec![
+     *     vec!["Name".to_string(), "Age".to_string()],
+     *     vec!["Alice".to_string(), "30".to_string()],
+     *     vec!["Bob".to_string(), "25".to_string()],
+     * ];
+     *
+     * let markdown = cells_to_markdown(&cells);
+     * assert!(markdown.contains("| Name | Age |"));
+     * assert!(markdown.contains("|------|------|"));
+     * ```
+     *
+     * Converts a 2D vector of cell strings into plain text with tab-separated columns.
+     *
+     * # Behavior
+     *
+     * - Rows are separated by newlines
+     * - Cells within a row are separated by tab characters
+     * - No pipe delimiters or separator rows (unlike markdown tables)
+     * - Returns an empty string for empty input
+     *
+     * # Arguments
+     *
+     * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+     *
+     * # Returns
+     *
+     * A `String` containing the plain text table representation
+     *
+     * @param array<array<string>> $cells
+     * @return string
+     */
+    public static function cellsToText(array $cells): string
+    {
+        return \Kreuzberg\KreuzbergApi::cellsToText($cells); // delegate to native extension class
+    }
+
+    /**
+     * cellsToMarkdown.
+     *
+     * @param array<array<string>> $cells
+     * @return string
+     */
+    public static function cellsToMarkdown(array $cells): string
+    {
+        return \Kreuzberg\KreuzbergApi::cellsToMarkdown($cells); // delegate to native extension class
     }
 
     /**
@@ -2862,6 +3003,17 @@ final class Kreuzberg
     public static function renderListItem(FormattedBlock $item, string $indent, string $marker): string
     {
         return \Kreuzberg\KreuzbergApi::renderListItem($item, $indent, $marker); // delegate to native extension class
+    }
+
+    /**
+     * Render inline content to djot markup.
+     *
+     * @param array<InlineElement> $elements
+     * @return string
+     */
+    public static function renderInlineContent(array $elements): string
+    {
+        return \Kreuzberg\KreuzbergApi::renderInlineContent($elements); // delegate to native extension class
     }
 
     /**
@@ -4111,6 +4263,18 @@ final class Kreuzberg
     }
 
     /**
+     * calculateQualityScore.
+     *
+     * @param string $text
+     * @param ?string $metadata
+     * @return float
+     */
+    public static function calculateQualityScore(string $text, ?string $metadata = null): float
+    {
+        return \Kreuzberg\KreuzbergApi::calculateQualityScore($text, $metadata); // delegate to native extension class
+    }
+
+    /**
      * cleanExtractedText.
      *
      * @param string $text
@@ -4409,6 +4573,21 @@ final class Kreuzberg
     }
 
     /**
+     * Classify a URL string into the appropriate `UriKind`.
+     *
+     * - `mailto:` → `Email`
+     * - `#` prefix → `Anchor`
+     * - everything else → `Hyperlink`
+     *
+     * @param string $url
+     * @return UriKind
+     */
+    public static function classifyUri(string $url): UriKind
+    {
+        return \Kreuzberg\KreuzbergApi::classifyUri($url); // delegate to native extension class
+    }
+
+    /**
      * Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary.
      *
      * The function prefers an explicit `encoding`, falls back to the cached guess, probes
@@ -4587,9 +4766,9 @@ final class Kreuzberg
      * // Automatically returned to pool when buffer goes out of scope
      * ```
      *
-     * @return string
+     * @return PooledString
      */
-    public static function acquireStringBuffer(): string
+    public static function acquireStringBuffer(): PooledString
     {
         return \Kreuzberg\KreuzbergApi::acquireStringBuffer(); // delegate to native extension class
     }
@@ -4713,6 +4892,41 @@ final class Kreuzberg
     public static function detectRows(array $words, float $row_threshold_ratio): array
     {
         return \Kreuzberg\KreuzbergApi::detectRows($words, $row_threshold_ratio); // delegate to native extension class
+    }
+
+    /**
+     * Reconstruct a table grid from words with bounding box positions.
+     *
+     * Takes detected words and reconstructs a 2D table by:
+     * 1. Detecting column positions (grouping by x-coordinate within `column_threshold`)
+     * 2. Detecting row positions (grouping by y-center within `row_threshold_ratio` * median height)
+     * 3. Assigning words to cells based on closest row/column
+     * 4. Combining words within the same cell
+     *
+     * Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
+     *
+     * @param array<string> $words
+     * @param int $column_threshold
+     * @param float $row_threshold_ratio
+     * @return array<array<string>>
+     */
+    public static function reconstructTable(array $words, int $column_threshold, float $row_threshold_ratio): array
+    {
+        return \Kreuzberg\KreuzbergApi::reconstructTable($words, $column_threshold, $row_threshold_ratio); // delegate to native extension class
+    }
+
+    /**
+     * Convert a table grid to markdown format.
+     *
+     * The first row is treated as the header row, with a separator line added after it.
+     * Pipe characters in cell content are escaped.
+     *
+     * @param array<array<string>> $table
+     * @return string
+     */
+    public static function tableToMarkdown(array $table): string
+    {
+        return \Kreuzberg\KreuzbergApi::tableToMarkdown($table); // delegate to native extension class
     }
 
     /**
@@ -5104,6 +5318,177 @@ final class Kreuzberg
     }
 
     /**
+     * Validates the consistency and correctness of page boundaries.
+     *
+     * # Validation Rules
+     *
+     * 1. Boundaries must be sorted by byte_start (monotonically increasing)
+     * 2. Boundaries must not overlap (byte_end[i] <= byte_start[i+1])
+     * 3. Each boundary must have byte_start < byte_end
+     *
+     * # Arguments
+     *
+     * * `boundaries` - Page boundary markers to validate
+     *
+     * # Returns
+     *
+     * Returns `Ok(())` if all boundaries are valid.
+     * Returns `KreuzbergError::Validation` if any boundary is invalid.
+     *
+     * @param array<PageBoundary> $boundaries
+     * @return void
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function validatePageBoundaries(array $boundaries): void
+    {
+        return \Kreuzberg\KreuzbergApi::validatePageBoundaries($boundaries); // delegate to native extension class
+    }
+
+    /**
+     * Classify a single chunk based on its content and optional heading context.
+     *
+     * Rules are evaluated in priority order. The first matching rule determines
+     * the returned [`ChunkType`]. When no rule matches, [`ChunkType::Unknown`]
+     * is returned.
+     *
+     * # Arguments
+     *
+     * * `content` - The text content of the chunk (may be trimmed or raw).
+     * * `heading_context` - Optional heading hierarchy this chunk falls under
+     *   (only available when using `ChunkerType::Markdown`).
+     *
+     * # Examples
+     *
+     * ```rust
+     * use kreuzberg::chunking::classifier::classify_chunk;
+     * use kreuzberg::types::ChunkType;
+     *
+     * assert_eq!(classify_chunk("# Introduction", None), ChunkType::Heading);
+     * assert_eq!(
+     *     classify_chunk("The Investor shall subscribe for the Shares and agrees to pay the subscription price. The Company shall deliver the Share certificates upon receipt.", None),
+     *     ChunkType::OperativeClause,
+     * );
+     * assert_eq!(classify_chunk("Some unrecognized text.", None), ChunkType::Unknown);
+     * ```
+     *
+     * @param string $content
+     * @param ?HeadingContext $heading_context
+     * @return ChunkType
+     */
+    public static function classifyChunk(string $content, ?HeadingContext $heading_context = null): ChunkType
+    {
+        return \Kreuzberg\KreuzbergApi::classifyChunk($content, $heading_context); // delegate to native extension class
+    }
+
+    /**
+     * Split text into chunks with optional page boundary tracking.
+     *
+     * This is the primary API function for chunking text. It supports both plain text
+     * and Markdown with configurable chunk size, overlap, and page boundary mapping.
+     *
+     * # Arguments
+     *
+     * * `text` - The text to split into chunks
+     * * `config` - Chunking configuration (max size, overlap, type)
+     * * `page_boundaries` - Optional page boundary markers for mapping chunks to pages
+     *
+     * # Returns
+     *
+     * A ChunkingResult containing all chunks and their metadata.
+     *
+     * # Examples
+     *
+     * ```rust
+     * use kreuzberg::chunking::{chunk_text, ChunkingConfig, ChunkerType};
+     *
+     * # fn example() -> kreuzberg::Result<()> {
+     * let config = ChunkingConfig {
+     *     max_characters: 500,
+     *     overlap: 50,
+     *     trim: true,
+     *     chunker_type: ChunkerType::Text,
+     *     ..Default::default()
+     * };
+     * let result = chunk_text("Long text...", &config, None)?;
+     * assert!(!result.chunks.is_empty());
+     * # Ok(())
+     * # }
+     * ```
+     *
+     * @param string $text
+     * @param ChunkingConfig $config
+     * @param ?array<PageBoundary> $page_boundaries
+     * @return ChunkingResult
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function chunkText(string $text, ChunkingConfig $config, ?array $page_boundaries = null): ChunkingResult
+    {
+        return \Kreuzberg\KreuzbergApi::chunkText($text, $config, $page_boundaries); // delegate to native extension class
+    }
+
+    /**
+     * Chunk text with an optional separate markdown source for heading context resolution.
+     *
+     * When `heading_source` is provided, it is used instead of `text` for building the
+     * heading map. This is needed when `text` is plain text (no markdown headings) but
+     * the original document had headings that were stripped during rendering.
+     *
+     * @param string $text
+     * @param ChunkingConfig $config
+     * @param ?array<PageBoundary> $page_boundaries
+     * @param ?string $heading_source
+     * @return ChunkingResult
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function chunkTextWithHeadingSource(string $text, ChunkingConfig $config, ?array $page_boundaries = null, ?string $heading_source = null): ChunkingResult
+    {
+        return \Kreuzberg\KreuzbergApi::chunkTextWithHeadingSource($text, $config, $page_boundaries, $heading_source); // delegate to native extension class
+    }
+
+    /**
+     * Chunk text with explicit type specification.
+     *
+     * This is a convenience function that constructs a ChunkingConfig from individual
+     * parameters and calls `chunk_text`.
+     *
+     * # Arguments
+     *
+     * * `text` - The text to split into chunks
+     * * `max_characters` - Maximum characters per chunk
+     * * `overlap` - Character overlap between consecutive chunks
+     * * `trim` - Whether to trim whitespace from boundaries
+     * * `chunker_type` - Type of chunker to use (Text or Markdown)
+     *
+     * # Returns
+     *
+     * A ChunkingResult containing all chunks and their metadata.
+     *
+     * # Examples
+     *
+     * ```rust
+     * use kreuzberg::chunking::{chunk_text_with_type, ChunkerType};
+     *
+     * # fn example() -> kreuzberg::Result<()> {
+     * let result = chunk_text_with_type("Some text", 500, 50, true, ChunkerType::Text)?;
+     * assert!(!result.chunks.is_empty());
+     * # Ok(())
+     * # }
+     * ```
+     *
+     * @param string $text
+     * @param int $max_characters
+     * @param int $overlap
+     * @param bool $trim
+     * @param ChunkerType $chunker_type
+     * @return ChunkingResult
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function chunkTextWithType(string $text, int $max_characters, int $overlap, bool $trim, ChunkerType $chunker_type): ChunkingResult
+    {
+        return \Kreuzberg\KreuzbergApi::chunkTextWithType($text, $max_characters, $overlap, $trim, $chunker_type); // delegate to native extension class
+    }
+
+    /**
      * Batch process multiple texts with the same configuration.
      *
      * This convenience function applies the same chunking configuration to multiple
@@ -5181,6 +5566,53 @@ final class Kreuzberg
     }
 
     /**
+     * Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries.
+     *
+     * This function ensures that all page boundary positions are at valid UTF-8 character
+     * boundaries within the text. This is CRITICAL to prevent text corruption when boundaries
+     * are created from language bindings or external sources, particularly with multibyte
+     * UTF-8 characters (emoji, CJK characters, combining marks, etc.).
+     *
+     * **Performance Strategy**: Uses adaptive validation to optimize for different boundary counts:
+     * - **Small sets (≤10 boundaries)**: O(k) approach using Rust's native `is_char_boundary()` for each position
+     * - **Large sets (>10 boundaries)**: O(n) precomputation with O(1) lookups via BitVec
+     *
+     * For typical PDF documents with 1-10 page boundaries, the fast path provides 30-50% faster
+     * validation than always precomputing. For documents with 100+ boundaries, batch precomputation
+     * is 2-4% faster overall due to amortized costs. This gives ~2-4% improvement across all scenarios.
+     *
+     * # Arguments
+     *
+     * * `text` - The text being chunked
+     * * `boundaries` - Page boundary markers to validate
+     *
+     * # Returns
+     *
+     * Returns `Ok(())` if all boundaries are at valid UTF-8 character boundaries.
+     * Returns `KreuzbergError::Validation` if any boundary is at an invalid position.
+     *
+     * # UTF-8 Boundary Safety
+     *
+     * Rust strings use UTF-8 encoding where characters can be 1-4 bytes. For example:
+     * - ASCII letters: 1 byte each
+     * - Emoji (🌍): 4 bytes but 1 character
+     * - CJK characters (中): 3 bytes but 1 character
+     *
+     * This function checks that all byte_start and byte_end values are at character boundaries
+     * using an adaptive strategy: direct calls for small boundary sets, or precomputed BitVec
+     * for large sets.
+     *
+     * @param string $text
+     * @param array<PageBoundary> $boundaries
+     * @return void
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function validateUtf8Boundaries(string $text, array $boundaries): void
+    {
+        return \Kreuzberg\KreuzbergApi::validateUtf8Boundaries($text, $boundaries); // delegate to native extension class
+    }
+
+    /**
      * Render a Jinja2 template with the given context variables.
      *
      * @param string $template
@@ -5191,6 +5623,38 @@ final class Kreuzberg
     public static function renderTemplate(string $template, string $context): string
     {
         return \Kreuzberg\KreuzbergApi::renderTemplate($template, $context); // delegate to native extension class
+    }
+
+    /**
+     * Extract structured data from document content using an LLM with JSON schema.
+     *
+     * Sends the document content to the configured LLM with a JSON schema constraint,
+     * returning structured data that conforms to the schema.
+     *
+     * # Arguments
+     *
+     * * `content` - The extracted document text to send to the LLM.
+     * * `config` - Structured extraction configuration including schema and LLM settings.
+     *
+     * # Returns
+     *
+     * A `serde_json::Value` conforming to the provided JSON schema.
+     *
+     * # Errors
+     *
+     * Returns an error if:
+     * - The LLM client cannot be created (invalid provider/credentials).
+     * - The LLM request fails (network, rate-limit, etc.).
+     * - The LLM response cannot be parsed as valid JSON.
+     *
+     * @param string $content
+     * @param StructuredExtractionConfig $config
+     * @return string
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function extractStructured(string $content, StructuredExtractionConfig $config): string
+    {
+        return \Kreuzberg\KreuzbergApi::extractStructuredAsync($content, $config); // delegate to native extension class
     }
 
     /**
@@ -5223,6 +5687,73 @@ final class Kreuzberg
     public static function listPresets(): array
     {
         return \Kreuzberg\KreuzbergApi::listPresets(); // delegate to native extension class
+    }
+
+    /**
+     * Eagerly download and cache an embedding model without returning the handle.
+     *
+     * This triggers the same download and initialization as `get_or_init_engine`
+     * but discards the result, making it suitable for cache-warming scenarios
+     * where the caller doesn't need to use the model immediately.
+     *
+     * **Note**: This function downloads AND initializes the ONNX model, which
+     * requires ONNX Runtime and uses significant memory. For download-only
+     * scenarios (e.g., init containers), use [`download_model`] instead.
+     *
+     * @param EmbeddingModelType $model_type
+     * @param ?string $cache_dir
+     * @return void
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function warmModel(EmbeddingModelType $model_type, ?string $cache_dir = null): void
+    {
+        return \Kreuzberg\KreuzbergApi::warmModel($model_type, $cache_dir); // delegate to native extension class
+    }
+
+    /**
+     * Download an embedding model's files without initializing ONNX Runtime.
+     *
+     * Downloads the model files (ONNX model, tokenizer, config) from HuggingFace
+     * to the cache directory. Subsequent calls to `warm_model` or
+     * `get_or_init_engine` will find the files cached and skip the download step.
+     *
+     * This is ideal for init containers or CI environments where you want to
+     * pre-populate the cache without loading models into memory.
+     *
+     * @param EmbeddingModelType $model_type
+     * @param ?string $cache_dir
+     * @return void
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function downloadModel(EmbeddingModelType $model_type, ?string $cache_dir = null): void
+    {
+        return \Kreuzberg\KreuzbergApi::downloadModel($model_type, $cache_dir); // delegate to native extension class
+    }
+
+    /**
+     * Generate embeddings for text chunks using the specified configuration.
+     *
+     * This function modifies chunks in-place, populating their `embedding` field
+     * with generated embedding vectors. It uses batch processing for efficiency.
+     *
+     * # Arguments
+     *
+     * * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+     * * `config` - Embedding configuration specifying model and parameters
+     *
+     * # Returns
+     *
+     * Returns `Ok(())` if embeddings were generated successfully, or an error if
+     * model initialization or embedding generation fails.
+     *
+     * @param array<Chunk> $chunks
+     * @param EmbeddingConfig $config
+     * @return void
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function generateEmbeddingsForChunks(array $chunks, EmbeddingConfig $config): void
+    {
+        return \Kreuzberg\KreuzbergApi::generateEmbeddingsForChunks($chunks, $config); // delegate to native extension class
     }
 
     /**
@@ -5554,6 +6085,30 @@ final class Kreuzberg
     }
 
     /**
+     * Convert a vector of OcrElements to HocrWords for batch table processing.
+     *
+     * Filters to word-level elements only, as table reconstruction
+     * works best with word-level granularity.
+     *
+     * # Arguments
+     *
+     * * `elements` - Slice of OCR elements to convert
+     * * `min_confidence` - Minimum recognition confidence threshold (0.0-1.0)
+     *
+     * # Returns
+     *
+     * A vector of HocrWords filtered by confidence and element level.
+     *
+     * @param array<OcrElement> $elements
+     * @param float $min_confidence
+     * @return array<string>
+     */
+    public static function elementsToHocrWords(array $elements, float $min_confidence): array
+    {
+        return \Kreuzberg\KreuzbergApi::elementsToHocrWords($elements, $min_confidence); // delegate to native extension class
+    }
+
+    /**
      * Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata.
      *
      * This is the primary entry point. It replaces the older `convert_hocr_to_markdown` path
@@ -5581,6 +6136,45 @@ final class Kreuzberg
     public static function parseHocrToInternalDocument(string $hocr_html): string
     {
         return \Kreuzberg\KreuzbergApi::parseHocrToInternalDocument($hocr_html); // delegate to native extension class
+    }
+
+    /**
+     * Assemble structured markdown from OCR elements using layout detection results.
+     *
+     * Both inputs must be in the same pixel coordinate space (from the same
+     * rendered page image). Returns plain text join when `detection` is `None`.
+     *
+     * `recognized_tables` provides pre-computed markdown for Table regions
+     * (from TATR or other table structure recognizer). When empty, Table
+     * regions fall back to heuristic grid reconstruction from OCR elements.
+     *
+     * @param array<OcrElement> $elements
+     * @param ?DetectionResult $detection
+     * @param int $img_width
+     * @param int $img_height
+     * @param array<RecognizedTable> $recognized_tables
+     * @return string
+     */
+    public static function assembleOcrMarkdown(array $elements, ?DetectionResult $detection = null, int $img_width, int $img_height, array $recognized_tables): string
+    {
+        return \Kreuzberg\KreuzbergApi::assembleOcrMarkdown($elements, $detection, $img_width, $img_height, $recognized_tables); // delegate to native extension class
+    }
+
+    /**
+     * Run TATR table recognition for all Table regions in a page.
+     *
+     * For each Table detection, crops the page image, runs TATR inference,
+     * matches OCR elements to cells, and produces markdown tables.
+     *
+     * @param string $page_image
+     * @param DetectionResult $detection
+     * @param array<OcrElement> $elements
+     * @param string $tatr_model
+     * @return array<RecognizedTable>
+     */
+    public static function recognizePageTables(string $page_image, DetectionResult $detection, array $elements, string $tatr_model): array
+    {
+        return \Kreuzberg\KreuzbergApi::recognizePageTables($page_image, $detection, $elements, $tatr_model); // delegate to native extension class
     }
 
     /**
@@ -5691,6 +6285,65 @@ final class Kreuzberg
     }
 
     /**
+     * Build a 2D cell grid from TATR detections.
+     *
+     * The grid is `[num_rows][num_cols]` where each cell is the intersection
+     * of a row bounding box and a column bounding box.
+     *
+     * Processing steps:
+     * 1. Widen all rows to span the full table width (min x1 to max x2 across rows)
+     * 2. Apply NMS using IoB: sort by confidence descending, remove detections
+     *    whose IoB with any higher-confidence detection exceeds [`NMS_IOB_THRESHOLD`]
+     * 3. For each (row, column) pair, compute the intersection rectangle
+     *
+     * If `table_bbox` is provided, it is used to clip the row widening bounds.
+     *
+     * @param string $result
+     * @param ?string $table_bbox
+     * @return array<array<string>>
+     */
+    public static function buildCellGrid(string $result, ?string $table_bbox = null): array
+    {
+        return \Kreuzberg\KreuzbergApi::buildCellGrid($result, $table_bbox); // delegate to native extension class
+    }
+
+    /**
+     * Apply Docling-style postprocessing heuristics to raw detections.
+     *
+     * This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
+     * 1. Per-class confidence thresholds
+     * 2. Full-page picture removal (>90% page area)
+     * 3. Overlap resolution (IoU > 0.8 or containment > 0.8)
+     * 4. Cross-type overlap handling (KVR vs Table)
+     *
+     * @param array<LayoutDetection> $detections
+     * @param float $page_width
+     * @param float $page_height
+     * @return array<LayoutDetection>
+     */
+    public static function applyHeuristics(array $detections, float $page_width, float $page_height): array
+    {
+        return \Kreuzberg\KreuzbergApi::applyHeuristics($detections, $page_width, $page_height); // delegate to native extension class
+    }
+
+    /**
+     * Standard greedy Non-Maximum Suppression.
+     *
+     * Sorts detections by confidence (descending), then iteratively removes
+     * detections that have IoU > `iou_threshold` with any higher-confidence detection.
+     *
+     * This is required for YOLO models. RT-DETR is NMS-free.
+     *
+     * @param array<LayoutDetection> $detections
+     * @param float $iou_threshold
+     * @return void
+     */
+    public static function greedyNms(array $detections, float $iou_threshold): void
+    {
+        return \Kreuzberg\KreuzbergApi::greedyNms($detections, $iou_threshold); // delegate to native extension class
+    }
+
+    /**
      * Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
      *
      * Pipeline: resize to target_size x target_size (bilinear) -> rescale /255 -> ImageNet normalize -> NCHW f32.
@@ -5764,6 +6417,31 @@ final class Kreuzberg
     }
 
     /**
+     * Build an optimized ORT session from an ONNX model file.
+     *
+     * `thread_budget` controls the number of intra-op threads for this session.
+     * Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
+     * to respect the user's `ConcurrencyConfig`.
+     *
+     * When `accel` is `None` or `Auto`, uses platform defaults:
+     * - macOS: CoreML (Neural Engine / GPU)
+     * - Linux: CUDA (GPU)
+     * - Others: CPU only
+     *
+     * ORT silently falls back to CPU if the requested EP is unavailable.
+     *
+     * @param string $path
+     * @param ?AccelerationConfig $accel
+     * @param int $thread_budget
+     * @return string
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function buildSession(string $path, ?AccelerationConfig $accel = null, int $thread_budget): string
+    {
+        return \Kreuzberg\KreuzbergApi::buildSession($path, $accel, $thread_budget); // delegate to native extension class
+    }
+
+    /**
      * Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
      *
      * @param LayoutDetectionConfig $layout_config
@@ -5772,6 +6450,47 @@ final class Kreuzberg
     public static function configFromExtraction(LayoutDetectionConfig $layout_config): string
     {
         return \Kreuzberg\KreuzbergApi::configFromExtraction($layout_config); // delegate to native extension class
+    }
+
+    /**
+     * Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
+     *
+     * Ensures ORT is available, then creates the engine with model download.
+     *
+     * @param LayoutDetectionConfig $layout_config
+     * @return string
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function createEngine(LayoutDetectionConfig $layout_config): string
+    {
+        return \Kreuzberg\KreuzbergApi::createEngine($layout_config); // delegate to native extension class
+    }
+
+    /**
+     * Take the cached layout engine, or create a new one if the cache is empty.
+     *
+     * The caller owns the engine for the duration of its work and should
+     * return it via [`return_engine`] when done. This avoids holding the
+     * global mutex during inference.
+     *
+     * @param LayoutDetectionConfig $layout_config
+     * @return string
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function takeOrCreateEngine(LayoutDetectionConfig $layout_config): string
+    {
+        return \Kreuzberg\KreuzbergApi::takeOrCreateEngine($layout_config); // delegate to native extension class
+    }
+
+    /**
+     * Return a layout engine to the global cache for reuse by future extractions.
+     *
+     * @param string $engine
+     * @return void
+     */
+    public static function returnEngine(string $engine): void
+    {
+        return \Kreuzberg\KreuzbergApi::returnEngine($engine); // delegate to native extension class
     }
 
     /**
@@ -5897,6 +6616,21 @@ final class Kreuzberg
     }
 
     /**
+     * Extract embedded files from PDF bytes and recursively process them.
+     *
+     * Returns `(children, warnings)`. The children are `ArchiveEntry` values
+     * suitable for attaching to `InternalDocument.children`.
+     *
+     * @param string $pdf_bytes
+     * @param ExtractionConfig $config
+     * @return string
+     */
+    public static function extractAndProcessEmbeddedFiles(string $pdf_bytes, ExtractionConfig $config): string
+    {
+        return \Kreuzberg\KreuzbergApi::extractAndProcessEmbeddedFilesAsync($pdf_bytes, $config); // delegate to native extension class
+    }
+
+    /**
      * Initialize the global font cache.
      *
      * On first call, discovers and loads all system fonts. Subsequent calls are no-ops.
@@ -5956,6 +6690,176 @@ final class Kreuzberg
     public static function cachedFontCount(): int
     {
         return \Kreuzberg\KreuzbergApi::cachedFontCount(); // delegate to native extension class
+    }
+
+    /**
+     * Cluster text blocks by font size using k-means algorithm.
+     *
+     * Uses k-means clustering to group text blocks by their font size, which helps
+     * identify document hierarchy levels (H1, H2, Body, etc.). The algorithm:
+     * 1. Extracts font sizes from text blocks
+     * 2. Applies k-means clustering to group similar font sizes
+     * 3. Sorts clusters by centroid size in descending order (largest = H1)
+     * 4. Returns clusters with their member blocks
+     *
+     * # Arguments
+     *
+     * * `blocks` - Slice of TextBlock objects to cluster
+     * * `k` - Number of clusters to create
+     *
+     * # Returns
+     *
+     * Result with vector of FontSizeCluster ordered by size (descending),
+     * or an error if clustering fails
+     *
+     * # Example
+     *
+     * ```rust,no_run
+     * # #[cfg(feature = "pdf")]
+     * # {
+     * use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, cluster_font_sizes};
+     *
+     * let blocks = vec![
+     *     TextBlock {
+     *         text: "Title".to_string(),
+     *         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
+     *         font_size: 24.0,
+     *     },
+     *     TextBlock {
+     *         text: "Body".to_string(),
+     *         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
+     *         font_size: 12.0,
+     *     },
+     * ];
+     *
+     * let clusters = cluster_font_sizes(&blocks, 2).unwrap();
+     * assert_eq!(clusters.len(), 2);
+     * assert_eq!(clusters[0].centroid, 24.0); // Largest is first
+     * # }
+     * ```
+     *
+     * @param array<string> $blocks
+     * @param int $k
+     * @return array<FontSizeCluster>
+     * @throws \Kreuzberg\KreuzbergException
+     */
+    public static function clusterFontSizes(array $blocks, int $k): array
+    {
+        return \Kreuzberg\KreuzbergApi::clusterFontSizes($blocks, $k); // delegate to native extension class
+    }
+
+    /**
+     * Assign heading levels using the "most frequent cluster = Body" rule.
+     *
+     * Instead of naively mapping the largest font size to H1, this function
+     * identifies the cluster with the most members as body text. Only clusters
+     * with fewer members AND sufficiently larger font size than body become headings.
+     *
+     * # Arguments
+     *
+     * * `clusters` - Slice of FontSizeCluster objects (sorted by centroid descending)
+     * * `min_heading_ratio` - Minimum ratio of heading centroid to body centroid (e.g. 1.15)
+     * * `min_heading_gap` - Minimum absolute font-size difference in points (e.g. 1.5)
+     *
+     * # Returns
+     *
+     * Vector of tuples `(centroid, heading_level)` where `None` means body text
+     * and `Some(1..=6)` means H1-H6. Sorted by centroid descending.
+     *
+     * @param array<FontSizeCluster> $clusters
+     * @param float $min_heading_ratio
+     * @param float $min_heading_gap
+     * @return array<string>
+     */
+    public static function assignHeadingLevelsSmart(array $clusters, float $min_heading_ratio, float $min_heading_gap): array
+    {
+        return \Kreuzberg\KreuzbergApi::assignHeadingLevelsSmart($clusters, $min_heading_ratio, $min_heading_gap); // delegate to native extension class
+    }
+
+    /**
+     * Assign hierarchy levels to text blocks based on KMeans clustering results.
+     *
+     * Maps cluster indices to HTML heading levels (H1-H6) and body text:
+     * - Cluster 0 → H1 (top-level heading)
+     * - Cluster 1 → H2 (secondary heading)
+     * - Cluster 2 → H3 (tertiary heading)
+     * - Cluster 3 → H4 (quaternary heading)
+     * - Cluster 4 → H5 (quinary heading)
+     * - Cluster 5 → H6 (senary heading)
+     * - Cluster 6+ → Body (body text)
+     *
+     * # Arguments
+     *
+     * * `blocks` - Slice of TextBlock objects to assign hierarchy levels to
+     * * `kmeans_result` - KMeansResult containing cluster labels for each block
+     *
+     * # Returns
+     *
+     * Vector of tuples containing (original block info, hierarchy level)
+     *
+     * # Example
+     *
+     * ```rust,no_run
+     * # #[cfg(feature = "pdf")]
+     * # {
+     * use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, HierarchyLevel, assign_hierarchy_levels, KMeansResult};
+     *
+     * let blocks = vec![
+     *     TextBlock {
+     *         text: "Title".to_string(),
+     *         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
+     *         font_size: 24.0,
+     *     },
+     *     TextBlock {
+     *         text: "Body".to_string(),
+     *         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
+     *         font_size: 12.0,
+     *     },
+     * ];
+     *
+     * let kmeans_result = KMeansResult {
+     *     labels: vec![0, 6],
+     * };
+     *
+     * let results = assign_hierarchy_levels(&blocks, &kmeans_result);
+     * assert_eq!(results[0].hierarchy_level, HierarchyLevel::H1);
+     * assert_eq!(results[1].hierarchy_level, HierarchyLevel::Body);
+     * # }
+     * ```
+     *
+     * @param array<string> $blocks
+     * @param string $kmeans_result
+     * @return array<HierarchyBlock>
+     */
+    public static function assignHierarchyLevels(array $blocks, string $kmeans_result): array
+    {
+        return \Kreuzberg\KreuzbergApi::assignHierarchyLevels($blocks, $kmeans_result); // delegate to native extension class
+    }
+
+    /**
+     * Assign hierarchy levels to text blocks based on font size clusters.
+     *
+     * Maps font size clusters to heading levels (H1-H6) and body text.
+     * Larger font sizes are assigned higher hierarchy levels.
+     *
+     * # Arguments
+     *
+     * * `blocks` - Vector of TextBlock objects to assign levels to
+     * * `clusters` - Vector of FontSizeCluster objects from clustering
+     *
+     * # Returns
+     *
+     * Vector of tuples containing (TextBlock, HierarchyLevel).
+     * If blocks is empty or clusters is empty, returns empty vector.
+     * All blocks get Body level if only one cluster exists.
+     *
+     * @param array<string> $blocks
+     * @param array<FontSizeCluster> $clusters
+     * @return array<string>
+     */
+    public static function assignHierarchyLevelsFromClusters(array $blocks, array $clusters): array
+    {
+        return \Kreuzberg\KreuzbergApi::assignHierarchyLevelsFromClusters($blocks, $clusters); // delegate to native extension class
     }
 
     /**
@@ -6020,6 +6924,38 @@ final class Kreuzberg
     public static function extractSegmentsFromPage(string $page): array
     {
         return \Kreuzberg\KreuzbergApi::extractSegmentsFromPage($page); // delegate to native extension class
+    }
+
+    /**
+     * Merge characters into text blocks using a greedy clustering algorithm.
+     *
+     * Groups characters based on spatial proximity using weighted distance and
+     * intersection ratio metrics. Characters are merged greedily based on their
+     * proximity and overlap.
+     *
+     * # Arguments
+     *
+     * * `chars` - Vector of CharData to merge into blocks
+     *
+     * # Returns
+     *
+     * Vector of TextBlock objects containing merged characters
+     *
+     * # Algorithm
+     *
+     * The function uses a greedy approach:
+     * 1. Create bounding boxes for each character
+     * 2. Use weighted_distance (5.0 * dx + 1.0 * dy) with maximum threshold of ~2.5x font size
+     * 3. Use intersection_ratio to detect overlapping or very close characters
+     * 4. Merge characters into blocks based on proximity thresholds
+     * 5. Return sorted blocks by position (top to bottom, left to right)
+     *
+     * @param array<CharData> $chars
+     * @return array<string>
+     */
+    public static function mergeCharsIntoBlocks(array $chars): array
+    {
+        return \Kreuzberg\KreuzbergApi::mergeCharsIntoBlocks($chars); // delegate to native extension class
     }
 
     /**
@@ -6309,6 +7245,52 @@ final class Kreuzberg
     public static function segmentsToWords(array $segments, float $page_height): array
     {
         return \Kreuzberg\KreuzbergApi::segmentsToWords($segments, $page_height); // delegate to native extension class
+    }
+
+    /**
+     * Post-process a raw table grid to validate structure and clean up.
+     *
+     * Returns `None` if the table fails structural validation.
+     *
+     * When `layout_guided` is true, the layout model already confirmed this is
+     * a table, so validation thresholds are relaxed:
+     * - Minimum columns: 3 → 2
+     * - Column sparsity: 75% → 95%
+     * - Overall density: 40% → 15%
+     * - Prose detection: reject if >70% cells >100 chars (vs >50% >60 chars)
+     * - Prose detection: reject if avg cell >80 chars (vs >50 chars)
+     * - Single-word cell: reject if >85% single-word (vs >70%)
+     * - Content asymmetry: reject if one col >92% of text (vs >85%)
+     * - Column-text-flow: applied equally (reject if >60% rows flow through)
+     *
+     * @param array<array<string>> $table
+     * @param bool $layout_guided
+     * @param bool $allow_single_column
+     * @return ?array<array<string>>
+     */
+    public static function postProcessTable(array $table, bool $layout_guided, bool $allow_single_column): ?array
+    {
+        return \Kreuzberg\KreuzbergApi::postProcessTable($table, $layout_guided, $allow_single_column); // delegate to native extension class
+    }
+
+    /**
+     * Validate whether a reconstructed table grid represents a well-formed table
+     * rather than multi-column prose or a repeated page element.
+     *
+     * Returns `true` if the grid looks like a real table, `false` if it should be
+     * rejected and its content emitted as paragraph text instead.
+     *
+     * The checks catch cases the layout model misidentifies as tables:
+     * - Multi-column prose split into a grid (detected via row coherence and column uniformity)
+     * - Repeated page elements (headers/footers detected as tables on every page)
+     * - Low-vocabulary repetitive content (same few words in every row)
+     *
+     * @param array<array<string>> $grid
+     * @return bool
+     */
+    public static function isWellFormedTable(array $grid): bool
+    {
+        return \Kreuzberg\KreuzbergApi::isWellFormedTable($grid); // delegate to native extension class
     }
 
     /**

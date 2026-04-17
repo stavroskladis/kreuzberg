@@ -476,6 +476,16 @@ const (
 )
 
 
+// Format-specific metadata (discriminated union).
+//
+// Only one format type can exist per extraction result. This provides
+// type-safe, clean metadata without nested optionals.
+// Variants: Pdf, Docx, Excel, Email, Pptx, Archive, Image, Xml, Text, Html, Ocr, Csv, Bibtex, Citation, FictionBook, Dbf, Jats, Epub, Pst, Code
+type FormatMetadata struct {
+    FormatType string `json:"format_type"`
+}
+
+
 // Text direction enumeration for HTML documents.
 type TextDirection string
 
@@ -2948,6 +2958,53 @@ type ExtractedInlineImage struct {
 }
 
 
+// A drawing object extracted from `<w:drawing>`.
+type Drawing struct {
+    DrawingType string `json:"drawing_type"`
+    Extent *string `json:"extent,omitempty"`
+    DocProperties *string `json:"doc_properties,omitempty"`
+    ImageRef *string `json:"image_ref,omitempty"`
+}
+
+
+// Drawing option function
+type DrawingOption func(*Drawing)
+
+// WithDrawingDrawingType sets the drawing_type field.
+func WithDrawingDrawingType(v string) DrawingOption {
+    return func(c *Drawing) { c.DrawingType = v }
+}
+
+// WithDrawingExtent sets the extent field.
+func WithDrawingExtent(v string) DrawingOption {
+    return func(c *Drawing) { c.Extent = &v }
+}
+
+// WithDrawingDocProperties sets the doc_properties field.
+func WithDrawingDocProperties(v string) DrawingOption {
+    return func(c *Drawing) { c.DocProperties = &v }
+}
+
+// WithDrawingImageRef sets the image_ref field.
+func WithDrawingImageRef(v string) DrawingOption {
+    return func(c *Drawing) { c.ImageRef = &v }
+}
+
+// NewDrawing creates a Drawing with optional parameters.
+func NewDrawing(opts ...DrawingOption) *Drawing {
+    c := &Drawing {
+        DrawingType: "",
+        Extent: nil,
+        DocProperties: nil,
+        ImageRef: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Properties for anchored drawings.
 type AnchorProperties struct {
     BehindDoc bool `json:"behind_doc"`
@@ -3171,6 +3228,88 @@ func NewResolvedStyle(opts ...ResolvedStyleOption) *ResolvedStyle {
     c := &ResolvedStyle {
         ParagraphProperties: "",
         RunProperties: "",
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
+// Table-level properties from `<w:tblPr>`.
+type TableProperties struct {
+    StyleId *string `json:"style_id,omitempty"`
+    Width *string `json:"width,omitempty"`
+    Alignment *string `json:"alignment,omitempty"`
+    Layout *string `json:"layout,omitempty"`
+    Look *string `json:"look,omitempty"`
+    Borders *string `json:"borders,omitempty"`
+    CellMargins *string `json:"cell_margins,omitempty"`
+    Indent *string `json:"indent,omitempty"`
+    Caption *string `json:"caption,omitempty"`
+}
+
+
+// TableProperties option function
+type TablePropertiesOption func(*TableProperties)
+
+// WithTablePropertiesStyleId sets the style_id field.
+func WithTablePropertiesStyleId(v string) TablePropertiesOption {
+    return func(c *TableProperties) { c.StyleId = &v }
+}
+
+// WithTablePropertiesWidth sets the width field.
+func WithTablePropertiesWidth(v string) TablePropertiesOption {
+    return func(c *TableProperties) { c.Width = &v }
+}
+
+// WithTablePropertiesAlignment sets the alignment field.
+func WithTablePropertiesAlignment(v string) TablePropertiesOption {
+    return func(c *TableProperties) { c.Alignment = &v }
+}
+
+// WithTablePropertiesLayout sets the layout field.
+func WithTablePropertiesLayout(v string) TablePropertiesOption {
+    return func(c *TableProperties) { c.Layout = &v }
+}
+
+// WithTablePropertiesLook sets the look field.
+func WithTablePropertiesLook(v string) TablePropertiesOption {
+    return func(c *TableProperties) { c.Look = &v }
+}
+
+// WithTablePropertiesBorders sets the borders field.
+func WithTablePropertiesBorders(v string) TablePropertiesOption {
+    return func(c *TableProperties) { c.Borders = &v }
+}
+
+// WithTablePropertiesCellMargins sets the cell_margins field.
+func WithTablePropertiesCellMargins(v string) TablePropertiesOption {
+    return func(c *TableProperties) { c.CellMargins = &v }
+}
+
+// WithTablePropertiesIndent sets the indent field.
+func WithTablePropertiesIndent(v string) TablePropertiesOption {
+    return func(c *TableProperties) { c.Indent = &v }
+}
+
+// WithTablePropertiesCaption sets the caption field.
+func WithTablePropertiesCaption(v string) TablePropertiesOption {
+    return func(c *TableProperties) { c.Caption = &v }
+}
+
+// NewTableProperties creates a TableProperties with optional parameters.
+func NewTableProperties(opts ...TablePropertiesOption) *TableProperties {
+    c := &TableProperties {
+        StyleId: nil,
+        Width: nil,
+        Alignment: nil,
+        Layout: nil,
+        Look: nil,
+        Borders: nil,
+        CellMargins: nil,
+        Indent: nil,
+        Caption: nil,
     }
     for _, opt := range opts {
         opt(c)
@@ -5121,7 +5260,7 @@ type Metadata struct {
     //
     // Contains detailed metadata specific to the document format.
     // Serializes with a `format_type` discriminator field.
-    Format *string `json:"format,omitempty"`
+    Format *FormatMetadata `json:"format,omitempty"`
     // Image preprocessing metadata (when OCR preprocessing was applied)
     ImagePreprocessing *ImagePreprocessingMetadata `json:"image_preprocessing,omitempty"`
     // JSON schema (for structured data extraction)
@@ -5214,7 +5353,7 @@ func WithMetadataPages(v PageStructure) MetadataOption {
 }
 
 // WithMetadataFormat sets the format field.
-func WithMetadataFormat(v string) MetadataOption {
+func WithMetadataFormat(v FormatMetadata) MetadataOption {
     return func(c *Metadata) { c.Format = &v }
 }
 
@@ -5358,6 +5497,32 @@ type XmlMetadata struct {
     ElementCount uint `json:"element_count"`
     // List of unique element tag names (sorted)
     UniqueElements []string `json:"unique_elements,omitempty"`
+}
+
+
+// XmlMetadata option function
+type XmlMetadataOption func(*XmlMetadata)
+
+// WithXmlMetadataElementCount sets the element_count field.
+func WithXmlMetadataElementCount(v uint) XmlMetadataOption {
+    return func(c *XmlMetadata) { c.ElementCount = v }
+}
+
+// WithXmlMetadataUniqueElements sets the unique_elements field.
+func WithXmlMetadataUniqueElements(v []string) XmlMetadataOption {
+    return func(c *XmlMetadata) { c.UniqueElements = v }
+}
+
+// NewXmlMetadata creates a XmlMetadata with optional parameters.
+func NewXmlMetadata(opts ...XmlMetadataOption) *XmlMetadata {
+    c := &XmlMetadata {
+        ElementCount: 0,
+        UniqueElements: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
 }
 
 
@@ -6441,6 +6606,22 @@ func (h *ByteBufferPool) Free() {
 }
 
 
+// RAII wrapper for a pooled string buffer.
+//
+// Automatically returns the buffer to the pool when dropped.
+type PooledString struct {
+    ptr unsafe.Pointer
+}
+
+// Free releases the resources held by this handle.
+func (h *PooledString) Free() {
+    if h.ptr != nil {
+        C.kreuzberg_pooled_string_free((*C.KREUZBERGPooledString)(h.ptr))
+        h.ptr = nil
+    }
+}
+
+
 // A [`tower::Layer`] that wraps each extraction in a semantic tracing span.
 type TracingLayer struct {
     ptr unsafe.Pointer
@@ -6744,6 +6925,22 @@ type ExtractBytesParams struct {
     Config *map[string]interface{} `json:"config,omitempty"`
     // Password for encrypted PDFs
     PdfPassword *string `json:"pdf_password,omitempty"`
+    // Wire format for the response: "json" (default) or "toon"
+    ResponseFormat *string `json:"response_format,omitempty"`
+}
+
+
+// Request parameters for batch file extraction.
+type BatchExtractFilesParams struct {
+    // Paths to files to extract
+    Paths []string `json:"paths,omitempty"`
+    // Extraction configuration (JSON object)
+    Config *map[string]interface{} `json:"config,omitempty"`
+    // Password for encrypted PDFs
+    PdfPassword *string `json:"pdf_password,omitempty"`
+    // Per-file extraction configuration overrides (parallel array to paths).
+    // Each entry is either null (use default) or a FileExtractionConfig JSON object.
+    FileConfigs *[]*map[string]interface{} `json:"file_configs,omitempty"`
     // Wire format for the response: "json" (default) or "toon"
     ResponseFormat *string `json:"response_format,omitempty"`
 }
@@ -8837,6 +9034,50 @@ func ClearProcessorCache() error {
 }
 
 
+// Apply output format conversion to the extraction result.
+//
+// Records the output format in metadata and swaps in pre-rendered content
+// (produced during `derive_extraction_result`) if available.
+//
+// This runs as the final pipeline step, after post-processors have operated
+// on the plain-text `content` field.
+//
+// # Arguments
+//
+// * `result` - The extraction result to modify
+// * `output_format` - The desired output format
+func ApplyOutputFormat(result ExtractionResult, output_format OutputFormat) *ExtractionResult {
+    jsonBytescResult, err := json.Marshal(result)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcResult := C.CString(string(jsonBytescResult))
+    cResult := C.kreuzberg_extraction_result_from_json(tmpStrcResult)
+    C.free(unsafe.Pointer(tmpStrcResult))
+    defer C.kreuzberg_extraction_result_free(cResult)
+
+    jsonBytescOutputFormat, err := json.Marshal(output_format)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcOutputFormat := C.CString(string(jsonBytescOutputFormat))
+    cOutputFormat := C.kreuzberg_output_format_from_json(tmpStrcOutputFormat)
+    C.free(unsafe.Pointer(tmpStrcOutputFormat))
+    defer C.kreuzberg_output_format_free(cOutputFormat)
+
+    ptr := C.kreuzberg_apply_output_format(cResult, cOutputFormat)
+    defer C.kreuzberg_extraction_result_free(ptr)
+    return func() *ExtractionResult {
+	jsonPtr := C.kreuzberg_extraction_result_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kreuzberg_free_string(jsonPtr)
+	var result ExtractionResult
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
 // Determine if a page's text content indicates a blank page.
 //
 // A page is blank if it has fewer than [`MIN_NON_WHITESPACE_CHARS`] non-whitespace characters.
@@ -10403,6 +10644,38 @@ func ExtractTextWithPageBreaks(bytes []byte) (*string, error) {
 }
 
 
+// Detect explicit page break positions in document.xml and extract full text with page boundaries.
+//
+// This is a convenience function for the extractor that combines text extraction with page
+// break detection. It returns the extracted text along with page boundaries.
+//
+// # Arguments
+// * `bytes` - The DOCX file contents (ZIP archive)
+//
+// # Returns
+// * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
+// * `Err(KreuzbergError)` - If extraction fails
+//
+// # Limitations
+// - Only detects explicit page breaks, not reflowed content
+// - Page numbers are estimates based on detected breaks
+func DetectPageBreaksFromDocx(bytes []byte) (**[]PageBoundary, error) {
+    cBytes := (*C.uchar)(unsafe.Pointer(&bytes[0]))
+
+    ptr := C.kreuzberg_detect_page_breaks_from_docx(cBytes)
+    if err := lastError(); err != nil {
+        return nil, err
+    }
+    return func() *[]PageBoundary {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []PageBoundary
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
 // Compute the 1-based page number for each top-level table in the document.
 //
 // Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
@@ -10429,6 +10702,39 @@ func DetectTablePageNumbers(bytes []byte) (*[]uint, error) {
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }(), nil
+}
+
+
+// Extract embedded objects from an OOXML ZIP archive and recursively process them.
+//
+// Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
+// `ppt/embeddings/`) inside the ZIP archive for embedded files. Known formats
+// (.xlsx, .pdf, .docx, .pptx, etc.) are recursively extracted. OLE compound
+// files (oleObject*.bin) are skipped with a warning unless their format can be
+// identified.
+//
+// Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
+func ExtractOoxmlEmbeddedObjects(zip_bytes []byte, embeddings_prefix string, source_label string, config ExtractionConfig) *string {
+    cZipBytes := (*C.uchar)(unsafe.Pointer(&zip_bytes[0]))
+
+    cEmbeddingsPrefix := C.CString(embeddings_prefix)
+    defer C.free(unsafe.Pointer(cEmbeddingsPrefix))
+
+    cSourceLabel := C.CString(source_label)
+    defer C.free(unsafe.Pointer(cSourceLabel))
+
+    jsonBytescConfig, err := json.Marshal(config)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcConfig := C.CString(string(jsonBytescConfig))
+    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
+    C.free(unsafe.Pointer(tmpStrcConfig))
+    defer C.kreuzberg_extraction_config_free(cConfig)
+
+    ptr := C.kreuzberg_extract_ooxml_embedded_objects(cZipBytes, cEmbeddingsPrefix, cSourceLabel, cConfig)
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -10603,6 +10909,84 @@ func ParseXml(xml_bytes []byte, preserve_whitespace bool) (*XmlExtractionResult,
 	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
 	return &result
 }(), nil
+}
+
+
+// Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table.
+//
+// # Behavior
+//
+// - The first row is treated as the header row
+// - A separator row is inserted after the header
+// - Pipe characters (`|`) in cell content are automatically escaped with backslash
+// - Irregular tables (rows with varying column counts) are padded with empty cells to match the header
+// - Returns an empty string for empty input
+//
+// # Arguments
+//
+// * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+//
+// # Returns
+//
+// A `String` containing the GFM markdown table representation
+//
+// # Examples
+//
+// ```
+// # use kreuzberg::extraction::cells_to_markdown;
+// let cells = vec![
+// vec!["Name".to_string(), "Age".to_string()],
+// vec!["Alice".to_string(), "30".to_string()],
+// vec!["Bob".to_string(), "25".to_string()],
+// ];
+//
+// let markdown = cells_to_markdown(&cells);
+// assert!(markdown.contains("| Name | Age |"));
+// assert!(markdown.contains("|------|------|"));
+// ```
+//
+// Converts a 2D vector of cell strings into plain text with tab-separated columns.
+//
+// # Behavior
+//
+// - Rows are separated by newlines
+// - Cells within a row are separated by tab characters
+// - No pipe delimiters or separator rows (unlike markdown tables)
+// - Returns an empty string for empty input
+//
+// # Arguments
+//
+// * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+//
+// # Returns
+//
+// A `String` containing the plain text table representation
+func CellsToText(cells [][]string) *string {
+    jsonBytescCells, err := json.Marshal(cells)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cCells := C.CString(string(jsonBytescCells))
+    defer C.free(unsafe.Pointer(cCells))
+
+    ptr := C.kreuzberg_cells_to_text(cCells)
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// CellsToMarkdown calls the FFI function.
+func CellsToMarkdown(cells [][]string) *string {
+    jsonBytescCells, err := json.Marshal(cells)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cCells := C.CString(string(jsonBytescCells))
+    defer C.free(unsafe.Pointer(cCells))
+
+    ptr := C.kreuzberg_cells_to_markdown(cCells)
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -10832,6 +11216,21 @@ func RenderListItem(item FormattedBlock, indent string, marker string) *string {
     defer C.free(unsafe.Pointer(cMarker))
 
     ptr := C.kreuzberg_render_list_item(cItem, cIndent, cMarker)
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// Render inline content to djot markup.
+func RenderInlineContent(elements []InlineElement) *string {
+    jsonBytescElements, err := json.Marshal(elements)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cElements := C.CString(string(jsonBytescElements))
+    defer C.free(unsafe.Pointer(cElements))
+
+    ptr := C.kreuzberg_render_inline_content(cElements)
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }()
 }
@@ -12108,6 +12507,23 @@ func IsValidUtf8(bytes []byte) *bool {
 }
 
 
+// CalculateQualityScore calls the FFI function.
+func CalculateQualityScore(text string, metadata ...*string) *float64 {
+    var metadataVal *string
+    if len(metadata) > 0 {
+        metadataVal = metadata[0]
+    }
+    cText := C.CString(text)
+    defer C.free(unsafe.Pointer(cText))
+
+    cMetadataVal := C.CString(metadataVal)
+    defer C.free(unsafe.Pointer(cMetadataVal))
+
+    ptr := C.kreuzberg_calculate_quality_score(cText, cMetadataVal)
+    return func() *float64 { v := float64(ptr); return &v }()
+}
+
+
 // CleanExtractedText calls the FFI function.
 func CleanExtractedText(text string) *string {
     cText := C.CString(text)
@@ -12497,6 +12913,28 @@ func Highlight(start uint32, end uint32) *TextAnnotation {
 }
 
 
+// Classify a URL string into the appropriate `UriKind`.
+//
+// - `mailto:` → `Email`
+// - `#` prefix → `Anchor`
+// - everything else → `Hyperlink`
+func ClassifyUri(url string) *UriKind {
+    cUrl := C.CString(url)
+    defer C.free(unsafe.Pointer(cUrl))
+
+    ptr := C.kreuzberg_classify_uri(cUrl)
+    defer C.kreuzberg_uri_kind_free(ptr)
+    return func() *UriKind {
+	jsonPtr := C.kreuzberg_uri_kind_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kreuzberg_free_string(jsonPtr)
+	var result UriKind
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
 // Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary.
 //
 // The function prefers an explicit `encoding`, falls back to the cached guess, probes
@@ -12667,10 +13105,9 @@ func EstimatePoolSize(file_size uint64, mime_type string) *string {
 // buffer.push_str("content");
 // // Automatically returned to pool when buffer goes out of scope
 // ```
-func AcquireStringBuffer() *string {
+func AcquireStringBuffer() *PooledString {
     ptr := C.kreuzberg_acquire_string_buffer()
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
+    return &PooledString{ptr: unsafe.Pointer(ptr)}
 }
 
 
@@ -12807,6 +13244,52 @@ func DetectRows(words []string, row_threshold_ratio float64) *[]uint32 {
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }()
+}
+
+
+// Reconstruct a table grid from words with bounding box positions.
+//
+// Takes detected words and reconstructs a 2D table by:
+// 1. Detecting column positions (grouping by x-coordinate within `column_threshold`)
+// 2. Detecting row positions (grouping by y-center within `row_threshold_ratio` * median height)
+// 3. Assigning words to cells based on closest row/column
+// 4. Combining words within the same cell
+//
+// Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
+func ReconstructTable(words []string, column_threshold uint32, row_threshold_ratio float64) *[][]string {
+    jsonBytescWords, err := json.Marshal(words)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cWords := C.CString(string(jsonBytescWords))
+    defer C.free(unsafe.Pointer(cWords))
+
+    ptr := C.kreuzberg_reconstruct_table(cWords, cColumnThreshold, cRowThresholdRatio)
+    return func() *[][]string {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result [][]string
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
+// Convert a table grid to markdown format.
+//
+// The first row is treated as the header row, with a separator line added after it.
+// Pipe characters in cell content are escaped.
+func TableToMarkdown(table [][]string) *string {
+    jsonBytescTable, err := json.Marshal(table)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cTable := C.CString(string(jsonBytescTable))
+    defer C.free(unsafe.Pointer(cTable))
+
+    ptr := C.kreuzberg_table_to_markdown(cTable)
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -13254,6 +13737,277 @@ func StartMcpServerWithConfig(config ExtractionConfig) error {
 }
 
 
+// Validates the consistency and correctness of page boundaries.
+//
+// # Validation Rules
+//
+// 1. Boundaries must be sorted by byte_start (monotonically increasing)
+// 2. Boundaries must not overlap (byte_end[i] <= byte_start[i+1])
+// 3. Each boundary must have byte_start < byte_end
+//
+// # Arguments
+//
+// * `boundaries` - Page boundary markers to validate
+//
+// # Returns
+//
+// Returns `Ok(())` if all boundaries are valid.
+// Returns `KreuzbergError::Validation` if any boundary is invalid.
+func ValidatePageBoundaries(boundaries []PageBoundary) error {
+    jsonBytescBoundaries, err := json.Marshal(boundaries)
+    if err != nil {
+        return fmt.Errorf("failed to marshal: %w", err)
+    }
+    cBoundaries := C.CString(string(jsonBytescBoundaries))
+    defer C.free(unsafe.Pointer(cBoundaries))
+
+    C.kreuzberg_validate_page_boundaries(cBoundaries)
+    return lastError()
+}
+
+
+// Classify a single chunk based on its content and optional heading context.
+//
+// Rules are evaluated in priority order. The first matching rule determines
+// the returned [`ChunkType`]. When no rule matches, [`ChunkType::Unknown`]
+// is returned.
+//
+// # Arguments
+//
+// * `content` - The text content of the chunk (may be trimmed or raw).
+// * `heading_context` - Optional heading hierarchy this chunk falls under
+// (only available when using `ChunkerType::Markdown`).
+//
+// # Examples
+//
+// ```rust
+// use kreuzberg::chunking::classifier::classify_chunk;
+// use kreuzberg::types::ChunkType;
+//
+// assert_eq!(classify_chunk("# Introduction", None), ChunkType::Heading);
+// assert_eq!(
+// classify_chunk("The Investor shall subscribe for the Shares and agrees to pay the subscription price. The Company shall deliver the Share certificates upon receipt.", None),
+// ChunkType::OperativeClause,
+// );
+// assert_eq!(classify_chunk("Some unrecognized text.", None), ChunkType::Unknown);
+// ```
+func ClassifyChunk(content string, heading_context ...*HeadingContext) *ChunkType {
+    var heading_contextVal *HeadingContext
+    if len(heading_context) > 0 {
+        heading_contextVal = heading_context[0]
+    }
+    cContent := C.CString(content)
+    defer C.free(unsafe.Pointer(cContent))
+
+    jsonBytescHeadingContextVal, err := json.Marshal(heading_contextVal)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcHeadingContextVal := C.CString(string(jsonBytescHeadingContextVal))
+    cHeadingContextVal := C.kreuzberg_heading_context_from_json(tmpStrcHeadingContextVal)
+    C.free(unsafe.Pointer(tmpStrcHeadingContextVal))
+    defer C.kreuzberg_heading_context_free(cHeadingContextVal)
+
+    ptr := C.kreuzberg_classify_chunk(cContent, cHeadingContextVal)
+    defer C.kreuzberg_chunk_type_free(ptr)
+    return func() *ChunkType {
+	jsonPtr := C.kreuzberg_chunk_type_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kreuzberg_free_string(jsonPtr)
+	var result ChunkType
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
+// Split text into chunks with optional page boundary tracking.
+//
+// This is the primary API function for chunking text. It supports both plain text
+// and Markdown with configurable chunk size, overlap, and page boundary mapping.
+//
+// # Arguments
+//
+// * `text` - The text to split into chunks
+// * `config` - Chunking configuration (max size, overlap, type)
+// * `page_boundaries` - Optional page boundary markers for mapping chunks to pages
+//
+// # Returns
+//
+// A ChunkingResult containing all chunks and their metadata.
+//
+// # Examples
+//
+// ```rust
+// use kreuzberg::chunking::{chunk_text, ChunkingConfig, ChunkerType};
+//
+// # fn example() -> kreuzberg::Result<()> {
+// let config = ChunkingConfig {
+// max_characters: 500,
+// overlap: 50,
+// trim: true,
+// chunker_type: ChunkerType::Text,
+// ..Default::default()
+// };
+// let result = chunk_text("Long text...", &config, None)?;
+// assert!(!result.chunks.is_empty());
+// # Ok(())
+// # }
+// ```
+func ChunkText(text string, config ChunkingConfig, page_boundaries ...*[]PageBoundary) (*ChunkingResult, error) {
+    var page_boundariesVal *[]PageBoundary
+    if len(page_boundaries) > 0 {
+        page_boundariesVal = page_boundaries[0]
+    }
+    cText := C.CString(text)
+    defer C.free(unsafe.Pointer(cText))
+
+    jsonBytescConfig, err := json.Marshal(config)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcConfig := C.CString(string(jsonBytescConfig))
+    cConfig := C.kreuzberg_chunking_config_from_json(tmpStrcConfig)
+    C.free(unsafe.Pointer(tmpStrcConfig))
+    defer C.kreuzberg_chunking_config_free(cConfig)
+
+    jsonBytescPageBoundariesVal, err := json.Marshal(page_boundariesVal)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    cPageBoundariesVal := C.CString(string(jsonBytescPageBoundariesVal))
+    defer C.free(unsafe.Pointer(cPageBoundariesVal))
+
+    ptr := C.kreuzberg_chunk_text(cText, cConfig, cPageBoundariesVal)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kreuzberg_chunking_result_free(ptr)
+        }
+        return nil, err
+    }
+    defer C.kreuzberg_chunking_result_free(ptr)
+    return func() *ChunkingResult {
+	jsonPtr := C.kreuzberg_chunking_result_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kreuzberg_free_string(jsonPtr)
+	var result ChunkingResult
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
+// Chunk text with an optional separate markdown source for heading context resolution.
+//
+// When `heading_source` is provided, it is used instead of `text` for building the
+// heading map. This is needed when `text` is plain text (no markdown headings) but
+// the original document had headings that were stripped during rendering.
+func ChunkTextWithHeadingSource(text string, config ChunkingConfig, page_boundaries ...*[]PageBoundary) (*ChunkingResult, error) {
+    var page_boundariesVal *[]PageBoundary
+    if len(page_boundaries) > 0 {
+        page_boundariesVal = page_boundaries[0]
+    }
+    cText := C.CString(text)
+    defer C.free(unsafe.Pointer(cText))
+
+    jsonBytescConfig, err := json.Marshal(config)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcConfig := C.CString(string(jsonBytescConfig))
+    cConfig := C.kreuzberg_chunking_config_from_json(tmpStrcConfig)
+    C.free(unsafe.Pointer(tmpStrcConfig))
+    defer C.kreuzberg_chunking_config_free(cConfig)
+
+    jsonBytescPageBoundariesVal, err := json.Marshal(page_boundariesVal)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    cPageBoundariesVal := C.CString(string(jsonBytescPageBoundariesVal))
+    defer C.free(unsafe.Pointer(cPageBoundariesVal))
+
+    cHeadingSourceVal := C.CString(heading_sourceVal)
+    defer C.free(unsafe.Pointer(cHeadingSourceVal))
+
+    ptr := C.kreuzberg_chunk_text_with_heading_source(cText, cConfig, cPageBoundariesVal, cHeadingSourceVal)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kreuzberg_chunking_result_free(ptr)
+        }
+        return nil, err
+    }
+    defer C.kreuzberg_chunking_result_free(ptr)
+    return func() *ChunkingResult {
+	jsonPtr := C.kreuzberg_chunking_result_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kreuzberg_free_string(jsonPtr)
+	var result ChunkingResult
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
+// Chunk text with explicit type specification.
+//
+// This is a convenience function that constructs a ChunkingConfig from individual
+// parameters and calls `chunk_text`.
+//
+// # Arguments
+//
+// * `text` - The text to split into chunks
+// * `max_characters` - Maximum characters per chunk
+// * `overlap` - Character overlap between consecutive chunks
+// * `trim` - Whether to trim whitespace from boundaries
+// * `chunker_type` - Type of chunker to use (Text or Markdown)
+//
+// # Returns
+//
+// A ChunkingResult containing all chunks and their metadata.
+//
+// # Examples
+//
+// ```rust
+// use kreuzberg::chunking::{chunk_text_with_type, ChunkerType};
+//
+// # fn example() -> kreuzberg::Result<()> {
+// let result = chunk_text_with_type("Some text", 500, 50, true, ChunkerType::Text)?;
+// assert!(!result.chunks.is_empty());
+// # Ok(())
+// # }
+// ```
+func ChunkTextWithType(text string, max_characters uint, overlap uint, trim bool, chunker_type ChunkerType) (*ChunkingResult, error) {
+    cText := C.CString(text)
+    defer C.free(unsafe.Pointer(cText))
+
+    jsonBytescChunkerType, err := json.Marshal(chunker_type)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcChunkerType := C.CString(string(jsonBytescChunkerType))
+    cChunkerType := C.kreuzberg_chunker_type_from_json(tmpStrcChunkerType)
+    C.free(unsafe.Pointer(tmpStrcChunkerType))
+    defer C.kreuzberg_chunker_type_free(cChunkerType)
+
+    ptr := C.kreuzberg_chunk_text_with_type(cText, cMaxCharacters, cOverlap, cTrim, cChunkerType)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kreuzberg_chunking_result_free(ptr)
+        }
+        return nil, err
+    }
+    defer C.kreuzberg_chunking_result_free(ptr)
+    return func() *ChunkingResult {
+	jsonPtr := C.kreuzberg_chunking_result_to_json(ptr)
+	if jsonPtr == nil { return nil }
+	defer C.kreuzberg_free_string(jsonPtr)
+	var result ChunkingResult
+	if err := json.Unmarshal([]byte(C.GoString(jsonPtr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
 // Batch process multiple texts with the same configuration.
 //
 // This convenience function applies the same chunking configuration to multiple
@@ -13350,6 +14104,57 @@ func PrecomputeUtf8Boundaries(text string) *string {
 }
 
 
+// Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries.
+//
+// This function ensures that all page boundary positions are at valid UTF-8 character
+// boundaries within the text. This is CRITICAL to prevent text corruption when boundaries
+// are created from language bindings or external sources, particularly with multibyte
+// UTF-8 characters (emoji, CJK characters, combining marks, etc.).
+//
+// **Performance Strategy**: Uses adaptive validation to optimize for different boundary counts:
+// - **Small sets (≤10 boundaries)**: O(k) approach using Rust's native `is_char_boundary()` for each position
+// - **Large sets (>10 boundaries)**: O(n) precomputation with O(1) lookups via BitVec
+//
+// For typical PDF documents with 1-10 page boundaries, the fast path provides 30-50% faster
+// validation than always precomputing. For documents with 100+ boundaries, batch precomputation
+// is 2-4% faster overall due to amortized costs. This gives ~2-4% improvement across all scenarios.
+//
+// # Arguments
+//
+// * `text` - The text being chunked
+// * `boundaries` - Page boundary markers to validate
+//
+// # Returns
+//
+// Returns `Ok(())` if all boundaries are at valid UTF-8 character boundaries.
+// Returns `KreuzbergError::Validation` if any boundary is at an invalid position.
+//
+// # UTF-8 Boundary Safety
+//
+// Rust strings use UTF-8 encoding where characters can be 1-4 bytes. For example:
+// - ASCII letters: 1 byte each
+// - Emoji (🌍): 4 bytes but 1 character
+// - CJK characters (中): 3 bytes but 1 character
+//
+// This function checks that all byte_start and byte_end values are at character boundaries
+// using an adaptive strategy: direct calls for small boundary sets, or precomputed BitVec
+// for large sets.
+func ValidateUtf8Boundaries(text string, boundaries []PageBoundary) error {
+    cText := C.CString(text)
+    defer C.free(unsafe.Pointer(cText))
+
+    jsonBytescBoundaries, err := json.Marshal(boundaries)
+    if err != nil {
+        return fmt.Errorf("failed to marshal: %w", err)
+    }
+    cBoundaries := C.CString(string(jsonBytescBoundaries))
+    defer C.free(unsafe.Pointer(cBoundaries))
+
+    C.kreuzberg_validate_utf8_boundaries(cText, cBoundaries)
+    return lastError()
+}
+
+
 // Render a Jinja2 template with the given context variables.
 func RenderTemplate(template string, context string) (*string, error) {
     cTemplate := C.CString(template)
@@ -13359,6 +14164,51 @@ func RenderTemplate(template string, context string) (*string, error) {
     defer C.free(unsafe.Pointer(cContext))
 
     ptr := C.kreuzberg_render_template(cTemplate, cContext)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kreuzberg_free_string(ptr)
+        }
+        return nil, err
+    }
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
+}
+
+
+// Extract structured data from document content using an LLM with JSON schema.
+//
+// Sends the document content to the configured LLM with a JSON schema constraint,
+// returning structured data that conforms to the schema.
+//
+// # Arguments
+//
+// * `content` - The extracted document text to send to the LLM.
+// * `config` - Structured extraction configuration including schema and LLM settings.
+//
+// # Returns
+//
+// A `serde_json::Value` conforming to the provided JSON schema.
+//
+// # Errors
+//
+// Returns an error if:
+// - The LLM client cannot be created (invalid provider/credentials).
+// - The LLM request fails (network, rate-limit, etc.).
+// - The LLM response cannot be parsed as valid JSON.
+func ExtractStructured(content string, config StructuredExtractionConfig) (*string, error) {
+    cContent := C.CString(content)
+    defer C.free(unsafe.Pointer(cContent))
+
+    jsonBytescConfig, err := json.Marshal(config)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcConfig := C.CString(string(jsonBytescConfig))
+    cConfig := C.kreuzberg_structured_extraction_config_from_json(tmpStrcConfig)
+    C.free(unsafe.Pointer(tmpStrcConfig))
+    defer C.kreuzberg_structured_extraction_config_free(cConfig)
+
+    ptr := C.kreuzberg_extract_structured(cContent, cConfig)
     if err := lastError(); err != nil {
         if ptr != nil {
             C.kreuzberg_free_string(ptr)
@@ -13410,6 +14260,103 @@ func ListPresets() *[]string {
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }()
+}
+
+
+// Eagerly download and cache an embedding model without returning the handle.
+//
+// This triggers the same download and initialization as `get_or_init_engine`
+// but discards the result, making it suitable for cache-warming scenarios
+// where the caller doesn't need to use the model immediately.
+//
+// **Note**: This function downloads AND initializes the ONNX model, which
+// requires ONNX Runtime and uses significant memory. For download-only
+// scenarios (e.g., init containers), use [`download_model`] instead.
+func WarmModel(model_type EmbeddingModelType, cache_dir ...*string) error {
+    var cache_dirVal *string
+    if len(cache_dir) > 0 {
+        cache_dirVal = cache_dir[0]
+    }
+    jsonBytescModelType, err := json.Marshal(model_type)
+    if err != nil {
+        return fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcModelType := C.CString(string(jsonBytescModelType))
+    cModelType := C.kreuzberg_embedding_model_type_from_json(tmpStrcModelType)
+    C.free(unsafe.Pointer(tmpStrcModelType))
+    defer C.kreuzberg_embedding_model_type_free(cModelType)
+
+    cCacheDirVal := C.CString(cache_dirVal)
+    defer C.free(unsafe.Pointer(cCacheDirVal))
+
+    C.kreuzberg_warm_model(cModelType, cCacheDirVal)
+    return lastError()
+}
+
+
+// Download an embedding model's files without initializing ONNX Runtime.
+//
+// Downloads the model files (ONNX model, tokenizer, config) from HuggingFace
+// to the cache directory. Subsequent calls to `warm_model` or
+// `get_or_init_engine` will find the files cached and skip the download step.
+//
+// This is ideal for init containers or CI environments where you want to
+// pre-populate the cache without loading models into memory.
+func DownloadModel(model_type EmbeddingModelType, cache_dir ...*string) error {
+    var cache_dirVal *string
+    if len(cache_dir) > 0 {
+        cache_dirVal = cache_dir[0]
+    }
+    jsonBytescModelType, err := json.Marshal(model_type)
+    if err != nil {
+        return fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcModelType := C.CString(string(jsonBytescModelType))
+    cModelType := C.kreuzberg_embedding_model_type_from_json(tmpStrcModelType)
+    C.free(unsafe.Pointer(tmpStrcModelType))
+    defer C.kreuzberg_embedding_model_type_free(cModelType)
+
+    cCacheDirVal := C.CString(cache_dirVal)
+    defer C.free(unsafe.Pointer(cCacheDirVal))
+
+    C.kreuzberg_download_model(cModelType, cCacheDirVal)
+    return lastError()
+}
+
+
+// Generate embeddings for text chunks using the specified configuration.
+//
+// This function modifies chunks in-place, populating their `embedding` field
+// with generated embedding vectors. It uses batch processing for efficiency.
+//
+// # Arguments
+//
+// * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+// * `config` - Embedding configuration specifying model and parameters
+//
+// # Returns
+//
+// Returns `Ok(())` if embeddings were generated successfully, or an error if
+// model initialization or embedding generation fails.
+func GenerateEmbeddingsForChunks(chunks []Chunk, config EmbeddingConfig) error {
+    jsonBytescChunks, err := json.Marshal(chunks)
+    if err != nil {
+        return fmt.Errorf("failed to marshal: %w", err)
+    }
+    cChunks := C.CString(string(jsonBytescChunks))
+    defer C.free(unsafe.Pointer(cChunks))
+
+    jsonBytescConfig, err := json.Marshal(config)
+    if err != nil {
+        return fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcConfig := C.CString(string(jsonBytescConfig))
+    cConfig := C.kreuzberg_embedding_config_from_json(tmpStrcConfig)
+    C.free(unsafe.Pointer(tmpStrcConfig))
+    defer C.kreuzberg_embedding_config_free(cConfig)
+
+    C.kreuzberg_generate_embeddings_for_chunks(cChunks, cConfig)
+    return lastError()
 }
 
 
@@ -13758,6 +14705,38 @@ func ElementToHocrWord(element OcrElement) *string {
 }
 
 
+// Convert a vector of OcrElements to HocrWords for batch table processing.
+//
+// Filters to word-level elements only, as table reconstruction
+// works best with word-level granularity.
+//
+// # Arguments
+//
+// * `elements` - Slice of OCR elements to convert
+// * `min_confidence` - Minimum recognition confidence threshold (0.0-1.0)
+//
+// # Returns
+//
+// A vector of HocrWords filtered by confidence and element level.
+func ElementsToHocrWords(elements []OcrElement, min_confidence float64) *[]string {
+    jsonBytescElements, err := json.Marshal(elements)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cElements := C.CString(string(jsonBytescElements))
+    defer C.free(unsafe.Pointer(cElements))
+
+    ptr := C.kreuzberg_elements_to_hocr_words(cElements, cMinConfidence)
+    return func() *[]string {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []string
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
 // Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata.
 //
 // This is the primary entry point. It replaces the older `convert_hocr_to_markdown` path
@@ -13785,6 +14764,82 @@ func ParseHocrToInternalDocument(hocr_html string) *string {
     ptr := C.kreuzberg_parse_hocr_to_internal_document(cHocrHtml)
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// Assemble structured markdown from OCR elements using layout detection results.
+//
+// Both inputs must be in the same pixel coordinate space (from the same
+// rendered page image). Returns plain text join when `detection` is `None`.
+//
+// `recognized_tables` provides pre-computed markdown for Table regions
+// (from TATR or other table structure recognizer). When empty, Table
+// regions fall back to heuristic grid reconstruction from OCR elements.
+func AssembleOcrMarkdown(elements []OcrElement, detection *DetectionResult, img_width uint32, img_height uint32, recognized_tables []RecognizedTable) *string {
+    jsonBytescElements, err := json.Marshal(elements)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cElements := C.CString(string(jsonBytescElements))
+    defer C.free(unsafe.Pointer(cElements))
+
+    jsonBytescDetection, err := json.Marshal(detection)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcDetection := C.CString(string(jsonBytescDetection))
+    cDetection := C.kreuzberg_detection_result_from_json(tmpStrcDetection)
+    C.free(unsafe.Pointer(tmpStrcDetection))
+    defer C.kreuzberg_detection_result_free(cDetection)
+
+    jsonBytescRecognizedTables, err := json.Marshal(recognized_tables)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cRecognizedTables := C.CString(string(jsonBytescRecognizedTables))
+    defer C.free(unsafe.Pointer(cRecognizedTables))
+
+    ptr := C.kreuzberg_assemble_ocr_markdown(cElements, cDetection, cImgWidth, cImgHeight, cRecognizedTables)
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// Run TATR table recognition for all Table regions in a page.
+//
+// For each Table detection, crops the page image, runs TATR inference,
+// matches OCR elements to cells, and produces markdown tables.
+func RecognizePageTables(page_image string, detection DetectionResult, elements []OcrElement, tatr_model string) *[]RecognizedTable {
+    cPageImage := C.CString(page_image)
+    defer C.free(unsafe.Pointer(cPageImage))
+
+    jsonBytescDetection, err := json.Marshal(detection)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcDetection := C.CString(string(jsonBytescDetection))
+    cDetection := C.kreuzberg_detection_result_from_json(tmpStrcDetection)
+    C.free(unsafe.Pointer(tmpStrcDetection))
+    defer C.kreuzberg_detection_result_free(cDetection)
+
+    jsonBytescElements, err := json.Marshal(elements)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cElements := C.CString(string(jsonBytescElements))
+    defer C.free(unsafe.Pointer(cElements))
+
+    cTatrModel := C.CString(tatr_model)
+    defer C.free(unsafe.Pointer(cTatrModel))
+
+    ptr := C.kreuzberg_recognize_page_tables(cPageImage, cDetection, cElements, cTatrModel)
+    return func() *[]RecognizedTable {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []RecognizedTable
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
 }
 
 
@@ -13890,6 +14945,84 @@ func MapLanguageCode(kreuzberg_code string) **string {
 }
 
 
+// Build a 2D cell grid from TATR detections.
+//
+// The grid is `[num_rows][num_cols]` where each cell is the intersection
+// of a row bounding box and a column bounding box.
+//
+// Processing steps:
+// 1. Widen all rows to span the full table width (min x1 to max x2 across rows)
+// 2. Apply NMS using IoB: sort by confidence descending, remove detections
+// whose IoB with any higher-confidence detection exceeds [`NMS_IOB_THRESHOLD`]
+// 3. For each (row, column) pair, compute the intersection rectangle
+//
+// If `table_bbox` is provided, it is used to clip the row widening bounds.
+func BuildCellGrid(result string, table_bbox ...*string) *[][]string {
+    var table_bboxVal *string
+    if len(table_bbox) > 0 {
+        table_bboxVal = table_bbox[0]
+    }
+    cResult := C.CString(result)
+    defer C.free(unsafe.Pointer(cResult))
+
+    cTableBboxVal := C.CString(table_bboxVal)
+    defer C.free(unsafe.Pointer(cTableBboxVal))
+
+    ptr := C.kreuzberg_build_cell_grid(cResult, cTableBboxVal)
+    return func() *[][]string {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result [][]string
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
+// Apply Docling-style postprocessing heuristics to raw detections.
+//
+// This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
+// 1. Per-class confidence thresholds
+// 2. Full-page picture removal (>90% page area)
+// 3. Overlap resolution (IoU > 0.8 or containment > 0.8)
+// 4. Cross-type overlap handling (KVR vs Table)
+func ApplyHeuristics(detections []LayoutDetection, page_width float32, page_height float32) *[]LayoutDetection {
+    jsonBytescDetections, err := json.Marshal(detections)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cDetections := C.CString(string(jsonBytescDetections))
+    defer C.free(unsafe.Pointer(cDetections))
+
+    ptr := C.kreuzberg_apply_heuristics(cDetections, cPageWidth, cPageHeight)
+    return func() *[]LayoutDetection {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []LayoutDetection
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
+// Standard greedy Non-Maximum Suppression.
+//
+// Sorts detections by confidence (descending), then iteratively removes
+// detections that have IoU > `iou_threshold` with any higher-confidence detection.
+//
+// This is required for YOLO models. RT-DETR is NMS-free.
+func GreedyNms(detections []LayoutDetection, iou_threshold float32) {
+    jsonBytescDetections, err := json.Marshal(detections)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cDetections := C.CString(string(jsonBytescDetections))
+    defer C.free(unsafe.Pointer(cDetections))
+
+    C.kreuzberg_greedy_nms(cDetections, cIouThreshold)
+}
+
+
 // Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
 //
 // Pipeline: resize to target_size x target_size (bilinear) -> rescale /255 -> ImageNet normalize -> NCHW f32.
@@ -13958,6 +15091,43 @@ func PreprocessLetterbox(img string, target_width uint32, target_height uint32) 
 }
 
 
+// Build an optimized ORT session from an ONNX model file.
+//
+// `thread_budget` controls the number of intra-op threads for this session.
+// Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
+// to respect the user's `ConcurrencyConfig`.
+//
+// When `accel` is `None` or `Auto`, uses platform defaults:
+// - macOS: CoreML (Neural Engine / GPU)
+// - Linux: CUDA (GPU)
+// - Others: CPU only
+//
+// ORT silently falls back to CPU if the requested EP is unavailable.
+func BuildSession(path string, accel *AccelerationConfig, thread_budget uint) (*string, error) {
+    cPath := C.CString(path)
+    defer C.free(unsafe.Pointer(cPath))
+
+    jsonBytescAccel, err := json.Marshal(accel)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcAccel := C.CString(string(jsonBytescAccel))
+    cAccel := C.kreuzberg_acceleration_config_from_json(tmpStrcAccel)
+    C.free(unsafe.Pointer(tmpStrcAccel))
+    defer C.kreuzberg_acceleration_config_free(cAccel)
+
+    ptr := C.kreuzberg_build_session(cPath, cAccel, cThreadBudget)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kreuzberg_free_string(ptr)
+        }
+        return nil, err
+    }
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
+}
+
+
 // Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
 func ConfigFromExtraction(layout_config LayoutDetectionConfig) *string {
     jsonBytescLayoutConfig, err := json.Marshal(layout_config)
@@ -13972,6 +15142,67 @@ func ConfigFromExtraction(layout_config LayoutDetectionConfig) *string {
     ptr := C.kreuzberg_config_from_extraction(cLayoutConfig)
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
+//
+// Ensures ORT is available, then creates the engine with model download.
+func CreateEngine(layout_config LayoutDetectionConfig) (*string, error) {
+    jsonBytescLayoutConfig, err := json.Marshal(layout_config)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcLayoutConfig := C.CString(string(jsonBytescLayoutConfig))
+    cLayoutConfig := C.kreuzberg_layout_detection_config_from_json(tmpStrcLayoutConfig)
+    C.free(unsafe.Pointer(tmpStrcLayoutConfig))
+    defer C.kreuzberg_layout_detection_config_free(cLayoutConfig)
+
+    ptr := C.kreuzberg_create_engine(cLayoutConfig)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kreuzberg_free_string(ptr)
+        }
+        return nil, err
+    }
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
+}
+
+
+// Take the cached layout engine, or create a new one if the cache is empty.
+//
+// The caller owns the engine for the duration of its work and should
+// return it via [`return_engine`] when done. This avoids holding the
+// global mutex during inference.
+func TakeOrCreateEngine(layout_config LayoutDetectionConfig) (*string, error) {
+    jsonBytescLayoutConfig, err := json.Marshal(layout_config)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    tmpStrcLayoutConfig := C.CString(string(jsonBytescLayoutConfig))
+    cLayoutConfig := C.kreuzberg_layout_detection_config_from_json(tmpStrcLayoutConfig)
+    C.free(unsafe.Pointer(tmpStrcLayoutConfig))
+    defer C.kreuzberg_layout_detection_config_free(cLayoutConfig)
+
+    ptr := C.kreuzberg_take_or_create_engine(cLayoutConfig)
+    if err := lastError(); err != nil {
+        if ptr != nil {
+            C.kreuzberg_free_string(ptr)
+        }
+        return nil, err
+    }
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }(), nil
+}
+
+
+// Return a layout engine to the global cache for reuse by future extractions.
+func ReturnEngine(engine string) {
+    cEngine := C.CString(engine)
+    defer C.free(unsafe.Pointer(cEngine))
+
+    C.kreuzberg_return_engine(cEngine)
 }
 
 
@@ -14101,6 +15332,28 @@ func ExtractEmbeddedFiles(document string) *[]EmbeddedFile {
 }
 
 
+// Extract embedded files from PDF bytes and recursively process them.
+//
+// Returns `(children, warnings)`. The children are `ArchiveEntry` values
+// suitable for attaching to `InternalDocument.children`.
+func ExtractAndProcessEmbeddedFiles(pdf_bytes []byte, config ExtractionConfig) *string {
+    cPdfBytes := (*C.uchar)(unsafe.Pointer(&pdf_bytes[0]))
+
+    jsonBytescConfig, err := json.Marshal(config)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcConfig := C.CString(string(jsonBytescConfig))
+    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
+    C.free(unsafe.Pointer(tmpStrcConfig))
+    defer C.kreuzberg_extraction_config_free(cConfig)
+
+    ptr := C.kreuzberg_extract_and_process_embedded_files(cPdfBytes, cConfig)
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
 // Initialize the global font cache.
 //
 // On first call, discovers and loads all system fonts. Subsequent calls are no-ops.
@@ -14158,6 +15411,219 @@ func GetFontDescriptors() (*[]string, error) {
 func CachedFontCount() *uint {
     ptr := C.kreuzberg_cached_font_count()
     return func() *uint { v := uint(ptr); return &v }()
+}
+
+
+// Cluster text blocks by font size using k-means algorithm.
+//
+// Uses k-means clustering to group text blocks by their font size, which helps
+// identify document hierarchy levels (H1, H2, Body, etc.). The algorithm:
+// 1. Extracts font sizes from text blocks
+// 2. Applies k-means clustering to group similar font sizes
+// 3. Sorts clusters by centroid size in descending order (largest = H1)
+// 4. Returns clusters with their member blocks
+//
+// # Arguments
+//
+// * `blocks` - Slice of TextBlock objects to cluster
+// * `k` - Number of clusters to create
+//
+// # Returns
+//
+// Result with vector of FontSizeCluster ordered by size (descending),
+// or an error if clustering fails
+//
+// # Example
+//
+// ```rust,no_run
+// # #[cfg(feature = "pdf")]
+// # {
+// use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, cluster_font_sizes};
+//
+// let blocks = vec![
+// TextBlock {
+// text: "Title".to_string(),
+// bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
+// font_size: 24.0,
+// },
+// TextBlock {
+// text: "Body".to_string(),
+// bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
+// font_size: 12.0,
+// },
+// ];
+//
+// let clusters = cluster_font_sizes(&blocks, 2).unwrap();
+// assert_eq!(clusters.len(), 2);
+// assert_eq!(clusters[0].centroid, 24.0); // Largest is first
+// # }
+// ```
+func ClusterFontSizes(blocks []string, k uint) (*[]FontSizeCluster, error) {
+    jsonBytescBlocks, err := json.Marshal(blocks)
+    if err != nil {
+        return nil, fmt.Errorf("failed to marshal: %w", err)
+    }
+    cBlocks := C.CString(string(jsonBytescBlocks))
+    defer C.free(unsafe.Pointer(cBlocks))
+
+    ptr := C.kreuzberg_cluster_font_sizes(cBlocks, cK)
+    if err := lastError(); err != nil {
+        return nil, err
+    }
+    return func() *[]FontSizeCluster {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []FontSizeCluster
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}(), nil
+}
+
+
+// Assign heading levels using the "most frequent cluster = Body" rule.
+//
+// Instead of naively mapping the largest font size to H1, this function
+// identifies the cluster with the most members as body text. Only clusters
+// with fewer members AND sufficiently larger font size than body become headings.
+//
+// # Arguments
+//
+// * `clusters` - Slice of FontSizeCluster objects (sorted by centroid descending)
+// * `min_heading_ratio` - Minimum ratio of heading centroid to body centroid (e.g. 1.15)
+// * `min_heading_gap` - Minimum absolute font-size difference in points (e.g. 1.5)
+//
+// # Returns
+//
+// Vector of tuples `(centroid, heading_level)` where `None` means body text
+// and `Some(1..=6)` means H1-H6. Sorted by centroid descending.
+func AssignHeadingLevelsSmart(clusters []FontSizeCluster, min_heading_ratio float32, min_heading_gap float32) *[]string {
+    jsonBytescClusters, err := json.Marshal(clusters)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cClusters := C.CString(string(jsonBytescClusters))
+    defer C.free(unsafe.Pointer(cClusters))
+
+    ptr := C.kreuzberg_assign_heading_levels_smart(cClusters, cMinHeadingRatio, cMinHeadingGap)
+    return func() *[]string {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []string
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
+// Assign hierarchy levels to text blocks based on KMeans clustering results.
+//
+// Maps cluster indices to HTML heading levels (H1-H6) and body text:
+// - Cluster 0 → H1 (top-level heading)
+// - Cluster 1 → H2 (secondary heading)
+// - Cluster 2 → H3 (tertiary heading)
+// - Cluster 3 → H4 (quaternary heading)
+// - Cluster 4 → H5 (quinary heading)
+// - Cluster 5 → H6 (senary heading)
+// - Cluster 6+ → Body (body text)
+//
+// # Arguments
+//
+// * `blocks` - Slice of TextBlock objects to assign hierarchy levels to
+// * `kmeans_result` - KMeansResult containing cluster labels for each block
+//
+// # Returns
+//
+// Vector of tuples containing (original block info, hierarchy level)
+//
+// # Example
+//
+// ```rust,no_run
+// # #[cfg(feature = "pdf")]
+// # {
+// use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, HierarchyLevel, assign_hierarchy_levels, KMeansResult};
+//
+// let blocks = vec![
+// TextBlock {
+// text: "Title".to_string(),
+// bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
+// font_size: 24.0,
+// },
+// TextBlock {
+// text: "Body".to_string(),
+// bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
+// font_size: 12.0,
+// },
+// ];
+//
+// let kmeans_result = KMeansResult {
+// labels: vec![0, 6],
+// };
+//
+// let results = assign_hierarchy_levels(&blocks, &kmeans_result);
+// assert_eq!(results[0].hierarchy_level, HierarchyLevel::H1);
+// assert_eq!(results[1].hierarchy_level, HierarchyLevel::Body);
+// # }
+// ```
+func AssignHierarchyLevels(blocks []string, kmeans_result string) *[]HierarchyBlock {
+    jsonBytescBlocks, err := json.Marshal(blocks)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cBlocks := C.CString(string(jsonBytescBlocks))
+    defer C.free(unsafe.Pointer(cBlocks))
+
+    cKmeansResult := C.CString(kmeans_result)
+    defer C.free(unsafe.Pointer(cKmeansResult))
+
+    ptr := C.kreuzberg_assign_hierarchy_levels(cBlocks, cKmeansResult)
+    return func() *[]HierarchyBlock {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []HierarchyBlock
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
+// Assign hierarchy levels to text blocks based on font size clusters.
+//
+// Maps font size clusters to heading levels (H1-H6) and body text.
+// Larger font sizes are assigned higher hierarchy levels.
+//
+// # Arguments
+//
+// * `blocks` - Vector of TextBlock objects to assign levels to
+// * `clusters` - Vector of FontSizeCluster objects from clustering
+//
+// # Returns
+//
+// Vector of tuples containing (TextBlock, HierarchyLevel).
+// If blocks is empty or clusters is empty, returns empty vector.
+// All blocks get Body level if only one cluster exists.
+func AssignHierarchyLevelsFromClusters(blocks []string, clusters []FontSizeCluster) *[]string {
+    jsonBytescBlocks, err := json.Marshal(blocks)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cBlocks := C.CString(string(jsonBytescBlocks))
+    defer C.free(unsafe.Pointer(cBlocks))
+
+    jsonBytescClusters, err := json.Marshal(clusters)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cClusters := C.CString(string(jsonBytescClusters))
+    defer C.free(unsafe.Pointer(cClusters))
+
+    ptr := C.kreuzberg_assign_hierarchy_levels_from_clusters(cBlocks, cClusters)
+    return func() *[]string {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []string
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
 }
 
 
@@ -14236,6 +15702,47 @@ func ExtractSegmentsFromPage(page string) (*[]string, error) {
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }(), nil
+}
+
+
+// Merge characters into text blocks using a greedy clustering algorithm.
+//
+// Groups characters based on spatial proximity using weighted distance and
+// intersection ratio metrics. Characters are merged greedily based on their
+// proximity and overlap.
+//
+// # Arguments
+//
+// * `chars` - Vector of CharData to merge into blocks
+//
+// # Returns
+//
+// Vector of TextBlock objects containing merged characters
+//
+// # Algorithm
+//
+// The function uses a greedy approach:
+// 1. Create bounding boxes for each character
+// 2. Use weighted_distance (5.0 * dx + 1.0 * dy) with maximum threshold of ~2.5x font size
+// 3. Use intersection_ratio to detect overlapping or very close characters
+// 4. Merge characters into blocks based on proximity thresholds
+// 5. Return sorted blocks by position (top to bottom, left to right)
+func MergeCharsIntoBlocks(chars []CharData) *[]string {
+    jsonBytescChars, err := json.Marshal(chars)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cChars := C.CString(string(jsonBytescChars))
+    defer C.free(unsafe.Pointer(cChars))
+
+    ptr := C.kreuzberg_merge_chars_into_blocks(cChars)
+    return func() *[]string {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []string
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
 }
 
 
@@ -14640,6 +16147,62 @@ func SegmentsToWords(segments []string, page_height float32) *[]string {
 }
 
 
+// Post-process a raw table grid to validate structure and clean up.
+//
+// Returns `None` if the table fails structural validation.
+//
+// When `layout_guided` is true, the layout model already confirmed this is
+// a table, so validation thresholds are relaxed:
+// - Minimum columns: 3 → 2
+// - Column sparsity: 75% → 95%
+// - Overall density: 40% → 15%
+// - Prose detection: reject if >70% cells >100 chars (vs >50% >60 chars)
+// - Prose detection: reject if avg cell >80 chars (vs >50 chars)
+// - Single-word cell: reject if >85% single-word (vs >70%)
+// - Content asymmetry: reject if one col >92% of text (vs >85%)
+// - Column-text-flow: applied equally (reject if >60% rows flow through)
+func PostProcessTable(table [][]string, layout_guided bool, allow_single_column bool) **[][]string {
+    jsonBytescTable, err := json.Marshal(table)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cTable := C.CString(string(jsonBytescTable))
+    defer C.free(unsafe.Pointer(cTable))
+
+    ptr := C.kreuzberg_post_process_table(cTable, cLayoutGuided, cAllowSingleColumn)
+    return func() *[][]string {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result [][]string
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
+}
+
+
+// Validate whether a reconstructed table grid represents a well-formed table
+// rather than multi-column prose or a repeated page element.
+//
+// Returns `true` if the grid looks like a real table, `false` if it should be
+// rejected and its content emitted as paragraph text instead.
+//
+// The checks catch cases the layout model misidentifies as tables:
+// - Multi-column prose split into a grid (detected via row coherence and column uniformity)
+// - Repeated page elements (headers/footers detected as tables on every page)
+// - Low-vocabulary repetitive content (same few words in every row)
+func IsWellFormedTable(grid [][]string) *bool {
+    jsonBytescGrid, err := json.Marshal(grid)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cGrid := C.CString(string(jsonBytescGrid))
+    defer C.free(unsafe.Pointer(cGrid))
+
+    ptr := C.kreuzberg_is_well_formed_table(cGrid)
+    return func() *bool { v := ptr != 0; return &v }()
+}
+
+
 // ExtractTextFromPdf calls the FFI function.
 func ExtractTextFromPdf(pdf_bytes []byte) (*string, error) {
     cPdfBytes := (*C.uchar)(unsafe.Pointer(&pdf_bytes[0]))
@@ -14744,6 +16307,55 @@ func SerializeToJson(result ExtractionResult) (*string, error) {
     }
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }(), nil
+}
+
+
+// Create a new `ExtractionConfig` by applying per-file overrides from a
+// [`FileExtractionConfig`]. Fields that are `Some` in the override replace the
+// corresponding field in `self`; `None` fields keep the original value.
+//
+// Batch-level fields (`max_concurrent_extractions`, `use_cache`, `acceleration`,
+// `security_limits`) are never affected by overrides.
+//
+// # Example
+//
+// ```rust
+// use kreuzberg::{ExtractionConfig, FileExtractionConfig};
+//
+// let base = ExtractionConfig::default();
+// let override_config = FileExtractionConfig {
+// force_ocr: Some(true),
+// ..Default::default()
+// };
+// let resolved = base.with_file_overrides(&override_config);
+// assert!(resolved.force_ocr);
+// ```
+func (r *ExtractionConfig) WithFileOverrides(overrides FileExtractionConfig) *ExtractionConfig {
+    jsonBytescOverrides, err := json.Marshal(overrides)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcOverrides := C.CString(string(jsonBytescOverrides))
+    cOverrides := C.kreuzberg_file_extraction_config_from_json(tmpStrcOverrides)
+    C.free(unsafe.Pointer(tmpStrcOverrides))
+    defer C.kreuzberg_file_extraction_config_free(cOverrides)
+
+    ptr := C.kreuzberg_extraction_config_with_file_overrides ((*C.KREUZBERGExtractionConfig)(unsafe.Pointer(r)), cOverrides)
+    return (*ExtractionConfig)(unsafe.Pointer(ptr))
+}
+
+
+// Normalize configuration for implicit requirements.
+//
+// Currently handles:
+// - Auto-enabling `extract_pages` when `result_format` is `ElementBased`, because
+// the element transformation requires per-page data to assign correct page numbers.
+// Without this, all elements would incorrectly get `page_number=1`.
+// - Auto-enabling `extract_pages` when chunking is configured, because the chunker
+// needs page boundaries to assign correct page numbers to chunks.
+func (r *ExtractionConfig) Normalized() *ExtractionConfig {
+    ptr := C.kreuzberg_extraction_config_normalized ((*C.KREUZBERGExtractionConfig)(unsafe.Pointer(r)))
+    return (*ExtractionConfig)(unsafe.Pointer(ptr))
 }
 
 
@@ -15221,6 +16833,13 @@ func (r *DocumentStructure) FurnitureRoots() *string {
 }
 
 
+// Get a node by index.
+func (r *DocumentStructure) Get(index uint32) **DocumentNode {
+    ptr := C.kreuzberg_document_structure_get ((*C.KREUZBERGDocumentStructure)(unsafe.Pointer(r)), cIndex)
+    return (*DocumentNode)(unsafe.Pointer(ptr))
+}
+
+
 // Get the total number of nodes.
 func (r *DocumentStructure) Len() *uint {
     ptr := C.kreuzberg_document_structure_len ((*C.KREUZBERGDocumentStructure)(unsafe.Pointer(r)))
@@ -15231,6 +16850,13 @@ func (r *DocumentStructure) Len() *uint {
 // Check if the document structure is empty.
 func (r *DocumentStructure) IsEmpty() *bool {
     ptr := C.kreuzberg_document_structure_is_empty ((*C.KREUZBERGDocumentStructure)(unsafe.Pointer(r)))
+    return func() *bool { v := ptr != 0; return &v }()
+}
+
+
+// Check if metadata is empty (no meaningful content extracted).
+func (r *HtmlMetadata) IsEmpty() *bool {
+    ptr := C.kreuzberg_html_metadata_is_empty ((*C.KREUZBERGHtmlMetadata)(unsafe.Pointer(r)))
     return func() *bool { v := ptr != 0; return &v }()
 }
 
@@ -15267,10 +16893,86 @@ func (r *OcrElement) WithRotation(rotation OcrRotation) *OcrElement {
 }
 
 
+// Set page number.
+func (r *OcrElement) WithPageNumber(page_number uint) *OcrElement {
+    ptr := C.kreuzberg_ocr_element_with_page_number ((*C.KREUZBERGOcrElement)(unsafe.Pointer(r)), cPageNumber)
+    return (*OcrElement)(unsafe.Pointer(ptr))
+}
+
+
+// Set parent element ID.
+func (r *OcrElement) WithParentId(parent_id string) *OcrElement {
+    cParentId := C.CString(parent_id)
+    defer C.free(unsafe.Pointer(cParentId))
+
+    ptr := C.kreuzberg_ocr_element_with_parent_id ((*C.KREUZBERGOcrElement)(unsafe.Pointer(r)), cParentId)
+    return (*OcrElement)(unsafe.Pointer(ptr))
+}
+
+
+// Add backend-specific metadata.
+func (r *OcrElement) WithMetadata(key string, value map[string]interface{}) *OcrElement {
+    cKey := C.CString(key)
+    defer C.free(unsafe.Pointer(cKey))
+
+    ptr := C.kreuzberg_ocr_element_with_metadata ((*C.KREUZBERGOcrElement)(unsafe.Pointer(r)), cKey, cValue)
+    return (*OcrElement)(unsafe.Pointer(ptr))
+}
+
+
 // Set the page number.
 func (r *Uri) WithPage(page uint32) *Uri {
     ptr := C.kreuzberg_uri_with_page ((*C.KREUZBERGUri)(unsafe.Pointer(r)), cPage)
     return (*Uri)(unsafe.Pointer(ptr))
+}
+
+
+// Get mutable access to the underlying string buffer.
+func (r *PooledString) BufferMut() *string {
+    ptr := C.kreuzberg_pooled_string_buffer_mut ((*C.KREUZBERGPooledString)(unsafe.Pointer(r)))
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// Get immutable access to the underlying string buffer.
+func (r *PooledString) AsStr() *string {
+    ptr := C.kreuzberg_pooled_string_as_str ((*C.KREUZBERGPooledString)(unsafe.Pointer(r)))
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// Deref is a method.
+func (r *PooledString) Deref() *string {
+    ptr := C.kreuzberg_pooled_string_deref ((*C.KREUZBERGPooledString)(unsafe.Pointer(r)))
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// DerefMut is a method.
+func (r *PooledString) DerefMut() *string {
+    ptr := C.kreuzberg_pooled_string_deref_mut ((*C.KREUZBERGPooledString)(unsafe.Pointer(r)))
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// Drop is a method.
+func (r *PooledString) Drop() {
+    C.kreuzberg_pooled_string_drop ((*C.KREUZBERGPooledString)(unsafe.Pointer(r)))
+}
+
+
+// Fmt is a method.
+func (r *PooledString) Fmt(f string) *string {
+    cF := C.CString(f)
+    defer C.free(unsafe.Pointer(cF))
+
+    ptr := C.kreuzberg_pooled_string_fmt ((*C.KREUZBERGPooledString)(unsafe.Pointer(r)), cF)
+    defer C.kreuzberg_free_string(ptr)
+    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -15509,6 +17211,55 @@ func (r *BBox) Center() *string {
 }
 
 
+// Area of intersection with another bounding box.
+func (r *BBox) IntersectionArea(other BBox) *float32 {
+    jsonBytescOther, err := json.Marshal(other)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcOther := C.CString(string(jsonBytescOther))
+    cOther := C.kreuzberg_b_box_from_json(tmpStrcOther)
+    C.free(unsafe.Pointer(tmpStrcOther))
+    defer C.kreuzberg_b_box_free(cOther)
+
+    ptr := C.kreuzberg_b_box_intersection_area ((*C.KREUZBERGBBox)(unsafe.Pointer(r)), cOther)
+    return func() *float32 { v := float32(ptr); return &v }()
+}
+
+
+// Intersection over Union with another bounding box.
+func (r *BBox) Iou(other BBox) *float32 {
+    jsonBytescOther, err := json.Marshal(other)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcOther := C.CString(string(jsonBytescOther))
+    cOther := C.kreuzberg_b_box_from_json(tmpStrcOther)
+    C.free(unsafe.Pointer(tmpStrcOther))
+    defer C.kreuzberg_b_box_free(cOther)
+
+    ptr := C.kreuzberg_b_box_iou ((*C.KREUZBERGBBox)(unsafe.Pointer(r)), cOther)
+    return func() *float32 { v := float32(ptr); return &v }()
+}
+
+
+// Fraction of `other` that is contained within `self`.
+// Returns 0.0..=1.0 where 1.0 means `other` is fully inside `self`.
+func (r *BBox) ContainmentOf(other BBox) *float32 {
+    jsonBytescOther, err := json.Marshal(other)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    tmpStrcOther := C.CString(string(jsonBytescOther))
+    cOther := C.kreuzberg_b_box_from_json(tmpStrcOther)
+    C.free(unsafe.Pointer(tmpStrcOther))
+    defer C.kreuzberg_b_box_free(cOther)
+
+    ptr := C.kreuzberg_b_box_containment_of ((*C.KREUZBERGBBox)(unsafe.Pointer(r)), cOther)
+    return func() *float32 { v := float32(ptr); return &v }()
+}
+
+
 // Fraction of page area this bbox covers.
 func (r *BBox) PageCoverage(page_width float32, page_height float32) *float32 {
     ptr := C.kreuzberg_b_box_page_coverage ((*C.KREUZBERGBBox)(unsafe.Pointer(r)), cPageWidth, cPageHeight)
@@ -15524,6 +17275,26 @@ func (r *BBox) Fmt(f string) *string {
     ptr := C.kreuzberg_b_box_fmt ((*C.KREUZBERGBBox)(unsafe.Pointer(r)), cF)
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }()
+}
+
+
+// Sort detections by confidence in descending order.
+func LayoutDetectionSortByConfidenceDesc(detections []LayoutDetection) *[]LayoutDetection {
+    jsonBytescDetections, err := json.Marshal(detections)
+    if err != nil {
+        panic(fmt.Sprintf("failed to marshal: %v", err))
+    }
+    cDetections := C.CString(string(jsonBytescDetections))
+    defer C.free(unsafe.Pointer(cDetections))
+
+    ptr := C.kreuzberg_layout_detection_sort_by_confidence_desc (cDetections)
+    return func() *[]LayoutDetection {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []LayoutDetection
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
 }
 
 

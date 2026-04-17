@@ -102,44 +102,44 @@ class KeywordAlgorithm(str, Enum):
     RAKE = "rake"
 
 
-class TokenReductionOptions:
-    """Placeholder for TokenReductionOptions type."""
-
-
-class LanguageDetectionConfig:
-    """Placeholder for LanguageDetectionConfig type."""
-
-
-class ErrorMetadata:
-    """Placeholder for ErrorMetadata type."""
-
-
-class ImagePreprocessingMetadata:
-    """Placeholder for ImagePreprocessingMetadata type."""
-
-
 class OcrRotation:
     """Placeholder for OcrRotation type."""
 
 
-class PageStructure:
-    """Placeholder for PageStructure type."""
+class TokenReductionOptions:
+    """Placeholder for TokenReductionOptions type."""
 
 
-class StructuredExtractionConfig:
-    """Placeholder for StructuredExtractionConfig type."""
+class YearRange:
+    """Placeholder for YearRange type."""
 
 
 class OcrPipelineConfig:
     """Placeholder for OcrPipelineConfig type."""
 
 
+class ErrorMetadata:
+    """Placeholder for ErrorMetadata type."""
+
+
+class StructuredExtractionConfig:
+    """Placeholder for StructuredExtractionConfig type."""
+
+
+class LanguageDetectionConfig:
+    """Placeholder for LanguageDetectionConfig type."""
+
+
 class DjotContent:
     """Placeholder for DjotContent type."""
 
 
-class YearRange:
-    """Placeholder for YearRange type."""
+class PageStructure:
+    """Placeholder for PageStructure type."""
+
+
+class ImagePreprocessingMetadata:
+    """Placeholder for ImagePreprocessingMetadata type."""
 
 
 @dataclass
@@ -730,6 +730,14 @@ class ServerConfig(TypedDict, total=False):
     """Maximum size of multipart fields in bytes (default: 100 MB)"""
 
 
+class Drawing(TypedDict, total=False):
+    """A drawing object extracted from `<w:drawing>`."""
+
+    drawing_type: str
+    extent: str | None
+    doc_properties: str | None
+    image_ref: str | None
+
 @dataclass
 class AnchorProperties:
     """Properties for anchored drawings."""
@@ -765,6 +773,19 @@ class ResolvedStyle:
 
     paragraph_properties: str = ""
     run_properties: str = ""
+
+class TableProperties(TypedDict, total=False):
+    """Table-level properties from `<w:tblPr>`."""
+
+    style_id: str | None
+    width: str | None
+    alignment: str | None
+    layout: str | None
+    look: str | None
+    borders: str | None
+    cell_margins: str | None
+    indent: str | None
+    caption: str | None
 
 @dataclass
 class XlsxAppProperties:
@@ -1147,7 +1168,7 @@ class Metadata(TypedDict, total=False):
     pages: Any | None
     """Page/slide/sheet structure with boundaries"""
 
-    format: str | None
+    format: dict | None
     """Format-specific metadata (discriminated union)"""
 
     image_preprocessing: Any | None
@@ -1179,6 +1200,17 @@ class Metadata(TypedDict, total=False):
 
     additional: str
     """Additional custom fields from postprocessors."""
+
+
+@dataclass
+class XmlMetadata:
+    """XML metadata extracted during XML parsing."""
+
+    element_count: int = 0
+    """Total number of XML elements processed"""
+
+    unique_elements: list[str] = field(default_factory=list)
+    """List of unique element tag names (sorted)"""
 
 
 @dataclass

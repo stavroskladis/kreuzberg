@@ -8,4 +8,7 @@ public record XmlMetadata(
     @JsonProperty("element_count") long elementCount,
     @JsonProperty("unique_elements") List<String> uniqueElements
 ) {
+    public static XmlMetadataBuilder builder() {
+        return new XmlMetadataBuilder();
+    }
 }

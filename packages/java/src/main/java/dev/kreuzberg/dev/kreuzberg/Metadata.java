@@ -16,7 +16,7 @@ public record Metadata(
     @JsonProperty("created_by") Optional<String> createdBy,
     @JsonProperty("modified_by") Optional<String> modifiedBy,
     Optional<PageStructure> pages,
-    Optional<String> format,
+    Optional<FormatMetadata> format,
     @JsonProperty("image_preprocessing") Optional<ImagePreprocessingMetadata> imagePreprocessing,
     @JsonProperty("json_schema") Optional<Object> jsonSchema,
     Optional<ErrorMetadata> error,

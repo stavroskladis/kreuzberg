@@ -295,7 +295,7 @@ pub struct ImageMetadata {
 /// XML metadata extracted during XML parsing.
 ///
 /// Provides statistics about XML document structure.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 pub struct XmlMetadata {
     /// Total number of XML elements processed

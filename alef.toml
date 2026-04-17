@@ -352,9 +352,6 @@ types = [
     "ExtractionMetrics",
     "MetricsLayer",
 
-    # PHP: ext-php-rs can't handle PooledString (E0716/E0596/E0507)
-    "PooledString",
-
     # Internal layout/detection types missing serde
     "PageLayoutRegion",
     "ListItemMetadata",
@@ -397,19 +394,7 @@ types = [
 
     "VlmOcrBackend",
     "ApiError",
-    "Drawing",
-    "TableProperties",
     "TableGrid",
-
-    # MCP param types with serde_json::Value fields that can't map to String
-    "BatchExtractFilesParams",
-
-    # Tagged enum with heterogeneous tuple payloads — codegen flattens all variant
-    # payloads into a single Option<String> field, but the inner metadata structs
-    # (DocxMetadata, XmlMetadata, etc.) don't implement From<String>/Into<String>.
-    # Individual metadata types keep their standalone Js* wrappers; only the
-    # discriminated-union wrapper is excluded.
-    "FormatMetadata",
 ]
 functions = [
     # Internal functions not part of public API
@@ -443,14 +428,9 @@ functions = [
     "calculate_page_range",
 
     # Functions returning opaque dependency types that can't cross FFI
-    "build_session",
     "create_layout_engine",
     "normalize_image",
     "build_layout_engine",
-    "create_engine",
-    "take_or_create_engine",
-    "return_engine",
-    "get_default_cache_dir",
 
     # Functions taking opaque/internal types as params
     "run_pipeline",
@@ -461,56 +441,9 @@ functions = [
     # Returns DefaultClient — opaque dependency type, can't convert to String
     "create_client",
 
-    # Internal postprocessing — takes &mut Vec, not binding-friendly
-    "apply_heuristics",
-    "greedy_nms",
-    "generate_embeddings_for_chunks",
-
-    # Returns tuples with opaque types or complex params
-    "extract_ooxml_embedded_objects",
-    "extract_and_process_embedded_files",
-
     # Returns tuple (Value, Option<LlmUsage>) — can't map to String
     "vlm_ocr",
     "vlm_ocr_with_prompt",
-    "extract_structured",
-
-    # Returns Vec<core::PageBoundary> needing element conversion
-    "detect_page_breaks_from_docx",
-
-    # PHP: Vec<CustomType> params fail FromZvalMut; WASM: JsValue/return type mismatches
-    "render_inline_content",
-    "sort_by_confidence_desc",
-    "validate_page_boundaries",
-    "validate_utf8_boundaries",
-    "elements_to_hocr_words",
-    "assign_heading_levels_smart",
-    "assign_hierarchy_levels_from_clusters",
-    "merge_chars_into_blocks",
-    "cells_to_text",
-    "cells_to_markdown",
-    "calculate_quality_score",
-    "reconstruct_table",
-    "table_to_markdown",
-    "build_cell_grid",
-    "post_process_table",
-    "is_well_formed_table",
-    "chunk_text",
-    "chunk_text_with_heading_source",
-    "chunk_text_with_type",
-    "apply_output_format",
-    "classify_uri",
-    "classify_chunk",
-    "cluster_font_sizes",
-    "assign_hierarchy_levels",
-
-    # PHP: EmbeddingModelType From<String> not satisfied
-    "warm_model",
-    "download_model",
-
-    # PHP: Vec<OcrElement>/Vec<RecognizedTable> FromZvalMut + type mismatches
-    "assemble_ocr_markdown",
-    "recognize_page_tables",
 ]
 methods = [
     "OcrElement.with_rotation_opt",
@@ -523,27 +456,6 @@ methods = [
 
     # Returns PathBuf — can't convert to String across FFI
     "PaddleOcrConfig.resolve_cache_dir",
-    # Ambiguous type inference in generated From conversion
-    "HtmlMetadata.from",
-    # is_empty calls From<WasmHtmlMetadata> for HtmlMetadata which is excluded
-    "HtmlMetadata.is_empty",
-    # PHP: BBox methods return 0 instead of 0.0 (codegen integer literal mismatch)
-    "BBox.intersection_area",
-    "BBox.iou",
-    "BBox.containment_of",
-    # PHP: DocumentStructure.get expects NodeIndex, codegen passes u32
-    "DocumentStructure.get",
-    # PHP: backend_metadata HashMap<String,Value> vs HashMap<String,String> mismatch
-    "OcrElement.with_page_number",
-    "OcrElement.with_parent_id",
-    "OcrElement.with_metadata",
-    # PHP: ExtractionResult backend_metadata same mismatch
-    "ExtractionResult.with_page_metadata",
-    # WASM: normalized() returns Cow<ExtractionConfig>, codegen can't convert to WasmExtractionConfig
-    "ExtractionConfig.normalized",
-    "ExtractionConfig.with_file_overrides",
-    # PHP: Vec<LayoutDetection> FromZvalMut not satisfied
-    "LayoutDetection.sort_by_confidence_desc",
 ]
 
 # ---------------------------------------------------------------------------
@@ -632,8 +544,6 @@ exclude_types = [
     "PageTiming",
     "ProcessingWarning",
     "RecognizedTable",
-    # chunking-tokenizers feature not enabled for WASM
-    "ChunkSizing",
 ]
 exclude_functions = [
     # paddle-ocr / layout-detection / embeddings / auto-rotate

@@ -1134,6 +1134,26 @@ public final class Kreuzberg {
     }
 
     /**
+     * Apply output format conversion to the extraction result.
+     * 
+     * Records the output format in metadata and swaps in pre-rendered content
+     * (produced during `derive_extraction_result`) if available.
+     * 
+     * This runs as the final pipeline step, after post-processors have operated
+     * on the plain-text `content` field.
+     * 
+     * # Arguments
+     * 
+     * * `result` - The extraction result to modify
+     * * `output_format` - The desired output format
+     */
+    public static ExtractionResult applyOutputFormat(ExtractionResult result, OutputFormat outputFormat) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(result, "result must not be null");
+        java.util.Objects.requireNonNull(outputFormat, "outputFormat must not be null");
+        return KreuzbergRs.applyOutputFormat(result, outputFormat);
+    }
+
+    /**
      * Determine if a page's text content indicates a blank page.
      * 
      * A page is blank if it has fewer than [`MIN_NON_WHITESPACE_CHARS`] non-whitespace characters.
@@ -2108,6 +2128,28 @@ public final class Kreuzberg {
     }
 
     /**
+     * Detect explicit page break positions in document.xml and extract full text with page boundaries.
+     * 
+     * This is a convenience function for the extractor that combines text extraction with page
+     * break detection. It returns the extracted text along with page boundaries.
+     * 
+     * # Arguments
+     * * `bytes` - The DOCX file contents (ZIP archive)
+     * 
+     * # Returns
+     * * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
+     * * `Err(KreuzbergError)` - If extraction fails
+     * 
+     * # Limitations
+     * - Only detects explicit page breaks, not reflowed content
+     * - Page numbers are estimates based on detected breaks
+     */
+    public static List<PageBoundary> detectPageBreaksFromDocx(byte[] bytes) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(bytes, "bytes must not be null");
+        return KreuzbergRs.detectPageBreaksFromDocx(bytes);
+    }
+
+    /**
      * Compute the 1-based page number for each top-level table in the document.
      * 
      * Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
@@ -2124,6 +2166,25 @@ public final class Kreuzberg {
     public static List<Long> detectTablePageNumbers(byte[] bytes) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(bytes, "bytes must not be null");
         return KreuzbergRs.detectTablePageNumbers(bytes);
+    }
+
+    /**
+     * Extract embedded objects from an OOXML ZIP archive and recursively process them.
+     * 
+     * Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
+     * `ppt/embeddings/`) inside the ZIP archive for embedded files. Known formats
+     * (.xlsx, .pdf, .docx, .pptx, etc.) are recursively extracted. OLE compound
+     * files (oleObject*.bin) are skipped with a warning unless their format can be
+     * identified.
+     * 
+     * Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
+     */
+    public static String extractOoxmlEmbeddedObjects(byte[] zipBytes, String embeddingsPrefix, String sourceLabel, ExtractionConfig config) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(zipBytes, "zipBytes must not be null");
+        java.util.Objects.requireNonNull(embeddingsPrefix, "embeddingsPrefix must not be null");
+        java.util.Objects.requireNonNull(sourceLabel, "sourceLabel must not be null");
+        java.util.Objects.requireNonNull(config, "config must not be null");
+        return KreuzbergRs.extractOoxmlEmbeddedObjects(zipBytes, embeddingsPrefix, sourceLabel, config);
     }
 
     /**
@@ -2215,6 +2276,67 @@ public final class Kreuzberg {
         java.util.Objects.requireNonNull(xmlBytes, "xmlBytes must not be null");
         java.util.Objects.requireNonNull(preserveWhitespace, "preserveWhitespace must not be null");
         return KreuzbergRs.parseXml(xmlBytes, preserveWhitespace);
+    }
+
+    /**
+     * Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table.
+     * 
+     * # Behavior
+     * 
+     * - The first row is treated as the header row
+     * - A separator row is inserted after the header
+     * - Pipe characters (`|`) in cell content are automatically escaped with backslash
+     * - Irregular tables (rows with varying column counts) are padded with empty cells to match the header
+     * - Returns an empty string for empty input
+     * 
+     * # Arguments
+     * 
+     * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+     * 
+     * # Returns
+     * 
+     * A `String` containing the GFM markdown table representation
+     * 
+     * # Examples
+     * 
+     * ```
+     * # use kreuzberg::extraction::cells_to_markdown;
+     * let cells = vec![
+     *     vec!["Name".to_string(), "Age".to_string()],
+     *     vec!["Alice".to_string(), "30".to_string()],
+     *     vec!["Bob".to_string(), "25".to_string()],
+     * ];
+     * 
+     * let markdown = cells_to_markdown(&cells);
+     * assert!(markdown.contains("| Name | Age |"));
+     * assert!(markdown.contains("|------|------|"));
+     * ```
+     * 
+     * Converts a 2D vector of cell strings into plain text with tab-separated columns.
+     * 
+     * # Behavior
+     * 
+     * - Rows are separated by newlines
+     * - Cells within a row are separated by tab characters
+     * - No pipe delimiters or separator rows (unlike markdown tables)
+     * - Returns an empty string for empty input
+     * 
+     * # Arguments
+     * 
+     * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+     * 
+     * # Returns
+     * 
+     * A `String` containing the plain text table representation
+     */
+    public static String cellsToText(List<List<String>> cells) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(cells, "cells must not be null");
+        return KreuzbergRs.cellsToText(cells);
+    }
+
+    public static String cellsToMarkdown(List<List<String>> cells) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(cells, "cells must not be null");
+        return KreuzbergRs.cellsToMarkdown(cells);
     }
 
     /**
@@ -2367,6 +2489,14 @@ public final class Kreuzberg {
         java.util.Objects.requireNonNull(indent, "indent must not be null");
         java.util.Objects.requireNonNull(marker, "marker must not be null");
         return KreuzbergRs.renderListItem(item, indent, marker);
+    }
+
+    /**
+     * Render inline content to djot markup.
+     */
+    public static String renderInlineContent(List<InlineElement> elements) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(elements, "elements must not be null");
+        return KreuzbergRs.renderInlineContent(elements);
     }
 
     /**
@@ -3413,6 +3543,15 @@ public final class Kreuzberg {
         return KreuzbergRs.isValidUtf8(bytes);
     }
 
+    public static double calculateQualityScore(String text, String metadata) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(text, "text must not be null");
+        return KreuzbergRs.calculateQualityScore(text, metadata);
+    }
+
+    public static double calculateQualityScore(String text) throws KreuzbergRsException {
+        return calculateQualityScore(text, null);
+    }
+
     public static String cleanExtractedText(String text) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(text, "text must not be null");
         return KreuzbergRs.cleanExtractedText(text);
@@ -3665,6 +3804,18 @@ public final class Kreuzberg {
     }
 
     /**
+     * Classify a URL string into the appropriate `UriKind`.
+     * 
+     * - `mailto:` → `Email`
+     * - `#` prefix → `Anchor`
+     * - everything else → `Hyperlink`
+     */
+    public static UriKind classifyUri(String url) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(url, "url must not be null");
+        return KreuzbergRs.classifyUri(url);
+    }
+
+    /**
      * Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary.
      * 
      * The function prefers an explicit `encoding`, falls back to the cached guess, probes
@@ -3822,7 +3973,7 @@ public final class Kreuzberg {
      * // Automatically returned to pool when buffer goes out of scope
      * ```
      */
-    public static String acquireStringBuffer() throws KreuzbergRsException {
+    public static PooledString acquireStringBuffer() throws KreuzbergRsException {
         return KreuzbergRs.acquireStringBuffer();
     }
 
@@ -3927,6 +4078,35 @@ public final class Kreuzberg {
         java.util.Objects.requireNonNull(words, "words must not be null");
         java.util.Objects.requireNonNull(rowThresholdRatio, "rowThresholdRatio must not be null");
         return KreuzbergRs.detectRows(words, rowThresholdRatio);
+    }
+
+    /**
+     * Reconstruct a table grid from words with bounding box positions.
+     * 
+     * Takes detected words and reconstructs a 2D table by:
+     * 1. Detecting column positions (grouping by x-coordinate within `column_threshold`)
+     * 2. Detecting row positions (grouping by y-center within `row_threshold_ratio` * median height)
+     * 3. Assigning words to cells based on closest row/column
+     * 4. Combining words within the same cell
+     * 
+     * Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
+     */
+    public static List<List<String>> reconstructTable(List<String> words, int columnThreshold, double rowThresholdRatio) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(words, "words must not be null");
+        java.util.Objects.requireNonNull(columnThreshold, "columnThreshold must not be null");
+        java.util.Objects.requireNonNull(rowThresholdRatio, "rowThresholdRatio must not be null");
+        return KreuzbergRs.reconstructTable(words, columnThreshold, rowThresholdRatio);
+    }
+
+    /**
+     * Convert a table grid to markdown format.
+     * 
+     * The first row is treated as the header row, with a separator line added after it.
+     * Pipe characters in cell content are escaped.
+     */
+    public static String tableToMarkdown(List<List<String>> table) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(table, "table must not be null");
+        return KreuzbergRs.tableToMarkdown(table);
     }
 
     /**
@@ -4281,6 +4461,166 @@ public final class Kreuzberg {
     }
 
     /**
+     * Validates the consistency and correctness of page boundaries.
+     * 
+     * # Validation Rules
+     * 
+     * 1. Boundaries must be sorted by byte_start (monotonically increasing)
+     * 2. Boundaries must not overlap (byte_end[i] <= byte_start[i+1])
+     * 3. Each boundary must have byte_start < byte_end
+     * 
+     * # Arguments
+     * 
+     * * `boundaries` - Page boundary markers to validate
+     * 
+     * # Returns
+     * 
+     * Returns `Ok(())` if all boundaries are valid.
+     * Returns `KreuzbergError::Validation` if any boundary is invalid.
+     */
+    public static void validatePageBoundaries(List<PageBoundary> boundaries) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(boundaries, "boundaries must not be null");
+        KreuzbergRs.validatePageBoundaries(boundaries);
+    }
+
+    /**
+     * Classify a single chunk based on its content and optional heading context.
+     * 
+     * Rules are evaluated in priority order. The first matching rule determines
+     * the returned [`ChunkType`]. When no rule matches, [`ChunkType::Unknown`]
+     * is returned.
+     * 
+     * # Arguments
+     * 
+     * * `content` - The text content of the chunk (may be trimmed or raw).
+     * * `heading_context` - Optional heading hierarchy this chunk falls under
+     *   (only available when using `ChunkerType::Markdown`).
+     * 
+     * # Examples
+     * 
+     * ```rust
+     * use kreuzberg::chunking::classifier::classify_chunk;
+     * use kreuzberg::types::ChunkType;
+     * 
+     * assert_eq!(classify_chunk("# Introduction", None), ChunkType::Heading);
+     * assert_eq!(
+     *     classify_chunk("The Investor shall subscribe for the Shares and agrees to pay the subscription price. The Company shall deliver the Share certificates upon receipt.", None),
+     *     ChunkType::OperativeClause,
+     * );
+     * assert_eq!(classify_chunk("Some unrecognized text.", None), ChunkType::Unknown);
+     * ```
+     */
+    public static ChunkType classifyChunk(String content, HeadingContext headingContext) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(content, "content must not be null");
+        return KreuzbergRs.classifyChunk(content, headingContext);
+    }
+
+    public static ChunkType classifyChunk(String content) throws KreuzbergRsException {
+        return classifyChunk(content, null);
+    }
+
+    /**
+     * Split text into chunks with optional page boundary tracking.
+     * 
+     * This is the primary API function for chunking text. It supports both plain text
+     * and Markdown with configurable chunk size, overlap, and page boundary mapping.
+     * 
+     * # Arguments
+     * 
+     * * `text` - The text to split into chunks
+     * * `config` - Chunking configuration (max size, overlap, type)
+     * * `page_boundaries` - Optional page boundary markers for mapping chunks to pages
+     * 
+     * # Returns
+     * 
+     * A ChunkingResult containing all chunks and their metadata.
+     * 
+     * # Examples
+     * 
+     * ```rust
+     * use kreuzberg::chunking::{chunk_text, ChunkingConfig, ChunkerType};
+     * 
+     * # fn example() -> kreuzberg::Result<()> {
+     * let config = ChunkingConfig {
+     *     max_characters: 500,
+     *     overlap: 50,
+     *     trim: true,
+     *     chunker_type: ChunkerType::Text,
+     *     ..Default::default()
+     * };
+     * let result = chunk_text("Long text...", &config, None)?;
+     * assert!(!result.chunks.is_empty());
+     * # Ok(())
+     * # }
+     * ```
+     */
+    public static ChunkingResult chunkText(String text, ChunkingConfig config, List<PageBoundary> pageBoundaries) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(text, "text must not be null");
+        java.util.Objects.requireNonNull(config, "config must not be null");
+        return KreuzbergRs.chunkText(text, config, pageBoundaries);
+    }
+
+    public static ChunkingResult chunkText(String text, ChunkingConfig config) throws KreuzbergRsException {
+        return chunkText(text, config, null);
+    }
+
+    /**
+     * Chunk text with an optional separate markdown source for heading context resolution.
+     * 
+     * When `heading_source` is provided, it is used instead of `text` for building the
+     * heading map. This is needed when `text` is plain text (no markdown headings) but
+     * the original document had headings that were stripped during rendering.
+     */
+    public static ChunkingResult chunkTextWithHeadingSource(String text, ChunkingConfig config, List<PageBoundary> pageBoundaries, String headingSource) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(text, "text must not be null");
+        java.util.Objects.requireNonNull(config, "config must not be null");
+        return KreuzbergRs.chunkTextWithHeadingSource(text, config, pageBoundaries, headingSource);
+    }
+
+    public static ChunkingResult chunkTextWithHeadingSource(String text, ChunkingConfig config) throws KreuzbergRsException {
+        return chunkTextWithHeadingSource(text, config, null, null);
+    }
+
+    /**
+     * Chunk text with explicit type specification.
+     * 
+     * This is a convenience function that constructs a ChunkingConfig from individual
+     * parameters and calls `chunk_text`.
+     * 
+     * # Arguments
+     * 
+     * * `text` - The text to split into chunks
+     * * `max_characters` - Maximum characters per chunk
+     * * `overlap` - Character overlap between consecutive chunks
+     * * `trim` - Whether to trim whitespace from boundaries
+     * * `chunker_type` - Type of chunker to use (Text or Markdown)
+     * 
+     * # Returns
+     * 
+     * A ChunkingResult containing all chunks and their metadata.
+     * 
+     * # Examples
+     * 
+     * ```rust
+     * use kreuzberg::chunking::{chunk_text_with_type, ChunkerType};
+     * 
+     * # fn example() -> kreuzberg::Result<()> {
+     * let result = chunk_text_with_type("Some text", 500, 50, true, ChunkerType::Text)?;
+     * assert!(!result.chunks.is_empty());
+     * # Ok(())
+     * # }
+     * ```
+     */
+    public static ChunkingResult chunkTextWithType(String text, long maxCharacters, long overlap, boolean trim, ChunkerType chunkerType) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(text, "text must not be null");
+        java.util.Objects.requireNonNull(maxCharacters, "maxCharacters must not be null");
+        java.util.Objects.requireNonNull(overlap, "overlap must not be null");
+        java.util.Objects.requireNonNull(trim, "trim must not be null");
+        java.util.Objects.requireNonNull(chunkerType, "chunkerType must not be null");
+        return KreuzbergRs.chunkTextWithType(text, maxCharacters, overlap, trim, chunkerType);
+    }
+
+    /**
      * Batch process multiple texts with the same configuration.
      * 
      * This convenience function applies the same chunking configuration to multiple
@@ -4351,12 +4691,83 @@ public final class Kreuzberg {
     }
 
     /**
+     * Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries.
+     * 
+     * This function ensures that all page boundary positions are at valid UTF-8 character
+     * boundaries within the text. This is CRITICAL to prevent text corruption when boundaries
+     * are created from language bindings or external sources, particularly with multibyte
+     * UTF-8 characters (emoji, CJK characters, combining marks, etc.).
+     * 
+     * **Performance Strategy**: Uses adaptive validation to optimize for different boundary counts:
+     * - **Small sets (≤10 boundaries)**: O(k) approach using Rust's native `is_char_boundary()` for each position
+     * - **Large sets (>10 boundaries)**: O(n) precomputation with O(1) lookups via BitVec
+     * 
+     * For typical PDF documents with 1-10 page boundaries, the fast path provides 30-50% faster
+     * validation than always precomputing. For documents with 100+ boundaries, batch precomputation
+     * is 2-4% faster overall due to amortized costs. This gives ~2-4% improvement across all scenarios.
+     * 
+     * # Arguments
+     * 
+     * * `text` - The text being chunked
+     * * `boundaries` - Page boundary markers to validate
+     * 
+     * # Returns
+     * 
+     * Returns `Ok(())` if all boundaries are at valid UTF-8 character boundaries.
+     * Returns `KreuzbergError::Validation` if any boundary is at an invalid position.
+     * 
+     * # UTF-8 Boundary Safety
+     * 
+     * Rust strings use UTF-8 encoding where characters can be 1-4 bytes. For example:
+     * - ASCII letters: 1 byte each
+     * - Emoji (🌍): 4 bytes but 1 character
+     * - CJK characters (中): 3 bytes but 1 character
+     * 
+     * This function checks that all byte_start and byte_end values are at character boundaries
+     * using an adaptive strategy: direct calls for small boundary sets, or precomputed BitVec
+     * for large sets.
+     */
+    public static void validateUtf8Boundaries(String text, List<PageBoundary> boundaries) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(text, "text must not be null");
+        java.util.Objects.requireNonNull(boundaries, "boundaries must not be null");
+        KreuzbergRs.validateUtf8Boundaries(text, boundaries);
+    }
+
+    /**
      * Render a Jinja2 template with the given context variables.
      */
     public static String renderTemplate(String template, String context) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(template, "template must not be null");
         java.util.Objects.requireNonNull(context, "context must not be null");
         return KreuzbergRs.renderTemplate(template, context);
+    }
+
+    /**
+     * Extract structured data from document content using an LLM with JSON schema.
+     * 
+     * Sends the document content to the configured LLM with a JSON schema constraint,
+     * returning structured data that conforms to the schema.
+     * 
+     * # Arguments
+     * 
+     * * `content` - The extracted document text to send to the LLM.
+     * * `config` - Structured extraction configuration including schema and LLM settings.
+     * 
+     * # Returns
+     * 
+     * A `serde_json::Value` conforming to the provided JSON schema.
+     * 
+     * # Errors
+     * 
+     * Returns an error if:
+     * - The LLM client cannot be created (invalid provider/credentials).
+     * - The LLM request fails (network, rate-limit, etc.).
+     * - The LLM response cannot be parsed as valid JSON.
+     */
+    public static String extractStructured(String content, StructuredExtractionConfig config) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(content, "content must not be null");
+        java.util.Objects.requireNonNull(config, "config must not be null");
+        return KreuzbergRs.extractStructured(content, config);
     }
 
     /**
@@ -4380,6 +4791,67 @@ public final class Kreuzberg {
      */
     public static List<String> listPresets() throws KreuzbergRsException {
         return KreuzbergRs.listPresets();
+    }
+
+    /**
+     * Eagerly download and cache an embedding model without returning the handle.
+     * 
+     * This triggers the same download and initialization as `get_or_init_engine`
+     * but discards the result, making it suitable for cache-warming scenarios
+     * where the caller doesn't need to use the model immediately.
+     * 
+     * **Note**: This function downloads AND initializes the ONNX model, which
+     * requires ONNX Runtime and uses significant memory. For download-only
+     * scenarios (e.g., init containers), use [`download_model`] instead.
+     */
+    public static void warmModel(EmbeddingModelType modelType, String cacheDir) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(modelType, "modelType must not be null");
+        KreuzbergRs.warmModel(modelType, cacheDir);
+    }
+
+    public static void warmModel(EmbeddingModelType modelType) throws KreuzbergRsException {
+        warmModel(modelType, null);
+    }
+
+    /**
+     * Download an embedding model's files without initializing ONNX Runtime.
+     * 
+     * Downloads the model files (ONNX model, tokenizer, config) from HuggingFace
+     * to the cache directory. Subsequent calls to `warm_model` or
+     * `get_or_init_engine` will find the files cached and skip the download step.
+     * 
+     * This is ideal for init containers or CI environments where you want to
+     * pre-populate the cache without loading models into memory.
+     */
+    public static void downloadModel(EmbeddingModelType modelType, String cacheDir) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(modelType, "modelType must not be null");
+        KreuzbergRs.downloadModel(modelType, cacheDir);
+    }
+
+    public static void downloadModel(EmbeddingModelType modelType) throws KreuzbergRsException {
+        downloadModel(modelType, null);
+    }
+
+    /**
+     * Generate embeddings for text chunks using the specified configuration.
+     * 
+     * This function modifies chunks in-place, populating their `embedding` field
+     * with generated embedding vectors. It uses batch processing for efficiency.
+     * 
+     * # Arguments
+     * 
+     * * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+     * * `config` - Embedding configuration specifying model and parameters
+     * 
+     * # Returns
+     * 
+     * Returns `Ok(())` if embeddings were generated successfully, or an error if
+     * model initialization or embedding generation fails.
+     */
+    public static void generateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(chunks, "chunks must not be null");
+        java.util.Objects.requireNonNull(config, "config must not be null");
+        KreuzbergRs.generateEmbeddingsForChunks(chunks, config);
     }
 
     /**
@@ -4680,6 +5152,27 @@ public final class Kreuzberg {
     }
 
     /**
+     * Convert a vector of OcrElements to HocrWords for batch table processing.
+     * 
+     * Filters to word-level elements only, as table reconstruction
+     * works best with word-level granularity.
+     * 
+     * # Arguments
+     * 
+     * * `elements` - Slice of OCR elements to convert
+     * * `min_confidence` - Minimum recognition confidence threshold (0.0-1.0)
+     * 
+     * # Returns
+     * 
+     * A vector of HocrWords filtered by confidence and element level.
+     */
+    public static List<String> elementsToHocrWords(List<OcrElement> elements, double minConfidence) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(elements, "elements must not be null");
+        java.util.Objects.requireNonNull(minConfidence, "minConfidence must not be null");
+        return KreuzbergRs.elementsToHocrWords(elements, minConfidence);
+    }
+
+    /**
      * Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata.
      * 
      * This is the primary entry point. It replaces the older `convert_hocr_to_markdown` path
@@ -4704,6 +5197,42 @@ public final class Kreuzberg {
     public static String parseHocrToInternalDocument(String hocrHtml) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(hocrHtml, "hocrHtml must not be null");
         return KreuzbergRs.parseHocrToInternalDocument(hocrHtml);
+    }
+
+    /**
+     * Assemble structured markdown from OCR elements using layout detection results.
+     * 
+     * Both inputs must be in the same pixel coordinate space (from the same
+     * rendered page image). Returns plain text join when `detection` is `None`.
+     * 
+     * `recognized_tables` provides pre-computed markdown for Table regions
+     * (from TATR or other table structure recognizer). When empty, Table
+     * regions fall back to heuristic grid reconstruction from OCR elements.
+     */
+    public static String assembleOcrMarkdown(List<OcrElement> elements, DetectionResult detection, int imgWidth, int imgHeight, List<RecognizedTable> recognizedTables) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(elements, "elements must not be null");
+        java.util.Objects.requireNonNull(imgWidth, "imgWidth must not be null");
+        java.util.Objects.requireNonNull(imgHeight, "imgHeight must not be null");
+        java.util.Objects.requireNonNull(recognizedTables, "recognizedTables must not be null");
+        return KreuzbergRs.assembleOcrMarkdown(elements, detection, imgWidth, imgHeight, recognizedTables);
+    }
+
+    public static String assembleOcrMarkdown(List<OcrElement> elements, int imgWidth, int imgHeight, List<RecognizedTable> recognizedTables) throws KreuzbergRsException {
+        return assembleOcrMarkdown(elements, null, imgWidth, imgHeight, recognizedTables);
+    }
+
+    /**
+     * Run TATR table recognition for all Table regions in a page.
+     * 
+     * For each Table detection, crops the page image, runs TATR inference,
+     * matches OCR elements to cells, and produces markdown tables.
+     */
+    public static List<RecognizedTable> recognizePageTables(String pageImage, DetectionResult detection, List<OcrElement> elements, String tatrModel) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(pageImage, "pageImage must not be null");
+        java.util.Objects.requireNonNull(detection, "detection must not be null");
+        java.util.Objects.requireNonNull(elements, "elements must not be null");
+        java.util.Objects.requireNonNull(tatrModel, "tatrModel must not be null");
+        return KreuzbergRs.recognizePageTables(pageImage, detection, elements, tatrModel);
     }
 
     /**
@@ -4788,6 +5317,59 @@ public final class Kreuzberg {
     }
 
     /**
+     * Build a 2D cell grid from TATR detections.
+     * 
+     * The grid is `[num_rows][num_cols]` where each cell is the intersection
+     * of a row bounding box and a column bounding box.
+     * 
+     * Processing steps:
+     * 1. Widen all rows to span the full table width (min x1 to max x2 across rows)
+     * 2. Apply NMS using IoB: sort by confidence descending, remove detections
+     *    whose IoB with any higher-confidence detection exceeds [`NMS_IOB_THRESHOLD`]
+     * 3. For each (row, column) pair, compute the intersection rectangle
+     * 
+     * If `table_bbox` is provided, it is used to clip the row widening bounds.
+     */
+    public static List<List<String>> buildCellGrid(String result, String tableBbox) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(result, "result must not be null");
+        return KreuzbergRs.buildCellGrid(result, tableBbox);
+    }
+
+    public static List<List<String>> buildCellGrid(String result) throws KreuzbergRsException {
+        return buildCellGrid(result, null);
+    }
+
+    /**
+     * Apply Docling-style postprocessing heuristics to raw detections.
+     * 
+     * This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
+     * 1. Per-class confidence thresholds
+     * 2. Full-page picture removal (>90% page area)
+     * 3. Overlap resolution (IoU > 0.8 or containment > 0.8)
+     * 4. Cross-type overlap handling (KVR vs Table)
+     */
+    public static List<LayoutDetection> applyHeuristics(List<LayoutDetection> detections, float pageWidth, float pageHeight) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(detections, "detections must not be null");
+        java.util.Objects.requireNonNull(pageWidth, "pageWidth must not be null");
+        java.util.Objects.requireNonNull(pageHeight, "pageHeight must not be null");
+        return KreuzbergRs.applyHeuristics(detections, pageWidth, pageHeight);
+    }
+
+    /**
+     * Standard greedy Non-Maximum Suppression.
+     * 
+     * Sorts detections by confidence (descending), then iteratively removes
+     * detections that have IoU > `iou_threshold` with any higher-confidence detection.
+     * 
+     * This is required for YOLO models. RT-DETR is NMS-free.
+     */
+    public static void greedyNms(List<LayoutDetection> detections, float iouThreshold) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(detections, "detections must not be null");
+        java.util.Objects.requireNonNull(iouThreshold, "iouThreshold must not be null");
+        KreuzbergRs.greedyNms(detections, iouThreshold);
+    }
+
+    /**
      * Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
      * 
      * Pipeline: resize to target_size x target_size (bilinear) -> rescale /255 -> ImageNet normalize -> NCHW f32.
@@ -4849,11 +5431,65 @@ public final class Kreuzberg {
     }
 
     /**
+     * Build an optimized ORT session from an ONNX model file.
+     * 
+     * `thread_budget` controls the number of intra-op threads for this session.
+     * Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
+     * to respect the user's `ConcurrencyConfig`.
+     * 
+     * When `accel` is `None` or `Auto`, uses platform defaults:
+     * - macOS: CoreML (Neural Engine / GPU)
+     * - Linux: CUDA (GPU)
+     * - Others: CPU only
+     * 
+     * ORT silently falls back to CPU if the requested EP is unavailable.
+     */
+    public static String buildSession(String path, AccelerationConfig accel, long threadBudget) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(path, "path must not be null");
+        java.util.Objects.requireNonNull(threadBudget, "threadBudget must not be null");
+        return KreuzbergRs.buildSession(path, accel, threadBudget);
+    }
+
+    public static String buildSession(String path, long threadBudget) throws KreuzbergRsException {
+        return buildSession(path, null, threadBudget);
+    }
+
+    /**
      * Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
      */
     public static String configFromExtraction(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(layoutConfig, "layoutConfig must not be null");
         return KreuzbergRs.configFromExtraction(layoutConfig);
+    }
+
+    /**
+     * Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
+     * 
+     * Ensures ORT is available, then creates the engine with model download.
+     */
+    public static String createEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(layoutConfig, "layoutConfig must not be null");
+        return KreuzbergRs.createEngine(layoutConfig);
+    }
+
+    /**
+     * Take the cached layout engine, or create a new one if the cache is empty.
+     * 
+     * The caller owns the engine for the duration of its work and should
+     * return it via [`return_engine`] when done. This avoids holding the
+     * global mutex during inference.
+     */
+    public static String takeOrCreateEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(layoutConfig, "layoutConfig must not be null");
+        return KreuzbergRs.takeOrCreateEngine(layoutConfig);
+    }
+
+    /**
+     * Return a layout engine to the global cache for reuse by future extractions.
+     */
+    public static void returnEngine(String engine) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(engine, "engine must not be null");
+        KreuzbergRs.returnEngine(engine);
     }
 
     /**
@@ -4952,6 +5588,18 @@ public final class Kreuzberg {
     }
 
     /**
+     * Extract embedded files from PDF bytes and recursively process them.
+     * 
+     * Returns `(children, warnings)`. The children are `ArchiveEntry` values
+     * suitable for attaching to `InternalDocument.children`.
+     */
+    public static String extractAndProcessEmbeddedFiles(byte[] pdfBytes, ExtractionConfig config) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(pdfBytes, "pdfBytes must not be null");
+        java.util.Objects.requireNonNull(config, "config must not be null");
+        return KreuzbergRs.extractAndProcessEmbeddedFiles(pdfBytes, config);
+    }
+
+    /**
      * Initialize the global font cache.
      * 
      * On first call, discovers and loads all system fonts. Subsequent calls are no-ops.
@@ -5000,6 +5648,163 @@ public final class Kreuzberg {
      */
     public static long cachedFontCount() throws KreuzbergRsException {
         return KreuzbergRs.cachedFontCount();
+    }
+
+    /**
+     * Cluster text blocks by font size using k-means algorithm.
+     * 
+     * Uses k-means clustering to group text blocks by their font size, which helps
+     * identify document hierarchy levels (H1, H2, Body, etc.). The algorithm:
+     * 1. Extracts font sizes from text blocks
+     * 2. Applies k-means clustering to group similar font sizes
+     * 3. Sorts clusters by centroid size in descending order (largest = H1)
+     * 4. Returns clusters with their member blocks
+     * 
+     * # Arguments
+     * 
+     * * `blocks` - Slice of TextBlock objects to cluster
+     * * `k` - Number of clusters to create
+     * 
+     * # Returns
+     * 
+     * Result with vector of FontSizeCluster ordered by size (descending),
+     * or an error if clustering fails
+     * 
+     * # Example
+     * 
+     * ```rust,no_run
+     * # #[cfg(feature = "pdf")]
+     * # {
+     * use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, cluster_font_sizes};
+     * 
+     * let blocks = vec![
+     *     TextBlock {
+     *         text: "Title".to_string(),
+     *         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
+     *         font_size: 24.0,
+     *     },
+     *     TextBlock {
+     *         text: "Body".to_string(),
+     *         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
+     *         font_size: 12.0,
+     *     },
+     * ];
+     * 
+     * let clusters = cluster_font_sizes(&blocks, 2).unwrap();
+     * assert_eq!(clusters.len(), 2);
+     * assert_eq!(clusters[0].centroid, 24.0); // Largest is first
+     * # }
+     * ```
+     */
+    public static List<FontSizeCluster> clusterFontSizes(List<String> blocks, long k) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(blocks, "blocks must not be null");
+        java.util.Objects.requireNonNull(k, "k must not be null");
+        return KreuzbergRs.clusterFontSizes(blocks, k);
+    }
+
+    /**
+     * Assign heading levels using the "most frequent cluster = Body" rule.
+     * 
+     * Instead of naively mapping the largest font size to H1, this function
+     * identifies the cluster with the most members as body text. Only clusters
+     * with fewer members AND sufficiently larger font size than body become headings.
+     * 
+     * # Arguments
+     * 
+     * * `clusters` - Slice of FontSizeCluster objects (sorted by centroid descending)
+     * * `min_heading_ratio` - Minimum ratio of heading centroid to body centroid (e.g. 1.15)
+     * * `min_heading_gap` - Minimum absolute font-size difference in points (e.g. 1.5)
+     * 
+     * # Returns
+     * 
+     * Vector of tuples `(centroid, heading_level)` where `None` means body text
+     * and `Some(1..=6)` means H1-H6. Sorted by centroid descending.
+     */
+    public static List<String> assignHeadingLevelsSmart(List<FontSizeCluster> clusters, float minHeadingRatio, float minHeadingGap) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(clusters, "clusters must not be null");
+        java.util.Objects.requireNonNull(minHeadingRatio, "minHeadingRatio must not be null");
+        java.util.Objects.requireNonNull(minHeadingGap, "minHeadingGap must not be null");
+        return KreuzbergRs.assignHeadingLevelsSmart(clusters, minHeadingRatio, minHeadingGap);
+    }
+
+    /**
+     * Assign hierarchy levels to text blocks based on KMeans clustering results.
+     * 
+     * Maps cluster indices to HTML heading levels (H1-H6) and body text:
+     * - Cluster 0 → H1 (top-level heading)
+     * - Cluster 1 → H2 (secondary heading)
+     * - Cluster 2 → H3 (tertiary heading)
+     * - Cluster 3 → H4 (quaternary heading)
+     * - Cluster 4 → H5 (quinary heading)
+     * - Cluster 5 → H6 (senary heading)
+     * - Cluster 6+ → Body (body text)
+     * 
+     * # Arguments
+     * 
+     * * `blocks` - Slice of TextBlock objects to assign hierarchy levels to
+     * * `kmeans_result` - KMeansResult containing cluster labels for each block
+     * 
+     * # Returns
+     * 
+     * Vector of tuples containing (original block info, hierarchy level)
+     * 
+     * # Example
+     * 
+     * ```rust,no_run
+     * # #[cfg(feature = "pdf")]
+     * # {
+     * use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, HierarchyLevel, assign_hierarchy_levels, KMeansResult};
+     * 
+     * let blocks = vec![
+     *     TextBlock {
+     *         text: "Title".to_string(),
+     *         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
+     *         font_size: 24.0,
+     *     },
+     *     TextBlock {
+     *         text: "Body".to_string(),
+     *         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
+     *         font_size: 12.0,
+     *     },
+     * ];
+     * 
+     * let kmeans_result = KMeansResult {
+     *     labels: vec![0, 6],
+     * };
+     * 
+     * let results = assign_hierarchy_levels(&blocks, &kmeans_result);
+     * assert_eq!(results[0].hierarchy_level, HierarchyLevel::H1);
+     * assert_eq!(results[1].hierarchy_level, HierarchyLevel::Body);
+     * # }
+     * ```
+     */
+    public static List<HierarchyBlock> assignHierarchyLevels(List<String> blocks, String kmeansResult) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(blocks, "blocks must not be null");
+        java.util.Objects.requireNonNull(kmeansResult, "kmeansResult must not be null");
+        return KreuzbergRs.assignHierarchyLevels(blocks, kmeansResult);
+    }
+
+    /**
+     * Assign hierarchy levels to text blocks based on font size clusters.
+     * 
+     * Maps font size clusters to heading levels (H1-H6) and body text.
+     * Larger font sizes are assigned higher hierarchy levels.
+     * 
+     * # Arguments
+     * 
+     * * `blocks` - Vector of TextBlock objects to assign levels to
+     * * `clusters` - Vector of FontSizeCluster objects from clustering
+     * 
+     * # Returns
+     * 
+     * Vector of tuples containing (TextBlock, HierarchyLevel).
+     * If blocks is empty or clusters is empty, returns empty vector.
+     * All blocks get Body level if only one cluster exists.
+     */
+    public static List<String> assignHierarchyLevelsFromClusters(List<String> blocks, List<FontSizeCluster> clusters) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(blocks, "blocks must not be null");
+        java.util.Objects.requireNonNull(clusters, "clusters must not be null");
+        return KreuzbergRs.assignHierarchyLevelsFromClusters(blocks, clusters);
     }
 
     /**
@@ -5056,6 +5861,35 @@ public final class Kreuzberg {
     public static List<String> extractSegmentsFromPage(String page) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(page, "page must not be null");
         return KreuzbergRs.extractSegmentsFromPage(page);
+    }
+
+    /**
+     * Merge characters into text blocks using a greedy clustering algorithm.
+     * 
+     * Groups characters based on spatial proximity using weighted distance and
+     * intersection ratio metrics. Characters are merged greedily based on their
+     * proximity and overlap.
+     * 
+     * # Arguments
+     * 
+     * * `chars` - Vector of CharData to merge into blocks
+     * 
+     * # Returns
+     * 
+     * Vector of TextBlock objects containing merged characters
+     * 
+     * # Algorithm
+     * 
+     * The function uses a greedy approach:
+     * 1. Create bounding boxes for each character
+     * 2. Use weighted_distance (5.0 * dx + 1.0 * dy) with maximum threshold of ~2.5x font size
+     * 3. Use intersection_ratio to detect overlapping or very close characters
+     * 4. Merge characters into blocks based on proximity thresholds
+     * 5. Return sorted blocks by position (top to bottom, left to right)
+     */
+    public static List<String> mergeCharsIntoBlocks(List<CharData> chars) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(chars, "chars must not be null");
+        return KreuzbergRs.mergeCharsIntoBlocks(chars);
     }
 
     /**
@@ -5282,6 +6116,46 @@ public final class Kreuzberg {
         java.util.Objects.requireNonNull(segments, "segments must not be null");
         java.util.Objects.requireNonNull(pageHeight, "pageHeight must not be null");
         return KreuzbergRs.segmentsToWords(segments, pageHeight);
+    }
+
+    /**
+     * Post-process a raw table grid to validate structure and clean up.
+     * 
+     * Returns `None` if the table fails structural validation.
+     * 
+     * When `layout_guided` is true, the layout model already confirmed this is
+     * a table, so validation thresholds are relaxed:
+     * - Minimum columns: 3 → 2
+     * - Column sparsity: 75% → 95%
+     * - Overall density: 40% → 15%
+     * - Prose detection: reject if >70% cells >100 chars (vs >50% >60 chars)
+     * - Prose detection: reject if avg cell >80 chars (vs >50 chars)
+     * - Single-word cell: reject if >85% single-word (vs >70%)
+     * - Content asymmetry: reject if one col >92% of text (vs >85%)
+     * - Column-text-flow: applied equally (reject if >60% rows flow through)
+     */
+    public static List<List<String>> postProcessTable(List<List<String>> table, boolean layoutGuided, boolean allowSingleColumn) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(table, "table must not be null");
+        java.util.Objects.requireNonNull(layoutGuided, "layoutGuided must not be null");
+        java.util.Objects.requireNonNull(allowSingleColumn, "allowSingleColumn must not be null");
+        return KreuzbergRs.postProcessTable(table, layoutGuided, allowSingleColumn);
+    }
+
+    /**
+     * Validate whether a reconstructed table grid represents a well-formed table
+     * rather than multi-column prose or a repeated page element.
+     * 
+     * Returns `true` if the grid looks like a real table, `false` if it should be
+     * rejected and its content emitted as paragraph text instead.
+     * 
+     * The checks catch cases the layout model misidentifies as tables:
+     * - Multi-column prose split into a grid (detected via row coherence and column uniformity)
+     * - Repeated page elements (headers/footers detected as tables on every page)
+     * - Low-vocabulary repetitive content (same few words in every row)
+     */
+    public static boolean isWellFormedTable(List<List<String>> grid) throws KreuzbergRsException {
+        java.util.Objects.requireNonNull(grid, "grid must not be null");
+        return KreuzbergRs.isWellFormedTable(grid);
     }
 
     public static String extractTextFromPdf(byte[] pdfBytes) throws KreuzbergRsException {

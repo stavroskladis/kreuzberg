@@ -321,6 +321,12 @@ clear_processor_cache <- function() {
   .Call("kreuzberg_clear_processor_cache")
 }
 
+#' Apply output format conversion to the extraction result.
+#' @export
+apply_output_format <- function(result, output_format) {
+  .Call("kreuzberg_apply_output_format", result, output_format)
+}
+
 #' Determine if a page's text content indicates a blank page.
 #' @export
 is_page_text_blank <- function(text) {
@@ -675,10 +681,22 @@ extract_text_with_page_breaks <- function(bytes) {
   .Call("kreuzberg_extract_text_with_page_breaks", bytes)
 }
 
+#' Detect explicit page break positions in document.xml and extract full text with page boundaries.
+#' @export
+detect_page_breaks_from_docx <- function(bytes) {
+  .Call("kreuzberg_detect_page_breaks_from_docx", bytes)
+}
+
 #' Compute the 1-based page number for each top-level table in the document.
 #' @export
 detect_table_page_numbers <- function(bytes) {
   .Call("kreuzberg_detect_table_page_numbers", bytes)
+}
+
+#' Extract embedded objects from an OOXML ZIP archive and recursively process them.
+#' @export
+extract_ooxml_embedded_objects <- function(zip_bytes, embeddings_prefix, source_label, config) {
+  .Call("kreuzberg_extract_ooxml_embedded_objects", zip_bytes, embeddings_prefix, source_label, config)
 }
 
 #' Detect image format from raw bytes using magic byte signatures.
@@ -721,6 +739,18 @@ parse_xml_svg <- function(xml_bytes, preserve_whitespace) {
 #' @export
 parse_xml <- function(xml_bytes, preserve_whitespace) {
   .Call("kreuzberg_parse_xml", xml_bytes, preserve_whitespace)
+}
+
+#' Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table.
+#' @export
+cells_to_text <- function(cells) {
+  .Call("kreuzberg_cells_to_text", cells)
+}
+
+#' Function
+#' @export
+cells_to_markdown <- function(cells) {
+  .Call("kreuzberg_cells_to_markdown", cells)
 }
 
 #' Parse jotdown attributes into our Attributes representation.
@@ -775,6 +805,12 @@ render_block_to_djot <- function(block, indent_level) {
 #' @export
 render_list_item <- function(item, indent, marker) {
   .Call("kreuzberg_render_list_item", item, indent, marker)
+}
+
+#' Render inline content to djot markup.
+#' @export
+render_inline_content <- function(elements) {
+  .Call("kreuzberg_render_inline_content", elements)
 }
 
 #' Extract YAML frontmatter from document content.
@@ -1139,6 +1175,12 @@ is_valid_utf8 <- function(bytes) {
 
 #' Function
 #' @export
+calculate_quality_score <- function(text, metadata = NULL) {
+  .Call("kreuzberg_calculate_quality_score", text, metadata)
+}
+
+#' Function
+#' @export
 clean_extracted_text <- function(text) {
   .Call("kreuzberg_clean_extracted_text", text)
 }
@@ -1233,6 +1275,12 @@ highlight <- function(start, end) {
   .Call("kreuzberg_highlight", start, end)
 }
 
+#' Classify a URL string into the appropriate `UriKind`.
+#' @export
+classify_uri <- function(url) {
+  .Call("kreuzberg_classify_uri", url)
+}
+
 #' Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary.
 #' @export
 safe_decode <- function(byte_data, encoding = NULL) {
@@ -1323,6 +1371,18 @@ detect_rows <- function(words, row_threshold_ratio) {
   .Call("kreuzberg_detect_rows", words, row_threshold_ratio)
 }
 
+#' Reconstruct a table grid from words with bounding box positions.
+#' @export
+reconstruct_table <- function(words, column_threshold, row_threshold_ratio) {
+  .Call("kreuzberg_reconstruct_table", words, column_threshold, row_threshold_ratio)
+}
+
+#' Convert a table grid to markdown format.
+#' @export
+table_to_markdown <- function(table) {
+  .Call("kreuzberg_table_to_markdown", table)
+}
+
 #' Load ServerConfig with proper precedence order.
 #' @export
 load_server_config <- function(config_path = NULL) {
@@ -1389,6 +1449,36 @@ start_mcp_server_with_config <- function(config) {
   .Call("kreuzberg_start_mcp_server_with_config", config)
 }
 
+#' Validates the consistency and correctness of page boundaries.
+#' @export
+validate_page_boundaries <- function(boundaries) {
+  .Call("kreuzberg_validate_page_boundaries", boundaries)
+}
+
+#' Classify a single chunk based on its content and optional heading context.
+#' @export
+classify_chunk <- function(content, heading_context = NULL) {
+  .Call("kreuzberg_classify_chunk", content, heading_context)
+}
+
+#' Split text into chunks with optional page boundary tracking.
+#' @export
+chunk_text <- function(text, config, page_boundaries = NULL) {
+  .Call("kreuzberg_chunk_text", text, config, page_boundaries)
+}
+
+#' Chunk text with an optional separate markdown source for heading context resolution.
+#' @export
+chunk_text_with_heading_source <- function(text, config, page_boundaries = NULL, heading_source = NULL) {
+  .Call("kreuzberg_chunk_text_with_heading_source", text, config, page_boundaries, heading_source)
+}
+
+#' Chunk text with explicit type specification.
+#' @export
+chunk_text_with_type <- function(text, max_characters, overlap, trim, chunker_type) {
+  .Call("kreuzberg_chunk_text_with_type", text, max_characters, overlap, trim, chunker_type)
+}
+
 #' Batch process multiple texts with the same configuration.
 #' @export
 chunk_texts_batch <- function(texts, config) {
@@ -1401,10 +1491,22 @@ precompute_utf8_boundaries <- function(text) {
   .Call("kreuzberg_precompute_utf8_boundaries", text)
 }
 
+#' Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries.
+#' @export
+validate_utf8_boundaries <- function(text, boundaries) {
+  .Call("kreuzberg_validate_utf8_boundaries", text, boundaries)
+}
+
 #' Render a Jinja2 template with the given context variables.
 #' @export
 render_template <- function(template, context) {
   .Call("kreuzberg_render_template", template, context)
+}
+
+#' Extract structured data from document content using an LLM with JSON schema.
+#' @export
+extract_structured <- function(content, config) {
+  .Call("kreuzberg_extract_structured", content, config)
 }
 
 #' L2-normalize a vector.
@@ -1423,6 +1525,24 @@ get_preset <- function(name) {
 #' @export
 list_presets <- function() {
   .Call("kreuzberg_list_presets")
+}
+
+#' Eagerly download and cache an embedding model without returning the handle.
+#' @export
+warm_model <- function(model_type, cache_dir = NULL) {
+  .Call("kreuzberg_warm_model", model_type, cache_dir)
+}
+
+#' Download an embedding model's files without initializing ONNX Runtime.
+#' @export
+download_model <- function(model_type, cache_dir = NULL) {
+  .Call("kreuzberg_download_model", model_type, cache_dir)
+}
+
+#' Generate embeddings for text chunks using the specified configuration.
+#' @export
+generate_embeddings_for_chunks <- function(chunks, config) {
+  .Call("kreuzberg_generate_embeddings_for_chunks", chunks, config)
 }
 
 #' Calculate smart DPI based on page dimensions, memory constraints, and target DPI
@@ -1479,10 +1599,28 @@ element_to_hocr_word <- function(element) {
   .Call("kreuzberg_element_to_hocr_word", element)
 }
 
+#' Convert a vector of OcrElements to HocrWords for batch table processing.
+#' @export
+elements_to_hocr_words <- function(elements, min_confidence) {
+  .Call("kreuzberg_elements_to_hocr_words", elements, min_confidence)
+}
+
 #' Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata.
 #' @export
 parse_hocr_to_internal_document <- function(hocr_html) {
   .Call("kreuzberg_parse_hocr_to_internal_document", hocr_html)
+}
+
+#' Assemble structured markdown from OCR elements using layout detection results.
+#' @export
+assemble_ocr_markdown <- function(elements, detection = NULL, img_width, img_height, recognized_tables) {
+  .Call("kreuzberg_assemble_ocr_markdown", elements, detection, img_width, img_height, recognized_tables)
+}
+
+#' Run TATR table recognition for all Table regions in a page.
+#' @export
+recognize_page_tables <- function(page_image, detection, elements, tatr_model) {
+  .Call("kreuzberg_recognize_page_tables", page_image, detection, elements, tatr_model)
 }
 
 #' Extract words from Tesseract TSV output and convert to HocrWord format.
@@ -1527,6 +1665,24 @@ map_language_code <- function(kreuzberg_code) {
   .Call("kreuzberg_map_language_code", kreuzberg_code)
 }
 
+#' Build a 2D cell grid from TATR detections.
+#' @export
+build_cell_grid <- function(result, table_bbox = NULL) {
+  .Call("kreuzberg_build_cell_grid", result, table_bbox)
+}
+
+#' Apply Docling-style postprocessing heuristics to raw detections.
+#' @export
+apply_heuristics <- function(detections, page_width, page_height) {
+  .Call("kreuzberg_apply_heuristics", detections, page_width, page_height)
+}
+
+#' Standard greedy Non-Maximum Suppression.
+#' @export
+greedy_nms <- function(detections, iou_threshold) {
+  .Call("kreuzberg_greedy_nms", detections, iou_threshold)
+}
+
 #' Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
 #' @export
 preprocess_imagenet <- function(img, target_size) {
@@ -1551,10 +1707,34 @@ preprocess_letterbox <- function(img, target_width, target_height) {
   .Call("kreuzberg_preprocess_letterbox", img, target_width, target_height)
 }
 
+#' Build an optimized ORT session from an ONNX model file.
+#' @export
+build_session <- function(path, accel = NULL, thread_budget) {
+  .Call("kreuzberg_build_session", path, accel, thread_budget)
+}
+
 #' Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
 #' @export
 config_from_extraction <- function(layout_config) {
   .Call("kreuzberg_config_from_extraction", layout_config)
+}
+
+#' Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
+#' @export
+create_engine <- function(layout_config) {
+  .Call("kreuzberg_create_engine", layout_config)
+}
+
+#' Take the cached layout engine, or create a new one if the cache is empty.
+#' @export
+take_or_create_engine <- function(layout_config) {
+  .Call("kreuzberg_take_or_create_engine", layout_config)
+}
+
+#' Return a layout engine to the global cache for reuse by future extractions.
+#' @export
+return_engine <- function(engine) {
+  .Call("kreuzberg_return_engine", engine)
 }
 
 #' Take the cached TATR model, or create a new one if the cache is empty.
@@ -1611,6 +1791,12 @@ extract_embedded_files <- function(document) {
   .Call("kreuzberg_extract_embedded_files", document)
 }
 
+#' Extract embedded files from PDF bytes and recursively process them.
+#' @export
+extract_and_process_embedded_files <- function(pdf_bytes, config) {
+  .Call("kreuzberg_extract_and_process_embedded_files", pdf_bytes, config)
+}
+
 #' Initialize the global font cache.
 #' @export
 initialize_font_cache <- function() {
@@ -1629,6 +1815,30 @@ cached_font_count <- function() {
   .Call("kreuzberg_cached_font_count")
 }
 
+#' Cluster text blocks by font size using k-means algorithm.
+#' @export
+cluster_font_sizes <- function(blocks, k) {
+  .Call("kreuzberg_cluster_font_sizes", blocks, k)
+}
+
+#' Assign heading levels using the "most frequent cluster = Body" rule.
+#' @export
+assign_heading_levels_smart <- function(clusters, min_heading_ratio, min_heading_gap) {
+  .Call("kreuzberg_assign_heading_levels_smart", clusters, min_heading_ratio, min_heading_gap)
+}
+
+#' Assign hierarchy levels to text blocks based on KMeans clustering results.
+#' @export
+assign_hierarchy_levels <- function(blocks, kmeans_result) {
+  .Call("kreuzberg_assign_hierarchy_levels", blocks, kmeans_result)
+}
+
+#' Assign hierarchy levels to text blocks based on font size clusters.
+#' @export
+assign_hierarchy_levels_from_clusters <- function(blocks, clusters) {
+  .Call("kreuzberg_assign_hierarchy_levels_from_clusters", blocks, clusters)
+}
+
 #' Extract characters with fonts from a PDF page.
 #' @export
 extract_chars_with_fonts <- function(page) {
@@ -1639,6 +1849,12 @@ extract_chars_with_fonts <- function(page) {
 #' @export
 extract_segments_from_page <- function(page) {
   .Call("kreuzberg_extract_segments_from_page", page)
+}
+
+#' Merge characters into text blocks using a greedy clustering algorithm.
+#' @export
+merge_chars_into_blocks <- function(chars) {
+  .Call("kreuzberg_merge_chars_into_blocks", chars)
 }
 
 #' Determine whether OCR should be triggered based on text block coverage.
@@ -1729,6 +1945,18 @@ split_segment_to_words <- function(seg, page_height) {
 #' @export
 segments_to_words <- function(segments, page_height) {
   .Call("kreuzberg_segments_to_words", segments, page_height)
+}
+
+#' Post-process a raw table grid to validate structure and clean up.
+#' @export
+post_process_table <- function(table, layout_guided, allow_single_column) {
+  .Call("kreuzberg_post_process_table", table, layout_guided, allow_single_column)
+}
+
+#' Validate whether a reconstructed table grid represents a well-formed table
+#' @export
+is_well_formed_table <- function(grid) {
+  .Call("kreuzberg_is_well_formed_table", grid)
 }
 
 #' Function

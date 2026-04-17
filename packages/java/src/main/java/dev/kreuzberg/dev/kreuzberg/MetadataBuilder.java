@@ -16,7 +16,7 @@ public class MetadataBuilder {
     private Optional<String> createdBy = Optional.empty();
     private Optional<String> modifiedBy = Optional.empty();
     private Optional<PageStructure> pages = Optional.empty();
-    private Optional<String> format = Optional.empty();
+    private Optional<FormatMetadata> format = Optional.empty();
     private Optional<ImagePreprocessingMetadata> imagePreprocessing = Optional.empty();
     private Optional<Object> jsonSchema = Optional.empty();
     private Optional<ErrorMetadata> error = Optional.empty();
@@ -78,7 +78,7 @@ public class MetadataBuilder {
         return this;
     }
 
-    public MetadataBuilder withFormat(Optional<String> value) {
+    public MetadataBuilder withFormat(Optional<FormatMetadata> value) {
         this.format = value;
         return this;
     }

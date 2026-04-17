@@ -80,8 +80,9 @@ public sealed class Metadata
     /// Contains detailed metadata specific to the document format.
     /// Serializes with a `format_type` discriminator field.
     /// </summary>
+    [JsonConverter(typeof(FormatMetadataJsonConverter))]
     [JsonPropertyName("format")]
-    public string? Format { get; set; } = null;
+    public FormatMetadata? Format { get; set; } = null;
 
     /// <summary>
     /// Image preprocessing metadata (when OCR preprocessing was applied)
