@@ -9446,12 +9446,6 @@ impl WasmHtmlMetadata {
     pub fn is_empty(&self) -> bool {
         kreuzberg::HtmlMetadata::from(self.clone()).is_empty()
     }
-
-    #[allow(clippy::should_implement_trait)]
-    #[wasm_bindgen]
-    pub fn from(metadata: WasmHtmlMetadata) -> WasmHtmlMetadata {
-        kreuzberg::HtmlMetadata::from(metadata.into()).into()
-    }
 }
 
 #[derive(Clone)]
@@ -12345,86 +12339,6 @@ impl WasmExtractBytesParams {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct WasmBatchExtractFilesParams {
-    paths: Vec<String>,
-    config: Option<JsValue>,
-    pdf_password: Option<String>,
-    file_configs: Option<Vec<Option<JsValue>>>,
-    response_format: Option<String>,
-}
-
-#[wasm_bindgen]
-impl WasmBatchExtractFilesParams {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        paths: Vec<String>,
-        config: Option<JsValue>,
-        pdf_password: Option<String>,
-        file_configs: Option<Vec<Option<JsValue>>>,
-        response_format: Option<String>,
-    ) -> WasmBatchExtractFilesParams {
-        WasmBatchExtractFilesParams {
-            paths,
-            config,
-            pdf_password,
-            file_configs,
-            response_format,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn paths(&self) -> Vec<String> {
-        self.paths.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_paths(&mut self, value: Vec<String>) {
-        self.paths = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn config(&self) -> Option<JsValue> {
-        self.config.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_config(&mut self, value: Option<JsValue>) {
-        self.config = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "pdfPassword")]
-    pub fn pdf_password(&self) -> Option<String> {
-        self.pdf_password.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "pdfPassword")]
-    pub fn set_pdf_password(&mut self, value: Option<String>) {
-        self.pdf_password = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "fileConfigs")]
-    pub fn file_configs(&self) -> Option<Vec<Option<JsValue>>> {
-        self.file_configs.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "fileConfigs")]
-    pub fn set_file_configs(&mut self, value: Option<Vec<Option<JsValue>>>) {
-        self.file_configs = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "responseFormat")]
-    pub fn response_format(&self) -> Option<String> {
-        self.response_format.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "responseFormat")]
-    pub fn set_response_format(&mut self, value: Option<String>) {
-        self.response_format = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
 pub struct WasmDetectMimeTypeParams {
     path: String,
     use_content: bool,
@@ -13429,14 +13343,6 @@ impl WasmPaddleOcrConfig {
         kreuzberg::PaddleOcrConfig::from(self.clone())
             .with_model_tier(tier)
             .into()
-    }
-
-    #[wasm_bindgen(js_name = "resolveCacheDir")]
-    pub fn resolve_cache_dir(&self) -> String {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .resolve_cache_dir()
-            .to_string_lossy()
-            .to_string()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -15406,8 +15312,9 @@ pub fn validate_llm_config_model(model: String) -> Result<(), JsValue> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateVlmBackendConfig")]
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<WasmLlmConfig>) -> Result<(), JsValue> {
-    let result = kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.as_ref())
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let result =
+        kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.map(Into::into).as_ref())
+            .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
 
@@ -16395,7 +16302,7 @@ pub fn from_utf8(bytes: Vec<u8>) -> Result<String, JsValue> {
 #[wasm_bindgen(js_name = "stringFromUtf8")]
 pub fn string_from_utf8(bytes: Vec<u8>) -> Result<String, JsValue> {
     let result =
-        kreuzberg::text::utf8_validation::string_from_utf8(&bytes).map_err(|e| JsValue::from_str(&e.to_string()))?;
+        kreuzberg::text::utf8_validation::string_from_utf8(bytes).map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
 
@@ -16698,7 +16605,7 @@ pub fn validate_page_boundaries(boundaries: Vec<WasmPageBoundary>) -> Result<(),
 
 #[wasm_bindgen(js_name = "classifyChunk")]
 pub fn classify_chunk(content: String, heading_context: Option<WasmHeadingContext>) -> WasmChunkType {
-    kreuzberg::chunking::classify_chunk(&content, heading_context.as_ref()).into()
+    kreuzberg::chunking::classify_chunk(&content, heading_context.map(Into::into).as_ref()).into()
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -16764,12 +16671,6 @@ pub fn validate_utf8_boundaries(text: String, boundaries: Vec<WasmPageBoundary>)
     let result = kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "createClient")]
-pub fn create_client(config: WasmLlmConfig) -> Result<String, JsValue> {
-    Err(JsValue::from_str("Not implemented: create_client"))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -16927,7 +16828,7 @@ pub fn assemble_ocr_markdown(
 ) -> String {
     kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
         &elements,
-        detection.as_ref(),
+        detection.map(Into::into).as_ref(),
         img_width,
         img_height,
         &recognized_tables,
@@ -19448,28 +19349,6 @@ impl From<kreuzberg::StructuredData> for WasmStructuredData {
     }
 }
 
-impl From<WasmHtmlMetadata> for kreuzberg::HtmlMetadata {
-    fn from(val: WasmHtmlMetadata) -> Self {
-        Self {
-            title: val.title,
-            description: val.description,
-            keywords: val.keywords,
-            author: val.author,
-            canonical_url: val.canonical_url,
-            base_href: val.base_href,
-            language: val.language,
-            text_direction: val.text_direction.map(Into::into),
-            open_graph: serde_wasm_bindgen::from_value(val.open_graph.clone()).unwrap_or_default(),
-            twitter_card: serde_wasm_bindgen::from_value(val.twitter_card.clone()).unwrap_or_default(),
-            meta_tags: serde_wasm_bindgen::from_value(val.meta_tags.clone()).unwrap_or_default(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            links: val.links.into_iter().map(Into::into).collect(),
-            images: val.images.into_iter().map(Into::into).collect(),
-            structured_data: val.structured_data.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::HtmlMetadata> for WasmHtmlMetadata {
     fn from(val: kreuzberg::HtmlMetadata) -> Self {
         Self {
@@ -20120,18 +19999,6 @@ impl From<kreuzberg::mcp::ExtractBytesParams> for WasmExtractBytesParams {
             mime_type: val.mime_type,
             config: val.config.as_ref().and_then(|v| serde_wasm_bindgen::to_value(v).ok()),
             pdf_password: val.pdf_password,
-            response_format: val.response_format,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::BatchExtractFilesParams> for WasmBatchExtractFilesParams {
-    fn from(val: kreuzberg::mcp::BatchExtractFilesParams) -> Self {
-        Self {
-            paths: val.paths,
-            config: val.config.as_ref().and_then(|v| serde_wasm_bindgen::to_value(v).ok()),
-            pdf_password: val.pdf_password,
-            file_configs: val.file_configs,
             response_format: val.response_format,
         }
     }
@@ -20855,7 +20722,7 @@ impl From<kreuzberg::plugins::OcrBackendType> for WasmOcrBackendType {
     }
 }
 
-impl From<WasmReductionLevel> for kreuzberg::text::ReductionLevel {
+impl From<WasmReductionLevel> for kreuzberg::ReductionLevel {
     fn from(val: WasmReductionLevel) -> Self {
         match val {
             WasmReductionLevel::Off => Self::Off,
@@ -20867,14 +20734,14 @@ impl From<WasmReductionLevel> for kreuzberg::text::ReductionLevel {
     }
 }
 
-impl From<kreuzberg::text::ReductionLevel> for WasmReductionLevel {
-    fn from(val: kreuzberg::text::ReductionLevel) -> Self {
+impl From<kreuzberg::ReductionLevel> for WasmReductionLevel {
+    fn from(val: kreuzberg::ReductionLevel) -> Self {
         match val {
-            kreuzberg::text::ReductionLevel::Off => Self::Off,
-            kreuzberg::text::ReductionLevel::Light => Self::Light,
-            kreuzberg::text::ReductionLevel::Moderate => Self::Moderate,
-            kreuzberg::text::ReductionLevel::Aggressive => Self::Aggressive,
-            kreuzberg::text::ReductionLevel::Maximum => Self::Maximum,
+            kreuzberg::ReductionLevel::Off => Self::Off,
+            kreuzberg::ReductionLevel::Light => Self::Light,
+            kreuzberg::ReductionLevel::Moderate => Self::Moderate,
+            kreuzberg::ReductionLevel::Aggressive => Self::Aggressive,
+            kreuzberg::ReductionLevel::Maximum => Self::Maximum,
         }
     }
 }

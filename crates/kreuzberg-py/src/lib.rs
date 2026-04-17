@@ -5534,13 +5534,6 @@ impl HtmlMetadata {
         };
         core_self.is_empty()
     }
-
-    #[allow(clippy::should_implement_trait)]
-    #[staticmethod]
-    #[pyo3(signature = (metadata))]
-    pub fn from(metadata: HtmlMetadata) -> HtmlMetadata {
-        kreuzberg::HtmlMetadata::from(metadata.into()).into()
-    }
 }
 
 #[derive(Clone, serde::Serialize)]
@@ -7249,49 +7242,6 @@ impl ExtractBytesParams {
 
 #[derive(Clone, serde::Serialize)]
 #[pyclass(frozen, from_py_object)]
-pub struct BatchExtractFilesParams {
-    /// Paths to files to extract
-    #[pyo3(get)]
-    pub paths: Vec<String>,
-    /// Extraction configuration (JSON object)
-    #[pyo3(get)]
-    pub config: Option<String>,
-    /// Password for encrypted PDFs
-    #[pyo3(get)]
-    pub pdf_password: Option<String>,
-    /// Per-file extraction configuration overrides (parallel array to paths).
-    /// Each entry is either null (use default) or a FileExtractionConfig JSON object.
-    #[pyo3(get)]
-    pub file_configs: Option<Vec<Option<String>>>,
-    /// Wire format for the response: "json" (default) or "toon"
-    #[pyo3(get)]
-    pub response_format: Option<String>,
-}
-
-#[pymethods]
-impl BatchExtractFilesParams {
-    #[must_use]
-    #[pyo3(signature = (paths, config=None, pdf_password=None, file_configs=None, response_format=None))]
-    #[new]
-    pub fn new(
-        paths: Vec<String>,
-        config: Option<String>,
-        pdf_password: Option<String>,
-        file_configs: Option<Vec<Option<String>>>,
-        response_format: Option<String>,
-    ) -> Self {
-        Self {
-            paths,
-            config,
-            pdf_password,
-            file_configs,
-            response_format,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
-#[pyclass(frozen, from_py_object)]
 pub struct DetectMimeTypeParams {
     /// Path to the file
     #[pyo3(get)]
@@ -8076,25 +8026,6 @@ impl PaddleOcrConfig {
             model_tier: self.model_tier.clone(),
         };
         core_self.with_model_tier(tier).into()
-    }
-
-    #[pyo3(signature = ())]
-    pub fn resolve_cache_dir(&self) -> String {
-        let core_self = kreuzberg::PaddleOcrConfig {
-            language: self.language.clone(),
-            cache_dir: self.cache_dir.clone().map(Into::into),
-            use_angle_cls: self.use_angle_cls,
-            enable_table_detection: self.enable_table_detection,
-            det_db_thresh: self.det_db_thresh,
-            det_db_box_thresh: self.det_db_box_thresh,
-            det_db_unclip_ratio: self.det_db_unclip_ratio,
-            det_limit_side_len: self.det_limit_side_len,
-            rec_batch_num: self.rec_batch_num,
-            padding: self.padding,
-            drop_score: self.drop_score,
-            model_tier: self.model_tier.clone(),
-        };
-        core_self.resolve_cache_dir().into()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -9801,7 +9732,7 @@ pub fn validate_llm_config_model(model: String) -> PyResult<()> {
 #[pyfunction]
 #[pyo3(signature = (backend, vlm_config=None))]
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<LlmConfig>) -> PyResult<()> {
-    let vlm_config_core = vlm_config.as_ref();
+    let vlm_config_core = vlm_config.map(Into::into).as_ref();
     kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config_core)
         .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
 }
@@ -11129,7 +11060,7 @@ pub fn from_utf8(bytes: Vec<u8>) -> PyResult<String> {
 #[pyfunction]
 #[pyo3(signature = (bytes))]
 pub fn string_from_utf8(bytes: Vec<u8>) -> PyResult<String> {
-    kreuzberg::text::utf8_validation::string_from_utf8(&bytes)
+    kreuzberg::text::utf8_validation::string_from_utf8(bytes)
         .map(|val| val.into())
         .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
 }
@@ -11520,7 +11451,7 @@ pub fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> PyResult<()> {
 #[pyfunction]
 #[pyo3(signature = (content, heading_context=None))]
 pub fn classify_chunk(content: String, heading_context: Option<HeadingContext>) -> ChunkType {
-    let heading_context_core = heading_context.as_ref();
+    let heading_context_core = heading_context.map(Into::into).as_ref();
     kreuzberg::chunking::classify_chunk(&content, heading_context_core).into()
 }
 
@@ -11597,19 +11528,6 @@ pub fn precompute_utf8_boundaries(text: String) -> String {
 pub fn validate_utf8_boundaries(text: String, boundaries: Vec<PageBoundary>) -> PyResult<()> {
     let boundaries_core: Vec<_> = boundaries.into_iter().map(Into::into).collect();
     kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries_core)
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[pyfunction]
-#[pyo3(signature = (config))]
-pub fn create_client(config: LlmConfig) -> PyResult<String> {
-    let config_json =
-        serde_json::to_string(&config).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-    let config_core: kreuzberg::LlmConfig =
-        serde_json::from_str(&config_json).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-    kreuzberg::llm::client::create_client(&config_core)
-        .map(|val| val.into())
         .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
 }
 
@@ -11819,7 +11737,7 @@ pub fn assemble_ocr_markdown(
     recognized_tables: Option<Vec<RecognizedTable>>,
 ) -> String {
     let elements_core: Vec<_> = elements.into_iter().map(Into::into).collect();
-    let detection_core = detection.as_ref();
+    let detection_core = detection.map(Into::into).as_ref();
     let recognized_tables_core: Vec<_> = recognized_tables
         .expect("'recognized_tables' is required")
         .into_iter()
@@ -14481,28 +14399,6 @@ impl From<kreuzberg::StructuredData> for StructuredData {
     }
 }
 
-impl From<HtmlMetadata> for kreuzberg::HtmlMetadata {
-    fn from(val: HtmlMetadata) -> Self {
-        Self {
-            title: val.title,
-            description: val.description,
-            keywords: val.keywords,
-            author: val.author,
-            canonical_url: val.canonical_url,
-            base_href: val.base_href,
-            language: val.language,
-            text_direction: val.text_direction.map(Into::into),
-            open_graph: val.open_graph.into_iter().collect(),
-            twitter_card: val.twitter_card.into_iter().collect(),
-            meta_tags: val.meta_tags.into_iter().collect(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            links: val.links.into_iter().map(Into::into).collect(),
-            images: val.images.into_iter().map(Into::into).collect(),
-            structured_data: val.structured_data.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::HtmlMetadata> for HtmlMetadata {
     fn from(val: kreuzberg::HtmlMetadata) -> Self {
         Self {
@@ -15162,18 +15058,6 @@ impl From<kreuzberg::mcp::ExtractBytesParams> for ExtractBytesParams {
     }
 }
 
-impl From<kreuzberg::mcp::BatchExtractFilesParams> for BatchExtractFilesParams {
-    fn from(val: kreuzberg::mcp::BatchExtractFilesParams) -> Self {
-        Self {
-            paths: val.paths,
-            config: val.config.as_ref().map(ToString::to_string),
-            pdf_password: val.pdf_password,
-            file_configs: val.file_configs,
-            response_format: val.response_format,
-        }
-    }
-}
-
 impl From<kreuzberg::mcp::DetectMimeTypeParams> for DetectMimeTypeParams {
     fn from(val: kreuzberg::mcp::DetectMimeTypeParams) -> Self {
         Self {
@@ -15816,7 +15700,7 @@ impl From<kreuzberg::plugins::OcrBackendType> for OcrBackendType {
     }
 }
 
-impl From<ReductionLevel> for kreuzberg::text::ReductionLevel {
+impl From<ReductionLevel> for kreuzberg::ReductionLevel {
     fn from(val: ReductionLevel) -> Self {
         match val {
             ReductionLevel::Off => Self::Off,
@@ -15828,14 +15712,14 @@ impl From<ReductionLevel> for kreuzberg::text::ReductionLevel {
     }
 }
 
-impl From<kreuzberg::text::ReductionLevel> for ReductionLevel {
-    fn from(val: kreuzberg::text::ReductionLevel) -> Self {
+impl From<kreuzberg::ReductionLevel> for ReductionLevel {
+    fn from(val: kreuzberg::ReductionLevel) -> Self {
         match val {
-            kreuzberg::text::ReductionLevel::Off => Self::Off,
-            kreuzberg::text::ReductionLevel::Light => Self::Light,
-            kreuzberg::text::ReductionLevel::Moderate => Self::Moderate,
-            kreuzberg::text::ReductionLevel::Aggressive => Self::Aggressive,
-            kreuzberg::text::ReductionLevel::Maximum => Self::Maximum,
+            kreuzberg::ReductionLevel::Off => Self::Off,
+            kreuzberg::ReductionLevel::Light => Self::Light,
+            kreuzberg::ReductionLevel::Moderate => Self::Moderate,
+            kreuzberg::ReductionLevel::Aggressive => Self::Aggressive,
+            kreuzberg::ReductionLevel::Maximum => Self::Maximum,
         }
     }
 }
@@ -16533,7 +16417,6 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<DoclingCompatResponse>()?;
     m.add_class::<ExtractFileParams>()?;
     m.add_class::<ExtractBytesParams>()?;
-    m.add_class::<BatchExtractFilesParams>()?;
     m.add_class::<DetectMimeTypeParams>()?;
     m.add_class::<CacheWarmParams>()?;
     m.add_class::<EmbedTextParams>()?;
@@ -16847,7 +16730,6 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(chunk_texts_batch, m)?)?;
     m.add_function(wrap_pyfunction!(precompute_utf8_boundaries, m)?)?;
     m.add_function(wrap_pyfunction!(validate_utf8_boundaries, m)?)?;
-    m.add_function(wrap_pyfunction!(create_client, m)?)?;
     m.add_function(wrap_pyfunction!(render_template, m)?)?;
     m.add_function(wrap_pyfunction!(extract_structured, m)?)?;
     m.add_function(wrap_pyfunction!(vlm_ocr, m)?)?;

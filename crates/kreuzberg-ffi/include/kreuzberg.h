@@ -18,7 +18,6 @@ typedef struct KREUZBERGApiState KREUZBERGApiState;
 typedef struct KREUZBERGArchiveEntry KREUZBERGArchiveEntry;
 typedef struct KREUZBERGArchiveMetadata KREUZBERGArchiveMetadata;
 typedef struct KREUZBERGBBox KREUZBERGBBox;
-typedef struct KREUZBERGBatchExtractFilesParams KREUZBERGBatchExtractFilesParams;
 typedef struct KREUZBERGBibtexMetadata KREUZBERGBibtexMetadata;
 typedef struct KREUZBERGBlockType KREUZBERGBlockType;
 typedef struct KREUZBERGByteBufferPool KREUZBERGByteBufferPool;
@@ -6725,13 +6724,6 @@ char *kreuzberg_html_metadata_structured_data(const KREUZBERGHtmlMetadata *ptr);
 int32_t kreuzberg_html_metadata_is_empty(const KREUZBERGHtmlMetadata *this_);
 
 /**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGHtmlMetadata *kreuzberg_html_metadata_from(const KREUZBERGHtmlMetadata *metadata);
-
-/**
  * Create a `OcrMetadata` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -9068,48 +9060,6 @@ char *kreuzberg_extract_bytes_params_pdf_password(const KREUZBERGExtractBytesPar
 char *kreuzberg_extract_bytes_params_response_format(const KREUZBERGExtractBytesParams *ptr);
 
 /**
- * Free a `BatchExtractFilesParams` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_batch_extract_files_params_free(KREUZBERGBatchExtractFilesParams *ptr);
-
-/**
- * Get the `paths` field from a `BatchExtractFilesParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_batch_extract_files_params_paths(const KREUZBERGBatchExtractFilesParams *ptr);
-
-/**
- * Get the `config` field from a `BatchExtractFilesParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_batch_extract_files_params_config(const KREUZBERGBatchExtractFilesParams *ptr);
-
-/**
- * Get the `pdf_password` field from a `BatchExtractFilesParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_batch_extract_files_params_pdf_password(const KREUZBERGBatchExtractFilesParams *ptr);
-
-/**
- * Get the `file_configs` field from a `BatchExtractFilesParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_batch_extract_files_params_file_configs(const KREUZBERGBatchExtractFilesParams *ptr);
-
-/**
- * Get the `response_format` field from a `BatchExtractFilesParams`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-char *kreuzberg_batch_extract_files_params_response_format(const KREUZBERGBatchExtractFilesParams *ptr);
-
-/**
  * Free a `DetectMimeTypeParams` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -9914,31 +9864,6 @@ KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_padding(KREUZBERGPadd
  */
 KREUZBERGPaddleOcrConfig *kreuzberg_paddle_ocr_config_with_model_tier(KREUZBERGPaddleOcrConfig *this_,
                                                                       const char *tier);
-
-/**
- * Resolves the cache directory, checking in order:
- * 1. Configured `cache_dir` if set
- * 2. `KREUZBERG_CACHE_DIR` environment variable + `/paddle-ocr`
- * 3. Default: `.kreuzberg/paddle-ocr/` (consistent with other cache types)
- *
- * # Returns
- *
- * The resolved cache directory path
- *
- * # Examples
- *
- * ```no_run
- * use kreuzberg::PaddleOcrConfig;
- *
- * let config = PaddleOcrConfig::new("en");
- * let cache_dir = config.resolve_cache_dir();
- * println!("Cache directory: {:?}", cache_dir);
- * ```
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_paddle_ocr_config_resolve_cache_dir(const KREUZBERGPaddleOcrConfig *this_);
 
 /**
  * Creates a default configuration with English language support.
@@ -15938,20 +15863,6 @@ char *kreuzberg_precompute_utf8_boundaries(const char *_text);
  */
 int32_t kreuzberg_validate_utf8_boundaries(const char *text,
                                            const char *boundaries);
-
-/**
- * Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`].
- *
- * The `model` field from the config is passed as a model hint so that
- * liter-llm can resolve the correct provider automatically.
- *
- * When `api_key` is `None`, liter-llm falls back to the provider's standard
- * environment variable (e.g., `OPENAI_API_KEY`).
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_create_client(const KREUZBERGLlmConfig *_config);
 
 /**
  * Render a Jinja2 template with the given context variables.

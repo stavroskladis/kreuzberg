@@ -4080,29 +4080,6 @@ public final class KreuzbergRs {
         }
     }
 
-    public static String createClient(LlmConfig config) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
-            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
-            var cconfig = cconfigJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_LLM_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
-                : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CREATE_CLIENT.invoke(cconfig);
-            if (!cconfig.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_LLM_CONFIG_FREE.invoke(cconfig);
-            }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
     public static String renderTemplate(String template, String context) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var ctemplate = arena.allocateFrom(template);

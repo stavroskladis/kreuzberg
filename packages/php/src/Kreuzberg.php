@@ -5613,24 +5613,6 @@ final class Kreuzberg
     }
 
     /**
-     * Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`].
-     *
-     * The `model` field from the config is passed as a model hint so that
-     * liter-llm can resolve the correct provider automatically.
-     *
-     * When `api_key` is `None`, liter-llm falls back to the provider's standard
-     * environment variable (e.g., `OPENAI_API_KEY`).
-     *
-     * @param LlmConfig $config
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function createClient(LlmConfig $config): string
-    {
-        return \Kreuzberg\KreuzbergApi::createClient($config); // delegate to native extension class
-    }
-
-    /**
      * Render a Jinja2 template with the given context variables.
      *
      * @param string $template

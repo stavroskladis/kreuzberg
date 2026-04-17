@@ -5087,11 +5087,6 @@ impl HtmlMetadata {
         };
         core_self.is_empty()
     }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn from(metadata: &HtmlMetadata) -> HtmlMetadata {
-        panic!("alef: from not auto-delegatable")
-    }
 }
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
@@ -6716,55 +6711,6 @@ impl ExtractBytesParams {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[php_class]
-#[php(name = "Kreuzberg\\BatchExtractFilesParams")]
-pub struct BatchExtractFilesParams {
-    /// Paths to files to extract
-    #[php(prop, name = "paths")]
-    pub paths: Vec<String>,
-    /// Extraction configuration (JSON object)
-    pub config: Option<String>,
-    /// Password for encrypted PDFs
-    #[php(prop, name = "pdf_password")]
-    pub pdf_password: Option<String>,
-    /// Per-file extraction configuration overrides (parallel array to paths).
-    /// Each entry is either null (use default) or a FileExtractionConfig JSON object.
-    pub file_configs: Option<Vec<Option<String>>>,
-    /// Wire format for the response: "json" (default) or "toon"
-    #[php(prop, name = "response_format")]
-    pub response_format: Option<String>,
-}
-
-#[php_impl]
-impl BatchExtractFilesParams {
-    pub fn __construct(
-        paths: Vec<String>,
-        config: Option<String>,
-        pdf_password: Option<String>,
-        file_configs: Option<Vec<Option<String>>>,
-        response_format: Option<String>,
-    ) -> Self {
-        Self {
-            paths,
-            config,
-            pdf_password,
-            file_configs,
-            response_format,
-        }
-    }
-
-    #[php(getter)]
-    pub fn get_config(&self) -> Option<String> {
-        self.config.clone()
-    }
-
-    #[php(getter)]
-    pub fn get_file_configs(&self) -> Option<Vec<Option<String>>> {
-        self.file_configs.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
 #[php(name = "Kreuzberg\\DetectMimeTypeParams")]
 pub struct DetectMimeTypeParams {
     /// Path to the file
@@ -7517,24 +7463,6 @@ impl PaddleOcrConfig {
             model_tier: self.model_tier.clone(),
         };
         core_self.with_model_tier(&tier).into()
-    }
-
-    pub fn resolve_cache_dir(&self) -> String {
-        let core_self = kreuzberg::PaddleOcrConfig {
-            language: self.language.clone(),
-            cache_dir: self.cache_dir.clone().map(Into::into),
-            use_angle_cls: self.use_angle_cls,
-            enable_table_detection: self.enable_table_detection,
-            det_db_thresh: self.det_db_thresh,
-            det_db_box_thresh: self.det_db_box_thresh,
-            det_db_unclip_ratio: self.det_db_unclip_ratio,
-            det_limit_side_len: self.det_limit_side_len,
-            rec_batch_num: self.rec_batch_num,
-            padding: self.padding,
-            drop_score: self.drop_score,
-            model_tier: self.model_tier.clone(),
-        };
-        core_self.resolve_cache_dir().into()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -9776,12 +9704,6 @@ impl KreuzbergApi {
         let result = kreuzberg::chunking::validate_utf8_boundaries(&text, boundaries)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
-    }
-
-    pub fn create_client(config: &LlmConfig) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: create_client".to_string(),
-        ))
     }
 
     pub fn render_template(template: String, context: String) -> PhpResult<String> {
@@ -12176,13 +12098,6 @@ impl From<kreuzberg::StructuredData> for StructuredData {
     }
 }
 
-impl From<HtmlMetadata> for kreuzberg::HtmlMetadata {
-    fn from(val: HtmlMetadata) -> Self {
-        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
-        serde_json::from_str(&json).expect("alef: deserialize to core type")
-    }
-}
-
 impl From<kreuzberg::HtmlMetadata> for HtmlMetadata {
     fn from(val: kreuzberg::HtmlMetadata) -> Self {
         Self {
@@ -12827,18 +12742,6 @@ impl From<kreuzberg::mcp::ExtractBytesParams> for ExtractBytesParams {
             mime_type: val.mime_type,
             config: val.config.as_ref().map(ToString::to_string),
             pdf_password: val.pdf_password,
-            response_format: val.response_format,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::BatchExtractFilesParams> for BatchExtractFilesParams {
-    fn from(val: kreuzberg::mcp::BatchExtractFilesParams) -> Self {
-        Self {
-            paths: val.paths,
-            config: val.config.as_ref().map(ToString::to_string),
-            pdf_password: val.pdf_password,
-            file_configs: val.file_configs,
             response_format: val.response_format,
         }
     }
@@ -13522,7 +13425,6 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<DoclingCompatResponse>()
         .class::<ExtractFileParams>()
         .class::<ExtractBytesParams>()
-        .class::<BatchExtractFilesParams>()
         .class::<DetectMimeTypeParams>()
         .class::<CacheWarmParams>()
         .class::<EmbedTextParams>()

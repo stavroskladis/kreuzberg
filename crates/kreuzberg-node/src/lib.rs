@@ -2167,19 +2167,6 @@ pub struct JsExtractBytesParams {
 
 #[derive(Clone)]
 #[napi(object)]
-pub struct JsBatchExtractFilesParams {
-    pub paths: Vec<String>,
-    pub config: Option<String>,
-    #[napi(js_name = "pdfPassword")]
-    pub pdf_password: Option<String>,
-    #[napi(js_name = "fileConfigs")]
-    pub file_configs: Option<Vec<Option<String>>>,
-    #[napi(js_name = "responseFormat")]
-    pub response_format: Option<String>,
-}
-
-#[derive(Clone)]
-#[napi(object)]
 pub struct JsDetectMimeTypeParams {
     pub path: String,
     #[napi(js_name = "useContent")]
@@ -3502,7 +3489,7 @@ pub fn validate_llm_config_model(model: String) -> Result<()> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "validateVlmBackendConfig")]
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<JsLlmConfig>) -> Result<()> {
-    let vlm_config_core = vlm_config.as_ref();
+    let vlm_config_core = vlm_config.map(Into::into).as_ref();
     kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -4992,7 +4979,7 @@ pub fn validate_page_boundaries(boundaries: Vec<JsPageBoundary>) -> Result<()> {
 
 #[napi(js_name = "classifyChunk")]
 pub fn classify_chunk(content: String, heading_context: Option<JsHeadingContext>) -> JsChunkType {
-    let heading_context_core = heading_context.as_ref();
+    let heading_context_core = heading_context.map(Into::into).as_ref();
     kreuzberg::chunking::classify_chunk(&content, heading_context_core).into()
 }
 
@@ -5064,16 +5051,6 @@ pub fn validate_utf8_boundaries(text: String, boundaries: Vec<JsPageBoundary>) -
     let boundaries_core: Vec<_> = boundaries.into_iter().map(Into::into).collect();
     kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "createClient")]
-pub fn create_client(config: JsLlmConfig) -> Result<String> {
-    let _ = config;
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: create_client",
-    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -5248,7 +5225,7 @@ pub fn assemble_ocr_markdown(
     recognized_tables: Option<Vec<JsRecognizedTable>>,
 ) -> String {
     let elements_core: Vec<_> = elements.into_iter().map(Into::into).collect();
-    let detection_core = detection.as_ref();
+    let detection_core = detection.map(Into::into).as_ref();
     let recognized_tables_core: Vec<_> = recognized_tables
         .expect("'recognized_tables' is required")
         .into_iter()
@@ -7832,40 +7809,6 @@ impl From<kreuzberg::StructuredData> for JsStructuredData {
     }
 }
 
-impl From<JsHtmlMetadata> for kreuzberg::HtmlMetadata {
-    fn from(val: JsHtmlMetadata) -> Self {
-        Self {
-            title: val.title,
-            description: val.description,
-            keywords: val.keywords.unwrap_or_default(),
-            author: val.author,
-            canonical_url: val.canonical_url,
-            base_href: val.base_href,
-            language: val.language,
-            text_direction: val.text_direction.map(Into::into),
-            open_graph: val.open_graph.unwrap_or_default().into_iter().collect(),
-            twitter_card: val.twitter_card.unwrap_or_default().into_iter().collect(),
-            meta_tags: val.meta_tags.unwrap_or_default().into_iter().collect(),
-            headers: val
-                .headers
-                .map(|v| v.into_iter().map(Into::into).collect())
-                .unwrap_or_default(),
-            links: val
-                .links
-                .map(|v| v.into_iter().map(Into::into).collect())
-                .unwrap_or_default(),
-            images: val
-                .images
-                .map(|v| v.into_iter().map(Into::into).collect())
-                .unwrap_or_default(),
-            structured_data: val
-                .structured_data
-                .map(|v| v.into_iter().map(Into::into).collect())
-                .unwrap_or_default(),
-        }
-    }
-}
-
 impl From<kreuzberg::HtmlMetadata> for JsHtmlMetadata {
     fn from(val: kreuzberg::HtmlMetadata) -> Self {
         Self {
@@ -8517,18 +8460,6 @@ impl From<kreuzberg::mcp::ExtractBytesParams> for JsExtractBytesParams {
             mime_type: val.mime_type,
             config: val.config.as_ref().map(ToString::to_string),
             pdf_password: val.pdf_password,
-            response_format: val.response_format,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::BatchExtractFilesParams> for JsBatchExtractFilesParams {
-    fn from(val: kreuzberg::mcp::BatchExtractFilesParams) -> Self {
-        Self {
-            paths: val.paths,
-            config: val.config.as_ref().map(ToString::to_string),
-            pdf_password: val.pdf_password,
-            file_configs: val.file_configs,
             response_format: val.response_format,
         }
     }
@@ -9282,7 +9213,7 @@ impl From<kreuzberg::plugins::OcrBackendType> for JsOcrBackendType {
     }
 }
 
-impl From<JsReductionLevel> for kreuzberg::text::ReductionLevel {
+impl From<JsReductionLevel> for kreuzberg::ReductionLevel {
     fn from(val: JsReductionLevel) -> Self {
         match val {
             JsReductionLevel::Off => Self::Off,
@@ -9294,14 +9225,14 @@ impl From<JsReductionLevel> for kreuzberg::text::ReductionLevel {
     }
 }
 
-impl From<kreuzberg::text::ReductionLevel> for JsReductionLevel {
-    fn from(val: kreuzberg::text::ReductionLevel) -> Self {
+impl From<kreuzberg::ReductionLevel> for JsReductionLevel {
+    fn from(val: kreuzberg::ReductionLevel) -> Self {
         match val {
-            kreuzberg::text::ReductionLevel::Off => Self::Off,
-            kreuzberg::text::ReductionLevel::Light => Self::Light,
-            kreuzberg::text::ReductionLevel::Moderate => Self::Moderate,
-            kreuzberg::text::ReductionLevel::Aggressive => Self::Aggressive,
-            kreuzberg::text::ReductionLevel::Maximum => Self::Maximum,
+            kreuzberg::ReductionLevel::Off => Self::Off,
+            kreuzberg::ReductionLevel::Light => Self::Light,
+            kreuzberg::ReductionLevel::Moderate => Self::Moderate,
+            kreuzberg::ReductionLevel::Aggressive => Self::Aggressive,
+            kreuzberg::ReductionLevel::Maximum => Self::Maximum,
         }
     }
 }

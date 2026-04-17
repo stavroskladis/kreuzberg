@@ -1849,12 +1849,6 @@ def validate_utf8_boundaries(text: str, boundaries: list[PageBoundary]) -> None:
     return _rust.validate_utf8_boundaries(text, boundaries)
 
 
-def create_client(config: LlmConfig) -> str:
-    """Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`]."""
-    _rust_config = _to_rust_llm_config(config)
-    return _rust.create_client(_rust_config)
-
-
 def render_template(template: str, context: str) -> str:
     """Render a Jinja2 template with the given context variables."""
     return _rust.render_template(template, context)

@@ -1652,8 +1652,6 @@ class HtmlMetadata:
         text_direction: TextDirection | str | None = None,
     ) -> None: ...
     def is_empty(self) -> bool: ...
-    @staticmethod
-    def from_(metadata: HtmlMetadata) -> HtmlMetadata: ...
 
 class OcrMetadata:
     language: str
@@ -2175,21 +2173,6 @@ class ExtractBytesParams:
         response_format: str | None = None,
     ) -> None: ...
 
-class BatchExtractFilesParams:
-    paths: list[str]
-    config: dict[str, Any] | None
-    pdf_password: str | None
-    file_configs: list[dict[str, Any] | None]
-    response_format: str | None
-    def __init__(
-        self,
-        paths: list[str],
-        config: dict[str, Any] | None = None,
-        pdf_password: str | None = None,
-        file_configs: list[dict[str, Any] | None] = None,
-        response_format: str | None = None,
-    ) -> None: ...
-
 class DetectMimeTypeParams:
     path: str
     use_content: bool
@@ -2364,7 +2347,6 @@ class PaddleOcrConfig:
     def with_drop_score(self, score: float) -> PaddleOcrConfig: ...
     def with_padding(self, padding: int) -> PaddleOcrConfig: ...
     def with_model_tier(self, tier: str) -> PaddleOcrConfig: ...
-    def resolve_cache_dir(self) -> str: ...
     @staticmethod
     def default() -> PaddleOcrConfig: ...
 
@@ -3426,8 +3408,6 @@ def chunk_texts_batch(texts: list[str], config: ChunkingConfig) -> list[Chunking
 def precompute_utf8_boundaries(text: str) -> str: ...
 
 def validate_utf8_boundaries(text: str, boundaries: list[PageBoundary]) -> None: ...
-
-def create_client(config: LlmConfig) -> str: ...
 
 def render_template(template: str, context: str) -> str: ...
 

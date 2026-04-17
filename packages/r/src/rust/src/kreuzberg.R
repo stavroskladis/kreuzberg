@@ -1497,12 +1497,6 @@ validate_utf8_boundaries <- function(text, boundaries) {
   .Call("kreuzberg_validate_utf8_boundaries", text, boundaries)
 }
 
-#' Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`].
-#' @export
-create_client <- function(config) {
-  .Call("kreuzberg_create_client", config)
-}
-
 #' Render a Jinja2 template with the given context variables.
 #' @export
 render_template <- function(template, context) {

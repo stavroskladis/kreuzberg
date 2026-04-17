@@ -4734,20 +4734,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`].
-     * 
-     * The `model` field from the config is passed as a model hint so that
-     * liter-llm can resolve the correct provider automatically.
-     * 
-     * When `api_key` is `None`, liter-llm falls back to the provider's standard
-     * environment variable (e.g., `OPENAI_API_KEY`).
-     */
-    public static String createClient(LlmConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.createClient(config);
-    }
-
-    /**
      * Render a Jinja2 template with the given context variables.
      */
     public static String renderTemplate(String template, String context) throws KreuzbergRsException {

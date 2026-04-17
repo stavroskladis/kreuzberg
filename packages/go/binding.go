@@ -6789,22 +6789,6 @@ type ExtractBytesParams struct {
 }
 
 
-// Request parameters for batch file extraction.
-type BatchExtractFilesParams struct {
-    // Paths to files to extract
-    Paths []string `json:"paths,omitempty"`
-    // Extraction configuration (JSON object)
-    Config *map[string]interface{} `json:"config,omitempty"`
-    // Password for encrypted PDFs
-    PdfPassword *string `json:"pdf_password,omitempty"`
-    // Per-file extraction configuration overrides (parallel array to paths).
-    // Each entry is either null (use default) or a FileExtractionConfig JSON object.
-    FileConfigs *[]*map[string]interface{} `json:"file_configs,omitempty"`
-    // Wire format for the response: "json" (default) or "toon"
-    ResponseFormat *string `json:"response_format,omitempty"`
-}
-
-
 // Request parameters for MIME type detection.
 type DetectMimeTypeParams struct {
     // Path to the file
@@ -14014,35 +13998,6 @@ func ValidateUtf8Boundaries(text string, boundaries []PageBoundary) error {
 }
 
 
-// Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`].
-//
-// The `model` field from the config is passed as a model hint so that
-// liter-llm can resolve the correct provider automatically.
-//
-// When `api_key` is `None`, liter-llm falls back to the provider's standard
-// environment variable (e.g., `OPENAI_API_KEY`).
-func CreateClient(config LlmConfig) (*string, error) {
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_llm_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_llm_config_free(cConfig)
-
-    ptr := C.kreuzberg_create_client(cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
 // Render a Jinja2 template with the given context variables.
 func RenderTemplate(template string, context string) (*string, error) {
     cTemplate := C.CString(template)
@@ -17025,31 +16980,6 @@ func (r *PaddleOcrConfig) WithModelTier(tier string) *PaddleOcrConfig {
 
     ptr := C.kreuzberg_paddle_ocr_config_with_model_tier ((*C.KREUZBERGPaddleOcrConfig)(unsafe.Pointer(r)), cTier)
     return (*PaddleOcrConfig)(unsafe.Pointer(ptr))
-}
-
-
-// Resolves the cache directory, checking in order:
-// 1. Configured `cache_dir` if set
-// 2. `KREUZBERG_CACHE_DIR` environment variable + `/paddle-ocr`
-// 3. Default: `.kreuzberg/paddle-ocr/` (consistent with other cache types)
-//
-// # Returns
-//
-// The resolved cache directory path
-//
-// # Examples
-//
-// ```no_run
-// use kreuzberg::PaddleOcrConfig;
-//
-// let config = PaddleOcrConfig::new("en");
-// let cache_dir = config.resolve_cache_dir();
-// println!("Cache directory: {:?}", cache_dir);
-// ```
-func (r *PaddleOcrConfig) ResolveCacheDir() *string {
-    ptr := C.kreuzberg_paddle_ocr_config_resolve_cache_dir ((*C.KREUZBERGPaddleOcrConfig)(unsafe.Pointer(r)))
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 

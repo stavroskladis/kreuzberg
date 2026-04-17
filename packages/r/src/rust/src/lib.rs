@@ -5079,11 +5079,6 @@ impl HtmlMetadata {
         };
         core_self.is_empty()
     }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn from(metadata: HtmlMetadata) -> HtmlMetadata {
-        kreuzberg::HtmlMetadata::from(metadata.into()).into()
-    }
 }
 
 #[extendr]
@@ -6558,35 +6553,6 @@ impl ExtractBytesParams {
 }
 
 #[derive(Clone, serde::Serialize)]
-pub struct BatchExtractFilesParams {
-    /// Paths to files to extract
-    pub paths: Vec<String>,
-    /// Extraction configuration (JSON object)
-    pub config: Option<String>,
-    /// Password for encrypted PDFs
-    pub pdf_password: Option<String>,
-    /// Per-file extraction configuration overrides (parallel array to paths).
-    /// Each entry is either null (use default) or a FileExtractionConfig JSON object.
-    pub file_configs: Option<Vec<Option<String>>>,
-    /// Wire format for the response: "json" (default) or "toon"
-    pub response_format: Option<String>,
-}
-
-impl BatchExtractFilesParams {
-    #[must_use]
-    
-    pub fn new(
-        paths: Vec<String>,
-        config: Option<String>,
-        pdf_password: Option<String>,
-        file_configs: Option<Vec<Option<String>>>,
-        response_format: Option<String>,
-    ) -> Self {
-        Self { paths, config, pdf_password, file_configs, response_format }
-    }
-}
-
-#[derive(Clone, serde::Serialize)]
 pub struct DetectMimeTypeParams {
     /// Path to the file
     pub path: String,
@@ -7292,24 +7258,6 @@ impl PaddleOcrConfig {
             model_tier: self.model_tier.clone(),
         };
         core_self.with_model_tier(tier).into()
-    }
-
-    pub fn resolve_cache_dir(&self) -> String {
-        let core_self = kreuzberg::PaddleOcrConfig {
-            language: self.language.clone(),
-            cache_dir: self.cache_dir.clone().map(Into::into),
-            use_angle_cls: self.use_angle_cls,
-            enable_table_detection: self.enable_table_detection,
-            det_db_thresh: self.det_db_thresh,
-            det_db_box_thresh: self.det_db_box_thresh,
-            det_db_unclip_ratio: self.det_db_unclip_ratio,
-            det_limit_side_len: self.det_limit_side_len,
-            rec_batch_num: self.rec_batch_num,
-            padding: self.padding,
-            drop_score: self.drop_score,
-            model_tier: self.model_tier.clone(),
-        };
-        core_self.resolve_cache_dir().into()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -8559,7 +8507,7 @@ pub fn validate_llm_config_model(model: String) -> Result<()> {
 #[allow(clippy::missing_errors_doc)]
 #[extendr]
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<LlmConfig>) -> Result<()> {
-    let vlm_config_core = vlm_config.as_ref();
+    let vlm_config_core = vlm_config.map(Into::into).as_ref();
     kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config_core).map_err(|e| e.to_string())
 }
 
@@ -9524,7 +9472,7 @@ pub fn from_utf8(bytes: Vec<u8>) -> Result<String> {
 #[allow(clippy::missing_errors_doc)]
 #[extendr]
 pub fn string_from_utf8(bytes: Vec<u8>) -> Result<String> {
-    kreuzberg::text::utf8_validation::string_from_utf8(&bytes).map(|val| val.into()).map_err(|e| e.to_string())
+    kreuzberg::text::utf8_validation::string_from_utf8(bytes).map(|val| val.into()).map_err(|e| e.to_string())
 }
 
 #[extendr]
@@ -9806,7 +9754,7 @@ pub fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> Result<()> {
 
 #[extendr]
 pub fn classify_chunk(content: String, heading_context: Option<HeadingContext>) -> ChunkType {
-    let heading_context_core = heading_context.as_ref();
+    let heading_context_core = heading_context.map(Into::into).as_ref();
     kreuzberg::chunking::classify_chunk(&content, heading_context_core).into()
 }
 
@@ -9854,14 +9802,6 @@ pub fn precompute_utf8_boundaries(text: String) -> String {
 pub fn validate_utf8_boundaries(text: String, boundaries: Vec<PageBoundary>) -> Result<()> {
     let boundaries_core: Vec<_> = boundaries.into_iter().map(Into::into).collect();
     kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries_core).map_err(|e| e.to_string())
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[extendr]
-pub fn create_client(config: LlmConfig) -> Result<String> {
-    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
-    let config_core: kreuzberg::LlmConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
-    kreuzberg::llm::client::create_client(&config_core).map(|val| val.into()).map_err(|e| e.to_string())
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -10001,7 +9941,7 @@ pub fn assemble_ocr_markdown(
     recognized_tables: Option<Vec<RecognizedTable>>
 ) -> String {
     let elements_core: Vec<_> = elements.into_iter().map(Into::into).collect();
-    let detection_core = detection.as_ref();
+    let detection_core = detection.map(Into::into).as_ref();
     let recognized_tables_core: Vec<_> = recognized_tables.expect("'recognized_tables' is required").into_iter().map(Into::into).collect();
     kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(&elements_core, detection_core, img_width.expect("'img_width' is required"), img_height.expect("'img_height' is required"), &recognized_tables_core).into()
 }
@@ -10511,7 +10451,6 @@ extendr_module! {
     impl DoclingCompatResponse;
     impl ExtractFileParams;
     impl ExtractBytesParams;
-    impl BatchExtractFilesParams;
     impl DetectMimeTypeParams;
     impl CacheWarmParams;
     impl EmbedTextParams;
@@ -10789,7 +10728,6 @@ extendr_module! {
     fn chunk_texts_batch;
     fn precompute_utf8_boundaries;
     fn validate_utf8_boundaries;
-    fn create_client;
     fn render_template;
     fn extract_structured;
     fn vlm_ocr;

@@ -4717,40 +4717,6 @@ class ExtractBytesParams
 }
 
 /**
- * Request parameters for batch file extraction.
- */
-class BatchExtractFilesParams
-{
-    /** @var array<string> */
-    public array $paths;
-    public ?string $config;
-    public ?string $pdf_password;
-    /** @var ?array<?string> */
-    public ?array $file_configs;
-    public ?string $response_format;
-
-    /**
-     * @param array<string> $paths
-     * @param ?array<?string> $file_configs
-     */
-    public function __construct(
-        array $paths,
-        ?string $config = null,
-        ?string $pdf_password = null,
-        ?array $file_configs = null,
-        ?string $response_format = null
-    ) { }
-
-    /** @return array<string> */
-    public function getPaths(): array { }
-    public function getConfig(): ?string { }
-    public function getPdfPassword(): ?string { }
-    /** @return ?array<?string> */
-    public function getFileConfigs(): ?array { }
-    public function getResponseFormat(): ?string { }
-}
-
-/**
  * Request parameters for MIME type detection.
  */
 class DetectMimeTypeParams
@@ -6199,7 +6165,6 @@ class KreuzbergApi
      * @return void
      */
     public static function validateUtf8Boundaries(string $text, array $boundaries): void { }
-    public static function createClient(\Kreuzberg\LlmConfig $config): string { }
     public static function renderTemplate(string $template, string $context): string { }
     public static function extractStructuredAsync(string $content, \Kreuzberg\StructuredExtractionConfig $config): string { }
     public static function vlmOcrAsync(string $image_bytes, string $image_mime_type, string $language, \Kreuzberg\LlmConfig $config): string { }

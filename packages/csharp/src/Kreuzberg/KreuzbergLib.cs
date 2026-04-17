@@ -6847,31 +6847,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`].
-    ///
-    /// The `model` field from the config is passed as a model hint so that
-    /// liter-llm can resolve the correct provider automatically.
-    ///
-    /// When `api_key` is `None`, liter-llm falls back to the provider's standard
-    /// environment variable (e.g., `OPENAI_API_KEY`).
-    /// </summary>
-    /// <param name="config"></param>
-    public static string CreateClient(LlmConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.LlmConfigFromJson(configJson);
-        var result = NativeMethods.CreateClient(
-            configHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        NativeMethods.LlmConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Render a Jinja2 template with the given context variables.
     /// </summary>
     /// <param name="template"></param>
@@ -9925,23 +9900,6 @@ public static class KreuzbergLib
         return returnValue;
     }
 
-    public static HtmlMetadata HtmlMetadataFrom(HtmlMetadata metadata)
-    {
-        ArgumentNullException.ThrowIfNull(metadata);
-        var metadataJson = JsonSerializer.Serialize(metadata, JsonOptions);
-        var metadataHandle = NativeMethods.HtmlMetadataFromJson(metadataJson);
-        var result = NativeMethods.HtmlMetadataFrom(
-            metadataHandle
-        );
-        var jsonPtr = NativeMethods.HtmlMetadataToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.HtmlMetadataFree(result);
-        var returnValue = JsonSerializer.Deserialize<HtmlMetadata>(json ?? "null", JsonOptions)!;
-        NativeMethods.HtmlMetadataFree(metadataHandle);
-        return returnValue;
-    }
-
     /// <summary>
     /// Create confidence from Tesseract's single confidence value.
     ///
@@ -10631,34 +10589,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.PaddleOcrConfigFree(result);
         var returnValue = JsonSerializer.Deserialize<PaddleOcrConfig>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Resolves the cache directory, checking in order:
-    /// 1. Configured `cache_dir` if set
-    /// 2. `KREUZBERG_CACHE_DIR` environment variable + `/paddle-ocr`
-    /// 3. Default: `.kreuzberg/paddle-ocr/` (consistent with other cache types)
-    ///
-    /// # Returns
-    ///
-    /// The resolved cache directory path
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use kreuzberg::PaddleOcrConfig;
-    ///
-    /// let config = PaddleOcrConfig::new("en");
-    /// let cache_dir = config.resolve_cache_dir();
-    /// println!("Cache directory: {:?}", cache_dir);
-    /// ```
-    /// </summary>
-    public static string PaddleOcrConfigResolveCacheDir()
-    {
-        var result = NativeMethods.PaddleOcrConfigResolveCacheDir();
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
         return returnValue;
     }
 

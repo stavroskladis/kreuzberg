@@ -131,7 +131,7 @@ pub use core::config::{
 };
 
 #[cfg(feature = "quality")]
-pub use text::TokenReductionConfig;
+pub use text::{ReductionLevel, TokenReductionConfig};
 
 #[cfg(feature = "api")]
 pub use core::server_config::ServerConfig;

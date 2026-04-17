@@ -2533,16 +2533,6 @@ pub struct ExtractBytesParams {
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.BatchExtractFilesParams"]
-pub struct BatchExtractFilesParams {
-    pub paths: Vec<String>,
-    pub config: Option<String>,
-    pub pdf_password: Option<String>,
-    pub file_configs: Option<Vec<Option<String>>>,
-    pub response_format: Option<String>,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.DetectMimeTypeParams"]
 pub struct DetectMimeTypeParams {
     pub path: String,
@@ -5100,17 +5090,6 @@ pub fn validate_utf8_boundaries(text: String, boundaries: Vec<PageBoundary>) -> 
 }
 
 #[rustler::nif]
-pub fn create_client(config: Option<String>) -> Result<String, String> {
-    let config_core: Option<kreuzberg::LlmConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::LlmConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result =
-        kreuzberg::llm::client::create_client(Some(config_core.unwrap_or_default())).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
 pub fn render_template(template: String, context: String) -> Result<String, String> {
     Err(String::from("Not implemented: render_template"))
 }
@@ -6024,11 +6003,6 @@ pub fn htmlmetadata_is_empty(obj: HtmlMetadata) -> bool {
 }
 
 #[rustler::nif]
-pub fn htmlmetadata_from(metadata: HtmlMetadata) -> HtmlMetadata {
-    kreuzberg::HtmlMetadata::from(metadata.into()).into()
-}
-
-#[rustler::nif]
 pub fn ocrconfidence_from_tesseract(confidence: f64) -> OcrConfidence {
     kreuzberg::OcrConfidence::from_tesseract(confidence).into()
 }
@@ -6267,14 +6241,6 @@ pub fn paddleocrconfig_with_padding(obj: PaddleOcrConfig, padding: u32) -> Paddl
 #[rustler::nif]
 pub fn paddleocrconfig_with_model_tier(obj: PaddleOcrConfig, tier: String) -> PaddleOcrConfig {
     kreuzberg::PaddleOcrConfig::from(obj).with_model_tier(&tier).into()
-}
-
-#[rustler::nif]
-pub fn paddleocrconfig_resolve_cache_dir(obj: PaddleOcrConfig) -> String {
-    kreuzberg::PaddleOcrConfig::from(obj)
-        .resolve_cache_dir()
-        .to_string_lossy()
-        .to_string()
 }
 
 #[rustler::nif]
@@ -8471,28 +8437,6 @@ impl From<kreuzberg::StructuredData> for StructuredData {
     }
 }
 
-impl From<HtmlMetadata> for kreuzberg::HtmlMetadata {
-    fn from(val: HtmlMetadata) -> Self {
-        Self {
-            title: val.title,
-            description: val.description,
-            keywords: val.keywords,
-            author: val.author,
-            canonical_url: val.canonical_url,
-            base_href: val.base_href,
-            language: val.language,
-            text_direction: val.text_direction.map(Into::into),
-            open_graph: val.open_graph.into_iter().collect(),
-            twitter_card: val.twitter_card.into_iter().collect(),
-            meta_tags: val.meta_tags.into_iter().collect(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            links: val.links.into_iter().map(Into::into).collect(),
-            images: val.images.into_iter().map(Into::into).collect(),
-            structured_data: val.structured_data.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::HtmlMetadata> for HtmlMetadata {
     fn from(val: kreuzberg::HtmlMetadata) -> Self {
         Self {
@@ -9147,18 +9091,6 @@ impl From<kreuzberg::mcp::ExtractBytesParams> for ExtractBytesParams {
             mime_type: val.mime_type,
             config: val.config.as_ref().map(ToString::to_string),
             pdf_password: val.pdf_password,
-            response_format: val.response_format,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::BatchExtractFilesParams> for BatchExtractFilesParams {
-    fn from(val: kreuzberg::mcp::BatchExtractFilesParams) -> Self {
-        Self {
-            paths: val.paths,
-            config: val.config.as_ref().map(ToString::to_string),
-            pdf_password: val.pdf_password,
-            file_configs: val.file_configs,
             response_format: val.response_format,
         }
     }
@@ -9882,7 +9814,7 @@ impl From<kreuzberg::plugins::OcrBackendType> for OcrBackendType {
     }
 }
 
-impl From<ReductionLevel> for kreuzberg::text::ReductionLevel {
+impl From<ReductionLevel> for kreuzberg::ReductionLevel {
     fn from(val: ReductionLevel) -> Self {
         match val {
             ReductionLevel::Off => Self::Off,
@@ -9894,14 +9826,14 @@ impl From<ReductionLevel> for kreuzberg::text::ReductionLevel {
     }
 }
 
-impl From<kreuzberg::text::ReductionLevel> for ReductionLevel {
-    fn from(val: kreuzberg::text::ReductionLevel) -> Self {
+impl From<kreuzberg::ReductionLevel> for ReductionLevel {
+    fn from(val: kreuzberg::ReductionLevel) -> Self {
         match val {
-            kreuzberg::text::ReductionLevel::Off => Self::Off,
-            kreuzberg::text::ReductionLevel::Light => Self::Light,
-            kreuzberg::text::ReductionLevel::Moderate => Self::Moderate,
-            kreuzberg::text::ReductionLevel::Aggressive => Self::Aggressive,
-            kreuzberg::text::ReductionLevel::Maximum => Self::Maximum,
+            kreuzberg::ReductionLevel::Off => Self::Off,
+            kreuzberg::ReductionLevel::Light => Self::Light,
+            kreuzberg::ReductionLevel::Moderate => Self::Moderate,
+            kreuzberg::ReductionLevel::Aggressive => Self::Aggressive,
+            kreuzberg::ReductionLevel::Maximum => Self::Maximum,
         }
     }
 }

@@ -396,6 +396,9 @@ types = [
     "Drawing",
     "TableProperties",
     "TableGrid",
+
+    # MCP param types with serde_json::Value fields that can't map to String
+    "BatchExtractFilesParams",
 ]
 functions = [
     # Internal functions not part of public API
@@ -443,6 +446,9 @@ functions = [
     "serve_with_config_and_limits",
     "normalize_image_dpi",
     "extract_metadata_from_document",
+
+    # Returns DefaultClient — opaque dependency type, can't convert to String
+    "create_client",
 ]
 methods = [
     "OcrElement.with_rotation_opt",
@@ -452,6 +458,11 @@ methods = [
     "ApiError.internal",
     "ApiError.bad_gateway",
     "ApiError.from",
+
+    # Returns PathBuf — can't convert to String across FFI
+    "PaddleOcrConfig.resolve_cache_dir",
+    # Ambiguous type inference in generated From conversion
+    "HtmlMetadata.from",
 ]
 
 # ---------------------------------------------------------------------------

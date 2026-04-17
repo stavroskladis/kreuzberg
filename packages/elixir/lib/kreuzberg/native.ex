@@ -319,7 +319,6 @@ defmodule Kreuzberg.Native do
   def chunk_texts_batch(_texts, _config), do: :erlang.nif_error(:nif_not_loaded)
   def precompute_utf8_boundaries(_text), do: :erlang.nif_error(:nif_not_loaded)
   def validate_utf8_boundaries(_text, _boundaries), do: :erlang.nif_error(:nif_not_loaded)
-  def create_client(_config), do: :erlang.nif_error(:nif_not_loaded)
   def render_template(_template, _context), do: :erlang.nif_error(:nif_not_loaded)
   def extract_structured_async(_content, _config), do: :erlang.nif_error(:nif_not_loaded)
 
@@ -526,7 +525,6 @@ defmodule Kreuzberg.Native do
   def imagepreprocessingconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def tesseractconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def htmlmetadata_is_empty(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def htmlmetadata_from(_metadata), do: :erlang.nif_error(:nif_not_loaded)
   def ocrconfidence_from_tesseract(_confidence), do: :erlang.nif_error(:nif_not_loaded)
   def ocrconfidence_from_paddle(_box_score, _text_score), do: :erlang.nif_error(:nif_not_loaded)
   def ocrrotation_from_paddle(_angle_index, _angle_score), do: :erlang.nif_error(:nif_not_loaded)
@@ -583,7 +581,6 @@ defmodule Kreuzberg.Native do
   def paddleocrconfig_with_drop_score(_obj, _score), do: :erlang.nif_error(:nif_not_loaded)
   def paddleocrconfig_with_padding(_obj, _padding), do: :erlang.nif_error(:nif_not_loaded)
   def paddleocrconfig_with_model_tier(_obj, _tier), do: :erlang.nif_error(:nif_not_loaded)
-  def paddleocrconfig_resolve_cache_dir(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def paddleocrconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def bbox_width(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def bbox_height(_obj), do: :erlang.nif_error(:nif_not_loaded)

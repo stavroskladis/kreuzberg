@@ -9643,64 +9643,6 @@ impl ExtractBytesParams {
 }
 
 #[derive(Clone, Debug)]
-#[magnus::wrap(class = "Kreuzberg::BatchExtractFilesParams")]
-pub struct BatchExtractFilesParams {
-    pub paths: Vec<String>,
-    pub config: Option<String>,
-    pub pdf_password: Option<String>,
-    pub file_configs: Option<Vec<Option<String>>>,
-    pub response_format: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for BatchExtractFilesParams {}
-
-impl magnus::TryConvert for BatchExtractFilesParams {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &BatchExtractFilesParams = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for BatchExtractFilesParams {}
-
-impl BatchExtractFilesParams {
-    fn new(
-        paths: Vec<String>,
-        config: Option<String>,
-        pdf_password: Option<String>,
-        file_configs: Option<Vec<Option<String>>>,
-        response_format: Option<String>,
-    ) -> Self {
-        Self {
-            paths,
-            config,
-            pdf_password,
-            file_configs,
-            response_format,
-        }
-    }
-
-    fn paths(&self) -> Vec<String> {
-        self.paths.clone()
-    }
-
-    fn config(&self) -> Option<String> {
-        self.config.clone()
-    }
-
-    fn pdf_password(&self) -> Option<String> {
-        self.pdf_password.clone()
-    }
-
-    fn file_configs(&self) -> Option<Vec<Option<String>>> {
-        self.file_configs.clone()
-    }
-
-    fn response_format(&self) -> Option<String> {
-        self.response_format.clone()
-    }
-}
-
-#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::DetectMimeTypeParams")]
 pub struct DetectMimeTypeParams {
     pub path: String,
@@ -10654,24 +10596,6 @@ impl PaddleOcrConfig {
             model_tier: self.model_tier.clone(),
         };
         core_self.with_model_tier(tier).into()
-    }
-
-    fn resolve_cache_dir(&self) -> String {
-        let core_self = kreuzberg::PaddleOcrConfig {
-            language: self.language.clone(),
-            cache_dir: self.cache_dir.clone().map(Into::into),
-            use_angle_cls: self.use_angle_cls,
-            enable_table_detection: self.enable_table_detection,
-            det_db_thresh: self.det_db_thresh,
-            det_db_box_thresh: self.det_db_box_thresh,
-            det_db_unclip_ratio: self.det_db_unclip_ratio,
-            det_limit_side_len: self.det_limit_side_len,
-            rec_batch_num: self.rec_batch_num,
-            padding: self.padding,
-            drop_score: self.drop_score,
-            model_tier: self.model_tier.clone(),
-        };
-        core_self.resolve_cache_dir().into()
     }
 }
 
@@ -13625,13 +13549,14 @@ fn validate_vlm_backend_config(backend: String, vlm_config: Option<String>) -> R
             Ok::<_, magnus::Error>(core.into())
         })
         .transpose()?;
-    let result = kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.as_ref())
-        .map_err(|e| {
-            magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                e.to_string(),
-            )
-        })?;
+    let result =
+        kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.map(Into::into).as_ref())
+            .map_err(|e| {
+                magnus::Error::new(
+                    unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                    e.to_string(),
+                )
+            })?;
     Ok(result)
 }
 
@@ -14802,7 +14727,7 @@ fn from_utf8(bytes: Vec<u8>) -> Result<String, Error> {
 }
 
 fn string_from_utf8(bytes: Vec<u8>) -> Result<String, Error> {
-    let result = kreuzberg::text::utf8_validation::string_from_utf8(&bytes).map_err(|e| {
+    let result = kreuzberg::text::utf8_validation::string_from_utf8(bytes).map_err(|e| {
         magnus::Error::new(
             unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
             e.to_string(),
@@ -15271,7 +15196,7 @@ fn classify_chunk(content: String, heading_context: Option<String>) -> ChunkType
             Ok::<_, magnus::Error>(core.into())
         })
         .transpose()?;
-    kreuzberg::chunking::classify_chunk(&content, heading_context.as_ref()).into()
+    kreuzberg::chunking::classify_chunk(&content, heading_context.map(Into::into).as_ref()).into()
 }
 
 fn chunk_text(
@@ -15368,18 +15293,6 @@ fn validate_utf8_boundaries(text: String, boundaries: Vec<PageBoundary>) -> Resu
         )
     })?;
     Ok(result)
-}
-
-fn create_client(config: String) -> Result<String, Error> {
-    let config: LlmConfig = {
-        let core: kreuzberg::LlmConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: create_client",
-    ))
 }
 
 fn render_template(template: String, context: String) -> Result<String, Error> {
@@ -15611,7 +15524,7 @@ fn assemble_ocr_markdown(
         .transpose()?;
     kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
         &elements,
-        detection.as_ref(),
+        detection.map(Into::into).as_ref(),
         img_width,
         img_height,
         &recognized_tables,
@@ -18138,28 +18051,6 @@ impl From<kreuzberg::StructuredData> for StructuredData {
     }
 }
 
-impl From<HtmlMetadata> for kreuzberg::HtmlMetadata {
-    fn from(val: HtmlMetadata) -> Self {
-        Self {
-            title: val.title,
-            description: val.description,
-            keywords: val.keywords,
-            author: val.author,
-            canonical_url: val.canonical_url,
-            base_href: val.base_href,
-            language: val.language,
-            text_direction: val.text_direction.map(Into::into),
-            open_graph: val.open_graph.into_iter().collect(),
-            twitter_card: val.twitter_card.into_iter().collect(),
-            meta_tags: val.meta_tags.into_iter().collect(),
-            headers: val.headers.into_iter().map(Into::into).collect(),
-            links: val.links.into_iter().map(Into::into).collect(),
-            images: val.images.into_iter().map(Into::into).collect(),
-            structured_data: val.structured_data.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::HtmlMetadata> for HtmlMetadata {
     fn from(val: kreuzberg::HtmlMetadata) -> Self {
         Self {
@@ -18814,18 +18705,6 @@ impl From<kreuzberg::mcp::ExtractBytesParams> for ExtractBytesParams {
             mime_type: val.mime_type,
             config: val.config.as_ref().map(ToString::to_string),
             pdf_password: val.pdf_password,
-            response_format: val.response_format,
-        }
-    }
-}
-
-impl From<kreuzberg::mcp::BatchExtractFilesParams> for BatchExtractFilesParams {
-    fn from(val: kreuzberg::mcp::BatchExtractFilesParams) -> Self {
-        Self {
-            paths: val.paths,
-            config: val.config.as_ref().map(ToString::to_string),
-            pdf_password: val.pdf_password,
-            file_configs: val.file_configs,
             response_format: val.response_format,
         }
     }
@@ -19539,7 +19418,7 @@ impl From<kreuzberg::plugins::OcrBackendType> for OcrBackendType {
     }
 }
 
-impl From<ReductionLevel> for kreuzberg::text::ReductionLevel {
+impl From<ReductionLevel> for kreuzberg::ReductionLevel {
     fn from(val: ReductionLevel) -> Self {
         match val {
             ReductionLevel::Off => Self::Off,
@@ -19551,14 +19430,14 @@ impl From<ReductionLevel> for kreuzberg::text::ReductionLevel {
     }
 }
 
-impl From<kreuzberg::text::ReductionLevel> for ReductionLevel {
-    fn from(val: kreuzberg::text::ReductionLevel) -> Self {
+impl From<kreuzberg::ReductionLevel> for ReductionLevel {
+    fn from(val: kreuzberg::ReductionLevel) -> Self {
         match val {
-            kreuzberg::text::ReductionLevel::Off => Self::Off,
-            kreuzberg::text::ReductionLevel::Light => Self::Light,
-            kreuzberg::text::ReductionLevel::Moderate => Self::Moderate,
-            kreuzberg::text::ReductionLevel::Aggressive => Self::Aggressive,
-            kreuzberg::text::ReductionLevel::Maximum => Self::Maximum,
+            kreuzberg::ReductionLevel::Off => Self::Off,
+            kreuzberg::ReductionLevel::Light => Self::Light,
+            kreuzberg::ReductionLevel::Moderate => Self::Moderate,
+            kreuzberg::ReductionLevel::Aggressive => Self::Aggressive,
+            kreuzberg::ReductionLevel::Maximum => Self::Maximum,
         }
     }
 }
@@ -21797,14 +21676,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("pdf_password", method!(ExtractBytesParams::pdf_password, 0))?;
     class.define_method("response_format", method!(ExtractBytesParams::response_format, 0))?;
 
-    let class = module.define_class("BatchExtractFilesParams", ruby.class_object())?;
-    class.define_singleton_method("new", function!(BatchExtractFilesParams::new, 5))?;
-    class.define_method("paths", method!(BatchExtractFilesParams::paths, 0))?;
-    class.define_method("config", method!(BatchExtractFilesParams::config, 0))?;
-    class.define_method("pdf_password", method!(BatchExtractFilesParams::pdf_password, 0))?;
-    class.define_method("file_configs", method!(BatchExtractFilesParams::file_configs, 0))?;
-    class.define_method("response_format", method!(BatchExtractFilesParams::response_format, 0))?;
-
     let class = module.define_class("DetectMimeTypeParams", ruby.class_object())?;
     class.define_singleton_method("new", function!(DetectMimeTypeParams::new, 2))?;
     class.define_method("path", method!(DetectMimeTypeParams::path, 0))?;
@@ -21933,7 +21804,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("with_drop_score", method!(PaddleOcrConfig::with_drop_score, 1))?;
     class.define_method("with_padding", method!(PaddleOcrConfig::with_padding, 1))?;
     class.define_method("with_model_tier", method!(PaddleOcrConfig::with_model_tier, 1))?;
-    class.define_method("resolve_cache_dir", method!(PaddleOcrConfig::resolve_cache_dir, 0))?;
 
     let class = module.define_class("ModelPaths", ruby.class_object())?;
     class.define_singleton_method("new", function!(ModelPaths::new, 4))?;
@@ -22384,7 +22254,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("chunk_texts_batch", function!(chunk_texts_batch, 2))?;
     module.define_module_function("precompute_utf8_boundaries", function!(precompute_utf8_boundaries, 1))?;
     module.define_module_function("validate_utf8_boundaries", function!(validate_utf8_boundaries, 2))?;
-    module.define_module_function("create_client", function!(create_client, 1))?;
     module.define_module_function("render_template", function!(render_template, 2))?;
     module.define_module_function("extract_structured", function!(extract_structured, 2))?;
     module.define_module_function("extract_structured_async", function!(extract_structured_async, 2))?;

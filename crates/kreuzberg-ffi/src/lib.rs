@@ -972,6 +972,7 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_normalized(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.normalized();
+    let result = result.clone();
     let result = result.into_owned();
     Box::into_raw(Box::new(result))
 }
@@ -15885,23 +15886,6 @@ pub unsafe extern "C" fn kreuzberg_html_metadata_is_empty(this: *const kreuzberg
     }
 }
 
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_html_metadata_from(
-    metadata: *const kreuzberg::HtmlMetadata,
-) -> *mut kreuzberg::HtmlMetadata {
-    clear_last_error();
-    if metadata.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'metadata'");
-        return std::ptr::null_mut();
-    }
-    let metadata_rs = unsafe { &*metadata }.clone();
-    let result = kreuzberg::HtmlMetadata::from(metadata_rs);
-    Box::into_raw(Box::new(result))
-}
-
 /// Create a `OcrMetadata` from a JSON string. Returns null on failure.
 /// # Safety
 /// JSON string must be valid UTF-8 and null-terminated.
@@ -19680,6 +19664,7 @@ pub unsafe extern "C" fn kreuzberg_pooled_string_buffer_mut(
     // SAFETY: null check above guarantees this is a valid pointer; caller ensures exclusive access.
     let obj = unsafe { &mut *this };
     let result = obj.buffer_mut();
+    let result = result.clone();
     match CString::new(result) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
@@ -19702,6 +19687,7 @@ pub unsafe extern "C" fn kreuzberg_pooled_string_as_str(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.as_str();
+    let result = result.clone();
     match CString::new(result) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
@@ -19744,7 +19730,7 @@ pub unsafe extern "C" fn kreuzberg_pooled_string_drop(this: *mut kreuzberg::util
     }
     // SAFETY: null check above guarantees this is a valid pointer; caller ensures exclusive access.
     let obj = unsafe { &mut *this };
-    let result = obj.drop();
+    std::mem::drop(obj);
 }
 
 /// # Safety
@@ -21973,124 +21959,6 @@ pub unsafe extern "C" fn kreuzberg_extract_bytes_params_response_format(
     }
 }
 
-/// Free a `BatchExtractFilesParams` handle.
-/// # Safety
-/// Pointer must have been returned by this library, or be null.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_batch_extract_files_params_free(ptr: *mut kreuzberg::mcp::BatchExtractFilesParams) {
-    if !ptr.is_null() {
-        unsafe {
-            drop(Box::from_raw(ptr));
-        }
-    }
-}
-
-/// Get the `paths` field from a `BatchExtractFilesParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_batch_extract_files_params_paths(
-    ptr: *const kreuzberg::mcp::BatchExtractFilesParams,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match serde_json::to_string(&obj.paths) {
-        Ok(s) => match CString::new(s) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        Err(_) => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `config` field from a `BatchExtractFilesParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_batch_extract_files_params_config(
-    ptr: *const kreuzberg::mcp::BatchExtractFilesParams,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.config {
-        Some(val) => match serde_json::to_string(&val) {
-            Ok(s) => match CString::new(s) {
-                Ok(cs) => cs.into_raw(),
-                Err(_) => std::ptr::null_mut(),
-            },
-            Err(_) => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `pdf_password` field from a `BatchExtractFilesParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_batch_extract_files_params_pdf_password(
-    ptr: *const kreuzberg::mcp::BatchExtractFilesParams,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.pdf_password {
-        Some(val) => match CString::new(val.to_string()) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `file_configs` field from a `BatchExtractFilesParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_batch_extract_files_params_file_configs(
-    ptr: *const kreuzberg::mcp::BatchExtractFilesParams,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.file_configs {
-        Some(val) => match serde_json::to_string(&val) {
-            Ok(s) => match CString::new(s) {
-                Ok(cs) => cs.into_raw(),
-                Err(_) => std::ptr::null_mut(),
-            },
-            Err(_) => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
-/// Get the `response_format` field from a `BatchExtractFilesParams`.
-/// # Safety
-/// Pointer must be a valid handle returned by this library.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_batch_extract_files_params_response_format(
-    ptr: *const kreuzberg::mcp::BatchExtractFilesParams,
-) -> *mut std::ffi::c_char {
-    if ptr.is_null() {
-        return std::ptr::null_mut();
-    }
-    let obj = unsafe { &*ptr };
-    match &obj.response_format {
-        Some(val) => match CString::new(val.to_string()) {
-            Ok(cs) => cs.into_raw(),
-            Err(_) => std::ptr::null_mut(),
-        },
-        None => std::ptr::null_mut(),
-    }
-}
-
 /// Free a `DetectMimeTypeParams` handle.
 /// # Safety
 /// Pointer must have been returned by this library, or be null.
@@ -23957,45 +23825,6 @@ pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_with_model_tier(
     };
     let result = obj.with_model_tier(tier_rs);
     Box::into_raw(Box::new(result))
-}
-
-/// Resolves the cache directory, checking in order:
-/// 1. Configured `cache_dir` if set
-/// 2. `KREUZBERG_CACHE_DIR` environment variable + `/paddle-ocr`
-/// 3. Default: `.kreuzberg/paddle-ocr/` (consistent with other cache types)
-///
-/// # Returns
-///
-/// The resolved cache directory path
-///
-/// # Examples
-///
-/// ```no_run
-/// use kreuzberg::PaddleOcrConfig;
-///
-/// let config = PaddleOcrConfig::new("en");
-/// let cache_dir = config.resolve_cache_dir();
-/// println!("Cache directory: {:?}", cache_dir);
-/// ```
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_paddle_ocr_config_resolve_cache_dir(
-    this: *const kreuzberg::PaddleOcrConfig,
-) -> *mut std::ffi::c_char {
-    clear_last_error();
-    if this.is_null() {
-        set_last_error(1, "Null pointer passed for self");
-        return std::ptr::null_mut();
-    }
-    // SAFETY: null check above guarantees this is a valid pointer.
-    let obj = unsafe { &*this };
-    let result = obj.resolve_cache_dir();
-    match CString::new(result.to_string_lossy().to_string()) {
-        Ok(cs) => cs.into_raw(),
-        Err(_) => std::ptr::null_mut(),
-    }
 }
 
 /// Creates a default configuration with English language support.
@@ -33076,7 +32905,7 @@ pub unsafe extern "C" fn kreuzberg_string_from_utf8(bytes: *const u8, bytes_len:
         return std::ptr::null_mut();
     }
     let bytes_rs = unsafe { std::slice::from_raw_parts(bytes, bytes_len) }.to_vec();
-    let result = kreuzberg::text::utf8_validation::string_from_utf8(&bytes_rs);
+    let result = kreuzberg::text::utf8_validation::string_from_utf8(bytes_rs);
     match result {
         Ok(val) => match CString::new(val.to_string()) {
             Ok(cs) => cs.into_raw(),
@@ -34668,14 +34497,20 @@ pub unsafe extern "C" fn kreuzberg_chunk_text(
         None
     } else {
         match unsafe { CStr::from_ptr(page_boundaries) }.to_str() {
-            Ok(s) => Some(s.to_string()),
+            Ok(s) => match serde_json::from_str::<Vec<_>>(s) {
+                Ok(v) => Some(v),
+                Err(e) => {
+                    set_last_error(2, &format!("Invalid JSON in parameter '{}': {}", "page_boundaries", e));
+                    return std::ptr::null_mut();
+                }
+            },
             Err(_) => {
                 set_last_error(1, "Invalid UTF-8 in parameter 'page_boundaries'");
                 return std::ptr::null_mut();
             }
         }
     };
-    let result = kreuzberg::chunking::chunk_text(&text_rs, &config_rs, page_boundaries_rs);
+    let result = kreuzberg::chunking::chunk_text(&text_rs, &config_rs, page_boundaries_rs.as_deref());
     match result {
         Ok(val) => Box::into_raw(Box::new(val.clone())),
         Err(e) => {
@@ -34721,7 +34556,13 @@ pub unsafe extern "C" fn kreuzberg_chunk_text_with_heading_source(
         None
     } else {
         match unsafe { CStr::from_ptr(page_boundaries) }.to_str() {
-            Ok(s) => Some(s.to_string()),
+            Ok(s) => match serde_json::from_str::<Vec<_>>(s) {
+                Ok(v) => Some(v),
+                Err(e) => {
+                    set_last_error(2, &format!("Invalid JSON in parameter '{}': {}", "page_boundaries", e));
+                    return std::ptr::null_mut();
+                }
+            },
             Err(_) => {
                 set_last_error(1, "Invalid UTF-8 in parameter 'page_boundaries'");
                 return std::ptr::null_mut();
@@ -34742,7 +34583,7 @@ pub unsafe extern "C" fn kreuzberg_chunk_text_with_heading_source(
     let result = kreuzberg::chunking::chunk_text_with_heading_source(
         &text_rs,
         &config_rs,
-        page_boundaries_rs,
+        page_boundaries_rs.as_deref(),
         heading_source_rs.as_deref(),
     );
     match result {
@@ -35018,23 +34859,6 @@ pub unsafe extern "C" fn kreuzberg_validate_utf8_boundaries(
             -1
         }
     }
-}
-
-/// Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`].
-///
-/// The `model` field from the config is passed as a model hint so that
-/// liter-llm can resolve the correct provider automatically.
-///
-/// When `api_key` is `None`, liter-llm falls back to the provider's standard
-/// environment variable (e.g., `OPENAI_API_KEY`).
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_create_client(_config: *const kreuzberg::LlmConfig) -> *mut std::ffi::c_char {
-    clear_last_error();
-    set_last_error(99, "Not implemented: create_client");
-    std::ptr::null_mut()
 }
 
 /// Render a Jinja2 template with the given context variables.

@@ -1012,10 +1012,6 @@ final class NativeLib {
         LIB.find("kreuzberg_validate_utf8_boundaries").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
-    static final MethodHandle KREUZBERG_CREATE_CLIENT = LINKER.downcallHandle(
-        LIB.find("kreuzberg_create_client").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
     static final MethodHandle KREUZBERG_RENDER_TEMPLATE = LINKER.downcallHandle(
         LIB.find("kreuzberg_render_template").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)

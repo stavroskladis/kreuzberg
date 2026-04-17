@@ -1658,12 +1658,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.validate_utf8_boundaries(text, boundaries)
   end
 
-  @doc "Create a liter-llm [`DefaultClient`] from kreuzberg's [`LlmConfig`]."
-  @spec create_client(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
-  def create_client(config) do
-    Kreuzberg.Native.create_client(config)
-  end
-
   @doc "Render a Jinja2 template with the given context variables."
   @spec render_template(String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
   def render_template(template, context) do
@@ -2576,12 +2570,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.htmlmetadata_is_empty(obj)
   end
 
-  @doc "Method"
-  @spec htmlmetadata_from(String.t() | nil) :: String.t() | nil
-  def htmlmetadata_from(metadata) do
-    Kreuzberg.Native.htmlmetadata_from(metadata)
-  end
-
   @doc "Create confidence from Tesseract's single confidence value."
   @spec ocrconfidence_from_tesseract(float()) :: String.t() | nil
   def ocrconfidence_from_tesseract(confidence) do
@@ -2844,12 +2832,6 @@ defmodule Kreuzberg do
   @spec paddleocrconfig_with_model_tier(map(), String.t()) :: String.t() | nil
   def paddleocrconfig_with_model_tier(obj, tier) do
     Kreuzberg.Native.paddleocrconfig_with_model_tier(obj, tier)
-  end
-
-  @doc "Resolves the cache directory, checking in order:"
-  @spec paddleocrconfig_resolve_cache_dir(map()) :: String.t()
-  def paddleocrconfig_resolve_cache_dir(obj) do
-    Kreuzberg.Native.paddleocrconfig_resolve_cache_dir(obj)
   end
 
   @doc "Creates a default configuration with English language support."
