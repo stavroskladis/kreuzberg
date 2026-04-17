@@ -2536,43 +2536,31 @@ unsafe impl TryConvertOwned for StreamReader {}
 
 impl StreamReader {
     fn read_u8(&self) -> Result<u8, Error> {
-        let result = self.inner.read_u8().map_err(|e| {
-            magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                e.to_string(),
-            )
-        })?;
-        Ok(result)
+        Err(magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            "Not implemented: read_u8",
+        ))
     }
 
     fn read_u16(&self) -> Result<u16, Error> {
-        let result = self.inner.read_u16().map_err(|e| {
-            magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                e.to_string(),
-            )
-        })?;
-        Ok(result)
+        Err(magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            "Not implemented: read_u16",
+        ))
     }
 
     fn read_u32(&self) -> Result<u32, Error> {
-        let result = self.inner.read_u32().map_err(|e| {
-            magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                e.to_string(),
-            )
-        })?;
-        Ok(result)
+        Err(magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            "Not implemented: read_u32",
+        ))
     }
 
     fn read_bytes(&self, len: usize) -> Result<Vec<u8>, Error> {
-        let result = self.inner.read_bytes(len).map_err(|e| {
-            magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                e.to_string(),
-            )
-        })?;
-        Ok(result)
+        Err(magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            "Not implemented: read_bytes",
+        ))
     }
 
     fn position(&self) -> u64 {
@@ -3604,13 +3592,10 @@ unsafe impl TryConvertOwned for StringGrowthValidator {}
 
 impl StringGrowthValidator {
     fn check_append(&self, len: usize) -> Result<(), Error> {
-        self.inner.check_append(len).map_err(|e| {
-            magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                e.to_string(),
-            )
-        })?;
-        Ok(())
+        Err(magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            "Not implemented: check_append",
+        ))
     }
 
     fn current_size(&self) -> usize {
@@ -3636,13 +3621,10 @@ unsafe impl TryConvertOwned for IterationValidator {}
 
 impl IterationValidator {
     fn check_iteration(&self) -> Result<(), Error> {
-        self.inner.check_iteration().map_err(|e| {
-            magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                e.to_string(),
-            )
-        })?;
-        Ok(())
+        Err(magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            "Not implemented: check_iteration",
+        ))
     }
 
     fn current_count(&self) -> usize {
@@ -3668,17 +3650,14 @@ unsafe impl TryConvertOwned for DepthValidator {}
 
 impl DepthValidator {
     fn push(&self) -> Result<(), Error> {
-        self.inner.push().map_err(|e| {
-            magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                e.to_string(),
-            )
-        })?;
-        Ok(())
+        Err(magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            "Not implemented: push",
+        ))
     }
 
     fn pop(&self) -> () {
-        self.inner.pop()
+        ()
     }
 
     fn current_depth(&self) -> usize {
@@ -3732,13 +3711,10 @@ unsafe impl TryConvertOwned for TableValidator {}
 
 impl TableValidator {
     fn add_cells(&self, count: usize) -> Result<(), Error> {
-        self.inner.add_cells(count).map_err(|e| {
-            magnus::Error::new(
-                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                e.to_string(),
-            )
-        })?;
-        Ok(())
+        Err(magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            "Not implemented: add_cells",
+        ))
     }
 
     fn current_cells(&self) -> usize {
@@ -8696,7 +8672,7 @@ unsafe impl TryConvertOwned for PooledString {}
 
 impl PooledString {
     fn buffer_mut(&self) -> String {
-        self.inner.buffer_mut().into()
+        String::from("[unimplemented: buffer_mut]")
     }
 
     fn as_str(&self) -> String {
@@ -8713,7 +8689,7 @@ impl PooledString {
     }
 
     fn drop(&self) -> () {
-        self.inner.drop()
+        ()
     }
 
     fn fmt(&self, f: String) -> String {

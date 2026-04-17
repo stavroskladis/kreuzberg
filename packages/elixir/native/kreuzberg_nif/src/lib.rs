@@ -5577,7 +5577,7 @@ pub fn hierarchyconfig_default() -> HierarchyConfig {
 
 #[rustler::nif]
 pub fn postprocessorconfig_build_lookup_sets(obj: PostProcessorConfig) -> () {
-    kreuzberg::PostProcessorConfig::from(obj).build_lookup_sets()
+    ()
 }
 
 #[rustler::nif]
@@ -5656,10 +5656,7 @@ pub fn serverconfig_max_multipart_field_mb(obj: ServerConfig) -> usize {
 
 #[rustler::nif]
 pub fn serverconfig_apply_env_overrides(obj: ServerConfig) -> Result<(), String> {
-    let result = kreuzberg::ServerConfig::from(obj)
-        .apply_env_overrides()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
+    Err(String::from("Not implemented: serverconfig_apply_env_overrides"))
 }
 
 #[rustler::nif]
@@ -5684,31 +5681,22 @@ pub fn serverconfig_from_json_file(path: String) -> Result<ServerConfig, String>
 
 #[rustler::nif]
 pub fn streamreader_read_u8(resource: ResourceArc<StreamReader>) -> Result<u8, String> {
-    let result = resource.inner.as_ref().clone().read_u8().map_err(|e| e.to_string())?;
-    Ok(result)
+    Err(String::from("Not implemented: streamreader_read_u8"))
 }
 
 #[rustler::nif]
 pub fn streamreader_read_u16(resource: ResourceArc<StreamReader>) -> Result<u16, String> {
-    let result = resource.inner.as_ref().clone().read_u16().map_err(|e| e.to_string())?;
-    Ok(result)
+    Err(String::from("Not implemented: streamreader_read_u16"))
 }
 
 #[rustler::nif]
 pub fn streamreader_read_u32(resource: ResourceArc<StreamReader>) -> Result<u32, String> {
-    let result = resource.inner.as_ref().clone().read_u32().map_err(|e| e.to_string())?;
-    Ok(result)
+    Err(String::from("Not implemented: streamreader_read_u32"))
 }
 
 #[rustler::nif]
 pub fn streamreader_read_bytes(resource: ResourceArc<StreamReader>, len: usize) -> Result<Vec<u8>, String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .read_bytes(len)
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
+    Err(String::from("Not implemented: streamreader_read_bytes"))
 }
 
 #[rustler::nif]
@@ -5726,13 +5714,7 @@ pub fn stringgrowthvalidator_check_append(
     resource: ResourceArc<StringGrowthValidator>,
     len: usize,
 ) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .check_append(len)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
+    Err(String::from("Not implemented: stringgrowthvalidator_check_append"))
 }
 
 #[rustler::nif]
@@ -5742,13 +5724,7 @@ pub fn stringgrowthvalidator_current_size(resource: ResourceArc<StringGrowthVali
 
 #[rustler::nif]
 pub fn iterationvalidator_check_iteration(resource: ResourceArc<IterationValidator>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .check_iteration()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
+    Err(String::from("Not implemented: iterationvalidator_check_iteration"))
 }
 
 #[rustler::nif]
@@ -5758,13 +5734,12 @@ pub fn iterationvalidator_current_count(resource: ResourceArc<IterationValidator
 
 #[rustler::nif]
 pub fn depthvalidator_push(resource: ResourceArc<DepthValidator>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().push().map_err(|e| e.to_string())?;
-    Ok(result)
+    Err(String::from("Not implemented: depthvalidator_push"))
 }
 
 #[rustler::nif]
 pub fn depthvalidator_pop(resource: ResourceArc<DepthValidator>) -> () {
-    resource.inner.as_ref().clone().pop()
+    ()
 }
 
 #[rustler::nif]
@@ -5785,13 +5760,7 @@ pub fn entityvalidator_validate(resource: ResourceArc<EntityValidator>, content:
 
 #[rustler::nif]
 pub fn tablevalidator_add_cells(resource: ResourceArc<TableValidator>, count: usize) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .add_cells(count)
-        .map_err(|e| e.to_string())?;
-    Ok(result)
+    Err(String::from("Not implemented: tablevalidator_add_cells"))
 }
 
 #[rustler::nif]
@@ -5811,12 +5780,12 @@ pub fn documentstructure_with_capacity(capacity: usize) -> DocumentStructure {
 
 #[rustler::nif]
 pub fn documentstructure_push_node(obj: DocumentStructure, node: DocumentNode) -> u32 {
-    kreuzberg::DocumentStructure::from(obj).push_node(node.into())
+    0
 }
 
 #[rustler::nif]
 pub fn documentstructure_add_child(obj: DocumentStructure, parent: u32, child: u32) -> () {
-    kreuzberg::DocumentStructure::from(obj).add_child(parent, child)
+    ()
 }
 
 #[rustler::nif]
@@ -5950,7 +5919,7 @@ pub fn uri_with_page(obj: Uri, page: u32) -> Uri {
 
 #[rustler::nif]
 pub fn pooledstring_buffer_mut(resource: ResourceArc<PooledString>) -> String {
-    resource.inner.as_ref().clone().buffer_mut().into()
+    String::from("[unimplemented: pooledstring_buffer_mut]")
 }
 
 #[rustler::nif]
@@ -5970,7 +5939,7 @@ pub fn pooledstring_deref_mut(resource: ResourceArc<PooledString>) -> String {
 
 #[rustler::nif]
 pub fn pooledstring_drop(resource: ResourceArc<PooledString>) -> () {
-    resource.inner.as_ref().clone().drop()
+    ()
 }
 
 #[rustler::nif]

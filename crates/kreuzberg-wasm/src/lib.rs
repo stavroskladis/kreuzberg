@@ -555,8 +555,9 @@ impl WasmExtractionConfig {
 
     #[wasm_bindgen(js_name = "withFileOverrides")]
     pub fn with_file_overrides(&self, overrides: WasmFileExtractionConfig) -> WasmExtractionConfig {
+        let overrides_core: kreuzberg::FileExtractionConfig = overrides.into();
         kreuzberg::ExtractionConfig::from(self.clone())
-            .with_file_overrides(overrides.into())
+            .with_file_overrides(&overrides_core)
             .into()
     }
 
@@ -2233,7 +2234,7 @@ impl WasmPostProcessorConfig {
 
     #[wasm_bindgen(js_name = "buildLookupSets")]
     pub fn build_lookup_sets(&self) -> () {
-        kreuzberg::PostProcessorConfig::from(self.clone()).build_lookup_sets()
+        ()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -2350,15 +2351,17 @@ impl WasmChunkingConfig {
 
     #[wasm_bindgen(js_name = "withChunkerType")]
     pub fn with_chunker_type(&self, chunker_type: WasmChunkerType) -> WasmChunkingConfig {
+        let chunker_type_core: kreuzberg::ChunkerType = chunker_type.into();
         kreuzberg::ChunkingConfig::from(self.clone())
-            .with_chunker_type(chunker_type.into())
+            .with_chunker_type(chunker_type_core)
             .into()
     }
 
     #[wasm_bindgen(js_name = "withSizing")]
     pub fn with_sizing(&self, sizing: WasmChunkSizing) -> WasmChunkingConfig {
+        let sizing_core: kreuzberg::ChunkSizing = sizing.into();
         kreuzberg::ChunkingConfig::from(self.clone())
-            .with_sizing(sizing.into())
+            .with_sizing(sizing_core)
             .into()
     }
 
@@ -2749,10 +2752,7 @@ impl WasmServerConfig {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "applyEnvOverrides")]
     pub fn apply_env_overrides(&self) -> Result<(), JsValue> {
-        let result = kreuzberg::ServerConfig::from(self.clone())
-            .apply_env_overrides()
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(result)
+        Err(JsValue::from_str("Not implemented: apply_env_overrides"))
     }
 
     #[allow(clippy::missing_errors_doc)]
@@ -2858,32 +2858,25 @@ impl WasmStreamReader {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "readU8")]
     pub fn read_u8(&self) -> Result<u8, JsValue> {
-        let result = self.inner.read_u8().map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(result)
+        Err(JsValue::from_str("Not implemented: read_u8"))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "readU16")]
     pub fn read_u16(&self) -> Result<u16, JsValue> {
-        let result = self.inner.read_u16().map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(result)
+        Err(JsValue::from_str("Not implemented: read_u16"))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "readU32")]
     pub fn read_u32(&self) -> Result<u32, JsValue> {
-        let result = self.inner.read_u32().map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(result)
+        Err(JsValue::from_str("Not implemented: read_u32"))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "readBytes")]
     pub fn read_bytes(&self, len: usize) -> Result<Vec<u8>, JsValue> {
-        let result = self
-            .inner
-            .read_bytes(len)
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(result)
+        Err(JsValue::from_str("Not implemented: read_bytes"))
     }
 
     #[wasm_bindgen]
@@ -4182,10 +4175,7 @@ impl WasmStringGrowthValidator {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "checkAppend")]
     pub fn check_append(&self, len: usize) -> Result<(), JsValue> {
-        self.inner
-            .check_append(len)
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
+        Err(JsValue::from_str("Not implemented: check_append"))
     }
 
     #[wasm_bindgen(js_name = "currentSize")]
@@ -4205,10 +4195,7 @@ impl WasmIterationValidator {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "checkIteration")]
     pub fn check_iteration(&self) -> Result<(), JsValue> {
-        self.inner
-            .check_iteration()
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
+        Err(JsValue::from_str("Not implemented: check_iteration"))
     }
 
     #[wasm_bindgen(js_name = "currentCount")]
@@ -4228,13 +4215,12 @@ impl WasmDepthValidator {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen]
     pub fn push(&self) -> Result<(), JsValue> {
-        self.inner.push().map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
+        Err(JsValue::from_str("Not implemented: push"))
     }
 
     #[wasm_bindgen]
     pub fn pop(&self) -> () {
-        self.inner.pop()
+        ()
     }
 
     #[wasm_bindgen(js_name = "currentDepth")]
@@ -4272,10 +4258,7 @@ impl WasmTableValidator {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "addCells")]
     pub fn add_cells(&self, count: usize) -> Result<(), JsValue> {
-        self.inner
-            .add_cells(count)
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
+        Err(JsValue::from_str("Not implemented: add_cells"))
     }
 
     #[wasm_bindgen(js_name = "currentCells")]
@@ -5028,13 +5011,12 @@ impl WasmDocumentStructure {
 
     #[wasm_bindgen(js_name = "pushNode")]
     pub fn push_node(&self, node: WasmDocumentNode) -> u32 {
-        kreuzberg::DocumentStructure::from(self.clone()).push_node(node.into())
+        0
     }
 
     #[wasm_bindgen(js_name = "addChild")]
     pub fn add_child(&self, parent: u32, child: u32) -> () {
-        kreuzberg::DocumentStructure::from(self.clone())
-            .add_child(kreuzberg::NodeIndex(parent), kreuzberg::NodeIndex(child))
+        ()
     }
 
     #[allow(clippy::missing_errors_doc)]
@@ -9958,15 +9940,15 @@ impl WasmOcrElement {
 
     #[wasm_bindgen(js_name = "withLevel")]
     pub fn with_level(&self, level: WasmOcrElementLevel) -> WasmOcrElement {
-        kreuzberg::OcrElement::from(self.clone())
-            .with_level(level.into())
-            .into()
+        let level_core: kreuzberg::OcrElementLevel = level.into();
+        kreuzberg::OcrElement::from(self.clone()).with_level(level_core).into()
     }
 
     #[wasm_bindgen(js_name = "withRotation")]
     pub fn with_rotation(&self, rotation: WasmOcrRotation) -> WasmOcrElement {
+        let rotation_core: kreuzberg::OcrRotation = rotation.into();
         kreuzberg::OcrElement::from(self.clone())
-            .with_rotation(rotation.into())
+            .with_rotation(rotation_core)
             .into()
     }
 
@@ -10590,7 +10572,7 @@ pub struct WasmPooledString {
 impl WasmPooledString {
     #[wasm_bindgen(js_name = "bufferMut")]
     pub fn buffer_mut(&self) -> String {
-        self.inner.buffer_mut().into()
+        String::from("[unimplemented: buffer_mut]")
     }
 
     #[wasm_bindgen(js_name = "asStr")]
@@ -10611,7 +10593,7 @@ impl WasmPooledString {
 
     #[wasm_bindgen]
     pub fn drop(&self) -> () {
-        self.inner.drop()
+        ()
     }
 
     #[wasm_bindgen]
@@ -12358,7 +12340,8 @@ impl WasmKeyword {
         algorithm: WasmKeywordAlgorithm,
         positions: Vec<usize>,
     ) -> WasmKeyword {
-        kreuzberg::Keyword::with_positions(text, score, algorithm.into(), positions).into()
+        let algorithm_core: kreuzberg::KeywordAlgorithm = algorithm.into();
+        kreuzberg::Keyword::with_positions(text, score, algorithm_core, positions).into()
     }
 }
 
@@ -13562,7 +13545,8 @@ pub fn init_thread_pools(budget: usize) -> () {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "mergeConfigJson")]
 pub fn merge_config_json(base: WasmExtractionConfig, override_json: String) -> Result<WasmExtractionConfig, JsValue> {
-    let result = kreuzberg::core::config::merge::merge_config_json(base.into(), &override_json)
+    let base_core: kreuzberg::ExtractionConfig = base.into();
+    let result = kreuzberg::core::config::merge::merge_config_json(&base_core, &override_json)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result.into())
 }
@@ -13573,7 +13557,8 @@ pub fn build_config_from_json(
     base: WasmExtractionConfig,
     override_json: Option<String>,
 ) -> Result<WasmExtractionConfig, JsValue> {
-    let result = kreuzberg::core::config::merge::build_config_from_json(base.into(), override_json.as_deref())
+    let base_core: kreuzberg::ExtractionConfig = base.into();
+    let result = kreuzberg::core::config::merge::build_config_from_json(&base_core, override_json.as_deref())
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result.into())
 }
@@ -13694,7 +13679,9 @@ pub fn validate_llm_config_model(model: String) -> Result<(), JsValue> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateVlmBackendConfig")]
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<WasmLlmConfig>) -> Result<(), JsValue> {
-    let result = kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.as_ref())
+    let vlm_config_owned: Option<kreuzberg::LlmConfig> = vlm_config.map(Into::into);
+    let vlm_config_core = vlm_config_owned.as_ref();
+    let result = kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config_core)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
@@ -13714,7 +13701,8 @@ pub async fn extract_bytes(
     mime_type: String,
     config: WasmExtractionConfig,
 ) -> Result<WasmExtractionResult, JsValue> {
-    let result = kreuzberg::extract_bytes(&content, &mime_type, config.into())
+    let config_core: kreuzberg::ExtractionConfig = config.into();
+    let result = kreuzberg::extract_bytes(&content, &mime_type, &config_core)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(WasmExtractionResult::from(result))
@@ -13727,7 +13715,8 @@ pub async fn extract_file(
     mime_type: Option<String>,
     config: WasmExtractionConfig,
 ) -> Result<WasmExtractionResult, JsValue> {
-    let result = kreuzberg::extract_file(path, mime_type.as_deref(), config.into())
+    let config_core: kreuzberg::ExtractionConfig = config.expect("'config' is required").into();
+    let result = kreuzberg::extract_file(path, mime_type.as_deref(), &config_core)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(WasmExtractionResult::from(result))
@@ -13824,7 +13813,9 @@ pub fn clear_processor_cache() -> Result<(), JsValue> {
 
 #[wasm_bindgen(js_name = "applyOutputFormat")]
 pub fn apply_output_format(result: WasmExtractionResult, output_format: WasmOutputFormat) -> WasmExtractionResult {
-    kreuzberg::core::pipeline::apply_output_format(result.into(), output_format.into()).into()
+    let result_core: kreuzberg::ExtractionResult = result.into();
+    let output_format_core: kreuzberg::OutputFormat = output_format.into();
+    kreuzberg::core::pipeline::apply_output_format(result_core, output_format_core).into()
 }
 
 #[wasm_bindgen(js_name = "isPageTextBlank")]
@@ -13873,7 +13864,8 @@ pub fn parse_text(text_bytes: Vec<u8>, is_markdown: bool) -> Result<WasmTextExtr
 
 #[wasm_bindgen(js_name = "transformToDocumentStructure")]
 pub fn transform_to_document_structure(result: WasmExtractionResult) -> WasmDocumentStructure {
-    kreuzberg::extraction::transform_to_document_structure(result.into()).into()
+    let result_core: kreuzberg::ExtractionResult = result.into();
+    kreuzberg::extraction::transform_to_document_structure(&result_core).into()
 }
 
 #[wasm_bindgen(js_name = "detectListItems")]
@@ -13888,7 +13880,8 @@ pub fn generate_element_id(text: String, element_type: WasmElementType, page_num
 
 #[wasm_bindgen(js_name = "transformExtractionResultToElements")]
 pub fn transform_extraction_result_to_elements(result: WasmExtractionResult) -> Vec<WasmElement> {
-    kreuzberg::extraction::transform_extraction_result_to_elements(result.into())
+    let result_core: kreuzberg::ExtractionResult = result.into();
+    kreuzberg::extraction::transform_extraction_result_to_elements(&result_core)
         .into_iter()
         .map(Into::into)
         .collect()
@@ -14059,7 +14052,8 @@ pub fn extract_email_content(
 
 #[wasm_bindgen(js_name = "buildEmailTextOutput")]
 pub fn build_email_text_output(result: WasmEmailExtractionResult) -> String {
-    kreuzberg::extraction::build_email_text_output(result.into())
+    let result_core: kreuzberg::EmailExtractionResult = result.into();
+    kreuzberg::extraction::build_email_text_output(&result_core)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14079,12 +14073,14 @@ pub fn read_excel_bytes(data: Vec<u8>, file_extension: String) -> Result<WasmExc
 
 #[wasm_bindgen(js_name = "excelToText")]
 pub fn excel_to_text(workbook: WasmExcelWorkbook) -> String {
-    kreuzberg::extraction::excel::excel_to_text(workbook.into())
+    let workbook_core: kreuzberg::ExcelWorkbook = workbook.into();
+    kreuzberg::extraction::excel::excel_to_text(&workbook_core)
 }
 
 #[wasm_bindgen(js_name = "excelToMarkdown")]
 pub fn excel_to_markdown(workbook: WasmExcelWorkbook) -> String {
-    kreuzberg::extraction::excel_to_markdown(workbook.into())
+    let workbook_core: kreuzberg::ExcelWorkbook = workbook.into();
+    kreuzberg::extraction::excel_to_markdown(&workbook_core)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14277,13 +14273,15 @@ pub fn render_attributes(attrs: String) -> String {
 
 #[wasm_bindgen(js_name = "djotContentToDjot")]
 pub fn djot_content_to_djot(content: WasmDjotContent) -> String {
-    kreuzberg::extractors::djot_format::djot_content_to_djot(content.into())
+    let content_core: kreuzberg::DjotContent = content.into();
+    kreuzberg::extractors::djot_format::djot_content_to_djot(&content_core)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractionResultToDjot")]
 pub fn extraction_result_to_djot(result: WasmExtractionResult) -> Result<String, JsValue> {
-    let result = kreuzberg::extractors::djot_format::extraction_result_to_djot(result.into())
+    let result_core: kreuzberg::ExtractionResult = result.into();
+    let result = kreuzberg::extractors::djot_format::extraction_result_to_djot(&result_core)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
@@ -14308,17 +14306,20 @@ pub fn extract_text_from_events(events: Vec<String>) -> String {
 
 #[wasm_bindgen(js_name = "renderBlockToDjot")]
 pub fn render_block_to_djot(block: WasmFormattedBlock, indent_level: usize) -> String {
-    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(block.into(), indent_level)
+    let block_core: kreuzberg::FormattedBlock = block.into();
+    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(&block_core, indent_level)
 }
 
 #[wasm_bindgen(js_name = "renderListItem")]
 pub fn render_list_item(item: WasmFormattedBlock, indent: String, marker: String) -> String {
-    kreuzberg::extractors::djot_format::rendering::render_list_item(item.into(), &indent, &marker)
+    let item_core: kreuzberg::FormattedBlock = item.into();
+    kreuzberg::extractors::djot_format::rendering::render_list_item(&item_core, &indent, &marker)
 }
 
 #[wasm_bindgen(js_name = "renderInlineContent")]
 pub fn render_inline_content(elements: Vec<WasmInlineElement>) -> String {
-    kreuzberg::extractors::djot_format::rendering::render_inline_content(&elements)
+    let elements_core: Vec<_> = elements.into_iter().map(Into::into).collect();
+    kreuzberg::extractors::djot_format::rendering::render_inline_content(&elements_core)
 }
 
 #[wasm_bindgen(js_name = "extractFrontmatter")]
@@ -14674,7 +14675,8 @@ pub fn reduce_tokens(
     config: WasmTokenReductionConfig,
     language_hint: Option<String>,
 ) -> Result<String, JsValue> {
-    let result = kreuzberg::text::reduce_tokens(&text, config.into(), language_hint.as_deref())
+    let config_core: kreuzberg::TokenReductionConfig = config.into();
+    let result = kreuzberg::text::reduce_tokens(&text, &config_core, language_hint.as_deref())
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
@@ -14686,7 +14688,8 @@ pub fn batch_reduce_tokens(
     config: WasmTokenReductionConfig,
     language_hint: Option<String>,
 ) -> Result<Vec<String>, JsValue> {
-    let result = kreuzberg::text::batch_reduce_tokens(&texts, config.into(), language_hint.as_deref())
+    let config_core: kreuzberg::TokenReductionConfig = config.into();
+    let result = kreuzberg::text::batch_reduce_tokens(&texts, &config_core, language_hint.as_deref())
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
@@ -14886,7 +14889,8 @@ pub async fn serve(host: String, port: u16) -> Result<(), JsValue> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "serveWithConfig")]
 pub async fn serve_with_config(host: String, port: u16, config: WasmExtractionConfig) -> Result<(), JsValue> {
-    let result = kreuzberg::api::serve_with_config(host, port, config.into())
+    let config_core: kreuzberg::ExtractionConfig = config.into();
+    let result = kreuzberg::api::serve_with_config(host, port, config_core)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
@@ -14898,7 +14902,9 @@ pub async fn serve_with_server_config(
     extraction_config: WasmExtractionConfig,
     server_config: WasmServerConfig,
 ) -> Result<(), JsValue> {
-    let result = kreuzberg::api::serve_with_server_config(extraction_config.into(), server_config.into())
+    let extraction_config_core: kreuzberg::ExtractionConfig = extraction_config.into();
+    let server_config_core: kreuzberg::ServerConfig = server_config.into();
+    let result = kreuzberg::api::serve_with_server_config(extraction_config_core, server_config_core)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
@@ -14930,7 +14936,8 @@ pub async fn start_mcp_server() -> Result<(), JsValue> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "startMcpServerWithConfig")]
 pub async fn start_mcp_server_with_config(config: WasmExtractionConfig) -> Result<(), JsValue> {
-    let result = kreuzberg::mcp::start_mcp_server_with_config(config.into())
+    let config_core: kreuzberg::ExtractionConfig = config.into();
+    let result = kreuzberg::mcp::start_mcp_server_with_config(config_core)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
@@ -14939,14 +14946,17 @@ pub async fn start_mcp_server_with_config(config: WasmExtractionConfig) -> Resul
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validatePageBoundaries")]
 pub fn validate_page_boundaries(boundaries: Vec<WasmPageBoundary>) -> Result<(), JsValue> {
-    let result =
-        kreuzberg::chunking::validate_page_boundaries(&boundaries).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let boundaries_core: Vec<_> = boundaries.into_iter().map(Into::into).collect();
+    let result = kreuzberg::chunking::validate_page_boundaries(&boundaries_core)
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
 
 #[wasm_bindgen(js_name = "classifyChunk")]
 pub fn classify_chunk(content: String, heading_context: Option<WasmHeadingContext>) -> WasmChunkType {
-    kreuzberg::chunking::classify_chunk(&content, heading_context.as_ref()).into()
+    let heading_context_owned: Option<kreuzberg::HeadingContext> = heading_context.map(Into::into);
+    let heading_context_core = heading_context_owned.as_ref();
+    kreuzberg::chunking::classify_chunk(&content, heading_context_core).into()
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14956,7 +14966,11 @@ pub fn chunk_text(
     config: WasmChunkingConfig,
     page_boundaries: Option<Vec<WasmPageBoundary>>,
 ) -> Result<WasmChunkingResult, JsValue> {
-    let result = kreuzberg::chunking::chunk_text(&text, config.into(), page_boundaries.as_deref())
+    let config_core: kreuzberg::ChunkingConfig = config.into();
+    let page_boundaries_core: Option<Vec<_>> = page_boundaries
+        .as_ref()
+        .map(|v| v.iter().map(|x| x.clone().into()).collect());
+    let result = kreuzberg::chunking::chunk_text(&text, &config_core, page_boundaries_core.as_deref())
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result.into())
 }
@@ -14969,10 +14983,14 @@ pub fn chunk_text_with_heading_source(
     page_boundaries: Option<Vec<WasmPageBoundary>>,
     heading_source: Option<String>,
 ) -> Result<WasmChunkingResult, JsValue> {
+    let config_core: kreuzberg::ChunkingConfig = config.into();
+    let page_boundaries_core: Option<Vec<_>> = page_boundaries
+        .as_ref()
+        .map(|v| v.iter().map(|x| x.clone().into()).collect());
     let result = kreuzberg::chunking::chunk_text_with_heading_source(
         &text,
-        config.into(),
-        page_boundaries.as_deref(),
+        &config_core,
+        page_boundaries_core.as_deref(),
         heading_source.as_deref(),
     )
     .map_err(|e| JsValue::from_str(&e.to_string()))?;
@@ -14988,7 +15006,8 @@ pub fn chunk_text_with_type(
     trim: bool,
     chunker_type: WasmChunkerType,
 ) -> Result<WasmChunkingResult, JsValue> {
-    let result = kreuzberg::chunking::chunk_text_with_type(&text, max_characters, overlap, trim, chunker_type.into())
+    let chunker_type_core: kreuzberg::ChunkerType = chunker_type.into();
+    let result = kreuzberg::chunking::chunk_text_with_type(&text, max_characters, overlap, trim, chunker_type_core)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result.into())
 }
@@ -14996,8 +15015,9 @@ pub fn chunk_text_with_type(
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "chunkTextsBatch")]
 pub fn chunk_texts_batch(texts: Vec<String>, config: WasmChunkingConfig) -> Result<Vec<WasmChunkingResult>, JsValue> {
+    let config_core: kreuzberg::ChunkingConfig = config.into();
     let result =
-        kreuzberg::chunking::chunk_texts_batch(&texts, config.into()).map_err(|e| JsValue::from_str(&e.to_string()))?;
+        kreuzberg::chunking::chunk_texts_batch(&texts, &config_core).map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result.into_iter().map(Into::into).collect())
 }
 
@@ -15009,7 +15029,8 @@ pub fn precompute_utf8_boundaries(text: String) -> String {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateUtf8Boundaries")]
 pub fn validate_utf8_boundaries(text: String, boundaries: Vec<WasmPageBoundary>) -> Result<(), JsValue> {
-    let result = kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries)
+    let boundaries_core: Vec<_> = boundaries.into_iter().map(Into::into).collect();
+    let result = kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries_core)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
@@ -15034,7 +15055,8 @@ pub fn resize_image(image: String, new_width: u32, new_height: u32, scale_factor
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "detectLanguages")]
 pub fn detect_languages(text: String, config: WasmLanguageDetectionConfig) -> Result<Option<Vec<String>>, JsValue> {
-    let result = kreuzberg::language_detection::detect_languages(&text, config.into())
+    let config_core: kreuzberg::LanguageDetectionConfig = config.into();
+    let result = kreuzberg::language_detection::detect_languages(&text, &config_core)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
@@ -15060,7 +15082,8 @@ pub fn get_stopwords_with_fallback(language: String, fallback: String) -> Option
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractKeywords")]
 pub fn extract_keywords(text: String, config: WasmKeywordConfig) -> Result<Vec<WasmKeyword>, JsValue> {
-    let result = kreuzberg::extract_keywords(&text, config.into()).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let config_core: kreuzberg::KeywordConfig = config.into();
+    let result = kreuzberg::extract_keywords(&text, &config_core).map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result.into_iter().map(Into::into).collect())
 }
 
@@ -15356,14 +15379,16 @@ pub fn extract_text_from_pdf_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<S
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "serializeToToon")]
 pub fn serialize_to_toon(result: WasmExtractionResult) -> Result<String, JsValue> {
-    let result = kreuzberg::serialize_to_toon(result.into()).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let result_core: kreuzberg::ExtractionResult = result.into();
+    let result = kreuzberg::serialize_to_toon(&result_core).map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "serializeToJson")]
 pub fn serialize_to_json(result: WasmExtractionResult) -> Result<String, JsValue> {
-    let result = kreuzberg::serialize_to_json(result.into()).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let result_core: kreuzberg::ExtractionResult = result.into();
+    let result = kreuzberg::serialize_to_json(&result_core).map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
 

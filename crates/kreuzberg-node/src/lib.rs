@@ -3315,6 +3315,9 @@ pub fn validate_cache_key(key: String) -> bool {
 #[napi(js_name = "filterOldCacheEntries")]
 pub fn filter_old_cache_entries(cache_times: Vec<f64>, current_time: f64, max_age_seconds: f64) -> Vec<i64> {
     kreuzberg::cache::filter_old_cache_entries(&cache_times, current_time, max_age_seconds)
+        .into_iter()
+        .map(|v| v as i64)
+        .collect()
 }
 
 #[napi(js_name = "sortCacheByAccessTime")]
@@ -4131,6 +4134,7 @@ pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String> {
 #[napi(js_name = "detectTablePageNumbers")]
 pub fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<i64>> {
     kreuzberg::extraction::docx::detect_table_page_numbers(&bytes)
+        .map(|val| val.into_iter().map(|v| v as i64).collect())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -4254,7 +4258,7 @@ pub fn extract_text_from_events(events: Vec<String>) -> String {
 #[napi(js_name = "renderBlockToDjot")]
 pub fn render_block_to_djot(block: JsFormattedBlock, indent_level: i64) -> String {
     let block_core: kreuzberg::FormattedBlock = block.into();
-    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(&block_core, indent_level)
+    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(&block_core, indent_level as usize)
 }
 
 #[napi(js_name = "renderListItem")]
@@ -5005,9 +5009,15 @@ pub fn chunk_text_with_type(
     chunker_type: JsChunkerType,
 ) -> Result<JsChunkingResult> {
     let chunker_type_core: kreuzberg::ChunkerType = chunker_type.into();
-    kreuzberg::chunking::chunk_text_with_type(&text, max_characters, overlap, trim, chunker_type_core)
-        .map(|val| val.into())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
+    kreuzberg::chunking::chunk_text_with_type(
+        &text,
+        max_characters as usize,
+        overlap as usize,
+        trim,
+        chunker_type_core,
+    )
+    .map(|val| val.into())
+    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -5046,6 +5056,9 @@ pub fn render_template(template: String, context: String) -> Result<String> {
 #[napi]
 pub fn normalize(v: Vec<f64>) -> Vec<f64> {
     kreuzberg::embeddings::engine::normalize(&v)
+        .into_iter()
+        .map(|v| v as f64)
+        .collect()
 }
 
 #[napi(js_name = "getPreset")]
@@ -5181,8 +5194,8 @@ pub fn assemble_ocr_markdown(
     kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
         &elements_core,
         detection_core,
-        img_width.expect("'img_width' is required"),
-        img_height.expect("'img_height' is required"),
+        img_width.expect("'img_width' is required") as u32,
+        img_height.expect("'img_height' is required") as u32,
         &recognized_tables_core,
     )
 }
@@ -8259,7 +8272,11 @@ impl From<kreuzberg::api::EmbedRequest> for JsEmbedRequest {
 impl From<kreuzberg::api::EmbedResponse> for JsEmbedResponse {
     fn from(val: kreuzberg::api::EmbedResponse) -> Self {
         Self {
-            embeddings: val.embeddings,
+            embeddings: val
+                .embeddings
+                .iter()
+                .map(|inner| inner.iter().map(|&x| x as f64).collect())
+                .collect(),
             model: val.model,
             dimensions: val.dimensions as i64,
             count: val.count as i64,
@@ -9031,7 +9048,7 @@ impl From<JsChunkSizing> for kreuzberg::ChunkSizing {
             "characters" => Self::Characters,
             "tokenizer" => Self::Tokenizer {
                 model: val.model.unwrap_or_default(),
-                cache_dir: val.cache_dir,
+                cache_dir: val.cache_dir.map(std::path::PathBuf::from),
             },
             _ => Self::Characters,
         }
