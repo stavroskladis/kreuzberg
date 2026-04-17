@@ -84,25 +84,9 @@ class ByteBufferPool
 }
 
 /**
- * RAII wrapper for a pooled string buffer.
- *
- * Automatically returns the buffer to the pool when dropped.
- */
-class PooledString
-{
-}
-
-/**
  * A [`tower::Layer`] that wraps each extraction in a semantic tracing span.
  */
 class TracingLayer
-{
-}
-
-/**
- * A [`tower::Layer`] that records service-level extraction metrics.
- */
-class MetricsLayer
 {
 }
 
@@ -5863,7 +5847,6 @@ class KreuzbergApi
     public static function getExtensionsForMime(string $mime_type): array { }
     public static function listSupportedFormats(): array { }
     public static function clearProcessorCache(): void { }
-    public static function applyOutputFormat(\Kreuzberg\ExtractionResult $result, \Kreuzberg\OutputFormat $output_format): \Kreuzberg\ExtractionResult { }
     public static function isPageTextBlank(string $text): bool { }
     public static function resolveRelationships(string $doc): void { }
     public static function parseJson(string $data, ?string $config = null): \Kreuzberg\StructuredDataResult { }
@@ -5931,16 +5914,6 @@ class KreuzbergApi
     public static function extractPptxFromBytes(string $data, string $options): \Kreuzberg\PptxExtractionResult { }
     public static function parseXmlSvg(string $xml_bytes, bool $preserve_whitespace): \Kreuzberg\XmlExtractionResult { }
     public static function parseXml(string $xml_bytes, bool $preserve_whitespace): \Kreuzberg\XmlExtractionResult { }
-    /**
-     * @param array<array<string>> $cells
-     * @return string
-     */
-    public static function cellsToText(array $cells): string { }
-    /**
-     * @param array<array<string>> $cells
-     * @return string
-     */
-    public static function cellsToMarkdown(array $cells): string { }
     public static function parseJotdownAttributes(string $attrs): string { }
     public static function renderAttributes(string $attrs): string { }
     public static function djotContentToDjot(\Kreuzberg\DjotContent $content): string { }
@@ -5958,11 +5931,6 @@ class KreuzbergApi
     public static function extractTextFromEvents(array $events): string { }
     public static function renderBlockToDjot(\Kreuzberg\FormattedBlock $block, int $indent_level): string { }
     public static function renderListItem(\Kreuzberg\FormattedBlock $item, string $indent, string $marker): string { }
-    /**
-     * @param array<\Kreuzberg\InlineElement> $elements
-     * @return string
-     */
-    public static function renderInlineContent(array $elements): string { }
     public static function extractFrontmatter(string $content): string { }
     public static function extractTitleFromContent(string $content): ?string { }
     public static function collectIwaPaths(string $content): array { }
@@ -6032,7 +6000,6 @@ class KreuzbergApi
     public static function fromUtf8(string $bytes): string { }
     public static function stringFromUtf8(string $bytes): string { }
     public static function isValidUtf8(string $bytes): bool { }
-    public static function calculateQualityScore(string $text, ?string $metadata = null): float { }
     public static function cleanExtractedText(string $text): string { }
     public static function normalizeSpaces(string $text): string { }
     public static function reduceTokens(string $text, \Kreuzberg\TokenReductionConfig $config, ?string $language_hint = null): string { }
@@ -6055,7 +6022,6 @@ class KreuzbergApi
     public static function fontSize(int $start, int $end, string $value): \Kreuzberg\TextAnnotation { }
     public static function color(int $start, int $end, string $value): \Kreuzberg\TextAnnotation { }
     public static function highlight(int $start, int $end): \Kreuzberg\TextAnnotation { }
-    public static function classifyUri(string $url): \Kreuzberg\UriKind { }
     public static function safeDecode(string $byte_data, ?string $encoding = null): string { }
     public static function calculateTextConfidence(string $text): float { }
     public static function fixMojibake(string $text): string { }
@@ -6064,7 +6030,7 @@ class KreuzbergApi
     public static function createStringBufferPool(int $pool_size, int $buffer_capacity): \Kreuzberg\StringBufferPool { }
     public static function createByteBufferPool(int $pool_size, int $buffer_capacity): \Kreuzberg\ByteBufferPool { }
     public static function estimatePoolSize(int $file_size, string $mime_type): string { }
-    public static function acquireStringBuffer(): \Kreuzberg\PooledString { }
+    public static function acquireStringBuffer(): string { }
     public static function internLanguageCode(string $lang_code): string { }
     public static function internMimeType(string $mime_type): string { }
     public static function xmlTagName(string $name): string { }
@@ -6081,18 +6047,6 @@ class KreuzbergApi
      * @return array<int>
      */
     public static function detectRows(array $words, float $row_threshold_ratio): array { }
-    /**
-     * @param array<string> $words
-     * @param int $column_threshold
-     * @param float $row_threshold_ratio
-     * @return array<array<string>>
-     */
-    public static function reconstructTable(array $words, int $column_threshold, float $row_threshold_ratio): array { }
-    /**
-     * @param array<array<string>> $table
-     * @return string
-     */
-    public static function tableToMarkdown(array $table): string { }
     public static function loadServerConfig(?string $config_path = null): \Kreuzberg\ServerConfig { }
     public static function createRouter(\Kreuzberg\ExtractionConfig $config): string { }
     public static function createRouterWithLimits(\Kreuzberg\ExtractionConfig $config, string $limits): string { }
@@ -6105,40 +6059,12 @@ class KreuzbergApi
     public static function startMcpServerAsync(): void { }
     public static function startMcpServerWithConfigAsync(\Kreuzberg\ExtractionConfig $config): void { }
     /**
-     * @param array<\Kreuzberg\PageBoundary> $boundaries
-     * @return void
-     */
-    public static function validatePageBoundaries(array $boundaries): void { }
-    public static function classifyChunk(string $content, ?\Kreuzberg\HeadingContext $heading_context = null): \Kreuzberg\ChunkType { }
-    /**
-     * @param string $text
-     * @param \Kreuzberg\ChunkingConfig $config
-     * @param ?array<\Kreuzberg\PageBoundary> $page_boundaries
-     * @return \Kreuzberg\ChunkingResult
-     */
-    public static function chunkText(string $text, \Kreuzberg\ChunkingConfig $config, ?array $page_boundaries = null): \Kreuzberg\ChunkingResult { }
-    /**
-     * @param string $text
-     * @param \Kreuzberg\ChunkingConfig $config
-     * @param ?array<\Kreuzberg\PageBoundary> $page_boundaries
-     * @param ?string $heading_source
-     * @return \Kreuzberg\ChunkingResult
-     */
-    public static function chunkTextWithHeadingSource(string $text, \Kreuzberg\ChunkingConfig $config, ?array $page_boundaries = null, ?string $heading_source = null): \Kreuzberg\ChunkingResult { }
-    public static function chunkTextWithType(string $text, int $max_characters, int $overlap, bool $trim, \Kreuzberg\ChunkerType $chunker_type): \Kreuzberg\ChunkingResult { }
-    /**
      * @param array<string> $texts
      * @param \Kreuzberg\ChunkingConfig $config
      * @return array<\Kreuzberg\ChunkingResult>
      */
     public static function chunkTextsBatch(array $texts, \Kreuzberg\ChunkingConfig $config): array { }
     public static function precomputeUtf8Boundaries(string $text): string { }
-    /**
-     * @param string $text
-     * @param array<\Kreuzberg\PageBoundary> $boundaries
-     * @return void
-     */
-    public static function validateUtf8Boundaries(string $text, array $boundaries): void { }
     public static function renderTemplate(string $template, string $context): string { }
     /**
      * @param array<float> $v
@@ -6147,8 +6073,6 @@ class KreuzbergApi
     public static function normalize(array $v): array { }
     public static function getPreset(string $name): ?string { }
     public static function listPresets(): array { }
-    public static function warmModel(\Kreuzberg\EmbeddingModelType $model_type, ?string $cache_dir = null): void { }
-    public static function downloadModel(\Kreuzberg\EmbeddingModelType $model_type, ?string $cache_dir = null): void { }
     public static function calculateSmartDpi(float $page_width, float $page_height, int $target_dpi, int $max_dimension, float $max_memory_mb): int { }
     public static function calculateOptimalDpi(float $page_width, float $page_height, int $target_dpi, int $max_dimension, int $min_dpi, int $max_dpi): int { }
     public static function resizeImage(string $image, int $new_width, int $new_height, float $scale_factor): string { }
@@ -6158,30 +6082,7 @@ class KreuzbergApi
     public static function getStopwordsWithFallback(string $language, string $fallback): ?string { }
     public static function extractKeywords(string $text, \Kreuzberg\KeywordConfig $config): array { }
     public static function elementToHocrWord(\Kreuzberg\OcrElement $element): string { }
-    /**
-     * @param array<\Kreuzberg\OcrElement> $elements
-     * @param float $min_confidence
-     * @return array<string>
-     */
-    public static function elementsToHocrWords(array $elements, float $min_confidence): array { }
     public static function parseHocrToInternalDocument(string $hocr_html): string { }
-    /**
-     * @param array<\Kreuzberg\OcrElement> $elements
-     * @param ?\Kreuzberg\DetectionResult $detection
-     * @param int $img_width
-     * @param int $img_height
-     * @param array<\Kreuzberg\RecognizedTable> $recognized_tables
-     * @return string
-     */
-    public static function assembleOcrMarkdown(array $elements, ?\Kreuzberg\DetectionResult $detection = null, int $img_width, int $img_height, array $recognized_tables): string { }
-    /**
-     * @param string $page_image
-     * @param \Kreuzberg\DetectionResult $detection
-     * @param array<\Kreuzberg\OcrElement> $elements
-     * @param string $tatr_model
-     * @return array<\Kreuzberg\RecognizedTable>
-     */
-    public static function recognizePageTables(string $page_image, \Kreuzberg\DetectionResult $detection, array $elements, string $tatr_model): array { }
     public static function extractWordsFromTsv(string $tsv_data, float $min_confidence): array { }
     public static function computeHash(string $data): string { }
     public static function validateTesseractVersion(int $version): void { }
@@ -6189,7 +6090,6 @@ class KreuzbergApi
     public static function isLanguageSupported(string $lang): bool { }
     public static function languageToScriptFamily(string $paddle_lang): string { }
     public static function mapLanguageCode(string $kreuzberg_code): ?string { }
-    public static function buildCellGrid(string $result, ?string $table_bbox = null): array { }
     public static function preprocessImagenet(string $img, int $target_size): string { }
     public static function preprocessImagenetLetterbox(string $img, int $target_size): string { }
     public static function preprocessRescale(string $img, int $target_size): string { }
@@ -6207,38 +6107,8 @@ class KreuzbergApi
     public static function initializeFontCache(): void { }
     public static function getFontDescriptors(): array { }
     public static function cachedFontCount(): int { }
-    /**
-     * @param array<string> $blocks
-     * @param int $k
-     * @return array<\Kreuzberg\FontSizeCluster>
-     */
-    public static function clusterFontSizes(array $blocks, int $k): array { }
-    /**
-     * @param array<\Kreuzberg\FontSizeCluster> $clusters
-     * @param float $min_heading_ratio
-     * @param float $min_heading_gap
-     * @return array<string>
-     */
-    public static function assignHeadingLevelsSmart(array $clusters, float $min_heading_ratio, float $min_heading_gap): array { }
-    /**
-     * @param array<string> $blocks
-     * @param string $kmeans_result
-     * @return array<\Kreuzberg\HierarchyBlock>
-     */
-    public static function assignHierarchyLevels(array $blocks, string $kmeans_result): array { }
-    /**
-     * @param array<string> $blocks
-     * @param array<\Kreuzberg\FontSizeCluster> $clusters
-     * @return array<string>
-     */
-    public static function assignHierarchyLevelsFromClusters(array $blocks, array $clusters): array { }
     public static function extractCharsWithFonts(string $page): array { }
     public static function extractSegmentsFromPage(string $page): array { }
-    /**
-     * @param array<\Kreuzberg\CharData> $chars
-     * @return array<string>
-     */
-    public static function mergeCharsIntoBlocks(array $chars): array { }
     /**
      * @param string $page
      * @param array<string> $blocks
@@ -6275,18 +6145,6 @@ class KreuzbergApi
      * @return array<string>
      */
     public static function segmentsToWords(array $segments, float $page_height): array { }
-    /**
-     * @param array<array<string>> $table
-     * @param bool $layout_guided
-     * @param bool $allow_single_column
-     * @return ?array<array<string>>
-     */
-    public static function postProcessTable(array $table, bool $layout_guided, bool $allow_single_column): ?array { }
-    /**
-     * @param array<array<string>> $grid
-     * @return bool
-     */
-    public static function isWellFormedTable(array $grid): bool { }
     public static function extractTextFromPdf(string $pdf_bytes): string { }
     public static function extractTextFromPdfWithPassword(string $pdf_bytes, string $password): string { }
     /**

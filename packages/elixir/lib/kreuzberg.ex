@@ -350,12 +350,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.clear_processor_cache()
   end
 
-  @doc "Apply output format conversion to the extraction result."
-  @spec apply_output_format(String.t() | nil, map()) :: String.t() | nil
-  def apply_output_format(result, output_format) do
-    Kreuzberg.Native.apply_output_format(result, output_format)
-  end
-
   @doc "Determine if a page's text content indicates a blank page."
   @spec is_page_text_blank(String.t()) :: boolean()
   def is_page_text_blank(text) do
@@ -830,18 +824,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.parse_xml(xml_bytes, preserve_whitespace)
   end
 
-  @doc "Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table."
-  @spec cells_to_text([[String.t()]]) :: String.t()
-  def cells_to_text(cells) do
-    Kreuzberg.Native.cells_to_text(cells)
-  end
-
-  @doc "Function"
-  @spec cells_to_markdown([[String.t()]]) :: String.t()
-  def cells_to_markdown(cells) do
-    Kreuzberg.Native.cells_to_markdown(cells)
-  end
-
   @doc "Parse jotdown attributes into our Attributes representation."
   @spec parse_jotdown_attributes(String.t()) :: String.t()
   def parse_jotdown_attributes(attrs) do
@@ -894,12 +876,6 @@ defmodule Kreuzberg do
   @spec render_list_item(map(), String.t(), String.t()) :: String.t()
   def render_list_item(item, indent, marker) do
     Kreuzberg.Native.render_list_item(item, indent, marker)
-  end
-
-  @doc "Render inline content to djot markup."
-  @spec render_inline_content([map()]) :: String.t()
-  def render_inline_content(elements) do
-    Kreuzberg.Native.render_inline_content(elements)
   end
 
   @doc "Extract YAML frontmatter from document content."
@@ -1263,18 +1239,6 @@ defmodule Kreuzberg do
   end
 
   @doc "Function"
-  @spec calculate_quality_score(String.t()) :: float()
-  def calculate_quality_score(text) do
-    Kreuzberg.Native.calculate_quality_score(text, nil)
-  end
-
-  @doc "Function"
-  @spec calculate_quality_score(String.t(), String.t() | nil) :: float()
-  def calculate_quality_score(text, metadata) do
-    Kreuzberg.Native.calculate_quality_score(text, metadata)
-  end
-
-  @doc "Function"
   @spec clean_extracted_text(String.t()) :: String.t()
   def clean_extracted_text(text) do
     Kreuzberg.Native.clean_extracted_text(text)
@@ -1388,12 +1352,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.highlight(start, end)
   end
 
-  @doc "Classify a URL string into the appropriate `UriKind`."
-  @spec classify_uri(String.t()) :: map()
-  def classify_uri(url) do
-    Kreuzberg.Native.classify_uri(url)
-  end
-
   @doc "Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary."
   @spec safe_decode(binary()) :: String.t()
   def safe_decode(byte_data) do
@@ -1449,7 +1407,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Acquire a string buffer from the global pool."
-  @spec acquire_string_buffer() :: reference()
+  @spec acquire_string_buffer() :: String.t()
   def acquire_string_buffer do
     Kreuzberg.Native.acquire_string_buffer()
   end
@@ -1488,18 +1446,6 @@ defmodule Kreuzberg do
   @spec detect_rows([String.t()], float()) :: [non_neg_integer()]
   def detect_rows(words, row_threshold_ratio) do
     Kreuzberg.Native.detect_rows(words, row_threshold_ratio)
-  end
-
-  @doc "Reconstruct a table grid from words with bounding box positions."
-  @spec reconstruct_table([String.t()], non_neg_integer(), float()) :: [[String.t()]]
-  def reconstruct_table(words, column_threshold, row_threshold_ratio) do
-    Kreuzberg.Native.reconstruct_table(words, column_threshold, row_threshold_ratio)
-  end
-
-  @doc "Convert a table grid to markdown format."
-  @spec table_to_markdown([[String.t()]]) :: String.t()
-  def table_to_markdown(table) do
-    Kreuzberg.Native.table_to_markdown(table)
   end
 
   @doc "Load ServerConfig with proper precedence order."
@@ -1574,60 +1520,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.start_mcp_server_with_config_async(config)
   end
 
-  @doc "Validates the consistency and correctness of page boundaries."
-  @spec validate_page_boundaries([map()]) :: {:ok, nil} | {:error, String.t()}
-  def validate_page_boundaries(boundaries) do
-    Kreuzberg.Native.validate_page_boundaries(boundaries)
-  end
-
-  @doc "Classify a single chunk based on its content and optional heading context."
-  @spec classify_chunk(String.t()) :: map()
-  def classify_chunk(content) do
-    Kreuzberg.Native.classify_chunk(content, nil)
-  end
-
-  @doc "Classify a single chunk based on its content and optional heading context."
-  @spec classify_chunk(String.t(), map() | nil) :: map()
-  def classify_chunk(content, heading_context) do
-    Kreuzberg.Native.classify_chunk(content, heading_context)
-  end
-
-  @doc "Split text into chunks with optional page boundary tracking."
-  @spec chunk_text(String.t(), String.t() | nil) :: {:ok, map()} | {:error, String.t()}
-  def chunk_text(text, config) do
-    Kreuzberg.Native.chunk_text(text, config, nil)
-  end
-
-  @doc "Split text into chunks with optional page boundary tracking."
-  @spec chunk_text(String.t(), String.t() | nil, [map()] | nil) :: {:ok, map()} | {:error, String.t()}
-  def chunk_text(text, config, page_boundaries) do
-    Kreuzberg.Native.chunk_text(text, config, page_boundaries)
-  end
-
-  @doc "Chunk text with an optional separate markdown source for heading context resolution."
-  @spec chunk_text_with_heading_source(String.t(), String.t() | nil) :: {:ok, map()} | {:error, String.t()}
-  def chunk_text_with_heading_source(text, config) do
-    Kreuzberg.Native.chunk_text_with_heading_source(text, config, nil, nil)
-  end
-
-  @doc "Chunk text with an optional separate markdown source for heading context resolution."
-  @spec chunk_text_with_heading_source(String.t(), String.t() | nil, [map()] | nil) :: {:ok, map()} | {:error, String.t()}
-  def chunk_text_with_heading_source(text, config, page_boundaries) do
-    Kreuzberg.Native.chunk_text_with_heading_source(text, config, page_boundaries, nil)
-  end
-
-  @doc "Chunk text with an optional separate markdown source for heading context resolution."
-  @spec chunk_text_with_heading_source(String.t(), String.t() | nil, [map()] | nil, String.t() | nil) :: {:ok, map()} | {:error, String.t()}
-  def chunk_text_with_heading_source(text, config, page_boundaries, heading_source) do
-    Kreuzberg.Native.chunk_text_with_heading_source(text, config, page_boundaries, heading_source)
-  end
-
-  @doc "Chunk text with explicit type specification."
-  @spec chunk_text_with_type(String.t(), non_neg_integer(), non_neg_integer(), boolean(), map()) :: {:ok, map()} | {:error, String.t()}
-  def chunk_text_with_type(text, max_characters, overlap, trim, chunker_type) do
-    Kreuzberg.Native.chunk_text_with_type(text, max_characters, overlap, trim, chunker_type)
-  end
-
   @doc "Batch process multiple texts with the same configuration."
   @spec chunk_texts_batch([String.t()], String.t() | nil) :: {:ok, [map()]} | {:error, String.t()}
   def chunk_texts_batch(texts, config) do
@@ -1638,12 +1530,6 @@ defmodule Kreuzberg do
   @spec precompute_utf8_boundaries(String.t()) :: String.t()
   def precompute_utf8_boundaries(text) do
     Kreuzberg.Native.precompute_utf8_boundaries(text)
-  end
-
-  @doc "Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries."
-  @spec validate_utf8_boundaries(String.t(), [map()]) :: {:ok, nil} | {:error, String.t()}
-  def validate_utf8_boundaries(text, boundaries) do
-    Kreuzberg.Native.validate_utf8_boundaries(text, boundaries)
   end
 
   @doc "Render a Jinja2 template with the given context variables."
@@ -1668,30 +1554,6 @@ defmodule Kreuzberg do
   @spec list_presets() :: [String.t()]
   def list_presets do
     Kreuzberg.Native.list_presets()
-  end
-
-  @doc "Eagerly download and cache an embedding model without returning the handle."
-  @spec warm_model(map()) :: {:ok, nil} | {:error, String.t()}
-  def warm_model(model_type) do
-    Kreuzberg.Native.warm_model(model_type, nil)
-  end
-
-  @doc "Eagerly download and cache an embedding model without returning the handle."
-  @spec warm_model(map(), String.t() | nil) :: {:ok, nil} | {:error, String.t()}
-  def warm_model(model_type, cache_dir) do
-    Kreuzberg.Native.warm_model(model_type, cache_dir)
-  end
-
-  @doc "Download an embedding model's files without initializing ONNX Runtime."
-  @spec download_model(map()) :: {:ok, nil} | {:error, String.t()}
-  def download_model(model_type) do
-    Kreuzberg.Native.download_model(model_type, nil)
-  end
-
-  @doc "Download an embedding model's files without initializing ONNX Runtime."
-  @spec download_model(map(), String.t() | nil) :: {:ok, nil} | {:error, String.t()}
-  def download_model(model_type, cache_dir) do
-    Kreuzberg.Native.download_model(model_type, cache_dir)
   end
 
   @doc "Calculate smart DPI based on page dimensions, memory constraints, and target DPI"
@@ -1748,28 +1610,10 @@ defmodule Kreuzberg do
     Kreuzberg.Native.element_to_hocr_word(element)
   end
 
-  @doc "Convert a vector of OcrElements to HocrWords for batch table processing."
-  @spec elements_to_hocr_words([String.t() | nil], float()) :: [String.t()]
-  def elements_to_hocr_words(elements, min_confidence) do
-    Kreuzberg.Native.elements_to_hocr_words(elements, min_confidence)
-  end
-
   @doc "Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata."
   @spec parse_hocr_to_internal_document(String.t()) :: String.t()
   def parse_hocr_to_internal_document(hocr_html) do
     Kreuzberg.Native.parse_hocr_to_internal_document(hocr_html)
-  end
-
-  @doc "Assemble structured markdown from OCR elements using layout detection results."
-  @spec assemble_ocr_markdown([String.t() | nil], map() | nil, non_neg_integer(), non_neg_integer(), [map()]) :: String.t()
-  def assemble_ocr_markdown(elements, detection, img_width, img_height, recognized_tables) do
-    Kreuzberg.Native.assemble_ocr_markdown(elements, detection, img_width, img_height, recognized_tables)
-  end
-
-  @doc "Run TATR table recognition for all Table regions in a page."
-  @spec recognize_page_tables(String.t(), map(), [String.t() | nil], String.t()) :: [map()]
-  def recognize_page_tables(page_image, detection, elements, tatr_model) do
-    Kreuzberg.Native.recognize_page_tables(page_image, detection, elements, tatr_model)
   end
 
   @doc "Extract words from Tesseract TSV output and convert to HocrWord format."
@@ -1812,18 +1656,6 @@ defmodule Kreuzberg do
   @spec map_language_code(String.t()) :: String.t() | nil
   def map_language_code(kreuzberg_code) do
     Kreuzberg.Native.map_language_code(kreuzberg_code)
-  end
-
-  @doc "Build a 2D cell grid from TATR detections."
-  @spec build_cell_grid(String.t()) :: [[String.t()]]
-  def build_cell_grid(result) do
-    Kreuzberg.Native.build_cell_grid(result, nil)
-  end
-
-  @doc "Build a 2D cell grid from TATR detections."
-  @spec build_cell_grid(String.t(), String.t() | nil) :: [[String.t()]]
-  def build_cell_grid(result, table_bbox) do
-    Kreuzberg.Native.build_cell_grid(result, table_bbox)
   end
 
   @doc "Preprocess an image for models using ImageNet normalization (e.g., RT-DETR)."
@@ -1928,30 +1760,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.cached_font_count()
   end
 
-  @doc "Cluster text blocks by font size using k-means algorithm."
-  @spec cluster_font_sizes([String.t()], non_neg_integer()) :: {:ok, [map()]} | {:error, String.t()}
-  def cluster_font_sizes(blocks, k) do
-    Kreuzberg.Native.cluster_font_sizes(blocks, k)
-  end
-
-  @doc "Assign heading levels using the "most frequent cluster = Body" rule."
-  @spec assign_heading_levels_smart([map()], float(), float()) :: [String.t()]
-  def assign_heading_levels_smart(clusters, min_heading_ratio, min_heading_gap) do
-    Kreuzberg.Native.assign_heading_levels_smart(clusters, min_heading_ratio, min_heading_gap)
-  end
-
-  @doc "Assign hierarchy levels to text blocks based on KMeans clustering results."
-  @spec assign_hierarchy_levels([String.t()], String.t()) :: [map()]
-  def assign_hierarchy_levels(blocks, kmeans_result) do
-    Kreuzberg.Native.assign_hierarchy_levels(blocks, kmeans_result)
-  end
-
-  @doc "Assign hierarchy levels to text blocks based on font size clusters."
-  @spec assign_hierarchy_levels_from_clusters([String.t()], [map()]) :: [String.t()]
-  def assign_hierarchy_levels_from_clusters(blocks, clusters) do
-    Kreuzberg.Native.assign_hierarchy_levels_from_clusters(blocks, clusters)
-  end
-
   @doc "Extract characters with fonts from a PDF page."
   @spec extract_chars_with_fonts(String.t()) :: {:ok, [map()]} | {:error, String.t()}
   def extract_chars_with_fonts(page) do
@@ -1962,12 +1770,6 @@ defmodule Kreuzberg do
   @spec extract_segments_from_page(String.t()) :: {:ok, [String.t()]} | {:error, String.t()}
   def extract_segments_from_page(page) do
     Kreuzberg.Native.extract_segments_from_page(page)
-  end
-
-  @doc "Merge characters into text blocks using a greedy clustering algorithm."
-  @spec merge_chars_into_blocks([map()]) :: [String.t()]
-  def merge_chars_into_blocks(chars) do
-    Kreuzberg.Native.merge_chars_into_blocks(chars)
   end
 
   @doc "Determine whether OCR should be triggered based on text block coverage."
@@ -2078,18 +1880,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.segments_to_words(segments, page_height)
   end
 
-  @doc "Post-process a raw table grid to validate structure and clean up."
-  @spec post_process_table([[String.t()]], boolean(), boolean()) :: [[String.t()]] | nil
-  def post_process_table(table, layout_guided, allow_single_column) do
-    Kreuzberg.Native.post_process_table(table, layout_guided, allow_single_column)
-  end
-
-  @doc "Validate whether a reconstructed table grid represents a well-formed table"
-  @spec is_well_formed_table([[String.t()]]) :: boolean()
-  def is_well_formed_table(grid) do
-    Kreuzberg.Native.is_well_formed_table(grid)
-  end
-
   @doc "Function"
   @spec extract_text_from_pdf(binary()) :: {:ok, String.t()} | {:error, String.t()}
   def extract_text_from_pdf(pdf_bytes) do
@@ -2130,18 +1920,6 @@ defmodule Kreuzberg do
   @spec extractionconfig_default() :: String.t() | nil
   def extractionconfig_default do
     Kreuzberg.Native.extractionconfig_default()
-  end
-
-  @doc "Create a new `ExtractionConfig` by applying per-file overrides from a"
-  @spec extractionconfig_with_file_overrides(map(), String.t() | nil) :: String.t() | nil
-  def extractionconfig_with_file_overrides(obj, overrides) do
-    Kreuzberg.Native.extractionconfig_with_file_overrides(obj, overrides)
-  end
-
-  @doc "Normalize configuration for implicit requirements."
-  @spec extractionconfig_normalized(map()) :: String.t() | nil
-  def extractionconfig_normalized(obj) do
-    Kreuzberg.Native.extractionconfig_normalized(obj)
   end
 
   @doc "Validate the configuration, returning an error if any settings are invalid."
@@ -2480,12 +2258,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.documentstructure_furniture_roots(obj)
   end
 
-  @doc "Get a node by index."
-  @spec documentstructure_get(map(), non_neg_integer()) :: map() | nil
-  def documentstructure_get(obj, index) do
-    Kreuzberg.Native.documentstructure_get(obj, index)
-  end
-
   @doc "Get the total number of nodes."
   @spec documentstructure_len(map()) :: non_neg_integer()
   def documentstructure_len(obj) do
@@ -2516,12 +2288,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.tesseractconfig_default()
   end
 
-  @doc "Check if metadata is empty (no meaningful content extracted)."
-  @spec htmlmetadata_is_empty(map()) :: boolean()
-  def htmlmetadata_is_empty(obj) do
-    Kreuzberg.Native.htmlmetadata_is_empty(obj)
-  end
-
   @doc "Create confidence from Tesseract's single confidence value."
   @spec ocrconfidence_from_tesseract(float()) :: String.t() | nil
   def ocrconfidence_from_tesseract(confidence) do
@@ -2550,24 +2316,6 @@ defmodule Kreuzberg do
   @spec ocrelement_with_rotation(map(), map()) :: String.t() | nil
   def ocrelement_with_rotation(obj, rotation) do
     Kreuzberg.Native.ocrelement_with_rotation(obj, rotation)
-  end
-
-  @doc "Set page number."
-  @spec ocrelement_with_page_number(map(), non_neg_integer()) :: String.t() | nil
-  def ocrelement_with_page_number(obj, page_number) do
-    Kreuzberg.Native.ocrelement_with_page_number(obj, page_number)
-  end
-
-  @doc "Set parent element ID."
-  @spec ocrelement_with_parent_id(map(), String.t()) :: String.t() | nil
-  def ocrelement_with_parent_id(obj, parent_id) do
-    Kreuzberg.Native.ocrelement_with_parent_id(obj, parent_id)
-  end
-
-  @doc "Add backend-specific metadata."
-  @spec ocrelement_with_metadata(map(), String.t(), String.t()) :: String.t() | nil
-  def ocrelement_with_metadata(obj, key, value) do
-    Kreuzberg.Native.ocrelement_with_metadata(obj, key, value)
   end
 
   @doc "Create a new hyperlink URI, auto-classifying `mailto:` as Email and `#` as Anchor."
@@ -2612,52 +2360,10 @@ defmodule Kreuzberg do
     Kreuzberg.Native.uri_with_page(obj, page)
   end
 
-  @doc "Get mutable access to the underlying string buffer."
-  @spec pooledstring_buffer_mut(map()) :: String.t()
-  def pooledstring_buffer_mut(obj) do
-    Kreuzberg.Native.pooledstring_buffer_mut(obj)
-  end
-
-  @doc "Get immutable access to the underlying string buffer."
-  @spec pooledstring_as_str(map()) :: String.t()
-  def pooledstring_as_str(obj) do
-    Kreuzberg.Native.pooledstring_as_str(obj)
-  end
-
-  @doc "Method"
-  @spec pooledstring_deref(map()) :: String.t()
-  def pooledstring_deref(obj) do
-    Kreuzberg.Native.pooledstring_deref(obj)
-  end
-
-  @doc "Method"
-  @spec pooledstring_deref_mut(map()) :: String.t()
-  def pooledstring_deref_mut(obj) do
-    Kreuzberg.Native.pooledstring_deref_mut(obj)
-  end
-
-  @doc "Method"
-  @spec pooledstring_drop(map()) :: nil
-  def pooledstring_drop(obj) do
-    Kreuzberg.Native.pooledstring_drop(obj)
-  end
-
-  @doc "Method"
-  @spec pooledstring_fmt(map(), String.t()) :: String.t()
-  def pooledstring_fmt(obj, f) do
-    Kreuzberg.Native.pooledstring_fmt(obj, f)
-  end
-
   @doc "Method"
   @spec tracinglayer_layer(map(), String.t()) :: String.t()
   def tracinglayer_layer(obj, inner) do
     Kreuzberg.Native.tracinglayer_layer(obj, inner)
-  end
-
-  @doc "Method"
-  @spec metricslayer_layer(map(), String.t()) :: String.t()
-  def metricslayer_layer(obj, inner) do
-    Kreuzberg.Native.metricslayer_layer(obj, inner)
   end
 
   @doc "Method"
@@ -2816,24 +2522,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.bbox_center(obj)
   end
 
-  @doc "Area of intersection with another bounding box."
-  @spec bbox_intersection_area(map(), map()) :: float()
-  def bbox_intersection_area(obj, other) do
-    Kreuzberg.Native.bbox_intersection_area(obj, other)
-  end
-
-  @doc "Intersection over Union with another bounding box."
-  @spec bbox_iou(map(), map()) :: float()
-  def bbox_iou(obj, other) do
-    Kreuzberg.Native.bbox_iou(obj, other)
-  end
-
-  @doc "Fraction of `other` that is contained within `self`."
-  @spec bbox_containment_of(map(), map()) :: float()
-  def bbox_containment_of(obj, other) do
-    Kreuzberg.Native.bbox_containment_of(obj, other)
-  end
-
   @doc "Fraction of page area this bbox covers."
   @spec bbox_page_coverage(map(), float(), float()) :: float()
   def bbox_page_coverage(obj, page_width, page_height) do
@@ -2844,12 +2532,6 @@ defmodule Kreuzberg do
   @spec bbox_fmt(map(), String.t()) :: String.t()
   def bbox_fmt(obj, f) do
     Kreuzberg.Native.bbox_fmt(obj, f)
-  end
-
-  @doc "Sort detections by confidence in descending order."
-  @spec layoutdetection_sort_by_confidence_desc([map()]) :: [map()]
-  def layoutdetection_sort_by_confidence_desc(detections) do
-    Kreuzberg.Native.layoutdetection_sort_by_confidence_desc(detections)
   end
 
   @doc "Method"

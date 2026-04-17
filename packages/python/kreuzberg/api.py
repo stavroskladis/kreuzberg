@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 import kreuzberg._kreuzberg as _rust
 
 if TYPE_CHECKING:
-    from .options import AccelerationConfig, CharData, ChunkerType, ChunkingConfig, ContentFilterConfig, DetectionResult, DjotContent, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractionConfig, ExtractionResult, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, KeywordConfig, LanguageDetectionConfig, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfidence, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PdfConfig, PostProcessorConfig, RakeParams, RecognizedTable, ServerConfig, TesseractConfig, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, YakeParams
+    from .options import AccelerationConfig, ChunkingConfig, ContentFilterConfig, DjotContent, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, ExcelWorkbook, ExtractionConfig, ExtractionResult, FormattedBlock, HierarchyConfig, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, KeywordConfig, LanguageDetectionConfig, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfidence, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, PageConfig, PdfConfig, PostProcessorConfig, RakeParams, ServerConfig, TesseractConfig, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, YakeParams
 
 
 _TO_RUST_CHUNKERTYPE_MAP = {
@@ -863,12 +863,6 @@ def clear_processor_cache() -> None:
     return _rust.clear_processor_cache()
 
 
-def apply_output_format(result: ExtractionResult, output_format: OutputFormat) -> _rust.ExtractionResult:
-    """Apply output format conversion to the extraction result."""
-    _rust_result = _to_rust_extraction_result(result)
-    return _rust.apply_output_format(_rust_result, output_format)
-
-
 def is_page_text_blank(text: str) -> bool:
     """Determine if a page's text content indicates a blank page."""
     return _rust.is_page_text_blank(text)
@@ -1198,15 +1192,6 @@ def parse_xml(xml_bytes: bytes, preserve_whitespace: bool) -> _rust.XmlExtractio
     return _rust.parse_xml(xml_bytes, preserve_whitespace)
 
 
-def cells_to_text(cells: list[list[str]]) -> str:
-    """Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table."""
-    return _rust.cells_to_text(cells)
-
-
-def cells_to_markdown(cells: list[list[str]]) -> str:
-    return _rust.cells_to_markdown(cells)
-
-
 def parse_jotdown_attributes(attrs: str) -> str:
     """Parse jotdown attributes into our Attributes representation."""
     return _rust.parse_jotdown_attributes(attrs)
@@ -1251,11 +1236,6 @@ def render_block_to_djot(block: FormattedBlock, indent_level: int) -> str:
 def render_list_item(item: FormattedBlock, indent: str, marker: str) -> str:
     """Render a list item with the given marker."""
     return _rust.render_list_item(item, indent, marker)
-
-
-def render_inline_content(elements: list[InlineElement]) -> str:
-    """Render inline content to djot markup."""
-    return _rust.render_inline_content(elements)
 
 
 def extract_frontmatter(content: str) -> str:
@@ -1558,10 +1538,6 @@ def is_valid_utf8(bytes: bytes) -> bool:
     return _rust.is_valid_utf8(bytes)
 
 
-def calculate_quality_score(text: str, metadata: str | None = None) -> float:
-    return _rust.calculate_quality_score(text, metadata)
-
-
 def clean_extracted_text(text: str) -> str:
     return _rust.clean_extracted_text(text)
 
@@ -1642,11 +1618,6 @@ def highlight(start: int, end: int) -> _rust.TextAnnotation:
     return _rust.highlight(start, end)
 
 
-def classify_uri(url: str) -> _rust.UriKind:
-    """Classify a URL string into the appropriate `UriKind`."""
-    return _rust.classify_uri(url)
-
-
 def safe_decode(byte_data: bytes, encoding: str | None = None) -> str:
     """Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary."""
     return _rust.safe_decode(byte_data, encoding)
@@ -1687,7 +1658,7 @@ def estimate_pool_size(file_size: int, mime_type: str) -> str:
     return _rust.estimate_pool_size(file_size, mime_type)
 
 
-def acquire_string_buffer() -> _rust.PooledString:
+def acquire_string_buffer() -> str:
     """Acquire a string buffer from the global pool."""
     return _rust.acquire_string_buffer()
 
@@ -1720,16 +1691,6 @@ def detect_columns(words: list[str], column_threshold: int) -> list[int]:
 def detect_rows(words: list[str], row_threshold_ratio: float) -> list[int]:
     """Detect row positions from word y-coordinates."""
     return _rust.detect_rows(words, row_threshold_ratio)
-
-
-def reconstruct_table(words: list[str], column_threshold: int, row_threshold_ratio: float) -> list[list[str]]:
-    """Reconstruct a table grid from words with bounding box positions."""
-    return _rust.reconstruct_table(words, column_threshold, row_threshold_ratio)
-
-
-def table_to_markdown(table: list[list[str]]) -> str:
-    """Convert a table grid to markdown format."""
-    return _rust.table_to_markdown(table)
 
 
 def load_server_config(config_path: str | None = None) -> _rust.ServerConfig:
@@ -1795,33 +1756,6 @@ def start_mcp_server_with_config(config: ExtractionConfig) -> None:
     return _rust.start_mcp_server_with_config(_rust_config)
 
 
-def validate_page_boundaries(boundaries: list[PageBoundary]) -> None:
-    """Validates the consistency and correctness of page boundaries."""
-    return _rust.validate_page_boundaries(boundaries)
-
-
-def classify_chunk(content: str, heading_context: HeadingContext | None = None) -> _rust.ChunkType:
-    """Classify a single chunk based on its content and optional heading context."""
-    return _rust.classify_chunk(content, heading_context)
-
-
-def chunk_text(text: str, config: ChunkingConfig, page_boundaries: list[PageBoundary] | None = None) -> _rust.ChunkingResult:
-    """Split text into chunks with optional page boundary tracking."""
-    _rust_config = _to_rust_chunking_config(config)
-    return _rust.chunk_text(text, _rust_config, page_boundaries)
-
-
-def chunk_text_with_heading_source(text: str, config: ChunkingConfig, page_boundaries: list[PageBoundary] | None = None, heading_source: str | None = None) -> _rust.ChunkingResult:
-    """Chunk text with an optional separate markdown source for heading context resolution."""
-    _rust_config = _to_rust_chunking_config(config)
-    return _rust.chunk_text_with_heading_source(text, _rust_config, page_boundaries, heading_source)
-
-
-def chunk_text_with_type(text: str, max_characters: int, overlap: int, trim: bool, chunker_type: ChunkerType) -> _rust.ChunkingResult:
-    """Chunk text with explicit type specification."""
-    return _rust.chunk_text_with_type(text, max_characters, overlap, trim, chunker_type)
-
-
 def chunk_texts_batch(texts: list[str], config: ChunkingConfig) -> list[_rust.ChunkingResult]:
     """Batch process multiple texts with the same configuration."""
     _rust_config = _to_rust_chunking_config(config)
@@ -1831,11 +1765,6 @@ def chunk_texts_batch(texts: list[str], config: ChunkingConfig) -> list[_rust.Ch
 def precompute_utf8_boundaries(text: str) -> str:
     """Pre-computes valid UTF-8 character boundaries for a text string."""
     return _rust.precompute_utf8_boundaries(text)
-
-
-def validate_utf8_boundaries(text: str, boundaries: list[PageBoundary]) -> None:
-    """Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries."""
-    return _rust.validate_utf8_boundaries(text, boundaries)
 
 
 def render_template(template: str, context: str) -> str:
@@ -1856,16 +1785,6 @@ def get_preset(name: str) -> str | None:
 def list_presets() -> list[str]:
     """List all available preset names."""
     return _rust.list_presets()
-
-
-def warm_model(model_type: EmbeddingModelType, cache_dir: str | None = None) -> None:
-    """Eagerly download and cache an embedding model without returning the handle."""
-    return _rust.warm_model(model_type, cache_dir)
-
-
-def download_model(model_type: EmbeddingModelType, cache_dir: str | None = None) -> None:
-    """Download an embedding model's files without initializing ONNX Runtime."""
-    return _rust.download_model(model_type, cache_dir)
 
 
 def calculate_smart_dpi(page_width: float, page_height: float, target_dpi: int, max_dimension: int, max_memory_mb: float) -> int:
@@ -1915,24 +1834,9 @@ def element_to_hocr_word(element: OcrElement) -> str:
     return _rust.element_to_hocr_word(_rust_element)
 
 
-def elements_to_hocr_words(elements: list[OcrElement], min_confidence: float) -> list[str]:
-    """Convert a vector of OcrElements to HocrWords for batch table processing."""
-    return _rust.elements_to_hocr_words(elements, min_confidence)
-
-
 def parse_hocr_to_internal_document(hocr_html: str) -> str:
     """Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata."""
     return _rust.parse_hocr_to_internal_document(hocr_html)
-
-
-def assemble_ocr_markdown(elements: list[OcrElement], detection: DetectionResult | None = None, img_width: int, img_height: int, recognized_tables: list[RecognizedTable]) -> str:
-    """Assemble structured markdown from OCR elements using layout detection results."""
-    return _rust.assemble_ocr_markdown(elements, detection, img_width, img_height, recognized_tables)
-
-
-def recognize_page_tables(page_image: str, detection: DetectionResult, elements: list[OcrElement], tatr_model: str) -> list[_rust.RecognizedTable]:
-    """Run TATR table recognition for all Table regions in a page."""
-    return _rust.recognize_page_tables(page_image, detection, elements, tatr_model)
 
 
 def extract_words_from_tsv(tsv_data: str, min_confidence: float) -> list[str]:
@@ -1967,11 +1871,6 @@ def language_to_script_family(paddle_lang: str) -> str:
 def map_language_code(kreuzberg_code: str) -> str | None:
     """Map Kreuzberg language codes to PaddleOCR language codes."""
     return _rust.map_language_code(kreuzberg_code)
-
-
-def build_cell_grid(result: str, table_bbox: str | None = None) -> list[list[str]]:
-    """Build a 2D cell grid from TATR detections."""
-    return _rust.build_cell_grid(result, table_bbox)
 
 
 def preprocess_imagenet(img: str, target_size: int) -> str:
@@ -2060,26 +1959,6 @@ def cached_font_count() -> int:
     return _rust.cached_font_count()
 
 
-def cluster_font_sizes(blocks: list[str], k: int) -> list[_rust.FontSizeCluster]:
-    """Cluster text blocks by font size using k-means algorithm."""
-    return _rust.cluster_font_sizes(blocks, k)
-
-
-def assign_heading_levels_smart(clusters: list[FontSizeCluster], min_heading_ratio: float, min_heading_gap: float) -> list[str]:
-    """Assign heading levels using the "most frequent cluster = Body" rule."""
-    return _rust.assign_heading_levels_smart(clusters, min_heading_ratio, min_heading_gap)
-
-
-def assign_hierarchy_levels(blocks: list[str], kmeans_result: str) -> list[_rust.HierarchyBlock]:
-    """Assign hierarchy levels to text blocks based on KMeans clustering results."""
-    return _rust.assign_hierarchy_levels(blocks, kmeans_result)
-
-
-def assign_hierarchy_levels_from_clusters(blocks: list[str], clusters: list[FontSizeCluster]) -> list[str]:
-    """Assign hierarchy levels to text blocks based on font size clusters."""
-    return _rust.assign_hierarchy_levels_from_clusters(blocks, clusters)
-
-
 def extract_chars_with_fonts(page: str) -> list[_rust.CharData]:
     """Extract characters with fonts from a PDF page."""
     return _rust.extract_chars_with_fonts(page)
@@ -2088,11 +1967,6 @@ def extract_chars_with_fonts(page: str) -> list[_rust.CharData]:
 def extract_segments_from_page(page: str) -> list[str]:
     """Extract text segments from a PDF page using pdfium's segment merging."""
     return _rust.extract_segments_from_page(page)
-
-
-def merge_chars_into_blocks(chars: list[CharData]) -> list[str]:
-    """Merge characters into text blocks using a greedy clustering algorithm."""
-    return _rust.merge_chars_into_blocks(chars)
 
 
 def should_trigger_ocr(page: str, blocks: list[str], config: ExtractionConfig) -> bool:
@@ -2165,16 +2039,6 @@ def split_segment_to_words(seg: str, page_height: float) -> list[str]:
 def segments_to_words(segments: list[str], page_height: float) -> list[str]:
     """Convert a page's segments to word-level `HocrWord`s for table extraction."""
     return _rust.segments_to_words(segments, page_height)
-
-
-def post_process_table(table: list[list[str]], layout_guided: bool, allow_single_column: bool) -> list[list[str]] | None:
-    """Post-process a raw table grid to validate structure and clean up."""
-    return _rust.post_process_table(table, layout_guided, allow_single_column)
-
-
-def is_well_formed_table(grid: list[list[str]]) -> bool:
-    """Validate whether a reconstructed table grid represents a well-formed table."""
-    return _rust.is_well_formed_table(grid)
 
 
 def extract_text_from_pdf(pdf_bytes: bytes) -> str:

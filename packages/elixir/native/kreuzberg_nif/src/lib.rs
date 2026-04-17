@@ -4,8 +4,6 @@
 
 use rustler::ResourceArc;
 use std::collections::HashMap;
-use std::ops::Deref;
-use std::ops::DerefMut;
 use std::sync::Arc;
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
@@ -2309,16 +2307,6 @@ impl std::panic::RefUnwindSafe for ByteBufferPool {}
 impl rustler::Resource for ByteBufferPool {}
 
 #[derive(Clone)]
-pub struct PooledString {
-    inner: Arc<kreuzberg::utils::string_pool::PooledString>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for PooledString {}
-
-impl rustler::Resource for PooledString {}
-
-#[derive(Clone)]
 pub struct TracingLayer {
     inner: Arc<kreuzberg::service::layers::tracing::TracingLayer>,
 }
@@ -2327,16 +2315,6 @@ pub struct TracingLayer {
 impl std::panic::RefUnwindSafe for TracingLayer {}
 
 impl rustler::Resource for TracingLayer {}
-
-#[derive(Clone)]
-pub struct MetricsLayer {
-    inner: Arc<kreuzberg::service::layers::metrics::MetricsLayer>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for MetricsLayer {}
-
-impl rustler::Resource for MetricsLayer {}
 
 #[derive(Clone)]
 pub struct ApiDoc {
@@ -3853,15 +3831,6 @@ pub fn clear_processor_cache() -> Result<(), String> {
 }
 
 #[rustler::nif]
-pub fn apply_output_format(result: Option<String>, output_format: OutputFormat) -> ExtractionResult {
-    let result_core: Option<kreuzberg::ExtractionResult> = result
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionResult>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::core::pipeline::apply_output_format(Some(result_core.unwrap_or_default()), output_format.into()).into()
-}
-
-#[rustler::nif]
 pub fn is_page_text_blank(text: String) -> bool {
     kreuzberg::extraction::blank_detection::is_page_text_blank(&text)
 }
@@ -4237,16 +4206,6 @@ pub fn parse_xml(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<XmlExt
 }
 
 #[rustler::nif]
-pub fn cells_to_text(cells: Vec<Vec<String>>) -> String {
-    kreuzberg::extraction::cells_to_text(cells).into()
-}
-
-#[rustler::nif]
-pub fn cells_to_markdown(cells: Vec<Vec<String>>) -> String {
-    kreuzberg::extraction::cells_to_markdown(cells).into()
-}
-
-#[rustler::nif]
 pub fn parse_jotdown_attributes(attrs: String) -> String {
     String::from("[unimplemented: parse_jotdown_attributes]")
 }
@@ -4296,11 +4255,6 @@ pub fn render_block_to_djot(block: FormattedBlock, indent_level: usize) -> Strin
 #[rustler::nif]
 pub fn render_list_item(item: FormattedBlock, indent: String, marker: String) -> String {
     kreuzberg::extractors::djot_format::rendering::render_list_item(item.into(), &indent, &marker).into()
-}
-
-#[rustler::nif]
-pub fn render_inline_content(elements: Vec<InlineElement>) -> String {
-    kreuzberg::extractors::djot_format::rendering::render_inline_content(elements).into()
 }
 
 #[rustler::nif]
@@ -4624,11 +4578,6 @@ pub fn is_valid_utf8(bytes: Vec<u8>) -> bool {
 }
 
 #[rustler::nif]
-pub fn calculate_quality_score(text: String, metadata: String) -> f64 {
-    0
-}
-
-#[rustler::nif]
 pub fn clean_extracted_text(text: String) -> String {
     kreuzberg::text::clean_extracted_text(&text).into()
 }
@@ -4725,11 +4674,6 @@ pub fn highlight(start: u32, end: u32) -> TextAnnotation {
 }
 
 #[rustler::nif]
-pub fn classify_uri(url: String) -> UriKind {
-    kreuzberg::classify_uri(&url).into()
-}
-
-#[rustler::nif]
 pub fn safe_decode(byte_data: Vec<u8>, encoding: String) -> String {
     kreuzberg::utils::safe_decode(&byte_data, &encoding).into()
 }
@@ -4774,10 +4718,8 @@ pub fn estimate_pool_size(file_size: u64, mime_type: String) -> String {
 }
 
 #[rustler::nif]
-pub fn acquire_string_buffer() -> ResourceArc<PooledString> {
-    ResourceArc::new(PooledString {
-        inner: Arc::new(kreuzberg::utils::string_pool::acquire_string_buffer()),
-    })
+pub fn acquire_string_buffer() -> String {
+    String::from("[unimplemented: acquire_string_buffer]")
 }
 
 #[rustler::nif]
@@ -4808,16 +4750,6 @@ pub fn detect_columns(words: Vec<String>, column_threshold: u32) -> Vec<u32> {
 #[rustler::nif]
 pub fn detect_rows(words: Vec<String>, row_threshold_ratio: f64) -> Vec<u32> {
     Vec::new()
-}
-
-#[rustler::nif]
-pub fn reconstruct_table(words: Vec<String>, column_threshold: u32, row_threshold_ratio: f64) -> Vec<Vec<String>> {
-    Vec::new()
-}
-
-#[rustler::nif]
-pub fn table_to_markdown(table: Vec<Vec<String>>) -> String {
-    kreuzberg::table_core::table_to_markdown(table).into()
 }
 
 #[rustler::nif]
@@ -4947,66 +4879,6 @@ pub fn start_mcp_server_with_config_async(config: Option<String>) -> Result<(), 
 }
 
 #[rustler::nif]
-pub fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> Result<(), String> {
-    let result = kreuzberg::chunking::validate_page_boundaries(boundaries).map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn classify_chunk(content: String, heading_context: Option<HeadingContext>) -> ChunkType {
-    kreuzberg::chunking::classify_chunk(&content, heading_context.map(Into::into)).into()
-}
-
-#[rustler::nif]
-pub fn chunk_text(
-    text: String,
-    config: Option<String>,
-    page_boundaries: Vec<PageBoundary>,
-) -> Result<ChunkingResult, String> {
-    let config_core: Option<kreuzberg::ChunkingConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ChunkingConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::chunking::chunk_text(&text, Some(config_core.unwrap_or_default()), page_boundaries)
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn chunk_text_with_heading_source(
-    text: String,
-    config: Option<String>,
-    page_boundaries: Vec<PageBoundary>,
-    heading_source: String,
-) -> Result<ChunkingResult, String> {
-    let config_core: Option<kreuzberg::ChunkingConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ChunkingConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::chunking::chunk_text_with_heading_source(
-        &text,
-        Some(config_core.unwrap_or_default()),
-        page_boundaries,
-        &heading_source,
-    )
-    .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn chunk_text_with_type(
-    text: String,
-    max_characters: usize,
-    overlap: usize,
-    trim: bool,
-    chunker_type: ChunkerType,
-) -> Result<ChunkingResult, String> {
-    let result = kreuzberg::chunking::chunk_text_with_type(&text, max_characters, overlap, trim, chunker_type.into())
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
 pub fn chunk_texts_batch(texts: Vec<String>, config: Option<String>) -> Result<Vec<ChunkingResult>, String> {
     let config_core: Option<kreuzberg::ChunkingConfig> = config
         .map(|s| serde_json::from_str::<kreuzberg::ChunkingConfig>(&s))
@@ -5020,12 +4892,6 @@ pub fn chunk_texts_batch(texts: Vec<String>, config: Option<String>) -> Result<V
 #[rustler::nif]
 pub fn precompute_utf8_boundaries(text: String) -> String {
     String::from("[unimplemented: precompute_utf8_boundaries]")
-}
-
-#[rustler::nif]
-pub fn validate_utf8_boundaries(text: String, boundaries: Vec<PageBoundary>) -> Result<(), String> {
-    let result = kreuzberg::chunking::validate_utf8_boundaries(&text, boundaries).map_err(|e| e.to_string())?;
-    Ok(result)
 }
 
 #[rustler::nif]
@@ -5046,18 +4912,6 @@ pub fn get_preset(name: String) -> Option<String> {
 #[rustler::nif]
 pub fn list_presets() -> Vec<String> {
     kreuzberg::list_presets()
-}
-
-#[rustler::nif]
-pub fn warm_model(model_type: EmbeddingModelType, cache_dir: String) -> Result<(), String> {
-    let result = kreuzberg::warm_model(model_type.into(), &cache_dir).map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn download_model(model_type: EmbeddingModelType, cache_dir: String) -> Result<(), String> {
-    let result = kreuzberg::download_model(model_type.into(), &cache_dir).map_err(|e| e.to_string())?;
-    Ok(result)
 }
 
 #[rustler::nif]
@@ -5131,41 +4985,8 @@ pub fn element_to_hocr_word(element: Option<String>) -> String {
 }
 
 #[rustler::nif]
-pub fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<String> {
-    Vec::new()
-}
-
-#[rustler::nif]
 pub fn parse_hocr_to_internal_document(hocr_html: String) -> String {
     String::from("[unimplemented: parse_hocr_to_internal_document]")
-}
-
-#[rustler::nif]
-pub fn assemble_ocr_markdown(
-    elements: Vec<OcrElement>,
-    detection: Option<DetectionResult>,
-    img_width: u32,
-    img_height: u32,
-    recognized_tables: Vec<RecognizedTable>,
-) -> String {
-    kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
-        elements,
-        detection.map(Into::into),
-        img_width,
-        img_height,
-        recognized_tables,
-    )
-    .into()
-}
-
-#[rustler::nif]
-pub fn recognize_page_tables(
-    page_image: String,
-    detection: DetectionResult,
-    elements: Vec<OcrElement>,
-    tatr_model: String,
-) -> Vec<RecognizedTable> {
-    Vec::new()
 }
 
 #[rustler::nif]
@@ -5202,11 +5023,6 @@ pub fn language_to_script_family(paddle_lang: String) -> String {
 #[rustler::nif]
 pub fn map_language_code(kreuzberg_code: String) -> Option<String> {
     kreuzberg::paddle_ocr::map_language_code(&kreuzberg_code)
-}
-
-#[rustler::nif]
-pub fn build_cell_grid(result: String, table_bbox: String) -> Vec<Vec<String>> {
-    Vec::new()
 }
 
 #[rustler::nif]
@@ -5300,30 +5116,6 @@ pub fn cached_font_count() -> usize {
 }
 
 #[rustler::nif]
-pub fn cluster_font_sizes(blocks: Vec<String>, k: usize) -> Result<Vec<FontSizeCluster>, String> {
-    Err(String::from("Not implemented: cluster_font_sizes"))
-}
-
-#[rustler::nif]
-pub fn assign_heading_levels_smart(
-    clusters: Vec<FontSizeCluster>,
-    min_heading_ratio: f32,
-    min_heading_gap: f32,
-) -> Vec<String> {
-    Vec::new()
-}
-
-#[rustler::nif]
-pub fn assign_hierarchy_levels(blocks: Vec<String>, kmeans_result: String) -> Vec<HierarchyBlock> {
-    Vec::new()
-}
-
-#[rustler::nif]
-pub fn assign_hierarchy_levels_from_clusters(blocks: Vec<String>, clusters: Vec<FontSizeCluster>) -> Vec<String> {
-    Vec::new()
-}
-
-#[rustler::nif]
 pub fn extract_chars_with_fonts(page: String) -> Result<Vec<CharData>, String> {
     Err(String::from("Not implemented: extract_chars_with_fonts"))
 }
@@ -5331,11 +5123,6 @@ pub fn extract_chars_with_fonts(page: String) -> Result<Vec<CharData>, String> {
 #[rustler::nif]
 pub fn extract_segments_from_page(page: String) -> Result<Vec<String>, String> {
     Err(String::from("Not implemented: extract_segments_from_page"))
-}
-
-#[rustler::nif]
-pub fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<String> {
-    Vec::new()
 }
 
 #[rustler::nif]
@@ -5428,20 +5215,6 @@ pub fn segments_to_words(segments: Vec<String>, page_height: f32) -> Vec<String>
 }
 
 #[rustler::nif]
-pub fn post_process_table(
-    table: Vec<Vec<String>>,
-    layout_guided: bool,
-    allow_single_column: bool,
-) -> Option<Vec<Vec<String>>> {
-    kreuzberg::pdf::table_reconstruct::post_process_table(table, layout_guided, allow_single_column)
-}
-
-#[rustler::nif]
-pub fn is_well_formed_table(grid: Vec<Vec<String>>) -> bool {
-    kreuzberg::pdf::table_reconstruct::is_well_formed_table(grid)
-}
-
-#[rustler::nif]
 pub fn extract_text_from_pdf(pdf_bytes: Vec<u8>) -> Result<String, String> {
     let result = kreuzberg::pdf::extract_text_from_pdf(&pdf_bytes).map_err(|e| e.to_string())?;
     Ok(result.into())
@@ -5489,21 +5262,6 @@ pub fn contentfilterconfig_default() -> ContentFilterConfig {
 #[rustler::nif]
 pub fn extractionconfig_default() -> ExtractionConfig {
     kreuzberg::ExtractionConfig::default().into()
-}
-
-#[rustler::nif]
-pub fn extractionconfig_with_file_overrides(
-    obj: ExtractionConfig,
-    overrides: FileExtractionConfig,
-) -> ExtractionConfig {
-    kreuzberg::ExtractionConfig::from(obj)
-        .with_file_overrides(overrides.into())
-        .into()
-}
-
-#[rustler::nif]
-pub fn extractionconfig_normalized(obj: ExtractionConfig) -> ExtractionConfig {
-    kreuzberg::ExtractionConfig::from(obj).normalized().clone().into()
 }
 
 #[rustler::nif]
@@ -5807,11 +5565,6 @@ pub fn documentstructure_furniture_roots(obj: DocumentStructure) -> String {
 }
 
 #[rustler::nif]
-pub fn documentstructure_get(obj: DocumentStructure, index: u32) -> Option<DocumentNode> {
-    kreuzberg::DocumentStructure::from(obj).get(index)
-}
-
-#[rustler::nif]
 pub fn documentstructure_len(obj: DocumentStructure) -> usize {
     kreuzberg::DocumentStructure::from(obj).len()
 }
@@ -5834,11 +5587,6 @@ pub fn imagepreprocessingconfig_default() -> ImagePreprocessingConfig {
 #[rustler::nif]
 pub fn tesseractconfig_default() -> TesseractConfig {
     kreuzberg::TesseractConfig::default().into()
-}
-
-#[rustler::nif]
-pub fn htmlmetadata_is_empty(obj: HtmlMetadata) -> bool {
-    kreuzberg::HtmlMetadata::from(obj).is_empty()
 }
 
 #[rustler::nif]
@@ -5865,21 +5613,6 @@ pub fn ocrelement_with_level(obj: OcrElement, level: OcrElementLevel) -> OcrElem
 #[rustler::nif]
 pub fn ocrelement_with_rotation(obj: OcrElement, rotation: OcrRotation) -> OcrElement {
     kreuzberg::OcrElement::from(obj).with_rotation(rotation.into()).into()
-}
-
-#[rustler::nif]
-pub fn ocrelement_with_page_number(obj: OcrElement, page_number: usize) -> OcrElement {
-    kreuzberg::OcrElement::from(obj).with_page_number(page_number).into()
-}
-
-#[rustler::nif]
-pub fn ocrelement_with_parent_id(obj: OcrElement, parent_id: String) -> OcrElement {
-    kreuzberg::OcrElement::from(obj).with_parent_id(&parent_id).into()
-}
-
-#[rustler::nif]
-pub fn ocrelement_with_metadata(obj: OcrElement, key: String, value: String) -> OcrElement {
-    panic!("alef: ocrelement_with_metadata not auto-delegatable")
 }
 
 #[rustler::nif]
@@ -5918,43 +5651,8 @@ pub fn uri_with_page(obj: Uri, page: u32) -> Uri {
 }
 
 #[rustler::nif]
-pub fn pooledstring_buffer_mut(resource: ResourceArc<PooledString>) -> String {
-    String::from("[unimplemented: pooledstring_buffer_mut]")
-}
-
-#[rustler::nif]
-pub fn pooledstring_as_str(resource: ResourceArc<PooledString>) -> String {
-    resource.inner.as_ref().clone().as_str().into()
-}
-
-#[rustler::nif]
-pub fn pooledstring_deref(resource: ResourceArc<PooledString>) -> String {
-    String::from("[unimplemented: pooledstring_deref]")
-}
-
-#[rustler::nif]
-pub fn pooledstring_deref_mut(resource: ResourceArc<PooledString>) -> String {
-    String::from("[unimplemented: pooledstring_deref_mut]")
-}
-
-#[rustler::nif]
-pub fn pooledstring_drop(resource: ResourceArc<PooledString>) -> () {
-    ()
-}
-
-#[rustler::nif]
-pub fn pooledstring_fmt(resource: ResourceArc<PooledString>, f: String) -> String {
-    String::from("[unimplemented: pooledstring_fmt]")
-}
-
-#[rustler::nif]
 pub fn tracinglayer_layer(resource: ResourceArc<TracingLayer>, inner: String) -> String {
     String::from("[unimplemented: tracinglayer_layer]")
-}
-
-#[rustler::nif]
-pub fn metricslayer_layer(resource: ResourceArc<MetricsLayer>, inner: String) -> String {
-    String::from("[unimplemented: metricslayer_layer]")
 }
 
 #[rustler::nif]
@@ -6108,21 +5806,6 @@ pub fn bbox_center(obj: BBox) -> String {
 }
 
 #[rustler::nif]
-pub fn bbox_intersection_area(obj: BBox, other: BBox) -> f32 {
-    kreuzberg::BBox::from(obj).intersection_area(other.into())
-}
-
-#[rustler::nif]
-pub fn bbox_iou(obj: BBox, other: BBox) -> f32 {
-    kreuzberg::BBox::from(obj).iou(other.into())
-}
-
-#[rustler::nif]
-pub fn bbox_containment_of(obj: BBox, other: BBox) -> f32 {
-    kreuzberg::BBox::from(obj).containment_of(other.into())
-}
-
-#[rustler::nif]
 pub fn bbox_page_coverage(obj: BBox, page_width: f32, page_height: f32) -> f32 {
     kreuzberg::BBox::from(obj).page_coverage(page_width, page_height)
 }
@@ -6130,14 +5813,6 @@ pub fn bbox_page_coverage(obj: BBox, page_width: f32, page_height: f32) -> f32 {
 #[rustler::nif]
 pub fn bbox_fmt(obj: BBox, f: String) -> String {
     String::from("[unimplemented: bbox_fmt]")
-}
-
-#[rustler::nif]
-pub fn layoutdetection_sort_by_confidence_desc(detections: Vec<LayoutDetection>) -> Vec<LayoutDetection> {
-    kreuzberg::LayoutDetection::sort_by_confidence_desc(detections)
-        .into_iter()
-        .map(Into::into)
-        .collect()
 }
 
 #[rustler::nif]
@@ -6275,36 +5950,6 @@ impl From<kreuzberg::ExtractionConfig> for ExtractionConfig {
             max_archive_depth: val.max_archive_depth,
             tree_sitter: val.tree_sitter.map(Into::into),
             structured_extraction: val.structured_extraction.map(Into::into),
-        }
-    }
-}
-
-#[allow(clippy::needless_update)]
-impl From<FileExtractionConfig> for kreuzberg::FileExtractionConfig {
-    fn from(val: FileExtractionConfig) -> Self {
-        Self {
-            enable_quality_processing: val.enable_quality_processing,
-            ocr: val.ocr.map(Into::into),
-            force_ocr: val.force_ocr,
-            force_ocr_pages: val.force_ocr_pages,
-            disable_ocr: val.disable_ocr,
-            chunking: val.chunking.map(Into::into),
-            content_filter: val.content_filter.map(Into::into),
-            images: val.images.map(Into::into),
-            pdf_options: val.pdf_options.map(Into::into),
-            token_reduction: val.token_reduction.map(Into::into),
-            language_detection: val.language_detection.map(Into::into),
-            pages: val.pages.map(Into::into),
-            postprocessor: val.postprocessor.map(Into::into),
-            html_options: Default::default(),
-            result_format: val.result_format.map(Into::into),
-            output_format: val.output_format.map(Into::into),
-            include_document_structure: val.include_document_structure,
-            layout: val.layout.map(Into::into),
-            timeout_secs: val.timeout_secs,
-            tree_sitter: val.tree_sitter.map(Into::into),
-            structured_extraction: val.structured_extraction.map(Into::into),
-            ..Default::default()
         }
     }
 }
@@ -8180,18 +7825,6 @@ impl From<kreuzberg::TextMetadata> for TextMetadata {
     }
 }
 
-impl From<HeaderMetadata> for kreuzberg::HeaderMetadata {
-    fn from(val: HeaderMetadata) -> Self {
-        Self {
-            level: val.level,
-            text: val.text,
-            id: val.id,
-            depth: val.depth,
-            html_offset: val.html_offset,
-        }
-    }
-}
-
 impl From<kreuzberg::HeaderMetadata> for HeaderMetadata {
     fn from(val: kreuzberg::HeaderMetadata) -> Self {
         Self {
@@ -8200,19 +7833,6 @@ impl From<kreuzberg::HeaderMetadata> for HeaderMetadata {
             id: val.id,
             depth: val.depth,
             html_offset: val.html_offset,
-        }
-    }
-}
-
-impl From<LinkMetadata> for kreuzberg::LinkMetadata {
-    fn from(val: LinkMetadata) -> Self {
-        Self {
-            href: val.href,
-            text: val.text,
-            title: val.title,
-            link_type: val.link_type.into(),
-            rel: val.rel,
-            attributes: Default::default(),
         }
     }
 }
@@ -8230,19 +7850,6 @@ impl From<kreuzberg::LinkMetadata> for LinkMetadata {
     }
 }
 
-impl From<ImageMetadataType> for kreuzberg::ImageMetadataType {
-    fn from(val: ImageMetadataType) -> Self {
-        Self {
-            src: val.src,
-            alt: val.alt,
-            title: val.title,
-            dimensions: Default::default(),
-            image_type: val.image_type.into(),
-            attributes: Default::default(),
-        }
-    }
-}
-
 impl From<kreuzberg::ImageMetadataType> for ImageMetadataType {
     fn from(val: kreuzberg::ImageMetadataType) -> Self {
         Self {
@@ -8252,16 +7859,6 @@ impl From<kreuzberg::ImageMetadataType> for ImageMetadataType {
             dimensions: val.dimensions.as_ref().map(|v| format!("{:?}", v)),
             image_type: val.image_type.into(),
             attributes: val.attributes.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<StructuredData> for kreuzberg::StructuredData {
-    fn from(val: StructuredData) -> Self {
-        Self {
-            data_type: val.data_type.into(),
-            raw_json: val.raw_json,
-            schema_type: val.schema_type,
         }
     }
 }
@@ -9103,16 +8700,6 @@ impl From<kreuzberg::ocr::OcrCacheStats> for OcrCacheStats {
     }
 }
 
-impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable {
-    fn from(val: RecognizedTable) -> Self {
-        Self {
-            detection_bbox: val.detection_bbox.into(),
-            cells: val.cells,
-            markdown: val.markdown,
-        }
-    }
-}
-
 impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for RecognizedTable {
     fn from(val: kreuzberg::ocr::layout_assembly::RecognizedTable) -> Self {
         Self {
@@ -9263,15 +8850,6 @@ impl From<kreuzberg::pdf::embedded_files::EmbeddedFile> for EmbeddedFile {
     }
 }
 
-impl From<FontSizeCluster> for kreuzberg::pdf::FontSizeCluster {
-    fn from(val: FontSizeCluster) -> Self {
-        Self {
-            centroid: val.centroid,
-            members: Default::default(),
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::FontSizeCluster> for FontSizeCluster {
     fn from(val: kreuzberg::pdf::FontSizeCluster) -> Self {
         Self {
@@ -9309,17 +8887,6 @@ impl From<kreuzberg::pdf::CharData> for CharData {
             is_bold: val.is_bold,
             is_italic: val.is_italic,
             baseline_y: val.baseline_y,
-        }
-    }
-}
-
-impl From<HierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
-    fn from(val: HierarchyBlock) -> Self {
-        Self {
-            text: val.text,
-            bbox: Default::default(),
-            font_size: val.font_size,
-            hierarchy_level: Default::default(),
         }
     }
 }
@@ -10088,35 +9655,12 @@ impl From<kreuzberg::ElementType> for ElementType {
     }
 }
 
-impl From<TextDirection> for kreuzberg::TextDirection {
-    fn from(val: TextDirection) -> Self {
-        match val {
-            TextDirection::LeftToRight => Self::LeftToRight,
-            TextDirection::RightToLeft => Self::RightToLeft,
-            TextDirection::Auto => Self::Auto,
-        }
-    }
-}
-
 impl From<kreuzberg::TextDirection> for TextDirection {
     fn from(val: kreuzberg::TextDirection) -> Self {
         match val {
             kreuzberg::TextDirection::LeftToRight => Self::LeftToRight,
             kreuzberg::TextDirection::RightToLeft => Self::RightToLeft,
             kreuzberg::TextDirection::Auto => Self::Auto,
-        }
-    }
-}
-
-impl From<LinkType> for kreuzberg::LinkType {
-    fn from(val: LinkType) -> Self {
-        match val {
-            LinkType::Anchor => Self::Anchor,
-            LinkType::Internal => Self::Internal,
-            LinkType::External => Self::External,
-            LinkType::Email => Self::Email,
-            LinkType::Phone => Self::Phone,
-            LinkType::Other => Self::Other,
         }
     }
 }
@@ -10134,17 +9678,6 @@ impl From<kreuzberg::LinkType> for LinkType {
     }
 }
 
-impl From<ImageType> for kreuzberg::ImageType {
-    fn from(val: ImageType) -> Self {
-        match val {
-            ImageType::DataUri => Self::DataUri,
-            ImageType::InlineSvg => Self::InlineSvg,
-            ImageType::External => Self::External,
-            ImageType::Relative => Self::Relative,
-        }
-    }
-}
-
 impl From<kreuzberg::ImageType> for ImageType {
     fn from(val: kreuzberg::ImageType) -> Self {
         match val {
@@ -10152,16 +9685,6 @@ impl From<kreuzberg::ImageType> for ImageType {
             kreuzberg::ImageType::InlineSvg => Self::InlineSvg,
             kreuzberg::ImageType::External => Self::External,
             kreuzberg::ImageType::Relative => Self::Relative,
-        }
-    }
-}
-
-impl From<StructuredDataType> for kreuzberg::StructuredDataType {
-    fn from(val: StructuredDataType) -> Self {
-        match val {
-            StructuredDataType::JsonLd => Self::JsonLd,
-            StructuredDataType::Microdata => Self::Microdata,
-            StructuredDataType::RDFa => Self::RDFa,
         }
     }
 }
@@ -10415,12 +9938,8 @@ fn on_load(env: rustler::Env, _info: rustler::Term) -> bool {
         .expect("Failed to register resource type StringBufferPool");
     env.register::<ByteBufferPool>()
         .expect("Failed to register resource type ByteBufferPool");
-    env.register::<PooledString>()
-        .expect("Failed to register resource type PooledString");
     env.register::<TracingLayer>()
         .expect("Failed to register resource type TracingLayer");
-    env.register::<MetricsLayer>()
-        .expect("Failed to register resource type MetricsLayer");
     env.register::<ApiDoc>()
         .expect("Failed to register resource type ApiDoc");
     env.register::<ExtractResponse>()

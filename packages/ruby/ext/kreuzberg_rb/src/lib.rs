@@ -4,8 +4,6 @@
 
 use magnus::{Error, IntoValueFromNative, Ruby, function, method, prelude::*, try_convert::TryConvertOwned};
 use std::collections::HashMap;
-use std::ops::Deref;
-use std::ops::DerefMut;
 use std::sync::Arc;
 
 fn json_to_ruby(handle: &Ruby, val: serde_json::Value) -> magnus::Value {
@@ -452,48 +450,6 @@ impl ExtractionConfig {
 
     fn structured_extraction(&self) -> Option<StructuredExtractionConfig> {
         self.structured_extraction.clone()
-    }
-
-    fn with_file_overrides(&self, overrides: FileExtractionConfig) -> ExtractionConfig {
-        panic!("alef: with_file_overrides not auto-delegatable")
-    }
-
-    fn normalized(&self) -> ExtractionConfig {
-        let core_self = kreuzberg::ExtractionConfig {
-            use_cache: self.use_cache,
-            enable_quality_processing: self.enable_quality_processing,
-            ocr: self.ocr.clone().map(Into::into),
-            force_ocr: self.force_ocr,
-            force_ocr_pages: self.force_ocr_pages.clone(),
-            disable_ocr: self.disable_ocr,
-            chunking: self.chunking.clone().map(Into::into),
-            content_filter: self.content_filter.clone().map(Into::into),
-            images: self.images.clone().map(Into::into),
-            pdf_options: self.pdf_options.clone().map(Into::into),
-            token_reduction: self.token_reduction.clone().map(Into::into),
-            language_detection: self.language_detection.clone().map(Into::into),
-            pages: self.pages.clone().map(Into::into),
-            postprocessor: self.postprocessor.clone().map(Into::into),
-            html_options: Default::default(),
-            html_output: self.html_output.clone().map(Into::into),
-            extraction_timeout_secs: self.extraction_timeout_secs,
-            max_concurrent_extractions: self.max_concurrent_extractions,
-            result_format: self.result_format.clone().into(),
-            security_limits: Default::default(),
-            output_format: self.output_format.clone().into(),
-            layout: self.layout.clone().map(Into::into),
-            include_document_structure: self.include_document_structure,
-            acceleration: self.acceleration.clone().map(Into::into),
-            cache_namespace: self.cache_namespace.clone(),
-            cache_ttl_secs: self.cache_ttl_secs,
-            email: self.email.clone().map(Into::into),
-            concurrency: Default::default(),
-            max_archive_depth: self.max_archive_depth,
-            tree_sitter: self.tree_sitter.clone().map(Into::into),
-            structured_extraction: self.structured_extraction.clone().map(Into::into),
-            ..Default::default()
-        };
-        core_self.normalized().into()
     }
 
     fn validate(&self) -> Result<(), Error> {
@@ -4325,15 +4281,6 @@ impl DocumentStructure {
         String::from("[unimplemented: furniture_roots]")
     }
 
-    fn get(&self, index: u32) -> Option<DocumentNode> {
-        let core_self = kreuzberg::DocumentStructure {
-            nodes: self.nodes.clone().into_iter().map(Into::into).collect(),
-            source_format: self.source_format.clone(),
-            relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.get(kreuzberg::NodeIndex(index))
-    }
-
     fn len(&self) -> usize {
         let core_self = kreuzberg::DocumentStructure {
             nodes: self.nodes.clone().into_iter().map(Into::into).collect(),
@@ -7234,27 +7181,6 @@ impl HtmlMetadata {
     fn structured_data(&self) -> Vec<StructuredData> {
         self.structured_data.clone()
     }
-
-    fn is_empty(&self) -> bool {
-        let core_self = kreuzberg::HtmlMetadata {
-            title: self.title.clone(),
-            description: self.description.clone(),
-            keywords: self.keywords.clone(),
-            author: self.author.clone(),
-            canonical_url: self.canonical_url.clone(),
-            base_href: self.base_href.clone(),
-            language: self.language.clone(),
-            text_direction: self.text_direction.clone().map(Into::into),
-            open_graph: self.open_graph.clone().into_iter().collect(),
-            twitter_card: self.twitter_card.clone().into_iter().collect(),
-            meta_tags: self.meta_tags.clone().into_iter().collect(),
-            headers: self.headers.clone().into_iter().map(Into::into).collect(),
-            links: self.links.clone().into_iter().map(Into::into).collect(),
-            images: self.images.clone().into_iter().map(Into::into).collect(),
-            structured_data: self.structured_data.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.is_empty()
-    }
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
@@ -8166,48 +8092,6 @@ impl OcrElement {
     fn with_rotation(&self, rotation: OcrRotation) -> OcrElement {
         panic!("alef: with_rotation not auto-delegatable")
     }
-
-    fn with_page_number(&self, page_number: usize) -> OcrElement {
-        let core_self = kreuzberg::OcrElement {
-            text: self.text.clone(),
-            geometry: self.geometry.clone().into(),
-            confidence: self.confidence.clone().into(),
-            level: self.level.clone().into(),
-            rotation: self.rotation.clone().map(Into::into),
-            page_number: self.page_number,
-            parent_id: self.parent_id.clone(),
-            backend_metadata: self
-                .backend_metadata
-                .clone()
-                .into_iter()
-                .map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::Value::String(v))))
-                .collect(),
-        };
-        core_self.with_page_number(page_number).into()
-    }
-
-    fn with_parent_id(&self, parent_id: String) -> OcrElement {
-        let core_self = kreuzberg::OcrElement {
-            text: self.text.clone(),
-            geometry: self.geometry.clone().into(),
-            confidence: self.confidence.clone().into(),
-            level: self.level.clone().into(),
-            rotation: self.rotation.clone().map(Into::into),
-            page_number: self.page_number,
-            parent_id: self.parent_id.clone(),
-            backend_metadata: self
-                .backend_metadata
-                .clone()
-                .into_iter()
-                .map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::Value::String(v))))
-                .collect(),
-        };
-        core_self.with_parent_id(parent_id).into()
-    }
-
-    fn with_metadata(&self, key: String, value: String) -> OcrElement {
-        panic!("alef: with_metadata not auto-delegatable")
-    }
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
@@ -8655,49 +8539,6 @@ unsafe impl TryConvertOwned for ByteBufferPool {}
 impl ByteBufferPool {}
 
 #[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::PooledString")]
-pub struct PooledString {
-    inner: Arc<kreuzberg::utils::string_pool::PooledString>,
-}
-
-unsafe impl IntoValueFromNative for PooledString {}
-
-impl magnus::TryConvert for PooledString {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PooledString = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PooledString {}
-
-impl PooledString {
-    fn buffer_mut(&self) -> String {
-        String::from("[unimplemented: buffer_mut]")
-    }
-
-    fn as_str(&self) -> String {
-        self.inner.as_str().into()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    fn deref(&self) -> String {
-        String::from("[unimplemented: deref]")
-    }
-
-    fn deref_mut(&self) -> String {
-        String::from("[unimplemented: deref_mut]")
-    }
-
-    fn drop(&self) -> () {
-        ()
-    }
-
-    fn fmt(&self, f: String) -> String {
-        String::from("[unimplemented: fmt]")
-    }
-}
-
-#[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::TracingLayer")]
 pub struct TracingLayer {
     inner: Arc<kreuzberg::service::layers::tracing::TracingLayer>,
@@ -8714,28 +8555,6 @@ impl magnus::TryConvert for TracingLayer {
 unsafe impl TryConvertOwned for TracingLayer {}
 
 impl TracingLayer {
-    fn layer(&self, inner: String) -> String {
-        String::from("[unimplemented: layer]")
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::MetricsLayer")]
-pub struct MetricsLayer {
-    inner: Arc<kreuzberg::service::layers::metrics::MetricsLayer>,
-}
-
-unsafe impl IntoValueFromNative for MetricsLayer {}
-
-impl magnus::TryConvert for MetricsLayer {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &MetricsLayer = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for MetricsLayer {}
-
-impl MetricsLayer {
     fn layer(&self, inner: String) -> String {
         String::from("[unimplemented: layer]")
     }
@@ -10724,18 +10543,6 @@ impl BBox {
 
     fn center(&self) -> String {
         String::from("[unimplemented: center]")
-    }
-
-    fn intersection_area(&self, other: BBox) -> f32 {
-        0
-    }
-
-    fn iou(&self, other: BBox) -> f32 {
-        0
-    }
-
-    fn containment_of(&self, other: BBox) -> f32 {
-        0
     }
 
     fn page_coverage(&self, page_width: f32, page_height: f32) -> f32 {
@@ -13669,20 +13476,6 @@ fn clear_processor_cache() -> Result<(), Error> {
     Ok(result)
 }
 
-fn apply_output_format(result: String, output_format: String) -> ExtractionResult {
-    let result: ExtractionResult = {
-        let core: kreuzberg::ExtractionResult = serde_json::from_str(&result)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    let output_format: OutputFormat = {
-        let core: kreuzberg::OutputFormat = serde_json::from_str(&output_format)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::core::pipeline::apply_output_format(result.into(), output_format.into()).into()
-}
-
 fn is_page_text_blank(text: String) -> bool {
     kreuzberg::extraction::blank_detection::is_page_text_blank(&text)
 }
@@ -14183,14 +13976,6 @@ fn parse_xml(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<XmlExtract
     Ok(result.into())
 }
 
-fn cells_to_text(cells: Vec<Vec<String>>) -> String {
-    kreuzberg::extraction::cells_to_text(&cells)
-}
-
-fn cells_to_markdown(cells: Vec<Vec<String>>) -> String {
-    kreuzberg::extraction::cells_to_markdown(&cells)
-}
-
 fn parse_jotdown_attributes(attrs: String) -> String {
     String::from("[unimplemented: parse_jotdown_attributes]")
 }
@@ -14257,10 +14042,6 @@ fn render_list_item(item: String, indent: String, marker: String) -> String {
         core.into()
     };
     kreuzberg::extractors::djot_format::rendering::render_list_item(item.into(), &indent, &marker)
-}
-
-fn render_inline_content(elements: Vec<InlineElement>) -> String {
-    kreuzberg::extractors::djot_format::rendering::render_inline_content(&elements)
 }
 
 fn extract_frontmatter(content: String) -> String {
@@ -14626,10 +14407,6 @@ fn is_valid_utf8(bytes: Vec<u8>) -> bool {
     kreuzberg::text::utf8_validation::is_valid_utf8(&bytes)
 }
 
-fn calculate_quality_score(text: String, metadata: Option<String>) -> f64 {
-    0
-}
-
 fn clean_extracted_text(text: String) -> String {
     kreuzberg::text::clean_extracted_text(&text)
 }
@@ -14721,10 +14498,6 @@ fn highlight(start: u32, end: u32) -> TextAnnotation {
     kreuzberg::builder::highlight(start, end).into()
 }
 
-fn classify_uri(url: String) -> UriKind {
-    kreuzberg::classify_uri(&url).into()
-}
-
 fn safe_decode(byte_data: Vec<u8>, encoding: Option<String>) -> String {
     kreuzberg::utils::safe_decode(&byte_data, encoding.as_deref())
 }
@@ -14761,10 +14534,8 @@ fn estimate_pool_size(file_size: u64, mime_type: String) -> String {
     String::from("[unimplemented: estimate_pool_size]")
 }
 
-fn acquire_string_buffer() -> PooledString {
-    PooledString {
-        inner: Arc::new(kreuzberg::utils::string_pool::acquire_string_buffer()),
-    }
+fn acquire_string_buffer() -> String {
+    String::from("[unimplemented: acquire_string_buffer]")
 }
 
 fn intern_language_code(lang_code: String) -> String {
@@ -14789,14 +14560,6 @@ fn detect_columns(words: Vec<String>, column_threshold: u32) -> Vec<u32> {
 
 fn detect_rows(words: Vec<String>, row_threshold_ratio: f64) -> Vec<u32> {
     Vec::new()
-}
-
-fn reconstruct_table(words: Vec<String>, column_threshold: u32, row_threshold_ratio: f64) -> Vec<Vec<String>> {
-    Vec::new()
-}
-
-fn table_to_markdown(table: Vec<Vec<String>>) -> String {
-    kreuzberg::table_core::table_to_markdown(&table)
 }
 
 fn load_server_config(config_path: Option<String>) -> Result<ServerConfig, Error> {
@@ -15061,97 +14824,6 @@ fn start_mcp_server_with_config_async(config: String) -> Result<(), Error> {
     Ok(result)
 }
 
-fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> Result<(), Error> {
-    let result = kreuzberg::chunking::validate_page_boundaries(&boundaries).map_err(|e| {
-        magnus::Error::new(
-            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-            e.to_string(),
-        )
-    })?;
-    Ok(result)
-}
-
-fn classify_chunk(content: String, heading_context: Option<String>) -> ChunkType {
-    let heading_context: Option<HeadingContext> = heading_context
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::HeadingContext = serde_json::from_str(s).map_err(|e| {
-                magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string())
-            })?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    kreuzberg::chunking::classify_chunk(&content, heading_context.as_ref()).into()
-}
-
-fn chunk_text(
-    text: String,
-    config: String,
-    page_boundaries: Option<Vec<PageBoundary>>,
-) -> Result<ChunkingResult, Error> {
-    let config: ChunkingConfig = {
-        let core: kreuzberg::ChunkingConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::chunking::chunk_text(&text, config.into(), page_boundaries.as_deref()).map_err(|e| {
-        magnus::Error::new(
-            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-            e.to_string(),
-        )
-    })?;
-    Ok(result.into())
-}
-
-fn chunk_text_with_heading_source(
-    text: String,
-    config: String,
-    page_boundaries: Option<Vec<PageBoundary>>,
-    heading_source: Option<String>,
-) -> Result<ChunkingResult, Error> {
-    let config: ChunkingConfig = {
-        let core: kreuzberg::ChunkingConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::chunking::chunk_text_with_heading_source(
-        &text,
-        config.into(),
-        page_boundaries.as_deref(),
-        heading_source.as_deref(),
-    )
-    .map_err(|e| {
-        magnus::Error::new(
-            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-            e.to_string(),
-        )
-    })?;
-    Ok(result.into())
-}
-
-fn chunk_text_with_type(
-    text: String,
-    max_characters: usize,
-    overlap: usize,
-    trim: bool,
-    chunker_type: String,
-) -> Result<ChunkingResult, Error> {
-    let chunker_type: ChunkerType = {
-        let core: kreuzberg::ChunkerType = serde_json::from_str(&chunker_type)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::chunking::chunk_text_with_type(&text, max_characters, overlap, trim, chunker_type.into())
-        .map_err(|e| {
-        magnus::Error::new(
-            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-            e.to_string(),
-        )
-    })?;
-    Ok(result.into())
-}
-
 fn chunk_texts_batch(texts: Vec<String>, config: String) -> Result<Vec<ChunkingResult>, Error> {
     let config: ChunkingConfig = {
         let core: kreuzberg::ChunkingConfig = serde_json::from_str(&config)
@@ -15171,16 +14843,6 @@ fn precompute_utf8_boundaries(text: String) -> String {
     String::from("[unimplemented: precompute_utf8_boundaries]")
 }
 
-fn validate_utf8_boundaries(text: String, boundaries: Vec<PageBoundary>) -> Result<(), Error> {
-    let result = kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries).map_err(|e| {
-        magnus::Error::new(
-            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-            e.to_string(),
-        )
-    })?;
-    Ok(result)
-}
-
 fn render_template(template: String, context: String) -> Result<String, Error> {
     Err(magnus::Error::new(
         unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
@@ -15198,36 +14860,6 @@ fn get_preset(name: String) -> Option<String> {
 
 fn list_presets() -> Vec<String> {
     kreuzberg::list_presets().into_iter().map(Into::into).collect()
-}
-
-fn warm_model(model_type: String, cache_dir: Option<String>) -> Result<(), Error> {
-    let model_type: EmbeddingModelType = {
-        let core: kreuzberg::EmbeddingModelType = serde_json::from_str(&model_type)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::warm_model(model_type.into(), cache_dir.as_deref()).map_err(|e| {
-        magnus::Error::new(
-            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-            e.to_string(),
-        )
-    })?;
-    Ok(result)
-}
-
-fn download_model(model_type: String, cache_dir: Option<String>) -> Result<(), Error> {
-    let model_type: EmbeddingModelType = {
-        let core: kreuzberg::EmbeddingModelType = serde_json::from_str(&model_type)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::download_model(model_type.into(), cache_dir.as_deref()).map_err(|e| {
-        magnus::Error::new(
-            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-            e.to_string(),
-        )
-    })?;
-    Ok(result)
 }
 
 fn calculate_smart_dpi(
@@ -15315,52 +14947,8 @@ fn element_to_hocr_word(element: String) -> String {
     String::from("[unimplemented: element_to_hocr_word]")
 }
 
-fn elements_to_hocr_words(elements: Vec<OcrElement>, min_confidence: f64) -> Vec<String> {
-    Vec::new()
-}
-
 fn parse_hocr_to_internal_document(hocr_html: String) -> String {
     String::from("[unimplemented: parse_hocr_to_internal_document]")
-}
-
-fn assemble_ocr_markdown(
-    elements: Vec<OcrElement>,
-    detection: Option<String>,
-    img_width: Option<u32>,
-    img_height: Option<u32>,
-    recognized_tables: Option<Vec<RecognizedTable>>,
-) -> String {
-    let detection: Option<DetectionResult> = detection
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::DetectionResult = serde_json::from_str(s).map_err(|e| {
-                magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string())
-            })?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
-        &elements,
-        detection.as_ref(),
-        img_width,
-        img_height,
-        &recognized_tables,
-    )
-}
-
-fn recognize_page_tables(
-    page_image: String,
-    detection: String,
-    elements: Vec<OcrElement>,
-    tatr_model: String,
-) -> Vec<RecognizedTable> {
-    let detection: DetectionResult = {
-        let core: kreuzberg::DetectionResult = serde_json::from_str(&detection)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Vec::new()
 }
 
 fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<String>, Error> {
@@ -15398,10 +14986,6 @@ fn language_to_script_family(paddle_lang: String) -> String {
 
 fn map_language_code(kreuzberg_code: String) -> Option<String> {
     kreuzberg::paddle_ocr::map_language_code(&kreuzberg_code).map(Into::into)
-}
-
-fn build_cell_grid(result: String, table_bbox: Option<String>) -> Vec<Vec<String>> {
-    Vec::new()
 }
 
 fn preprocess_imagenet(img: String, target_size: u32) -> String {
@@ -15486,29 +15070,6 @@ fn cached_font_count() -> usize {
     kreuzberg::pdf::cached_font_count()
 }
 
-fn cluster_font_sizes(blocks: Vec<String>, k: usize) -> Result<Vec<FontSizeCluster>, Error> {
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: cluster_font_sizes",
-    ))
-}
-
-fn assign_heading_levels_smart(
-    clusters: Vec<FontSizeCluster>,
-    min_heading_ratio: f32,
-    min_heading_gap: f32,
-) -> Vec<String> {
-    Vec::new()
-}
-
-fn assign_hierarchy_levels(blocks: Vec<String>, kmeans_result: String) -> Vec<HierarchyBlock> {
-    Vec::new()
-}
-
-fn assign_hierarchy_levels_from_clusters(blocks: Vec<String>, clusters: Vec<FontSizeCluster>) -> Vec<String> {
-    Vec::new()
-}
-
 fn extract_chars_with_fonts(page: String) -> Result<Vec<CharData>, Error> {
     Err(magnus::Error::new(
         unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
@@ -15521,10 +15082,6 @@ fn extract_segments_from_page(page: String) -> Result<Vec<String>, Error> {
         unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_segments_from_page",
     ))
-}
-
-fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<String> {
-    Vec::new()
 }
 
 fn should_trigger_ocr(page: String, blocks: Vec<String>, config: String) -> bool {
@@ -15638,18 +15195,6 @@ fn split_segment_to_words(seg: String, page_height: f32) -> Vec<String> {
 
 fn segments_to_words(segments: Vec<String>, page_height: f32) -> Vec<String> {
     Vec::new()
-}
-
-fn post_process_table(
-    table: Vec<Vec<String>>,
-    layout_guided: bool,
-    allow_single_column: bool,
-) -> Option<Vec<Vec<String>>> {
-    kreuzberg::pdf::table_reconstruct::post_process_table(table, layout_guided, allow_single_column)
-}
-
-fn is_well_formed_table(grid: Vec<Vec<String>>) -> bool {
-    kreuzberg::pdf::table_reconstruct::is_well_formed_table(&grid)
 }
 
 fn extract_text_from_pdf(pdf_bytes: Vec<u8>) -> Result<String, Error> {
@@ -15842,36 +15387,6 @@ impl From<kreuzberg::ExtractionConfig> for ExtractionConfig {
             max_archive_depth: val.max_archive_depth,
             tree_sitter: val.tree_sitter.map(Into::into),
             structured_extraction: val.structured_extraction.map(Into::into),
-        }
-    }
-}
-
-#[allow(clippy::needless_update)]
-impl From<FileExtractionConfig> for kreuzberg::FileExtractionConfig {
-    fn from(val: FileExtractionConfig) -> Self {
-        Self {
-            enable_quality_processing: val.enable_quality_processing,
-            ocr: val.ocr.map(Into::into),
-            force_ocr: val.force_ocr,
-            force_ocr_pages: val.force_ocr_pages,
-            disable_ocr: val.disable_ocr,
-            chunking: val.chunking.map(Into::into),
-            content_filter: val.content_filter.map(Into::into),
-            images: val.images.map(Into::into),
-            pdf_options: val.pdf_options.map(Into::into),
-            token_reduction: val.token_reduction.map(Into::into),
-            language_detection: val.language_detection.map(Into::into),
-            pages: val.pages.map(Into::into),
-            postprocessor: val.postprocessor.map(Into::into),
-            html_options: Default::default(),
-            result_format: val.result_format.map(Into::into),
-            output_format: val.output_format.map(Into::into),
-            include_document_structure: val.include_document_structure,
-            layout: val.layout.map(Into::into),
-            timeout_secs: val.timeout_secs,
-            tree_sitter: val.tree_sitter.map(Into::into),
-            structured_extraction: val.structured_extraction.map(Into::into),
-            ..Default::default()
         }
     }
 }
@@ -17747,18 +17262,6 @@ impl From<kreuzberg::TextMetadata> for TextMetadata {
     }
 }
 
-impl From<HeaderMetadata> for kreuzberg::HeaderMetadata {
-    fn from(val: HeaderMetadata) -> Self {
-        Self {
-            level: val.level,
-            text: val.text,
-            id: val.id,
-            depth: val.depth,
-            html_offset: val.html_offset,
-        }
-    }
-}
-
 impl From<kreuzberg::HeaderMetadata> for HeaderMetadata {
     fn from(val: kreuzberg::HeaderMetadata) -> Self {
         Self {
@@ -17767,19 +17270,6 @@ impl From<kreuzberg::HeaderMetadata> for HeaderMetadata {
             id: val.id,
             depth: val.depth,
             html_offset: val.html_offset,
-        }
-    }
-}
-
-impl From<LinkMetadata> for kreuzberg::LinkMetadata {
-    fn from(val: LinkMetadata) -> Self {
-        Self {
-            href: val.href,
-            text: val.text,
-            title: val.title,
-            link_type: val.link_type.into(),
-            rel: val.rel,
-            attributes: Default::default(),
         }
     }
 }
@@ -17797,19 +17287,6 @@ impl From<kreuzberg::LinkMetadata> for LinkMetadata {
     }
 }
 
-impl From<ImageMetadataType> for kreuzberg::ImageMetadataType {
-    fn from(val: ImageMetadataType) -> Self {
-        Self {
-            src: val.src,
-            alt: val.alt,
-            title: val.title,
-            dimensions: Default::default(),
-            image_type: val.image_type.into(),
-            attributes: Default::default(),
-        }
-    }
-}
-
 impl From<kreuzberg::ImageMetadataType> for ImageMetadataType {
     fn from(val: kreuzberg::ImageMetadataType) -> Self {
         Self {
@@ -17819,16 +17296,6 @@ impl From<kreuzberg::ImageMetadataType> for ImageMetadataType {
             dimensions: val.dimensions.as_ref().map(|v| format!("{:?}", v)),
             image_type: val.image_type.into(),
             attributes: val.attributes.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<StructuredData> for kreuzberg::StructuredData {
-    fn from(val: StructuredData) -> Self {
-        Self {
-            data_type: val.data_type.into(),
-            raw_json: val.raw_json,
-            schema_type: val.schema_type,
         }
     }
 }
@@ -18670,16 +18137,6 @@ impl From<kreuzberg::ocr::OcrCacheStats> for OcrCacheStats {
     }
 }
 
-impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable {
-    fn from(val: RecognizedTable) -> Self {
-        Self {
-            detection_bbox: val.detection_bbox.into(),
-            cells: val.cells,
-            markdown: val.markdown,
-        }
-    }
-}
-
 impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for RecognizedTable {
     fn from(val: kreuzberg::ocr::layout_assembly::RecognizedTable) -> Self {
         Self {
@@ -18830,15 +18287,6 @@ impl From<kreuzberg::pdf::embedded_files::EmbeddedFile> for EmbeddedFile {
     }
 }
 
-impl From<FontSizeCluster> for kreuzberg::pdf::FontSizeCluster {
-    fn from(val: FontSizeCluster) -> Self {
-        Self {
-            centroid: val.centroid,
-            members: Default::default(),
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::FontSizeCluster> for FontSizeCluster {
     fn from(val: kreuzberg::pdf::FontSizeCluster) -> Self {
         Self {
@@ -18876,17 +18324,6 @@ impl From<kreuzberg::pdf::CharData> for CharData {
             is_bold: val.is_bold,
             is_italic: val.is_italic,
             baseline_y: val.baseline_y,
-        }
-    }
-}
-
-impl From<HierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
-    fn from(val: HierarchyBlock) -> Self {
-        Self {
-            text: val.text,
-            bbox: Default::default(),
-            font_size: val.font_size,
-            hierarchy_level: Default::default(),
         }
     }
 }
@@ -19630,35 +19067,12 @@ impl From<kreuzberg::ElementType> for ElementType {
     }
 }
 
-impl From<TextDirection> for kreuzberg::TextDirection {
-    fn from(val: TextDirection) -> Self {
-        match val {
-            TextDirection::LeftToRight => Self::LeftToRight,
-            TextDirection::RightToLeft => Self::RightToLeft,
-            TextDirection::Auto => Self::Auto,
-        }
-    }
-}
-
 impl From<kreuzberg::TextDirection> for TextDirection {
     fn from(val: kreuzberg::TextDirection) -> Self {
         match val {
             kreuzberg::TextDirection::LeftToRight => Self::LeftToRight,
             kreuzberg::TextDirection::RightToLeft => Self::RightToLeft,
             kreuzberg::TextDirection::Auto => Self::Auto,
-        }
-    }
-}
-
-impl From<LinkType> for kreuzberg::LinkType {
-    fn from(val: LinkType) -> Self {
-        match val {
-            LinkType::Anchor => Self::Anchor,
-            LinkType::Internal => Self::Internal,
-            LinkType::External => Self::External,
-            LinkType::Email => Self::Email,
-            LinkType::Phone => Self::Phone,
-            LinkType::Other => Self::Other,
         }
     }
 }
@@ -19676,17 +19090,6 @@ impl From<kreuzberg::LinkType> for LinkType {
     }
 }
 
-impl From<ImageType> for kreuzberg::ImageType {
-    fn from(val: ImageType) -> Self {
-        match val {
-            ImageType::DataUri => Self::DataUri,
-            ImageType::InlineSvg => Self::InlineSvg,
-            ImageType::External => Self::External,
-            ImageType::Relative => Self::Relative,
-        }
-    }
-}
-
 impl From<kreuzberg::ImageType> for ImageType {
     fn from(val: kreuzberg::ImageType) -> Self {
         match val {
@@ -19694,16 +19097,6 @@ impl From<kreuzberg::ImageType> for ImageType {
             kreuzberg::ImageType::InlineSvg => Self::InlineSvg,
             kreuzberg::ImageType::External => Self::External,
             kreuzberg::ImageType::Relative => Self::Relative,
-        }
-    }
-}
-
-impl From<StructuredDataType> for kreuzberg::StructuredDataType {
-    fn from(val: StructuredDataType) -> Self {
-        match val {
-            StructuredDataType::JsonLd => Self::JsonLd,
-            StructuredDataType::Microdata => Self::Microdata,
-            StructuredDataType::RDFa => Self::RDFa,
         }
     }
 }
@@ -20024,8 +19417,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         "structured_extraction",
         method!(ExtractionConfig::structured_extraction, 0),
     )?;
-    class.define_method("with_file_overrides", method!(ExtractionConfig::with_file_overrides, 1))?;
-    class.define_method("normalized", method!(ExtractionConfig::normalized, 0))?;
     class.define_method("validate", method!(ExtractionConfig::validate, 0))?;
     class.define_method(
         "effective_disable_ocr",
@@ -20617,7 +20008,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("validate", method!(DocumentStructure::validate, 0))?;
     class.define_method("body_roots", method!(DocumentStructure::body_roots, 0))?;
     class.define_method("furniture_roots", method!(DocumentStructure::furniture_roots, 0))?;
-    class.define_method("get", method!(DocumentStructure::get, 1))?;
     class.define_method("len", method!(DocumentStructure::len, 0))?;
     class.define_method("is_empty", method!(DocumentStructure::is_empty, 0))?;
 
@@ -21067,7 +20457,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("links", method!(HtmlMetadata::links, 0))?;
     class.define_method("images", method!(HtmlMetadata::images, 0))?;
     class.define_method("structured_data", method!(HtmlMetadata::structured_data, 0))?;
-    class.define_method("is_empty", method!(HtmlMetadata::is_empty, 0))?;
 
     let class = module.define_class("OcrMetadata", ruby.class_object())?;
     class.define_singleton_method("new", function!(OcrMetadata::new, 6))?;
@@ -21191,9 +20580,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("backend_metadata", method!(OcrElement::backend_metadata, 0))?;
     class.define_method("with_level", method!(OcrElement::with_level, 1))?;
     class.define_method("with_rotation", method!(OcrElement::with_rotation, 1))?;
-    class.define_method("with_page_number", method!(OcrElement::with_page_number, 1))?;
-    class.define_method("with_parent_id", method!(OcrElement::with_parent_id, 1))?;
-    class.define_method("with_metadata", method!(OcrElement::with_metadata, 2))?;
 
     let class = module.define_class("OcrElementConfig", ruby.class_object())?;
     class.define_singleton_method("new", function!(OcrElementConfig::new, 4))?;
@@ -21258,19 +20644,8 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
 
     let _class = module.define_class("ByteBufferPool", ruby.class_object())?;
 
-    let class = module.define_class("PooledString", ruby.class_object())?;
-    class.define_method("buffer_mut", method!(PooledString::buffer_mut, 0))?;
-    class.define_method("as_str", method!(PooledString::as_str, 0))?;
-    class.define_method("deref", method!(PooledString::deref, 0))?;
-    class.define_method("deref_mut", method!(PooledString::deref_mut, 0))?;
-    class.define_method("drop", method!(PooledString::drop, 0))?;
-    class.define_method("fmt", method!(PooledString::fmt, 1))?;
-
     let class = module.define_class("TracingLayer", ruby.class_object())?;
     class.define_method("layer", method!(TracingLayer::layer, 1))?;
-
-    let class = module.define_class("MetricsLayer", ruby.class_object())?;
-    class.define_method("layer", method!(MetricsLayer::layer, 1))?;
 
     let _class = module.define_class("ApiDoc", ruby.class_object())?;
 
@@ -21559,9 +20934,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("height", method!(BBox::height, 0))?;
     class.define_method("area", method!(BBox::area, 0))?;
     class.define_method("center", method!(BBox::center, 0))?;
-    class.define_method("intersection_area", method!(BBox::intersection_area, 1))?;
-    class.define_method("iou", method!(BBox::iou, 1))?;
-    class.define_method("containment_of", method!(BBox::containment_of, 1))?;
     class.define_method("page_coverage", method!(BBox::page_coverage, 2))?;
     class.define_method("fmt", method!(BBox::fmt, 1))?;
 
@@ -21714,7 +21086,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("get_extensions_for_mime", function!(get_extensions_for_mime, 1))?;
     module.define_module_function("list_supported_formats", function!(list_supported_formats, 0))?;
     module.define_module_function("clear_processor_cache", function!(clear_processor_cache, 0))?;
-    module.define_module_function("apply_output_format", function!(apply_output_format, 2))?;
     module.define_module_function("is_page_text_blank", function!(is_page_text_blank, 1))?;
     module.define_module_function("resolve_relationships", function!(resolve_relationships, 1))?;
     module.define_module_function("parse_json", function!(parse_json, 2))?;
@@ -21818,8 +21189,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("extract_pptx_from_bytes", function!(extract_pptx_from_bytes, 2))?;
     module.define_module_function("parse_xml_svg", function!(parse_xml_svg, 2))?;
     module.define_module_function("parse_xml", function!(parse_xml, 2))?;
-    module.define_module_function("cells_to_text", function!(cells_to_text, 1))?;
-    module.define_module_function("cells_to_markdown", function!(cells_to_markdown, 1))?;
     module.define_module_function("parse_jotdown_attributes", function!(parse_jotdown_attributes, 1))?;
     module.define_module_function("render_attributes", function!(render_attributes, 1))?;
     module.define_module_function("djot_content_to_djot", function!(djot_content_to_djot, 1))?;
@@ -21829,7 +21198,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("extract_text_from_events", function!(extract_text_from_events, 1))?;
     module.define_module_function("render_block_to_djot", function!(render_block_to_djot, 2))?;
     module.define_module_function("render_list_item", function!(render_list_item, 3))?;
-    module.define_module_function("render_inline_content", function!(render_inline_content, 1))?;
     module.define_module_function("extract_frontmatter", function!(extract_frontmatter, 1))?;
     module.define_module_function("extract_title_from_content", function!(extract_title_from_content, 1))?;
     module.define_module_function("collect_iwa_paths", function!(collect_iwa_paths, 1))?;
@@ -21899,7 +21267,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("from_utf8", function!(from_utf8, 1))?;
     module.define_module_function("string_from_utf8", function!(string_from_utf8, 1))?;
     module.define_module_function("is_valid_utf8", function!(is_valid_utf8, 1))?;
-    module.define_module_function("calculate_quality_score", function!(calculate_quality_score, 2))?;
     module.define_module_function("clean_extracted_text", function!(clean_extracted_text, 1))?;
     module.define_module_function("normalize_spaces", function!(normalize_spaces, 1))?;
     module.define_module_function("reduce_tokens", function!(reduce_tokens, 3))?;
@@ -21916,7 +21283,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("font_size", function!(font_size, 3))?;
     module.define_module_function("color", function!(color, 3))?;
     module.define_module_function("highlight", function!(highlight, 2))?;
-    module.define_module_function("classify_uri", function!(classify_uri, 1))?;
     module.define_module_function("safe_decode", function!(safe_decode, 2))?;
     module.define_module_function("calculate_text_confidence", function!(calculate_text_confidence, 1))?;
     module.define_module_function("fix_mojibake", function!(fix_mojibake, 1))?;
@@ -21932,8 +21298,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("escape_html_entities", function!(escape_html_entities, 1))?;
     module.define_module_function("detect_columns", function!(detect_columns, 2))?;
     module.define_module_function("detect_rows", function!(detect_rows, 2))?;
-    module.define_module_function("reconstruct_table", function!(reconstruct_table, 3))?;
-    module.define_module_function("table_to_markdown", function!(table_to_markdown, 1))?;
     module.define_module_function("load_server_config", function!(load_server_config, 1))?;
     module.define_module_function("create_router", function!(create_router, 1))?;
     module.define_module_function("create_router_with_limits", function!(create_router_with_limits, 2))?;
@@ -21963,23 +21327,12 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         "start_mcp_server_with_config_async",
         function!(start_mcp_server_with_config_async, 1),
     )?;
-    module.define_module_function("validate_page_boundaries", function!(validate_page_boundaries, 1))?;
-    module.define_module_function("classify_chunk", function!(classify_chunk, 2))?;
-    module.define_module_function("chunk_text", function!(chunk_text, 3))?;
-    module.define_module_function(
-        "chunk_text_with_heading_source",
-        function!(chunk_text_with_heading_source, 4),
-    )?;
-    module.define_module_function("chunk_text_with_type", function!(chunk_text_with_type, 5))?;
     module.define_module_function("chunk_texts_batch", function!(chunk_texts_batch, 2))?;
     module.define_module_function("precompute_utf8_boundaries", function!(precompute_utf8_boundaries, 1))?;
-    module.define_module_function("validate_utf8_boundaries", function!(validate_utf8_boundaries, 2))?;
     module.define_module_function("render_template", function!(render_template, 2))?;
     module.define_module_function("normalize", function!(normalize, 1))?;
     module.define_module_function("get_preset", function!(get_preset, 1))?;
     module.define_module_function("list_presets", function!(list_presets, 0))?;
-    module.define_module_function("warm_model", function!(warm_model, 2))?;
-    module.define_module_function("download_model", function!(download_model, 2))?;
     module.define_module_function("calculate_smart_dpi", function!(calculate_smart_dpi, 5))?;
     module.define_module_function("calculate_optimal_dpi", function!(calculate_optimal_dpi, 6))?;
     module.define_module_function("resize_image", function!(resize_image, 4))?;
@@ -21992,13 +21345,10 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("get_stopwords_with_fallback", function!(get_stopwords_with_fallback, 2))?;
     module.define_module_function("extract_keywords", function!(extract_keywords, 2))?;
     module.define_module_function("element_to_hocr_word", function!(element_to_hocr_word, 1))?;
-    module.define_module_function("elements_to_hocr_words", function!(elements_to_hocr_words, 2))?;
     module.define_module_function(
         "parse_hocr_to_internal_document",
         function!(parse_hocr_to_internal_document, 1),
     )?;
-    module.define_module_function("assemble_ocr_markdown", function!(assemble_ocr_markdown, 5))?;
-    module.define_module_function("recognize_page_tables", function!(recognize_page_tables, 4))?;
     module.define_module_function("extract_words_from_tsv", function!(extract_words_from_tsv, 2))?;
     module.define_module_function("compute_hash", function!(compute_hash, 1))?;
     module.define_module_function("validate_tesseract_version", function!(validate_tesseract_version, 1))?;
@@ -22006,7 +21356,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("is_language_supported", function!(is_language_supported, 1))?;
     module.define_module_function("language_to_script_family", function!(language_to_script_family, 1))?;
     module.define_module_function("map_language_code", function!(map_language_code, 1))?;
-    module.define_module_function("build_cell_grid", function!(build_cell_grid, 2))?;
     module.define_module_function("preprocess_imagenet", function!(preprocess_imagenet, 2))?;
     module.define_module_function(
         "preprocess_imagenet_letterbox",
@@ -22033,16 +21382,8 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("initialize_font_cache", function!(initialize_font_cache, 0))?;
     module.define_module_function("get_font_descriptors", function!(get_font_descriptors, 0))?;
     module.define_module_function("cached_font_count", function!(cached_font_count, 0))?;
-    module.define_module_function("cluster_font_sizes", function!(cluster_font_sizes, 2))?;
-    module.define_module_function("assign_heading_levels_smart", function!(assign_heading_levels_smart, 3))?;
-    module.define_module_function("assign_hierarchy_levels", function!(assign_hierarchy_levels, 2))?;
-    module.define_module_function(
-        "assign_hierarchy_levels_from_clusters",
-        function!(assign_hierarchy_levels_from_clusters, 2),
-    )?;
     module.define_module_function("extract_chars_with_fonts", function!(extract_chars_with_fonts, 1))?;
     module.define_module_function("extract_segments_from_page", function!(extract_segments_from_page, 1))?;
-    module.define_module_function("merge_chars_into_blocks", function!(merge_chars_into_blocks, 1))?;
     module.define_module_function("should_trigger_ocr", function!(should_trigger_ocr, 3))?;
     module.define_module_function("extract_images_from_pdf", function!(extract_images_from_pdf, 1))?;
     module.define_module_function(
@@ -22070,8 +21411,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("segment_to_hocr_word", function!(segment_to_hocr_word, 2))?;
     module.define_module_function("split_segment_to_words", function!(split_segment_to_words, 2))?;
     module.define_module_function("segments_to_words", function!(segments_to_words, 2))?;
-    module.define_module_function("post_process_table", function!(post_process_table, 3))?;
-    module.define_module_function("is_well_formed_table", function!(is_well_formed_table, 1))?;
     module.define_module_function("extract_text_from_pdf", function!(extract_text_from_pdf, 1))?;
     module.define_module_function(
         "extract_text_from_pdf_with_password",

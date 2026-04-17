@@ -350,6 +350,10 @@ types = [
     # Types with non-Clone/non-Default fields (Mutex, OpenTelemetry metrics)
     "TelemetryMetrics",
     "ExtractionMetrics",
+    "MetricsLayer",
+
+    # PHP: ext-php-rs can't handle PooledString (E0716/E0596/E0507)
+    "PooledString",
 
     # Internal layout/detection types missing serde
     "PageLayoutRegion",
@@ -473,6 +477,40 @@ functions = [
 
     # Returns Vec<core::PageBoundary> needing element conversion
     "detect_page_breaks_from_docx",
+
+    # PHP: Vec<CustomType> params fail FromZvalMut; WASM: JsValue/return type mismatches
+    "render_inline_content",
+    "sort_by_confidence_desc",
+    "validate_page_boundaries",
+    "validate_utf8_boundaries",
+    "elements_to_hocr_words",
+    "assign_heading_levels_smart",
+    "assign_hierarchy_levels_from_clusters",
+    "merge_chars_into_blocks",
+    "cells_to_text",
+    "cells_to_markdown",
+    "calculate_quality_score",
+    "reconstruct_table",
+    "table_to_markdown",
+    "build_cell_grid",
+    "post_process_table",
+    "is_well_formed_table",
+    "chunk_text",
+    "chunk_text_with_heading_source",
+    "chunk_text_with_type",
+    "apply_output_format",
+    "classify_uri",
+    "classify_chunk",
+    "cluster_font_sizes",
+    "assign_hierarchy_levels",
+
+    # PHP: EmbeddingModelType From<String> not satisfied
+    "warm_model",
+    "download_model",
+
+    # PHP: Vec<OcrElement>/Vec<RecognizedTable> FromZvalMut + type mismatches
+    "assemble_ocr_markdown",
+    "recognize_page_tables",
 ]
 methods = [
     "OcrElement.with_rotation_opt",
@@ -487,6 +525,25 @@ methods = [
     "PaddleOcrConfig.resolve_cache_dir",
     # Ambiguous type inference in generated From conversion
     "HtmlMetadata.from",
+    # is_empty calls From<WasmHtmlMetadata> for HtmlMetadata which is excluded
+    "HtmlMetadata.is_empty",
+    # PHP: BBox methods return 0 instead of 0.0 (codegen integer literal mismatch)
+    "BBox.intersection_area",
+    "BBox.iou",
+    "BBox.containment_of",
+    # PHP: DocumentStructure.get expects NodeIndex, codegen passes u32
+    "DocumentStructure.get",
+    # PHP: backend_metadata HashMap<String,Value> vs HashMap<String,String> mismatch
+    "OcrElement.with_page_number",
+    "OcrElement.with_parent_id",
+    "OcrElement.with_metadata",
+    # PHP: ExtractionResult backend_metadata same mismatch
+    "ExtractionResult.with_page_metadata",
+    # WASM: normalized() returns Cow<ExtractionConfig>, codegen can't convert to WasmExtractionConfig
+    "ExtractionConfig.normalized",
+    "ExtractionConfig.with_file_overrides",
+    # PHP: Vec<LayoutDetection> FromZvalMut not satisfied
+    "LayoutDetection.sort_by_confidence_desc",
 ]
 
 # ---------------------------------------------------------------------------
@@ -575,6 +632,8 @@ exclude_types = [
     "PageTiming",
     "ProcessingWarning",
     "RecognizedTable",
+    # chunking-tokenizers feature not enabled for WASM
+    "ChunkSizing",
 ]
 exclude_functions = [
     # paddle-ocr / layout-detection / embeddings / auto-rotate
@@ -613,6 +672,8 @@ exclude_functions = [
     # layout detection
     "config_from_extraction",
     "detect_layout_for_images",
+    # Uses excluded types WasmDetectionResult/WasmRecognizedTable
+    "recognize_page_tables",
 ]
 # Everything except ort-dependent features (paddle-ocr, layout-detection, embeddings, auto-rotate)
 features = [

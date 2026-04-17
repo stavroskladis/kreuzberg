@@ -130,7 +130,6 @@ typedef struct KREUZBERGLlmUsage KREUZBERGLlmUsage;
 typedef struct KREUZBERGManifestEntryResponse KREUZBERGManifestEntryResponse;
 typedef struct KREUZBERGManifestResponse KREUZBERGManifestResponse;
 typedef struct KREUZBERGMetadata KREUZBERGMetadata;
-typedef struct KREUZBERGMetricsLayer KREUZBERGMetricsLayer;
 typedef struct KREUZBERGModelPaths KREUZBERGModelPaths;
 typedef struct KREUZBERGNodeContent KREUZBERGNodeContent;
 typedef struct KREUZBERGNote KREUZBERGNote;
@@ -174,7 +173,6 @@ typedef struct KREUZBERGPdfConfig KREUZBERGPdfConfig;
 typedef struct KREUZBERGPdfImage KREUZBERGPdfImage;
 typedef struct KREUZBERGPdfUnifiedExtractionResult KREUZBERGPdfUnifiedExtractionResult;
 typedef struct KREUZBERGPoolError KREUZBERGPoolError;
-typedef struct KREUZBERGPooledString KREUZBERGPooledString;
 typedef struct KREUZBERGPostProcessorConfig KREUZBERGPostProcessorConfig;
 typedef struct KREUZBERGPptxAppProperties KREUZBERGPptxAppProperties;
 typedef struct KREUZBERGPptxExtractionResult KREUZBERGPptxExtractionResult;
@@ -607,49 +605,6 @@ KREUZBERGStructuredExtractionConfig *kreuzberg_extraction_config_structured_extr
  * Returned pointers must be freed with the appropriate free function.
  */
 KREUZBERGExtractionConfig *kreuzberg_extraction_config_default(void);
-
-/**
- * Create a new `ExtractionConfig` by applying per-file overrides from a
- * [`FileExtractionConfig`]. Fields that are `Some` in the override replace the
- * corresponding field in `self`; `None` fields keep the original value.
- *
- * Batch-level fields (`max_concurrent_extractions`, `use_cache`, `acceleration`,
- * `security_limits`) are never affected by overrides.
- *
- * # Example
- *
- * ```rust
- * use kreuzberg::{ExtractionConfig, FileExtractionConfig};
- *
- * let base = ExtractionConfig::default();
- * let override_config = FileExtractionConfig {
- *     force_ocr: Some(true),
- *     ..Default::default()
- * };
- * let resolved = base.with_file_overrides(&override_config);
- * assert!(resolved.force_ocr);
- * ```
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGExtractionConfig *kreuzberg_extraction_config_with_file_overrides(const KREUZBERGExtractionConfig *this_,
-                                                                           const KREUZBERGFileExtractionConfig *overrides);
-
-/**
- * Normalize configuration for implicit requirements.
- *
- * Currently handles:
- * - Auto-enabling `extract_pages` when `result_format` is `ElementBased`, because
- *   the element transformation requires per-page data to assign correct page numbers.
- *   Without this, all elements would incorrectly get `page_number=1`.
- * - Auto-enabling `extract_pages` when chunking is configured, because the chunker
- *   needs page boundaries to assign correct page numbers to chunks.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGExtractionConfig *kreuzberg_extraction_config_normalized(const KREUZBERGExtractionConfig *this_);
 
 /**
  * Validate the configuration, returning an error if any settings are invalid.
@@ -4049,15 +4004,6 @@ char *kreuzberg_document_structure_body_roots(const KREUZBERGDocumentStructure *
 char *kreuzberg_document_structure_furniture_roots(const KREUZBERGDocumentStructure *_this);
 
 /**
- * Get a node by index.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGDocumentNode *kreuzberg_document_structure_get(const KREUZBERGDocumentStructure *this_,
-                                                        uint32_t index);
-
-/**
  * Get the total number of nodes.
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
@@ -6708,14 +6654,6 @@ char *kreuzberg_html_metadata_images(const KREUZBERGHtmlMetadata *ptr);
 char *kreuzberg_html_metadata_structured_data(const KREUZBERGHtmlMetadata *ptr);
 
 /**
- * Check if metadata is empty (no meaningful content extracted).
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-int32_t kreuzberg_html_metadata_is_empty(const KREUZBERGHtmlMetadata *this_);
-
-/**
  * Create a `OcrMetadata` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -7646,34 +7584,6 @@ KREUZBERGOcrElement *kreuzberg_ocr_element_with_rotation(KREUZBERGOcrElement *th
                                                          const KREUZBERGOcrRotation *rotation);
 
 /**
- * Set page number.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGOcrElement *kreuzberg_ocr_element_with_page_number(KREUZBERGOcrElement *this_,
-                                                            uintptr_t page_number);
-
-/**
- * Set parent element ID.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGOcrElement *kreuzberg_ocr_element_with_parent_id(KREUZBERGOcrElement *this_,
-                                                          const char *parent_id);
-
-/**
- * Add backend-specific metadata.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGOcrElement *kreuzberg_ocr_element_with_metadata(KREUZBERGOcrElement *this_,
-                                                         const char *key,
-                                                         const char *value);
-
-/**
  * Create a `OcrElementConfig` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.
@@ -8152,58 +8062,6 @@ void kreuzberg_string_buffer_pool_free(KREUZBERGStringBufferPool *ptr);
 void kreuzberg_byte_buffer_pool_free(KREUZBERGByteBufferPool *ptr);
 
 /**
- * Free a `PooledString` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_pooled_string_free(KREUZBERGPooledString *ptr);
-
-/**
- * Get mutable access to the underlying string buffer.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_pooled_string_buffer_mut(KREUZBERGPooledString *this_);
-
-/**
- * Get immutable access to the underlying string buffer.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_pooled_string_as_str(const KREUZBERGPooledString *this_);
-
-/**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_pooled_string_deref(const KREUZBERGPooledString *_this);
-
-/**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_pooled_string_deref_mut(KREUZBERGPooledString *_this);
-
-/**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-void kreuzberg_pooled_string_drop(KREUZBERGPooledString *this_);
-
-/**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_pooled_string_fmt(const KREUZBERGPooledString *_this,
-                                  const char *_f);
-
-/**
  * Free a `TracingLayer` handle.
  * # Safety
  * Pointer must have been returned by this library, or be null.
@@ -8216,21 +8074,6 @@ void kreuzberg_tracing_layer_free(KREUZBERGTracingLayer *ptr);
  * Returned pointers must be freed with the appropriate free function.
  */
 char *kreuzberg_tracing_layer_layer(const KREUZBERGTracingLayer *_this,
-                                    const char *_inner);
-
-/**
- * Free a `MetricsLayer` handle.
- * # Safety
- * Pointer must have been returned by this library, or be null.
- */
-void kreuzberg_metrics_layer_free(KREUZBERGMetricsLayer *ptr);
-
-/**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_metrics_layer_layer(const KREUZBERGMetricsLayer *_this,
                                     const char *_inner);
 
 /**
@@ -10001,34 +9844,6 @@ float kreuzberg_b_box_area(const KREUZBERGBBox *this_);
 char *kreuzberg_b_box_center(const KREUZBERGBBox *_this);
 
 /**
- * Area of intersection with another bounding box.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-float kreuzberg_b_box_intersection_area(const KREUZBERGBBox *this_,
-                                        const KREUZBERGBBox *other);
-
-/**
- * Intersection over Union with another bounding box.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-float kreuzberg_b_box_iou(const KREUZBERGBBox *this_,
-                          const KREUZBERGBBox *other);
-
-/**
- * Fraction of `other` that is contained within `self`.
- * Returns 0.0..=1.0 where 1.0 means `other` is fully inside `self`.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-float kreuzberg_b_box_containment_of(const KREUZBERGBBox *this_,
-                                     const KREUZBERGBBox *other);
-
-/**
  * Fraction of page area this bbox covers.
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
@@ -10089,14 +9904,6 @@ float kreuzberg_layout_detection_confidence(const KREUZBERGLayoutDetection *ptr)
  * Pointer must be a valid handle returned by this library.
  */
 KREUZBERGBBox *kreuzberg_layout_detection_bbox(const KREUZBERGLayoutDetection *ptr);
-
-/**
- * Sort detections by confidence in descending order.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_layout_detection_sort_by_confidence_desc(const char *detections);
 
 /**
  * # Safety
@@ -12195,26 +12002,6 @@ char *kreuzberg_list_supported_formats(void);
 int32_t kreuzberg_clear_processor_cache(void);
 
 /**
- * Apply output format conversion to the extraction result.
- *
- * Records the output format in metadata and swaps in pre-rendered content
- * (produced during `derive_extraction_result`) if available.
- *
- * This runs as the final pipeline step, after post-processors have operated
- * on the plain-text `content` field.
- *
- * # Arguments
- *
- * * `result` - The extraction result to modify
- * * `output_format` - The desired output format
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGExtractionResult *kreuzberg_apply_output_format(const KREUZBERGExtractionResult *result,
-                                                         const KREUZBERGOutputFormat *output_format);
-
-/**
  * Determine if a page's text content indicates a blank page.
  *
  * A page is blank if it has fewer than [`MIN_NON_WHITESPACE_CHARS`] non-whitespace characters.
@@ -13330,69 +13117,6 @@ KREUZBERGXmlExtractionResult *kreuzberg_parse_xml(const uint8_t *xml_bytes,
                                                   int32_t preserve_whitespace);
 
 /**
- * Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table.
- *
- * # Behavior
- *
- * - The first row is treated as the header row
- * - A separator row is inserted after the header
- * - Pipe characters (`|`) in cell content are automatically escaped with backslash
- * - Irregular tables (rows with varying column counts) are padded with empty cells to match the header
- * - Returns an empty string for empty input
- *
- * # Arguments
- *
- * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
- *
- * # Returns
- *
- * A `String` containing the GFM markdown table representation
- *
- * # Examples
- *
- * ```
- * # use kreuzberg::extraction::cells_to_markdown;
- * let cells = vec![
- *     vec!["Name".to_string(), "Age".to_string()],
- *     vec!["Alice".to_string(), "30".to_string()],
- *     vec!["Bob".to_string(), "25".to_string()],
- * ];
- *
- * let markdown = cells_to_markdown(&cells);
- * assert!(markdown.contains("| Name | Age |"));
- * assert!(markdown.contains("|------|------|"));
- * ```
- *
- * Converts a 2D vector of cell strings into plain text with tab-separated columns.
- *
- * # Behavior
- *
- * - Rows are separated by newlines
- * - Cells within a row are separated by tab characters
- * - No pipe delimiters or separator rows (unlike markdown tables)
- * - Returns an empty string for empty input
- *
- * # Arguments
- *
- * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
- *
- * # Returns
- *
- * A `String` containing the plain text table representation
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_cells_to_text(const char *cells);
-
-/**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_cells_to_markdown(const char *cells);
-
-/**
  * Parse jotdown attributes into our Attributes representation.
  *
  * Converts jotdown's internal attribute representation to Kreuzberg's
@@ -13543,14 +13267,6 @@ char *kreuzberg_render_block_to_djot(const KREUZBERGFormattedBlock *block,
 char *kreuzberg_render_list_item(const KREUZBERGFormattedBlock *item,
                                  const char *indent,
                                  const char *marker);
-
-/**
- * Render inline content to djot markup.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_render_inline_content(const char *elements);
 
 /**
  * Extract YAML frontmatter from document content.
@@ -14628,14 +14344,6 @@ int32_t kreuzberg_is_valid_utf8(const uint8_t *bytes,
  * Caller must ensure all pointer arguments are valid or null.
  * Returned pointers must be freed with the appropriate free function.
  */
-double kreuzberg_calculate_quality_score(const char *_text,
-                                         const char *_metadata);
-
-/**
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
 char *kreuzberg_clean_extracted_text(const char *text);
 
 /**
@@ -14878,18 +14586,6 @@ KREUZBERGTextAnnotation *kreuzberg_highlight(uint32_t start,
                                              uint32_t end);
 
 /**
- * Classify a URL string into the appropriate `UriKind`.
- *
- * - `mailto:` → `Email`
- * - `#` prefix → `Anchor`
- * - everything else → `Hyperlink`
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGUriKind *kreuzberg_classify_uri(const char *url);
-
-/**
  * Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary.
  *
  * The function prefers an explicit `encoding`, falls back to the cached guess, probes
@@ -15048,7 +14744,7 @@ char *kreuzberg_estimate_pool_size(uint64_t _file_size,
  * Caller must ensure all pointer arguments are valid or null.
  * Returned pointers must be freed with the appropriate free function.
  */
-KREUZBERGPooledString *kreuzberg_acquire_string_buffer(void);
+char *kreuzberg_acquire_string_buffer(void);
 
 /**
  * Get or intern a language code string.
@@ -15153,35 +14849,6 @@ char *kreuzberg_detect_columns(const char *_words,
  */
 char *kreuzberg_detect_rows(const char *_words,
                             double _row_threshold_ratio);
-
-/**
- * Reconstruct a table grid from words with bounding box positions.
- *
- * Takes detected words and reconstructs a 2D table by:
- * 1. Detecting column positions (grouping by x-coordinate within `column_threshold`)
- * 2. Detecting row positions (grouping by y-center within `row_threshold_ratio` * median height)
- * 3. Assigning words to cells based on closest row/column
- * 4. Combining words within the same cell
- *
- * Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_reconstruct_table(const char *_words,
-                                  uint32_t _column_threshold,
-                                  double _row_threshold_ratio);
-
-/**
- * Convert a table grid to markdown format.
- *
- * The first row is treated as the header row, with a separator line added after it.
- * Pipe characters in cell content are escaped.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_table_to_markdown(const char *table);
 
 /**
  * Load ServerConfig with proper precedence order.
@@ -15534,158 +15201,6 @@ int32_t kreuzberg_start_mcp_server(void);
 int32_t kreuzberg_start_mcp_server_with_config(const KREUZBERGExtractionConfig *config);
 
 /**
- * Validates the consistency and correctness of page boundaries.
- *
- * # Validation Rules
- *
- * 1. Boundaries must be sorted by byte_start (monotonically increasing)
- * 2. Boundaries must not overlap (byte_end[i] <= byte_start[i+1])
- * 3. Each boundary must have byte_start < byte_end
- *
- * # Arguments
- *
- * * `boundaries` - Page boundary markers to validate
- *
- * # Returns
- *
- * Returns `Ok(())` if all boundaries are valid.
- * Returns `KreuzbergError::Validation` if any boundary is invalid.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-int32_t kreuzberg_validate_page_boundaries(const char *boundaries);
-
-/**
- * Classify a single chunk based on its content and optional heading context.
- *
- * Rules are evaluated in priority order. The first matching rule determines
- * the returned [`ChunkType`]. When no rule matches, [`ChunkType::Unknown`]
- * is returned.
- *
- * # Arguments
- *
- * * `content` - The text content of the chunk (may be trimmed or raw).
- * * `heading_context` - Optional heading hierarchy this chunk falls under
- *   (only available when using `ChunkerType::Markdown`).
- *
- * # Examples
- *
- * ```rust
- * use kreuzberg::chunking::classifier::classify_chunk;
- * use kreuzberg::types::ChunkType;
- *
- * assert_eq!(classify_chunk("# Introduction", None), ChunkType::Heading);
- * assert_eq!(
- *     classify_chunk("The Investor shall subscribe for the Shares and agrees to pay the subscription price. The Company shall deliver the Share certificates upon receipt.", None),
- *     ChunkType::OperativeClause,
- * );
- * assert_eq!(classify_chunk("Some unrecognized text.", None), ChunkType::Unknown);
- * ```
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGChunkType *kreuzberg_classify_chunk(const char *content,
-                                             const KREUZBERGHeadingContext *heading_context);
-
-/**
- * Split text into chunks with optional page boundary tracking.
- *
- * This is the primary API function for chunking text. It supports both plain text
- * and Markdown with configurable chunk size, overlap, and page boundary mapping.
- *
- * # Arguments
- *
- * * `text` - The text to split into chunks
- * * `config` - Chunking configuration (max size, overlap, type)
- * * `page_boundaries` - Optional page boundary markers for mapping chunks to pages
- *
- * # Returns
- *
- * A ChunkingResult containing all chunks and their metadata.
- *
- * # Examples
- *
- * ```rust
- * use kreuzberg::chunking::{chunk_text, ChunkingConfig, ChunkerType};
- *
- * # fn example() -> kreuzberg::Result<()> {
- * let config = ChunkingConfig {
- *     max_characters: 500,
- *     overlap: 50,
- *     trim: true,
- *     chunker_type: ChunkerType::Text,
- *     ..Default::default()
- * };
- * let result = chunk_text("Long text...", &config, None)?;
- * assert!(!result.chunks.is_empty());
- * # Ok(())
- * # }
- * ```
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGChunkingResult *kreuzberg_chunk_text(const char *text,
-                                              const KREUZBERGChunkingConfig *config,
-                                              const char *page_boundaries);
-
-/**
- * Chunk text with an optional separate markdown source for heading context resolution.
- *
- * When `heading_source` is provided, it is used instead of `text` for building the
- * heading map. This is needed when `text` is plain text (no markdown headings) but
- * the original document had headings that were stripped during rendering.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGChunkingResult *kreuzberg_chunk_text_with_heading_source(const char *text,
-                                                                  const KREUZBERGChunkingConfig *config,
-                                                                  const char *page_boundaries,
-                                                                  const char *heading_source);
-
-/**
- * Chunk text with explicit type specification.
- *
- * This is a convenience function that constructs a ChunkingConfig from individual
- * parameters and calls `chunk_text`.
- *
- * # Arguments
- *
- * * `text` - The text to split into chunks
- * * `max_characters` - Maximum characters per chunk
- * * `overlap` - Character overlap between consecutive chunks
- * * `trim` - Whether to trim whitespace from boundaries
- * * `chunker_type` - Type of chunker to use (Text or Markdown)
- *
- * # Returns
- *
- * A ChunkingResult containing all chunks and their metadata.
- *
- * # Examples
- *
- * ```rust
- * use kreuzberg::chunking::{chunk_text_with_type, ChunkerType};
- *
- * # fn example() -> kreuzberg::Result<()> {
- * let result = chunk_text_with_type("Some text", 500, 50, true, ChunkerType::Text)?;
- * assert!(!result.chunks.is_empty());
- * # Ok(())
- * # }
- * ```
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-KREUZBERGChunkingResult *kreuzberg_chunk_text_with_type(const char *text,
-                                                        uintptr_t max_characters,
-                                                        uintptr_t overlap,
-                                                        int32_t trim,
-                                                        const KREUZBERGChunkerType *chunker_type);
-
-/**
  * Batch process multiple texts with the same configuration.
  *
  * This convenience function applies the same chunking configuration to multiple
@@ -15756,49 +15271,6 @@ char *kreuzberg_chunk_texts_batch(const char *texts,
 char *kreuzberg_precompute_utf8_boundaries(const char *_text);
 
 /**
- * Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries.
- *
- * This function ensures that all page boundary positions are at valid UTF-8 character
- * boundaries within the text. This is CRITICAL to prevent text corruption when boundaries
- * are created from language bindings or external sources, particularly with multibyte
- * UTF-8 characters (emoji, CJK characters, combining marks, etc.).
- *
- * **Performance Strategy**: Uses adaptive validation to optimize for different boundary counts:
- * - **Small sets (≤10 boundaries)**: O(k) approach using Rust's native `is_char_boundary()` for each position
- * - **Large sets (>10 boundaries)**: O(n) precomputation with O(1) lookups via BitVec
- *
- * For typical PDF documents with 1-10 page boundaries, the fast path provides 30-50% faster
- * validation than always precomputing. For documents with 100+ boundaries, batch precomputation
- * is 2-4% faster overall due to amortized costs. This gives ~2-4% improvement across all scenarios.
- *
- * # Arguments
- *
- * * `text` - The text being chunked
- * * `boundaries` - Page boundary markers to validate
- *
- * # Returns
- *
- * Returns `Ok(())` if all boundaries are at valid UTF-8 character boundaries.
- * Returns `KreuzbergError::Validation` if any boundary is at an invalid position.
- *
- * # UTF-8 Boundary Safety
- *
- * Rust strings use UTF-8 encoding where characters can be 1-4 bytes. For example:
- * - ASCII letters: 1 byte each
- * - Emoji (🌍): 4 bytes but 1 character
- * - CJK characters (中): 3 bytes but 1 character
- *
- * This function checks that all byte_start and byte_end values are at character boundaries
- * using an adaptive strategy: direct calls for small boundary sets, or precomputed BitVec
- * for large sets.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-int32_t kreuzberg_validate_utf8_boundaries(const char *text,
-                                           const char *boundaries);
-
-/**
  * Render a Jinja2 template with the given context variables.
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
@@ -15830,39 +15302,6 @@ char *kreuzberg_get_preset(const char *_name);
  * Returned pointers must be freed with the appropriate free function.
  */
 char *kreuzberg_list_presets(void);
-
-/**
- * Eagerly download and cache an embedding model without returning the handle.
- *
- * This triggers the same download and initialization as `get_or_init_engine`
- * but discards the result, making it suitable for cache-warming scenarios
- * where the caller doesn't need to use the model immediately.
- *
- * **Note**: This function downloads AND initializes the ONNX model, which
- * requires ONNX Runtime and uses significant memory. For download-only
- * scenarios (e.g., init containers), use [`download_model`] instead.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-int32_t kreuzberg_warm_model(const KREUZBERGEmbeddingModelType *model_type,
-                             const char *cache_dir);
-
-/**
- * Download an embedding model's files without initializing ONNX Runtime.
- *
- * Downloads the model files (ONNX model, tokenizer, config) from HuggingFace
- * to the cache directory. Subsequent calls to `warm_model` or
- * `get_or_init_engine` will find the files cached and skip the download step.
- *
- * This is ideal for init containers or CI environments where you want to
- * pre-populate the cache without loading models into memory.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-int32_t kreuzberg_download_model(const KREUZBERGEmbeddingModelType *model_type,
-                                 const char *cache_dir);
 
 /**
  * Calculate smart DPI based on page dimensions, memory constraints, and target DPI
@@ -16163,27 +15602,6 @@ char *kreuzberg_extract_keywords(const char *text,
 char *kreuzberg_element_to_hocr_word(const KREUZBERGOcrElement *_element);
 
 /**
- * Convert a vector of OcrElements to HocrWords for batch table processing.
- *
- * Filters to word-level elements only, as table reconstruction
- * works best with word-level granularity.
- *
- * # Arguments
- *
- * * `elements` - Slice of OCR elements to convert
- * * `min_confidence` - Minimum recognition confidence threshold (0.0-1.0)
- *
- * # Returns
- *
- * A vector of HocrWords filtered by confidence and element level.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_elements_to_hocr_words(const char *_elements,
-                                       double _min_confidence);
-
-/**
  * Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata.
  *
  * This is the primary entry point. It replaces the older `convert_hocr_to_markdown` path
@@ -16209,39 +15627,6 @@ char *kreuzberg_elements_to_hocr_words(const char *_elements,
  * Returned pointers must be freed with the appropriate free function.
  */
 char *kreuzberg_parse_hocr_to_internal_document(const char *_hocr_html);
-
-/**
- * Assemble structured markdown from OCR elements using layout detection results.
- *
- * Both inputs must be in the same pixel coordinate space (from the same
- * rendered page image). Returns plain text join when `detection` is `None`.
- *
- * `recognized_tables` provides pre-computed markdown for Table regions
- * (from TATR or other table structure recognizer). When empty, Table
- * regions fall back to heuristic grid reconstruction from OCR elements.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_assemble_ocr_markdown(const char *elements,
-                                      const KREUZBERGDetectionResult *detection,
-                                      uint32_t img_width,
-                                      uint32_t img_height,
-                                      const char *recognized_tables);
-
-/**
- * Run TATR table recognition for all Table regions in a page.
- *
- * For each Table detection, crops the page image, runs TATR inference,
- * matches OCR elements to cells, and produces markdown tables.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_recognize_page_tables(const char *_page_image,
-                                      const KREUZBERGDetectionResult *_detection,
-                                      const char *_elements,
-                                      const char *_tatr_model);
 
 /**
  * Extract words from Tesseract TSV output and convert to HocrWord format.
@@ -16326,26 +15711,6 @@ char *kreuzberg_language_to_script_family(const char *paddle_lang);
  * Returned pointers must be freed with the appropriate free function.
  */
 char *kreuzberg_map_language_code(const char *kreuzberg_code);
-
-/**
- * Build a 2D cell grid from TATR detections.
- *
- * The grid is `[num_rows][num_cols]` where each cell is the intersection
- * of a row bounding box and a column bounding box.
- *
- * Processing steps:
- * 1. Widen all rows to span the full table width (min x1 to max x2 across rows)
- * 2. Apply NMS using IoB: sort by confidence descending, remove detections
- *    whose IoB with any higher-confidence detection exceeds [`NMS_IOB_THRESHOLD`]
- * 3. For each (row, column) pair, compute the intersection rectangle
- *
- * If `table_bbox` is provided, it is used to clip the row widening bounds.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_build_cell_grid(const char *_result,
-                                const char *_table_bbox);
 
 /**
  * Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
@@ -16568,163 +15933,6 @@ char *kreuzberg_get_font_descriptors(void);
 uintptr_t kreuzberg_cached_font_count(void);
 
 /**
- * Cluster text blocks by font size using k-means algorithm.
- *
- * Uses k-means clustering to group text blocks by their font size, which helps
- * identify document hierarchy levels (H1, H2, Body, etc.). The algorithm:
- * 1. Extracts font sizes from text blocks
- * 2. Applies k-means clustering to group similar font sizes
- * 3. Sorts clusters by centroid size in descending order (largest = H1)
- * 4. Returns clusters with their member blocks
- *
- * # Arguments
- *
- * * `blocks` - Slice of TextBlock objects to cluster
- * * `k` - Number of clusters to create
- *
- * # Returns
- *
- * Result with vector of FontSizeCluster ordered by size (descending),
- * or an error if clustering fails
- *
- * # Example
- *
- * ```rust,no_run
- * # #[cfg(feature = "pdf")]
- * # {
- * use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, cluster_font_sizes};
- *
- * let blocks = vec![
- *     TextBlock {
- *         text: "Title".to_string(),
- *         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
- *         font_size: 24.0,
- *     },
- *     TextBlock {
- *         text: "Body".to_string(),
- *         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
- *         font_size: 12.0,
- *     },
- * ];
- *
- * let clusters = cluster_font_sizes(&blocks, 2).unwrap();
- * assert_eq!(clusters.len(), 2);
- * assert_eq!(clusters[0].centroid, 24.0); // Largest is first
- * # }
- * ```
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_cluster_font_sizes(const char *_blocks,
-                                   uintptr_t _k);
-
-/**
- * Assign heading levels using the "most frequent cluster = Body" rule.
- *
- * Instead of naively mapping the largest font size to H1, this function
- * identifies the cluster with the most members as body text. Only clusters
- * with fewer members AND sufficiently larger font size than body become headings.
- *
- * # Arguments
- *
- * * `clusters` - Slice of FontSizeCluster objects (sorted by centroid descending)
- * * `min_heading_ratio` - Minimum ratio of heading centroid to body centroid (e.g. 1.15)
- * * `min_heading_gap` - Minimum absolute font-size difference in points (e.g. 1.5)
- *
- * # Returns
- *
- * Vector of tuples `(centroid, heading_level)` where `None` means body text
- * and `Some(1..=6)` means H1-H6. Sorted by centroid descending.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_assign_heading_levels_smart(const char *_clusters,
-                                            float _min_heading_ratio,
-                                            float _min_heading_gap);
-
-/**
- * Assign hierarchy levels to text blocks based on KMeans clustering results.
- *
- * Maps cluster indices to HTML heading levels (H1-H6) and body text:
- * - Cluster 0 → H1 (top-level heading)
- * - Cluster 1 → H2 (secondary heading)
- * - Cluster 2 → H3 (tertiary heading)
- * - Cluster 3 → H4 (quaternary heading)
- * - Cluster 4 → H5 (quinary heading)
- * - Cluster 5 → H6 (senary heading)
- * - Cluster 6+ → Body (body text)
- *
- * # Arguments
- *
- * * `blocks` - Slice of TextBlock objects to assign hierarchy levels to
- * * `kmeans_result` - KMeansResult containing cluster labels for each block
- *
- * # Returns
- *
- * Vector of tuples containing (original block info, hierarchy level)
- *
- * # Example
- *
- * ```rust,no_run
- * # #[cfg(feature = "pdf")]
- * # {
- * use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, HierarchyLevel, assign_hierarchy_levels, KMeansResult};
- *
- * let blocks = vec![
- *     TextBlock {
- *         text: "Title".to_string(),
- *         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
- *         font_size: 24.0,
- *     },
- *     TextBlock {
- *         text: "Body".to_string(),
- *         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
- *         font_size: 12.0,
- *     },
- * ];
- *
- * let kmeans_result = KMeansResult {
- *     labels: vec![0, 6],
- * };
- *
- * let results = assign_hierarchy_levels(&blocks, &kmeans_result);
- * assert_eq!(results[0].hierarchy_level, HierarchyLevel::H1);
- * assert_eq!(results[1].hierarchy_level, HierarchyLevel::Body);
- * # }
- * ```
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_assign_hierarchy_levels(const char *_blocks,
-                                        const char *_kmeans_result);
-
-/**
- * Assign hierarchy levels to text blocks based on font size clusters.
- *
- * Maps font size clusters to heading levels (H1-H6) and body text.
- * Larger font sizes are assigned higher hierarchy levels.
- *
- * # Arguments
- *
- * * `blocks` - Vector of TextBlock objects to assign levels to
- * * `clusters` - Vector of FontSizeCluster objects from clustering
- *
- * # Returns
- *
- * Vector of tuples containing (TextBlock, HierarchyLevel).
- * If blocks is empty or clusters is empty, returns empty vector.
- * All blocks get Body level if only one cluster exists.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_assign_hierarchy_levels_from_clusters(const char *_blocks,
-                                                      const char *_clusters);
-
-/**
  * Extract characters with fonts from a PDF page.
  *
  * Iterates through all characters on a page, extracting text, position,
@@ -16779,35 +15987,6 @@ char *kreuzberg_extract_chars_with_fonts(const char *_page);
  * Returned pointers must be freed with the appropriate free function.
  */
 char *kreuzberg_extract_segments_from_page(const char *_page);
-
-/**
- * Merge characters into text blocks using a greedy clustering algorithm.
- *
- * Groups characters based on spatial proximity using weighted distance and
- * intersection ratio metrics. Characters are merged greedily based on their
- * proximity and overlap.
- *
- * # Arguments
- *
- * * `chars` - Vector of CharData to merge into blocks
- *
- * # Returns
- *
- * Vector of TextBlock objects containing merged characters
- *
- * # Algorithm
- *
- * The function uses a greedy approach:
- * 1. Create bounding boxes for each character
- * 2. Use weighted_distance (5.0 * dx + 1.0 * dy) with maximum threshold of ~2.5x font size
- * 3. Use intersection_ratio to detect overlapping or very close characters
- * 4. Merge characters into blocks based on proximity thresholds
- * 5. Return sorted blocks by position (top to bottom, left to right)
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_merge_chars_into_blocks(const char *_chars);
 
 /**
  * Determine whether OCR should be triggered based on text block coverage.
@@ -17045,46 +16224,6 @@ char *kreuzberg_split_segment_to_words(const char *_seg,
  */
 char *kreuzberg_segments_to_words(const char *_segments,
                                   float _page_height);
-
-/**
- * Post-process a raw table grid to validate structure and clean up.
- *
- * Returns `None` if the table fails structural validation.
- *
- * When `layout_guided` is true, the layout model already confirmed this is
- * a table, so validation thresholds are relaxed:
- * - Minimum columns: 3 → 2
- * - Column sparsity: 75% → 95%
- * - Overall density: 40% → 15%
- * - Prose detection: reject if >70% cells >100 chars (vs >50% >60 chars)
- * - Prose detection: reject if avg cell >80 chars (vs >50 chars)
- * - Single-word cell: reject if >85% single-word (vs >70%)
- * - Content asymmetry: reject if one col >92% of text (vs >85%)
- * - Column-text-flow: applied equally (reject if >60% rows flow through)
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_post_process_table(const char *table,
-                                   int32_t layout_guided,
-                                   int32_t allow_single_column);
-
-/**
- * Validate whether a reconstructed table grid represents a well-formed table
- * rather than multi-column prose or a repeated page element.
- *
- * Returns `true` if the grid looks like a real table, `false` if it should be
- * rejected and its content emitted as paragraph text instead.
- *
- * The checks catch cases the layout model misidentifies as tables:
- * - Multi-column prose split into a grid (detected via row coherence and column uniformity)
- * - Repeated page elements (headers/footers detected as tables on every page)
- * - Low-vocabulary repetitive content (same few words in every row)
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-int32_t kreuzberg_is_well_formed_table(const char *grid);
 
 /**
  * # Safety

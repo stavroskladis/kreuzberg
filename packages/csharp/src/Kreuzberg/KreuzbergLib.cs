@@ -1500,45 +1500,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Apply output format conversion to the extraction result.
-    ///
-    /// Records the output format in metadata and swaps in pre-rendered content
-    /// (produced during `derive_extraction_result`) if available.
-    ///
-    /// This runs as the final pipeline step, after post-processors have operated
-    /// on the plain-text `content` field.
-    ///
-    /// # Arguments
-    ///
-    /// * `result` - The extraction result to modify
-    /// * `output_format` - The desired output format
-    /// </summary>
-    /// <param name="result"></param>
-    /// <param name="outputFormat"></param>
-    public static ExtractionResult ApplyOutputFormat(ExtractionResult result, OutputFormat outputFormat)
-    {
-        ArgumentNullException.ThrowIfNull(result);
-        ArgumentNullException.ThrowIfNull(outputFormat);
-        var resultJson = JsonSerializer.Serialize(result, JsonOptions);
-        var resultHandle = NativeMethods.ExtractionResultFromJson(resultJson);
-        var outputFormatJson = JsonSerializer.Serialize(outputFormat, JsonOptions);
-        var outputFormatHandle = NativeMethods.OutputFormatFromJson(outputFormatJson);
-        var result = NativeMethods.ApplyOutputFormat(
-            resultHandle,
-            outputFormatHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ExtractionResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.ExtractionResultFree(resultHandle);
-        NativeMethods.OutputFormatFree(outputFormatHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Determine if a page's text content indicates a blank page.
     ///
     /// A page is blank if it has fewer than [`MIN_NON_WHITESPACE_CHARS`] non-whitespace characters.
@@ -3248,86 +3209,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table.
-    ///
-    /// # Behavior
-    ///
-    /// - The first row is treated as the header row
-    /// - A separator row is inserted after the header
-    /// - Pipe characters (`|`) in cell content are automatically escaped with backslash
-    /// - Irregular tables (rows with varying column counts) are padded with empty cells to match the header
-    /// - Returns an empty string for empty input
-    ///
-    /// # Arguments
-    ///
-    /// * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
-    ///
-    /// # Returns
-    ///
-    /// A `String` containing the GFM markdown table representation
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use kreuzberg::extraction::cells_to_markdown;
-    /// let cells = vec![
-    ///     vec!["Name".to_string(), "Age".to_string()],
-    ///     vec!["Alice".to_string(), "30".to_string()],
-    ///     vec!["Bob".to_string(), "25".to_string()],
-    /// ];
-    ///
-    /// let markdown = cells_to_markdown(&cells);
-    /// assert!(markdown.contains("| Name | Age |"));
-    /// assert!(markdown.contains("|------|------|"));
-    /// ```
-    ///
-    /// Converts a 2D vector of cell strings into plain text with tab-separated columns.
-    ///
-    /// # Behavior
-    ///
-    /// - Rows are separated by newlines
-    /// - Cells within a row are separated by tab characters
-    /// - No pipe delimiters or separator rows (unlike markdown tables)
-    /// - Returns an empty string for empty input
-    ///
-    /// # Arguments
-    ///
-    /// * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
-    ///
-    /// # Returns
-    ///
-    /// A `String` containing the plain text table representation
-    /// </summary>
-    /// <param name="cells"></param>
-    public static string CellsToText(List<List<string>> cells)
-    {
-        var cellsJson = JsonSerializer.Serialize(cells, JsonOptions);
-        var cellsHandle = Marshal.StringToHGlobalAnsi(cellsJson);
-        var result = NativeMethods.CellsToText(
-            cellsHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        Marshal.FreeHGlobal(cellsHandle);
-        return returnValue;
-    }
-
-    public static string CellsToMarkdown(List<List<string>> cells)
-    {
-        var cellsJson = JsonSerializer.Serialize(cells, JsonOptions);
-        var cellsHandle = Marshal.StringToHGlobalAnsi(cellsJson);
-        var result = NativeMethods.CellsToMarkdown(
-            cellsHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        Marshal.FreeHGlobal(cellsHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Parse jotdown attributes into our Attributes representation.
     ///
     /// Converts jotdown's internal attribute representation to Kreuzberg's
@@ -3570,24 +3451,6 @@ public static class KreuzbergLib
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
         NativeMethods.FormattedBlockFree(itemHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Render inline content to djot markup.
-    /// </summary>
-    /// <param name="elements"></param>
-    public static string RenderInlineContent(List<InlineElement> elements)
-    {
-        var elementsJson = JsonSerializer.Serialize(elements, JsonOptions);
-        var elementsHandle = Marshal.StringToHGlobalAnsi(elementsJson);
-        var result = NativeMethods.RenderInlineContent(
-            elementsHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        Marshal.FreeHGlobal(elementsHandle);
         return returnValue;
     }
 
@@ -5043,18 +4906,6 @@ public static class KreuzbergLib
         return returnValue;
     }
 
-    public static double CalculateQualityScore(string text, string? metadata)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        var result = NativeMethods.CalculateQualityScore(
-            text,
-            metadata!
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = result;
-        return returnValue;
-    }
-
     public static string CleanExtractedText(string text)
     {
         ArgumentNullException.ThrowIfNull(text);
@@ -5481,27 +5332,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Classify a URL string into the appropriate `UriKind`.
-    ///
-    /// - `mailto:` → `Email`
-    /// - `#` prefix → `Anchor`
-    /// - everything else → `Hyperlink`
-    /// </summary>
-    /// <param name="url"></param>
-    public static UriKind ClassifyUri(string url)
-    {
-        ArgumentNullException.ThrowIfNull(url);
-        var result = NativeMethods.ClassifyUri(
-            url
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<UriKind>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
     /// Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary.
     ///
     /// The function prefers an explicit `encoding`, falls back to the cached guess, probes
@@ -5719,11 +5549,12 @@ public static class KreuzbergLib
     /// // Automatically returned to pool when buffer goes out of scope
     /// ```
     /// </summary>
-    public static PooledString AcquireStringBuffer()
+    public static string AcquireStringBuffer()
     {
         var result = NativeMethods.AcquireStringBuffer();
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = new PooledString(result);
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -5883,58 +5714,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<uint>>(json ?? "null", JsonOptions)!;
         Marshal.FreeHGlobal(wordsHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Reconstruct a table grid from words with bounding box positions.
-    ///
-    /// Takes detected words and reconstructs a 2D table by:
-    /// 1. Detecting column positions (grouping by x-coordinate within `column_threshold`)
-    /// 2. Detecting row positions (grouping by y-center within `row_threshold_ratio` * median height)
-    /// 3. Assigning words to cells based on closest row/column
-    /// 4. Combining words within the same cell
-    ///
-    /// Returns a `Vec<Vec<String>>` where each inner `Vec` is a row of cell texts.
-    /// </summary>
-    /// <param name="words"></param>
-    /// <param name="columnThreshold"></param>
-    /// <param name="rowThresholdRatio"></param>
-    public static List<List<string>> ReconstructTable(List<string> words, uint columnThreshold, double rowThresholdRatio)
-    {
-        var wordsJson = JsonSerializer.Serialize(words, JsonOptions);
-        var wordsHandle = Marshal.StringToHGlobalAnsi(wordsJson);
-        var result = NativeMethods.ReconstructTable(
-            wordsHandle,
-            columnThreshold,
-            rowThresholdRatio
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<List<string>>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(wordsHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convert a table grid to markdown format.
-    ///
-    /// The first row is treated as the header row, with a separator line added after it.
-    /// Pipe characters in cell content are escaped.
-    /// </summary>
-    /// <param name="table"></param>
-    public static string TableToMarkdown(List<List<string>> table)
-    {
-        var tableJson = JsonSerializer.Serialize(table, JsonOptions);
-        var tableHandle = Marshal.StringToHGlobalAnsi(tableJson);
-        var result = NativeMethods.TableToMarkdown(
-            tableHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        Marshal.FreeHGlobal(tableHandle);
         return returnValue;
     }
 
@@ -6401,237 +6180,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Validates the consistency and correctness of page boundaries.
-    ///
-    /// # Validation Rules
-    ///
-    /// 1. Boundaries must be sorted by byte_start (monotonically increasing)
-    /// 2. Boundaries must not overlap (byte_end[i] <= byte_start[i+1])
-    /// 3. Each boundary must have byte_start < byte_end
-    ///
-    /// # Arguments
-    ///
-    /// * `boundaries` - Page boundary markers to validate
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())` if all boundaries are valid.
-    /// Returns `KreuzbergError::Validation` if any boundary is invalid.
-    /// </summary>
-    /// <param name="boundaries"></param>
-    public static void ValidatePageBoundaries(List<PageBoundary> boundaries)
-    {
-        var boundariesJson = JsonSerializer.Serialize(boundaries, JsonOptions);
-        var boundariesHandle = Marshal.StringToHGlobalAnsi(boundariesJson);
-        NativeMethods.ValidatePageBoundaries(
-            boundariesHandle
-        );
-        Marshal.FreeHGlobal(boundariesHandle);
-    }
-
-    /// <summary>
-    /// Classify a single chunk based on its content and optional heading context.
-    ///
-    /// Rules are evaluated in priority order. The first matching rule determines
-    /// the returned [`ChunkType`]. When no rule matches, [`ChunkType::Unknown`]
-    /// is returned.
-    ///
-    /// # Arguments
-    ///
-    /// * `content` - The text content of the chunk (may be trimmed or raw).
-    /// * `heading_context` - Optional heading hierarchy this chunk falls under
-    ///   (only available when using `ChunkerType::Markdown`).
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use kreuzberg::chunking::classifier::classify_chunk;
-    /// use kreuzberg::types::ChunkType;
-    ///
-    /// assert_eq!(classify_chunk("# Introduction", None), ChunkType::Heading);
-    /// assert_eq!(
-    ///     classify_chunk("The Investor shall subscribe for the Shares and agrees to pay the subscription price. The Company shall deliver the Share certificates upon receipt.", None),
-    ///     ChunkType::OperativeClause,
-    /// );
-    /// assert_eq!(classify_chunk("Some unrecognized text.", None), ChunkType::Unknown);
-    /// ```
-    /// </summary>
-    /// <param name="content"></param>
-    /// <param name="headingContext">Optional.</param>
-    public static ChunkType ClassifyChunk(string content, HeadingContext? headingContext)
-    {
-        ArgumentNullException.ThrowIfNull(content);
-        var headingContextJson = headingContext != null ? JsonSerializer.Serialize(headingContext, JsonOptions) : "null";
-        var headingContextHandle = NativeMethods.HeadingContextFromJson(headingContextJson);
-        var result = NativeMethods.ClassifyChunk(
-            content,
-            headingContextHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<ChunkType>(json ?? "null", JsonOptions)!;
-        NativeMethods.HeadingContextFree(headingContextHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Split text into chunks with optional page boundary tracking.
-    ///
-    /// This is the primary API function for chunking text. It supports both plain text
-    /// and Markdown with configurable chunk size, overlap, and page boundary mapping.
-    ///
-    /// # Arguments
-    ///
-    /// * `text` - The text to split into chunks
-    /// * `config` - Chunking configuration (max size, overlap, type)
-    /// * `page_boundaries` - Optional page boundary markers for mapping chunks to pages
-    ///
-    /// # Returns
-    ///
-    /// A ChunkingResult containing all chunks and their metadata.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use kreuzberg::chunking::{chunk_text, ChunkingConfig, ChunkerType};
-    ///
-    /// # fn example() -> kreuzberg::Result<()> {
-    /// let config = ChunkingConfig {
-    ///     max_characters: 500,
-    ///     overlap: 50,
-    ///     trim: true,
-    ///     chunker_type: ChunkerType::Text,
-    ///     ..Default::default()
-    /// };
-    /// let result = chunk_text("Long text...", &config, None)?;
-    /// assert!(!result.chunks.is_empty());
-    /// # Ok(())
-    /// # }
-    /// ```
-    /// </summary>
-    /// <param name="text"></param>
-    /// <param name="config"></param>
-    /// <param name="pageBoundaries">Optional.</param>
-    public static ChunkingResult ChunkText(string text, ChunkingConfig config, List<PageBoundary>? pageBoundaries)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ChunkingConfigFromJson(configJson);
-        var pageBoundariesJson = JsonSerializer.Serialize(pageBoundaries, JsonOptions);
-        var pageBoundariesHandle = Marshal.StringToHGlobalAnsi(pageBoundariesJson);
-        var result = NativeMethods.ChunkText(
-            text,
-            configHandle,
-            pageBoundariesHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ChunkingResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ChunkingResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<ChunkingResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.ChunkingConfigFree(configHandle);
-        Marshal.FreeHGlobal(pageBoundariesHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Chunk text with an optional separate markdown source for heading context resolution.
-    ///
-    /// When `heading_source` is provided, it is used instead of `text` for building the
-    /// heading map. This is needed when `text` is plain text (no markdown headings) but
-    /// the original document had headings that were stripped during rendering.
-    /// </summary>
-    /// <param name="text"></param>
-    /// <param name="config"></param>
-    /// <param name="pageBoundaries">Optional.</param>
-    /// <param name="headingSource">Optional.</param>
-    public static ChunkingResult ChunkTextWithHeadingSource(string text, ChunkingConfig config, List<PageBoundary>? pageBoundaries, string? headingSource)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ChunkingConfigFromJson(configJson);
-        var pageBoundariesJson = JsonSerializer.Serialize(pageBoundaries, JsonOptions);
-        var pageBoundariesHandle = Marshal.StringToHGlobalAnsi(pageBoundariesJson);
-        var result = NativeMethods.ChunkTextWithHeadingSource(
-            text,
-            configHandle,
-            pageBoundariesHandle,
-            headingSource!
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ChunkingResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ChunkingResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<ChunkingResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.ChunkingConfigFree(configHandle);
-        Marshal.FreeHGlobal(pageBoundariesHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Chunk text with explicit type specification.
-    ///
-    /// This is a convenience function that constructs a ChunkingConfig from individual
-    /// parameters and calls `chunk_text`.
-    ///
-    /// # Arguments
-    ///
-    /// * `text` - The text to split into chunks
-    /// * `max_characters` - Maximum characters per chunk
-    /// * `overlap` - Character overlap between consecutive chunks
-    /// * `trim` - Whether to trim whitespace from boundaries
-    /// * `chunker_type` - Type of chunker to use (Text or Markdown)
-    ///
-    /// # Returns
-    ///
-    /// A ChunkingResult containing all chunks and their metadata.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use kreuzberg::chunking::{chunk_text_with_type, ChunkerType};
-    ///
-    /// # fn example() -> kreuzberg::Result<()> {
-    /// let result = chunk_text_with_type("Some text", 500, 50, true, ChunkerType::Text)?;
-    /// assert!(!result.chunks.is_empty());
-    /// # Ok(())
-    /// # }
-    /// ```
-    /// </summary>
-    /// <param name="text"></param>
-    /// <param name="maxCharacters"></param>
-    /// <param name="overlap"></param>
-    /// <param name="trim"></param>
-    /// <param name="chunkerType"></param>
-    public static ChunkingResult ChunkTextWithType(string text, ulong maxCharacters, ulong overlap, bool trim, ChunkerType chunkerType)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        ArgumentNullException.ThrowIfNull(chunkerType);
-        var chunkerTypeJson = JsonSerializer.Serialize(chunkerType, JsonOptions);
-        var chunkerTypeHandle = NativeMethods.ChunkerTypeFromJson(chunkerTypeJson);
-        var result = NativeMethods.ChunkTextWithType(
-            text,
-            maxCharacters,
-            overlap,
-            trim,
-            chunkerTypeHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ChunkingResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ChunkingResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<ChunkingResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.ChunkerTypeFree(chunkerTypeHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Batch process multiple texts with the same configuration.
     ///
     /// This convenience function applies the same chunking configuration to multiple
@@ -6726,57 +6274,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Validates that byte offsets in page boundaries fall on valid UTF-8 character boundaries.
-    ///
-    /// This function ensures that all page boundary positions are at valid UTF-8 character
-    /// boundaries within the text. This is CRITICAL to prevent text corruption when boundaries
-    /// are created from language bindings or external sources, particularly with multibyte
-    /// UTF-8 characters (emoji, CJK characters, combining marks, etc.).
-    ///
-    /// **Performance Strategy**: Uses adaptive validation to optimize for different boundary counts:
-    /// - **Small sets (≤10 boundaries)**: O(k) approach using Rust's native `is_char_boundary()` for each position
-    /// - **Large sets (>10 boundaries)**: O(n) precomputation with O(1) lookups via BitVec
-    ///
-    /// For typical PDF documents with 1-10 page boundaries, the fast path provides 30-50% faster
-    /// validation than always precomputing. For documents with 100+ boundaries, batch precomputation
-    /// is 2-4% faster overall due to amortized costs. This gives ~2-4% improvement across all scenarios.
-    ///
-    /// # Arguments
-    ///
-    /// * `text` - The text being chunked
-    /// * `boundaries` - Page boundary markers to validate
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())` if all boundaries are at valid UTF-8 character boundaries.
-    /// Returns `KreuzbergError::Validation` if any boundary is at an invalid position.
-    ///
-    /// # UTF-8 Boundary Safety
-    ///
-    /// Rust strings use UTF-8 encoding where characters can be 1-4 bytes. For example:
-    /// - ASCII letters: 1 byte each
-    /// - Emoji (🌍): 4 bytes but 1 character
-    /// - CJK characters (中): 3 bytes but 1 character
-    ///
-    /// This function checks that all byte_start and byte_end values are at character boundaries
-    /// using an adaptive strategy: direct calls for small boundary sets, or precomputed BitVec
-    /// for large sets.
-    /// </summary>
-    /// <param name="text"></param>
-    /// <param name="boundaries"></param>
-    public static void ValidateUtf8Boundaries(string text, List<PageBoundary> boundaries)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        var boundariesJson = JsonSerializer.Serialize(boundaries, JsonOptions);
-        var boundariesHandle = Marshal.StringToHGlobalAnsi(boundariesJson);
-        NativeMethods.ValidateUtf8Boundaries(
-            text,
-            boundariesHandle
-        );
-        Marshal.FreeHGlobal(boundariesHandle);
-    }
-
-    /// <summary>
     /// Render a Jinja2 template with the given context variables.
     /// </summary>
     /// <param name="template"></param>
@@ -6842,55 +6339,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         return returnValue;
-    }
-
-    /// <summary>
-    /// Eagerly download and cache an embedding model without returning the handle.
-    ///
-    /// This triggers the same download and initialization as `get_or_init_engine`
-    /// but discards the result, making it suitable for cache-warming scenarios
-    /// where the caller doesn't need to use the model immediately.
-    ///
-    /// **Note**: This function downloads AND initializes the ONNX model, which
-    /// requires ONNX Runtime and uses significant memory. For download-only
-    /// scenarios (e.g., init containers), use [`download_model`] instead.
-    /// </summary>
-    /// <param name="modelType"></param>
-    /// <param name="cacheDir">Optional.</param>
-    public static void WarmModel(EmbeddingModelType modelType, string? cacheDir)
-    {
-        ArgumentNullException.ThrowIfNull(modelType);
-        var modelTypeJson = JsonSerializer.Serialize(modelType, JsonOptions);
-        var modelTypeHandle = NativeMethods.EmbeddingModelTypeFromJson(modelTypeJson);
-        NativeMethods.WarmModel(
-            modelTypeHandle,
-            cacheDir!
-        );
-        NativeMethods.EmbeddingModelTypeFree(modelTypeHandle);
-    }
-
-    /// <summary>
-    /// Download an embedding model's files without initializing ONNX Runtime.
-    ///
-    /// Downloads the model files (ONNX model, tokenizer, config) from HuggingFace
-    /// to the cache directory. Subsequent calls to `warm_model` or
-    /// `get_or_init_engine` will find the files cached and skip the download step.
-    ///
-    /// This is ideal for init containers or CI environments where you want to
-    /// pre-populate the cache without loading models into memory.
-    /// </summary>
-    /// <param name="modelType"></param>
-    /// <param name="cacheDir">Optional.</param>
-    public static void DownloadModel(EmbeddingModelType modelType, string? cacheDir)
-    {
-        ArgumentNullException.ThrowIfNull(modelType);
-        var modelTypeJson = JsonSerializer.Serialize(modelType, JsonOptions);
-        var modelTypeHandle = NativeMethods.EmbeddingModelTypeFromJson(modelTypeJson);
-        NativeMethods.DownloadModel(
-            modelTypeHandle,
-            cacheDir!
-        );
-        NativeMethods.EmbeddingModelTypeFree(modelTypeHandle);
     }
 
     /// <summary>
@@ -7283,39 +6731,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Convert a vector of OcrElements to HocrWords for batch table processing.
-    ///
-    /// Filters to word-level elements only, as table reconstruction
-    /// works best with word-level granularity.
-    ///
-    /// # Arguments
-    ///
-    /// * `elements` - Slice of OCR elements to convert
-    /// * `min_confidence` - Minimum recognition confidence threshold (0.0-1.0)
-    ///
-    /// # Returns
-    ///
-    /// A vector of HocrWords filtered by confidence and element level.
-    /// </summary>
-    /// <param name="elements"></param>
-    /// <param name="minConfidence"></param>
-    public static List<string> ElementsToHocrWords(List<OcrElement> elements, double minConfidence)
-    {
-        var elementsJson = JsonSerializer.Serialize(elements, JsonOptions);
-        var elementsHandle = Marshal.StringToHGlobalAnsi(elementsJson);
-        var result = NativeMethods.ElementsToHocrWords(
-            elementsHandle,
-            minConfidence
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(elementsHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Parse hOCR HTML into an [`InternalDocument`] with full spatial and confidence metadata.
     ///
     /// This is the primary entry point. It replaces the older `convert_hocr_to_markdown` path
@@ -7347,79 +6762,6 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Assemble structured markdown from OCR elements using layout detection results.
-    ///
-    /// Both inputs must be in the same pixel coordinate space (from the same
-    /// rendered page image). Returns plain text join when `detection` is `None`.
-    ///
-    /// `recognized_tables` provides pre-computed markdown for Table regions
-    /// (from TATR or other table structure recognizer). When empty, Table
-    /// regions fall back to heuristic grid reconstruction from OCR elements.
-    /// </summary>
-    /// <param name="elements"></param>
-    /// <param name="detection">Optional.</param>
-    /// <param name="imgWidth"></param>
-    /// <param name="imgHeight"></param>
-    /// <param name="recognizedTables"></param>
-    public static string AssembleOcrMarkdown(List<OcrElement> elements, DetectionResult? detection, uint imgWidth, uint imgHeight, List<RecognizedTable> recognizedTables)
-    {
-        var elementsJson = JsonSerializer.Serialize(elements, JsonOptions);
-        var elementsHandle = Marshal.StringToHGlobalAnsi(elementsJson);
-        var detectionJson = detection != null ? JsonSerializer.Serialize(detection, JsonOptions) : "null";
-        var detectionHandle = NativeMethods.DetectionResultFromJson(detectionJson);
-        var recognizedTablesJson = JsonSerializer.Serialize(recognizedTables, JsonOptions);
-        var recognizedTablesHandle = Marshal.StringToHGlobalAnsi(recognizedTablesJson);
-        var result = NativeMethods.AssembleOcrMarkdown(
-            elementsHandle,
-            detectionHandle,
-            imgWidth,
-            imgHeight,
-            recognizedTablesHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        Marshal.FreeHGlobal(elementsHandle);
-        NativeMethods.DetectionResultFree(detectionHandle);
-        Marshal.FreeHGlobal(recognizedTablesHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Run TATR table recognition for all Table regions in a page.
-    ///
-    /// For each Table detection, crops the page image, runs TATR inference,
-    /// matches OCR elements to cells, and produces markdown tables.
-    /// </summary>
-    /// <param name="pageImage"></param>
-    /// <param name="detection"></param>
-    /// <param name="elements"></param>
-    /// <param name="tatrModel"></param>
-    public static List<RecognizedTable> RecognizePageTables(string pageImage, DetectionResult detection, List<OcrElement> elements, string tatrModel)
-    {
-        ArgumentNullException.ThrowIfNull(pageImage);
-        ArgumentNullException.ThrowIfNull(detection);
-        ArgumentNullException.ThrowIfNull(tatrModel);
-        var detectionJson = JsonSerializer.Serialize(detection, JsonOptions);
-        var detectionHandle = NativeMethods.DetectionResultFromJson(detectionJson);
-        var elementsJson = JsonSerializer.Serialize(elements, JsonOptions);
-        var elementsHandle = Marshal.StringToHGlobalAnsi(elementsJson);
-        var result = NativeMethods.RecognizePageTables(
-            pageImage,
-            detectionHandle,
-            elementsHandle,
-            tatrModel
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<RecognizedTable>>(json ?? "null", JsonOptions)!;
-        NativeMethods.DetectionResultFree(detectionHandle);
-        Marshal.FreeHGlobal(elementsHandle);
         return returnValue;
     }
 
@@ -7546,36 +6888,6 @@ public static class KreuzbergLib
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<string?>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Build a 2D cell grid from TATR detections.
-    ///
-    /// The grid is `[num_rows][num_cols]` where each cell is the intersection
-    /// of a row bounding box and a column bounding box.
-    ///
-    /// Processing steps:
-    /// 1. Widen all rows to span the full table width (min x1 to max x2 across rows)
-    /// 2. Apply NMS using IoB: sort by confidence descending, remove detections
-    ///    whose IoB with any higher-confidence detection exceeds [`NMS_IOB_THRESHOLD`]
-    /// 3. For each (row, column) pair, compute the intersection rectangle
-    ///
-    /// If `table_bbox` is provided, it is used to clip the row widening bounds.
-    /// </summary>
-    /// <param name="result"></param>
-    /// <param name="tableBbox">Optional.</param>
-    public static List<List<string>> BuildCellGrid(string result, string? tableBbox)
-    {
-        ArgumentNullException.ThrowIfNull(result);
-        var result = NativeMethods.BuildCellGrid(
-            result,
-            tableBbox!
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<List<string>>>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -7916,216 +7228,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Cluster text blocks by font size using k-means algorithm.
-    ///
-    /// Uses k-means clustering to group text blocks by their font size, which helps
-    /// identify document hierarchy levels (H1, H2, Body, etc.). The algorithm:
-    /// 1. Extracts font sizes from text blocks
-    /// 2. Applies k-means clustering to group similar font sizes
-    /// 3. Sorts clusters by centroid size in descending order (largest = H1)
-    /// 4. Returns clusters with their member blocks
-    ///
-    /// # Arguments
-    ///
-    /// * `blocks` - Slice of TextBlock objects to cluster
-    /// * `k` - Number of clusters to create
-    ///
-    /// # Returns
-    ///
-    /// Result with vector of FontSizeCluster ordered by size (descending),
-    /// or an error if clustering fails
-    ///
-    /// # Example
-    ///
-    /// ```rust,no_run
-    /// # #[cfg(feature = "pdf")]
-    /// # {
-    /// use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, cluster_font_sizes};
-    ///
-    /// let blocks = vec![
-    ///     TextBlock {
-    ///         text: "Title".to_string(),
-    ///         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
-    ///         font_size: 24.0,
-    ///     },
-    ///     TextBlock {
-    ///         text: "Body".to_string(),
-    ///         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
-    ///         font_size: 12.0,
-    ///     },
-    /// ];
-    ///
-    /// let clusters = cluster_font_sizes(&blocks, 2).unwrap();
-    /// assert_eq!(clusters.len(), 2);
-    /// assert_eq!(clusters[0].centroid, 24.0); // Largest is first
-    /// # }
-    /// ```
-    /// </summary>
-    /// <param name="blocks"></param>
-    /// <param name="k"></param>
-    public static List<FontSizeCluster> ClusterFontSizes(List<string> blocks, ulong k)
-    {
-        var blocksJson = JsonSerializer.Serialize(blocks, JsonOptions);
-        var blocksHandle = Marshal.StringToHGlobalAnsi(blocksJson);
-        var result = NativeMethods.ClusterFontSizes(
-            blocksHandle,
-            k
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<FontSizeCluster>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(blocksHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Assign heading levels using the "most frequent cluster = Body" rule.
-    ///
-    /// Instead of naively mapping the largest font size to H1, this function
-    /// identifies the cluster with the most members as body text. Only clusters
-    /// with fewer members AND sufficiently larger font size than body become headings.
-    ///
-    /// # Arguments
-    ///
-    /// * `clusters` - Slice of FontSizeCluster objects (sorted by centroid descending)
-    /// * `min_heading_ratio` - Minimum ratio of heading centroid to body centroid (e.g. 1.15)
-    /// * `min_heading_gap` - Minimum absolute font-size difference in points (e.g. 1.5)
-    ///
-    /// # Returns
-    ///
-    /// Vector of tuples `(centroid, heading_level)` where `None` means body text
-    /// and `Some(1..=6)` means H1-H6. Sorted by centroid descending.
-    /// </summary>
-    /// <param name="clusters"></param>
-    /// <param name="minHeadingRatio"></param>
-    /// <param name="minHeadingGap"></param>
-    public static List<string> AssignHeadingLevelsSmart(List<FontSizeCluster> clusters, float minHeadingRatio, float minHeadingGap)
-    {
-        var clustersJson = JsonSerializer.Serialize(clusters, JsonOptions);
-        var clustersHandle = Marshal.StringToHGlobalAnsi(clustersJson);
-        var result = NativeMethods.AssignHeadingLevelsSmart(
-            clustersHandle,
-            minHeadingRatio,
-            minHeadingGap
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(clustersHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Assign hierarchy levels to text blocks based on KMeans clustering results.
-    ///
-    /// Maps cluster indices to HTML heading levels (H1-H6) and body text:
-    /// - Cluster 0 → H1 (top-level heading)
-    /// - Cluster 1 → H2 (secondary heading)
-    /// - Cluster 2 → H3 (tertiary heading)
-    /// - Cluster 3 → H4 (quaternary heading)
-    /// - Cluster 4 → H5 (quinary heading)
-    /// - Cluster 5 → H6 (senary heading)
-    /// - Cluster 6+ → Body (body text)
-    ///
-    /// # Arguments
-    ///
-    /// * `blocks` - Slice of TextBlock objects to assign hierarchy levels to
-    /// * `kmeans_result` - KMeansResult containing cluster labels for each block
-    ///
-    /// # Returns
-    ///
-    /// Vector of tuples containing (original block info, hierarchy level)
-    ///
-    /// # Example
-    ///
-    /// ```rust,no_run
-    /// # #[cfg(feature = "pdf")]
-    /// # {
-    /// use kreuzberg::pdf::hierarchy::{TextBlock, BoundingBox, HierarchyLevel, assign_hierarchy_levels, KMeansResult};
-    ///
-    /// let blocks = vec![
-    ///     TextBlock {
-    ///         text: "Title".to_string(),
-    ///         bbox: BoundingBox { left: 0.0, top: 0.0, right: 100.0, bottom: 24.0 },
-    ///         font_size: 24.0,
-    ///     },
-    ///     TextBlock {
-    ///         text: "Body".to_string(),
-    ///         bbox: BoundingBox { left: 0.0, top: 30.0, right: 100.0, bottom: 42.0 },
-    ///         font_size: 12.0,
-    ///     },
-    /// ];
-    ///
-    /// let kmeans_result = KMeansResult {
-    ///     labels: vec![0, 6],
-    /// };
-    ///
-    /// let results = assign_hierarchy_levels(&blocks, &kmeans_result);
-    /// assert_eq!(results[0].hierarchy_level, HierarchyLevel::H1);
-    /// assert_eq!(results[1].hierarchy_level, HierarchyLevel::Body);
-    /// # }
-    /// ```
-    /// </summary>
-    /// <param name="blocks"></param>
-    /// <param name="kmeansResult"></param>
-    public static List<HierarchyBlock> AssignHierarchyLevels(List<string> blocks, string kmeansResult)
-    {
-        ArgumentNullException.ThrowIfNull(kmeansResult);
-        var blocksJson = JsonSerializer.Serialize(blocks, JsonOptions);
-        var blocksHandle = Marshal.StringToHGlobalAnsi(blocksJson);
-        var result = NativeMethods.AssignHierarchyLevels(
-            blocksHandle,
-            kmeansResult
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<HierarchyBlock>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(blocksHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Assign hierarchy levels to text blocks based on font size clusters.
-    ///
-    /// Maps font size clusters to heading levels (H1-H6) and body text.
-    /// Larger font sizes are assigned higher hierarchy levels.
-    ///
-    /// # Arguments
-    ///
-    /// * `blocks` - Vector of TextBlock objects to assign levels to
-    /// * `clusters` - Vector of FontSizeCluster objects from clustering
-    ///
-    /// # Returns
-    ///
-    /// Vector of tuples containing (TextBlock, HierarchyLevel).
-    /// If blocks is empty or clusters is empty, returns empty vector.
-    /// All blocks get Body level if only one cluster exists.
-    /// </summary>
-    /// <param name="blocks"></param>
-    /// <param name="clusters"></param>
-    public static List<string> AssignHierarchyLevelsFromClusters(List<string> blocks, List<FontSizeCluster> clusters)
-    {
-        var blocksJson = JsonSerializer.Serialize(blocks, JsonOptions);
-        var blocksHandle = Marshal.StringToHGlobalAnsi(blocksJson);
-        var clustersJson = JsonSerializer.Serialize(clusters, JsonOptions);
-        var clustersHandle = Marshal.StringToHGlobalAnsi(clustersJson);
-        var result = NativeMethods.AssignHierarchyLevelsFromClusters(
-            blocksHandle,
-            clustersHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(blocksHandle);
-        Marshal.FreeHGlobal(clustersHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Extract characters with fonts from a PDF page.
     ///
     /// Iterates through all characters on a page, extracting text, position,
@@ -8196,46 +7298,6 @@ public static class KreuzbergLib
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Merge characters into text blocks using a greedy clustering algorithm.
-    ///
-    /// Groups characters based on spatial proximity using weighted distance and
-    /// intersection ratio metrics. Characters are merged greedily based on their
-    /// proximity and overlap.
-    ///
-    /// # Arguments
-    ///
-    /// * `chars` - Vector of CharData to merge into blocks
-    ///
-    /// # Returns
-    ///
-    /// Vector of TextBlock objects containing merged characters
-    ///
-    /// # Algorithm
-    ///
-    /// The function uses a greedy approach:
-    /// 1. Create bounding boxes for each character
-    /// 2. Use weighted_distance (5.0 * dx + 1.0 * dy) with maximum threshold of ~2.5x font size
-    /// 3. Use intersection_ratio to detect overlapping or very close characters
-    /// 4. Merge characters into blocks based on proximity thresholds
-    /// 5. Return sorted blocks by position (top to bottom, left to right)
-    /// </summary>
-    /// <param name="chars"></param>
-    public static List<string> MergeCharsIntoBlocks(List<CharData> chars)
-    {
-        var charsJson = JsonSerializer.Serialize(chars, JsonOptions);
-        var charsHandle = Marshal.StringToHGlobalAnsi(charsJson);
-        var result = NativeMethods.MergeCharsIntoBlocks(
-            charsHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(charsHandle);
         return returnValue;
     }
 
@@ -8615,68 +7677,6 @@ public static class KreuzbergLib
         return returnValue;
     }
 
-    /// <summary>
-    /// Post-process a raw table grid to validate structure and clean up.
-    ///
-    /// Returns `None` if the table fails structural validation.
-    ///
-    /// When `layout_guided` is true, the layout model already confirmed this is
-    /// a table, so validation thresholds are relaxed:
-    /// - Minimum columns: 3 → 2
-    /// - Column sparsity: 75% → 95%
-    /// - Overall density: 40% → 15%
-    /// - Prose detection: reject if >70% cells >100 chars (vs >50% >60 chars)
-    /// - Prose detection: reject if avg cell >80 chars (vs >50 chars)
-    /// - Single-word cell: reject if >85% single-word (vs >70%)
-    /// - Content asymmetry: reject if one col >92% of text (vs >85%)
-    /// - Column-text-flow: applied equally (reject if >60% rows flow through)
-    /// </summary>
-    /// <param name="table"></param>
-    /// <param name="layoutGuided"></param>
-    /// <param name="allowSingleColumn"></param>
-    public static List<List<string>>? PostProcessTable(List<List<string>> table, bool layoutGuided, bool allowSingleColumn)
-    {
-        var tableJson = JsonSerializer.Serialize(table, JsonOptions);
-        var tableHandle = Marshal.StringToHGlobalAnsi(tableJson);
-        var result = NativeMethods.PostProcessTable(
-            tableHandle,
-            layoutGuided,
-            allowSingleColumn
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<List<string>>?>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(tableHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Validate whether a reconstructed table grid represents a well-formed table
-    /// rather than multi-column prose or a repeated page element.
-    ///
-    /// Returns `true` if the grid looks like a real table, `false` if it should be
-    /// rejected and its content emitted as paragraph text instead.
-    ///
-    /// The checks catch cases the layout model misidentifies as tables:
-    /// - Multi-column prose split into a grid (detected via row coherence and column uniformity)
-    /// - Repeated page elements (headers/footers detected as tables on every page)
-    /// - Low-vocabulary repetitive content (same few words in every row)
-    /// </summary>
-    /// <param name="grid"></param>
-    public static bool IsWellFormedTable(List<List<string>> grid)
-    {
-        var gridJson = JsonSerializer.Serialize(grid, JsonOptions);
-        var gridHandle = Marshal.StringToHGlobalAnsi(gridJson);
-        var result = NativeMethods.IsWellFormedTable(
-            gridHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = result != 0;
-        Marshal.FreeHGlobal(gridHandle);
-        return returnValue;
-    }
-
     public static string ExtractTextFromPdf(byte[] pdfBytes)
     {
         ArgumentNullException.ThrowIfNull(pdfBytes);
@@ -8774,67 +7774,6 @@ public static class KreuzbergLib
     public static ExtractionConfig ExtractionConfigDefault()
     {
         var result = NativeMethods.ExtractionConfigDefault();
-        var jsonPtr = NativeMethods.ExtractionConfigToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionConfigFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionConfig>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Create a new `ExtractionConfig` by applying per-file overrides from a
-    /// [`FileExtractionConfig`]. Fields that are `Some` in the override replace the
-    /// corresponding field in `self`; `None` fields keep the original value.
-    ///
-    /// Batch-level fields (`max_concurrent_extractions`, `use_cache`, `acceleration`,
-    /// `security_limits`) are never affected by overrides.
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use kreuzberg::{ExtractionConfig, FileExtractionConfig};
-    ///
-    /// let base = ExtractionConfig::default();
-    /// let override_config = FileExtractionConfig {
-    ///     force_ocr: Some(true),
-    ///     ..Default::default()
-    /// };
-    /// let resolved = base.with_file_overrides(&override_config);
-    /// assert!(resolved.force_ocr);
-    /// ```
-    /// </summary>
-    /// <param name="overrides"></param>
-    public static ExtractionConfig ExtractionConfigWithFileOverrides(FileExtractionConfig overrides)
-    {
-        ArgumentNullException.ThrowIfNull(overrides);
-        var overridesJson = JsonSerializer.Serialize(overrides, JsonOptions);
-        var overridesHandle = NativeMethods.FileExtractionConfigFromJson(overridesJson);
-        var result = NativeMethods.ExtractionConfigWithFileOverrides(
-            overridesHandle
-        );
-        var jsonPtr = NativeMethods.ExtractionConfigToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionConfigFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionConfig>(json ?? "null", JsonOptions)!;
-        NativeMethods.FileExtractionConfigFree(overridesHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Normalize configuration for implicit requirements.
-    ///
-    /// Currently handles:
-    /// - Auto-enabling `extract_pages` when `result_format` is `ElementBased`, because
-    ///   the element transformation requires per-page data to assign correct page numbers.
-    ///   Without this, all elements would incorrectly get `page_number=1`.
-    /// - Auto-enabling `extract_pages` when chunking is configured, because the chunker
-    ///   needs page boundaries to assign correct page numbers to chunks.
-    /// </summary>
-    public static ExtractionConfig ExtractionConfigNormalized()
-    {
-        var result = NativeMethods.ExtractionConfigNormalized();
         var jsonPtr = NativeMethods.ExtractionConfigToJson(result);
         var json = Marshal.PtrToStringUTF8(jsonPtr);
         NativeMethods.FreeString(jsonPtr);
@@ -9551,21 +8490,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Get a node by index.
-    /// </summary>
-    /// <param name="index"></param>
-    public static DocumentNode? DocumentStructureGet(uint index)
-    {
-        var result = NativeMethods.DocumentStructureGet(
-            index
-        );
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<DocumentNode?>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
     /// Get the total number of nodes.
     /// </summary>
     public static ulong DocumentStructureLen()
@@ -9615,16 +8539,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.TesseractConfigFree(result);
         var returnValue = JsonSerializer.Deserialize<TesseractConfig>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Check if metadata is empty (no meaningful content extracted).
-    /// </summary>
-    public static bool HtmlMetadataIsEmpty()
-    {
-        var result = NativeMethods.HtmlMetadataIsEmpty();
-        var returnValue = result != 0;
         return returnValue;
     }
 
@@ -9739,61 +8653,6 @@ public static class KreuzbergLib
         NativeMethods.OcrElementFree(result);
         var returnValue = JsonSerializer.Deserialize<OcrElement>(json ?? "null", JsonOptions)!;
         NativeMethods.OcrRotationFree(rotationHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Set page number.
-    /// </summary>
-    /// <param name="pageNumber"></param>
-    public static OcrElement OcrElementWithPageNumber(ulong pageNumber)
-    {
-        var result = NativeMethods.OcrElementWithPageNumber(
-            pageNumber
-        );
-        var jsonPtr = NativeMethods.OcrElementToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.OcrElementFree(result);
-        var returnValue = JsonSerializer.Deserialize<OcrElement>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Set parent element ID.
-    /// </summary>
-    /// <param name="parentId"></param>
-    public static OcrElement OcrElementWithParentId(string parentId)
-    {
-        ArgumentNullException.ThrowIfNull(parentId);
-        var result = NativeMethods.OcrElementWithParentId(
-            parentId
-        );
-        var jsonPtr = NativeMethods.OcrElementToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.OcrElementFree(result);
-        var returnValue = JsonSerializer.Deserialize<OcrElement>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Add backend-specific metadata.
-    /// </summary>
-    /// <param name="key"></param>
-    /// <param name="value"></param>
-    public static OcrElement OcrElementWithMetadata(string key, object value)
-    {
-        ArgumentNullException.ThrowIfNull(key);
-        var result = NativeMethods.OcrElementWithMetadata(
-            key,
-            value
-        );
-        var jsonPtr = NativeMethods.OcrElementToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.OcrElementFree(result);
-        var returnValue = JsonSerializer.Deserialize<OcrElement>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -10364,58 +9223,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Area of intersection with another bounding box.
-    /// </summary>
-    /// <param name="other"></param>
-    public static float BBoxIntersectionArea(BBox other)
-    {
-        ArgumentNullException.ThrowIfNull(other);
-        var otherJson = JsonSerializer.Serialize(other, JsonOptions);
-        var otherHandle = NativeMethods.BBoxFromJson(otherJson);
-        var result = NativeMethods.BBoxIntersectionArea(
-            otherHandle
-        );
-        var returnValue = result;
-        NativeMethods.BBoxFree(otherHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Intersection over Union with another bounding box.
-    /// </summary>
-    /// <param name="other"></param>
-    public static float BBoxIou(BBox other)
-    {
-        ArgumentNullException.ThrowIfNull(other);
-        var otherJson = JsonSerializer.Serialize(other, JsonOptions);
-        var otherHandle = NativeMethods.BBoxFromJson(otherJson);
-        var result = NativeMethods.BBoxIou(
-            otherHandle
-        );
-        var returnValue = result;
-        NativeMethods.BBoxFree(otherHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Fraction of `other` that is contained within `self`.
-    /// Returns 0.0..=1.0 where 1.0 means `other` is fully inside `self`.
-    /// </summary>
-    /// <param name="other"></param>
-    public static float BBoxContainmentOf(BBox other)
-    {
-        ArgumentNullException.ThrowIfNull(other);
-        var otherJson = JsonSerializer.Serialize(other, JsonOptions);
-        var otherHandle = NativeMethods.BBoxFromJson(otherJson);
-        var result = NativeMethods.BBoxContainmentOf(
-            otherHandle
-        );
-        var returnValue = result;
-        NativeMethods.BBoxFree(otherHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Fraction of page area this bbox covers.
     /// </summary>
     /// <param name="pageWidth"></param>
@@ -10438,24 +9245,6 @@ public static class KreuzbergLib
         );
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Sort detections by confidence in descending order.
-    /// </summary>
-    /// <param name="detections"></param>
-    public static List<LayoutDetection> LayoutDetectionSortByConfidenceDesc(List<LayoutDetection> detections)
-    {
-        var detectionsJson = JsonSerializer.Serialize(detections, JsonOptions);
-        var detectionsHandle = Marshal.StringToHGlobalAnsi(detectionsJson);
-        var result = NativeMethods.LayoutDetectionSortByConfidenceDesc(
-            detectionsHandle
-        );
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<LayoutDetection>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(detectionsHandle);
         return returnValue;
     }
 
