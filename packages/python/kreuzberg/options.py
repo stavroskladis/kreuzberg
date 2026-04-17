@@ -102,44 +102,44 @@ class KeywordAlgorithm(str, Enum):
     RAKE = "rake"
 
 
-class TokenReductionOptions:
-    """Placeholder for TokenReductionOptions type."""
+class ErrorMetadata:
+    """Placeholder for ErrorMetadata type."""
 
 
 class OcrRotation:
     """Placeholder for OcrRotation type."""
 
 
-class LanguageDetectionConfig:
-    """Placeholder for LanguageDetectionConfig type."""
-
-
-class DjotContent:
-    """Placeholder for DjotContent type."""
-
-
-class PageStructure:
-    """Placeholder for PageStructure type."""
-
-
 class YearRange:
     """Placeholder for YearRange type."""
-
-
-class OcrPipelineConfig:
-    """Placeholder for OcrPipelineConfig type."""
-
-
-class ImagePreprocessingMetadata:
-    """Placeholder for ImagePreprocessingMetadata type."""
 
 
 class StructuredExtractionConfig:
     """Placeholder for StructuredExtractionConfig type."""
 
 
-class ErrorMetadata:
-    """Placeholder for ErrorMetadata type."""
+class ImagePreprocessingMetadata:
+    """Placeholder for ImagePreprocessingMetadata type."""
+
+
+class DjotContent:
+    """Placeholder for DjotContent type."""
+
+
+class LanguageDetectionConfig:
+    """Placeholder for LanguageDetectionConfig type."""
+
+
+class TokenReductionOptions:
+    """Placeholder for TokenReductionOptions type."""
+
+
+class PageStructure:
+    """Placeholder for PageStructure type."""
+
+
+class OcrPipelineConfig:
+    """Placeholder for OcrPipelineConfig type."""
 
 
 @dataclass

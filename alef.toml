@@ -550,8 +550,70 @@ package_name = "kreuzberg"
 
 [wasm]
 # Only exclude ort-dependent types/functions (paddle-ocr, layout-detection, embeddings, auto-rotate).
-exclude_types = []
-exclude_functions = []
+exclude_types = [
+    # paddle-ocr / layout-detection / embeddings (ort-dependent)
+    "PaddleOcrConfig",
+    "PaddleLanguage",
+    "LayoutClass",
+    "LayoutDetectionConfig",
+    "LayoutDetection",
+    "DetectionResult",
+    "PSMMode",
+    "BBox",
+    "TableModel",
+    "EmbeddingConfig",
+    "EmbeddingResult",
+    "DocOrientationResult",
+    "OrientationResult",
+    "OcrFallbackDecision",
+    "ModelPaths",
+    "OcrProcessor",
+    "TesseractConfig",
+    "OcrCacheStats",
+    "TessdataManager",
+    "PageLayoutResult",
+    "PageTiming",
+    "ProcessingWarning",
+    "RecognizedTable",
+]
+exclude_functions = [
+    # paddle-ocr / layout-detection / embeddings / auto-rotate
+    "embed_texts",
+    "embed_text",
+    "warm_model",
+    "download_model",
+    "detect_layout",
+    "detect_orientation",
+    "run_ocr_pipeline",
+    "process_ocr_element",
+    "layout_runner",
+    "record_success_on_current_span",
+    "record_error_on_current_span",
+    # ocr module (requires full ocr, not ocr-wasm)
+    "compute_hash",
+    "assemble_ocr_markdown",
+    "validate_tesseract_version",
+    # paddle_ocr module
+    "is_language_supported",
+    "language_to_script_family",
+    "map_language_code",
+    # embeddings module
+    "normalize",
+    "list_presets",
+    # image module (ort-dependent preprocessing)
+    "calculate_optimal_dpi",
+    "calculate_smart_dpi",
+    # ort_discovery
+    "ensure_ort_available",
+    # pdf layout_runner
+    "run_layout_for_page",
+    "run_layout_for_pdf",
+    # telemetry internals
+    "sanitize_path",
+    # layout detection
+    "config_from_extraction",
+    "detect_layout_for_images",
+]
 # Everything except ort-dependent features (paddle-ocr, layout-detection, embeddings, auto-rotate)
 features = [
     "pdf",

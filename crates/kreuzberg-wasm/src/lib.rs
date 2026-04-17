@@ -166,7 +166,6 @@ pub struct WasmExtractionConfig {
     result_format: WasmExtractionMode,
     security_limits: Option<String>,
     output_format: WasmOutputFormat,
-    layout: Option<WasmLayoutDetectionConfig>,
     include_document_structure: bool,
     acceleration: Option<WasmAccelerationConfig>,
     cache_namespace: Option<String>,
@@ -206,7 +205,6 @@ impl WasmExtractionConfig {
         extraction_timeout_secs: Option<u64>,
         max_concurrent_extractions: Option<usize>,
         security_limits: Option<String>,
-        layout: Option<WasmLayoutDetectionConfig>,
         acceleration: Option<WasmAccelerationConfig>,
         cache_namespace: Option<String>,
         cache_ttl_secs: Option<u64>,
@@ -237,7 +235,6 @@ impl WasmExtractionConfig {
             result_format: result_format.unwrap_or_default(),
             security_limits,
             output_format: output_format.unwrap_or_default(),
-            layout,
             include_document_structure: include_document_structure.unwrap_or(false),
             acceleration,
             cache_namespace,
@@ -460,16 +457,6 @@ impl WasmExtractionConfig {
         self.output_format = value;
     }
 
-    #[wasm_bindgen(getter)]
-    pub fn layout(&self) -> Option<WasmLayoutDetectionConfig> {
-        self.layout.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_layout(&mut self, value: Option<WasmLayoutDetectionConfig>) {
-        self.layout = value;
-    }
-
     #[wasm_bindgen(getter, js_name = "includeDocumentStructure")]
     pub fn include_document_structure(&self) -> bool {
         self.include_document_structure
@@ -621,7 +608,6 @@ pub struct WasmFileExtractionConfig {
     result_format: Option<WasmExtractionMode>,
     output_format: Option<WasmOutputFormat>,
     include_document_structure: Option<bool>,
-    layout: Option<WasmLayoutDetectionConfig>,
     timeout_secs: Option<u64>,
     tree_sitter: Option<WasmTreeSitterConfig>,
     structured_extraction: Option<WasmStructuredExtractionConfig>,
@@ -649,7 +635,6 @@ impl WasmFileExtractionConfig {
         result_format: Option<WasmExtractionMode>,
         output_format: Option<WasmOutputFormat>,
         include_document_structure: Option<bool>,
-        layout: Option<WasmLayoutDetectionConfig>,
         timeout_secs: Option<u64>,
         tree_sitter: Option<WasmTreeSitterConfig>,
         structured_extraction: Option<WasmStructuredExtractionConfig>,
@@ -672,7 +657,6 @@ impl WasmFileExtractionConfig {
             result_format,
             output_format,
             include_document_structure,
-            layout,
             timeout_secs,
             tree_sitter,
             structured_extraction,
@@ -847,16 +831,6 @@ impl WasmFileExtractionConfig {
     #[wasm_bindgen(setter, js_name = "includeDocumentStructure")]
     pub fn set_include_document_structure(&mut self, value: Option<bool>) {
         self.include_document_structure = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn layout(&self) -> Option<WasmLayoutDetectionConfig> {
-        self.layout.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_layout(&mut self, value: Option<WasmLayoutDetectionConfig>) {
-        self.layout = value;
     }
 
     #[wasm_bindgen(getter, js_name = "timeoutSecs")]
@@ -1167,66 +1141,6 @@ impl WasmHtmlOutputConfig {
     #[wasm_bindgen]
     pub fn default() -> WasmHtmlOutputConfig {
         kreuzberg::HtmlOutputConfig::default().into()
-    }
-}
-
-#[derive(Clone, Default)]
-#[wasm_bindgen]
-pub struct WasmLayoutDetectionConfig {
-    confidence_threshold: Option<f32>,
-    apply_heuristics: bool,
-    table_model: WasmTableModel,
-}
-
-#[wasm_bindgen]
-impl WasmLayoutDetectionConfig {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        apply_heuristics: Option<bool>,
-        table_model: Option<WasmTableModel>,
-        confidence_threshold: Option<f32>,
-    ) -> WasmLayoutDetectionConfig {
-        WasmLayoutDetectionConfig {
-            confidence_threshold,
-            apply_heuristics: apply_heuristics.unwrap_or(true),
-            table_model: table_model.unwrap_or_default(),
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "confidenceThreshold")]
-    pub fn confidence_threshold(&self) -> Option<f32> {
-        self.confidence_threshold
-    }
-
-    #[wasm_bindgen(setter, js_name = "confidenceThreshold")]
-    pub fn set_confidence_threshold(&mut self, value: Option<f32>) {
-        self.confidence_threshold = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "applyHeuristics")]
-    pub fn apply_heuristics(&self) -> bool {
-        self.apply_heuristics
-    }
-
-    #[wasm_bindgen(setter, js_name = "applyHeuristics")]
-    pub fn set_apply_heuristics(&mut self, value: bool) {
-        self.apply_heuristics = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tableModel")]
-    pub fn table_model(&self) -> WasmTableModel {
-        self.table_model
-    }
-
-    #[wasm_bindgen(setter, js_name = "tableModel")]
-    pub fn set_table_model(&mut self, value: WasmTableModel) {
-        self.table_model = value;
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[wasm_bindgen]
-    pub fn default() -> WasmLayoutDetectionConfig {
-        kreuzberg::LayoutDetectionConfig::default().into()
     }
 }
 
@@ -1665,7 +1579,6 @@ pub struct WasmOcrPipelineStage {
     backend: String,
     priority: u32,
     language: Option<String>,
-    tesseract_config: Option<WasmTesseractConfig>,
     paddle_ocr_config: Option<JsValue>,
     vlm_config: Option<WasmLlmConfig>,
 }
@@ -1677,7 +1590,6 @@ impl WasmOcrPipelineStage {
         backend: String,
         priority: u32,
         language: Option<String>,
-        tesseract_config: Option<WasmTesseractConfig>,
         paddle_ocr_config: Option<JsValue>,
         vlm_config: Option<WasmLlmConfig>,
     ) -> WasmOcrPipelineStage {
@@ -1685,7 +1597,6 @@ impl WasmOcrPipelineStage {
             backend,
             priority,
             language,
-            tesseract_config,
             paddle_ocr_config,
             vlm_config,
         }
@@ -1719,16 +1630,6 @@ impl WasmOcrPipelineStage {
     #[wasm_bindgen(setter)]
     pub fn set_language(&mut self, value: Option<String>) {
         self.language = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tesseractConfig")]
-    pub fn tesseract_config(&self) -> Option<WasmTesseractConfig> {
-        self.tesseract_config.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "tesseractConfig")]
-    pub fn set_tesseract_config(&mut self, value: Option<WasmTesseractConfig>) {
-        self.tesseract_config = value;
     }
 
     #[wasm_bindgen(getter, js_name = "paddleOcrConfig")]
@@ -1799,7 +1700,6 @@ pub struct WasmOcrConfig {
     enabled: bool,
     backend: String,
     language: String,
-    tesseract_config: Option<WasmTesseractConfig>,
     output_format: Option<WasmOutputFormat>,
     paddle_ocr_config: Option<JsValue>,
     element_config: Option<WasmOcrElementConfig>,
@@ -1819,7 +1719,6 @@ impl WasmOcrConfig {
         backend: Option<String>,
         language: Option<String>,
         auto_rotate: Option<bool>,
-        tesseract_config: Option<WasmTesseractConfig>,
         output_format: Option<WasmOutputFormat>,
         paddle_ocr_config: Option<JsValue>,
         element_config: Option<WasmOcrElementConfig>,
@@ -1832,7 +1731,6 @@ impl WasmOcrConfig {
             enabled: enabled.unwrap_or(true),
             backend: backend.unwrap_or_default(),
             language: language.unwrap_or_default(),
-            tesseract_config,
             output_format,
             paddle_ocr_config,
             element_config,
@@ -1872,16 +1770,6 @@ impl WasmOcrConfig {
     #[wasm_bindgen(setter)]
     pub fn set_language(&mut self, value: String) {
         self.language = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tesseractConfig")]
-    pub fn tesseract_config(&self) -> Option<WasmTesseractConfig> {
-        self.tesseract_config.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "tesseractConfig")]
-    pub fn set_tesseract_config(&mut self, value: Option<WasmTesseractConfig>) {
-        self.tesseract_config = value;
     }
 
     #[wasm_bindgen(getter, js_name = "outputFormat")]
@@ -2362,7 +2250,6 @@ pub struct WasmChunkingConfig {
     overlap: usize,
     trim: bool,
     chunker_type: WasmChunkerType,
-    embedding: Option<WasmEmbeddingConfig>,
     preset: Option<String>,
     sizing: WasmChunkSizing,
     prepend_heading_context: bool,
@@ -2370,7 +2257,6 @@ pub struct WasmChunkingConfig {
 
 #[wasm_bindgen]
 impl WasmChunkingConfig {
-    #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
     pub fn new(
         max_characters: Option<usize>,
@@ -2379,7 +2265,6 @@ impl WasmChunkingConfig {
         chunker_type: Option<WasmChunkerType>,
         sizing: Option<WasmChunkSizing>,
         prepend_heading_context: Option<bool>,
-        embedding: Option<WasmEmbeddingConfig>,
         preset: Option<String>,
     ) -> WasmChunkingConfig {
         WasmChunkingConfig {
@@ -2387,7 +2272,6 @@ impl WasmChunkingConfig {
             overlap: overlap.unwrap_or(200),
             trim: trim.unwrap_or(true),
             chunker_type: chunker_type.unwrap_or_default(),
-            embedding,
             preset,
             sizing: sizing.unwrap_or_default(),
             prepend_heading_context: prepend_heading_context.unwrap_or(false),
@@ -2432,16 +2316,6 @@ impl WasmChunkingConfig {
     #[wasm_bindgen(setter, js_name = "chunkerType")]
     pub fn set_chunker_type(&mut self, value: WasmChunkerType) {
         self.chunker_type = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn embedding(&self) -> Option<WasmEmbeddingConfig> {
-        self.embedding.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_embedding(&mut self, value: Option<WasmEmbeddingConfig>) {
-        self.embedding = value;
     }
 
     #[wasm_bindgen(getter)]
@@ -2499,92 +2373,6 @@ impl WasmChunkingConfig {
     #[wasm_bindgen]
     pub fn default() -> WasmChunkingConfig {
         kreuzberg::ChunkingConfig::default().into()
-    }
-}
-
-#[derive(Clone, Default)]
-#[wasm_bindgen]
-pub struct WasmEmbeddingConfig {
-    model: WasmEmbeddingModelType,
-    normalize: bool,
-    batch_size: usize,
-    show_download_progress: bool,
-    cache_dir: Option<String>,
-}
-
-#[wasm_bindgen]
-impl WasmEmbeddingConfig {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        model: Option<WasmEmbeddingModelType>,
-        normalize: Option<bool>,
-        batch_size: Option<usize>,
-        show_download_progress: Option<bool>,
-        cache_dir: Option<String>,
-    ) -> WasmEmbeddingConfig {
-        WasmEmbeddingConfig {
-            model: model.unwrap_or_default(),
-            normalize: normalize.unwrap_or(true),
-            batch_size: batch_size.unwrap_or(32),
-            show_download_progress: show_download_progress.unwrap_or(false),
-            cache_dir,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn model(&self) -> WasmEmbeddingModelType {
-        self.model
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_model(&mut self, value: WasmEmbeddingModelType) {
-        self.model = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn normalize(&self) -> bool {
-        self.normalize
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_normalize(&mut self, value: bool) {
-        self.normalize = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "batchSize")]
-    pub fn batch_size(&self) -> usize {
-        self.batch_size
-    }
-
-    #[wasm_bindgen(setter, js_name = "batchSize")]
-    pub fn set_batch_size(&mut self, value: usize) {
-        self.batch_size = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "showDownloadProgress")]
-    pub fn show_download_progress(&self) -> bool {
-        self.show_download_progress
-    }
-
-    #[wasm_bindgen(setter, js_name = "showDownloadProgress")]
-    pub fn set_show_download_progress(&mut self, value: bool) {
-        self.show_download_progress = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "cacheDir")]
-    pub fn cache_dir(&self) -> Option<String> {
-        self.cache_dir.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "cacheDir")]
-    pub fn set_cache_dir(&mut self, value: Option<String>) {
-        self.cache_dir = value;
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[wasm_bindgen]
-    pub fn default() -> WasmEmbeddingConfig {
-        kreuzberg::EmbeddingConfig::default().into()
     }
 }
 
@@ -4496,68 +4284,6 @@ impl WasmTableValidator {
     }
 }
 
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmOcrFallbackDecision {
-    stats: String,
-    avg_non_whitespace: f64,
-    avg_alnum: f64,
-    fallback: bool,
-}
-
-#[wasm_bindgen]
-impl WasmOcrFallbackDecision {
-    #[wasm_bindgen(constructor)]
-    pub fn new(stats: String, avg_non_whitespace: f64, avg_alnum: f64, fallback: bool) -> WasmOcrFallbackDecision {
-        WasmOcrFallbackDecision {
-            stats,
-            avg_non_whitespace,
-            avg_alnum,
-            fallback,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn stats(&self) -> String {
-        self.stats.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_stats(&mut self, value: String) {
-        self.stats = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "avgNonWhitespace")]
-    pub fn avg_non_whitespace(&self) -> f64 {
-        self.avg_non_whitespace
-    }
-
-    #[wasm_bindgen(setter, js_name = "avgNonWhitespace")]
-    pub fn set_avg_non_whitespace(&mut self, value: f64) {
-        self.avg_non_whitespace = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "avgAlnum")]
-    pub fn avg_alnum(&self) -> f64 {
-        self.avg_alnum
-    }
-
-    #[wasm_bindgen(setter, js_name = "avgAlnum")]
-    pub fn set_avg_alnum(&mut self, value: f64) {
-        self.avg_alnum = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn fallback(&self) -> bool {
-        self.fallback
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_fallback(&mut self, value: bool) {
-        self.fallback = value;
-    }
-}
-
 #[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmTokenReductionConfig {
@@ -5714,7 +5440,6 @@ pub struct WasmExtractionResult {
     ocr_elements: Option<Vec<WasmOcrElement>>,
     document: Option<WasmDocumentStructure>,
     quality_score: Option<f64>,
-    processing_warnings: Vec<WasmProcessingWarning>,
     annotations: Option<Vec<WasmPdfAnnotation>>,
     children: Option<Vec<WasmArchiveEntry>>,
     uris: Option<Vec<WasmUri>>,
@@ -5734,7 +5459,6 @@ impl WasmExtractionResult {
         mime_type: Option<String>,
         metadata: Option<WasmMetadata>,
         tables: Option<Vec<String>>,
-        processing_warnings: Option<Vec<WasmProcessingWarning>>,
         detected_languages: Option<Vec<String>>,
         chunks: Option<Vec<WasmChunk>>,
         images: Option<Vec<WasmExtractedImage>>,
@@ -5767,7 +5491,6 @@ impl WasmExtractionResult {
             ocr_elements,
             document,
             quality_score,
-            processing_warnings: processing_warnings.unwrap_or_default(),
             annotations,
             children,
             uris,
@@ -5909,16 +5632,6 @@ impl WasmExtractionResult {
         self.quality_score = value;
     }
 
-    #[wasm_bindgen(getter, js_name = "processingWarnings")]
-    pub fn processing_warnings(&self) -> Vec<WasmProcessingWarning> {
-        self.processing_warnings.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "processingWarnings")]
-    pub fn set_processing_warnings(&mut self, value: Vec<WasmProcessingWarning>) {
-        self.processing_warnings = value;
-    }
-
     #[wasm_bindgen(getter)]
     pub fn annotations(&self) -> Option<Vec<WasmPdfAnnotation>> {
         self.annotations.clone()
@@ -6047,41 +5760,6 @@ impl WasmArchiveEntry {
     #[wasm_bindgen(setter)]
     pub fn set_result(&mut self, value: WasmExtractionResult) {
         self.result = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmProcessingWarning {
-    source: String,
-    message: String,
-}
-
-#[wasm_bindgen]
-impl WasmProcessingWarning {
-    #[wasm_bindgen(constructor)]
-    pub fn new(source: String, message: String) -> WasmProcessingWarning {
-        WasmProcessingWarning { source, message }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn source(&self) -> String {
-        self.source.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_source(&mut self, value: String) {
-        self.source = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn message(&self) -> String {
-        self.message.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_message(&mut self, value: String) {
-        self.message = value;
     }
 }
 
@@ -7808,301 +7486,6 @@ impl WasmImagePreprocessingConfig {
     #[wasm_bindgen]
     pub fn default() -> WasmImagePreprocessingConfig {
         kreuzberg::ImagePreprocessingConfig::default().into()
-    }
-}
-
-#[derive(Clone, Default)]
-#[wasm_bindgen]
-pub struct WasmTesseractConfig {
-    language: String,
-    psm: i32,
-    output_format: String,
-    oem: i32,
-    min_confidence: f64,
-    preprocessing: Option<WasmImagePreprocessingConfig>,
-    enable_table_detection: bool,
-    table_min_confidence: f64,
-    table_column_threshold: i32,
-    table_row_threshold_ratio: f64,
-    use_cache: bool,
-    classify_use_pre_adapted_templates: bool,
-    language_model_ngram_on: bool,
-    tessedit_dont_blkrej_good_wds: bool,
-    tessedit_dont_rowrej_good_wds: bool,
-    tessedit_enable_dict_correction: bool,
-    tessedit_char_whitelist: String,
-    tessedit_char_blacklist: String,
-    tessedit_use_primary_params_model: bool,
-    textord_space_size_is_variable: bool,
-    thresholding_method: bool,
-}
-
-#[wasm_bindgen]
-impl WasmTesseractConfig {
-    #[allow(clippy::too_many_arguments)]
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        language: Option<String>,
-        psm: Option<i32>,
-        output_format: Option<String>,
-        oem: Option<i32>,
-        min_confidence: Option<f64>,
-        enable_table_detection: Option<bool>,
-        table_min_confidence: Option<f64>,
-        table_column_threshold: Option<i32>,
-        table_row_threshold_ratio: Option<f64>,
-        use_cache: Option<bool>,
-        classify_use_pre_adapted_templates: Option<bool>,
-        language_model_ngram_on: Option<bool>,
-        tessedit_dont_blkrej_good_wds: Option<bool>,
-        tessedit_dont_rowrej_good_wds: Option<bool>,
-        tessedit_enable_dict_correction: Option<bool>,
-        tessedit_char_whitelist: Option<String>,
-        tessedit_char_blacklist: Option<String>,
-        tessedit_use_primary_params_model: Option<bool>,
-        textord_space_size_is_variable: Option<bool>,
-        thresholding_method: Option<bool>,
-        preprocessing: Option<WasmImagePreprocessingConfig>,
-    ) -> WasmTesseractConfig {
-        WasmTesseractConfig {
-            language: language.unwrap_or_else(|| "eng".to_string()),
-            psm: psm.unwrap_or(3),
-            output_format: output_format.unwrap_or_else(|| "markdown".to_string()),
-            oem: oem.unwrap_or(3),
-            min_confidence: min_confidence.unwrap_or(0.0),
-            preprocessing,
-            enable_table_detection: enable_table_detection.unwrap_or(true),
-            table_min_confidence: table_min_confidence.unwrap_or(0.0),
-            table_column_threshold: table_column_threshold.unwrap_or(50),
-            table_row_threshold_ratio: table_row_threshold_ratio.unwrap_or(0.5),
-            use_cache: use_cache.unwrap_or(true),
-            classify_use_pre_adapted_templates: classify_use_pre_adapted_templates.unwrap_or(true),
-            language_model_ngram_on: language_model_ngram_on.unwrap_or(false),
-            tessedit_dont_blkrej_good_wds: tessedit_dont_blkrej_good_wds.unwrap_or(true),
-            tessedit_dont_rowrej_good_wds: tessedit_dont_rowrej_good_wds.unwrap_or(true),
-            tessedit_enable_dict_correction: tessedit_enable_dict_correction.unwrap_or(true),
-            tessedit_char_whitelist: tessedit_char_whitelist.unwrap_or_else(|| "".to_string()),
-            tessedit_char_blacklist: tessedit_char_blacklist.unwrap_or_else(|| "".to_string()),
-            tessedit_use_primary_params_model: tessedit_use_primary_params_model.unwrap_or(true),
-            textord_space_size_is_variable: textord_space_size_is_variable.unwrap_or(true),
-            thresholding_method: thresholding_method.unwrap_or(false),
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn language(&self) -> String {
-        self.language.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_language(&mut self, value: String) {
-        self.language = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn psm(&self) -> i32 {
-        self.psm
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_psm(&mut self, value: i32) {
-        self.psm = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "outputFormat")]
-    pub fn output_format(&self) -> String {
-        self.output_format.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "outputFormat")]
-    pub fn set_output_format(&mut self, value: String) {
-        self.output_format = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn oem(&self) -> i32 {
-        self.oem
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_oem(&mut self, value: i32) {
-        self.oem = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "minConfidence")]
-    pub fn min_confidence(&self) -> f64 {
-        self.min_confidence
-    }
-
-    #[wasm_bindgen(setter, js_name = "minConfidence")]
-    pub fn set_min_confidence(&mut self, value: f64) {
-        self.min_confidence = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn preprocessing(&self) -> Option<WasmImagePreprocessingConfig> {
-        self.preprocessing.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_preprocessing(&mut self, value: Option<WasmImagePreprocessingConfig>) {
-        self.preprocessing = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "enableTableDetection")]
-    pub fn enable_table_detection(&self) -> bool {
-        self.enable_table_detection
-    }
-
-    #[wasm_bindgen(setter, js_name = "enableTableDetection")]
-    pub fn set_enable_table_detection(&mut self, value: bool) {
-        self.enable_table_detection = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tableMinConfidence")]
-    pub fn table_min_confidence(&self) -> f64 {
-        self.table_min_confidence
-    }
-
-    #[wasm_bindgen(setter, js_name = "tableMinConfidence")]
-    pub fn set_table_min_confidence(&mut self, value: f64) {
-        self.table_min_confidence = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tableColumnThreshold")]
-    pub fn table_column_threshold(&self) -> i32 {
-        self.table_column_threshold
-    }
-
-    #[wasm_bindgen(setter, js_name = "tableColumnThreshold")]
-    pub fn set_table_column_threshold(&mut self, value: i32) {
-        self.table_column_threshold = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tableRowThresholdRatio")]
-    pub fn table_row_threshold_ratio(&self) -> f64 {
-        self.table_row_threshold_ratio
-    }
-
-    #[wasm_bindgen(setter, js_name = "tableRowThresholdRatio")]
-    pub fn set_table_row_threshold_ratio(&mut self, value: f64) {
-        self.table_row_threshold_ratio = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "useCache")]
-    pub fn use_cache(&self) -> bool {
-        self.use_cache
-    }
-
-    #[wasm_bindgen(setter, js_name = "useCache")]
-    pub fn set_use_cache(&mut self, value: bool) {
-        self.use_cache = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "classifyUsePreAdaptedTemplates")]
-    pub fn classify_use_pre_adapted_templates(&self) -> bool {
-        self.classify_use_pre_adapted_templates
-    }
-
-    #[wasm_bindgen(setter, js_name = "classifyUsePreAdaptedTemplates")]
-    pub fn set_classify_use_pre_adapted_templates(&mut self, value: bool) {
-        self.classify_use_pre_adapted_templates = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "languageModelNgramOn")]
-    pub fn language_model_ngram_on(&self) -> bool {
-        self.language_model_ngram_on
-    }
-
-    #[wasm_bindgen(setter, js_name = "languageModelNgramOn")]
-    pub fn set_language_model_ngram_on(&mut self, value: bool) {
-        self.language_model_ngram_on = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tesseditDontBlkrejGoodWds")]
-    pub fn tessedit_dont_blkrej_good_wds(&self) -> bool {
-        self.tessedit_dont_blkrej_good_wds
-    }
-
-    #[wasm_bindgen(setter, js_name = "tesseditDontBlkrejGoodWds")]
-    pub fn set_tessedit_dont_blkrej_good_wds(&mut self, value: bool) {
-        self.tessedit_dont_blkrej_good_wds = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tesseditDontRowrejGoodWds")]
-    pub fn tessedit_dont_rowrej_good_wds(&self) -> bool {
-        self.tessedit_dont_rowrej_good_wds
-    }
-
-    #[wasm_bindgen(setter, js_name = "tesseditDontRowrejGoodWds")]
-    pub fn set_tessedit_dont_rowrej_good_wds(&mut self, value: bool) {
-        self.tessedit_dont_rowrej_good_wds = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tesseditEnableDictCorrection")]
-    pub fn tessedit_enable_dict_correction(&self) -> bool {
-        self.tessedit_enable_dict_correction
-    }
-
-    #[wasm_bindgen(setter, js_name = "tesseditEnableDictCorrection")]
-    pub fn set_tessedit_enable_dict_correction(&mut self, value: bool) {
-        self.tessedit_enable_dict_correction = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tesseditCharWhitelist")]
-    pub fn tessedit_char_whitelist(&self) -> String {
-        self.tessedit_char_whitelist.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "tesseditCharWhitelist")]
-    pub fn set_tessedit_char_whitelist(&mut self, value: String) {
-        self.tessedit_char_whitelist = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tesseditCharBlacklist")]
-    pub fn tessedit_char_blacklist(&self) -> String {
-        self.tessedit_char_blacklist.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "tesseditCharBlacklist")]
-    pub fn set_tessedit_char_blacklist(&mut self, value: String) {
-        self.tessedit_char_blacklist = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "tesseditUsePrimaryParamsModel")]
-    pub fn tessedit_use_primary_params_model(&self) -> bool {
-        self.tessedit_use_primary_params_model
-    }
-
-    #[wasm_bindgen(setter, js_name = "tesseditUsePrimaryParamsModel")]
-    pub fn set_tessedit_use_primary_params_model(&mut self, value: bool) {
-        self.tessedit_use_primary_params_model = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "textordSpaceSizeIsVariable")]
-    pub fn textord_space_size_is_variable(&self) -> bool {
-        self.textord_space_size_is_variable
-    }
-
-    #[wasm_bindgen(setter, js_name = "textordSpaceSizeIsVariable")]
-    pub fn set_textord_space_size_is_variable(&mut self, value: bool) {
-        self.textord_space_size_is_variable = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "thresholdingMethod")]
-    pub fn thresholding_method(&self) -> bool {
-        self.thresholding_method
-    }
-
-    #[wasm_bindgen(setter, js_name = "thresholdingMethod")]
-    pub fn set_thresholding_method(&mut self, value: bool) {
-        self.thresholding_method = value;
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[wasm_bindgen]
-    pub fn default() -> WasmTesseractConfig {
-        kreuzberg::TesseractConfig::default().into()
     }
 }
 
@@ -11553,14 +10936,13 @@ impl WasmCacheClearResponse {
 #[wasm_bindgen]
 pub struct WasmEmbedRequest {
     texts: Vec<String>,
-    config: Option<WasmEmbeddingConfig>,
 }
 
 #[wasm_bindgen]
 impl WasmEmbedRequest {
     #[wasm_bindgen(constructor)]
-    pub fn new(texts: Vec<String>, config: Option<WasmEmbeddingConfig>) -> WasmEmbedRequest {
-        WasmEmbedRequest { texts, config }
+    pub fn new(texts: Vec<String>) -> WasmEmbedRequest {
+        WasmEmbedRequest { texts }
     }
 
     #[wasm_bindgen(getter)]
@@ -11571,16 +10953,6 @@ impl WasmEmbedRequest {
     #[wasm_bindgen(setter)]
     pub fn set_texts(&mut self, value: Vec<String>) {
         self.texts = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn config(&self) -> Option<WasmEmbeddingConfig> {
-        self.config.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_config(&mut self, value: Option<WasmEmbeddingConfig>) {
-        self.config = value;
     }
 }
 
@@ -12990,680 +12362,6 @@ impl WasmKeyword {
     }
 }
 
-#[derive(Clone, Default)]
-#[wasm_bindgen]
-pub struct WasmOcrCacheStats {
-    total_files: usize,
-    total_size_mb: f64,
-}
-
-#[wasm_bindgen]
-impl WasmOcrCacheStats {
-    #[wasm_bindgen(constructor)]
-    pub fn new(total_files: Option<usize>, total_size_mb: Option<f64>) -> WasmOcrCacheStats {
-        WasmOcrCacheStats {
-            total_files: total_files.unwrap_or_default(),
-            total_size_mb: total_size_mb.unwrap_or_default(),
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "totalFiles")]
-    pub fn total_files(&self) -> usize {
-        self.total_files
-    }
-
-    #[wasm_bindgen(setter, js_name = "totalFiles")]
-    pub fn set_total_files(&mut self, value: usize) {
-        self.total_files = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "totalSizeMb")]
-    pub fn total_size_mb(&self) -> f64 {
-        self.total_size_mb
-    }
-
-    #[wasm_bindgen(setter, js_name = "totalSizeMb")]
-    pub fn set_total_size_mb(&mut self, value: f64) {
-        self.total_size_mb = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmRecognizedTable {
-    detection_bbox: WasmBBox,
-    cells: JsValue,
-    markdown: String,
-}
-
-#[wasm_bindgen]
-impl WasmRecognizedTable {
-    #[wasm_bindgen(constructor)]
-    pub fn new(detection_bbox: WasmBBox, cells: JsValue, markdown: String) -> WasmRecognizedTable {
-        WasmRecognizedTable {
-            detection_bbox,
-            cells,
-            markdown,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "detectionBbox")]
-    pub fn detection_bbox(&self) -> WasmBBox {
-        self.detection_bbox.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "detectionBbox")]
-    pub fn set_detection_bbox(&mut self, value: WasmBBox) {
-        self.detection_bbox = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn cells(&self) -> JsValue {
-        self.cells.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_cells(&mut self, value: JsValue) {
-        self.cells = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn markdown(&self) -> String {
-        self.markdown.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_markdown(&mut self, value: String) {
-        self.markdown = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmTessdataManager {
-    inner: Arc<kreuzberg::ocr::TessdataManager>,
-}
-
-#[wasm_bindgen]
-impl WasmTessdataManager {
-    #[wasm_bindgen(js_name = "cacheDir")]
-    pub fn cache_dir(&self) -> String {
-        self.inner.cache_dir().to_string_lossy().to_string()
-    }
-
-    #[wasm_bindgen(js_name = "isLanguageCached")]
-    pub fn is_language_cached(&self, lang: String) -> bool {
-        self.inner.is_language_cached(&lang)
-    }
-}
-
-#[derive(Clone, Default)]
-#[wasm_bindgen]
-pub struct WasmPaddleOcrConfig {
-    language: String,
-    cache_dir: Option<String>,
-    use_angle_cls: bool,
-    enable_table_detection: bool,
-    det_db_thresh: f32,
-    det_db_box_thresh: f32,
-    det_db_unclip_ratio: f32,
-    det_limit_side_len: u32,
-    rec_batch_num: u32,
-    padding: u32,
-    drop_score: f32,
-    model_tier: String,
-}
-
-#[wasm_bindgen]
-impl WasmPaddleOcrConfig {
-    #[allow(clippy::too_many_arguments)]
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        language: Option<String>,
-        use_angle_cls: Option<bool>,
-        enable_table_detection: Option<bool>,
-        det_db_thresh: Option<f32>,
-        det_db_box_thresh: Option<f32>,
-        det_db_unclip_ratio: Option<f32>,
-        det_limit_side_len: Option<u32>,
-        rec_batch_num: Option<u32>,
-        padding: Option<u32>,
-        drop_score: Option<f32>,
-        model_tier: Option<String>,
-        cache_dir: Option<String>,
-    ) -> WasmPaddleOcrConfig {
-        WasmPaddleOcrConfig {
-            language: language.unwrap_or_default(),
-            cache_dir,
-            use_angle_cls: use_angle_cls.unwrap_or_default(),
-            enable_table_detection: enable_table_detection.unwrap_or_default(),
-            det_db_thresh: det_db_thresh.unwrap_or_default(),
-            det_db_box_thresh: det_db_box_thresh.unwrap_or_default(),
-            det_db_unclip_ratio: det_db_unclip_ratio.unwrap_or_default(),
-            det_limit_side_len: det_limit_side_len.unwrap_or_default(),
-            rec_batch_num: rec_batch_num.unwrap_or_default(),
-            padding: padding.unwrap_or_default(),
-            drop_score: drop_score.unwrap_or_default(),
-            model_tier: model_tier.unwrap_or_default(),
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn language(&self) -> String {
-        self.language.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_language(&mut self, value: String) {
-        self.language = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "cacheDir")]
-    pub fn cache_dir(&self) -> Option<String> {
-        self.cache_dir.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "cacheDir")]
-    pub fn set_cache_dir(&mut self, value: Option<String>) {
-        self.cache_dir = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "useAngleCls")]
-    pub fn use_angle_cls(&self) -> bool {
-        self.use_angle_cls
-    }
-
-    #[wasm_bindgen(setter, js_name = "useAngleCls")]
-    pub fn set_use_angle_cls(&mut self, value: bool) {
-        self.use_angle_cls = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "enableTableDetection")]
-    pub fn enable_table_detection(&self) -> bool {
-        self.enable_table_detection
-    }
-
-    #[wasm_bindgen(setter, js_name = "enableTableDetection")]
-    pub fn set_enable_table_detection(&mut self, value: bool) {
-        self.enable_table_detection = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "detDbThresh")]
-    pub fn det_db_thresh(&self) -> f32 {
-        self.det_db_thresh
-    }
-
-    #[wasm_bindgen(setter, js_name = "detDbThresh")]
-    pub fn set_det_db_thresh(&mut self, value: f32) {
-        self.det_db_thresh = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "detDbBoxThresh")]
-    pub fn det_db_box_thresh(&self) -> f32 {
-        self.det_db_box_thresh
-    }
-
-    #[wasm_bindgen(setter, js_name = "detDbBoxThresh")]
-    pub fn set_det_db_box_thresh(&mut self, value: f32) {
-        self.det_db_box_thresh = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "detDbUnclipRatio")]
-    pub fn det_db_unclip_ratio(&self) -> f32 {
-        self.det_db_unclip_ratio
-    }
-
-    #[wasm_bindgen(setter, js_name = "detDbUnclipRatio")]
-    pub fn set_det_db_unclip_ratio(&mut self, value: f32) {
-        self.det_db_unclip_ratio = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "detLimitSideLen")]
-    pub fn det_limit_side_len(&self) -> u32 {
-        self.det_limit_side_len
-    }
-
-    #[wasm_bindgen(setter, js_name = "detLimitSideLen")]
-    pub fn set_det_limit_side_len(&mut self, value: u32) {
-        self.det_limit_side_len = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "recBatchNum")]
-    pub fn rec_batch_num(&self) -> u32 {
-        self.rec_batch_num
-    }
-
-    #[wasm_bindgen(setter, js_name = "recBatchNum")]
-    pub fn set_rec_batch_num(&mut self, value: u32) {
-        self.rec_batch_num = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn padding(&self) -> u32 {
-        self.padding
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_padding(&mut self, value: u32) {
-        self.padding = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "dropScore")]
-    pub fn drop_score(&self) -> f32 {
-        self.drop_score
-    }
-
-    #[wasm_bindgen(setter, js_name = "dropScore")]
-    pub fn set_drop_score(&mut self, value: f32) {
-        self.drop_score = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "modelTier")]
-    pub fn model_tier(&self) -> String {
-        self.model_tier.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "modelTier")]
-    pub fn set_model_tier(&mut self, value: String) {
-        self.model_tier = value;
-    }
-
-    #[wasm_bindgen(js_name = "withCacheDir")]
-    pub fn with_cache_dir(&self, path: String) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_cache_dir(std::path::PathBuf::from(path))
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withTableDetection")]
-    pub fn with_table_detection(&self, enable: bool) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_table_detection(enable)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withAngleCls")]
-    pub fn with_angle_cls(&self, enable: bool) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_angle_cls(enable)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withDetDbThresh")]
-    pub fn with_det_db_thresh(&self, threshold: f32) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_det_db_thresh(threshold)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withDetDbBoxThresh")]
-    pub fn with_det_db_box_thresh(&self, threshold: f32) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_det_db_box_thresh(threshold)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withDetDbUnclipRatio")]
-    pub fn with_det_db_unclip_ratio(&self, ratio: f32) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_det_db_unclip_ratio(ratio)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withDetLimitSideLen")]
-    pub fn with_det_limit_side_len(&self, length: u32) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_det_limit_side_len(length)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withRecBatchNum")]
-    pub fn with_rec_batch_num(&self, batch_size: u32) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_rec_batch_num(batch_size)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withDropScore")]
-    pub fn with_drop_score(&self, score: f32) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_drop_score(score)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withPadding")]
-    pub fn with_padding(&self, padding: u32) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_padding(padding)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withModelTier")]
-    pub fn with_model_tier(&self, tier: String) -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::from(self.clone())
-            .with_model_tier(tier)
-            .into()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[wasm_bindgen]
-    pub fn default() -> WasmPaddleOcrConfig {
-        kreuzberg::PaddleOcrConfig::default().into()
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmModelPaths {
-    det_model: String,
-    cls_model: String,
-    rec_model: String,
-    dict_file: String,
-}
-
-#[wasm_bindgen]
-impl WasmModelPaths {
-    #[wasm_bindgen(constructor)]
-    pub fn new(det_model: String, cls_model: String, rec_model: String, dict_file: String) -> WasmModelPaths {
-        WasmModelPaths {
-            det_model,
-            cls_model,
-            rec_model,
-            dict_file,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "detModel")]
-    pub fn det_model(&self) -> String {
-        self.det_model.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "detModel")]
-    pub fn set_det_model(&mut self, value: String) {
-        self.det_model = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "clsModel")]
-    pub fn cls_model(&self) -> String {
-        self.cls_model.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "clsModel")]
-    pub fn set_cls_model(&mut self, value: String) {
-        self.cls_model = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "recModel")]
-    pub fn rec_model(&self) -> String {
-        self.rec_model.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "recModel")]
-    pub fn set_rec_model(&mut self, value: String) {
-        self.rec_model = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "dictFile")]
-    pub fn dict_file(&self) -> String {
-        self.dict_file.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "dictFile")]
-    pub fn set_dict_file(&mut self, value: String) {
-        self.dict_file = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmOrientationResult {
-    degrees: u32,
-    confidence: f32,
-}
-
-#[wasm_bindgen]
-impl WasmOrientationResult {
-    #[wasm_bindgen(constructor)]
-    pub fn new(degrees: u32, confidence: f32) -> WasmOrientationResult {
-        WasmOrientationResult { degrees, confidence }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn degrees(&self) -> u32 {
-        self.degrees
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_degrees(&mut self, value: u32) {
-        self.degrees = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn confidence(&self) -> f32 {
-        self.confidence
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_confidence(&mut self, value: f32) {
-        self.confidence = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmBBox {
-    x1: f32,
-    y1: f32,
-    x2: f32,
-    y2: f32,
-}
-
-#[wasm_bindgen]
-impl WasmBBox {
-    #[wasm_bindgen(constructor)]
-    pub fn new(x1: f32, y1: f32, x2: f32, y2: f32) -> WasmBBox {
-        WasmBBox { x1, y1, x2, y2 }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn x1(&self) -> f32 {
-        self.x1
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_x1(&mut self, value: f32) {
-        self.x1 = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn y1(&self) -> f32 {
-        self.y1
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_y1(&mut self, value: f32) {
-        self.y1 = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn x2(&self) -> f32 {
-        self.x2
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_x2(&mut self, value: f32) {
-        self.x2 = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn y2(&self) -> f32 {
-        self.y2
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_y2(&mut self, value: f32) {
-        self.y2 = value;
-    }
-
-    #[wasm_bindgen]
-    pub fn width(&self) -> f32 {
-        kreuzberg::BBox::from(self.clone()).width()
-    }
-
-    #[wasm_bindgen]
-    pub fn height(&self) -> f32 {
-        kreuzberg::BBox::from(self.clone()).height()
-    }
-
-    #[wasm_bindgen]
-    pub fn area(&self) -> f32 {
-        kreuzberg::BBox::from(self.clone()).area()
-    }
-
-    #[wasm_bindgen]
-    pub fn center(&self) -> String {
-        String::from("[unimplemented: center]")
-    }
-
-    #[wasm_bindgen(js_name = "intersectionArea")]
-    pub fn intersection_area(&self, other: WasmBBox) -> f32 {
-        kreuzberg::BBox::from(self.clone()).intersection_area(other.into())
-    }
-
-    #[wasm_bindgen]
-    pub fn iou(&self, other: WasmBBox) -> f32 {
-        kreuzberg::BBox::from(self.clone()).iou(other.into())
-    }
-
-    #[wasm_bindgen(js_name = "containmentOf")]
-    pub fn containment_of(&self, other: WasmBBox) -> f32 {
-        kreuzberg::BBox::from(self.clone()).containment_of(other.into())
-    }
-
-    #[wasm_bindgen(js_name = "pageCoverage")]
-    pub fn page_coverage(&self, page_width: f32, page_height: f32) -> f32 {
-        kreuzberg::BBox::from(self.clone()).page_coverage(page_width, page_height)
-    }
-
-    #[wasm_bindgen]
-    pub fn fmt(&self, f: String) -> String {
-        String::from("[unimplemented: fmt]")
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmLayoutDetection {
-    class: WasmLayoutClass,
-    confidence: f32,
-    bbox: WasmBBox,
-}
-
-#[wasm_bindgen]
-impl WasmLayoutDetection {
-    #[wasm_bindgen(constructor)]
-    pub fn new(class: WasmLayoutClass, confidence: f32, bbox: WasmBBox) -> WasmLayoutDetection {
-        WasmLayoutDetection {
-            class,
-            confidence,
-            bbox,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn class(&self) -> WasmLayoutClass {
-        self.class
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_class(&mut self, value: WasmLayoutClass) {
-        self.class = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn confidence(&self) -> f32 {
-        self.confidence
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_confidence(&mut self, value: f32) {
-        self.confidence = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn bbox(&self) -> WasmBBox {
-        self.bbox.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_bbox(&mut self, value: WasmBBox) {
-        self.bbox = value;
-    }
-
-    #[wasm_bindgen(js_name = "sortByConfidenceDesc")]
-    pub fn sort_by_confidence_desc(detections: Vec<WasmLayoutDetection>) -> Vec<WasmLayoutDetection> {
-        kreuzberg::LayoutDetection::sort_by_confidence_desc(detections)
-            .into_iter()
-            .map(Into::into)
-            .collect()
-    }
-
-    #[wasm_bindgen]
-    pub fn fmt(&self, f: String) -> String {
-        String::from("[unimplemented: fmt]")
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmDetectionResult {
-    page_width: u32,
-    page_height: u32,
-    detections: Vec<WasmLayoutDetection>,
-}
-
-#[wasm_bindgen]
-impl WasmDetectionResult {
-    #[wasm_bindgen(constructor)]
-    pub fn new(page_width: u32, page_height: u32, detections: Vec<WasmLayoutDetection>) -> WasmDetectionResult {
-        WasmDetectionResult {
-            page_width,
-            page_height,
-            detections,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "pageWidth")]
-    pub fn page_width(&self) -> u32 {
-        self.page_width
-    }
-
-    #[wasm_bindgen(setter, js_name = "pageWidth")]
-    pub fn set_page_width(&mut self, value: u32) {
-        self.page_width = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "pageHeight")]
-    pub fn page_height(&self) -> u32 {
-        self.page_height
-    }
-
-    #[wasm_bindgen(setter, js_name = "pageHeight")]
-    pub fn set_page_height(&mut self, value: u32) {
-        self.page_height = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn detections(&self) -> Vec<WasmLayoutDetection> {
-        self.detections.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_detections(&mut self, value: Vec<WasmLayoutDetection>) {
-        self.detections = value;
-    }
-}
-
 #[derive(Clone)]
 #[wasm_bindgen]
 pub struct WasmEmbeddedFile {
@@ -14075,192 +12773,6 @@ impl WasmPdfImage {
 
 #[derive(Clone)]
 #[wasm_bindgen]
-pub struct WasmPageLayoutResult {
-    page_index: usize,
-    regions: Vec<String>,
-    page_width_pts: f32,
-    page_height_pts: f32,
-    render_width_px: u32,
-    render_height_px: u32,
-}
-
-#[wasm_bindgen]
-impl WasmPageLayoutResult {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        page_index: usize,
-        regions: Vec<String>,
-        page_width_pts: f32,
-        page_height_pts: f32,
-        render_width_px: u32,
-        render_height_px: u32,
-    ) -> WasmPageLayoutResult {
-        WasmPageLayoutResult {
-            page_index,
-            regions,
-            page_width_pts,
-            page_height_pts,
-            render_width_px,
-            render_height_px,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "pageIndex")]
-    pub fn page_index(&self) -> usize {
-        self.page_index
-    }
-
-    #[wasm_bindgen(setter, js_name = "pageIndex")]
-    pub fn set_page_index(&mut self, value: usize) {
-        self.page_index = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn regions(&self) -> Vec<String> {
-        self.regions.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_regions(&mut self, value: Vec<String>) {
-        self.regions = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "pageWidthPts")]
-    pub fn page_width_pts(&self) -> f32 {
-        self.page_width_pts
-    }
-
-    #[wasm_bindgen(setter, js_name = "pageWidthPts")]
-    pub fn set_page_width_pts(&mut self, value: f32) {
-        self.page_width_pts = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "pageHeightPts")]
-    pub fn page_height_pts(&self) -> f32 {
-        self.page_height_pts
-    }
-
-    #[wasm_bindgen(setter, js_name = "pageHeightPts")]
-    pub fn set_page_height_pts(&mut self, value: f32) {
-        self.page_height_pts = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "renderWidthPx")]
-    pub fn render_width_px(&self) -> u32 {
-        self.render_width_px
-    }
-
-    #[wasm_bindgen(setter, js_name = "renderWidthPx")]
-    pub fn set_render_width_px(&mut self, value: u32) {
-        self.render_width_px = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "renderHeightPx")]
-    pub fn render_height_px(&self) -> u32 {
-        self.render_height_px
-    }
-
-    #[wasm_bindgen(setter, js_name = "renderHeightPx")]
-    pub fn set_render_height_px(&mut self, value: u32) {
-        self.render_height_px = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
-pub struct WasmPageTiming {
-    render_ms: f64,
-    preprocess_ms: f64,
-    onnx_ms: f64,
-    inference_ms: f64,
-    postprocess_ms: f64,
-    mapping_ms: f64,
-}
-
-#[wasm_bindgen]
-impl WasmPageTiming {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        render_ms: f64,
-        preprocess_ms: f64,
-        onnx_ms: f64,
-        inference_ms: f64,
-        postprocess_ms: f64,
-        mapping_ms: f64,
-    ) -> WasmPageTiming {
-        WasmPageTiming {
-            render_ms,
-            preprocess_ms,
-            onnx_ms,
-            inference_ms,
-            postprocess_ms,
-            mapping_ms,
-        }
-    }
-
-    #[wasm_bindgen(getter, js_name = "renderMs")]
-    pub fn render_ms(&self) -> f64 {
-        self.render_ms
-    }
-
-    #[wasm_bindgen(setter, js_name = "renderMs")]
-    pub fn set_render_ms(&mut self, value: f64) {
-        self.render_ms = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "preprocessMs")]
-    pub fn preprocess_ms(&self) -> f64 {
-        self.preprocess_ms
-    }
-
-    #[wasm_bindgen(setter, js_name = "preprocessMs")]
-    pub fn set_preprocess_ms(&mut self, value: f64) {
-        self.preprocess_ms = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "onnxMs")]
-    pub fn onnx_ms(&self) -> f64 {
-        self.onnx_ms
-    }
-
-    #[wasm_bindgen(setter, js_name = "onnxMs")]
-    pub fn set_onnx_ms(&mut self, value: f64) {
-        self.onnx_ms = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "inferenceMs")]
-    pub fn inference_ms(&self) -> f64 {
-        self.inference_ms
-    }
-
-    #[wasm_bindgen(setter, js_name = "inferenceMs")]
-    pub fn set_inference_ms(&mut self, value: f64) {
-        self.inference_ms = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "postprocessMs")]
-    pub fn postprocess_ms(&self) -> f64 {
-        self.postprocess_ms
-    }
-
-    #[wasm_bindgen(setter, js_name = "postprocessMs")]
-    pub fn set_postprocess_ms(&mut self, value: f64) {
-        self.postprocess_ms = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "mappingMs")]
-    pub fn mapping_ms(&self) -> f64 {
-        self.mapping_ms
-    }
-
-    #[wasm_bindgen(setter, js_name = "mappingMs")]
-    pub fn set_mapping_ms(&mut self, value: f64) {
-        self.mapping_ms = value;
-    }
-}
-
-#[derive(Clone)]
-#[wasm_bindgen]
 pub struct WasmCommonPdfMetadata {
     title: Option<String>,
     subject: Option<String>,
@@ -14424,24 +12936,6 @@ pub enum WasmHtmlTheme {
 impl Default for WasmHtmlTheme {
     fn default() -> Self {
         Self::Default
-    }
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum WasmTableModel {
-    Tatr = 0,
-    SlanetWired = 1,
-    SlanetWireless = 2,
-    SlanetPlus = 3,
-    SlanetAuto = 4,
-    Disabled = 5,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for WasmTableModel {
-    fn default() -> Self {
-        Self::Tatr
     }
 }
 
@@ -14947,86 +13441,6 @@ pub enum WasmKeywordAlgorithm {
 impl Default for WasmKeywordAlgorithm {
     fn default() -> Self {
         Self::Yake
-    }
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum WasmPSMMode {
-    OsdOnly = 0,
-    AutoOsd = 1,
-    AutoOnly = 2,
-    Auto = 3,
-    SingleColumn = 4,
-    SingleBlockVertical = 5,
-    SingleBlock = 6,
-    SingleLine = 7,
-    SingleWord = 8,
-    CircleWord = 9,
-    SingleChar = 10,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for WasmPSMMode {
-    fn default() -> Self {
-        Self::OsdOnly
-    }
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum WasmPaddleLanguage {
-    English = 0,
-    Chinese = 1,
-    Japanese = 2,
-    Korean = 3,
-    German = 4,
-    French = 5,
-    Latin = 6,
-    Cyrillic = 7,
-    TraditionalChinese = 8,
-    Thai = 9,
-    Greek = 10,
-    EastSlavic = 11,
-    Arabic = 12,
-    Devanagari = 13,
-    Tamil = 14,
-    Telugu = 15,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for WasmPaddleLanguage {
-    fn default() -> Self {
-        Self::English
-    }
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum WasmLayoutClass {
-    Caption = 0,
-    Footnote = 1,
-    Formula = 2,
-    ListItem = 3,
-    PageFooter = 4,
-    PageHeader = 5,
-    Picture = 6,
-    SectionHeader = 7,
-    Table = 8,
-    Text = 9,
-    Title = 10,
-    DocumentIndex = 11,
-    Code = 12,
-    CheckboxSelected = 13,
-    CheckboxUnselected = 14,
-    Form = 15,
-    KeyValueRegion = 16,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for WasmLayoutClass {
-    fn default() -> Self {
-        Self::Caption
     }
 }
 
@@ -16193,21 +14607,6 @@ pub fn get_metrics() -> String {
     String::from("[unimplemented: get_metrics]")
 }
 
-#[wasm_bindgen(js_name = "recordErrorOnCurrentSpan")]
-pub fn record_error_on_current_span(error: String) -> () {
-    ()
-}
-
-#[wasm_bindgen(js_name = "recordSuccessOnCurrentSpan")]
-pub fn record_success_on_current_span() -> () {
-    kreuzberg::telemetry::spans::record_success_on_current_span()
-}
-
-#[wasm_bindgen(js_name = "sanitizePath")]
-pub fn sanitize_path(path: String) -> String {
-    kreuzberg::telemetry::spans::sanitize_path(std::path::Path::new(&path))
-}
-
 #[wasm_bindgen(js_name = "extractorSpan")]
 pub fn extractor_span(extractor_name: String, mime_type: String, size_bytes: usize) -> String {
     String::from("[unimplemented: extractor_span]")
@@ -16621,58 +15020,9 @@ pub fn render_template(template: String, context: String) -> Result<String, JsVa
     Err(JsValue::from_str("Not implemented: render_template"))
 }
 
-#[wasm_bindgen]
-pub fn normalize(v: Vec<f32>) -> Vec<f32> {
-    kreuzberg::embeddings::engine::normalize(&v)
-}
-
 #[wasm_bindgen(js_name = "getPreset")]
 pub fn get_preset(name: String) -> Option<String> {
     None
-}
-
-#[wasm_bindgen(js_name = "listPresets")]
-pub fn list_presets() -> Vec<String> {
-    kreuzberg::list_presets().into_iter().map(Into::into).collect()
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "warmModel")]
-pub fn warm_model(model_type: WasmEmbeddingModelType, cache_dir: Option<String>) -> Result<(), JsValue> {
-    let result = kreuzberg::warm_model(model_type.into(), cache_dir.as_deref())
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "downloadModel")]
-pub fn download_model(model_type: WasmEmbeddingModelType, cache_dir: Option<String>) -> Result<(), JsValue> {
-    let result = kreuzberg::download_model(model_type.into(), cache_dir.as_deref())
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
-#[wasm_bindgen(js_name = "calculateSmartDpi")]
-pub fn calculate_smart_dpi(
-    page_width: f64,
-    page_height: f64,
-    target_dpi: i32,
-    max_dimension: i32,
-    max_memory_mb: f64,
-) -> i32 {
-    kreuzberg::image::dpi::calculate_smart_dpi(page_width, page_height, target_dpi, max_dimension, max_memory_mb)
-}
-
-#[wasm_bindgen(js_name = "calculateOptimalDpi")]
-pub fn calculate_optimal_dpi(
-    page_width: f64,
-    page_height: f64,
-    target_dpi: i32,
-    max_dimension: i32,
-    min_dpi: i32,
-    max_dpi: i32,
-) -> i32 {
-    kreuzberg::image::calculate_optimal_dpi(page_width, page_height, target_dpi, max_dimension, min_dpi, max_dpi)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -16729,23 +15079,6 @@ pub fn parse_hocr_to_internal_document(hocr_html: String) -> String {
     String::from("[unimplemented: parse_hocr_to_internal_document]")
 }
 
-#[wasm_bindgen(js_name = "assembleOcrMarkdown")]
-pub fn assemble_ocr_markdown(
-    elements: Vec<WasmOcrElement>,
-    detection: Option<WasmDetectionResult>,
-    img_width: u32,
-    img_height: u32,
-    recognized_tables: Vec<WasmRecognizedTable>,
-) -> String {
-    kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
-        &elements,
-        detection.as_ref(),
-        img_width,
-        img_height,
-        &recognized_tables,
-    )
-}
-
 #[wasm_bindgen(js_name = "recognizePageTables")]
 pub fn recognize_page_tables(
     page_image: String,
@@ -16760,38 +15093,6 @@ pub fn recognize_page_tables(
 #[wasm_bindgen(js_name = "extractWordsFromTsv")]
 pub fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<String>, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_words_from_tsv"))
-}
-
-#[wasm_bindgen(js_name = "computeHash")]
-pub fn compute_hash(data: String) -> String {
-    kreuzberg::ocr::compute_hash(&data)
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "validateTesseractVersion")]
-pub fn validate_tesseract_version(version: u32) -> Result<(), JsValue> {
-    let result = kreuzberg::ocr::validate_tesseract_version(version).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
-#[wasm_bindgen(js_name = "ensureOrtAvailable")]
-pub fn ensure_ort_available() -> () {
-    kreuzberg::ort_discovery::ensure_ort_available()
-}
-
-#[wasm_bindgen(js_name = "isLanguageSupported")]
-pub fn is_language_supported(lang: String) -> bool {
-    kreuzberg::paddle_ocr::is_language_supported(&lang)
-}
-
-#[wasm_bindgen(js_name = "languageToScriptFamily")]
-pub fn language_to_script_family(paddle_lang: String) -> String {
-    kreuzberg::paddle_ocr::language_to_script_family(&paddle_lang).into()
-}
-
-#[wasm_bindgen(js_name = "mapLanguageCode")]
-pub fn map_language_code(kreuzberg_code: String) -> Option<String> {
-    kreuzberg::paddle_ocr::map_language_code(&kreuzberg_code).map(Into::into)
 }
 
 #[wasm_bindgen(js_name = "buildCellGrid")]
@@ -16817,11 +15118,6 @@ pub fn preprocess_rescale(img: String, target_size: u32) -> String {
 #[wasm_bindgen(js_name = "preprocessLetterbox")]
 pub fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) -> String {
     String::from("[unimplemented: preprocess_letterbox]")
-}
-
-#[wasm_bindgen(js_name = "configFromExtraction")]
-pub fn config_from_extraction(layout_config: WasmLayoutDetectionConfig) -> String {
-    String::from("[unimplemented: config_from_extraction]")
 }
 
 #[wasm_bindgen(js_name = "takeOrCreateTatr")]
@@ -16956,12 +15252,6 @@ pub fn extract_images_from_pdf_with_password(
 #[wasm_bindgen(js_name = "detectLayoutForDocument")]
 pub fn detect_layout_for_document(pdf_bytes: Vec<u8>, engine: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: detect_layout_for_document"))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "detectLayoutForImages")]
-pub fn detect_layout_for_images(images: Vec<String>, engine: String) -> Result<Vec<WasmDetectionResult>, JsValue> {
-    Err(JsValue::from_str("Not implemented: detect_layout_for_images"))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -17158,7 +15448,7 @@ impl From<WasmExtractionConfig> for kreuzberg::ExtractionConfig {
             result_format: val.result_format.into(),
             security_limits: Default::default(),
             output_format: val.output_format.into(),
-            layout: val.layout.map(Into::into),
+            layout: Default::default(),
             include_document_structure: val.include_document_structure,
             acceleration: val.acceleration.map(Into::into),
             cache_namespace: val.cache_namespace,
@@ -17197,7 +15487,6 @@ impl From<kreuzberg::ExtractionConfig> for WasmExtractionConfig {
             result_format: val.result_format.into(),
             security_limits: val.security_limits.as_ref().map(|v| format!("{:?}", v)),
             output_format: val.output_format.into(),
-            layout: val.layout.map(Into::into),
             include_document_structure: val.include_document_structure,
             acceleration: val.acceleration.map(Into::into),
             cache_namespace: val.cache_namespace,
@@ -17232,7 +15521,7 @@ impl From<WasmFileExtractionConfig> for kreuzberg::FileExtractionConfig {
             result_format: val.result_format.map(Into::into),
             output_format: val.output_format.map(Into::into),
             include_document_structure: val.include_document_structure,
-            layout: val.layout.map(Into::into),
+            layout: Default::default(),
             timeout_secs: val.timeout_secs,
             tree_sitter: val.tree_sitter.map(Into::into),
             structured_extraction: val.structured_extraction.map(Into::into),
@@ -17261,7 +15550,6 @@ impl From<kreuzberg::FileExtractionConfig> for WasmFileExtractionConfig {
             result_format: val.result_format.map(Into::into),
             output_format: val.output_format.map(Into::into),
             include_document_structure: val.include_document_structure,
-            layout: val.layout.map(Into::into),
             timeout_secs: val.timeout_secs,
             tree_sitter: val.tree_sitter.map(Into::into),
             structured_extraction: val.structured_extraction.map(Into::into),
@@ -17355,26 +15643,6 @@ impl From<kreuzberg::HtmlOutputConfig> for WasmHtmlOutputConfig {
             theme: val.theme.into(),
             class_prefix: val.class_prefix,
             embed_css: val.embed_css,
-        }
-    }
-}
-
-impl From<WasmLayoutDetectionConfig> for kreuzberg::LayoutDetectionConfig {
-    fn from(val: WasmLayoutDetectionConfig) -> Self {
-        Self {
-            confidence_threshold: val.confidence_threshold,
-            apply_heuristics: val.apply_heuristics,
-            table_model: val.table_model.into(),
-        }
-    }
-}
-
-impl From<kreuzberg::LayoutDetectionConfig> for WasmLayoutDetectionConfig {
-    fn from(val: kreuzberg::LayoutDetectionConfig) -> Self {
-        Self {
-            confidence_threshold: val.confidence_threshold,
-            apply_heuristics: val.apply_heuristics,
-            table_model: val.table_model.into(),
         }
     }
 }
@@ -17485,7 +15753,7 @@ impl From<WasmOcrPipelineStage> for kreuzberg::OcrPipelineStage {
             backend: val.backend,
             priority: val.priority,
             language: val.language,
-            tesseract_config: val.tesseract_config.map(Into::into),
+            tesseract_config: Default::default(),
             paddle_ocr_config: val
                 .paddle_ocr_config
                 .as_ref()
@@ -17501,7 +15769,6 @@ impl From<kreuzberg::OcrPipelineStage> for WasmOcrPipelineStage {
             backend: val.backend,
             priority: val.priority,
             language: val.language,
-            tesseract_config: val.tesseract_config.map(Into::into),
             paddle_ocr_config: val
                 .paddle_ocr_config
                 .as_ref()
@@ -17535,7 +15802,7 @@ impl From<WasmOcrConfig> for kreuzberg::OcrConfig {
             enabled: val.enabled,
             backend: val.backend,
             language: val.language,
-            tesseract_config: val.tesseract_config.map(Into::into),
+            tesseract_config: Default::default(),
             output_format: val.output_format.map(Into::into),
             paddle_ocr_config: val
                 .paddle_ocr_config
@@ -17557,7 +15824,6 @@ impl From<kreuzberg::OcrConfig> for WasmOcrConfig {
             enabled: val.enabled,
             backend: val.backend,
             language: val.language,
-            tesseract_config: val.tesseract_config.map(Into::into),
             output_format: val.output_format.map(Into::into),
             paddle_ocr_config: val
                 .paddle_ocr_config
@@ -17678,7 +15944,7 @@ impl From<WasmChunkingConfig> for kreuzberg::ChunkingConfig {
             overlap: val.overlap,
             trim: val.trim,
             chunker_type: val.chunker_type.into(),
-            embedding: val.embedding.map(Into::into),
+            embedding: Default::default(),
             preset: val.preset,
             sizing: val.sizing.into(),
             prepend_heading_context: val.prepend_heading_context,
@@ -17693,34 +15959,9 @@ impl From<kreuzberg::ChunkingConfig> for WasmChunkingConfig {
             overlap: val.overlap,
             trim: val.trim,
             chunker_type: val.chunker_type.into(),
-            embedding: val.embedding.map(Into::into),
             preset: val.preset,
             sizing: val.sizing.into(),
             prepend_heading_context: val.prepend_heading_context,
-        }
-    }
-}
-
-impl From<WasmEmbeddingConfig> for kreuzberg::EmbeddingConfig {
-    fn from(val: WasmEmbeddingConfig) -> Self {
-        Self {
-            model: val.model.into(),
-            normalize: val.normalize,
-            batch_size: val.batch_size,
-            show_download_progress: val.show_download_progress,
-            cache_dir: val.cache_dir.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::EmbeddingConfig> for WasmEmbeddingConfig {
-    fn from(val: kreuzberg::EmbeddingConfig) -> Self {
-        Self {
-            model: val.model.into(),
-            normalize: val.normalize,
-            batch_size: val.batch_size,
-            show_download_progress: val.show_download_progress,
-            cache_dir: val.cache_dir.map(|p| p.to_string_lossy().to_string()),
         }
     }
 }
@@ -18008,17 +16249,6 @@ impl From<kreuzberg::extraction::OdtProperties> for WasmOdtProperties {
             paragraph_count: val.paragraph_count,
             table_count: val.table_count,
             image_count: val.image_count,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for WasmOcrFallbackDecision {
-    fn from(val: kreuzberg::extractors::pdf::OcrFallbackDecision) -> Self {
-        Self {
-            stats: format!("{:?}", val.stats),
-            avg_non_whitespace: val.avg_non_whitespace,
-            avg_alnum: val.avg_alnum,
-            fallback: val.fallback,
         }
     }
 }
@@ -18363,7 +16593,7 @@ impl From<WasmExtractionResult> for kreuzberg::ExtractionResult {
             ocr_elements: val.ocr_elements.map(|v| v.into_iter().map(Into::into).collect()),
             document: val.document.map(Into::into),
             quality_score: val.quality_score,
-            processing_warnings: val.processing_warnings.into_iter().map(Into::into).collect(),
+            processing_warnings: Default::default(),
             annotations: val.annotations.map(|v| v.into_iter().map(Into::into).collect()),
             children: val.children.map(|v| v.into_iter().map(Into::into).collect()),
             uris: val.uris.map(|v| v.into_iter().map(Into::into).collect()),
@@ -18396,7 +16626,6 @@ impl From<kreuzberg::ExtractionResult> for WasmExtractionResult {
             ocr_elements: val.ocr_elements.map(|v| v.into_iter().map(Into::into).collect()),
             document: val.document.map(Into::into),
             quality_score: val.quality_score,
-            processing_warnings: val.processing_warnings.into_iter().map(Into::into).collect(),
             annotations: val.annotations.map(|v| v.into_iter().map(Into::into).collect()),
             children: val.children.map(|v| v.into_iter().map(Into::into).collect()),
             uris: val.uris.map(|v| v.into_iter().map(Into::into).collect()),
@@ -18428,24 +16657,6 @@ impl From<kreuzberg::ArchiveEntry> for WasmArchiveEntry {
             path: val.path,
             mime_type: val.mime_type,
             result: (*val.result).into(),
-        }
-    }
-}
-
-impl From<WasmProcessingWarning> for kreuzberg::ProcessingWarning {
-    fn from(val: WasmProcessingWarning) -> Self {
-        Self {
-            source: Default::default(),
-            message: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::ProcessingWarning> for WasmProcessingWarning {
-    fn from(val: kreuzberg::ProcessingWarning) -> Self {
-        Self {
-            source: format!("{:?}", val.source),
-            message: format!("{:?}", val.message),
         }
     }
 }
@@ -18913,62 +17124,6 @@ impl From<kreuzberg::ImagePreprocessingConfig> for WasmImagePreprocessingConfig 
             contrast_enhance: val.contrast_enhance,
             binarization_method: val.binarization_method,
             invert_colors: val.invert_colors,
-        }
-    }
-}
-
-impl From<WasmTesseractConfig> for kreuzberg::TesseractConfig {
-    fn from(val: WasmTesseractConfig) -> Self {
-        Self {
-            language: val.language,
-            psm: val.psm,
-            output_format: val.output_format,
-            oem: val.oem,
-            min_confidence: val.min_confidence,
-            preprocessing: val.preprocessing.map(Into::into),
-            enable_table_detection: val.enable_table_detection,
-            table_min_confidence: val.table_min_confidence,
-            table_column_threshold: val.table_column_threshold,
-            table_row_threshold_ratio: val.table_row_threshold_ratio,
-            use_cache: val.use_cache,
-            classify_use_pre_adapted_templates: val.classify_use_pre_adapted_templates,
-            language_model_ngram_on: val.language_model_ngram_on,
-            tessedit_dont_blkrej_good_wds: val.tessedit_dont_blkrej_good_wds,
-            tessedit_dont_rowrej_good_wds: val.tessedit_dont_rowrej_good_wds,
-            tessedit_enable_dict_correction: val.tessedit_enable_dict_correction,
-            tessedit_char_whitelist: val.tessedit_char_whitelist,
-            tessedit_char_blacklist: val.tessedit_char_blacklist,
-            tessedit_use_primary_params_model: val.tessedit_use_primary_params_model,
-            textord_space_size_is_variable: val.textord_space_size_is_variable,
-            thresholding_method: val.thresholding_method,
-        }
-    }
-}
-
-impl From<kreuzberg::TesseractConfig> for WasmTesseractConfig {
-    fn from(val: kreuzberg::TesseractConfig) -> Self {
-        Self {
-            language: val.language,
-            psm: val.psm,
-            output_format: val.output_format,
-            oem: val.oem,
-            min_confidence: val.min_confidence,
-            preprocessing: val.preprocessing.map(Into::into),
-            enable_table_detection: val.enable_table_detection,
-            table_min_confidence: val.table_min_confidence,
-            table_column_threshold: val.table_column_threshold,
-            table_row_threshold_ratio: val.table_row_threshold_ratio,
-            use_cache: val.use_cache,
-            classify_use_pre_adapted_templates: val.classify_use_pre_adapted_templates,
-            language_model_ngram_on: val.language_model_ngram_on,
-            tessedit_dont_blkrej_good_wds: val.tessedit_dont_blkrej_good_wds,
-            tessedit_dont_rowrej_good_wds: val.tessedit_dont_rowrej_good_wds,
-            tessedit_enable_dict_correction: val.tessedit_enable_dict_correction,
-            tessedit_char_whitelist: val.tessedit_char_whitelist,
-            tessedit_char_blacklist: val.tessedit_char_blacklist,
-            tessedit_use_primary_params_model: val.tessedit_use_primary_params_model,
-            textord_space_size_is_variable: val.textord_space_size_is_variable,
-            thresholding_method: val.thresholding_method,
         }
     }
 }
@@ -19751,10 +17906,7 @@ impl From<kreuzberg::api::CacheClearResponse> for WasmCacheClearResponse {
 
 impl From<kreuzberg::api::EmbedRequest> for WasmEmbedRequest {
     fn from(val: kreuzberg::api::EmbedRequest) -> Self {
-        Self {
-            texts: val.texts,
-            config: val.config.map(Into::into),
-        }
+        Self { texts: val.texts }
     }
 }
 
@@ -20058,155 +18210,6 @@ impl From<kreuzberg::Keyword> for WasmKeyword {
     }
 }
 
-impl From<kreuzberg::ocr::OcrCacheStats> for WasmOcrCacheStats {
-    fn from(val: kreuzberg::ocr::OcrCacheStats) -> Self {
-        Self {
-            total_files: val.total_files,
-            total_size_mb: val.total_size_mb,
-        }
-    }
-}
-
-impl From<WasmRecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable {
-    fn from(val: WasmRecognizedTable) -> Self {
-        Self {
-            detection_bbox: val.detection_bbox.into(),
-            cells: serde_wasm_bindgen::from_value(val.cells.clone()).unwrap_or_default(),
-            markdown: val.markdown,
-        }
-    }
-}
-
-impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for WasmRecognizedTable {
-    fn from(val: kreuzberg::ocr::layout_assembly::RecognizedTable) -> Self {
-        Self {
-            detection_bbox: val.detection_bbox.into(),
-            cells: serde_wasm_bindgen::to_value(&val.cells).unwrap_or(JsValue::NULL),
-            markdown: val.markdown,
-        }
-    }
-}
-
-impl From<WasmPaddleOcrConfig> for kreuzberg::PaddleOcrConfig {
-    fn from(val: WasmPaddleOcrConfig) -> Self {
-        Self {
-            language: val.language,
-            cache_dir: val.cache_dir.map(Into::into),
-            use_angle_cls: val.use_angle_cls,
-            enable_table_detection: val.enable_table_detection,
-            det_db_thresh: val.det_db_thresh,
-            det_db_box_thresh: val.det_db_box_thresh,
-            det_db_unclip_ratio: val.det_db_unclip_ratio,
-            det_limit_side_len: val.det_limit_side_len,
-            rec_batch_num: val.rec_batch_num,
-            padding: val.padding,
-            drop_score: val.drop_score,
-            model_tier: val.model_tier,
-        }
-    }
-}
-
-impl From<kreuzberg::PaddleOcrConfig> for WasmPaddleOcrConfig {
-    fn from(val: kreuzberg::PaddleOcrConfig) -> Self {
-        Self {
-            language: val.language,
-            cache_dir: val.cache_dir.map(|p| p.to_string_lossy().to_string()),
-            use_angle_cls: val.use_angle_cls,
-            enable_table_detection: val.enable_table_detection,
-            det_db_thresh: val.det_db_thresh,
-            det_db_box_thresh: val.det_db_box_thresh,
-            det_db_unclip_ratio: val.det_db_unclip_ratio,
-            det_limit_side_len: val.det_limit_side_len,
-            rec_batch_num: val.rec_batch_num,
-            padding: val.padding,
-            drop_score: val.drop_score,
-            model_tier: val.model_tier,
-        }
-    }
-}
-
-impl From<kreuzberg::ModelPaths> for WasmModelPaths {
-    fn from(val: kreuzberg::ModelPaths) -> Self {
-        Self {
-            det_model: val.det_model.to_string_lossy().to_string(),
-            cls_model: val.cls_model.to_string_lossy().to_string(),
-            rec_model: val.rec_model.to_string_lossy().to_string(),
-            dict_file: val.dict_file.to_string_lossy().to_string(),
-        }
-    }
-}
-
-impl From<kreuzberg::OrientationResult> for WasmOrientationResult {
-    fn from(val: kreuzberg::OrientationResult) -> Self {
-        Self {
-            degrees: val.degrees,
-            confidence: val.confidence,
-        }
-    }
-}
-
-impl From<WasmBBox> for kreuzberg::BBox {
-    fn from(val: WasmBBox) -> Self {
-        Self {
-            x1: val.x1,
-            y1: val.y1,
-            x2: val.x2,
-            y2: val.y2,
-        }
-    }
-}
-
-impl From<kreuzberg::BBox> for WasmBBox {
-    fn from(val: kreuzberg::BBox) -> Self {
-        Self {
-            x1: val.x1,
-            y1: val.y1,
-            x2: val.x2,
-            y2: val.y2,
-        }
-    }
-}
-
-impl From<WasmLayoutDetection> for kreuzberg::LayoutDetection {
-    fn from(val: WasmLayoutDetection) -> Self {
-        Self {
-            class: val.class.into(),
-            confidence: val.confidence,
-            bbox: val.bbox.into(),
-        }
-    }
-}
-
-impl From<kreuzberg::LayoutDetection> for WasmLayoutDetection {
-    fn from(val: kreuzberg::LayoutDetection) -> Self {
-        Self {
-            class: val.class.into(),
-            confidence: val.confidence,
-            bbox: val.bbox.into(),
-        }
-    }
-}
-
-impl From<WasmDetectionResult> for kreuzberg::DetectionResult {
-    fn from(val: WasmDetectionResult) -> Self {
-        Self {
-            page_width: val.page_width,
-            page_height: val.page_height,
-            detections: val.detections.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<kreuzberg::DetectionResult> for WasmDetectionResult {
-    fn from(val: kreuzberg::DetectionResult) -> Self {
-        Self {
-            page_width: val.page_width,
-            page_height: val.page_height,
-            detections: val.detections.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
 impl From<WasmEmbeddedFile> for kreuzberg::pdf::embedded_files::EmbeddedFile {
     fn from(val: WasmEmbeddedFile) -> Self {
         Self {
@@ -20331,32 +18334,6 @@ impl From<kreuzberg::pdf::PdfImage> for WasmPdfImage {
     }
 }
 
-impl From<kreuzberg::pdf::layout_runner::PageLayoutResult> for WasmPageLayoutResult {
-    fn from(val: kreuzberg::pdf::layout_runner::PageLayoutResult) -> Self {
-        Self {
-            page_index: val.page_index,
-            regions: val.regions.iter().map(|i| format!("{:?}", i)).collect(),
-            page_width_pts: val.page_width_pts,
-            page_height_pts: val.page_height_pts,
-            render_width_px: val.render_width_px,
-            render_height_px: val.render_height_px,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::layout_runner::PageTiming> for WasmPageTiming {
-    fn from(val: kreuzberg::pdf::layout_runner::PageTiming) -> Self {
-        Self {
-            render_ms: val.render_ms,
-            preprocess_ms: val.preprocess_ms,
-            onnx_ms: val.onnx_ms,
-            inference_ms: val.inference_ms,
-            postprocess_ms: val.postprocess_ms,
-            mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
 impl From<WasmCommonPdfMetadata> for kreuzberg::pdf::metadata::CommonPdfMetadata {
     fn from(val: WasmCommonPdfMetadata) -> Self {
         Self {
@@ -20457,32 +18434,6 @@ impl From<kreuzberg::HtmlTheme> for WasmHtmlTheme {
             kreuzberg::HtmlTheme::Dark => Self::Dark,
             kreuzberg::HtmlTheme::Light => Self::Light,
             kreuzberg::HtmlTheme::Unstyled => Self::Unstyled,
-        }
-    }
-}
-
-impl From<WasmTableModel> for kreuzberg::TableModel {
-    fn from(val: WasmTableModel) -> Self {
-        match val {
-            WasmTableModel::Tatr => Self::Tatr,
-            WasmTableModel::SlanetWired => Self::SlanetWired,
-            WasmTableModel::SlanetWireless => Self::SlanetWireless,
-            WasmTableModel::SlanetPlus => Self::SlanetPlus,
-            WasmTableModel::SlanetAuto => Self::SlanetAuto,
-            WasmTableModel::Disabled => Self::Disabled,
-        }
-    }
-}
-
-impl From<kreuzberg::TableModel> for WasmTableModel {
-    fn from(val: kreuzberg::TableModel) -> Self {
-        match val {
-            kreuzberg::TableModel::Tatr => Self::Tatr,
-            kreuzberg::TableModel::SlanetWired => Self::SlanetWired,
-            kreuzberg::TableModel::SlanetWireless => Self::SlanetWireless,
-            kreuzberg::TableModel::SlanetPlus => Self::SlanetPlus,
-            kreuzberg::TableModel::SlanetAuto => Self::SlanetAuto,
-            kreuzberg::TableModel::Disabled => Self::Disabled,
         }
     }
 }
@@ -21255,95 +19206,6 @@ impl From<kreuzberg::KeywordAlgorithm> for WasmKeywordAlgorithm {
         match val {
             kreuzberg::KeywordAlgorithm::Yake => Self::Yake,
             kreuzberg::KeywordAlgorithm::Rake => Self::Rake,
-        }
-    }
-}
-
-impl From<kreuzberg::PSMMode> for WasmPSMMode {
-    fn from(val: kreuzberg::PSMMode) -> Self {
-        match val {
-            kreuzberg::PSMMode::OsdOnly => Self::OsdOnly,
-            kreuzberg::PSMMode::AutoOsd => Self::AutoOsd,
-            kreuzberg::PSMMode::AutoOnly => Self::AutoOnly,
-            kreuzberg::PSMMode::Auto => Self::Auto,
-            kreuzberg::PSMMode::SingleColumn => Self::SingleColumn,
-            kreuzberg::PSMMode::SingleBlockVertical => Self::SingleBlockVertical,
-            kreuzberg::PSMMode::SingleBlock => Self::SingleBlock,
-            kreuzberg::PSMMode::SingleLine => Self::SingleLine,
-            kreuzberg::PSMMode::SingleWord => Self::SingleWord,
-            kreuzberg::PSMMode::CircleWord => Self::CircleWord,
-            kreuzberg::PSMMode::SingleChar => Self::SingleChar,
-        }
-    }
-}
-
-impl From<kreuzberg::PaddleLanguage> for WasmPaddleLanguage {
-    fn from(val: kreuzberg::PaddleLanguage) -> Self {
-        match val {
-            kreuzberg::PaddleLanguage::English => Self::English,
-            kreuzberg::PaddleLanguage::Chinese => Self::Chinese,
-            kreuzberg::PaddleLanguage::Japanese => Self::Japanese,
-            kreuzberg::PaddleLanguage::Korean => Self::Korean,
-            kreuzberg::PaddleLanguage::German => Self::German,
-            kreuzberg::PaddleLanguage::French => Self::French,
-            kreuzberg::PaddleLanguage::Latin => Self::Latin,
-            kreuzberg::PaddleLanguage::Cyrillic => Self::Cyrillic,
-            kreuzberg::PaddleLanguage::TraditionalChinese => Self::TraditionalChinese,
-            kreuzberg::PaddleLanguage::Thai => Self::Thai,
-            kreuzberg::PaddleLanguage::Greek => Self::Greek,
-            kreuzberg::PaddleLanguage::EastSlavic => Self::EastSlavic,
-            kreuzberg::PaddleLanguage::Arabic => Self::Arabic,
-            kreuzberg::PaddleLanguage::Devanagari => Self::Devanagari,
-            kreuzberg::PaddleLanguage::Tamil => Self::Tamil,
-            kreuzberg::PaddleLanguage::Telugu => Self::Telugu,
-        }
-    }
-}
-
-impl From<WasmLayoutClass> for kreuzberg::LayoutClass {
-    fn from(val: WasmLayoutClass) -> Self {
-        match val {
-            WasmLayoutClass::Caption => Self::Caption,
-            WasmLayoutClass::Footnote => Self::Footnote,
-            WasmLayoutClass::Formula => Self::Formula,
-            WasmLayoutClass::ListItem => Self::ListItem,
-            WasmLayoutClass::PageFooter => Self::PageFooter,
-            WasmLayoutClass::PageHeader => Self::PageHeader,
-            WasmLayoutClass::Picture => Self::Picture,
-            WasmLayoutClass::SectionHeader => Self::SectionHeader,
-            WasmLayoutClass::Table => Self::Table,
-            WasmLayoutClass::Text => Self::Text,
-            WasmLayoutClass::Title => Self::Title,
-            WasmLayoutClass::DocumentIndex => Self::DocumentIndex,
-            WasmLayoutClass::Code => Self::Code,
-            WasmLayoutClass::CheckboxSelected => Self::CheckboxSelected,
-            WasmLayoutClass::CheckboxUnselected => Self::CheckboxUnselected,
-            WasmLayoutClass::Form => Self::Form,
-            WasmLayoutClass::KeyValueRegion => Self::KeyValueRegion,
-        }
-    }
-}
-
-impl From<kreuzberg::LayoutClass> for WasmLayoutClass {
-    fn from(val: kreuzberg::LayoutClass) -> Self {
-        match val {
-            kreuzberg::LayoutClass::Caption => Self::Caption,
-            kreuzberg::LayoutClass::Footnote => Self::Footnote,
-            kreuzberg::LayoutClass::Formula => Self::Formula,
-            kreuzberg::LayoutClass::ListItem => Self::ListItem,
-            kreuzberg::LayoutClass::PageFooter => Self::PageFooter,
-            kreuzberg::LayoutClass::PageHeader => Self::PageHeader,
-            kreuzberg::LayoutClass::Picture => Self::Picture,
-            kreuzberg::LayoutClass::SectionHeader => Self::SectionHeader,
-            kreuzberg::LayoutClass::Table => Self::Table,
-            kreuzberg::LayoutClass::Text => Self::Text,
-            kreuzberg::LayoutClass::Title => Self::Title,
-            kreuzberg::LayoutClass::DocumentIndex => Self::DocumentIndex,
-            kreuzberg::LayoutClass::Code => Self::Code,
-            kreuzberg::LayoutClass::CheckboxSelected => Self::CheckboxSelected,
-            kreuzberg::LayoutClass::CheckboxUnselected => Self::CheckboxUnselected,
-            kreuzberg::LayoutClass::Form => Self::Form,
-            kreuzberg::LayoutClass::KeyValueRegion => Self::KeyValueRegion,
         }
     }
 }
