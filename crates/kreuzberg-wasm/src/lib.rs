@@ -554,10 +554,10 @@ impl WasmExtractionConfig {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen]
     pub fn validate(&self) -> Result<(), JsValue> {
-        kreuzberg::ExtractionConfig::from(self.clone())
+        let result = kreuzberg::ExtractionConfig::from(self.clone())
             .validate()
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
+        Ok(result)
     }
 
     #[wasm_bindgen(js_name = "effectiveDisableOcr")]
@@ -1844,10 +1844,10 @@ impl WasmOcrConfig {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen]
     pub fn validate(&self) -> Result<(), JsValue> {
-        kreuzberg::OcrConfig::from(self.clone())
+        let result = kreuzberg::OcrConfig::from(self.clone())
             .validate()
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
+        Ok(result)
     }
 
     #[wasm_bindgen(js_name = "effectiveThresholds")]
@@ -2215,8 +2215,8 @@ impl WasmPostProcessorConfig {
     }
 
     #[wasm_bindgen(js_name = "buildLookupSets")]
-    pub fn build_lookup_sets(&self) {
-        
+    pub fn build_lookup_sets(&self) -> () {
+        ()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -2718,25 +2718,25 @@ impl WasmServerConfig {
 
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "fromFile")]
-    pub fn from_file(_path: String) -> Result<WasmServerConfig, JsValue> {
+    pub fn from_file(path: String) -> Result<WasmServerConfig, JsValue> {
         Err(JsValue::from_str("Not implemented: from_file"))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "fromTomlFile")]
-    pub fn from_toml_file(_path: String) -> Result<WasmServerConfig, JsValue> {
+    pub fn from_toml_file(path: String) -> Result<WasmServerConfig, JsValue> {
         Err(JsValue::from_str("Not implemented: from_toml_file"))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "fromYamlFile")]
-    pub fn from_yaml_file(_path: String) -> Result<WasmServerConfig, JsValue> {
+    pub fn from_yaml_file(path: String) -> Result<WasmServerConfig, JsValue> {
         Err(JsValue::from_str("Not implemented: from_yaml_file"))
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "fromJsonFile")]
-    pub fn from_json_file(_path: String) -> Result<WasmServerConfig, JsValue> {
+    pub fn from_json_file(path: String) -> Result<WasmServerConfig, JsValue> {
         Err(JsValue::from_str("Not implemented: from_json_file"))
     }
 }
@@ -2836,7 +2836,7 @@ impl WasmStreamReader {
 
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "readBytes")]
-    pub fn read_bytes(&self, _len: usize) -> Result<Vec<u8>, JsValue> {
+    pub fn read_bytes(&self, len: usize) -> Result<Vec<u8>, JsValue> {
         Err(JsValue::from_str("Not implemented: read_bytes"))
     }
 
@@ -4135,7 +4135,7 @@ pub struct WasmStringGrowthValidator {
 impl WasmStringGrowthValidator {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "checkAppend")]
-    pub fn check_append(&self, _len: usize) -> Result<(), JsValue> {
+    pub fn check_append(&self, len: usize) -> Result<(), JsValue> {
         Err(JsValue::from_str("Not implemented: check_append"))
     }
 
@@ -4180,8 +4180,8 @@ impl WasmDepthValidator {
     }
 
     #[wasm_bindgen]
-    pub fn pop(&self) {
-        
+    pub fn pop(&self) -> () {
+        ()
     }
 
     #[wasm_bindgen(js_name = "currentDepth")]
@@ -4218,7 +4218,7 @@ pub struct WasmTableValidator {
 impl WasmTableValidator {
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen(js_name = "addCells")]
-    pub fn add_cells(&self, _count: usize) -> Result<(), JsValue> {
+    pub fn add_cells(&self, count: usize) -> Result<(), JsValue> {
         Err(JsValue::from_str("Not implemented: add_cells"))
     }
 
@@ -4971,22 +4971,22 @@ impl WasmDocumentStructure {
     }
 
     #[wasm_bindgen(js_name = "pushNode")]
-    pub fn push_node(&self, _node: WasmDocumentNode) -> u32 {
+    pub fn push_node(&self, node: WasmDocumentNode) -> u32 {
         0
     }
 
     #[wasm_bindgen(js_name = "addChild")]
-    pub fn add_child(&self, _parent: u32, _child: u32) {
-        
+    pub fn add_child(&self, parent: u32, child: u32) -> () {
+        ()
     }
 
     #[allow(clippy::missing_errors_doc)]
     #[wasm_bindgen]
     pub fn validate(&self) -> Result<(), JsValue> {
-        kreuzberg::DocumentStructure::from(self.clone())
+        let result = kreuzberg::DocumentStructure::from(self.clone())
             .validate()
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
-        Ok(())
+        Ok(result)
     }
 
     #[wasm_bindgen(js_name = "bodyRoots")]
@@ -10501,7 +10501,7 @@ pub struct WasmTracingLayer {
 #[wasm_bindgen]
 impl WasmTracingLayer {
     #[wasm_bindgen]
-    pub fn layer(&self, _inner: String) -> String {
+    pub fn layer(&self, inner: String) -> String {
         String::from("[unimplemented: layer]")
     }
 }
@@ -13291,17 +13291,17 @@ impl Default for WasmKeywordAlgorithm {
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "getCacheMetadata")]
-pub fn get_cache_metadata(_cache_dir: String) -> Result<String, JsValue> {
+pub fn get_cache_metadata(cache_dir: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: get_cache_metadata"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "cleanupCache")]
 pub fn cleanup_cache(
-    _cache_dir: String,
-    _max_age_days: f64,
-    _max_size_mb: f64,
-    _target_size_ratio: f64,
+    cache_dir: String,
+    max_age_days: f64,
+    max_size_mb: f64,
+    target_size_ratio: f64,
 ) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: cleanup_cache"))
 }
@@ -13309,10 +13309,10 @@ pub fn cleanup_cache(
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "smartCleanupCache")]
 pub fn smart_cleanup_cache(
-    _cache_dir: String,
-    _max_age_days: f64,
-    _max_size_mb: f64,
-    _min_free_space_mb: f64,
+    cache_dir: String,
+    max_age_days: f64,
+    max_size_mb: f64,
+    min_free_space_mb: f64,
 ) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: smart_cleanup_cache"))
 }
@@ -13324,23 +13324,23 @@ pub fn is_cache_valid(cache_path: String, max_age_days: f64) -> bool {
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "clearCacheDirectory")]
-pub fn clear_cache_directory(_cache_dir: String) -> Result<String, JsValue> {
+pub fn clear_cache_directory(cache_dir: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: clear_cache_directory"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "batchCleanupCaches")]
 pub fn batch_cleanup_caches(
-    _cache_dirs: Vec<String>,
-    _max_age_days: f64,
-    _max_size_mb: f64,
-    _min_free_space_mb: f64,
+    cache_dirs: Vec<String>,
+    max_age_days: f64,
+    max_size_mb: f64,
+    min_free_space_mb: f64,
 ) -> Result<Vec<String>, JsValue> {
     Err(JsValue::from_str("Not implemented: batch_cleanup_caches"))
 }
 
 #[wasm_bindgen(js_name = "generateCacheKey")]
-pub fn generate_cache_key(_parts: Vec<String>) -> String {
+pub fn generate_cache_key(parts: Vec<String>) -> String {
     String::from("[unimplemented: generate_cache_key]")
 }
 
@@ -13380,7 +13380,7 @@ pub fn filter_old_cache_entries(cache_times: Vec<f64>, current_time: f64, max_ag
 }
 
 #[wasm_bindgen(js_name = "sortCacheByAccessTime")]
-pub fn sort_cache_by_access_time(_entries: Vec<String>) -> Vec<String> {
+pub fn sort_cache_by_access_time(entries: Vec<String>) -> Vec<String> {
     Vec::new()
 }
 
@@ -13395,12 +13395,12 @@ pub fn is_batch_mode() -> bool {
 }
 
 #[wasm_bindgen(js_name = "resolveThreadBudget")]
-pub fn resolve_thread_budget(_config: Option<String>) -> usize {
+pub fn resolve_thread_budget(config: Option<String>) -> usize {
     0
 }
 
 #[wasm_bindgen(js_name = "initThreadPools")]
-pub fn init_thread_pools(budget: usize) {
+pub fn init_thread_pools(budget: usize) -> () {
     kreuzberg::core::config::concurrency::init_thread_pools(budget)
 }
 
@@ -13428,110 +13428,114 @@ pub fn build_config_from_json(
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validatePort")]
 pub fn validate_port(port: u16) -> Result<(), JsValue> {
-    kreuzberg::core::config_validation::validate_port(port).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result =
+        kreuzberg::core::config_validation::validate_port(port).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateHost")]
 pub fn validate_host(host: String) -> Result<(), JsValue> {
-    kreuzberg::core::config_validation::validate_host(&host).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result =
+        kreuzberg::core::config_validation::validate_host(&host).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateCorsOrigin")]
 pub fn validate_cors_origin(origin: String) -> Result<(), JsValue> {
-    kreuzberg::core::config_validation::validate_cors_origin(&origin)
+    let result = kreuzberg::core::config_validation::validate_cors_origin(&origin)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateUploadSize")]
 pub fn validate_upload_size(size: usize) -> Result<(), JsValue> {
-    kreuzberg::core::config_validation::validate_upload_size(size)
+    let result = kreuzberg::core::config_validation::validate_upload_size(size)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateBinarizationMethod")]
 pub fn validate_binarization_method(method: String) -> Result<(), JsValue> {
-    kreuzberg::core::validate_binarization_method(&method).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result =
+        kreuzberg::core::validate_binarization_method(&method).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateTokenReductionLevel")]
 pub fn validate_token_reduction_level(level: String) -> Result<(), JsValue> {
-    kreuzberg::core::validate_token_reduction_level(&level).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result =
+        kreuzberg::core::validate_token_reduction_level(&level).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateOcrBackend")]
 pub fn validate_ocr_backend(backend: String) -> Result<(), JsValue> {
-    kreuzberg::core::validate_ocr_backend(&backend).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::core::validate_ocr_backend(&backend).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateLanguageCode")]
 pub fn validate_language_code(code: String) -> Result<(), JsValue> {
-    kreuzberg::core::validate_language_code(&code).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::core::validate_language_code(&code).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateTesseractPsm")]
 pub fn validate_tesseract_psm(psm: i32) -> Result<(), JsValue> {
-    kreuzberg::core::validate_tesseract_psm(psm).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::core::validate_tesseract_psm(psm).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateTesseractOem")]
 pub fn validate_tesseract_oem(oem: i32) -> Result<(), JsValue> {
-    kreuzberg::core::validate_tesseract_oem(oem).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::core::validate_tesseract_oem(oem).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateOutputFormat")]
 pub fn validate_output_format(format: String) -> Result<(), JsValue> {
-    kreuzberg::core::validate_output_format(&format).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::core::validate_output_format(&format).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateConfidence")]
 pub fn validate_confidence(confidence: f64) -> Result<(), JsValue> {
-    kreuzberg::core::validate_confidence(confidence).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::core::validate_confidence(confidence).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateDpi")]
 pub fn validate_dpi(dpi: i32) -> Result<(), JsValue> {
-    kreuzberg::core::validate_dpi(dpi).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::core::validate_dpi(dpi).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateChunkingParams")]
 pub fn validate_chunking_params(max_chars: usize, max_overlap: usize) -> Result<(), JsValue> {
-    kreuzberg::core::validate_chunking_params(max_chars, max_overlap)
+    let result = kreuzberg::core::validate_chunking_params(max_chars, max_overlap)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateLlmConfigModel")]
 pub fn validate_llm_config_model(model: String) -> Result<(), JsValue> {
-    kreuzberg::core::config_validation::validate_llm_config_model(&model)
+    let result = kreuzberg::core::config_validation::validate_llm_config_model(&model)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -13539,14 +13543,14 @@ pub fn validate_llm_config_model(model: String) -> Result<(), JsValue> {
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<WasmLlmConfig>) -> Result<(), JsValue> {
     let vlm_config_owned: Option<kreuzberg::LlmConfig> = vlm_config.map(Into::into);
     let vlm_config_core = vlm_config_owned.as_ref();
-    kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config_core)
+    let result = kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config_core)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateStructuredExtractionSchema")]
-pub fn validate_structured_extraction_schema(_schema: JsValue, _llm_model: String) -> Result<(), JsValue> {
+pub fn validate_structured_extraction_schema(schema: JsValue, llm_model: String) -> Result<(), JsValue> {
     Err(JsValue::from_str(
         "Not implemented: validate_structured_extraction_schema",
     ))
@@ -13581,7 +13585,7 @@ pub async fn extract_file(
 }
 
 #[wasm_bindgen(js_name = "getPoolSizingHint")]
-pub fn get_pool_sizing_hint(_file_size: u64, _mime_type: String) -> String {
+pub fn get_pool_sizing_hint(file_size: u64, mime_type: String) -> String {
     String::from("[unimplemented: get_pool_sizing_hint]")
 }
 
@@ -13592,36 +13596,36 @@ pub fn is_valid_format_field(field: String) -> bool {
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "openFileBytes")]
-pub fn open_file_bytes(_path: String) -> Result<String, JsValue> {
+pub fn open_file_bytes(path: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: open_file_bytes"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "readFileSync")]
-pub fn read_file_sync(_path: String) -> Result<Vec<u8>, JsValue> {
+pub fn read_file_sync(path: String) -> Result<Vec<u8>, JsValue> {
     Err(JsValue::from_str("Not implemented: read_file_sync"))
 }
 
 #[wasm_bindgen(js_name = "fileExists")]
-pub fn file_exists(_path: String) -> bool {
+pub fn file_exists(path: String) -> bool {
     false
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateFileExists")]
-pub fn validate_file_exists(_path: String) -> Result<(), JsValue> {
+pub fn validate_file_exists(path: String) -> Result<(), JsValue> {
     Err(JsValue::from_str("Not implemented: validate_file_exists"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "findFilesByExtension")]
-pub fn find_files_by_extension(_dir: String, _extension: String, _recursive: bool) -> Result<Vec<String>, JsValue> {
+pub fn find_files_by_extension(dir: String, extension: String, recursive: bool) -> Result<Vec<String>, JsValue> {
     Err(JsValue::from_str("Not implemented: find_files_by_extension"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "detectMimeType")]
-pub fn detect_mime_type(_path: String, _check_exists: bool) -> Result<String, JsValue> {
+pub fn detect_mime_type(path: String, check_exists: bool) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: detect_mime_type"))
 }
 
@@ -13665,8 +13669,8 @@ pub fn list_supported_formats() -> Vec<WasmSupportedFormat> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "clearProcessorCache")]
 pub fn clear_processor_cache() -> Result<(), JsValue> {
-    kreuzberg::core::pipeline::clear_processor_cache().map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::core::pipeline::clear_processor_cache().map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[wasm_bindgen(js_name = "isPageTextBlank")]
@@ -13675,19 +13679,19 @@ pub fn is_page_text_blank(text: String) -> bool {
 }
 
 #[wasm_bindgen(js_name = "resolveRelationships")]
-pub fn resolve_relationships(_doc: String) {
-    
+pub fn resolve_relationships(doc: String) -> () {
+    ()
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "parseJson")]
-pub fn parse_json(_data: Vec<u8>, _config: Option<String>) -> Result<WasmStructuredDataResult, JsValue> {
+pub fn parse_json(data: Vec<u8>, config: Option<String>) -> Result<WasmStructuredDataResult, JsValue> {
     Err(JsValue::from_str("Not implemented: parse_json"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "parseJsonl")]
-pub fn parse_jsonl(_data: Vec<u8>, _config: Option<String>) -> Result<WasmStructuredDataResult, JsValue> {
+pub fn parse_jsonl(data: Vec<u8>, config: Option<String>) -> Result<WasmStructuredDataResult, JsValue> {
     Err(JsValue::from_str("Not implemented: parse_jsonl"))
 }
 
@@ -13720,12 +13724,12 @@ pub fn transform_to_document_structure(result: WasmExtractionResult) -> WasmDocu
 }
 
 #[wasm_bindgen(js_name = "detectListItems")]
-pub fn detect_list_items(_text: String) -> Vec<String> {
+pub fn detect_list_items(text: String) -> Vec<String> {
     Vec::new()
 }
 
 #[wasm_bindgen(js_name = "generateElementId")]
-pub fn generate_element_id(_text: String, _element_type: WasmElementType, _page_number: Option<usize>) -> String {
+pub fn generate_element_id(text: String, element_type: WasmElementType, page_number: Option<usize>) -> String {
     String::from("[unimplemented: generate_element_id]")
 }
 
@@ -13740,7 +13744,7 @@ pub fn transform_extraction_result_to_elements(result: WasmExtractionResult) -> 
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "parseBodyText")]
-pub fn parse_body_text(_data: Vec<u8>, _is_compressed: bool) -> Result<Vec<String>, JsValue> {
+pub fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> Result<Vec<String>, JsValue> {
     Err(JsValue::from_str("Not implemented: parse_body_text"))
 }
 
@@ -13761,7 +13765,7 @@ pub fn extract_hwp_text(bytes: Vec<u8>) -> Result<String, JsValue> {
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractImageMetadata")]
-pub fn extract_image_metadata(_bytes: Vec<u8>) -> Result<String, JsValue> {
+pub fn extract_image_metadata(bytes: Vec<u8>) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_image_metadata"))
 }
 
@@ -13792,85 +13796,85 @@ pub fn estimate_table_markdown_capacity(row_count: usize, col_count: usize) -> u
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "decompressGzip")]
-pub fn decompress_gzip(_bytes: Vec<u8>, _limits: String) -> Result<Vec<u8>, JsValue> {
+pub fn decompress_gzip(bytes: Vec<u8>, limits: String) -> Result<Vec<u8>, JsValue> {
     Err(JsValue::from_str("Not implemented: decompress_gzip"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractGzip")]
-pub fn extract_gzip(_bytes: Vec<u8>, _limits: String) -> Result<String, JsValue> {
+pub fn extract_gzip(bytes: Vec<u8>, limits: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_gzip"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractGzipMetadata")]
-pub fn extract_gzip_metadata(_bytes: Vec<u8>, _limits: String) -> Result<WasmArchiveMetadata, JsValue> {
+pub fn extract_gzip_metadata(bytes: Vec<u8>, limits: String) -> Result<WasmArchiveMetadata, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_gzip_metadata"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractGzipTextContent")]
-pub fn extract_gzip_text_content(_bytes: Vec<u8>, _limits: String) -> Result<String, JsValue> {
+pub fn extract_gzip_text_content(bytes: Vec<u8>, limits: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_gzip_text_content"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractGzipWithBytes")]
-pub fn extract_gzip_with_bytes(_bytes: Vec<u8>, _limits: String) -> Result<String, JsValue> {
+pub fn extract_gzip_with_bytes(bytes: Vec<u8>, limits: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_gzip_with_bytes"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extract7zMetadata")]
-pub fn extract_7z_metadata(_bytes: Vec<u8>, _limits: String) -> Result<WasmArchiveMetadata, JsValue> {
+pub fn extract_7z_metadata(bytes: Vec<u8>, limits: String) -> Result<WasmArchiveMetadata, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_7z_metadata"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extract7zTextContent")]
-pub fn extract_7z_text_content(_bytes: Vec<u8>, _limits: String) -> Result<String, JsValue> {
+pub fn extract_7z_text_content(bytes: Vec<u8>, limits: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_7z_text_content"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extract7zFileBytes")]
-pub fn extract_7z_file_bytes(_bytes: Vec<u8>, _limits: String) -> Result<String, JsValue> {
+pub fn extract_7z_file_bytes(bytes: Vec<u8>, limits: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_7z_file_bytes"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractTarMetadata")]
-pub fn extract_tar_metadata(_bytes: Vec<u8>, _limits: String) -> Result<WasmArchiveMetadata, JsValue> {
+pub fn extract_tar_metadata(bytes: Vec<u8>, limits: String) -> Result<WasmArchiveMetadata, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_tar_metadata"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractTarTextContent")]
-pub fn extract_tar_text_content(_bytes: Vec<u8>, _limits: String) -> Result<String, JsValue> {
+pub fn extract_tar_text_content(bytes: Vec<u8>, limits: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_tar_text_content"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractTarFileBytes")]
-pub fn extract_tar_file_bytes(_bytes: Vec<u8>, _limits: String) -> Result<String, JsValue> {
+pub fn extract_tar_file_bytes(bytes: Vec<u8>, limits: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_tar_file_bytes"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractZipMetadata")]
-pub fn extract_zip_metadata(_bytes: Vec<u8>, _limits: String) -> Result<WasmArchiveMetadata, JsValue> {
+pub fn extract_zip_metadata(bytes: Vec<u8>, limits: String) -> Result<WasmArchiveMetadata, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_zip_metadata"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractZipTextContent")]
-pub fn extract_zip_text_content(_bytes: Vec<u8>, _limits: String) -> Result<String, JsValue> {
+pub fn extract_zip_text_content(bytes: Vec<u8>, limits: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_zip_text_content"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractZipFileBytes")]
-pub fn extract_zip_file_bytes(_bytes: Vec<u8>, _limits: String) -> Result<String, JsValue> {
+pub fn extract_zip_file_bytes(bytes: Vec<u8>, limits: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_zip_file_bytes"))
 }
 
@@ -13937,9 +13941,9 @@ pub fn excel_to_markdown(workbook: WasmExcelWorkbook) -> String {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "convertHtmlToMarkdown")]
 pub fn convert_html_to_markdown(
-    _html: String,
-    _options: Option<String>,
-    _output_format: Option<String>,
+    html: String,
+    options: Option<String>,
+    output_format: Option<String>,
 ) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: convert_html_to_markdown"))
 }
@@ -13947,9 +13951,9 @@ pub fn convert_html_to_markdown(
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "convertHtmlToMarkdownWithMetadata")]
 pub fn convert_html_to_markdown_with_metadata(
-    _html: String,
-    _options: Option<String>,
-    _output_format: Option<String>,
+    html: String,
+    options: Option<String>,
+    output_format: Option<String>,
 ) -> Result<String, JsValue> {
     Err(JsValue::from_str(
         "Not implemented: convert_html_to_markdown_with_metadata",
@@ -13959,9 +13963,9 @@ pub fn convert_html_to_markdown_with_metadata(
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "convertHtmlToMarkdownWithTables")]
 pub fn convert_html_to_markdown_with_tables(
-    _html: String,
-    _options: Option<String>,
-    _output_format: Option<String>,
+    html: String,
+    options: Option<String>,
+    output_format: Option<String>,
 ) -> Result<String, JsValue> {
     Err(JsValue::from_str(
         "Not implemented: convert_html_to_markdown_with_tables",
@@ -13970,29 +13974,29 @@ pub fn convert_html_to_markdown_with_tables(
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractHtmlInlineImages")]
-pub fn extract_html_inline_images(_html: String, _options: Option<String>) -> Result<Vec<String>, JsValue> {
+pub fn extract_html_inline_images(html: String, options: Option<String>) -> Result<Vec<String>, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_html_inline_images"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractDocText")]
-pub fn extract_doc_text(_content: Vec<u8>) -> Result<String, JsValue> {
+pub fn extract_doc_text(content: Vec<u8>) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_doc_text"))
 }
 
 #[wasm_bindgen(js_name = "collectAndConvertOmathPara")]
-pub fn collect_and_convert_omath_para(_reader: String) -> String {
+pub fn collect_and_convert_omath_para(reader: String) -> String {
     String::from("[unimplemented: collect_and_convert_omath_para]")
 }
 
 #[wasm_bindgen(js_name = "collectAndConvertOmath")]
-pub fn collect_and_convert_omath(_reader: String) -> String {
+pub fn collect_and_convert_omath(reader: String) -> String {
     String::from("[unimplemented: collect_and_convert_omath]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "parseDocument")]
-pub fn parse_document(_bytes: Vec<u8>) -> Result<String, JsValue> {
+pub fn parse_document(bytes: Vec<u8>) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: parse_document"))
 }
 
@@ -14005,34 +14009,34 @@ pub fn extract_text_from_bytes(bytes: Vec<u8>) -> Result<String, JsValue> {
 }
 
 #[wasm_bindgen(js_name = "parseSectionProperties")]
-pub fn parse_section_properties(_node: String) -> String {
+pub fn parse_section_properties(node: String) -> String {
     String::from("[unimplemented: parse_section_properties]")
 }
 
 #[wasm_bindgen(js_name = "parseSectionPropertiesStreaming")]
-pub fn parse_section_properties_streaming(_reader: String) -> String {
+pub fn parse_section_properties_streaming(reader: String) -> String {
     String::from("[unimplemented: parse_section_properties_streaming]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "parseStylesXml")]
-pub fn parse_styles_xml(_xml: String) -> Result<String, JsValue> {
+pub fn parse_styles_xml(xml: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: parse_styles_xml"))
 }
 
 #[wasm_bindgen(js_name = "parseRowProperties")]
-pub fn parse_row_properties(_reader: String) -> String {
+pub fn parse_row_properties(reader: String) -> String {
     String::from("[unimplemented: parse_row_properties]")
 }
 
 #[wasm_bindgen(js_name = "parseCellProperties")]
-pub fn parse_cell_properties(_reader: String) -> String {
+pub fn parse_cell_properties(reader: String) -> String {
     String::from("[unimplemented: parse_cell_properties]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "parseThemeXml")]
-pub fn parse_theme_xml(_xml: String) -> Result<String, JsValue> {
+pub fn parse_theme_xml(xml: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: parse_theme_xml"))
 }
 
@@ -14045,7 +14049,7 @@ pub fn extract_text(bytes: Vec<u8>) -> Result<String, JsValue> {
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractTextWithPageBreaks")]
-pub fn extract_text_with_page_breaks(_bytes: Vec<u8>) -> Result<String, JsValue> {
+pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_text_with_page_breaks"))
 }
 
@@ -14058,31 +14062,31 @@ pub fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<usize>, JsValue> 
 }
 
 #[wasm_bindgen(js_name = "detectImageFormat")]
-pub fn detect_image_format(_data: Vec<u8>) -> String {
+pub fn detect_image_format(data: Vec<u8>) -> String {
     String::from("[unimplemented: detect_image_format]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractPptText")]
-pub fn extract_ppt_text(_content: Vec<u8>) -> Result<String, JsValue> {
+pub fn extract_ppt_text(content: Vec<u8>) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_ppt_text"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractPptTextWithOptions")]
-pub fn extract_ppt_text_with_options(_content: Vec<u8>, _include_master_slides: bool) -> Result<String, JsValue> {
+pub fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bool) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_ppt_text_with_options"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractPptxFromPath")]
-pub fn extract_pptx_from_path(_path: String, _options: String) -> Result<WasmPptxExtractionResult, JsValue> {
+pub fn extract_pptx_from_path(path: String, options: String) -> Result<WasmPptxExtractionResult, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_pptx_from_path"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractPptxFromBytes")]
-pub fn extract_pptx_from_bytes(_data: Vec<u8>, _options: String) -> Result<WasmPptxExtractionResult, JsValue> {
+pub fn extract_pptx_from_bytes(data: Vec<u8>, options: String) -> Result<WasmPptxExtractionResult, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_pptx_from_bytes"))
 }
 
@@ -14103,12 +14107,12 @@ pub fn parse_xml(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<WasmXm
 }
 
 #[wasm_bindgen(js_name = "parseJotdownAttributes")]
-pub fn parse_jotdown_attributes(_attrs: String) -> String {
+pub fn parse_jotdown_attributes(attrs: String) -> String {
     String::from("[unimplemented: parse_jotdown_attributes]")
 }
 
 #[wasm_bindgen(js_name = "renderAttributes")]
-pub fn render_attributes(_attrs: String) -> String {
+pub fn render_attributes(attrs: String) -> String {
     String::from("[unimplemented: render_attributes]")
 }
 
@@ -14136,12 +14140,12 @@ pub fn djot_to_html(djot_source: String) -> Result<String, JsValue> {
 }
 
 #[wasm_bindgen(js_name = "extractTablesFromEvents")]
-pub fn extract_tables_from_events(_events: Vec<String>) -> Vec<String> {
+pub fn extract_tables_from_events(events: Vec<String>) -> Vec<String> {
     Vec::new()
 }
 
 #[wasm_bindgen(js_name = "extractTextFromEvents")]
-pub fn extract_text_from_events(_events: Vec<String>) -> String {
+pub fn extract_text_from_events(events: Vec<String>) -> String {
     String::from("[unimplemented: extract_text_from_events]")
 }
 
@@ -14158,7 +14162,7 @@ pub fn render_list_item(item: WasmFormattedBlock, indent: String, marker: String
 }
 
 #[wasm_bindgen(js_name = "extractFrontmatter")]
-pub fn extract_frontmatter(_content: String) -> String {
+pub fn extract_frontmatter(content: String) -> String {
     String::from("[unimplemented: extract_frontmatter]")
 }
 
@@ -14225,7 +14229,7 @@ pub fn parse_hex_byte(h1: u8, h2: u8) -> Option<u8> {
 }
 
 #[wasm_bindgen(js_name = "parseRtfControlWord")]
-pub fn parse_rtf_control_word(_chars: String) -> String {
+pub fn parse_rtf_control_word(chars: String) -> String {
     String::from("[unimplemented: parse_rtf_control_word]")
 }
 
@@ -14235,7 +14239,7 @@ pub fn normalize_whitespace(s: String) -> String {
 }
 
 #[wasm_bindgen(js_name = "extractPictImage")]
-pub fn extract_pict_image(_chars: String) -> String {
+pub fn extract_pict_image(chars: String) -> String {
     String::from("[unimplemented: extract_pict_image]")
 }
 
@@ -14245,48 +14249,48 @@ pub fn parse_rtf_datetime(segment: String) -> Option<String> {
 }
 
 #[wasm_bindgen(js_name = "extractRtfMetadata")]
-pub fn extract_rtf_metadata(_rtf_content: String, _extracted_text: String) -> String {
+pub fn extract_rtf_metadata(rtf_content: String, extracted_text: String) -> String {
     String::from("[unimplemented: extract_rtf_metadata]")
 }
 
 #[wasm_bindgen(js_name = "extractRtfFormatting")]
-pub fn extract_rtf_formatting(_content: String) -> String {
+pub fn extract_rtf_formatting(content: String) -> String {
     String::from("[unimplemented: extract_rtf_formatting]")
 }
 
 #[wasm_bindgen(js_name = "spansToAnnotations")]
-pub fn spans_to_annotations(_para_start: usize, _para_end: usize, _formatting: String) -> Vec<WasmTextAnnotation> {
+pub fn spans_to_annotations(para_start: usize, para_end: usize, formatting: String) -> Vec<WasmTextAnnotation> {
     Vec::new()
 }
 
 #[wasm_bindgen(js_name = "extractTextFromRtf")]
-pub fn extract_text_from_rtf(_content: String, _plain: bool) -> String {
+pub fn extract_text_from_rtf(content: String, plain: bool) -> String {
     String::from("[unimplemented: extract_text_from_rtf]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "registerDefaultExtractors")]
 pub fn register_default_extractors() -> Result<(), JsValue> {
-    kreuzberg::extractors::register_default_extractors().map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::extractors::register_default_extractors().map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[wasm_bindgen(js_name = "extractPanicMessage")]
-pub fn extract_panic_message(_panic_info: String) -> String {
+pub fn extract_panic_message(panic_info: String) -> String {
     String::from("[unimplemented: extract_panic_message]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "registerExtractor")]
-pub fn register_extractor(_extractor: String) -> Result<(), JsValue> {
+pub fn register_extractor(extractor: String) -> Result<(), JsValue> {
     Err(JsValue::from_str("Not implemented: register_extractor"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "unregisterExtractor")]
 pub fn unregister_extractor(name: String) -> Result<(), JsValue> {
-    kreuzberg::plugins::unregister_extractor(&name).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::plugins::unregister_extractor(&name).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14299,15 +14303,15 @@ pub fn list_extractors() -> Result<Vec<String>, JsValue> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "clearExtractors")]
 pub fn clear_extractors() -> Result<(), JsValue> {
-    kreuzberg::plugins::clear_extractors().map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::plugins::clear_extractors().map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "unregisterOcrBackend")]
 pub fn unregister_ocr_backend(name: String) -> Result<(), JsValue> {
-    kreuzberg::plugins::unregister_ocr_backend(&name).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::plugins::unregister_ocr_backend(&name).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14320,8 +14324,8 @@ pub fn list_ocr_backends() -> Result<Vec<String>, JsValue> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "clearOcrBackends")]
 pub fn clear_ocr_backends() -> Result<(), JsValue> {
-    kreuzberg::plugins::clear_ocr_backends().map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::plugins::clear_ocr_backends().map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14359,8 +14363,8 @@ pub fn get_renderer_registry() -> String {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "unregisterRenderer")]
 pub fn unregister_renderer(name: String) -> Result<(), JsValue> {
-    kreuzberg::plugins::unregister_renderer(&name).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::plugins::unregister_renderer(&name).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[wasm_bindgen(js_name = "listRenderers")]
@@ -14371,8 +14375,8 @@ pub fn list_renderers() -> Vec<String> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "clearRenderers")]
 pub fn clear_renderers() -> Result<(), JsValue> {
-    kreuzberg::plugins::clear_renderers().map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::plugins::clear_renderers().map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14383,15 +14387,15 @@ pub fn validate_plugins_at_startup() -> Result<String, JsValue> {
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "registerValidator")]
-pub fn register_validator(_validator: String) -> Result<(), JsValue> {
+pub fn register_validator(validator: String) -> Result<(), JsValue> {
     Err(JsValue::from_str("Not implemented: register_validator"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "unregisterValidator")]
 pub fn unregister_validator(name: String) -> Result<(), JsValue> {
-    kreuzberg::plugins::unregister_validator(&name).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::plugins::unregister_validator(&name).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14404,32 +14408,32 @@ pub fn list_validators() -> Result<Vec<String>, JsValue> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "clearValidators")]
 pub fn clear_validators() -> Result<(), JsValue> {
-    kreuzberg::plugins::clear_validators().map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::plugins::clear_validators().map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[wasm_bindgen(js_name = "renderDjot")]
-pub fn render_djot(_doc: String) -> String {
+pub fn render_djot(doc: String) -> String {
     String::from("[unimplemented: render_djot]")
 }
 
 #[wasm_bindgen(js_name = "renderHtml")]
-pub fn render_html(_doc: String) -> String {
+pub fn render_html(doc: String) -> String {
     String::from("[unimplemented: render_html]")
 }
 
 #[wasm_bindgen(js_name = "renderJson")]
-pub fn render_json(_doc: String) -> String {
+pub fn render_json(doc: String) -> String {
     String::from("[unimplemented: render_json]")
 }
 
 #[wasm_bindgen(js_name = "renderMarkdown")]
-pub fn render_markdown(_doc: String) -> String {
+pub fn render_markdown(doc: String) -> String {
     String::from("[unimplemented: render_markdown]")
 }
 
 #[wasm_bindgen(js_name = "renderPlain")]
-pub fn render_plain(_doc: String) -> String {
+pub fn render_plain(doc: String) -> String {
     String::from("[unimplemented: render_plain]")
 }
 
@@ -14444,27 +14448,27 @@ pub fn get_metrics() -> String {
 }
 
 #[wasm_bindgen(js_name = "extractorSpan")]
-pub fn extractor_span(_extractor_name: String, _mime_type: String, _size_bytes: usize) -> String {
+pub fn extractor_span(extractor_name: String, mime_type: String, size_bytes: usize) -> String {
     String::from("[unimplemented: extractor_span]")
 }
 
 #[wasm_bindgen(js_name = "pipelineStageSpan")]
-pub fn pipeline_stage_span(_stage: String) -> String {
+pub fn pipeline_stage_span(stage: String) -> String {
     String::from("[unimplemented: pipeline_stage_span]")
 }
 
 #[wasm_bindgen(js_name = "pipelineProcessorSpan")]
-pub fn pipeline_processor_span(_stage: String, _processor_name: String) -> String {
+pub fn pipeline_processor_span(stage: String, processor_name: String) -> String {
     String::from("[unimplemented: pipeline_processor_span]")
 }
 
 #[wasm_bindgen(js_name = "ocrSpan")]
-pub fn ocr_span(_backend: String, _language: String) -> String {
+pub fn ocr_span(backend: String, language: String) -> String {
     String::from("[unimplemented: ocr_span]")
 }
 
 #[wasm_bindgen(js_name = "modelInferenceSpan")]
-pub fn model_inference_span(_model_name: String) -> String {
+pub fn model_inference_span(model_name: String) -> String {
     String::from("[unimplemented: model_inference_span]")
 }
 
@@ -14525,7 +14529,7 @@ pub fn batch_reduce_tokens(
 }
 
 #[wasm_bindgen(js_name = "getReductionStatistics")]
-pub fn get_reduction_statistics(_original: String, _reduced: String) -> String {
+pub fn get_reduction_statistics(original: String, reduced: String) -> String {
     String::from("[unimplemented: get_reduction_statistics]")
 }
 
@@ -14595,17 +14599,17 @@ pub fn calculate_text_confidence(text: String) -> f64 {
 }
 
 #[wasm_bindgen(js_name = "fixMojibake")]
-pub fn fix_mojibake(_text: String) -> String {
+pub fn fix_mojibake(text: String) -> String {
     String::from("[unimplemented: fix_mojibake]")
 }
 
 #[wasm_bindgen(js_name = "snakeToCamel")]
-pub fn snake_to_camel(_val: String) -> String {
+pub fn snake_to_camel(val: String) -> String {
     String::from("[unimplemented: snake_to_camel]")
 }
 
 #[wasm_bindgen(js_name = "camelToSnake")]
-pub fn camel_to_snake(_val: String) -> String {
+pub fn camel_to_snake(val: String) -> String {
     String::from("[unimplemented: camel_to_snake]")
 }
 
@@ -14624,7 +14628,7 @@ pub fn create_byte_buffer_pool(pool_size: usize, buffer_capacity: usize) -> Wasm
 }
 
 #[wasm_bindgen(js_name = "estimatePoolSize")]
-pub fn estimate_pool_size(_file_size: u64, _mime_type: String) -> String {
+pub fn estimate_pool_size(file_size: u64, mime_type: String) -> String {
     String::from("[unimplemented: estimate_pool_size]")
 }
 
@@ -14634,32 +14638,32 @@ pub fn acquire_string_buffer() -> String {
 }
 
 #[wasm_bindgen(js_name = "internLanguageCode")]
-pub fn intern_language_code(_lang_code: String) -> String {
+pub fn intern_language_code(lang_code: String) -> String {
     String::from("[unimplemented: intern_language_code]")
 }
 
 #[wasm_bindgen(js_name = "internMimeType")]
-pub fn intern_mime_type(_mime_type: String) -> String {
+pub fn intern_mime_type(mime_type: String) -> String {
     String::from("[unimplemented: intern_mime_type]")
 }
 
 #[wasm_bindgen(js_name = "xmlTagName")]
-pub fn xml_tag_name(_name: Vec<u8>) -> String {
+pub fn xml_tag_name(name: Vec<u8>) -> String {
     String::from("[unimplemented: xml_tag_name]")
 }
 
 #[wasm_bindgen(js_name = "escapeHtmlEntities")]
-pub fn escape_html_entities(_text: String) -> String {
+pub fn escape_html_entities(text: String) -> String {
     String::from("[unimplemented: escape_html_entities]")
 }
 
 #[wasm_bindgen(js_name = "detectColumns")]
-pub fn detect_columns(_words: Vec<String>, _column_threshold: u32) -> Vec<u32> {
+pub fn detect_columns(words: Vec<String>, column_threshold: u32) -> Vec<u32> {
     Vec::new()
 }
 
 #[wasm_bindgen(js_name = "detectRows")]
-pub fn detect_rows(_words: Vec<String>, _row_threshold_ratio: f64) -> Vec<u32> {
+pub fn detect_rows(words: Vec<String>, row_threshold_ratio: f64) -> Vec<u32> {
     Vec::new()
 }
 
@@ -14672,20 +14676,20 @@ pub fn load_server_config(config_path: Option<String>) -> Result<WasmServerConfi
 }
 
 #[wasm_bindgen(js_name = "createRouter")]
-pub fn create_router(_config: WasmExtractionConfig) -> String {
+pub fn create_router(config: WasmExtractionConfig) -> String {
     String::from("[unimplemented: create_router]")
 }
 
 #[wasm_bindgen(js_name = "createRouterWithLimits")]
-pub fn create_router_with_limits(_config: WasmExtractionConfig, _limits: String) -> String {
+pub fn create_router_with_limits(config: WasmExtractionConfig, limits: String) -> String {
     String::from("[unimplemented: create_router_with_limits]")
 }
 
 #[wasm_bindgen(js_name = "createRouterWithLimitsAndServerConfig")]
 pub fn create_router_with_limits_and_server_config(
-    _config: WasmExtractionConfig,
-    _limits: String,
-    _server_config: WasmServerConfig,
+    config: WasmExtractionConfig,
+    limits: String,
+    server_config: WasmServerConfig,
 ) -> String {
     String::from("[unimplemented: create_router_with_limits_and_server_config]")
 }
@@ -14693,20 +14697,20 @@ pub fn create_router_with_limits_and_server_config(
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen]
 pub async fn serve(host: String, port: u16) -> Result<(), JsValue> {
-    kreuzberg::api::serve(host, port)
+    let result = kreuzberg::api::serve(host, port)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "serveWithConfig")]
 pub async fn serve_with_config(host: String, port: u16, config: WasmExtractionConfig) -> Result<(), JsValue> {
     let config_core: kreuzberg::ExtractionConfig = config.into();
-    kreuzberg::api::serve_with_config(host, port, config_core)
+    let result = kreuzberg::api::serve_with_config(host, port, config_core)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14717,43 +14721,43 @@ pub async fn serve_with_server_config(
 ) -> Result<(), JsValue> {
     let extraction_config_core: kreuzberg::ExtractionConfig = extraction_config.into();
     let server_config_core: kreuzberg::ServerConfig = server_config.into();
-    kreuzberg::api::serve_with_server_config(extraction_config_core, server_config_core)
+    let result = kreuzberg::api::serve_with_server_config(extraction_config_core, server_config_core)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "serveDefault")]
 pub async fn serve_default() -> Result<(), JsValue> {
-    kreuzberg::api::serve_default()
+    let result = kreuzberg::api::serve_default()
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[wasm_bindgen(js_name = "mapKreuzbergErrorToMcp")]
-pub fn map_kreuzberg_error_to_mcp(_error: String) -> String {
+pub fn map_kreuzberg_error_to_mcp(error: String) -> String {
     String::from("[unimplemented: map_kreuzberg_error_to_mcp]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "startMcpServer")]
 pub async fn start_mcp_server() -> Result<(), JsValue> {
-    kreuzberg::mcp::start_mcp_server()
+    let result = kreuzberg::mcp::start_mcp_server()
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "startMcpServerWithConfig")]
 pub async fn start_mcp_server_with_config(config: WasmExtractionConfig) -> Result<(), JsValue> {
     let config_core: kreuzberg::ExtractionConfig = config.into();
-    kreuzberg::mcp::start_mcp_server_with_config(config_core)
+    let result = kreuzberg::mcp::start_mcp_server_with_config(config_core)
         .await
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14766,24 +14770,24 @@ pub fn chunk_texts_batch(texts: Vec<String>, config: WasmChunkingConfig) -> Resu
 }
 
 #[wasm_bindgen(js_name = "precomputeUtf8Boundaries")]
-pub fn precompute_utf8_boundaries(_text: String) -> String {
+pub fn precompute_utf8_boundaries(text: String) -> String {
     String::from("[unimplemented: precompute_utf8_boundaries]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "renderTemplate")]
-pub fn render_template(_template: String, _context: String) -> Result<String, JsValue> {
+pub fn render_template(template: String, context: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: render_template"))
 }
 
 #[wasm_bindgen(js_name = "getPreset")]
-pub fn get_preset(_name: String) -> Option<String> {
+pub fn get_preset(name: String) -> Option<String> {
     None
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "resizeImage")]
-pub fn resize_image(_image: String, _new_width: u32, _new_height: u32, _scale_factor: f64) -> Result<String, JsValue> {
+pub fn resize_image(image: String, new_width: u32, new_height: u32, scale_factor: f64) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: resize_image"))
 }
 
@@ -14799,18 +14803,18 @@ pub fn detect_languages(text: String, config: WasmLanguageDetectionConfig) -> Re
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "registerLanguageDetectionProcessor")]
 pub fn register_language_detection_processor() -> Result<(), JsValue> {
-    kreuzberg::language_detection::register_language_detection_processor()
+    let result = kreuzberg::language_detection::register_language_detection_processor()
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    Ok(result)
 }
 
 #[wasm_bindgen(js_name = "getStopwords")]
-pub fn get_stopwords(_lang: String) -> Option<String> {
+pub fn get_stopwords(lang: String) -> Option<String> {
     None
 }
 
 #[wasm_bindgen(js_name = "getStopwordsWithFallback")]
-pub fn get_stopwords_with_fallback(_language: String, _fallback: String) -> Option<String> {
+pub fn get_stopwords_with_fallback(language: String, fallback: String) -> Option<String> {
     None
 }
 
@@ -14823,38 +14827,38 @@ pub fn extract_keywords(text: String, config: WasmKeywordConfig) -> Result<Vec<W
 }
 
 #[wasm_bindgen(js_name = "elementToHocrWord")]
-pub fn element_to_hocr_word(_element: WasmOcrElement) -> String {
+pub fn element_to_hocr_word(element: WasmOcrElement) -> String {
     String::from("[unimplemented: element_to_hocr_word]")
 }
 
 #[wasm_bindgen(js_name = "parseHocrToInternalDocument")]
-pub fn parse_hocr_to_internal_document(_hocr_html: String) -> String {
+pub fn parse_hocr_to_internal_document(hocr_html: String) -> String {
     String::from("[unimplemented: parse_hocr_to_internal_document]")
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractWordsFromTsv")]
-pub fn extract_words_from_tsv(_tsv_data: String, _min_confidence: f64) -> Result<Vec<String>, JsValue> {
+pub fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<String>, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_words_from_tsv"))
 }
 
 #[wasm_bindgen(js_name = "preprocessImagenet")]
-pub fn preprocess_imagenet(_img: String, _target_size: u32) -> String {
+pub fn preprocess_imagenet(img: String, target_size: u32) -> String {
     String::from("[unimplemented: preprocess_imagenet]")
 }
 
 #[wasm_bindgen(js_name = "preprocessImagenetLetterbox")]
-pub fn preprocess_imagenet_letterbox(_img: String, _target_size: u32) -> String {
+pub fn preprocess_imagenet_letterbox(img: String, target_size: u32) -> String {
     String::from("[unimplemented: preprocess_imagenet_letterbox]")
 }
 
 #[wasm_bindgen(js_name = "preprocessRescale")]
-pub fn preprocess_rescale(_img: String, _target_size: u32) -> String {
+pub fn preprocess_rescale(img: String, target_size: u32) -> String {
     String::from("[unimplemented: preprocess_rescale]")
 }
 
 #[wasm_bindgen(js_name = "preprocessLetterbox")]
-pub fn preprocess_letterbox(_img: String, _target_width: u32, _target_height: u32) -> String {
+pub fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) -> String {
     String::from("[unimplemented: preprocess_letterbox]")
 }
 
@@ -14864,18 +14868,18 @@ pub fn take_or_create_tatr() -> Option<String> {
 }
 
 #[wasm_bindgen(js_name = "returnTatr")]
-pub fn return_tatr(_model: String) {
-    
+pub fn return_tatr(model: String) -> () {
+    ()
 }
 
 #[wasm_bindgen(js_name = "takeOrCreateSlanet")]
-pub fn take_or_create_slanet(_variant: String) -> Option<String> {
+pub fn take_or_create_slanet(variant: String) -> Option<String> {
     None
 }
 
 #[wasm_bindgen(js_name = "returnSlanet")]
-pub fn return_slanet(_variant: String, _model: String) {
-    
+pub fn return_slanet(variant: String, model: String) -> () {
+    ()
 }
 
 #[wasm_bindgen(js_name = "takeOrCreateTableClassifier")]
@@ -14884,30 +14888,30 @@ pub fn take_or_create_table_classifier() -> Option<String> {
 }
 
 #[wasm_bindgen(js_name = "returnTableClassifier")]
-pub fn return_table_classifier(_model: String) {
-    
+pub fn return_table_classifier(model: String) -> () {
+    ()
 }
 
 #[wasm_bindgen(js_name = "extractAnnotationsFromDocument")]
-pub fn extract_annotations_from_document(_document: String) -> Vec<WasmPdfAnnotation> {
+pub fn extract_annotations_from_document(document: String) -> Vec<WasmPdfAnnotation> {
     Vec::new()
 }
 
 #[wasm_bindgen(js_name = "extractBookmarks")]
-pub fn extract_bookmarks(_document: String) -> Vec<WasmUri> {
+pub fn extract_bookmarks(document: String) -> Vec<WasmUri> {
     Vec::new()
 }
 
 #[wasm_bindgen(js_name = "extractEmbeddedFiles")]
-pub fn extract_embedded_files(_document: String) -> Vec<WasmEmbeddedFile> {
+pub fn extract_embedded_files(document: String) -> Vec<WasmEmbeddedFile> {
     Vec::new()
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "initializeFontCache")]
 pub fn initialize_font_cache() -> Result<(), JsValue> {
-    kreuzberg::pdf::initialize_font_cache().map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(())
+    let result = kreuzberg::pdf::initialize_font_cache().map_err(|e| JsValue::from_str(&e.to_string()))?;
+    Ok(result)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -14923,18 +14927,18 @@ pub fn cached_font_count() -> usize {
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractCharsWithFonts")]
-pub fn extract_chars_with_fonts(_page: String) -> Result<Vec<WasmCharData>, JsValue> {
+pub fn extract_chars_with_fonts(page: String) -> Result<Vec<WasmCharData>, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_chars_with_fonts"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractSegmentsFromPage")]
-pub fn extract_segments_from_page(_page: String) -> Result<Vec<String>, JsValue> {
+pub fn extract_segments_from_page(page: String) -> Result<Vec<String>, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_segments_from_page"))
 }
 
 #[wasm_bindgen(js_name = "shouldTriggerOcr")]
-pub fn should_trigger_ocr(_page: String, _blocks: Vec<String>, _config: WasmExtractionConfig) -> bool {
+pub fn should_trigger_ocr(page: String, blocks: Vec<String>, config: WasmExtractionConfig) -> bool {
     false
 }
 
@@ -14958,31 +14962,31 @@ pub fn extract_images_from_pdf_with_password(
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "detectLayoutForDocument")]
-pub fn detect_layout_for_document(_pdf_bytes: Vec<u8>, _engine: String) -> Result<String, JsValue> {
+pub fn detect_layout_for_document(pdf_bytes: Vec<u8>, engine: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: detect_layout_for_document"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractMetadata")]
-pub fn extract_metadata(_pdf_bytes: Vec<u8>) -> Result<String, JsValue> {
+pub fn extract_metadata(pdf_bytes: Vec<u8>) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_metadata"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractMetadataWithPassword")]
-pub fn extract_metadata_with_password(_pdf_bytes: Vec<u8>, _password: Option<String>) -> Result<String, JsValue> {
+pub fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_metadata_with_password"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractMetadataWithPasswords")]
-pub fn extract_metadata_with_passwords(_pdf_bytes: Vec<u8>, _passwords: Vec<String>) -> Result<String, JsValue> {
+pub fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_metadata_with_passwords"))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractCommonMetadataFromDocument")]
-pub fn extract_common_metadata_from_document(_document: String) -> Result<WasmCommonPdfMetadata, JsValue> {
+pub fn extract_common_metadata_from_document(document: String) -> Result<WasmCommonPdfMetadata, JsValue> {
     Err(JsValue::from_str(
         "Not implemented: extract_common_metadata_from_document",
     ))
@@ -14990,7 +14994,7 @@ pub fn extract_common_metadata_from_document(_document: String) -> Result<WasmCo
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "renderPageToImage")]
-pub fn render_page_to_image(_pdf_bytes: Vec<u8>, _page_index: usize, _options: String) -> Result<String, JsValue> {
+pub fn render_page_to_image(pdf_bytes: Vec<u8>, page_index: usize, options: String) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: render_page_to_image"))
 }
 
@@ -15009,22 +15013,22 @@ pub fn render_pdf_page_to_png(
 
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "extractWordsFromPage")]
-pub fn extract_words_from_page(_page: String, _min_confidence: f64) -> Result<Vec<String>, JsValue> {
+pub fn extract_words_from_page(page: String, min_confidence: f64) -> Result<Vec<String>, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_words_from_page"))
 }
 
 #[wasm_bindgen(js_name = "segmentToHocrWord")]
-pub fn segment_to_hocr_word(_seg: String, _page_height: f32) -> String {
+pub fn segment_to_hocr_word(seg: String, page_height: f32) -> String {
     String::from("[unimplemented: segment_to_hocr_word]")
 }
 
 #[wasm_bindgen(js_name = "splitSegmentToWords")]
-pub fn split_segment_to_words(_seg: String, _page_height: f32) -> Vec<String> {
+pub fn split_segment_to_words(seg: String, page_height: f32) -> Vec<String> {
     Vec::new()
 }
 
 #[wasm_bindgen(js_name = "segmentsToWords")]
-pub fn segments_to_words(_segments: Vec<String>, _page_height: f32) -> Vec<String> {
+pub fn segments_to_words(segments: Vec<String>, page_height: f32) -> Vec<String> {
     Vec::new()
 }
 

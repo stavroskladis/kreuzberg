@@ -314,9 +314,9 @@ pub fn parse_markdown_blocks(md: &str) -> Vec<MdBlock> {
                 current_text.push_str("![");
                 let _ = dest_url; // alt text comes as Text events
             }
-            Event::End(TagEnd::Image) => {
+            Event::End(TagEnd::Image)
                 // current_text has "![alt text" — close it
-                if current_text.starts_with("![") {
+                if current_text.starts_with("![") => {
                     current_text.push(']');
                     blocks.push(MdBlock {
                         block_type: MdBlockType::Image,
@@ -325,27 +325,22 @@ pub fn parse_markdown_blocks(md: &str) -> Vec<MdBlock> {
                     });
                     index += 1;
                 }
-            }
-            Event::Start(Tag::Paragraph) => {
-                if !in_list_item && !in_table {
+            Event::Start(Tag::Paragraph)
+                if !in_list_item && !in_table => {
                     flush_text(&mut current_text, &mut blocks, &mut index, MdBlockType::Paragraph);
                 }
-            }
-            Event::End(TagEnd::Paragraph) => {
-                if !in_list_item && !in_table {
+            Event::End(TagEnd::Paragraph)
+                if !in_list_item && !in_table => {
                     flush_text(&mut current_text, &mut blocks, &mut index, MdBlockType::Paragraph);
                 }
-            }
-            Event::Start(Tag::Strong) => {
-                if !in_table && !in_code_block {
+            Event::Start(Tag::Strong)
+                if !in_table && !in_code_block => {
                     current_text.push_str("**");
                 }
-            }
-            Event::End(TagEnd::Strong) => {
-                if !in_table && !in_code_block {
+            Event::End(TagEnd::Strong)
+                if !in_table && !in_code_block => {
                     current_text.push_str("**");
                 }
-            }
             Event::Text(text) | Event::Code(text) => {
                 if in_table {
                     current_text.push_str(&text);

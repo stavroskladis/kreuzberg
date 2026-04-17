@@ -4868,7 +4868,8 @@ pub fn render_template(template: String, context: String) -> Result<String> {
 
 #[napi]
 pub fn normalize(v: Vec<f64>) -> Vec<f64> {
-    kreuzberg::embeddings::engine::normalize(&v)
+    let v_f32: Vec<f32> = v.iter().map(|&x| x as f32).collect();
+    kreuzberg::embeddings::engine::normalize(&v_f32)
         .into_iter()
         .map(|v| v as f64)
         .collect()
@@ -7623,7 +7624,12 @@ impl From<JsOcrElement> for kreuzberg::OcrElement {
             rotation: val.rotation.map(Into::into),
             page_number: val.page_number.map(|v| v as usize).unwrap_or_default(),
             parent_id: val.parent_id,
-            backend_metadata: val.backend_metadata.unwrap_or_default().into_iter().collect(),
+            backend_metadata: val
+                .backend_metadata
+                .unwrap_or_default()
+                .into_iter()
+                .map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::json!(v))))
+                .collect(),
         }
     }
 }

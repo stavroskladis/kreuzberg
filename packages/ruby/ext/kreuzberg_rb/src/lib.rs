@@ -18458,7 +18458,7 @@ impl From<OutputFormat> for kreuzberg::OutputFormat {
             OutputFormat::Html => Self::Html,
             OutputFormat::Json => Self::Json,
             OutputFormat::Structured => Self::Structured,
-            OutputFormat::Custom { _0 } => Self::Custom(_0),
+            OutputFormat::Custom { _0 } => Self::Custom(val._0),
         }
     }
 }
@@ -18472,7 +18472,7 @@ impl From<kreuzberg::OutputFormat> for OutputFormat {
             kreuzberg::OutputFormat::Html => Self::Html,
             kreuzberg::OutputFormat::Json => Self::Json,
             kreuzberg::OutputFormat::Structured => Self::Structured,
-            kreuzberg::OutputFormat::Custom(_0) => Self::Custom { _0 },
+            kreuzberg::OutputFormat::Custom(_0) => Self::Custom { _0: val._0 },
         }
     }
 }
@@ -18571,7 +18571,10 @@ impl From<ChunkSizing> for kreuzberg::ChunkSizing {
     fn from(val: ChunkSizing) -> Self {
         match val {
             ChunkSizing::Characters => Self::Characters,
-            ChunkSizing::Tokenizer { model, cache_dir } => Self::Tokenizer { model, cache_dir },
+            ChunkSizing::Tokenizer { model, cache_dir } => Self::Tokenizer {
+                model: val.model,
+                cache_dir: val.cache_dir.map(Into::into),
+            },
         }
     }
 }
@@ -18580,7 +18583,10 @@ impl From<kreuzberg::ChunkSizing> for ChunkSizing {
     fn from(val: kreuzberg::ChunkSizing) -> Self {
         match val {
             kreuzberg::ChunkSizing::Characters => Self::Characters,
-            kreuzberg::ChunkSizing::Tokenizer { model, cache_dir } => Self::Tokenizer { model, cache_dir },
+            kreuzberg::ChunkSizing::Tokenizer { model, cache_dir } => Self::Tokenizer {
+                model: val.model,
+                cache_dir: val.cache_dir.map(|p| p.to_string_lossy().to_string()),
+            },
         }
     }
 }
@@ -18588,9 +18594,12 @@ impl From<kreuzberg::ChunkSizing> for ChunkSizing {
 impl From<EmbeddingModelType> for kreuzberg::EmbeddingModelType {
     fn from(val: EmbeddingModelType) -> Self {
         match val {
-            EmbeddingModelType::Preset { name } => Self::Preset { name },
-            EmbeddingModelType::Custom { model_id, dimensions } => Self::Custom { model_id, dimensions },
-            EmbeddingModelType::Llm { llm } => Self::Llm { llm: llm.into() },
+            EmbeddingModelType::Preset { name } => Self::Preset { name: val.name },
+            EmbeddingModelType::Custom { model_id, dimensions } => Self::Custom {
+                model_id: val.model_id,
+                dimensions: val.dimensions,
+            },
+            EmbeddingModelType::Llm { llm } => Self::Llm { llm: val.llm.into() },
         }
     }
 }
@@ -18598,9 +18607,12 @@ impl From<EmbeddingModelType> for kreuzberg::EmbeddingModelType {
 impl From<kreuzberg::EmbeddingModelType> for EmbeddingModelType {
     fn from(val: kreuzberg::EmbeddingModelType) -> Self {
         match val {
-            kreuzberg::EmbeddingModelType::Preset { name } => Self::Preset { name },
-            kreuzberg::EmbeddingModelType::Custom { model_id, dimensions } => Self::Custom { model_id, dimensions },
-            kreuzberg::EmbeddingModelType::Llm { llm } => Self::Llm { llm: llm.into() },
+            kreuzberg::EmbeddingModelType::Preset { name } => Self::Preset { name: val.name },
+            kreuzberg::EmbeddingModelType::Custom { model_id, dimensions } => Self::Custom {
+                model_id: val.model_id,
+                dimensions: val.dimensions,
+            },
+            kreuzberg::EmbeddingModelType::Llm { llm } => Self::Llm { llm: val.llm.into() },
         }
     }
 }
@@ -18844,46 +18856,63 @@ impl From<kreuzberg::ContentLayer> for ContentLayer {
 impl From<NodeContent> for kreuzberg::NodeContent {
     fn from(val: NodeContent) -> Self {
         match val {
-            NodeContent::Title { text } => Self::Title { text },
-            NodeContent::Heading { level, text } => Self::Heading { level, text },
-            NodeContent::Paragraph { text } => Self::Paragraph { text },
-            NodeContent::List { ordered } => Self::List { ordered },
-            NodeContent::ListItem { text } => Self::ListItem { text },
-            NodeContent::Table { grid } => Self::Table {
-                grid: serde_json::from_str(&grid).unwrap_or_default(),
+            NodeContent::Title { text } => Self::Title { text: val.text },
+            NodeContent::Heading { level, text } => Self::Heading {
+                level: val.level,
+                text: val.text,
             },
+            NodeContent::Paragraph { text } => Self::Paragraph { text: val.text },
+            NodeContent::List { ordered } => Self::List { ordered: val.ordered },
+            NodeContent::ListItem { text } => Self::ListItem { text: val.text },
+            NodeContent::Table { grid } => Self::Table { grid: val.grid },
             NodeContent::Image {
                 description,
                 image_index,
                 src,
             } => Self::Image {
-                description,
-                image_index,
-                src,
+                description: val.description,
+                image_index: val.image_index,
+                src: val.src,
             },
-            NodeContent::Code { text, language } => Self::Code { text, language },
+            NodeContent::Code { text, language } => Self::Code {
+                text: val.text,
+                language: val.language,
+            },
             NodeContent::Quote => Self::Quote,
-            NodeContent::Formula { text } => Self::Formula { text },
-            NodeContent::Footnote { text } => Self::Footnote { text },
+            NodeContent::Formula { text } => Self::Formula { text: val.text },
+            NodeContent::Footnote { text } => Self::Footnote { text: val.text },
             NodeContent::Group {
                 label,
                 heading_level,
                 heading_text,
             } => Self::Group {
-                label,
-                heading_level,
-                heading_text,
+                label: val.label,
+                heading_level: val.heading_level,
+                heading_text: val.heading_text,
             },
             NodeContent::PageBreak => Self::PageBreak,
-            NodeContent::Slide { number, title } => Self::Slide { number, title },
-            NodeContent::DefinitionList => Self::DefinitionList,
-            NodeContent::DefinitionItem { term, definition } => Self::DefinitionItem { term, definition },
-            NodeContent::Citation { key, text } => Self::Citation { key, text },
-            NodeContent::Admonition { kind, title } => Self::Admonition { kind, title },
-            NodeContent::RawBlock { format, content } => Self::RawBlock { format, content },
-            NodeContent::MetadataBlock { entries } => Self::MetadataBlock {
-                entries: serde_json::from_str(&entries).unwrap_or_default(),
+            NodeContent::Slide { number, title } => Self::Slide {
+                number: val.number,
+                title: val.title,
             },
+            NodeContent::DefinitionList => Self::DefinitionList,
+            NodeContent::DefinitionItem { term, definition } => Self::DefinitionItem {
+                term: val.term,
+                definition: val.definition,
+            },
+            NodeContent::Citation { key, text } => Self::Citation {
+                key: val.key,
+                text: val.text,
+            },
+            NodeContent::Admonition { kind, title } => Self::Admonition {
+                kind: val.kind,
+                title: val.title,
+            },
+            NodeContent::RawBlock { format, content } => Self::RawBlock {
+                format: val.format,
+                content: val.content,
+            },
+            NodeContent::MetadataBlock { entries } => Self::MetadataBlock { entries: val.entries },
         }
     }
 }
@@ -18891,45 +18920,66 @@ impl From<NodeContent> for kreuzberg::NodeContent {
 impl From<kreuzberg::NodeContent> for NodeContent {
     fn from(val: kreuzberg::NodeContent) -> Self {
         match val {
-            kreuzberg::NodeContent::Title { text } => Self::Title { text },
-            kreuzberg::NodeContent::Heading { level, text } => Self::Heading { level, text },
-            kreuzberg::NodeContent::Paragraph { text } => Self::Paragraph { text },
-            kreuzberg::NodeContent::List { ordered } => Self::List { ordered },
-            kreuzberg::NodeContent::ListItem { text } => Self::ListItem { text },
+            kreuzberg::NodeContent::Title { text } => Self::Title { text: val.text },
+            kreuzberg::NodeContent::Heading { level, text } => Self::Heading {
+                level: val.level,
+                text: val.text,
+            },
+            kreuzberg::NodeContent::Paragraph { text } => Self::Paragraph { text: val.text },
+            kreuzberg::NodeContent::List { ordered } => Self::List { ordered: val.ordered },
+            kreuzberg::NodeContent::ListItem { text } => Self::ListItem { text: val.text },
             kreuzberg::NodeContent::Table { grid } => Self::Table {
-                grid: serde_json::to_string(&grid).unwrap_or_default(),
+                grid: format!("{:?}", val.grid),
             },
             kreuzberg::NodeContent::Image {
                 description,
                 image_index,
                 src,
             } => Self::Image {
-                description,
-                image_index,
-                src,
+                description: val.description,
+                image_index: val.image_index,
+                src: val.src,
             },
-            kreuzberg::NodeContent::Code { text, language } => Self::Code { text, language },
+            kreuzberg::NodeContent::Code { text, language } => Self::Code {
+                text: val.text,
+                language: val.language,
+            },
             kreuzberg::NodeContent::Quote => Self::Quote,
-            kreuzberg::NodeContent::Formula { text } => Self::Formula { text },
-            kreuzberg::NodeContent::Footnote { text } => Self::Footnote { text },
+            kreuzberg::NodeContent::Formula { text } => Self::Formula { text: val.text },
+            kreuzberg::NodeContent::Footnote { text } => Self::Footnote { text: val.text },
             kreuzberg::NodeContent::Group {
                 label,
                 heading_level,
                 heading_text,
             } => Self::Group {
-                label,
-                heading_level,
-                heading_text,
+                label: val.label,
+                heading_level: val.heading_level,
+                heading_text: val.heading_text,
             },
             kreuzberg::NodeContent::PageBreak => Self::PageBreak,
-            kreuzberg::NodeContent::Slide { number, title } => Self::Slide { number, title },
+            kreuzberg::NodeContent::Slide { number, title } => Self::Slide {
+                number: val.number,
+                title: val.title,
+            },
             kreuzberg::NodeContent::DefinitionList => Self::DefinitionList,
-            kreuzberg::NodeContent::DefinitionItem { term, definition } => Self::DefinitionItem { term, definition },
-            kreuzberg::NodeContent::Citation { key, text } => Self::Citation { key, text },
-            kreuzberg::NodeContent::Admonition { kind, title } => Self::Admonition { kind, title },
-            kreuzberg::NodeContent::RawBlock { format, content } => Self::RawBlock { format, content },
+            kreuzberg::NodeContent::DefinitionItem { term, definition } => Self::DefinitionItem {
+                term: val.term,
+                definition: val.definition,
+            },
+            kreuzberg::NodeContent::Citation { key, text } => Self::Citation {
+                key: val.key,
+                text: val.text,
+            },
+            kreuzberg::NodeContent::Admonition { kind, title } => Self::Admonition {
+                kind: val.kind,
+                title: val.title,
+            },
+            kreuzberg::NodeContent::RawBlock { format, content } => Self::RawBlock {
+                format: val.format,
+                content: val.content,
+            },
             kreuzberg::NodeContent::MetadataBlock { entries } => Self::MetadataBlock {
-                entries: serde_json::to_string(&entries).unwrap_or_default(),
+                entries: val.entries.iter().map(|i| format!("{:?}", i)).collect(),
             },
         }
     }
@@ -18945,11 +18995,17 @@ impl From<AnnotationKind> for kreuzberg::AnnotationKind {
             AnnotationKind::Code => Self::Code,
             AnnotationKind::Subscript => Self::Subscript,
             AnnotationKind::Superscript => Self::Superscript,
-            AnnotationKind::Link { url, title } => Self::Link { url, title },
+            AnnotationKind::Link { url, title } => Self::Link {
+                url: val.url,
+                title: val.title,
+            },
             AnnotationKind::Highlight => Self::Highlight,
-            AnnotationKind::Color { value } => Self::Color { value },
-            AnnotationKind::FontSize { value } => Self::FontSize { value },
-            AnnotationKind::Custom { name, value } => Self::Custom { name, value },
+            AnnotationKind::Color { value } => Self::Color { value: val.value },
+            AnnotationKind::FontSize { value } => Self::FontSize { value: val.value },
+            AnnotationKind::Custom { name, value } => Self::Custom {
+                name: val.name,
+                value: val.value,
+            },
         }
     }
 }
@@ -18964,11 +19020,17 @@ impl From<kreuzberg::AnnotationKind> for AnnotationKind {
             kreuzberg::AnnotationKind::Code => Self::Code,
             kreuzberg::AnnotationKind::Subscript => Self::Subscript,
             kreuzberg::AnnotationKind::Superscript => Self::Superscript,
-            kreuzberg::AnnotationKind::Link { url, title } => Self::Link { url, title },
+            kreuzberg::AnnotationKind::Link { url, title } => Self::Link {
+                url: val.url,
+                title: val.title,
+            },
             kreuzberg::AnnotationKind::Highlight => Self::Highlight,
-            kreuzberg::AnnotationKind::Color { value } => Self::Color { value },
-            kreuzberg::AnnotationKind::FontSize { value } => Self::FontSize { value },
-            kreuzberg::AnnotationKind::Custom { name, value } => Self::Custom { name, value },
+            kreuzberg::AnnotationKind::Color { value } => Self::Color { value: val.value },
+            kreuzberg::AnnotationKind::FontSize { value } => Self::FontSize { value: val.value },
+            kreuzberg::AnnotationKind::Custom { name, value } => Self::Custom {
+                name: val.name,
+                value: val.value,
+            },
         }
     }
 }
@@ -19120,14 +19182,12 @@ impl From<OcrBoundingGeometry> for kreuzberg::OcrBoundingGeometry {
                 width,
                 height,
             } => Self::Rectangle {
-                left,
-                top,
-                width,
-                height,
+                left: val.left,
+                top: val.top,
+                width: val.width,
+                height: val.height,
             },
-            OcrBoundingGeometry::Quadrilateral { points } => Self::Quadrilateral {
-                points: serde_json::from_str(&points).unwrap_or_default(),
-            },
+            OcrBoundingGeometry::Quadrilateral { points } => Self::Quadrilateral { points: val.points },
         }
     }
 }
@@ -19141,13 +19201,13 @@ impl From<kreuzberg::OcrBoundingGeometry> for OcrBoundingGeometry {
                 width,
                 height,
             } => Self::Rectangle {
-                left,
-                top,
-                width,
-                height,
+                left: val.left,
+                top: val.top,
+                width: val.width,
+                height: val.height,
             },
             kreuzberg::OcrBoundingGeometry::Quadrilateral { points } => Self::Quadrilateral {
-                points: serde_json::to_string(&points).unwrap_or_default(),
+                points: format!("{:?}", val.points),
             },
         }
     }
