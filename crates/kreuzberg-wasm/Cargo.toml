@@ -16,7 +16,28 @@ ignored = ["wasm-bindgen-futures"]
 crate-type = ["cdylib"]
 
 [dependencies]
-kreuzberg = { path = "../kreuzberg", features = ["html"] }
+kreuzberg = { path = "../kreuzberg", features = [
+    "pdf",
+    "excel-wasm",
+    "office",
+    "hwp",
+    "iwork",
+    "email",
+    "html",
+    "xml",
+    "archives",
+    "language-detection",
+    "chunking",
+    "quality",
+    "keywords",
+    "mdx",
+    "ocr-wasm",
+    "tree-sitter-wasm",
+    "liter-llm",
+    "stopwords",
+    "api",
+    "mcp",
+] }
 serde-wasm-bindgen = "0.6"
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"

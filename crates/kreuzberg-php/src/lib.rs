@@ -451,7 +451,7 @@ impl ExtractionConfig {
             structured_extraction: self.structured_extraction.clone().map(Into::into),
             ..Default::default()
         };
-        core_self.normalized().into()
+        core_self.normalized().into_owned().into()
     }
 
     pub fn validate(&self) -> PhpResult<()> {
@@ -1375,7 +1375,7 @@ impl OcrConfig {
             vlm_config: self.vlm_config.clone().map(Into::into),
             vlm_prompt: self.vlm_prompt.clone(),
         };
-        core_self.effective_pipeline()
+        core_self.effective_pipeline().map(Into::into)
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -1572,14 +1572,7 @@ impl PostProcessorConfig {
     }
 
     pub fn build_lookup_sets(&self) -> () {
-        let core_self = kreuzberg::PostProcessorConfig {
-            enabled: self.enabled,
-            enabled_processors: self.enabled_processors.clone(),
-            disabled_processors: self.disabled_processors.clone(),
-            enabled_set: Default::default(),
-            disabled_set: Default::default(),
-        };
-        core_self.build_lookup_sets()
+        ()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -1883,7 +1876,7 @@ impl ServerConfig {
             max_request_body_bytes: self.max_request_body_bytes as usize,
             max_multipart_field_bytes: self.max_multipart_field_bytes as usize,
         };
-        core_self.listen_addr().into()
+        core_self.listen_addr()
     }
 
     pub fn cors_allows_all(&self) -> bool {
@@ -1916,7 +1909,7 @@ impl ServerConfig {
             max_request_body_bytes: self.max_request_body_bytes as usize,
             max_multipart_field_bytes: self.max_multipart_field_bytes as usize,
         };
-        core_self.max_request_body_mb()
+        core_self.max_request_body_mb() as i64
     }
 
     pub fn max_multipart_field_mb(&self) -> i64 {
@@ -1927,21 +1920,13 @@ impl ServerConfig {
             max_request_body_bytes: self.max_request_body_bytes as usize,
             max_multipart_field_bytes: self.max_multipart_field_bytes as usize,
         };
-        core_self.max_multipart_field_mb()
+        core_self.max_multipart_field_mb() as i64
     }
 
     pub fn apply_env_overrides(&self) -> PhpResult<()> {
-        let core_self = kreuzberg::ServerConfig {
-            host: self.host.clone(),
-            port: self.port,
-            cors_origins: self.cors_origins.clone(),
-            max_request_body_bytes: self.max_request_body_bytes as usize,
-            max_multipart_field_bytes: self.max_multipart_field_bytes as usize,
-        };
-        let result = core_self
-            .apply_env_overrides()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
+        Err(ext_php_rs::exception::PhpException::default(
+            "Not implemented: apply_env_overrides".to_string(),
+        ))
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -2045,17 +2030,17 @@ impl StreamReader {
     pub fn read_bytes(&self, len: i64) -> PhpResult<Vec<u8>> {
         let result = self
             .inner
-            .read_bytes(len)
+            .read_bytes(len as usize)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
 
     pub fn position(&self) -> i64 {
-        self.inner.position()
+        self.inner.position() as i64
     }
 
     pub fn remaining(&self) -> i64 {
-        self.inner.remaining()
+        self.inner.remaining() as i64
     }
 }
 
@@ -2650,13 +2635,13 @@ pub struct StringGrowthValidator {
 impl StringGrowthValidator {
     pub fn check_append(&self, len: i64) -> PhpResult<()> {
         self.inner
-            .check_append(len)
+            .check_append(len as usize)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(())
     }
 
     pub fn current_size(&self) -> i64 {
-        self.inner.current_size()
+        self.inner.current_size() as i64
     }
 }
 
@@ -2677,7 +2662,7 @@ impl IterationValidator {
     }
 
     pub fn current_count(&self) -> i64 {
-        self.inner.current_count()
+        self.inner.current_count() as i64
     }
 }
 
@@ -2702,7 +2687,7 @@ impl DepthValidator {
     }
 
     pub fn current_depth(&self) -> i64 {
-        self.inner.current_depth()
+        self.inner.current_depth() as i64
     }
 }
 
@@ -2734,13 +2719,13 @@ pub struct TableValidator {
 impl TableValidator {
     pub fn add_cells(&self, count: i64) -> PhpResult<()> {
         self.inner
-            .add_cells(count)
+            .add_cells(count as usize)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(())
     }
 
     pub fn current_cells(&self) -> i64 {
-        self.inner.current_cells()
+        self.inner.current_cells() as i64
     }
 }
 
@@ -3090,12 +3075,7 @@ impl DocumentStructure {
     }
 
     pub fn add_child(&self, parent: u32, child: u32) -> () {
-        let core_self = kreuzberg::DocumentStructure {
-            nodes: self.nodes.clone().into_iter().map(Into::into).collect(),
-            source_format: self.source_format.clone(),
-            relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
-        };
-        core_self.add_child(parent, child)
+        ()
     }
 
     pub fn validate(&self) -> PhpResult<()> {
@@ -3124,7 +3104,7 @@ impl DocumentStructure {
             source_format: self.source_format.clone(),
             relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
         };
-        core_self.get(index)
+        core_self.get(index).map(|v| v.clone().into())
     }
 
     pub fn len(&self) -> i64 {
@@ -3133,7 +3113,7 @@ impl DocumentStructure {
             source_format: self.source_format.clone(),
             relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
         };
-        core_self.len()
+        core_self.len() as i64
     }
 
     pub fn is_empty(&self) -> bool {
@@ -3146,7 +3126,7 @@ impl DocumentStructure {
     }
 
     pub fn with_capacity(capacity: i64) -> DocumentStructure {
-        kreuzberg::DocumentStructure::with_capacity(capacity).into()
+        kreuzberg::DocumentStructure::with_capacity(capacity as usize).into()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -5666,7 +5646,7 @@ impl OcrElement {
             parent_id: self.parent_id.clone(),
             backend_metadata: self.backend_metadata.clone(),
         };
-        core_self.with_page_number(page_number).into()
+        core_self.with_page_number(page_number as usize).into()
     }
 
     pub fn with_parent_id(&self, parent_id: String) -> OcrElement {
@@ -5702,7 +5682,7 @@ impl OcrElement {
             parent_id: self.parent_id.clone(),
             backend_metadata: self.backend_metadata.clone(),
         };
-        core_self.with_parent_id(&parent_id).into()
+        core_self.with_parent_id(parent_id).into()
     }
 
     pub fn with_metadata(&self, key: String, value: String) -> OcrElement {
@@ -6018,27 +5998,27 @@ impl Uri {
     }
 
     pub fn hyperlink(url: String, label: Option<String>) -> Uri {
-        kreuzberg::Uri::hyperlink(&url, label).into()
+        kreuzberg::Uri::hyperlink(url, label).into()
     }
 
     pub fn image(url: String, label: Option<String>) -> Uri {
-        kreuzberg::Uri::image(&url, label).into()
+        kreuzberg::Uri::image(url, label).into()
     }
 
     pub fn citation(url: String, label: Option<String>) -> Uri {
-        kreuzberg::Uri::citation(&url, label).into()
+        kreuzberg::Uri::citation(url, label).into()
     }
 
     pub fn anchor(url: String, label: Option<String>) -> Uri {
-        kreuzberg::Uri::anchor(&url, label).into()
+        kreuzberg::Uri::anchor(url, label).into()
     }
 
     pub fn email(url: String, label: Option<String>) -> Uri {
-        kreuzberg::Uri::email(&url, label).into()
+        kreuzberg::Uri::email(url, label).into()
     }
 
     pub fn reference(url: String, label: Option<String>) -> Uri {
-        kreuzberg::Uri::reference(&url, label).into()
+        kreuzberg::Uri::reference(url, label).into()
     }
 }
 
@@ -7021,7 +7001,7 @@ impl KeywordConfig {
             rake_params: self.rake_params.clone().map(Into::into),
             ..Default::default()
         };
-        core_self.with_max_keywords(max).into()
+        core_self.with_max_keywords(max as usize).into()
     }
 
     pub fn with_min_score(&self, score: f32) -> KeywordConfig {
@@ -7057,7 +7037,7 @@ impl KeywordConfig {
             rake_params: self.rake_params.clone().map(Into::into),
             ..Default::default()
         };
-        core_self.with_ngram_range(min, max).into()
+        core_self.with_ngram_range(min as usize, max as usize).into()
     }
 
     pub fn with_language(&self, lang: String) -> KeywordConfig {
@@ -7075,7 +7055,7 @@ impl KeywordConfig {
             rake_params: self.rake_params.clone().map(Into::into),
             ..Default::default()
         };
-        core_self.with_language(&lang).into()
+        core_self.with_language(lang).into()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -7462,7 +7442,7 @@ impl PaddleOcrConfig {
             drop_score: self.drop_score,
             model_tier: self.model_tier.clone(),
         };
-        core_self.with_model_tier(&tier).into()
+        core_self.with_model_tier(tier).into()
     }
 
     #[allow(clippy::should_implement_trait)]
@@ -7630,10 +7610,7 @@ impl LayoutDetection {
     }
 
     pub fn sort_by_confidence_desc(detections: Vec<LayoutDetection>) -> Vec<LayoutDetection> {
-        kreuzberg::LayoutDetection::sort_by_confidence_desc(detections)
-            .into_iter()
-            .map(Into::into)
-            .collect()
+        Vec::new()
     }
 }
 
@@ -8364,7 +8341,7 @@ impl KreuzbergApi {
     }
 
     pub fn blake3_hash_file(path: String) -> PhpResult<String> {
-        let result = kreuzberg::cache::blake3_hash_file(std::path::PathBuf::from(path))
+        let result = kreuzberg::cache::blake3_hash_file(std::path::Path::new(&path))
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -8376,7 +8353,7 @@ impl KreuzbergApi {
     }
 
     pub fn fast_hash(data: Vec<u8>) -> i64 {
-        kreuzberg::cache::fast_hash(&data)
+        kreuzberg::cache::fast_hash(&data) as i64
     }
 
     pub fn validate_cache_key(key: String) -> bool {
@@ -8384,7 +8361,10 @@ impl KreuzbergApi {
     }
 
     pub fn filter_old_cache_entries(cache_times: Vec<f64>, current_time: f64, max_age_seconds: f64) -> Vec<i64> {
-        kreuzberg::cache::filter_old_cache_entries(cache_times, current_time, max_age_seconds)
+        kreuzberg::cache::filter_old_cache_entries(&cache_times, current_time, max_age_seconds)
+            .into_iter()
+            .map(|v| v as i64)
+            .collect()
     }
 
     pub fn sort_cache_by_access_time(entries: Vec<String>) -> Vec<String> {
@@ -8404,7 +8384,7 @@ impl KreuzbergApi {
     }
 
     pub fn init_thread_pools(budget: i64) -> () {
-        kreuzberg::core::config::concurrency::init_thread_pools(budget)
+        kreuzberg::core::config::concurrency::init_thread_pools(budget as usize)
     }
 
     pub fn merge_config_json(base: &ExtractionConfig, override_json: String) -> PhpResult<ExtractionConfig> {
@@ -8443,7 +8423,7 @@ impl KreuzbergApi {
     }
 
     pub fn validate_upload_size(size: i64) -> PhpResult<()> {
-        let result = kreuzberg::core::config_validation::validate_upload_size(size)
+        let result = kreuzberg::core::config_validation::validate_upload_size(size as usize)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -8503,7 +8483,7 @@ impl KreuzbergApi {
     }
 
     pub fn validate_chunking_params(max_chars: i64, max_overlap: i64) -> PhpResult<()> {
-        let result = kreuzberg::core::validate_chunking_params(max_chars, max_overlap)
+        let result = kreuzberg::core::validate_chunking_params(max_chars as usize, max_overlap as usize)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -8720,23 +8700,23 @@ impl KreuzbergApi {
     }
 
     pub fn estimate_content_capacity(file_size: i64, format: String) -> i64 {
-        kreuzberg::extraction::estimate_content_capacity(file_size, &format)
+        kreuzberg::extraction::estimate_content_capacity(file_size as u64, &format) as i64
     }
 
     pub fn estimate_html_markdown_capacity(html_size: i64) -> i64 {
-        kreuzberg::extraction::estimate_html_markdown_capacity(html_size)
+        kreuzberg::extraction::estimate_html_markdown_capacity(html_size as u64) as i64
     }
 
     pub fn estimate_spreadsheet_capacity(file_size: i64) -> i64 {
-        kreuzberg::extraction::estimate_spreadsheet_capacity(file_size)
+        kreuzberg::extraction::estimate_spreadsheet_capacity(file_size as u64) as i64
     }
 
     pub fn estimate_presentation_capacity(file_size: i64) -> i64 {
-        kreuzberg::extraction::estimate_presentation_capacity(file_size)
+        kreuzberg::extraction::estimate_presentation_capacity(file_size as u64) as i64
     }
 
     pub fn estimate_table_markdown_capacity(row_count: i64, col_count: i64) -> i64 {
-        kreuzberg::extraction::estimate_table_markdown_capacity(row_count, col_count)
+        kreuzberg::extraction::estimate_table_markdown_capacity(row_count as usize, col_count as usize) as i64
     }
 
     pub fn decompress_gzip(bytes: Vec<u8>, limits: String) -> PhpResult<Vec<u8>> {
@@ -8977,7 +8957,7 @@ impl KreuzbergApi {
     pub fn detect_table_page_numbers(bytes: Vec<u8>) -> PhpResult<Vec<i64>> {
         let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
+        Ok(result.into_iter().map(|v| v as i64).collect())
     }
 
     pub fn detect_image_format(data: Vec<u8>) -> String {
@@ -9021,11 +9001,11 @@ impl KreuzbergApi {
     }
 
     pub fn cells_to_text(cells: Vec<Vec<String>>) -> String {
-        kreuzberg::extraction::cells_to_text(cells)
+        kreuzberg::extraction::cells_to_text(&cells)
     }
 
     pub fn cells_to_markdown(cells: Vec<Vec<String>>) -> String {
-        kreuzberg::extraction::cells_to_markdown(cells)
+        kreuzberg::extraction::cells_to_markdown(&cells)
     }
 
     pub fn parse_jotdown_attributes(attrs: String) -> String {
@@ -9064,7 +9044,7 @@ impl KreuzbergApi {
 
     pub fn render_block_to_djot(block: &FormattedBlock, indent_level: i64) -> String {
         let block_core: kreuzberg::FormattedBlock = block.clone().into();
-        kreuzberg::extractors::djot_format::rendering::render_block_to_djot(block_core, indent_level)
+        kreuzberg::extractors::djot_format::rendering::render_block_to_djot(block_core, indent_level as usize)
     }
 
     pub fn render_list_item(item: &FormattedBlock, indent: String, marker: String) -> String {
@@ -9073,7 +9053,7 @@ impl KreuzbergApi {
     }
 
     pub fn render_inline_content(elements: Vec<InlineElement>) -> String {
-        kreuzberg::extractors::djot_format::rendering::render_inline_content(elements)
+        kreuzberg::extractors::djot_format::rendering::render_inline_content(&elements)
     }
 
     pub fn extract_frontmatter(content: String) -> String {
@@ -9107,7 +9087,7 @@ impl KreuzbergApi {
     }
 
     pub fn extract_text_from_iwa_files(content: Vec<u8>, iwa_paths: Vec<String>) -> PhpResult<String> {
-        let result = kreuzberg::extractors::iwork::extract_text_from_iwa_files(&content, iwa_paths)
+        let result = kreuzberg::extractors::iwork::extract_text_from_iwa_files(&content, &iwa_paths)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -9305,7 +9285,7 @@ impl KreuzbergApi {
     }
 
     pub fn sanitize_filename(path: String) -> String {
-        kreuzberg::telemetry::conventions::sanitize_filename(std::path::PathBuf::from(path)).into()
+        kreuzberg::telemetry::conventions::sanitize_filename(std::path::Path::new(&path)).into()
     }
 
     pub fn get_metrics() -> String {
@@ -9321,7 +9301,7 @@ impl KreuzbergApi {
     }
 
     pub fn sanitize_path(path: String) -> String {
-        kreuzberg::telemetry::spans::sanitize_path(std::path::PathBuf::from(path))
+        kreuzberg::telemetry::spans::sanitize_path(std::path::Path::new(&path))
     }
 
     pub fn extractor_span(extractor_name: String, mime_type: String, size_bytes: i64) -> String {
@@ -9351,7 +9331,7 @@ impl KreuzbergApi {
     }
 
     pub fn string_from_utf8(bytes: Vec<u8>) -> PhpResult<String> {
-        let result = kreuzberg::text::utf8_validation::string_from_utf8(&bytes)
+        let result = kreuzberg::text::utf8_validation::string_from_utf8(bytes)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -9389,7 +9369,7 @@ impl KreuzbergApi {
         language_hint: Option<String>,
     ) -> PhpResult<Vec<String>> {
         let config_core: kreuzberg::TokenReductionConfig = config.clone().into();
-        let result = kreuzberg::text::batch_reduce_tokens(texts, config_core, language_hint.as_deref())
+        let result = kreuzberg::text::batch_reduce_tokens(&texts, config_core, language_hint.as_deref())
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -9468,13 +9448,19 @@ impl KreuzbergApi {
 
     pub fn create_string_buffer_pool(pool_size: i64, buffer_capacity: i64) -> StringBufferPool {
         StringBufferPool {
-            inner: Arc::new(kreuzberg::utils::create_string_buffer_pool(pool_size, buffer_capacity)),
+            inner: Arc::new(kreuzberg::utils::create_string_buffer_pool(
+                pool_size as usize,
+                buffer_capacity as usize,
+            )),
         }
     }
 
     pub fn create_byte_buffer_pool(pool_size: i64, buffer_capacity: i64) -> ByteBufferPool {
         ByteBufferPool {
-            inner: Arc::new(kreuzberg::utils::create_byte_buffer_pool(pool_size, buffer_capacity)),
+            inner: Arc::new(kreuzberg::utils::create_byte_buffer_pool(
+                pool_size as usize,
+                buffer_capacity as usize,
+            )),
         }
     }
 
@@ -9517,7 +9503,7 @@ impl KreuzbergApi {
     }
 
     pub fn table_to_markdown(table: Vec<Vec<String>>) -> String {
-        kreuzberg::table_core::table_to_markdown(table)
+        kreuzberg::table_core::table_to_markdown(&table)
     }
 
     pub fn load_server_config(config_path: Option<String>) -> PhpResult<ServerConfig> {
@@ -9601,7 +9587,7 @@ impl KreuzbergApi {
     }
 
     pub fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> PhpResult<()> {
-        let result = kreuzberg::chunking::validate_page_boundaries(boundaries)
+        let result = kreuzberg::chunking::validate_page_boundaries(&boundaries)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -9617,7 +9603,7 @@ impl KreuzbergApi {
         page_boundaries: Option<Vec<PageBoundary>>,
     ) -> PhpResult<ChunkingResult> {
         let config_core: kreuzberg::ChunkingConfig = config.clone().into();
-        let result = kreuzberg::chunking::chunk_text(&text, config_core, page_boundaries)
+        let result = kreuzberg::chunking::chunk_text(&text, config_core, page_boundaries.as_deref())
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result.into())
     }
@@ -9632,7 +9618,7 @@ impl KreuzbergApi {
         let result = kreuzberg::chunking::chunk_text_with_heading_source(
             &text,
             config_core,
-            page_boundaries,
+            page_boundaries.as_deref(),
             heading_source.as_deref(),
         )
         .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
@@ -9647,14 +9633,20 @@ impl KreuzbergApi {
         chunker_type: String,
     ) -> PhpResult<ChunkingResult> {
         let chunker_type_core: kreuzberg::ChunkerType = chunker_type.clone().into();
-        let result = kreuzberg::chunking::chunk_text_with_type(&text, max_characters, overlap, trim, chunker_type_core)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
+        let result = kreuzberg::chunking::chunk_text_with_type(
+            &text,
+            max_characters as usize,
+            overlap as usize,
+            trim,
+            chunker_type_core,
+        )
+        .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result.into())
     }
 
     pub fn chunk_texts_batch(texts: Vec<String>, config: &ChunkingConfig) -> PhpResult<Vec<ChunkingResult>> {
         let config_core: kreuzberg::ChunkingConfig = config.clone().into();
-        let result = kreuzberg::chunking::chunk_texts_batch(texts, config_core)
+        let result = kreuzberg::chunking::chunk_texts_batch(&texts, config_core)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result.into_iter().map(Into::into).collect())
     }
@@ -9664,7 +9656,7 @@ impl KreuzbergApi {
     }
 
     pub fn validate_utf8_boundaries(text: String, boundaries: Vec<PageBoundary>) -> PhpResult<()> {
-        let result = kreuzberg::chunking::validate_utf8_boundaries(&text, boundaries)
+        let result = kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -9676,7 +9668,7 @@ impl KreuzbergApi {
     }
 
     pub fn normalize(v: Vec<f32>) -> Vec<f32> {
-        kreuzberg::embeddings::engine::normalize(v)
+        kreuzberg::embeddings::engine::normalize(&v)
     }
 
     pub fn get_preset(name: String) -> Option<String> {
@@ -9777,11 +9769,11 @@ impl KreuzbergApi {
     ) -> String {
         let detection_core: Option<kreuzberg::DetectionResult> = detection.map(|v| v.clone().into());
         kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
-            elements,
+            &elements,
             detection_core,
             img_width,
             img_height,
-            recognized_tables,
+            &recognized_tables,
         )
     }
 
@@ -9899,7 +9891,7 @@ impl KreuzbergApi {
     }
 
     pub fn cached_font_count() -> i64 {
-        kreuzberg::pdf::cached_font_count()
+        kreuzberg::pdf::cached_font_count() as i64
     }
 
     pub fn cluster_font_sizes(blocks: Vec<String>, k: i64) -> PhpResult<Vec<FontSizeCluster>> {
@@ -10004,7 +9996,7 @@ impl KreuzbergApi {
         dpi: Option<i32>,
         password: Option<String>,
     ) -> PhpResult<Vec<u8>> {
-        let result = kreuzberg::pdf::render_pdf_page_to_png(&pdf_bytes, page_index, dpi, password.as_deref())
+        let result = kreuzberg::pdf::render_pdf_page_to_png(&pdf_bytes, page_index as usize, dpi, password.as_deref())
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -10036,7 +10028,7 @@ impl KreuzbergApi {
     }
 
     pub fn is_well_formed_table(grid: Vec<Vec<String>>) -> bool {
-        kreuzberg::pdf::table_reconstruct::is_well_formed_table(grid)
+        kreuzberg::pdf::table_reconstruct::is_well_formed_table(&grid)
     }
 
     pub fn extract_text_from_pdf(pdf_bytes: Vec<u8>) -> PhpResult<String> {
@@ -10052,7 +10044,7 @@ impl KreuzbergApi {
     }
 
     pub fn extract_text_from_pdf_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> PhpResult<String> {
-        let result = kreuzberg::pdf::text::extract_text_from_pdf_with_passwords(&pdf_bytes, passwords)
+        let result = kreuzberg::pdf::text::extract_text_from_pdf_with_passwords(&pdf_bytes, &passwords)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }

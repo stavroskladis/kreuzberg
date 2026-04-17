@@ -3511,6 +3511,7 @@ pub async fn extract_file(
     let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
     kreuzberg::extract_file(path, mime_type.as_deref(), &config_core)
+        .await
         .map(|val| val.into())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -4888,6 +4889,7 @@ pub async fn serve_with_config(host: String, port: u16, config: JsExtractionConf
     let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
     kreuzberg::api::serve_with_config(host, port, config_core)
+        .await
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
     Ok(())
 }

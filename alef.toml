@@ -549,7 +549,7 @@ extension_name = "kreuzberg"
 package_name = "kreuzberg"
 
 [wasm]
-# All complex types already excluded globally; only WASM-specific overrides here
+# Only exclude ort-dependent types/functions (paddle-ocr, layout-detection, embeddings, auto-rotate).
 exclude_types = []
 exclude_functions = []
 # Everything except ort-dependent features (paddle-ocr, layout-detection, embeddings, auto-rotate)
