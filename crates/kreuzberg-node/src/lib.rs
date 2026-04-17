@@ -8675,7 +8675,7 @@ impl From<JsEmbeddingModelType> for kreuzberg::EmbeddingModelType {
             },
             "custom" => Self::Custom {
                 model_id: val.model_id.unwrap_or_default(),
-                dimensions: val.dimensions.unwrap_or_default(),
+                dimensions: (val.dimensions as usize).unwrap_or_default(),
             },
             "llm" => Self::Llm {
                 llm: val.llm.unwrap_or_default().into(),
@@ -8699,7 +8699,7 @@ impl From<kreuzberg::EmbeddingModelType> for JsEmbeddingModelType {
             },
             kreuzberg::EmbeddingModelType::Custom { model_id, dimensions } => Self {
                 type_tag: "custom".to_string(),
-                dimensions: Some(dimensions),
+                dimensions: Some(dimensions as i64),
                 llm: None,
                 model_id: Some(model_id),
                 name: None,
@@ -8975,7 +8975,7 @@ impl From<JsNodeContent> for kreuzberg::NodeContent {
             },
             "image" => Self::Image {
                 description: val.description,
-                image_index: val.image_index,
+                image_index: val.image_index.map(|v| v as u32),
                 src: val.src,
             },
             "code" => Self::Code {
@@ -8996,7 +8996,7 @@ impl From<JsNodeContent> for kreuzberg::NodeContent {
             },
             "pagebreak" => Self::PageBreak,
             "slide" => Self::Slide {
-                number: val.number.unwrap_or_default(),
+                number: (val.number as u32).unwrap_or_default(),
                 title: val.title,
             },
             "definitionlist" => Self::DefinitionList,
@@ -9352,7 +9352,7 @@ impl From<kreuzberg::NodeContent> for JsNodeContent {
                 label: None,
                 language: None,
                 level: None,
-                number: Some(number),
+                number: Some(number as i64),
                 ordered: None,
                 src: None,
                 term: None,
@@ -9764,10 +9764,10 @@ impl From<JsOcrBoundingGeometry> for kreuzberg::OcrBoundingGeometry {
     fn from(val: JsOcrBoundingGeometry) -> Self {
         match val.type_tag.as_str() {
             "rectangle" => Self::Rectangle {
-                left: val.left.unwrap_or_default(),
-                top: val.top.unwrap_or_default(),
-                width: val.width.unwrap_or_default(),
-                height: val.height.unwrap_or_default(),
+                left: (val.left as u32).unwrap_or_default(),
+                top: (val.top as u32).unwrap_or_default(),
+                width: (val.width as u32).unwrap_or_default(),
+                height: (val.height as u32).unwrap_or_default(),
             },
             "quadrilateral" => Self::Quadrilateral {
                 points: Default::default(),
@@ -9792,11 +9792,11 @@ impl From<kreuzberg::OcrBoundingGeometry> for JsOcrBoundingGeometry {
                 height,
             } => Self {
                 type_tag: "rectangle".to_string(),
-                height: Some(height),
-                left: Some(left),
+                height: Some(height as i64),
+                left: Some(left as i64),
                 points: None,
-                top: Some(top),
-                width: Some(width),
+                top: Some(top as i64),
+                width: Some(width as i64),
             },
             kreuzberg::OcrBoundingGeometry::Quadrilateral { points: _points } => Self {
                 type_tag: "quadrilateral".to_string(),
