@@ -102,6 +102,10 @@ class KeywordAlgorithm(str, Enum):
     RAKE = "rake"
 
 
+class OcrRotation:
+    """Placeholder for OcrRotation type."""
+
+
 class TokenReductionOptions:
     """Placeholder for TokenReductionOptions type."""
 
@@ -114,8 +118,12 @@ class ErrorMetadata:
     """Placeholder for ErrorMetadata type."""
 
 
-class OcrRotation:
-    """Placeholder for OcrRotation type."""
+class LanguageDetectionConfig:
+    """Placeholder for LanguageDetectionConfig type."""
+
+
+class DjotContent:
+    """Placeholder for DjotContent type."""
 
 
 class OcrPipelineConfig:
@@ -126,20 +134,12 @@ class PageStructure:
     """Placeholder for PageStructure type."""
 
 
-class DjotContent:
-    """Placeholder for DjotContent type."""
-
-
 class YearRange:
     """Placeholder for YearRange type."""
 
 
 class ImagePreprocessingMetadata:
     """Placeholder for ImagePreprocessingMetadata type."""
-
-
-class LanguageDetectionConfig:
-    """Placeholder for LanguageDetectionConfig type."""
 
 
 @dataclass
@@ -1147,7 +1147,7 @@ class Metadata(TypedDict, total=False):
     pages: Any | None
     """Page/slide/sheet structure with boundaries"""
 
-    format: dict | None
+    format: str | None
     """Format-specific metadata (discriminated union)"""
 
     image_preprocessing: Any | None

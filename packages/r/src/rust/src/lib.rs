@@ -4651,7 +4651,7 @@ pub struct Metadata {
     /// 
     /// Contains detailed metadata specific to the document format.
     /// Serializes with a `format_type` discriminator field.
-    pub format: Option<FormatMetadata>,
+    pub format: Option<String>,
     /// Image preprocessing metadata (when OCR preprocessing was applied)
     pub image_preprocessing: Option<ImagePreprocessingMetadata>,
     /// JSON schema (for structured data extraction)
@@ -4705,7 +4705,7 @@ impl Metadata {
         created_by: Option<String>,
         modified_by: Option<String>,
         pages: Option<PageStructure>,
-        format: Option<FormatMetadata>,
+        format: Option<String>,
         image_preprocessing: Option<ImagePreprocessingMetadata>,
         json_schema: Option<String>,
         error: Option<ErrorMetadata>,
@@ -4732,7 +4732,7 @@ pub fn new_metadata(
     created_by: String = "",
     modified_by: String = "",
     pages: PageStructure = null,
-    format: FormatMetadata = null,
+    format: String = "",
     image_preprocessing: ImagePreprocessingMetadata = null,
     json_schema: String = "",
     error: ErrorMetadata = null,
@@ -8056,36 +8056,6 @@ pub enum ElementType {
 #[allow(clippy::derivable_impls)]
 impl Default for ElementType {
     fn default() -> Self { Self::Title }
-}
-
-
-#[derive(Clone, PartialEq, serde::Serialize)]
-pub enum FormatMetadata {
-    Pdf = 0,
-    Docx = 1,
-    Excel = 2,
-    Email = 3,
-    Pptx = 4,
-    Archive = 5,
-    Image = 6,
-    Xml = 7,
-    Text = 8,
-    Html = 9,
-    Ocr = 10,
-    Csv = 11,
-    Bibtex = 12,
-    Citation = 13,
-    FictionBook = 14,
-    Dbf = 15,
-    Jats = 16,
-    Epub = 17,
-    Pst = 18,
-    Code = 19,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for FormatMetadata {
-    fn default() -> Self { Self::Pdf }
 }
 
 

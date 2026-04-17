@@ -1724,7 +1724,7 @@ pub struct Metadata {
     pub created_by: Option<String>,
     pub modified_by: Option<String>,
     pub pages: Option<PageStructure>,
-    pub format: Option<FormatMetadata>,
+    pub format: Option<String>,
     pub image_preprocessing: Option<ImagePreprocessingMetadata>,
     pub json_schema: Option<String>,
     pub error: Option<ErrorMetadata>,
@@ -3281,37 +3281,6 @@ pub enum ElementType {
 impl Default for ElementType {
     fn default() -> Self {
         Self::Title
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum FormatMetadata {
-    Pdf,
-    Docx,
-    Excel,
-    Email,
-    Pptx,
-    Archive,
-    Image,
-    Xml,
-    Text,
-    Html,
-    Ocr,
-    Csv,
-    Bibtex,
-    Citation,
-    FictionBook,
-    Dbf,
-    Jats,
-    Epub,
-    Pst,
-    Code,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for FormatMetadata {
-    fn default() -> Self {
-        Self::Pdf
     }
 }
 
@@ -8124,7 +8093,7 @@ impl From<Metadata> for kreuzberg::Metadata {
             created_by: val.created_by,
             modified_by: val.modified_by,
             pages: val.pages.map(Into::into),
-            format: val.format.map(Into::into),
+            format: Default::default(),
             image_preprocessing: val.image_preprocessing.map(Into::into),
             json_schema: val.json_schema.as_ref().and_then(|s| serde_json::from_str(s).ok()),
             error: val.error.map(Into::into),
@@ -8152,7 +8121,7 @@ impl From<kreuzberg::Metadata> for Metadata {
             created_by: val.created_by,
             modified_by: val.modified_by,
             pages: val.pages.map(Into::into),
-            format: val.format.map(Into::into),
+            format: val.format.as_ref().map(|v| format!("{:?}", v)),
             image_preprocessing: val.image_preprocessing.map(Into::into),
             json_schema: val.json_schema.as_ref().map(ToString::to_string),
             error: val.error.map(Into::into),
@@ -10146,60 +10115,6 @@ impl From<kreuzberg::ElementType> for ElementType {
             kreuzberg::ElementType::BlockQuote => Self::BlockQuote,
             kreuzberg::ElementType::Footer => Self::Footer,
             kreuzberg::ElementType::Header => Self::Header,
-        }
-    }
-}
-
-impl From<FormatMetadata> for kreuzberg::FormatMetadata {
-    fn from(val: FormatMetadata) -> Self {
-        match val {
-            FormatMetadata::Pdf => Self::Pdf(Default::default()),
-            FormatMetadata::Docx => Self::Docx(Default::default()),
-            FormatMetadata::Excel => Self::Excel(Default::default()),
-            FormatMetadata::Email => Self::Email(Default::default()),
-            FormatMetadata::Pptx => Self::Pptx(Default::default()),
-            FormatMetadata::Archive => Self::Archive(Default::default()),
-            FormatMetadata::Image => Self::Image(Default::default()),
-            FormatMetadata::Xml => Self::Xml(Default::default()),
-            FormatMetadata::Text => Self::Text(Default::default()),
-            FormatMetadata::Html => Self::Html(Default::default()),
-            FormatMetadata::Ocr => Self::Ocr(Default::default()),
-            FormatMetadata::Csv => Self::Csv(Default::default()),
-            FormatMetadata::Bibtex => Self::Bibtex(Default::default()),
-            FormatMetadata::Citation => Self::Citation(Default::default()),
-            FormatMetadata::FictionBook => Self::FictionBook(Default::default()),
-            FormatMetadata::Dbf => Self::Dbf(Default::default()),
-            FormatMetadata::Jats => Self::Jats(Default::default()),
-            FormatMetadata::Epub => Self::Epub(Default::default()),
-            FormatMetadata::Pst => Self::Pst(Default::default()),
-            FormatMetadata::Code => Self::Code(Default::default()),
-        }
-    }
-}
-
-impl From<kreuzberg::FormatMetadata> for FormatMetadata {
-    fn from(val: kreuzberg::FormatMetadata) -> Self {
-        match val {
-            kreuzberg::FormatMetadata::Pdf(..) => Self::Pdf,
-            kreuzberg::FormatMetadata::Docx(..) => Self::Docx,
-            kreuzberg::FormatMetadata::Excel(..) => Self::Excel,
-            kreuzberg::FormatMetadata::Email(..) => Self::Email,
-            kreuzberg::FormatMetadata::Pptx(..) => Self::Pptx,
-            kreuzberg::FormatMetadata::Archive(..) => Self::Archive,
-            kreuzberg::FormatMetadata::Image(..) => Self::Image,
-            kreuzberg::FormatMetadata::Xml(..) => Self::Xml,
-            kreuzberg::FormatMetadata::Text(..) => Self::Text,
-            kreuzberg::FormatMetadata::Html(..) => Self::Html,
-            kreuzberg::FormatMetadata::Ocr(..) => Self::Ocr,
-            kreuzberg::FormatMetadata::Csv(..) => Self::Csv,
-            kreuzberg::FormatMetadata::Bibtex(..) => Self::Bibtex,
-            kreuzberg::FormatMetadata::Citation(..) => Self::Citation,
-            kreuzberg::FormatMetadata::FictionBook(..) => Self::FictionBook,
-            kreuzberg::FormatMetadata::Dbf(..) => Self::Dbf,
-            kreuzberg::FormatMetadata::Jats(..) => Self::Jats,
-            kreuzberg::FormatMetadata::Epub(..) => Self::Epub,
-            kreuzberg::FormatMetadata::Pst(..) => Self::Pst,
-            kreuzberg::FormatMetadata::Code(..) => Self::Code,
         }
     }
 }

@@ -6467,7 +6467,7 @@ pub struct Metadata {
     pub created_by: Option<String>,
     pub modified_by: Option<String>,
     pub pages: Option<PageStructure>,
-    pub format: Option<FormatMetadata>,
+    pub format: Option<String>,
     pub image_preprocessing: Option<ImagePreprocessingMetadata>,
     pub json_schema: Option<String>,
     pub error: Option<ErrorMetadata>,
@@ -6526,7 +6526,7 @@ impl Metadata {
                 .and_then(|v| PageStructure::try_convert(v).ok()),
             format: kwargs
                 .get(ruby.to_symbol("format"))
-                .and_then(|v| FormatMetadata::try_convert(v).ok()),
+                .and_then(|v| String::try_convert(v).ok()),
             image_preprocessing: kwargs
                 .get(ruby.to_symbol("image_preprocessing"))
                 .and_then(|v| ImagePreprocessingMetadata::try_convert(v).ok()),
@@ -6601,7 +6601,7 @@ impl Metadata {
         self.pages.clone()
     }
 
-    fn format(&self) -> Option<FormatMetadata> {
+    fn format(&self) -> Option<String> {
         self.format.clone()
     }
 
@@ -12516,57 +12516,6 @@ impl magnus::TryConvert for ElementType {
 unsafe impl IntoValueFromNative for ElementType {}
 unsafe impl TryConvertOwned for ElementType {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[serde(tag = "format_type")]
-pub enum FormatMetadata {
-    Pdf { _0: String },
-    Docx { _0: DocxMetadata },
-    Excel { _0: ExcelMetadata },
-    Email { _0: EmailMetadata },
-    Pptx { _0: PptxMetadata },
-    Archive { _0: ArchiveMetadata },
-    Image { _0: String },
-    Xml { _0: XmlMetadata },
-    Text { _0: TextMetadata },
-    Html { _0: HtmlMetadata },
-    Ocr { _0: OcrMetadata },
-    Csv { _0: CsvMetadata },
-    Bibtex { _0: BibtexMetadata },
-    Citation { _0: CitationMetadata },
-    FictionBook { _0: FictionBookMetadata },
-    Dbf { _0: DbfMetadata },
-    Jats { _0: JatsMetadata },
-    Epub { _0: EpubMetadata },
-    Pst { _0: PstMetadata },
-    Code { _0: String },
-}
-
-impl Default for FormatMetadata {
-    fn default() -> Self {
-        Self::Pdf { _0: Default::default() }
-    }
-}
-
-impl magnus::IntoValue for FormatMetadata {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for FormatMetadata {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for FormatMetadata {}
-unsafe impl TryConvertOwned for FormatMetadata {}
-
 #[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
 pub enum TextDirection {
     #[serde(rename = "ltr")]
@@ -17704,7 +17653,7 @@ impl From<Metadata> for kreuzberg::Metadata {
             created_by: val.created_by,
             modified_by: val.modified_by,
             pages: val.pages.map(Into::into),
-            format: val.format.map(Into::into),
+            format: Default::default(),
             image_preprocessing: val.image_preprocessing.map(Into::into),
             json_schema: val.json_schema.as_ref().and_then(|s| serde_json::from_str(s).ok()),
             error: val.error.map(Into::into),
@@ -17732,7 +17681,7 @@ impl From<kreuzberg::Metadata> for Metadata {
             created_by: val.created_by,
             modified_by: val.modified_by,
             pages: val.pages.map(Into::into),
-            format: val.format.map(Into::into),
+            format: val.format.as_ref().map(|v| format!("{:?}", v)),
             image_preprocessing: val.image_preprocessing.map(Into::into),
             json_schema: val.json_schema.as_ref().map(ToString::to_string),
             error: val.error.map(Into::into),
@@ -19701,66 +19650,6 @@ impl From<kreuzberg::ElementType> for ElementType {
             kreuzberg::ElementType::BlockQuote => Self::BlockQuote,
             kreuzberg::ElementType::Footer => Self::Footer,
             kreuzberg::ElementType::Header => Self::Header,
-        }
-    }
-}
-
-impl From<FormatMetadata> for kreuzberg::FormatMetadata {
-    fn from(val: FormatMetadata) -> Self {
-        match val {
-            FormatMetadata::Pdf { _0 } => Self::Pdf(serde_json::from_str(&_0).unwrap_or_default()),
-            FormatMetadata::Docx { _0 } => Self::Docx(Box::new(_0.into())),
-            FormatMetadata::Excel { _0 } => Self::Excel(_0.into()),
-            FormatMetadata::Email { _0 } => Self::Email(_0.into()),
-            FormatMetadata::Pptx { _0 } => Self::Pptx(_0.into()),
-            FormatMetadata::Archive { _0 } => Self::Archive(_0.into()),
-            FormatMetadata::Image { _0 } => Self::Image(serde_json::from_str(&_0).unwrap_or_default()),
-            FormatMetadata::Xml { _0 } => Self::Xml(_0.into()),
-            FormatMetadata::Text { _0 } => Self::Text(_0.into()),
-            FormatMetadata::Html { _0 } => Self::Html(Box::new(_0.into())),
-            FormatMetadata::Ocr { _0 } => Self::Ocr(_0.into()),
-            FormatMetadata::Csv { _0 } => Self::Csv(_0.into()),
-            FormatMetadata::Bibtex { _0 } => Self::Bibtex(_0.into()),
-            FormatMetadata::Citation { _0 } => Self::Citation(_0.into()),
-            FormatMetadata::FictionBook { _0 } => Self::FictionBook(_0.into()),
-            FormatMetadata::Dbf { _0 } => Self::Dbf(_0.into()),
-            FormatMetadata::Jats { _0 } => Self::Jats(_0.into()),
-            FormatMetadata::Epub { _0 } => Self::Epub(_0.into()),
-            FormatMetadata::Pst { _0 } => Self::Pst(_0.into()),
-            FormatMetadata::Code { _0 } => Self::Code(serde_json::from_str(&_0).unwrap_or_default()),
-        }
-    }
-}
-
-impl From<kreuzberg::FormatMetadata> for FormatMetadata {
-    fn from(val: kreuzberg::FormatMetadata) -> Self {
-        match val {
-            kreuzberg::FormatMetadata::Pdf(_0) => Self::Pdf {
-                _0: serde_json::to_string(&_0).unwrap_or_default(),
-            },
-            kreuzberg::FormatMetadata::Docx(_0) => Self::Docx { _0: (*_0).into() },
-            kreuzberg::FormatMetadata::Excel(_0) => Self::Excel { _0: _0.into() },
-            kreuzberg::FormatMetadata::Email(_0) => Self::Email { _0: _0.into() },
-            kreuzberg::FormatMetadata::Pptx(_0) => Self::Pptx { _0: _0.into() },
-            kreuzberg::FormatMetadata::Archive(_0) => Self::Archive { _0: _0.into() },
-            kreuzberg::FormatMetadata::Image(_0) => Self::Image {
-                _0: serde_json::to_string(&_0).unwrap_or_default(),
-            },
-            kreuzberg::FormatMetadata::Xml(_0) => Self::Xml { _0: _0.into() },
-            kreuzberg::FormatMetadata::Text(_0) => Self::Text { _0: _0.into() },
-            kreuzberg::FormatMetadata::Html(_0) => Self::Html { _0: (*_0).into() },
-            kreuzberg::FormatMetadata::Ocr(_0) => Self::Ocr { _0: _0.into() },
-            kreuzberg::FormatMetadata::Csv(_0) => Self::Csv { _0: _0.into() },
-            kreuzberg::FormatMetadata::Bibtex(_0) => Self::Bibtex { _0: _0.into() },
-            kreuzberg::FormatMetadata::Citation(_0) => Self::Citation { _0: _0.into() },
-            kreuzberg::FormatMetadata::FictionBook(_0) => Self::FictionBook { _0: _0.into() },
-            kreuzberg::FormatMetadata::Dbf(_0) => Self::Dbf { _0: _0.into() },
-            kreuzberg::FormatMetadata::Jats(_0) => Self::Jats { _0: _0.into() },
-            kreuzberg::FormatMetadata::Epub(_0) => Self::Epub { _0: _0.into() },
-            kreuzberg::FormatMetadata::Pst(_0) => Self::Pst { _0: _0.into() },
-            kreuzberg::FormatMetadata::Code(_0) => Self::Code {
-                _0: serde_json::to_string(&_0).unwrap_or_default(),
-            },
         }
     }
 }

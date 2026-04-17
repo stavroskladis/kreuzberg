@@ -8196,28 +8196,6 @@ pub const ELEMENTTYPE_BLOCKQUOTE: &str = "BlockQuote";
 pub const ELEMENTTYPE_FOOTER: &str = "Footer";
 pub const ELEMENTTYPE_HEADER: &str = "Header";
 
-// FormatMetadata enum values
-pub const FORMATMETADATA_PDF: &str = "Pdf";
-pub const FORMATMETADATA_DOCX: &str = "Docx";
-pub const FORMATMETADATA_EXCEL: &str = "Excel";
-pub const FORMATMETADATA_EMAIL: &str = "Email";
-pub const FORMATMETADATA_PPTX: &str = "Pptx";
-pub const FORMATMETADATA_ARCHIVE: &str = "Archive";
-pub const FORMATMETADATA_IMAGE: &str = "Image";
-pub const FORMATMETADATA_XML: &str = "Xml";
-pub const FORMATMETADATA_TEXT: &str = "Text";
-pub const FORMATMETADATA_HTML: &str = "Html";
-pub const FORMATMETADATA_OCR: &str = "Ocr";
-pub const FORMATMETADATA_CSV: &str = "Csv";
-pub const FORMATMETADATA_BIBTEX: &str = "Bibtex";
-pub const FORMATMETADATA_CITATION: &str = "Citation";
-pub const FORMATMETADATA_FICTIONBOOK: &str = "FictionBook";
-pub const FORMATMETADATA_DBF: &str = "Dbf";
-pub const FORMATMETADATA_JATS: &str = "Jats";
-pub const FORMATMETADATA_EPUB: &str = "Epub";
-pub const FORMATMETADATA_PST: &str = "Pst";
-pub const FORMATMETADATA_CODE: &str = "Code";
-
 // TextDirection enum values
 pub const TEXTDIRECTION_LEFTTORIGHT: &str = "LeftToRight";
 pub const TEXTDIRECTION_RIGHTTOLEFT: &str = "RightToLeft";
@@ -11862,12 +11840,7 @@ impl From<kreuzberg::Metadata> for Metadata {
             created_by: val.created_by,
             modified_by: val.modified_by,
             pages: val.pages.map(Into::into),
-            format: val.format.as_ref().map(|v| {
-                serde_json::to_value(v)
-                    .ok()
-                    .and_then(|s| s.as_str().map(String::from))
-                    .unwrap_or_default()
-            }),
+            format: val.format.as_ref().map(|v| format!("{:?}", v)),
             image_preprocessing: val.image_preprocessing.map(Into::into),
             json_schema: val.json_schema.as_ref().map(ToString::to_string),
             error: val.error.map(Into::into),

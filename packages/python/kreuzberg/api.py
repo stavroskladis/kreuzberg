@@ -456,7 +456,7 @@ def _to_rust_metadata(value: Metadata | None) -> _rust.Metadata | None:
         created_by=value.created_by,
         modified_by=value.modified_by,
         pages=value.pages,
-        format=_rust.FormatMetadata(value.format) if value.format is not None else None,
+        format=value.format,
         image_preprocessing=value.image_preprocessing,
         json_schema=value.json_schema,
         error=value.error,

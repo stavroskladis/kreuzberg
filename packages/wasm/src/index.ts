@@ -82,7 +82,6 @@ export {
   WasmFileExtractionConfig,
   WasmFontSizeCluster,
   WasmFootnote,
-  WasmFormatMetadata,
   WasmFormattedBlock,
   WasmFracType,
   WasmGridCell,

@@ -8291,7 +8291,7 @@ pub struct WasmMetadata {
     created_by: Option<String>,
     modified_by: Option<String>,
     pages: Option<WasmPageStructure>,
-    format: Option<WasmFormatMetadata>,
+    format: Option<String>,
     image_preprocessing: Option<WasmImagePreprocessingMetadata>,
     json_schema: Option<JsValue>,
     error: Option<WasmErrorMetadata>,
@@ -8320,7 +8320,7 @@ impl WasmMetadata {
         created_by: Option<String>,
         modified_by: Option<String>,
         pages: Option<WasmPageStructure>,
-        format: Option<WasmFormatMetadata>,
+        format: Option<String>,
         image_preprocessing: Option<WasmImagePreprocessingMetadata>,
         json_schema: Option<JsValue>,
         error: Option<WasmErrorMetadata>,
@@ -8457,12 +8457,12 @@ impl WasmMetadata {
     }
 
     #[wasm_bindgen(getter)]
-    pub fn format(&self) -> Option<WasmFormatMetadata> {
-        self.format
+    pub fn format(&self) -> Option<String> {
+        self.format.clone()
     }
 
     #[wasm_bindgen(setter)]
-    pub fn set_format(&mut self, value: Option<WasmFormatMetadata>) {
+    pub fn set_format(&mut self, value: Option<String>) {
         self.format = value;
     }
 
@@ -14798,38 +14798,6 @@ impl Default for WasmElementType {
 
 #[wasm_bindgen]
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum WasmFormatMetadata {
-    Pdf = 0,
-    Docx = 1,
-    Excel = 2,
-    Email = 3,
-    Pptx = 4,
-    Archive = 5,
-    Image = 6,
-    Xml = 7,
-    Text = 8,
-    Html = 9,
-    Ocr = 10,
-    Csv = 11,
-    Bibtex = 12,
-    Citation = 13,
-    FictionBook = 14,
-    Dbf = 15,
-    Jats = 16,
-    Epub = 17,
-    Pst = 18,
-    Code = 19,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for WasmFormatMetadata {
-    fn default() -> Self {
-        Self::Pdf
-    }
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum WasmTextDirection {
     LeftToRight = 0,
     RightToLeft = 1,
@@ -19056,7 +19024,7 @@ impl From<WasmMetadata> for kreuzberg::Metadata {
             created_by: val.created_by,
             modified_by: val.modified_by,
             pages: val.pages.map(Into::into),
-            format: val.format.map(Into::into),
+            format: Default::default(),
             image_preprocessing: val.image_preprocessing.map(Into::into),
             json_schema: val
                 .json_schema
@@ -19087,7 +19055,7 @@ impl From<kreuzberg::Metadata> for WasmMetadata {
             created_by: val.created_by,
             modified_by: val.modified_by,
             pages: val.pages.map(Into::into),
-            format: val.format.map(Into::into),
+            format: val.format.as_ref().map(|v| format!("{:?}", v)),
             image_preprocessing: val.image_preprocessing.map(Into::into),
             json_schema: val
                 .json_schema
@@ -21080,60 +21048,6 @@ impl From<kreuzberg::ElementType> for WasmElementType {
             kreuzberg::ElementType::BlockQuote => Self::BlockQuote,
             kreuzberg::ElementType::Footer => Self::Footer,
             kreuzberg::ElementType::Header => Self::Header,
-        }
-    }
-}
-
-impl From<WasmFormatMetadata> for kreuzberg::FormatMetadata {
-    fn from(val: WasmFormatMetadata) -> Self {
-        match val {
-            WasmFormatMetadata::Pdf => Self::Pdf(Default::default()),
-            WasmFormatMetadata::Docx => Self::Docx(Default::default()),
-            WasmFormatMetadata::Excel => Self::Excel(Default::default()),
-            WasmFormatMetadata::Email => Self::Email(Default::default()),
-            WasmFormatMetadata::Pptx => Self::Pptx(Default::default()),
-            WasmFormatMetadata::Archive => Self::Archive(Default::default()),
-            WasmFormatMetadata::Image => Self::Image(Default::default()),
-            WasmFormatMetadata::Xml => Self::Xml(Default::default()),
-            WasmFormatMetadata::Text => Self::Text(Default::default()),
-            WasmFormatMetadata::Html => Self::Html(Default::default()),
-            WasmFormatMetadata::Ocr => Self::Ocr(Default::default()),
-            WasmFormatMetadata::Csv => Self::Csv(Default::default()),
-            WasmFormatMetadata::Bibtex => Self::Bibtex(Default::default()),
-            WasmFormatMetadata::Citation => Self::Citation(Default::default()),
-            WasmFormatMetadata::FictionBook => Self::FictionBook(Default::default()),
-            WasmFormatMetadata::Dbf => Self::Dbf(Default::default()),
-            WasmFormatMetadata::Jats => Self::Jats(Default::default()),
-            WasmFormatMetadata::Epub => Self::Epub(Default::default()),
-            WasmFormatMetadata::Pst => Self::Pst(Default::default()),
-            WasmFormatMetadata::Code => Self::Code(Default::default()),
-        }
-    }
-}
-
-impl From<kreuzberg::FormatMetadata> for WasmFormatMetadata {
-    fn from(val: kreuzberg::FormatMetadata) -> Self {
-        match val {
-            kreuzberg::FormatMetadata::Pdf(..) => Self::Pdf,
-            kreuzberg::FormatMetadata::Docx(..) => Self::Docx,
-            kreuzberg::FormatMetadata::Excel(..) => Self::Excel,
-            kreuzberg::FormatMetadata::Email(..) => Self::Email,
-            kreuzberg::FormatMetadata::Pptx(..) => Self::Pptx,
-            kreuzberg::FormatMetadata::Archive(..) => Self::Archive,
-            kreuzberg::FormatMetadata::Image(..) => Self::Image,
-            kreuzberg::FormatMetadata::Xml(..) => Self::Xml,
-            kreuzberg::FormatMetadata::Text(..) => Self::Text,
-            kreuzberg::FormatMetadata::Html(..) => Self::Html,
-            kreuzberg::FormatMetadata::Ocr(..) => Self::Ocr,
-            kreuzberg::FormatMetadata::Csv(..) => Self::Csv,
-            kreuzberg::FormatMetadata::Bibtex(..) => Self::Bibtex,
-            kreuzberg::FormatMetadata::Citation(..) => Self::Citation,
-            kreuzberg::FormatMetadata::FictionBook(..) => Self::FictionBook,
-            kreuzberg::FormatMetadata::Dbf(..) => Self::Dbf,
-            kreuzberg::FormatMetadata::Jats(..) => Self::Jats,
-            kreuzberg::FormatMetadata::Epub(..) => Self::Epub,
-            kreuzberg::FormatMetadata::Pst(..) => Self::Pst,
-            kreuzberg::FormatMetadata::Code(..) => Self::Code,
         }
     }
 }

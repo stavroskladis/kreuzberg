@@ -12,7 +12,7 @@ defmodule Kreuzberg.Metadata do
             created_by: "",
             modified_by: "",
             pages: nil,
-            format: :pdf,
+            format: "",
             image_preprocessing: nil,
             json_schema: "",
             error: nil,

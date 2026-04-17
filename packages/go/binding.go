@@ -476,16 +476,6 @@ const (
 )
 
 
-// Format-specific metadata (discriminated union).
-//
-// Only one format type can exist per extraction result. This provides
-// type-safe, clean metadata without nested optionals.
-// Variants: Pdf, Docx, Excel, Email, Pptx, Archive, Image, Xml, Text, Html, Ocr, Csv, Bibtex, Citation, FictionBook, Dbf, Jats, Epub, Pst, Code
-type FormatMetadata struct {
-    FormatType string `json:"format_type"`
-}
-
-
 // Text direction enumeration for HTML documents.
 type TextDirection string
 
@@ -5131,7 +5121,7 @@ type Metadata struct {
     //
     // Contains detailed metadata specific to the document format.
     // Serializes with a `format_type` discriminator field.
-    Format *FormatMetadata `json:"format,omitempty"`
+    Format *string `json:"format,omitempty"`
     // Image preprocessing metadata (when OCR preprocessing was applied)
     ImagePreprocessing *ImagePreprocessingMetadata `json:"image_preprocessing,omitempty"`
     // JSON schema (for structured data extraction)
@@ -5224,7 +5214,7 @@ func WithMetadataPages(v PageStructure) MetadataOption {
 }
 
 // WithMetadataFormat sets the format field.
-func WithMetadataFormat(v FormatMetadata) MetadataOption {
+func WithMetadataFormat(v string) MetadataOption {
     return func(c *Metadata) { c.Format = &v }
 }
 

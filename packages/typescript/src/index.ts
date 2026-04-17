@@ -12,7 +12,6 @@ export {
   JsEmbeddingModelType,
   JsExecutionProviderType,
   JsExtractionMode,
-  JsFormatMetadata,
   JsFracType,
   JsHtmlTheme,
   JsImageType,

@@ -399,6 +399,13 @@ types = [
 
     # MCP param types with serde_json::Value fields that can't map to String
     "BatchExtractFilesParams",
+
+    # Tagged enum with heterogeneous tuple payloads — codegen flattens all variant
+    # payloads into a single Option<String> field, but the inner metadata structs
+    # (DocxMetadata, XmlMetadata, etc.) don't implement From<String>/Into<String>.
+    # Individual metadata types keep their standalone Js* wrappers; only the
+    # discriminated-union wrapper is excluded.
+    "FormatMetadata",
 ]
 functions = [
     # Internal functions not part of public API

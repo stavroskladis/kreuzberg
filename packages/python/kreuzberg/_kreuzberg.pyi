@@ -1460,7 +1460,7 @@ class Metadata:
     created_by: str | None
     modified_by: str | None
     pages: PageStructure | None
-    format: FormatMetadata | None
+    format: str | None
     image_preprocessing: ImagePreprocessingMetadata | None
     json_schema: dict[str, Any] | None
     error: ErrorMetadata | None
@@ -1484,7 +1484,7 @@ class Metadata:
         created_by: str | None = None,
         modified_by: str | None = None,
         pages: PageStructure | None = None,
-        format: FormatMetadata | dict[str, Any] | None = None,  # noqa: A002
+        format: str | None = None,  # noqa: A002
         image_preprocessing: ImagePreprocessingMetadata | None = None,
         json_schema: dict[str, Any] | None = None,
         error: ErrorMetadata | None = None,
@@ -2697,9 +2697,6 @@ class ElementType:
     Footer: ElementType = ...
     Header: ElementType = ...
     def __init__(self, value: int | str) -> None: ...
-
-class FormatMetadata:
-    def __init__(self, value: dict[str, Any]) -> None: ...
 
 class TextDirection:
     LeftToRight: TextDirection = ...

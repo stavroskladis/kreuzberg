@@ -3103,7 +3103,7 @@ class Metadata
     public ?string $created_by;
     public ?string $modified_by;
     public ?PageStructure $pages;
-    public ?FormatMetadata $format;
+    public ?string $format;
     public ?ImagePreprocessingMetadata $image_preprocessing;
     public ?string $json_schema;
     public ?ErrorMetadata $error;
@@ -3133,7 +3133,7 @@ class Metadata
         ?string $created_by = null,
         ?string $modified_by = null,
         ?PageStructure $pages = null,
-        ?FormatMetadata $format = null,
+        ?string $format = null,
         ?ImagePreprocessingMetadata $image_preprocessing = null,
         ?string $json_schema = null,
         ?ErrorMetadata $error = null,
@@ -3157,7 +3157,7 @@ class Metadata
     public function getCreatedBy(): ?string { }
     public function getModifiedBy(): ?string { }
     public function getPages(): ?PageStructure { }
-    public function getFormat(): ?FormatMetadata { }
+    public function getFormat(): ?string { }
     public function getImagePreprocessing(): ?ImagePreprocessingMetadata { }
     public function getJsonSchema(): ?string { }
     public function getError(): ?ErrorMetadata { }
@@ -5655,30 +5655,6 @@ enum ElementType: string
     case BlockQuote = 'BlockQuote';
     case Footer = 'Footer';
     case Header = 'Header';
-}
-
-enum FormatMetadata: string
-{
-    case Pdf = 'Pdf';
-    case Docx = 'Docx';
-    case Excel = 'Excel';
-    case Email = 'Email';
-    case Pptx = 'Pptx';
-    case Archive = 'Archive';
-    case Image = 'Image';
-    case Xml = 'Xml';
-    case Text = 'Text';
-    case Html = 'Html';
-    case Ocr = 'Ocr';
-    case Csv = 'Csv';
-    case Bibtex = 'Bibtex';
-    case Citation = 'Citation';
-    case FictionBook = 'FictionBook';
-    case Dbf = 'Dbf';
-    case Jats = 'Jats';
-    case Epub = 'Epub';
-    case Pst = 'Pst';
-    case Code = 'Code';
 }
 
 enum TextDirection: string

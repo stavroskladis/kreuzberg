@@ -90,7 +90,6 @@ typedef struct KREUZBERGFictionBookMetadata KREUZBERGFictionBookMetadata;
 typedef struct KREUZBERGFileExtractionConfig KREUZBERGFileExtractionConfig;
 typedef struct KREUZBERGFontSizeCluster KREUZBERGFontSizeCluster;
 typedef struct KREUZBERGFootnote KREUZBERGFootnote;
-typedef struct KREUZBERGFormatMetadata KREUZBERGFormatMetadata;
 typedef struct KREUZBERGFormattedBlock KREUZBERGFormattedBlock;
 typedef struct KREUZBERGFracType KREUZBERGFracType;
 typedef struct KREUZBERGGridCell KREUZBERGGridCell;
@@ -6059,13 +6058,6 @@ char *kreuzberg_metadata_modified_by(const KREUZBERGMetadata *ptr);
 KREUZBERGPageStructure *kreuzberg_metadata_pages(const KREUZBERGMetadata *ptr);
 
 /**
- * Get the `format` field from a `Metadata`.
- * # Safety
- * Pointer must be a valid handle returned by this library.
- */
-KREUZBERGFormatMetadata *kreuzberg_metadata_format(const KREUZBERGMetadata *ptr);
-
-/**
  * Get the `image_preprocessing` field from a `Metadata`.
  * # Safety
  * Pointer must be a valid handle returned by this library.
@@ -10862,21 +10854,6 @@ int32_t kreuzberg_element_type_from_i32(int32_t value);
  * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
  */
 int32_t kreuzberg_element_type_from_str(const char *name);
-
-/**
- * Convert an integer to a `FormatMetadata` variant. Returns -1 on invalid input.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-int32_t kreuzberg_format_metadata_from_i32(int32_t value);
-
-/**
- * Convert a `FormatMetadata` variant name (C string) to its integer value. Returns -1 on invalid input.
- * # Safety
- * Caller must ensure `ptr` is a valid pointer to a `c_char` or null.
- */
-int32_t kreuzberg_format_metadata_from_str(const char *name);
 
 /**
  * Convert an integer to a `TextDirection` variant. Returns -1 on invalid input.

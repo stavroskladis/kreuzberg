@@ -346,7 +346,6 @@ from .exceptions import (
 from ._kreuzberg import (
     ChunkSizing,
     EmbeddingModelType,
-    FormatMetadata,
     OcrBoundingGeometry,
     OutputFormat,
 )
@@ -443,7 +442,6 @@ __all__ = [
     "ExtractionResult",
     "FictionBookMetadata",
     "FileExtractionConfig",
-    "FormatMetadata",
     "HeaderFooter",
     "HierarchyConfig",
     "HtmlMetadata",

@@ -86,7 +86,6 @@ typedef struct KREUZBERGFictionBookMetadata KREUZBERGFictionBookMetadata;
 typedef struct KREUZBERGFileExtractionConfig KREUZBERGFileExtractionConfig;
 typedef struct KREUZBERGFontSizeCluster KREUZBERGFontSizeCluster;
 typedef struct KREUZBERGFootnote KREUZBERGFootnote;
-typedef struct KREUZBERGFormatMetadata KREUZBERGFormatMetadata;
 typedef struct KREUZBERGFormattedBlock KREUZBERGFormattedBlock;
 typedef struct KREUZBERGFracType KREUZBERGFracType;
 typedef struct KREUZBERGGridCell KREUZBERGGridCell;
