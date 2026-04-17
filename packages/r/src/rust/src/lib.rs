@@ -8503,7 +8503,7 @@ pub async fn extract_bytes(content: Vec<u8>, mime_type: String, config: Extracti
 pub async fn extract_file(path: String, mime_type: Option<String>, config: Option<ExtractionConfig>) -> Result<ExtractionResult> {
     let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
     let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
-    kreuzberg::extract_file(path, mime_type.as_deref(), &config_core).map(|val| ExtractionResult::from(val)).map_err(|e| e.to_string())
+    todo!("async not supported by backend")
 }
 
 #[extendr]
@@ -9669,8 +9669,7 @@ pub async fn serve(host: String, port: i32) -> Result<()> {
 pub async fn serve_with_config(host: String, port: i32, config: ExtractionConfig) -> Result<()> {
     let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
     let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
-    kreuzberg::api::serve_with_config(host, port, config_core).map_err(|e| e.to_string())?;
-    Ok(())
+    todo!("async not supported by backend")
 }
 
 #[allow(clippy::missing_errors_doc)]

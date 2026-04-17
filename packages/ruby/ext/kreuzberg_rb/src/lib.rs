@@ -18120,7 +18120,7 @@ impl From<OcrElement> for kreuzberg::OcrElement {
             backend_metadata: val
                 .backend_metadata
                 .into_iter()
-                .map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::Value::String(v))))
+                .map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or_default()))
                 .collect(),
         }
     }

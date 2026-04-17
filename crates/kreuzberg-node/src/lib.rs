@@ -3291,7 +3291,7 @@ pub fn blake3_hash_bytes(data: Vec<u8>) -> String {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "blake3HashFile")]
 pub fn blake3_hash_file(path: String) -> Result<String> {
-    kreuzberg::cache::blake3_hash_file(path.as_path())
+    kreuzberg::cache::blake3_hash_file(std::path::Path::new(&path))
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -3923,7 +3923,7 @@ pub fn parse_eml_content(data: Vec<u8>) -> Result<JsEmailExtractionResult> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "parseMsgContent")]
 pub fn parse_msg_content(data: Vec<u8>, fallback_codepage: Option<u32>) -> Result<JsEmailExtractionResult> {
-    kreuzberg::extraction::parse_msg_content(&data, fallback_codepage)
+    kreuzberg::extraction::parse_msg_content(&data, fallback_codepage.map(|v| v as u32))
         .map(|val| val.into())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -3935,7 +3935,7 @@ pub fn extract_email_content(
     mime_type: String,
     fallback_codepage: Option<u32>,
 ) -> Result<JsEmailExtractionResult> {
-    kreuzberg::extraction::extract_email_content(&data, &mime_type, fallback_codepage)
+    kreuzberg::extraction::extract_email_content(&data, &mime_type, fallback_codepage.map(|v| v as u32))
         .map(|val| val.into())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -4559,7 +4559,7 @@ pub fn render_plain(doc: String) -> String {
 
 #[napi(js_name = "sanitizeFilename")]
 pub fn sanitize_filename(path: String) -> String {
-    kreuzberg::telemetry::conventions::sanitize_filename(path.as_path()).into()
+    kreuzberg::telemetry::conventions::sanitize_filename(std::path::Path::new(&path)).into()
 }
 
 #[napi(js_name = "getMetrics")]
@@ -4580,7 +4580,7 @@ pub fn record_success_on_current_span() -> () {
 
 #[napi(js_name = "sanitizePath")]
 pub fn sanitize_path(path: String) -> String {
-    kreuzberg::telemetry::spans::sanitize_path(path.as_path())
+    kreuzberg::telemetry::spans::sanitize_path(std::path::Path::new(&path))
 }
 
 #[napi(js_name = "extractorSpan")]
@@ -4677,57 +4677,57 @@ pub fn get_reduction_statistics(original: String, reduced: String) -> String {
 
 #[napi]
 pub fn bold(start: u32, end: u32) -> JsTextAnnotation {
-    kreuzberg::builder::bold(start, end).into()
+    kreuzberg::builder::bold(start as u32, end as u32).into()
 }
 
 #[napi]
 pub fn italic(start: u32, end: u32) -> JsTextAnnotation {
-    kreuzberg::builder::italic(start, end).into()
+    kreuzberg::builder::italic(start as u32, end as u32).into()
 }
 
 #[napi]
 pub fn underline(start: u32, end: u32) -> JsTextAnnotation {
-    kreuzberg::builder::underline(start, end).into()
+    kreuzberg::builder::underline(start as u32, end as u32).into()
 }
 
 #[napi]
 pub fn link(start: u32, end: u32, url: String, title: Option<String>) -> JsTextAnnotation {
-    kreuzberg::builder::link(start, end, &url, title.as_deref()).into()
+    kreuzberg::builder::link(start as u32, end as u32, &url, title.as_deref()).into()
 }
 
 #[napi]
 pub fn code(start: u32, end: u32) -> JsTextAnnotation {
-    kreuzberg::builder::code(start, end).into()
+    kreuzberg::builder::code(start as u32, end as u32).into()
 }
 
 #[napi]
 pub fn strikethrough(start: u32, end: u32) -> JsTextAnnotation {
-    kreuzberg::builder::strikethrough(start, end).into()
+    kreuzberg::builder::strikethrough(start as u32, end as u32).into()
 }
 
 #[napi]
 pub fn subscript(start: u32, end: u32) -> JsTextAnnotation {
-    kreuzberg::builder::subscript(start, end).into()
+    kreuzberg::builder::subscript(start as u32, end as u32).into()
 }
 
 #[napi]
 pub fn superscript(start: u32, end: u32) -> JsTextAnnotation {
-    kreuzberg::builder::superscript(start, end).into()
+    kreuzberg::builder::superscript(start as u32, end as u32).into()
 }
 
 #[napi(js_name = "fontSize")]
 pub fn font_size(start: u32, end: u32, value: String) -> JsTextAnnotation {
-    kreuzberg::builder::font_size(start, end, &value).into()
+    kreuzberg::builder::font_size(start as u32, end as u32, &value).into()
 }
 
 #[napi]
 pub fn color(start: u32, end: u32, value: String) -> JsTextAnnotation {
-    kreuzberg::builder::color(start, end, &value).into()
+    kreuzberg::builder::color(start as u32, end as u32, &value).into()
 }
 
 #[napi]
 pub fn highlight(start: u32, end: u32) -> JsTextAnnotation {
-    kreuzberg::builder::highlight(start, end).into()
+    kreuzberg::builder::highlight(start as u32, end as u32).into()
 }
 
 #[napi(js_name = "classifyUri")]
@@ -5214,7 +5214,7 @@ pub fn compute_hash(data: String) -> String {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "validateTesseractVersion")]
 pub fn validate_tesseract_version(version: u32) -> Result<()> {
-    kreuzberg::ocr::validate_tesseract_version(version)
+    kreuzberg::ocr::validate_tesseract_version(version as u32)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -7842,7 +7842,10 @@ impl From<kreuzberg::BibtexMetadata> for JsBibtexMetadata {
             citation_keys: Some(val.citation_keys),
             authors: Some(val.authors),
             year_range: val.year_range.map(Into::into),
-            entry_types: val.entry_types.map(|m| m.into_iter().collect()),
+            entry_types: val
+                .entry_types
+                .as_ref()
+                .map(|m| m.iter().map(|(k, v)| (k.clone(), *v as i64)).collect()),
         }
     }
 }

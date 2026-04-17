@@ -12131,7 +12131,10 @@ impl From<kreuzberg::BibtexMetadata> for BibtexMetadata {
             citation_keys: val.citation_keys,
             authors: val.authors,
             year_range: val.year_range.map(Into::into),
-            entry_types: val.entry_types.map(|m| m.into_iter().collect()),
+            entry_types: val
+                .entry_types
+                .as_ref()
+                .map(|m| m.iter().map(|(k, v)| (k.clone(), *v as i64)).collect()),
         }
     }
 }
