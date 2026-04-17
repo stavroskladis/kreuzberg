@@ -1780,15 +1780,6 @@ public final class KreuzbergRs {
         }
     }
 
-    public static List<PageBoundary> detectPageBreaksFromDocx(byte[] bytes) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var primitiveResult = (MemorySegment) NativeLib.KREUZBERG_DETECT_PAGE_BREAKS_FROM_DOCX.invoke(bytes);
-            return primitiveResult;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
     public static List<Long> detectTablePageNumbers(byte[] bytes) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var resultPtr = (MemorySegment) NativeLib.KREUZBERG_DETECT_TABLE_PAGE_NUMBERS.invoke(bytes);
@@ -1801,41 +1792,6 @@ public final class KreuzbergRs {
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
-    }
-
-    public static String extractOoxmlEmbeddedObjects(byte[] zipBytes, String embeddingsPrefix, String sourceLabel, ExtractionConfig config) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cembeddingsPrefix = arena.allocateFrom(embeddingsPrefix);
-            var csourceLabel = arena.allocateFrom(sourceLabel);
-            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
-            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
-            var cconfig = cconfigJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_EXTRACTION_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
-                : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACT_OOXML_EMBEDDED_OBJECTS.invoke(zipBytes, cembeddingsPrefix, csourceLabel, cconfig);
-            if (!cconfig.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_EXTRACTION_CONFIG_FREE.invoke(cconfig);
-            }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static CompletableFuture<String> extractOoxmlEmbeddedObjectsAsync(byte[] zipBytes, String embeddingsPrefix, String sourceLabel, ExtractionConfig config) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return extractOoxmlEmbeddedObjects(zipBytes, embeddingsPrefix, sourceLabel, config);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
-        });
     }
 
     public static String detectImageFormat(byte[] data) throws KreuzbergRsException {
@@ -4097,75 +4053,6 @@ public final class KreuzbergRs {
         }
     }
 
-    public static String extractStructured(String content, StructuredExtractionConfig config) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var ccontent = arena.allocateFrom(content);
-            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
-            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
-            var cconfig = cconfigJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
-                : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACT_STRUCTURED.invoke(ccontent, cconfig);
-            if (!cconfig.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FREE.invoke(cconfig);
-            }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static CompletableFuture<String> extractStructuredAsync(String content, StructuredExtractionConfig config) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return extractStructured(content, config);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
-        });
-    }
-
-    public static String vlmOcr(byte[] imageBytes, String imageMimeType, String language, LlmConfig config) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cimageMimeType = arena.allocateFrom(imageMimeType);
-            var clanguage = arena.allocateFrom(language);
-            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
-            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
-            var cconfig = cconfigJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_LLM_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
-                : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_VLM_OCR.invoke(imageBytes, cimageMimeType, clanguage, cconfig);
-            if (!cconfig.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_LLM_CONFIG_FREE.invoke(cconfig);
-            }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static CompletableFuture<String> vlmOcrAsync(byte[] imageBytes, String imageMimeType, String language, LlmConfig config) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return vlmOcr(imageBytes, imageMimeType, language, config);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
-        });
-    }
-
     public static List<Float> normalize(List<Float> v) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cvJson = createObjectMapper().writeValueAsString(v);
@@ -4240,24 +4127,6 @@ public final class KreuzbergRs {
             NativeLib.KREUZBERG_DOWNLOAD_MODEL.invoke(cmodelType, ccacheDir);
             if (!cmodelType.equals(MemorySegment.NULL)) {
                 NativeLib.KREUZBERG_EMBEDDING_MODEL_TYPE_FREE.invoke(cmodelType);
-            }
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static void generateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cchunksJson = createObjectMapper().writeValueAsString(chunks);
-            var cchunks = arena.allocateFrom(cchunksJson);
-            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
-            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
-            var cconfig = cconfigJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_EMBEDDING_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
-                : MemorySegment.NULL;
-            NativeLib.KREUZBERG_GENERATE_EMBEDDINGS_FOR_CHUNKS.invoke(cchunks, cconfig);
-            if (!cconfig.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_EMBEDDING_CONFIG_FREE.invoke(cconfig);
             }
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
@@ -4593,26 +4462,6 @@ public final class KreuzbergRs {
         }
     }
 
-    public static void applyHeuristics(List<LayoutDetection> detections, float pageWidth, float pageHeight) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cdetectionsJson = createObjectMapper().writeValueAsString(detections);
-            var cdetections = arena.allocateFrom(cdetectionsJson);
-            NativeLib.KREUZBERG_APPLY_HEURISTICS.invoke(cdetections, pageWidth, pageHeight);
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static void greedyNms(List<LayoutDetection> detections, float iouThreshold) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cdetectionsJson = createObjectMapper().writeValueAsString(detections);
-            var cdetections = arena.allocateFrom(cdetectionsJson);
-            NativeLib.KREUZBERG_GREEDY_NMS.invoke(cdetections, iouThreshold);
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
     public static String preprocessImagenet(String img, int targetSize) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cimg = arena.allocateFrom(img);
@@ -4817,39 +4666,6 @@ public final class KreuzbergRs {
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
-    }
-
-    public static String extractAndProcessEmbeddedFiles(byte[] pdfBytes, ExtractionConfig config) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
-            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
-            var cconfig = cconfigJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_EXTRACTION_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
-                : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACT_AND_PROCESS_EMBEDDED_FILES.invoke(pdfBytes, cconfig);
-            if (!cconfig.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_EXTRACTION_CONFIG_FREE.invoke(cconfig);
-            }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static CompletableFuture<String> extractAndProcessEmbeddedFilesAsync(byte[] pdfBytes, ExtractionConfig config) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return extractAndProcessEmbeddedFiles(pdfBytes, config);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
-        });
     }
 
     public static void initializeFontCache() throws KreuzbergRsException {

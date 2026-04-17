@@ -449,6 +449,23 @@ functions = [
 
     # Returns DefaultClient — opaque dependency type, can't convert to String
     "create_client",
+
+    # Internal postprocessing — takes &mut Vec, not binding-friendly
+    "apply_heuristics",
+    "greedy_nms",
+    "generate_embeddings_for_chunks",
+
+    # Returns tuples with opaque types or complex params
+    "extract_ooxml_embedded_objects",
+    "extract_and_process_embedded_files",
+
+    # Returns tuple (Value, Option<LlmUsage>) — can't map to String
+    "vlm_ocr",
+    "vlm_ocr_with_prompt",
+    "extract_structured",
+
+    # Returns Vec<core::PageBoundary> needing element conversion
+    "detect_page_breaks_from_docx",
 ]
 methods = [
     "OcrElement.with_rotation_opt",

@@ -6907,7 +6907,8 @@ impl Keyword {
     }
 
     pub fn with_positions(text: String, score: f64, algorithm: KeywordAlgorithm, positions: Vec<f64>) -> Keyword {
-        kreuzberg::Keyword::with_positions(text, score, algorithm.into(), positions).into()
+        let algorithm_core: kreuzberg::KeywordAlgorithm = algorithm.into();
+    kreuzberg::Keyword::with_positions(text, score, algorithm_core, positions).into()
     }
 }
 
@@ -7439,7 +7440,8 @@ impl LayoutDetection {
     }
 
     pub fn sort_by_confidence_desc(detections: Vec<LayoutDetection>) -> Vec<LayoutDetection> {
-        kreuzberg::LayoutDetection::sort_by_confidence_desc(detections).into_iter().map(Into::into).collect()
+        let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
+    kreuzberg::LayoutDetection::sort_by_confidence_desc(detections_core).into_iter().map(Into::into).collect()
     }
 }
 
@@ -8507,7 +8509,8 @@ pub fn validate_llm_config_model(model: String) -> Result<()> {
 #[allow(clippy::missing_errors_doc)]
 #[extendr]
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<LlmConfig>) -> Result<()> {
-    let vlm_config_core = vlm_config.map(Into::into).as_ref();
+    let vlm_config_owned: Option<kreuzberg::LlmConfig> = vlm_config.map(Into::into);
+    let vlm_config_core = vlm_config_owned.as_ref();
     kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config_core).map_err(|e| e.to_string())
 }
 
@@ -8530,7 +8533,7 @@ pub async fn extract_bytes(content: Vec<u8>, mime_type: String, config: Extracti
 pub async fn extract_file(path: String, mime_type: Option<String>, config: Option<ExtractionConfig>) -> Result<ExtractionResult> {
     let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
     let config_core: kreuzberg::ExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
-    kreuzberg::extract_file(path, mime_type.as_deref(), &config_core).map(|val| val.into()).map_err(|e| e.to_string())
+    kreuzberg::extract_file(path, mime_type.as_deref(), &config_core).map(|val| ExtractionResult::from(val)).map_err(|e| e.to_string())
 }
 
 #[extendr]
@@ -9004,20 +9007,8 @@ pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String> {
 
 #[allow(clippy::missing_errors_doc)]
 #[extendr]
-pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<PageBoundary>>> {
-    kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes).map_err(|e| e.to_string())
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[extendr]
 pub fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<f64>> {
     kreuzberg::extraction::docx::detect_table_page_numbers(&bytes).map_err(|e| e.to_string())
-}
-
-#[extendr]
-pub async fn extract_ooxml_embedded_objects(zip_bytes: Vec<u8>, embeddings_prefix: String, source_label: String, config: ExtractionConfig) -> String {
-    let _ = (zip_bytes, embeddings_prefix, source_label, config);
-        String::from("[unimplemented: extract_ooxml_embedded_objects]")
 }
 
 #[extendr]
@@ -9754,7 +9745,8 @@ pub fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> Result<()> {
 
 #[extendr]
 pub fn classify_chunk(content: String, heading_context: Option<HeadingContext>) -> ChunkType {
-    let heading_context_core = heading_context.map(Into::into).as_ref();
+    let heading_context_owned: Option<kreuzberg::HeadingContext> = heading_context.map(Into::into);
+    let heading_context_core = heading_context_owned.as_ref();
     kreuzberg::chunking::classify_chunk(&content, heading_context_core).into()
 }
 
@@ -9762,7 +9754,8 @@ pub fn classify_chunk(content: String, heading_context: Option<HeadingContext>) 
 #[extendr]
 pub fn chunk_text(text: String, config: ChunkingConfig, page_boundaries: Option<Vec<PageBoundary>>) -> Result<ChunkingResult> {
     let config_core: kreuzberg::ChunkingConfig = config.into();
-    kreuzberg::chunking::chunk_text(&text, &config_core, page_boundaries.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
+    let page_boundaries_core: Option<Vec<_>> = page_boundaries.as_ref().map(|v| v.iter().map(|x| x.clone().into()).collect());
+    kreuzberg::chunking::chunk_text(&text, &config_core, page_boundaries_core.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -9774,7 +9767,8 @@ pub fn chunk_text_with_heading_source(
     heading_source: Option<String>
 ) -> Result<ChunkingResult> {
     let config_core: kreuzberg::ChunkingConfig = config.into();
-    kreuzberg::chunking::chunk_text_with_heading_source(&text, &config_core, page_boundaries.as_deref(), heading_source.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
+    let page_boundaries_core: Option<Vec<_>> = page_boundaries.as_ref().map(|v| v.iter().map(|x| x.clone().into()).collect());
+    kreuzberg::chunking::chunk_text_with_heading_source(&text, &config_core, page_boundaries_core.as_deref(), heading_source.as_deref()).map(|val| val.into()).map_err(|e| e.to_string())
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -9811,22 +9805,6 @@ pub fn render_template(template: String, context: String) -> Result<String> {
         Err("Not implemented: render_template".to_string())
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[extendr]
-pub async fn extract_structured(content: String, config: StructuredExtractionConfig) -> Result<String> {
-    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
-    let config_core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
-    kreuzberg::llm::structured::extract_structured(&content, &config_core).map(|val| val.into()).map_err(|e| e.to_string())
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[extendr]
-pub async fn vlm_ocr(image_bytes: Vec<u8>, image_mime_type: String, language: String, config: LlmConfig) -> Result<String> {
-    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
-    let config_core: kreuzberg::LlmConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
-    kreuzberg::llm::vlm_ocr::vlm_ocr(&image_bytes, &image_mime_type, &language, &config_core).map(|val| val.into()).map_err(|e| e.to_string())
-}
-
 #[extendr]
 pub fn normalize(v: Vec<f64>) -> Vec<f64> {
     kreuzberg::embeddings::engine::normalize(&v)
@@ -9855,14 +9833,6 @@ pub fn warm_model(model_type: EmbeddingModelType, cache_dir: Option<String>) -> 
 pub fn download_model(model_type: EmbeddingModelType, cache_dir: Option<String>) -> Result<()> {
     let model_type_core: kreuzberg::EmbeddingModelType = model_type.into();
     kreuzberg::download_model(&model_type_core, cache_dir.as_deref()).map_err(|e| e.to_string())
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[extendr]
-pub fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: EmbeddingConfig) -> Result<()> {
-    let chunks_core: Vec<_> = chunks.into_iter().map(Into::into).collect();
-    let config_core: kreuzberg::EmbeddingConfig = config.into();
-    kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks_core, &config_core).map_err(|e| e.to_string())
 }
 
 #[extendr]
@@ -9941,7 +9911,8 @@ pub fn assemble_ocr_markdown(
     recognized_tables: Option<Vec<RecognizedTable>>
 ) -> String {
     let elements_core: Vec<_> = elements.into_iter().map(Into::into).collect();
-    let detection_core = detection.map(Into::into).as_ref();
+    let detection_owned: Option<kreuzberg::DetectionResult> = detection.map(Into::into);
+    let detection_core = detection_owned.as_ref();
     let recognized_tables_core: Vec<_> = recognized_tables.expect("'recognized_tables' is required").into_iter().map(Into::into).collect();
     kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(&elements_core, detection_core, img_width.expect("'img_width' is required"), img_height.expect("'img_height' is required"), &recognized_tables_core).into()
 }
@@ -9994,18 +9965,6 @@ pub fn map_language_code(kreuzberg_code: String) -> Option<String> {
 pub fn build_cell_grid(result: String, table_bbox: Option<String>) -> Vec<Vec<String>> {
     let _ = (result, table_bbox);
         Vec::new()
-}
-
-#[extendr]
-pub fn apply_heuristics(detections: Vec<LayoutDetection>, page_width: f64, page_height: f64) -> () {
-    let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
-    kreuzberg::layout::postprocessing::heuristics::apply_heuristics(&detections_core, page_width, page_height)
-}
-
-#[extendr]
-pub fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f64) -> () {
-    let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
-    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections_core, iou_threshold)
 }
 
 #[extendr]
@@ -10088,12 +10047,6 @@ pub fn extract_bookmarks(document: String) -> Vec<Uri> {
 pub fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
     let _ = document;
         Vec::new()
-}
-
-#[extendr]
-pub async fn extract_and_process_embedded_files(pdf_bytes: Vec<u8>, config: ExtractionConfig) -> String {
-    let _ = (pdf_bytes, config);
-        String::from("[unimplemented: extract_and_process_embedded_files]")
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -10592,9 +10545,7 @@ extendr_module! {
     fn parse_theme_xml;
     fn extract_text;
     fn extract_text_with_page_breaks;
-    fn detect_page_breaks_from_docx;
     fn detect_table_page_numbers;
-    fn extract_ooxml_embedded_objects;
     fn detect_image_format;
     fn extract_ppt_text;
     fn extract_ppt_text_with_options;
@@ -10729,14 +10680,11 @@ extendr_module! {
     fn precompute_utf8_boundaries;
     fn validate_utf8_boundaries;
     fn render_template;
-    fn extract_structured;
-    fn vlm_ocr;
     fn normalize;
     fn get_preset;
     fn list_presets;
     fn warm_model;
     fn download_model;
-    fn generate_embeddings_for_chunks;
     fn calculate_smart_dpi;
     fn calculate_optimal_dpi;
     fn resize_image;
@@ -10758,8 +10706,6 @@ extendr_module! {
     fn language_to_script_family;
     fn map_language_code;
     fn build_cell_grid;
-    fn apply_heuristics;
-    fn greedy_nms;
     fn preprocess_imagenet;
     fn preprocess_imagenet_letterbox;
     fn preprocess_rescale;
@@ -10774,7 +10720,6 @@ extendr_module! {
     fn extract_annotations_from_document;
     fn extract_bookmarks;
     fn extract_embedded_files;
-    fn extract_and_process_embedded_files;
     fn initialize_font_cache;
     fn get_font_descriptors;
     fn cached_font_count;

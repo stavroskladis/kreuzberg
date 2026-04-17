@@ -4224,39 +4224,9 @@ pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String, String> {
 }
 
 #[rustler::nif]
-pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<PageBoundary>>, String> {
-    let result = kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes).map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
 pub fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<usize>, String> {
     let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes).map_err(|e| e.to_string())?;
     Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn extract_ooxml_embedded_objects_async(
-    zip_bytes: Vec<u8>,
-    embeddings_prefix: String,
-    source_label: String,
-    config: Option<String>,
-) -> Result<String, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt.block_on(async {
-        kreuzberg::extraction::ooxml_embedded::extract_ooxml_embedded_objects(
-            &zip_bytes,
-            &embeddings_prefix,
-            &source_label,
-            Some(config_core.unwrap_or_default()),
-        )
-        .await
-    });
-    Ok(result.into())
 }
 
 #[rustler::nif]
@@ -5094,37 +5064,6 @@ pub fn render_template(template: String, context: String) -> Result<String, Stri
     Err(String::from("Not implemented: render_template"))
 }
 
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn extract_structured_async(content: String, config: StructuredExtractionConfig) -> Result<String, String> {
-    Err(String::from("Not implemented: extract_structured_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn vlm_ocr_async(
-    image_bytes: Vec<u8>,
-    image_mime_type: String,
-    language: String,
-    config: Option<String>,
-) -> Result<String, String> {
-    let config_core: Option<kreuzberg::LlmConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::LlmConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            kreuzberg::llm::vlm_ocr::vlm_ocr(
-                &image_bytes,
-                &image_mime_type,
-                &language,
-                Some(config_core.unwrap_or_default()),
-            )
-            .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
 #[rustler::nif]
 pub fn normalize(v: Vec<f32>) -> Vec<f32> {
     kreuzberg::embeddings::engine::normalize(v)
@@ -5149,17 +5088,6 @@ pub fn warm_model(model_type: EmbeddingModelType, cache_dir: String) -> Result<(
 #[rustler::nif]
 pub fn download_model(model_type: EmbeddingModelType, cache_dir: String) -> Result<(), String> {
     let result = kreuzberg::download_model(model_type.into(), &cache_dir).map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: Option<String>) -> Result<(), String> {
-    let config_core: Option<kreuzberg::EmbeddingConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::EmbeddingConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::embeddings::generate_embeddings_for_chunks(chunks, Some(config_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
     Ok(result)
 }
 
@@ -5313,16 +5241,6 @@ pub fn build_cell_grid(result: String, table_bbox: String) -> Vec<Vec<String>> {
 }
 
 #[rustler::nif]
-pub fn apply_heuristics(detections: Vec<LayoutDetection>, page_width: f32, page_height: f32) -> () {
-    kreuzberg::layout::postprocessing::heuristics::apply_heuristics(detections, page_width, page_height)
-}
-
-#[rustler::nif]
-pub fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f32) -> () {
-    kreuzberg::layout::postprocessing::nms::greedy_nms(detections, iou_threshold)
-}
-
-#[rustler::nif]
 pub fn preprocess_imagenet(img: String, target_size: u32) -> String {
     String::from("[unimplemented: preprocess_imagenet]")
 }
@@ -5394,23 +5312,6 @@ pub fn extract_bookmarks(document: String) -> Vec<Uri> {
 #[rustler::nif]
 pub fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
     Vec::new()
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn extract_and_process_embedded_files_async(pdf_bytes: Vec<u8>, config: Option<String>) -> Result<String, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt.block_on(async {
-        kreuzberg::pdf::embedded_files::extract_and_process_embedded_files(
-            &pdf_bytes,
-            Some(config_core.unwrap_or_default()),
-        )
-        .await
-    });
-    Ok(result.into())
 }
 
 #[rustler::nif]

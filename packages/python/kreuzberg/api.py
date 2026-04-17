@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 import kreuzberg._kreuzberg as _rust
 
 if TYPE_CHECKING:
-    from .options import AccelerationConfig, CharData, Chunk, ChunkerType, ChunkingConfig, ContentFilterConfig, DetectionResult, DjotContent, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractionConfig, ExtractionResult, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, KeywordConfig, LanguageDetectionConfig, LayoutDetection, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfidence, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PdfConfig, PostProcessorConfig, RakeParams, RecognizedTable, ServerConfig, StructuredExtractionConfig, TesseractConfig, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, YakeParams
+    from .options import AccelerationConfig, CharData, ChunkerType, ChunkingConfig, ContentFilterConfig, DetectionResult, DjotContent, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractionConfig, ExtractionResult, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, KeywordConfig, LanguageDetectionConfig, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfidence, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PdfConfig, PostProcessorConfig, RakeParams, RecognizedTable, ServerConfig, TesseractConfig, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, YakeParams
 
 
 _TO_RUST_CHUNKERTYPE_MAP = {
@@ -1159,20 +1159,9 @@ def extract_text_with_page_breaks(bytes: bytes) -> str:
     return _rust.extract_text_with_page_breaks(bytes)
 
 
-def detect_page_breaks_from_docx(bytes: bytes) -> list[_rust.PageBoundary] | None:
-    """Detect explicit page break positions in document.xml and extract full text with page boun."""
-    return _rust.detect_page_breaks_from_docx(bytes)
-
-
 def detect_table_page_numbers(bytes: bytes) -> list[int]:
     """Compute the 1-based page number for each top-level table in the document."""
     return _rust.detect_table_page_numbers(bytes)
-
-
-def extract_ooxml_embedded_objects(zip_bytes: bytes, embeddings_prefix: str, source_label: str, config: ExtractionConfig) -> str:
-    """Extract embedded objects from an OOXML ZIP archive and recursively process them."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.extract_ooxml_embedded_objects(zip_bytes, embeddings_prefix, source_label, _rust_config)
 
 
 def detect_image_format(data: bytes) -> str:
@@ -1854,17 +1843,6 @@ def render_template(template: str, context: str) -> str:
     return _rust.render_template(template, context)
 
 
-def extract_structured(content: str, config: StructuredExtractionConfig) -> str:
-    """Extract structured data from document content using an LLM with JSON schema."""
-    return _rust.extract_structured(content, config)
-
-
-def vlm_ocr(image_bytes: bytes, image_mime_type: str, language: str, config: LlmConfig) -> str:
-    """Perform OCR on an image using a vision language model."""
-    _rust_config = _to_rust_llm_config(config)
-    return _rust.vlm_ocr(image_bytes, image_mime_type, language, _rust_config)
-
-
 def normalize(v: list[float]) -> list[float]:
     """L2-normalize a vector."""
     return _rust.normalize(v)
@@ -1888,12 +1866,6 @@ def warm_model(model_type: EmbeddingModelType, cache_dir: str | None = None) -> 
 def download_model(model_type: EmbeddingModelType, cache_dir: str | None = None) -> None:
     """Download an embedding model's files without initializing ONNX Runtime."""
     return _rust.download_model(model_type, cache_dir)
-
-
-def generate_embeddings_for_chunks(chunks: list[Chunk], config: EmbeddingConfig) -> None:
-    """Generate embeddings for text chunks using the specified configuration."""
-    _rust_config = _to_rust_embedding_config(config)
-    return _rust.generate_embeddings_for_chunks(chunks, _rust_config)
 
 
 def calculate_smart_dpi(page_width: float, page_height: float, target_dpi: int, max_dimension: int, max_memory_mb: float) -> int:
@@ -2002,16 +1974,6 @@ def build_cell_grid(result: str, table_bbox: str | None = None) -> list[list[str
     return _rust.build_cell_grid(result, table_bbox)
 
 
-def apply_heuristics(detections: list[LayoutDetection], page_width: float, page_height: float) -> None:
-    """Apply Docling-style postprocessing heuristics to raw detections."""
-    return _rust.apply_heuristics(detections, page_width, page_height)
-
-
-def greedy_nms(detections: list[LayoutDetection], iou_threshold: float) -> None:
-    """Standard greedy Non-Maximum Suppression."""
-    return _rust.greedy_nms(detections, iou_threshold)
-
-
 def preprocess_imagenet(img: str, target_size: int) -> str:
     """Preprocess an image for models using ImageNet normalization (e.g., RT-DETR)."""
     return _rust.preprocess_imagenet(img, target_size)
@@ -2081,12 +2043,6 @@ def extract_bookmarks(document: str) -> list[_rust.Uri]:
 def extract_embedded_files(document: str) -> list[_rust.EmbeddedFile]:
     """Extract embedded file descriptors from a PDF document loaded via lopdf."""
     return _rust.extract_embedded_files(document)
-
-
-def extract_and_process_embedded_files(pdf_bytes: bytes, config: ExtractionConfig) -> str:
-    """Extract embedded files from PDF bytes and recursively process them."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.extract_and_process_embedded_files(pdf_bytes, _rust_config)
 
 
 def initialize_font_cache() -> None:

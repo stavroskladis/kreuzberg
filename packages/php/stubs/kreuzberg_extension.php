@@ -5947,9 +5947,7 @@ class KreuzbergApi
     public static function parseThemeXml(string $xml): string { }
     public static function extractText(string $bytes): string { }
     public static function extractTextWithPageBreaks(string $bytes): string { }
-    public static function detectPageBreaksFromDocx(string $bytes): ?array { }
     public static function detectTablePageNumbers(string $bytes): array { }
-    public static function extractOoxmlEmbeddedObjectsAsync(string $zip_bytes, string $embeddings_prefix, string $source_label, \Kreuzberg\ExtractionConfig $config): string { }
     public static function detectImageFormat(string $data): string { }
     public static function extractPptText(string $content): string { }
     public static function extractPptTextWithOptions(string $content, bool $include_master_slides): string { }
@@ -6166,8 +6164,6 @@ class KreuzbergApi
      */
     public static function validateUtf8Boundaries(string $text, array $boundaries): void { }
     public static function renderTemplate(string $template, string $context): string { }
-    public static function extractStructuredAsync(string $content, \Kreuzberg\StructuredExtractionConfig $config): string { }
-    public static function vlmOcrAsync(string $image_bytes, string $image_mime_type, string $language, \Kreuzberg\LlmConfig $config): string { }
     /**
      * @param array<float> $v
      * @return array<float>
@@ -6177,12 +6173,6 @@ class KreuzbergApi
     public static function listPresets(): array { }
     public static function warmModel(\Kreuzberg\EmbeddingModelType $model_type, ?string $cache_dir = null): void { }
     public static function downloadModel(\Kreuzberg\EmbeddingModelType $model_type, ?string $cache_dir = null): void { }
-    /**
-     * @param array<\Kreuzberg\Chunk> $chunks
-     * @param \Kreuzberg\EmbeddingConfig $config
-     * @return void
-     */
-    public static function generateEmbeddingsForChunks(array $chunks, \Kreuzberg\EmbeddingConfig $config): void { }
     public static function calculateSmartDpi(float $page_width, float $page_height, int $target_dpi, int $max_dimension, float $max_memory_mb): int { }
     public static function calculateOptimalDpi(float $page_width, float $page_height, int $target_dpi, int $max_dimension, int $min_dpi, int $max_dpi): int { }
     public static function resizeImage(string $image, int $new_width, int $new_height, float $scale_factor): string { }
@@ -6224,19 +6214,6 @@ class KreuzbergApi
     public static function languageToScriptFamily(string $paddle_lang): string { }
     public static function mapLanguageCode(string $kreuzberg_code): ?string { }
     public static function buildCellGrid(string $result, ?string $table_bbox = null): array { }
-    /**
-     * @param array<\Kreuzberg\LayoutDetection> $detections
-     * @param float $page_width
-     * @param float $page_height
-     * @return void
-     */
-    public static function applyHeuristics(array $detections, float $page_width, float $page_height): void { }
-    /**
-     * @param array<\Kreuzberg\LayoutDetection> $detections
-     * @param float $iou_threshold
-     * @return void
-     */
-    public static function greedyNms(array $detections, float $iou_threshold): void { }
     public static function preprocessImagenet(string $img, int $target_size): string { }
     public static function preprocessImagenetLetterbox(string $img, int $target_size): string { }
     public static function preprocessRescale(string $img, int $target_size): string { }
@@ -6251,7 +6228,6 @@ class KreuzbergApi
     public static function extractAnnotationsFromDocument(string $document): array { }
     public static function extractBookmarks(string $document): array { }
     public static function extractEmbeddedFiles(string $document): array { }
-    public static function extractAndProcessEmbeddedFilesAsync(string $pdf_bytes, \Kreuzberg\ExtractionConfig $config): string { }
     public static function initializeFontCache(): void { }
     public static function getFontDescriptors(): array { }
     public static function cachedFontCount(): int { }

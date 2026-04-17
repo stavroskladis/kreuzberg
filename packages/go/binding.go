@@ -10487,38 +10487,6 @@ func ExtractTextWithPageBreaks(bytes []byte) (*string, error) {
 }
 
 
-// Detect explicit page break positions in document.xml and extract full text with page boundaries.
-//
-// This is a convenience function for the extractor that combines text extraction with page
-// break detection. It returns the extracted text along with page boundaries.
-//
-// # Arguments
-// * `bytes` - The DOCX file contents (ZIP archive)
-//
-// # Returns
-// * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
-// * `Err(KreuzbergError)` - If extraction fails
-//
-// # Limitations
-// - Only detects explicit page breaks, not reflowed content
-// - Page numbers are estimates based on detected breaks
-func DetectPageBreaksFromDocx(bytes []byte) (**[]PageBoundary, error) {
-    cBytes := (*C.uchar)(unsafe.Pointer(&bytes[0]))
-
-    ptr := C.kreuzberg_detect_page_breaks_from_docx(cBytes)
-    if err := lastError(); err != nil {
-        return nil, err
-    }
-    return func() *[]PageBoundary {
-	if ptr == nil { return nil }
-	defer C.kreuzberg_free_string(ptr)
-	var result []PageBoundary
-	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
-	return &result
-}(), nil
-}
-
-
 // Compute the 1-based page number for each top-level table in the document.
 //
 // Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
@@ -10545,39 +10513,6 @@ func DetectTablePageNumbers(bytes []byte) (*[]uint, error) {
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }(), nil
-}
-
-
-// Extract embedded objects from an OOXML ZIP archive and recursively process them.
-//
-// Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
-// `ppt/embeddings/`) inside the ZIP archive for embedded files. Known formats
-// (.xlsx, .pdf, .docx, .pptx, etc.) are recursively extracted. OLE compound
-// files (oleObject*.bin) are skipped with a warning unless their format can be
-// identified.
-//
-// Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
-func ExtractOoxmlEmbeddedObjects(zip_bytes []byte, embeddings_prefix string, source_label string, config ExtractionConfig) *string {
-    cZipBytes := (*C.uchar)(unsafe.Pointer(&zip_bytes[0]))
-
-    cEmbeddingsPrefix := C.CString(embeddings_prefix)
-    defer C.free(unsafe.Pointer(cEmbeddingsPrefix))
-
-    cSourceLabel := C.CString(source_label)
-    defer C.free(unsafe.Pointer(cSourceLabel))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_extract_ooxml_embedded_objects(cZipBytes, cEmbeddingsPrefix, cSourceLabel, cConfig)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 
@@ -14018,103 +13953,6 @@ func RenderTemplate(template string, context string) (*string, error) {
 }
 
 
-// Extract structured data from document content using an LLM with JSON schema.
-//
-// Sends the document content to the configured LLM with a JSON schema constraint,
-// returning structured data that conforms to the schema.
-//
-// # Arguments
-//
-// * `content` - The extracted document text to send to the LLM.
-// * `config` - Structured extraction configuration including schema and LLM settings.
-//
-// # Returns
-//
-// A `serde_json::Value` conforming to the provided JSON schema.
-//
-// # Errors
-//
-// Returns an error if:
-// - The LLM client cannot be created (invalid provider/credentials).
-// - The LLM request fails (network, rate-limit, etc.).
-// - The LLM response cannot be parsed as valid JSON.
-func ExtractStructured(content string, config StructuredExtractionConfig) (*string, error) {
-    cContent := C.CString(content)
-    defer C.free(unsafe.Pointer(cContent))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_structured_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_structured_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_extract_structured(cContent, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Perform OCR on an image using a vision language model.
-//
-// Sends the image to a VLM (e.g., GPT-4o, Claude) which extracts text.
-// The language hint is included in the prompt when the document language
-// is not English.
-//
-// # Arguments
-//
-// * `image_bytes` - Raw image data (JPEG, PNG, WebP, etc.)
-// * `image_mime_type` - MIME type of the image (e.g., `"image/png"`)
-// * `language` - ISO 639 language code or Tesseract language name
-// (e.g., `"eng"`, `"de"`, `"fra"`)
-// * `config` - LLM provider/model configuration
-//
-// # Returns
-//
-// Extracted text from the image, or an error if the VLM call fails.
-//
-// # Errors
-//
-// - `KreuzbergError::Ocr` if the VLM returns no content or the API call fails
-// - `KreuzbergError::MissingDependency` if the liter-llm client cannot be created
-func VlmOcr(image_bytes []byte, image_mime_type string, language string, config LlmConfig) (*string, error) {
-    cImageBytes := (*C.uchar)(unsafe.Pointer(&image_bytes[0]))
-
-    cImageMimeType := C.CString(image_mime_type)
-    defer C.free(unsafe.Pointer(cImageMimeType))
-
-    cLanguage := C.CString(language)
-    defer C.free(unsafe.Pointer(cLanguage))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_llm_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_llm_config_free(cConfig)
-
-    ptr := C.kreuzberg_vlm_ocr(cImageBytes, cImageMimeType, cLanguage, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
 // L2-normalize a vector.
 func Normalize(v []float32) *[]float32 {
     jsonBytescV, err := json.Marshal(v)
@@ -14215,42 +14053,6 @@ func DownloadModel(model_type EmbeddingModelType, cache_dir ...*string) error {
     defer C.free(unsafe.Pointer(cCacheDirVal))
 
     C.kreuzberg_download_model(cModelType, cCacheDirVal)
-    return lastError()
-}
-
-
-// Generate embeddings for text chunks using the specified configuration.
-//
-// This function modifies chunks in-place, populating their `embedding` field
-// with generated embedding vectors. It uses batch processing for efficiency.
-//
-// # Arguments
-//
-// * `chunks` - Mutable reference to vector of chunks to generate embeddings for
-// * `config` - Embedding configuration specifying model and parameters
-//
-// # Returns
-//
-// Returns `Ok(())` if embeddings were generated successfully, or an error if
-// model initialization or embedding generation fails.
-func GenerateEmbeddingsForChunks(chunks []Chunk, config EmbeddingConfig) error {
-    jsonBytescChunks, err := json.Marshal(chunks)
-    if err != nil {
-        return fmt.Errorf("failed to marshal: %w", err)
-    }
-    cChunks := C.CString(string(jsonBytescChunks))
-    defer C.free(unsafe.Pointer(cChunks))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_embedding_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_embedding_config_free(cConfig)
-
-    C.kreuzberg_generate_embeddings_for_chunks(cChunks, cConfig)
     return lastError()
 }
 
@@ -14874,43 +14676,6 @@ func BuildCellGrid(result string, table_bbox ...*string) *[][]string {
 }
 
 
-// Apply Docling-style postprocessing heuristics to raw detections.
-//
-// This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
-// 1. Per-class confidence thresholds
-// 2. Full-page picture removal (>90% page area)
-// 3. Overlap resolution (IoU > 0.8 or containment > 0.8)
-// 4. Cross-type overlap handling (KVR vs Table)
-func ApplyHeuristics(detections []LayoutDetection, page_width float32, page_height float32) {
-    jsonBytescDetections, err := json.Marshal(detections)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    cDetections := C.CString(string(jsonBytescDetections))
-    defer C.free(unsafe.Pointer(cDetections))
-
-    C.kreuzberg_apply_heuristics(cDetections, cPageWidth, cPageHeight)
-}
-
-
-// Standard greedy Non-Maximum Suppression.
-//
-// Sorts detections by confidence (descending), then iteratively removes
-// detections that have IoU > `iou_threshold` with any higher-confidence detection.
-//
-// This is required for YOLO models. RT-DETR is NMS-free.
-func GreedyNms(detections []LayoutDetection, iou_threshold float32) {
-    jsonBytescDetections, err := json.Marshal(detections)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    cDetections := C.CString(string(jsonBytescDetections))
-    defer C.free(unsafe.Pointer(cDetections))
-
-    C.kreuzberg_greedy_nms(cDetections, cIouThreshold)
-}
-
-
 // Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
 //
 // Pipeline: resize to target_size x target_size (bilinear) -> rescale /255 -> ImageNet normalize -> NCHW f32.
@@ -15119,28 +14884,6 @@ func ExtractEmbeddedFiles(document string) *[]EmbeddedFile {
 	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
 	return &result
 }()
-}
-
-
-// Extract embedded files from PDF bytes and recursively process them.
-//
-// Returns `(children, warnings)`. The children are `ArchiveEntry` values
-// suitable for attaching to `InternalDocument.children`.
-func ExtractAndProcessEmbeddedFiles(pdf_bytes []byte, config ExtractionConfig) *string {
-    cPdfBytes := (*C.uchar)(unsafe.Pointer(&pdf_bytes[0]))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        panic(fmt.Sprintf("failed to marshal: %v", err))
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_extract_and_process_embedded_files(cPdfBytes, cConfig)
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }()
 }
 
 

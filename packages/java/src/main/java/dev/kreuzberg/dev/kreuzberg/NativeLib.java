@@ -468,17 +468,9 @@ final class NativeLib {
         LIB.find("kreuzberg_extract_text_with_page_breaks").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
-    static final MethodHandle KREUZBERG_DETECT_PAGE_BREAKS_FROM_DOCX = LINKER.downcallHandle(
-        LIB.find("kreuzberg_detect_page_breaks_from_docx").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
     static final MethodHandle KREUZBERG_DETECT_TABLE_PAGE_NUMBERS = LINKER.downcallHandle(
         LIB.find("kreuzberg_detect_table_page_numbers").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-    static final MethodHandle KREUZBERG_EXTRACT_OOXML_EMBEDDED_OBJECTS = LINKER.downcallHandle(
-        LIB.find("kreuzberg_extract_ooxml_embedded_objects").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
     static final MethodHandle KREUZBERG_DETECT_IMAGE_FORMAT = LINKER.downcallHandle(
         LIB.find("kreuzberg_detect_image_format").orElseThrow(),
@@ -1016,14 +1008,6 @@ final class NativeLib {
         LIB.find("kreuzberg_render_template").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
-    static final MethodHandle KREUZBERG_EXTRACT_STRUCTURED = LINKER.downcallHandle(
-        LIB.find("kreuzberg_extract_structured").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-    static final MethodHandle KREUZBERG_VLM_OCR = LINKER.downcallHandle(
-        LIB.find("kreuzberg_vlm_ocr").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
     static final MethodHandle KREUZBERG_NORMALIZE = LINKER.downcallHandle(
         LIB.find("kreuzberg_normalize").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
@@ -1042,10 +1026,6 @@ final class NativeLib {
     );
     static final MethodHandle KREUZBERG_DOWNLOAD_MODEL = LINKER.downcallHandle(
         LIB.find("kreuzberg_download_model").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-    static final MethodHandle KREUZBERG_GENERATE_EMBEDDINGS_FOR_CHUNKS = LINKER.downcallHandle(
-        LIB.find("kreuzberg_generate_embeddings_for_chunks").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
     static final MethodHandle KREUZBERG_CALCULATE_SMART_DPI = LINKER.downcallHandle(
@@ -1132,14 +1112,6 @@ final class NativeLib {
         LIB.find("kreuzberg_build_cell_grid").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
-    static final MethodHandle KREUZBERG_APPLY_HEURISTICS = LINKER.downcallHandle(
-        LIB.find("kreuzberg_apply_heuristics").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_FLOAT, ValueLayout.JAVA_FLOAT)
-    );
-    static final MethodHandle KREUZBERG_GREEDY_NMS = LINKER.downcallHandle(
-        LIB.find("kreuzberg_greedy_nms").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_FLOAT)
-    );
     static final MethodHandle KREUZBERG_PREPROCESS_IMAGENET = LINKER.downcallHandle(
         LIB.find("kreuzberg_preprocess_imagenet").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT)
@@ -1195,10 +1167,6 @@ final class NativeLib {
     static final MethodHandle KREUZBERG_EXTRACT_EMBEDDED_FILES = LINKER.downcallHandle(
         LIB.find("kreuzberg_extract_embedded_files").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-    static final MethodHandle KREUZBERG_EXTRACT_AND_PROCESS_EMBEDDED_FILES = LINKER.downcallHandle(
-        LIB.find("kreuzberg_extract_and_process_embedded_files").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
     static final MethodHandle KREUZBERG_INITIALIZE_FONT_CACHE = LINKER.downcallHandle(
         LIB.find("kreuzberg_initialize_font_cache").orElseThrow(),
@@ -1772,16 +1740,6 @@ final class NativeLib {
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FROM_JSON = LINKER.downcallHandle(
-        LIB.find("kreuzberg_structured_extraction_config_from_json").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_structured_extraction_config_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
     static final MethodHandle KREUZBERG_EMBEDDING_MODEL_TYPE_FROM_JSON = LINKER.downcallHandle(
         LIB.find("kreuzberg_embedding_model_type_from_json").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
@@ -1789,16 +1747,6 @@ final class NativeLib {
 
     static final MethodHandle KREUZBERG_EMBEDDING_MODEL_TYPE_FREE = LINKER.downcallHandle(
         LIB.find("kreuzberg_embedding_model_type_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_EMBEDDING_CONFIG_FROM_JSON = LINKER.downcallHandle(
-        LIB.find("kreuzberg_embedding_config_from_json").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_EMBEDDING_CONFIG_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_embedding_config_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 

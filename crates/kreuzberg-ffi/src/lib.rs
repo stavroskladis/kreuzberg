@@ -3,12 +3,10 @@
 
 use std::cell::RefCell;
 use std::ffi::{c_char, CStr, CString};
-use std::ops::Deref;
-use std::ops::DerefMut;
 
 thread_local! {
-    static LAST_ERROR_CODE: RefCell<i32> = RefCell::new(0);
-    static LAST_ERROR_CONTEXT: RefCell<Option<CString>> = RefCell::new(None);
+    static LAST_ERROR_CODE: RefCell<i32> = const { RefCell::new(0) };
+    static LAST_ERROR_CONTEXT: RefCell<Option<CString>> = const { RefCell::new(None) };
 }
 
 fn set_last_error(code: i32, message: &str) {
@@ -730,7 +728,7 @@ pub unsafe extern "C" fn kreuzberg_extraction_config_result_format(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.result_format.clone()))
+    Box::into_raw(Box::new(obj.result_format))
 }
 
 /// Get the `output_format` field from a `ExtractionConfig`.
@@ -1376,7 +1374,7 @@ pub unsafe extern "C" fn kreuzberg_file_extraction_config_result_format(
     }
     let obj = unsafe { &*ptr };
     match &obj.result_format {
-        Some(val) => Box::into_raw(Box::new(val.clone())),
+        Some(val) => Box::into_raw(Box::new(*val)),
         None => std::ptr::null_mut(),
     }
 }
@@ -2137,7 +2135,7 @@ pub unsafe extern "C" fn kreuzberg_layout_detection_config_table_model(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.table_model.clone()))
+    Box::into_raw(Box::new(obj.table_model))
 }
 
 /// # Safety
@@ -4028,7 +4026,7 @@ pub unsafe extern "C" fn kreuzberg_post_processor_config_build_lookup_sets(this:
     }
     // SAFETY: null check above guarantees this is a valid pointer; caller ensures exclusive access.
     let obj = unsafe { &mut *this };
-    let result = obj.build_lookup_sets();
+    obj.build_lookup_sets();
 }
 
 /// # Safety
@@ -4154,7 +4152,7 @@ pub unsafe extern "C" fn kreuzberg_chunking_config_chunker_type(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.chunker_type.clone()))
+    Box::into_raw(Box::new(obj.chunker_type))
 }
 
 /// Get the `embedding` field from a `ChunkingConfig`.
@@ -4242,7 +4240,7 @@ pub unsafe extern "C" fn kreuzberg_chunking_config_with_chunker_type(
         set_last_error(1, "Null pointer passed for parameter 'chunker_type'");
         return std::ptr::null_mut();
     }
-    let chunker_type_rs = unsafe { &*chunker_type }.clone();
+    let chunker_type_rs = *unsafe { &*chunker_type };
     let result = obj.with_chunker_type(chunker_type_rs);
     Box::into_raw(Box::new(result))
 }
@@ -4817,7 +4815,7 @@ pub unsafe extern "C" fn kreuzberg_tree_sitter_process_config_content_mode(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.content_mode.clone()))
+    Box::into_raw(Box::new(obj.content_mode))
 }
 
 /// # Safety
@@ -5224,8 +5222,8 @@ pub unsafe extern "C" fn kreuzberg_server_config_max_request_body_mb(this: *cons
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.max_request_body_mb();
-    result
+    
+    obj.max_request_body_mb()
 }
 
 /// Get maximum multipart field size in megabytes (rounded up).
@@ -5250,8 +5248,8 @@ pub unsafe extern "C" fn kreuzberg_server_config_max_multipart_field_mb(this: *c
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.max_multipart_field_mb();
-    result
+    
+    obj.max_multipart_field_mb()
 }
 
 /// Apply environment variable overrides to the configuration.
@@ -5682,8 +5680,8 @@ pub unsafe extern "C" fn kreuzberg_stream_reader_position(
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.position();
-    result
+    
+    obj.position()
 }
 
 /// Number of bytes remaining from the current position to the end.
@@ -5701,8 +5699,8 @@ pub unsafe extern "C" fn kreuzberg_stream_reader_remaining(
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.remaining();
-    result
+    
+    obj.remaining()
 }
 
 /// Free a `ImageOcrResult` handle.
@@ -7358,8 +7356,8 @@ pub unsafe extern "C" fn kreuzberg_string_growth_validator_current_size(
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.current_size();
-    result
+    
+    obj.current_size()
 }
 
 /// Free a `IterationValidator` handle.
@@ -7420,8 +7418,8 @@ pub unsafe extern "C" fn kreuzberg_iteration_validator_current_count(
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.current_count();
-    result
+    
+    obj.current_count()
 }
 
 /// Free a `DepthValidator` handle.
@@ -7478,7 +7476,7 @@ pub unsafe extern "C" fn kreuzberg_depth_validator_pop(this: *mut kreuzberg::ext
     }
     // SAFETY: null check above guarantees this is a valid pointer; caller ensures exclusive access.
     let obj = unsafe { &mut *this };
-    let result = obj.pop();
+    obj.pop();
 }
 
 /// Get current depth.
@@ -7496,8 +7494,8 @@ pub unsafe extern "C" fn kreuzberg_depth_validator_current_depth(
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.current_depth();
-    result
+    
+    obj.current_depth()
 }
 
 /// Free a `EntityValidator` handle.
@@ -7611,8 +7609,8 @@ pub unsafe extern "C" fn kreuzberg_table_validator_current_cells(
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.current_cells();
-    result
+    
+    obj.current_cells()
 }
 
 /// Free a `OcrFallbackDecision` handle.
@@ -7752,7 +7750,7 @@ pub unsafe extern "C" fn kreuzberg_token_reduction_config_level(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.level.clone()))
+    Box::into_raw(Box::new(obj.level))
 }
 
 /// Get the `language_hint` field from a `TokenReductionConfig`.
@@ -8004,7 +8002,7 @@ pub unsafe extern "C" fn kreuzberg_pdf_annotation_annotation_type(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.annotation_type.clone()))
+    Box::into_raw(Box::new(obj.annotation_type))
 }
 
 /// Get the `content` field from a `PdfAnnotation`.
@@ -9022,7 +9020,7 @@ pub unsafe extern "C" fn kreuzberg_document_structure_add_child(
     let obj = unsafe { &mut *this };
     let parent_rs = kreuzberg::NodeIndex(parent);
     let child_rs = kreuzberg::NodeIndex(child);
-    let result = obj.add_child(parent_rs, child_rs);
+    obj.add_child(parent_rs, child_rs);
 }
 
 /// Validate all node indices are in bounds and parent-child relationships
@@ -9117,8 +9115,8 @@ pub unsafe extern "C" fn kreuzberg_document_structure_len(this: *const kreuzberg
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.len();
-    result
+    
+    obj.len()
 }
 
 /// Check if the document structure is empty.
@@ -9257,7 +9255,7 @@ pub unsafe extern "C" fn kreuzberg_document_relationship_kind(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.kind.clone()))
+    Box::into_raw(Box::new(obj.kind))
 }
 
 /// Create a `DocumentNode` from a JSON string. Returns null on failure.
@@ -9386,7 +9384,7 @@ pub unsafe extern "C" fn kreuzberg_document_node_content_layer(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.content_layer.clone()))
+    Box::into_raw(Box::new(obj.content_layer))
 }
 
 /// Get the `page` field from a `DocumentNode`.
@@ -10592,7 +10590,7 @@ pub unsafe extern "C" fn kreuzberg_chunk_chunk_type(ptr: *const kreuzberg::Chunk
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.chunk_type.clone()))
+    Box::into_raw(Box::new(obj.chunk_type))
 }
 
 /// Get the `embedding` field from a `Chunk`.
@@ -11442,7 +11440,7 @@ pub unsafe extern "C" fn kreuzberg_element_element_type(ptr: *const kreuzberg::E
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.element_type.clone()))
+    Box::into_raw(Box::new(obj.element_type))
 }
 
 /// Get the `text` field from a `Element`.
@@ -13009,7 +13007,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_table_bounding_box(
     }
     let obj = unsafe { &*ptr };
     match &obj.bounding_box {
-        Some(val) => Box::into_raw(Box::new(val.clone())),
+        Some(val) => Box::into_raw(Box::new(*val)),
         None => std::ptr::null_mut(),
     }
 }
@@ -15233,7 +15231,7 @@ pub unsafe extern "C" fn kreuzberg_link_metadata_link_type(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.link_type.clone()))
+    Box::into_raw(Box::new(obj.link_type))
 }
 
 /// Get the `rel` field from a `LinkMetadata`.
@@ -15392,7 +15390,7 @@ pub unsafe extern "C" fn kreuzberg_image_metadata_type_image_type(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.image_type.clone()))
+    Box::into_raw(Box::new(obj.image_type))
 }
 
 /// Create a `StructuredData` from a JSON string. Returns null on failure.
@@ -15472,7 +15470,7 @@ pub unsafe extern "C" fn kreuzberg_structured_data_data_type(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.data_type.clone()))
+    Box::into_raw(Box::new(obj.data_type))
 }
 
 /// Get the `raw_json` field from a `StructuredData`.
@@ -15726,7 +15724,7 @@ pub unsafe extern "C" fn kreuzberg_html_metadata_text_direction(
     }
     let obj = unsafe { &*ptr };
     match &obj.text_direction {
-        Some(val) => Box::into_raw(Box::new(val.clone())),
+        Some(val) => Box::into_raw(Box::new(*val)),
         None => std::ptr::null_mut(),
     }
 }
@@ -18163,7 +18161,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_element_level(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.level.clone()))
+    Box::into_raw(Box::new(obj.level))
 }
 
 /// Get the `rotation` field from a `OcrElement`.
@@ -18253,7 +18251,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_element_with_level(
         set_last_error(1, "Null pointer passed for parameter 'level'");
         return std::ptr::null_mut();
     }
-    let level_rs = unsafe { &*level }.clone();
+    let level_rs = *unsafe { &*level };
     let result = obj.with_level(level_rs);
     Box::into_raw(Box::new(result))
 }
@@ -18476,7 +18474,7 @@ pub unsafe extern "C" fn kreuzberg_ocr_element_config_min_level(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.min_level.clone()))
+    Box::into_raw(Box::new(obj.min_level))
 }
 
 /// Get the `min_confidence` field from a `OcrElementConfig`.
@@ -18592,7 +18590,7 @@ pub unsafe extern "C" fn kreuzberg_page_structure_unit_type(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.unit_type.clone()))
+    Box::into_raw(Box::new(obj.unit_type))
 }
 
 /// Get the `boundaries` field from a `PageStructure`.
@@ -19375,7 +19373,7 @@ pub unsafe extern "C" fn kreuzberg_uri_kind(ptr: *const kreuzberg::Uri) -> *mut 
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.kind.clone()))
+    Box::into_raw(Box::new(obj.kind))
 }
 
 /// Create a new hyperlink URI, auto-classifying `mailto:` as Email and `#` as Anchor.
@@ -19687,7 +19685,7 @@ pub unsafe extern "C" fn kreuzberg_pooled_string_as_str(
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
     let result = obj.as_str();
-    let result = result.clone();
+    let result = result;
     match CString::new(result) {
         Ok(cs) => cs.into_raw(),
         Err(_) => std::ptr::null_mut(),
@@ -22747,7 +22745,7 @@ pub unsafe extern "C" fn kreuzberg_keyword_config_algorithm(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.algorithm.clone()))
+    Box::into_raw(Box::new(obj.algorithm))
 }
 
 /// Get the `max_keywords` field from a `KeywordConfig`.
@@ -23038,7 +23036,7 @@ pub unsafe extern "C" fn kreuzberg_keyword_algorithm(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.algorithm.clone()))
+    Box::into_raw(Box::new(obj.algorithm))
 }
 
 /// Get the `positions` field from a `Keyword`.
@@ -23090,7 +23088,7 @@ pub unsafe extern "C" fn kreuzberg_keyword_with_positions(
         set_last_error(1, "Null pointer passed for parameter 'algorithm'");
         return std::ptr::null_mut();
     }
-    let algorithm_rs = unsafe { &*algorithm }.clone();
+    let algorithm_rs = *unsafe { &*algorithm };
     if positions.is_null() {
         set_last_error(1, "Null pointer passed for parameter 'positions'");
         return std::ptr::null_mut();
@@ -23172,7 +23170,7 @@ pub unsafe extern "C" fn kreuzberg_recognized_table_detection_bbox(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.detection_bbox.clone()))
+    Box::into_raw(Box::new(obj.detection_bbox))
 }
 
 /// Get the `cells` field from a `RecognizedTable`.
@@ -24072,8 +24070,8 @@ pub unsafe extern "C" fn kreuzberg_b_box_width(this: *const kreuzberg::BBox) -> 
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.width();
-    result
+    
+    obj.width()
 }
 
 /// # Safety
@@ -24088,8 +24086,8 @@ pub unsafe extern "C" fn kreuzberg_b_box_height(this: *const kreuzberg::BBox) ->
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.height();
-    result
+    
+    obj.height()
 }
 
 /// # Safety
@@ -24104,8 +24102,8 @@ pub unsafe extern "C" fn kreuzberg_b_box_area(this: *const kreuzberg::BBox) -> f
     }
     // SAFETY: null check above guarantees this is a valid pointer.
     let obj = unsafe { &*this };
-    let result = obj.area();
-    result
+    
+    obj.area()
 }
 
 /// # Safety
@@ -24138,9 +24136,9 @@ pub unsafe extern "C" fn kreuzberg_b_box_intersection_area(
         set_last_error(1, "Null pointer passed for parameter 'other'");
         return 0.0;
     }
-    let other_rs = unsafe { &*other }.clone();
-    let result = obj.intersection_area(&other_rs);
-    result
+    let other_rs = *unsafe { &*other };
+    
+    obj.intersection_area(&other_rs)
 }
 
 /// Intersection over Union with another bounding box.
@@ -24160,9 +24158,9 @@ pub unsafe extern "C" fn kreuzberg_b_box_iou(this: *const kreuzberg::BBox, other
         set_last_error(1, "Null pointer passed for parameter 'other'");
         return 0.0;
     }
-    let other_rs = unsafe { &*other }.clone();
-    let result = obj.iou(&other_rs);
-    result
+    let other_rs = *unsafe { &*other };
+    
+    obj.iou(&other_rs)
 }
 
 /// Fraction of `other` that is contained within `self`.
@@ -24186,9 +24184,9 @@ pub unsafe extern "C" fn kreuzberg_b_box_containment_of(
         set_last_error(1, "Null pointer passed for parameter 'other'");
         return 0.0;
     }
-    let other_rs = unsafe { &*other }.clone();
-    let result = obj.containment_of(&other_rs);
-    result
+    let other_rs = *unsafe { &*other };
+    
+    obj.containment_of(&other_rs)
 }
 
 /// Fraction of page area this bbox covers.
@@ -24210,8 +24208,8 @@ pub unsafe extern "C" fn kreuzberg_b_box_page_coverage(
     let obj = unsafe { &*this };
     let page_width_rs = page_width;
     let page_height_rs = page_height;
-    let result = obj.page_coverage(page_width_rs, page_height_rs);
-    result
+    
+    obj.page_coverage(page_width_rs, page_height_rs)
 }
 
 /// # Safety
@@ -24304,7 +24302,7 @@ pub unsafe extern "C" fn kreuzberg_layout_detection_class(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.class.clone()))
+    Box::into_raw(Box::new(obj.class))
 }
 
 /// Get the `confidence` field from a `LayoutDetection`.
@@ -24330,7 +24328,7 @@ pub unsafe extern "C" fn kreuzberg_layout_detection_bbox(
         return std::ptr::null_mut();
     }
     let obj = unsafe { &*ptr };
-    Box::into_raw(Box::new(obj.bbox.clone()))
+    Box::into_raw(Box::new(obj.bbox))
 }
 
 /// Sort detections by confidence in descending order.
@@ -27400,8 +27398,8 @@ pub unsafe extern "C" fn kreuzberg_fast_hash(data: *const u8, data_len: usize) -
         return 0;
     }
     let data_rs = unsafe { std::slice::from_raw_parts(data, data_len) }.to_vec();
-    let result = kreuzberg::cache::fast_hash(&data_rs);
-    result
+    
+    kreuzberg::cache::fast_hash(&data_rs)
 }
 
 /// # Safety
@@ -27574,7 +27572,7 @@ pub unsafe extern "C" fn kreuzberg_resolve_thread_budget(_config: *const std::ff
 pub unsafe extern "C" fn kreuzberg_init_thread_pools(budget: usize) {
     clear_last_error();
     let budget_rs = budget;
-    let result = kreuzberg::core::config::concurrency::init_thread_pools(budget_rs);
+    kreuzberg::core::config::concurrency::init_thread_pools(budget_rs);
 }
 
 /// Merge extraction configuration using JSON-level field override.
@@ -29570,8 +29568,8 @@ pub unsafe extern "C" fn kreuzberg_estimate_content_capacity(file_size: u64, for
             return 0;
         }
     };
-    let result = kreuzberg::extraction::estimate_content_capacity(file_size_rs, &format_rs);
-    result
+    
+    kreuzberg::extraction::estimate_content_capacity(file_size_rs, &format_rs)
 }
 
 /// Estimate capacity for HTML to Markdown conversion.
@@ -29593,8 +29591,8 @@ pub unsafe extern "C" fn kreuzberg_estimate_content_capacity(file_size: u64, for
 pub unsafe extern "C" fn kreuzberg_estimate_html_markdown_capacity(html_size: u64) -> usize {
     clear_last_error();
     let html_size_rs = html_size;
-    let result = kreuzberg::extraction::estimate_html_markdown_capacity(html_size_rs);
-    result
+    
+    kreuzberg::extraction::estimate_html_markdown_capacity(html_size_rs)
 }
 
 /// Estimate capacity for cell extraction from spreadsheets.
@@ -29616,8 +29614,8 @@ pub unsafe extern "C" fn kreuzberg_estimate_html_markdown_capacity(html_size: u6
 pub unsafe extern "C" fn kreuzberg_estimate_spreadsheet_capacity(file_size: u64) -> usize {
     clear_last_error();
     let file_size_rs = file_size;
-    let result = kreuzberg::extraction::estimate_spreadsheet_capacity(file_size_rs);
-    result
+    
+    kreuzberg::extraction::estimate_spreadsheet_capacity(file_size_rs)
 }
 
 /// Estimate capacity for slide content extraction from presentations.
@@ -29639,8 +29637,8 @@ pub unsafe extern "C" fn kreuzberg_estimate_spreadsheet_capacity(file_size: u64)
 pub unsafe extern "C" fn kreuzberg_estimate_presentation_capacity(file_size: u64) -> usize {
     clear_last_error();
     let file_size_rs = file_size;
-    let result = kreuzberg::extraction::estimate_presentation_capacity(file_size_rs);
-    result
+    
+    kreuzberg::extraction::estimate_presentation_capacity(file_size_rs)
 }
 
 /// Estimate capacity for markdown table generation.
@@ -29664,8 +29662,8 @@ pub unsafe extern "C" fn kreuzberg_estimate_table_markdown_capacity(row_count: u
     clear_last_error();
     let row_count_rs = row_count;
     let col_count_rs = col_count;
-    let result = kreuzberg::extraction::estimate_table_markdown_capacity(row_count_rs, col_count_rs);
-    result
+    
+    kreuzberg::extraction::estimate_table_markdown_capacity(row_count_rs, col_count_rs)
 }
 
 /// Decompress gzip bytes, returning the raw decompressed data.
@@ -30613,54 +30611,6 @@ pub unsafe extern "C" fn kreuzberg_extract_text_with_page_breaks(
     std::ptr::null_mut()
 }
 
-/// Detect explicit page break positions in document.xml and extract full text with page boundaries.
-///
-/// This is a convenience function for the extractor that combines text extraction with page
-/// break detection. It returns the extracted text along with page boundaries.
-///
-/// # Arguments
-/// * `bytes` - The DOCX file contents (ZIP archive)
-///
-/// # Returns
-/// * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
-/// * `Err(KreuzbergError)` - If extraction fails
-///
-/// # Limitations
-/// - Only detects explicit page breaks, not reflowed content
-/// - Page numbers are estimates based on detected breaks
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_detect_page_breaks_from_docx(
-    bytes: *const u8,
-    bytes_len: usize,
-) -> *mut std::ffi::c_char {
-    clear_last_error();
-    if bytes.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'bytes'");
-        return std::ptr::null_mut();
-    }
-    let bytes_rs = unsafe { std::slice::from_raw_parts(bytes, bytes_len) }.to_vec();
-    let result = kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes_rs);
-    match result {
-        Ok(val) => match &val {
-            Some(val) => match serde_json::to_string(&val) {
-                Ok(s) => match CString::new(s) {
-                    Ok(cs) => cs.into_raw(),
-                    Err(_) => std::ptr::null_mut(),
-                },
-                Err(_) => std::ptr::null_mut(),
-            },
-            None => std::ptr::null_mut(),
-        },
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            std::ptr::null_mut()
-        }
-    }
-}
-
 /// Compute the 1-based page number for each top-level table in the document.
 ///
 /// Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
@@ -30701,31 +30651,6 @@ pub unsafe extern "C" fn kreuzberg_detect_table_page_numbers(
             std::ptr::null_mut()
         }
     }
-}
-
-/// Extract embedded objects from an OOXML ZIP archive and recursively process them.
-///
-/// Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
-/// `ppt/embeddings/`) inside the ZIP archive for embedded files. Known formats
-/// (.xlsx, .pdf, .docx, .pptx, etc.) are recursively extracted. OLE compound
-/// files (oleObject*.bin) are skipped with a warning unless their format can be
-/// identified.
-///
-/// Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_extract_ooxml_embedded_objects(
-    _zip_bytes: *const u8,
-    _zip_bytes_len: usize,
-    _embeddings_prefix: *const std::ffi::c_char,
-    _source_label: *const std::ffi::c_char,
-    _config: *const kreuzberg::ExtractionConfig,
-) -> *mut std::ffi::c_char {
-    clear_last_error();
-    set_last_error(99, "Not implemented: extract_ooxml_embedded_objects");
-    std::ptr::null_mut()
 }
 
 /// Detect image format from raw bytes using magic byte signatures.
@@ -31622,10 +31547,7 @@ pub unsafe extern "C" fn kreuzberg_hex_digit_to_u8(c: u8) -> u8 {
     clear_last_error();
     let c_rs = c;
     let result = kreuzberg::extractors::rtf::hex_digit_to_u8(c_rs);
-    match result {
-        Some(val) => val,
-        None => 0,
-    }
+    result.unwrap_or_default()
 }
 
 /// Parse a hex-encoded byte from two bytes.
@@ -31640,10 +31562,7 @@ pub unsafe extern "C" fn kreuzberg_parse_hex_byte(h1: u8, h2: u8) -> u8 {
     let h1_rs = h1;
     let h2_rs = h2;
     let result = kreuzberg::extractors::rtf::parse_hex_byte(h1_rs, h2_rs);
-    match result {
-        Some(val) => val,
-        None => 0,
-    }
+    result.unwrap_or_default()
 }
 
 /// Parse an RTF control word and extract its value.
@@ -32735,7 +32654,7 @@ pub unsafe extern "C" fn kreuzberg_record_error_on_current_span(_error: *const s
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kreuzberg_record_success_on_current_span() {
     clear_last_error();
-    let result = kreuzberg::telemetry::spans::record_success_on_current_span();
+    kreuzberg::telemetry::spans::record_success_on_current_span();
 }
 
 /// Sanitize a file path to return only the filename.
@@ -33525,8 +33444,8 @@ pub unsafe extern "C" fn kreuzberg_calculate_text_confidence(text: *const std::f
             return 0.0;
         }
     };
-    let result = kreuzberg::utils::calculate_text_confidence(&text_rs);
-    result
+    
+    kreuzberg::utils::calculate_text_confidence(&text_rs)
 }
 
 /// Strip control characters and replacement glyphs that typically arise from mojibake.
@@ -34653,7 +34572,7 @@ pub unsafe extern "C" fn kreuzberg_chunk_text_with_type(
         set_last_error(1, "Null pointer passed for parameter 'chunker_type'");
         return std::ptr::null_mut();
     }
-    let chunker_type_rs = unsafe { &*chunker_type }.clone();
+    let chunker_type_rs = *unsafe { &*chunker_type };
     let result =
         kreuzberg::chunking::chunk_text_with_type(&text_rs, max_characters_rs, overlap_rs, trim_rs, chunker_type_rs);
     match result {
@@ -34875,77 +34794,6 @@ pub unsafe extern "C" fn kreuzberg_render_template(
     std::ptr::null_mut()
 }
 
-/// Extract structured data from document content using an LLM with JSON schema.
-///
-/// Sends the document content to the configured LLM with a JSON schema constraint,
-/// returning structured data that conforms to the schema.
-///
-/// # Arguments
-///
-/// * `content` - The extracted document text to send to the LLM.
-/// * `config` - Structured extraction configuration including schema and LLM settings.
-///
-/// # Returns
-///
-/// A `serde_json::Value` conforming to the provided JSON schema.
-///
-/// # Errors
-///
-/// Returns an error if:
-/// - The LLM client cannot be created (invalid provider/credentials).
-/// - The LLM request fails (network, rate-limit, etc.).
-/// - The LLM response cannot be parsed as valid JSON.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_extract_structured(
-    _content: *const std::ffi::c_char,
-    _config: *const kreuzberg::StructuredExtractionConfig,
-) -> *mut std::ffi::c_char {
-    clear_last_error();
-    set_last_error(99, "Not implemented: extract_structured");
-    std::ptr::null_mut()
-}
-
-/// Perform OCR on an image using a vision language model.
-///
-/// Sends the image to a VLM (e.g., GPT-4o, Claude) which extracts text.
-/// The language hint is included in the prompt when the document language
-/// is not English.
-///
-/// # Arguments
-///
-/// * `image_bytes` - Raw image data (JPEG, PNG, WebP, etc.)
-/// * `image_mime_type` - MIME type of the image (e.g., `"image/png"`)
-/// * `language` - ISO 639 language code or Tesseract language name
-///   (e.g., `"eng"`, `"de"`, `"fra"`)
-/// * `config` - LLM provider/model configuration
-///
-/// # Returns
-///
-/// Extracted text from the image, or an error if the VLM call fails.
-///
-/// # Errors
-///
-/// - `KreuzbergError::Ocr` if the VLM returns no content or the API call fails
-/// - `KreuzbergError::MissingDependency` if the liter-llm client cannot be created
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_vlm_ocr(
-    _image_bytes: *const u8,
-    _image_bytes_len: usize,
-    _image_mime_type: *const std::ffi::c_char,
-    _language: *const std::ffi::c_char,
-    _config: *const kreuzberg::LlmConfig,
-) -> *mut std::ffi::c_char {
-    clear_last_error();
-    set_last_error(99, "Not implemented: vlm_ocr");
-    std::ptr::null_mut()
-}
-
 /// L2-normalize a vector.
 /// # Safety
 /// Caller must ensure all pointer arguments are valid or null.
@@ -35096,62 +34944,6 @@ pub unsafe extern "C" fn kreuzberg_download_model(
     }
 }
 
-/// Generate embeddings for text chunks using the specified configuration.
-///
-/// This function modifies chunks in-place, populating their `embedding` field
-/// with generated embedding vectors. It uses batch processing for efficiency.
-///
-/// # Arguments
-///
-/// * `chunks` - Mutable reference to vector of chunks to generate embeddings for
-/// * `config` - Embedding configuration specifying model and parameters
-///
-/// # Returns
-///
-/// Returns `Ok(())` if embeddings were generated successfully, or an error if
-/// model initialization or embedding generation fails.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_generate_embeddings_for_chunks(
-    chunks: *const std::ffi::c_char,
-    config: *const kreuzberg::EmbeddingConfig,
-) -> i32 {
-    clear_last_error();
-    if chunks.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'chunks'");
-        return -1;
-    }
-    let chunks_rs_str = match unsafe { CStr::from_ptr(chunks) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in parameter 'chunks'");
-            return -1;
-        }
-    };
-    let mut chunks_rs = match serde_json::from_str::<Vec<_>>(chunks_rs_str) {
-        Ok(v) => v,
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            return -1;
-        }
-    };
-    if config.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'config'");
-        return -1;
-    }
-    let config_rs = unsafe { &*config }.clone();
-    let result = kreuzberg::embeddings::generate_embeddings_for_chunks(&mut chunks_rs, &config_rs);
-    match result {
-        Ok(()) => 0,
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            -1
-        }
-    }
-}
-
 /// Calculate smart DPI based on page dimensions, memory constraints, and target DPI
 /// # Safety
 /// Caller must ensure all pointer arguments are valid or null.
@@ -35170,14 +34962,14 @@ pub unsafe extern "C" fn kreuzberg_calculate_smart_dpi(
     let target_dpi_rs = target_dpi;
     let max_dimension_rs = max_dimension;
     let max_memory_mb_rs = max_memory_mb;
-    let result = kreuzberg::image::dpi::calculate_smart_dpi(
+    
+    kreuzberg::image::dpi::calculate_smart_dpi(
         page_width_rs,
         page_height_rs,
         target_dpi_rs,
         max_dimension_rs,
         max_memory_mb_rs,
-    );
-    result
+    )
 }
 
 /// Calculate optimal DPI with min/max constraints
@@ -35200,15 +34992,15 @@ pub unsafe extern "C" fn kreuzberg_calculate_optimal_dpi(
     let max_dimension_rs = max_dimension;
     let min_dpi_rs = min_dpi;
     let max_dpi_rs = max_dpi;
-    let result = kreuzberg::image::calculate_optimal_dpi(
+    
+    kreuzberg::image::calculate_optimal_dpi(
         page_width_rs,
         page_height_rs,
         target_dpi_rs,
         max_dimension_rs,
         min_dpi_rs,
         max_dpi_rs,
-    );
-    result
+    )
 }
 
 /// Resize an image using fast_image_resize with appropriate algorithm based on scale factor
@@ -35804,7 +35596,7 @@ pub unsafe extern "C" fn kreuzberg_validate_tesseract_version(version: u32) -> i
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kreuzberg_ensure_ort_available() {
     clear_last_error();
-    let result = kreuzberg::ort_discovery::ensure_ort_available();
+    kreuzberg::ort_discovery::ensure_ort_available();
 }
 
 /// Check if a language code is supported by PaddleOCR.
@@ -35931,84 +35723,6 @@ pub unsafe extern "C" fn kreuzberg_build_cell_grid(
     clear_last_error();
     set_last_error(99, "Not implemented: build_cell_grid");
     std::ptr::null_mut()
-}
-
-/// Apply Docling-style postprocessing heuristics to raw detections.
-///
-/// This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
-/// 1. Per-class confidence thresholds
-/// 2. Full-page picture removal (>90% page area)
-/// 3. Overlap resolution (IoU > 0.8 or containment > 0.8)
-/// 4. Cross-type overlap handling (KVR vs Table)
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_apply_heuristics(
-    detections: *const std::ffi::c_char,
-    page_width: f32,
-    page_height: f32,
-) {
-    clear_last_error();
-    if detections.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'detections'");
-        return;
-    }
-    let detections_rs_str = match unsafe { CStr::from_ptr(detections) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in parameter 'detections'");
-            return;
-        }
-    };
-    let mut detections_rs = match serde_json::from_str::<Vec<_>>(detections_rs_str) {
-        Ok(v) => v,
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            return;
-        }
-    };
-    let page_width_rs = page_width;
-    let page_height_rs = page_height;
-    let result = kreuzberg::layout::postprocessing::heuristics::apply_heuristics(
-        &mut detections_rs,
-        page_width_rs,
-        page_height_rs,
-    );
-}
-
-/// Standard greedy Non-Maximum Suppression.
-///
-/// Sorts detections by confidence (descending), then iteratively removes
-/// detections that have IoU > `iou_threshold` with any higher-confidence detection.
-///
-/// This is required for YOLO models. RT-DETR is NMS-free.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_greedy_nms(detections: *const std::ffi::c_char, iou_threshold: f32) {
-    clear_last_error();
-    if detections.is_null() {
-        set_last_error(1, "Null pointer passed for parameter 'detections'");
-        return;
-    }
-    let detections_rs_str = match unsafe { CStr::from_ptr(detections) }.to_str() {
-        Ok(s) => s,
-        Err(_) => {
-            set_last_error(1, "Invalid UTF-8 in parameter 'detections'");
-            return;
-        }
-    };
-    let mut detections_rs = match serde_json::from_str::<Vec<_>>(detections_rs_str) {
-        Ok(v) => v,
-        Err(e) => {
-            set_last_error(2, &e.to_string());
-            return;
-        }
-    };
-    let iou_threshold_rs = iou_threshold;
-    let result = kreuzberg::layout::postprocessing::nms::greedy_nms(&mut detections_rs, iou_threshold_rs);
 }
 
 /// Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
@@ -36227,24 +35941,6 @@ pub unsafe extern "C" fn kreuzberg_extract_embedded_files(_document: *const std:
     std::ptr::null_mut()
 }
 
-/// Extract embedded files from PDF bytes and recursively process them.
-///
-/// Returns `(children, warnings)`. The children are `ArchiveEntry` values
-/// suitable for attaching to `InternalDocument.children`.
-/// # Safety
-/// Caller must ensure all pointer arguments are valid or null.
-/// Returned pointers must be freed with the appropriate free function.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn kreuzberg_extract_and_process_embedded_files(
-    _pdf_bytes: *const u8,
-    _pdf_bytes_len: usize,
-    _config: *const kreuzberg::ExtractionConfig,
-) -> *mut std::ffi::c_char {
-    clear_last_error();
-    set_last_error(99, "Not implemented: extract_and_process_embedded_files");
-    std::ptr::null_mut()
-}
-
 /// Initialize the global font cache.
 ///
 /// On first call, discovers and loads all system fonts. Subsequent calls are no-ops.
@@ -36310,8 +36006,8 @@ pub unsafe extern "C" fn kreuzberg_get_font_descriptors() -> *mut std::ffi::c_ch
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kreuzberg_cached_font_count() -> usize {
     clear_last_error();
-    let result = kreuzberg::pdf::cached_font_count();
-    result
+    
+    kreuzberg::pdf::cached_font_count()
 }
 
 /// Cluster text blocks by font size using k-means algorithm.

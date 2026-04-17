@@ -3056,37 +3056,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Detect explicit page break positions in document.xml and extract full text with page boundaries.
-    ///
-    /// This is a convenience function for the extractor that combines text extraction with page
-    /// break detection. It returns the extracted text along with page boundaries.
-    ///
-    /// # Arguments
-    /// * `bytes` - The DOCX file contents (ZIP archive)
-    ///
-    /// # Returns
-    /// * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
-    /// * `Err(KreuzbergError)` - If extraction fails
-    ///
-    /// # Limitations
-    /// - Only detects explicit page breaks, not reflowed content
-    /// - Page numbers are estimates based on detected breaks
-    /// </summary>
-    /// <param name="bytes"></param>
-    public static List<PageBoundary>? DetectPageBreaksFromDocx(byte[] bytes)
-    {
-        ArgumentNullException.ThrowIfNull(bytes);
-        var result = NativeMethods.DetectPageBreaksFromDocx(
-            bytes
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<PageBoundary>?>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
     /// Compute the 1-based page number for each top-level table in the document.
     ///
     /// Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
@@ -3112,45 +3081,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<ulong>>(json ?? "null", JsonOptions)!;
         return returnValue;
-    }
-
-    /// <summary>
-    /// Extract embedded objects from an OOXML ZIP archive and recursively process them.
-    ///
-    /// Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
-    /// `ppt/embeddings/`) inside the ZIP archive for embedded files. Known formats
-    /// (.xlsx, .pdf, .docx, .pptx, etc.) are recursively extracted. OLE compound
-    /// files (oleObject*.bin) are skipped with a warning unless their format can be
-    /// identified.
-    ///
-    /// Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
-    /// </summary>
-    /// <param name="zipBytes"></param>
-    /// <param name="embeddingsPrefix"></param>
-    /// <param name="sourceLabel"></param>
-    /// <param name="config"></param>
-    public static async Task<string> ExtractOoxmlEmbeddedObjects(byte[] zipBytes, string embeddingsPrefix, string sourceLabel, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(zipBytes);
-        ArgumentNullException.ThrowIfNull(embeddingsPrefix);
-        ArgumentNullException.ThrowIfNull(sourceLabel);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.ExtractOoxmlEmbeddedObjects(
-                zipBytes,
-                embeddingsPrefix,
-                sourceLabel,
-                configHandle
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-            NativeMethods.FreeString(result);
-            NativeMethods.ExtractionConfigFree(configHandle);
-            return returnValue;
-        });
     }
 
     /// <summary>
@@ -6866,102 +6796,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Extract structured data from document content using an LLM with JSON schema.
-    ///
-    /// Sends the document content to the configured LLM with a JSON schema constraint,
-    /// returning structured data that conforms to the schema.
-    ///
-    /// # Arguments
-    ///
-    /// * `content` - The extracted document text to send to the LLM.
-    /// * `config` - Structured extraction configuration including schema and LLM settings.
-    ///
-    /// # Returns
-    ///
-    /// A `serde_json::Value` conforming to the provided JSON schema.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if:
-    /// - The LLM client cannot be created (invalid provider/credentials).
-    /// - The LLM request fails (network, rate-limit, etc.).
-    /// - The LLM response cannot be parsed as valid JSON.
-    /// </summary>
-    /// <param name="content"></param>
-    /// <param name="config"></param>
-    public static async Task<string> ExtractStructured(string content, StructuredExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(content);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.StructuredExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.ExtractStructured(
-                content,
-                configHandle
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-            NativeMethods.FreeString(result);
-            NativeMethods.StructuredExtractionConfigFree(configHandle);
-            return returnValue;
-        });
-    }
-
-    /// <summary>
-    /// Perform OCR on an image using a vision language model.
-    ///
-    /// Sends the image to a VLM (e.g., GPT-4o, Claude) which extracts text.
-    /// The language hint is included in the prompt when the document language
-    /// is not English.
-    ///
-    /// # Arguments
-    ///
-    /// * `image_bytes` - Raw image data (JPEG, PNG, WebP, etc.)
-    /// * `image_mime_type` - MIME type of the image (e.g., `"image/png"`)
-    /// * `language` - ISO 639 language code or Tesseract language name
-    ///   (e.g., `"eng"`, `"de"`, `"fra"`)
-    /// * `config` - LLM provider/model configuration
-    ///
-    /// # Returns
-    ///
-    /// Extracted text from the image, or an error if the VLM call fails.
-    ///
-    /// # Errors
-    ///
-    /// - `KreuzbergError::Ocr` if the VLM returns no content or the API call fails
-    /// - `KreuzbergError::MissingDependency` if the liter-llm client cannot be created
-    /// </summary>
-    /// <param name="imageBytes"></param>
-    /// <param name="imageMimeType"></param>
-    /// <param name="language"></param>
-    /// <param name="config"></param>
-    public static async Task<string> VlmOcr(byte[] imageBytes, string imageMimeType, string language, LlmConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(imageBytes);
-        ArgumentNullException.ThrowIfNull(imageMimeType);
-        ArgumentNullException.ThrowIfNull(language);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.LlmConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.VlmOcr(
-                imageBytes,
-                imageMimeType,
-                language,
-                configHandle
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-            NativeMethods.FreeString(result);
-            NativeMethods.LlmConfigFree(configHandle);
-            return returnValue;
-        });
-    }
-
-    /// <summary>
     /// L2-normalize a vector.
     /// </summary>
     /// <param name="v"></param>
@@ -7057,39 +6891,6 @@ public static class KreuzbergLib
             cacheDir!
         );
         NativeMethods.EmbeddingModelTypeFree(modelTypeHandle);
-    }
-
-    /// <summary>
-    /// Generate embeddings for text chunks using the specified configuration.
-    ///
-    /// This function modifies chunks in-place, populating their `embedding` field
-    /// with generated embedding vectors. It uses batch processing for efficiency.
-    ///
-    /// # Arguments
-    ///
-    /// * `chunks` - Mutable reference to vector of chunks to generate embeddings for
-    /// * `config` - Embedding configuration specifying model and parameters
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())` if embeddings were generated successfully, or an error if
-    /// model initialization or embedding generation fails.
-    /// </summary>
-    /// <param name="chunks"></param>
-    /// <param name="config"></param>
-    public static void GenerateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-        var chunksJson = JsonSerializer.Serialize(chunks, JsonOptions);
-        var chunksHandle = Marshal.StringToHGlobalAnsi(chunksJson);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.EmbeddingConfigFromJson(configJson);
-        NativeMethods.GenerateEmbeddingsForChunks(
-            chunksHandle,
-            configHandle
-        );
-        Marshal.FreeHGlobal(chunksHandle);
-        NativeMethods.EmbeddingConfigFree(configHandle);
     }
 
     /// <summary>
@@ -7779,51 +7580,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Apply Docling-style postprocessing heuristics to raw detections.
-    ///
-    /// This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
-    /// 1. Per-class confidence thresholds
-    /// 2. Full-page picture removal (>90% page area)
-    /// 3. Overlap resolution (IoU > 0.8 or containment > 0.8)
-    /// 4. Cross-type overlap handling (KVR vs Table)
-    /// </summary>
-    /// <param name="detections"></param>
-    /// <param name="pageWidth"></param>
-    /// <param name="pageHeight"></param>
-    public static void ApplyHeuristics(List<LayoutDetection> detections, float pageWidth, float pageHeight)
-    {
-        var detectionsJson = JsonSerializer.Serialize(detections, JsonOptions);
-        var detectionsHandle = Marshal.StringToHGlobalAnsi(detectionsJson);
-        NativeMethods.ApplyHeuristics(
-            detectionsHandle,
-            pageWidth,
-            pageHeight
-        );
-        Marshal.FreeHGlobal(detectionsHandle);
-    }
-
-    /// <summary>
-    /// Standard greedy Non-Maximum Suppression.
-    ///
-    /// Sorts detections by confidence (descending), then iteratively removes
-    /// detections that have IoU > `iou_threshold` with any higher-confidence detection.
-    ///
-    /// This is required for YOLO models. RT-DETR is NMS-free.
-    /// </summary>
-    /// <param name="detections"></param>
-    /// <param name="iouThreshold"></param>
-    public static void GreedyNms(List<LayoutDetection> detections, float iouThreshold)
-    {
-        var detectionsJson = JsonSerializer.Serialize(detections, JsonOptions);
-        var detectionsHandle = Marshal.StringToHGlobalAnsi(detectionsJson);
-        NativeMethods.GreedyNms(
-            detectionsHandle,
-            iouThreshold
-        );
-        Marshal.FreeHGlobal(detectionsHandle);
-    }
-
-    /// <summary>
     /// Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
     ///
     /// Pipeline: resize to target_size x target_size (bilinear) -> rescale /255 -> ImageNet normalize -> NCHW f32.
@@ -8095,34 +7851,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<EmbeddedFile>>(json ?? "null", JsonOptions)!;
         return returnValue;
-    }
-
-    /// <summary>
-    /// Extract embedded files from PDF bytes and recursively process them.
-    ///
-    /// Returns `(children, warnings)`. The children are `ArchiveEntry` values
-    /// suitable for attaching to `InternalDocument.children`.
-    /// </summary>
-    /// <param name="pdfBytes"></param>
-    /// <param name="config"></param>
-    public static async Task<string> ExtractAndProcessEmbeddedFiles(byte[] pdfBytes, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(pdfBytes);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.ExtractAndProcessEmbeddedFiles(
-                pdfBytes,
-                configHandle
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-            NativeMethods.FreeString(result);
-            NativeMethods.ExtractionConfigFree(configHandle);
-            return returnValue;
-        });
     }
 
     /// <summary>

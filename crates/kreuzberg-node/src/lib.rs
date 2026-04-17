@@ -3489,7 +3489,8 @@ pub fn validate_llm_config_model(model: String) -> Result<()> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "validateVlmBackendConfig")]
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<JsLlmConfig>) -> Result<()> {
-    let vlm_config_core = vlm_config.map(Into::into).as_ref();
+    let vlm_config_owned: Option<kreuzberg::LlmConfig> = vlm_config.map(Into::into);
+    let vlm_config_core = vlm_config_owned.as_ref();
     kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -4143,28 +4144,10 @@ pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String> {
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "detectPageBreaksFromDocx")]
-pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<JsPageBoundary>>> {
-    kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "detectTablePageNumbers")]
 pub fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<i64>> {
     kreuzberg::extraction::docx::detect_table_page_numbers(&bytes)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[napi(js_name = "extractOoxmlEmbeddedObjects")]
-pub async fn extract_ooxml_embedded_objects(
-    zip_bytes: Vec<u8>,
-    embeddings_prefix: String,
-    source_label: String,
-    config: JsExtractionConfig,
-) -> String {
-    let _ = (zip_bytes, embeddings_prefix, source_label, config);
-    String::from("[unimplemented: extract_ooxml_embedded_objects]")
 }
 
 #[napi(js_name = "detectImageFormat")]
@@ -4979,7 +4962,8 @@ pub fn validate_page_boundaries(boundaries: Vec<JsPageBoundary>) -> Result<()> {
 
 #[napi(js_name = "classifyChunk")]
 pub fn classify_chunk(content: String, heading_context: Option<JsHeadingContext>) -> JsChunkType {
-    let heading_context_core = heading_context.map(Into::into).as_ref();
+    let heading_context_owned: Option<kreuzberg::HeadingContext> = heading_context.map(Into::into);
+    let heading_context_core = heading_context_owned.as_ref();
     kreuzberg::chunking::classify_chunk(&content, heading_context_core).into()
 }
 
@@ -4991,7 +4975,10 @@ pub fn chunk_text(
     page_boundaries: Option<Vec<JsPageBoundary>>,
 ) -> Result<JsChunkingResult> {
     let config_core: kreuzberg::ChunkingConfig = config.into();
-    kreuzberg::chunking::chunk_text(&text, &config_core, page_boundaries.as_deref())
+    let page_boundaries_core: Option<Vec<_>> = page_boundaries
+        .as_ref()
+        .map(|v| v.iter().map(|x| x.clone().into()).collect());
+    kreuzberg::chunking::chunk_text(&text, &config_core, page_boundaries_core.as_deref())
         .map(|val| val.into())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -5005,10 +4992,13 @@ pub fn chunk_text_with_heading_source(
     heading_source: Option<String>,
 ) -> Result<JsChunkingResult> {
     let config_core: kreuzberg::ChunkingConfig = config.into();
+    let page_boundaries_core: Option<Vec<_>> = page_boundaries
+        .as_ref()
+        .map(|v| v.iter().map(|x| x.clone().into()).collect());
     kreuzberg::chunking::chunk_text_with_heading_source(
         &text,
         &config_core,
-        page_boundaries.as_deref(),
+        page_boundaries_core.as_deref(),
         heading_source.as_deref(),
     )
     .map(|val| val.into())
@@ -5063,31 +5053,6 @@ pub fn render_template(template: String, context: String) -> Result<String> {
     ))
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractStructured")]
-pub async fn extract_structured(content: String, config: JsStructuredExtractionConfig) -> Result<String> {
-    let _ = (content, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: extract_structured",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "vlmOcr")]
-pub async fn vlm_ocr(
-    image_bytes: Vec<u8>,
-    image_mime_type: String,
-    language: String,
-    config: JsLlmConfig,
-) -> Result<String> {
-    let _ = (image_bytes, image_mime_type, language, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: vlm_ocr",
-    ))
-}
-
 #[napi]
 pub fn normalize(v: Vec<f64>) -> Vec<f64> {
     kreuzberg::embeddings::engine::normalize(v)
@@ -5117,15 +5082,6 @@ pub fn warm_model(model_type: JsEmbeddingModelType, cache_dir: Option<String>) -
 pub fn download_model(model_type: JsEmbeddingModelType, cache_dir: Option<String>) -> Result<()> {
     let model_type_core: kreuzberg::EmbeddingModelType = model_type.into();
     kreuzberg::download_model(&model_type_core, cache_dir.as_deref())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "generateEmbeddingsForChunks")]
-pub fn generate_embeddings_for_chunks(chunks: Vec<JsChunk>, config: JsEmbeddingConfig) -> Result<()> {
-    let chunks_core: Vec<_> = chunks.into_iter().map(Into::into).collect();
-    let config_core: kreuzberg::EmbeddingConfig = config.into();
-    kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks_core, &config_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -5225,7 +5181,8 @@ pub fn assemble_ocr_markdown(
     recognized_tables: Option<Vec<JsRecognizedTable>>,
 ) -> String {
     let elements_core: Vec<_> = elements.into_iter().map(Into::into).collect();
-    let detection_core = detection.map(Into::into).as_ref();
+    let detection_owned: Option<kreuzberg::DetectionResult> = detection.map(Into::into);
+    let detection_core = detection_owned.as_ref();
     let recognized_tables_core: Vec<_> = recognized_tables
         .expect("'recognized_tables' is required")
         .into_iter()
@@ -5297,18 +5254,6 @@ pub fn map_language_code(kreuzberg_code: String) -> Option<String> {
 pub fn build_cell_grid(result: String, table_bbox: Option<String>) -> Vec<Vec<String>> {
     let _ = (result, table_bbox);
     Vec::new()
-}
-
-#[napi(js_name = "applyHeuristics")]
-pub fn apply_heuristics(detections: Vec<JsLayoutDetection>, page_width: f64, page_height: f64) -> () {
-    let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
-    kreuzberg::layout::postprocessing::heuristics::apply_heuristics(&detections_core, page_width, page_height)
-}
-
-#[napi(js_name = "greedyNms")]
-pub fn greedy_nms(detections: Vec<JsLayoutDetection>, iou_threshold: f64) -> () {
-    let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
-    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections_core, iou_threshold)
 }
 
 #[napi(js_name = "preprocessImagenet")]
@@ -5391,12 +5336,6 @@ pub fn extract_bookmarks(document: String) -> Vec<JsUri> {
 pub fn extract_embedded_files(document: String) -> Vec<JsEmbeddedFile> {
     let _ = document;
     Vec::new()
-}
-
-#[napi(js_name = "extractAndProcessEmbeddedFiles")]
-pub async fn extract_and_process_embedded_files(pdf_bytes: Vec<u8>, config: JsExtractionConfig) -> String {
-    let _ = (pdf_bytes, config);
-    String::from("[unimplemented: extract_and_process_embedded_files]")
 }
 
 #[allow(clippy::missing_errors_doc)]

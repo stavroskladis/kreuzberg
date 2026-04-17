@@ -2563,32 +2563,6 @@ final class Kreuzberg
     }
 
     /**
-     * Detect explicit page break positions in document.xml and extract full text with page boundaries.
-     *
-     * This is a convenience function for the extractor that combines text extraction with page
-     * break detection. It returns the extracted text along with page boundaries.
-     *
-     * # Arguments
-     * * `bytes` - The DOCX file contents (ZIP archive)
-     *
-     * # Returns
-     * * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
-     * * `Err(KreuzbergError)` - If extraction fails
-     *
-     * # Limitations
-     * - Only detects explicit page breaks, not reflowed content
-     * - Page numbers are estimates based on detected breaks
-     *
-     * @param string $bytes
-     * @return ?array<PageBoundary>
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function detectPageBreaksFromDocx(string $bytes): ?array
-    {
-        return \Kreuzberg\KreuzbergApi::detectPageBreaksFromDocx($bytes); // delegate to native extension class
-    }
-
-    /**
      * Compute the 1-based page number for each top-level table in the document.
      *
      * Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
@@ -2609,28 +2583,6 @@ final class Kreuzberg
     public static function detectTablePageNumbers(string $bytes): array
     {
         return \Kreuzberg\KreuzbergApi::detectTablePageNumbers($bytes); // delegate to native extension class
-    }
-
-    /**
-     * Extract embedded objects from an OOXML ZIP archive and recursively process them.
-     *
-     * Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
-     * `ppt/embeddings/`) inside the ZIP archive for embedded files. Known formats
-     * (.xlsx, .pdf, .docx, .pptx, etc.) are recursively extracted. OLE compound
-     * files (oleObject*.bin) are skipped with a warning unless their format can be
-     * identified.
-     *
-     * Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
-     *
-     * @param string $zip_bytes
-     * @param string $embeddings_prefix
-     * @param string $source_label
-     * @param ExtractionConfig $config
-     * @return string
-     */
-    public static function extractOoxmlEmbeddedObjects(string $zip_bytes, string $embeddings_prefix, string $source_label, ExtractionConfig $config): string
-    {
-        return \Kreuzberg\KreuzbergApi::extractOoxmlEmbeddedObjectsAsync($zip_bytes, $embeddings_prefix, $source_label, $config); // delegate to native extension class
     }
 
     /**
@@ -5626,74 +5578,6 @@ final class Kreuzberg
     }
 
     /**
-     * Extract structured data from document content using an LLM with JSON schema.
-     *
-     * Sends the document content to the configured LLM with a JSON schema constraint,
-     * returning structured data that conforms to the schema.
-     *
-     * # Arguments
-     *
-     * * `content` - The extracted document text to send to the LLM.
-     * * `config` - Structured extraction configuration including schema and LLM settings.
-     *
-     * # Returns
-     *
-     * A `serde_json::Value` conforming to the provided JSON schema.
-     *
-     * # Errors
-     *
-     * Returns an error if:
-     * - The LLM client cannot be created (invalid provider/credentials).
-     * - The LLM request fails (network, rate-limit, etc.).
-     * - The LLM response cannot be parsed as valid JSON.
-     *
-     * @param string $content
-     * @param StructuredExtractionConfig $config
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractStructured(string $content, StructuredExtractionConfig $config): string
-    {
-        return \Kreuzberg\KreuzbergApi::extractStructuredAsync($content, $config); // delegate to native extension class
-    }
-
-    /**
-     * Perform OCR on an image using a vision language model.
-     *
-     * Sends the image to a VLM (e.g., GPT-4o, Claude) which extracts text.
-     * The language hint is included in the prompt when the document language
-     * is not English.
-     *
-     * # Arguments
-     *
-     * * `image_bytes` - Raw image data (JPEG, PNG, WebP, etc.)
-     * * `image_mime_type` - MIME type of the image (e.g., `"image/png"`)
-     * * `language` - ISO 639 language code or Tesseract language name
-     *   (e.g., `"eng"`, `"de"`, `"fra"`)
-     * * `config` - LLM provider/model configuration
-     *
-     * # Returns
-     *
-     * Extracted text from the image, or an error if the VLM call fails.
-     *
-     * # Errors
-     *
-     * - `KreuzbergError::Ocr` if the VLM returns no content or the API call fails
-     * - `KreuzbergError::MissingDependency` if the liter-llm client cannot be created
-     *
-     * @param string $image_bytes
-     * @param string $image_mime_type
-     * @param string $language
-     * @param LlmConfig $config
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function vlmOcr(string $image_bytes, string $image_mime_type, string $language, LlmConfig $config): string
-    {
-        return \Kreuzberg\KreuzbergApi::vlmOcrAsync($image_bytes, $image_mime_type, $language, $config); // delegate to native extension class
-    }
-
-    /**
      * L2-normalize a vector.
      *
      * @param array<float> $v
@@ -5764,32 +5648,6 @@ final class Kreuzberg
     public static function downloadModel(EmbeddingModelType $model_type, ?string $cache_dir = null): void
     {
         return \Kreuzberg\KreuzbergApi::downloadModel($model_type, $cache_dir); // delegate to native extension class
-    }
-
-    /**
-     * Generate embeddings for text chunks using the specified configuration.
-     *
-     * This function modifies chunks in-place, populating their `embedding` field
-     * with generated embedding vectors. It uses batch processing for efficiency.
-     *
-     * # Arguments
-     *
-     * * `chunks` - Mutable reference to vector of chunks to generate embeddings for
-     * * `config` - Embedding configuration specifying model and parameters
-     *
-     * # Returns
-     *
-     * Returns `Ok(())` if embeddings were generated successfully, or an error if
-     * model initialization or embedding generation fails.
-     *
-     * @param array<Chunk> $chunks
-     * @param EmbeddingConfig $config
-     * @return void
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function generateEmbeddingsForChunks(array $chunks, EmbeddingConfig $config): void
-    {
-        return \Kreuzberg\KreuzbergApi::generateEmbeddingsForChunks($chunks, $config); // delegate to native extension class
     }
 
     /**
@@ -6344,42 +6202,6 @@ final class Kreuzberg
     }
 
     /**
-     * Apply Docling-style postprocessing heuristics to raw detections.
-     *
-     * This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
-     * 1. Per-class confidence thresholds
-     * 2. Full-page picture removal (>90% page area)
-     * 3. Overlap resolution (IoU > 0.8 or containment > 0.8)
-     * 4. Cross-type overlap handling (KVR vs Table)
-     *
-     * @param array<LayoutDetection> $detections
-     * @param float $page_width
-     * @param float $page_height
-     * @return void
-     */
-    public static function applyHeuristics(array $detections, float $page_width, float $page_height): void
-    {
-        return \Kreuzberg\KreuzbergApi::applyHeuristics($detections, $page_width, $page_height); // delegate to native extension class
-    }
-
-    /**
-     * Standard greedy Non-Maximum Suppression.
-     *
-     * Sorts detections by confidence (descending), then iteratively removes
-     * detections that have IoU > `iou_threshold` with any higher-confidence detection.
-     *
-     * This is required for YOLO models. RT-DETR is NMS-free.
-     *
-     * @param array<LayoutDetection> $detections
-     * @param float $iou_threshold
-     * @return void
-     */
-    public static function greedyNms(array $detections, float $iou_threshold): void
-    {
-        return \Kreuzberg\KreuzbergApi::greedyNms($detections, $iou_threshold); // delegate to native extension class
-    }
-
-    /**
      * Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
      *
      * Pipeline: resize to target_size x target_size (bilinear) -> rescale /255 -> ImageNet normalize -> NCHW f32.
@@ -6583,21 +6405,6 @@ final class Kreuzberg
     public static function extractEmbeddedFiles(string $document): array
     {
         return \Kreuzberg\KreuzbergApi::extractEmbeddedFiles($document); // delegate to native extension class
-    }
-
-    /**
-     * Extract embedded files from PDF bytes and recursively process them.
-     *
-     * Returns `(children, warnings)`. The children are `ArchiveEntry` values
-     * suitable for attaching to `InternalDocument.children`.
-     *
-     * @param string $pdf_bytes
-     * @param ExtractionConfig $config
-     * @return string
-     */
-    public static function extractAndProcessEmbeddedFiles(string $pdf_bytes, ExtractionConfig $config): string
-    {
-        return \Kreuzberg\KreuzbergApi::extractAndProcessEmbeddedFilesAsync($pdf_bytes, $config); // delegate to native extension class
     }
 
     /**

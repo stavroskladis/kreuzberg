@@ -681,22 +681,10 @@ extract_text_with_page_breaks <- function(bytes) {
   .Call("kreuzberg_extract_text_with_page_breaks", bytes)
 }
 
-#' Detect explicit page break positions in document.xml and extract full text with page boundaries.
-#' @export
-detect_page_breaks_from_docx <- function(bytes) {
-  .Call("kreuzberg_detect_page_breaks_from_docx", bytes)
-}
-
 #' Compute the 1-based page number for each top-level table in the document.
 #' @export
 detect_table_page_numbers <- function(bytes) {
   .Call("kreuzberg_detect_table_page_numbers", bytes)
-}
-
-#' Extract embedded objects from an OOXML ZIP archive and recursively process them.
-#' @export
-extract_ooxml_embedded_objects <- function(zip_bytes, embeddings_prefix, source_label, config) {
-  .Call("kreuzberg_extract_ooxml_embedded_objects", zip_bytes, embeddings_prefix, source_label, config)
 }
 
 #' Detect image format from raw bytes using magic byte signatures.
@@ -1503,18 +1491,6 @@ render_template <- function(template, context) {
   .Call("kreuzberg_render_template", template, context)
 }
 
-#' Extract structured data from document content using an LLM with JSON schema.
-#' @export
-extract_structured <- function(content, config) {
-  .Call("kreuzberg_extract_structured", content, config)
-}
-
-#' Perform OCR on an image using a vision language model.
-#' @export
-vlm_ocr <- function(image_bytes, image_mime_type, language, config) {
-  .Call("kreuzberg_vlm_ocr", image_bytes, image_mime_type, language, config)
-}
-
 #' L2-normalize a vector.
 #' @export
 normalize <- function(v) {
@@ -1543,12 +1519,6 @@ warm_model <- function(model_type, cache_dir = NULL) {
 #' @export
 download_model <- function(model_type, cache_dir = NULL) {
   .Call("kreuzberg_download_model", model_type, cache_dir)
-}
-
-#' Generate embeddings for text chunks using the specified configuration.
-#' @export
-generate_embeddings_for_chunks <- function(chunks, config) {
-  .Call("kreuzberg_generate_embeddings_for_chunks", chunks, config)
 }
 
 #' Calculate smart DPI based on page dimensions, memory constraints, and target DPI
@@ -1677,18 +1647,6 @@ build_cell_grid <- function(result, table_bbox = NULL) {
   .Call("kreuzberg_build_cell_grid", result, table_bbox)
 }
 
-#' Apply Docling-style postprocessing heuristics to raw detections.
-#' @export
-apply_heuristics <- function(detections, page_width, page_height) {
-  .Call("kreuzberg_apply_heuristics", detections, page_width, page_height)
-}
-
-#' Standard greedy Non-Maximum Suppression.
-#' @export
-greedy_nms <- function(detections, iou_threshold) {
-  .Call("kreuzberg_greedy_nms", detections, iou_threshold)
-}
-
 #' Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
 #' @export
 preprocess_imagenet <- function(img, target_size) {
@@ -1771,12 +1729,6 @@ extract_bookmarks <- function(document) {
 #' @export
 extract_embedded_files <- function(document) {
   .Call("kreuzberg_extract_embedded_files", document)
-}
-
-#' Extract embedded files from PDF bytes and recursively process them.
-#' @export
-extract_and_process_embedded_files <- function(pdf_bytes, config) {
-  .Call("kreuzberg_extract_and_process_embedded_files", pdf_bytes, config)
 }
 
 #' Initialize the global font cache.

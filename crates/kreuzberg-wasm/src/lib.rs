@@ -15312,9 +15312,8 @@ pub fn validate_llm_config_model(model: String) -> Result<(), JsValue> {
 #[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "validateVlmBackendConfig")]
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<WasmLlmConfig>) -> Result<(), JsValue> {
-    let result =
-        kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.map(Into::into).as_ref())
-            .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let result = kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.as_ref())
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
 
@@ -15822,36 +15821,11 @@ pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String, JsValue> 
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "detectPageBreaksFromDocx")]
-pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<WasmPageBoundary>>, JsValue> {
-    let result = kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
-#[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "detectTablePageNumbers")]
 pub fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<usize>, JsValue> {
     let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
-}
-
-#[wasm_bindgen(js_name = "extractOoxmlEmbeddedObjects")]
-pub async fn extract_ooxml_embedded_objects(
-    zip_bytes: Vec<u8>,
-    embeddings_prefix: String,
-    source_label: String,
-    config: WasmExtractionConfig,
-) -> String {
-    let result = kreuzberg::extraction::ooxml_embedded::extract_ooxml_embedded_objects(
-        &zip_bytes,
-        &embeddings_prefix,
-        &source_label,
-        config.into(),
-    )
-    .await;
-    result
 }
 
 #[wasm_bindgen(js_name = "detectImageFormat")]
@@ -16605,7 +16579,7 @@ pub fn validate_page_boundaries(boundaries: Vec<WasmPageBoundary>) -> Result<(),
 
 #[wasm_bindgen(js_name = "classifyChunk")]
 pub fn classify_chunk(content: String, heading_context: Option<WasmHeadingContext>) -> WasmChunkType {
-    kreuzberg::chunking::classify_chunk(&content, heading_context.map(Into::into).as_ref()).into()
+    kreuzberg::chunking::classify_chunk(&content, heading_context.as_ref()).into()
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -16679,29 +16653,6 @@ pub fn render_template(template: String, context: String) -> Result<String, JsVa
     Err(JsValue::from_str("Not implemented: render_template"))
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "extractStructured")]
-pub async fn extract_structured(content: String, config: WasmStructuredExtractionConfig) -> Result<String, JsValue> {
-    let result = kreuzberg::llm::structured::extract_structured(&content, config.into())
-        .await
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "vlmOcr")]
-pub async fn vlm_ocr(
-    image_bytes: Vec<u8>,
-    image_mime_type: String,
-    language: String,
-    config: WasmLlmConfig,
-) -> Result<String, JsValue> {
-    let result = kreuzberg::llm::vlm_ocr::vlm_ocr(&image_bytes, &image_mime_type, &language, config.into())
-        .await
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
 #[wasm_bindgen]
 pub fn normalize(v: Vec<f32>) -> Vec<f32> {
     kreuzberg::embeddings::engine::normalize(&v)
@@ -16729,14 +16680,6 @@ pub fn warm_model(model_type: WasmEmbeddingModelType, cache_dir: Option<String>)
 #[wasm_bindgen(js_name = "downloadModel")]
 pub fn download_model(model_type: WasmEmbeddingModelType, cache_dir: Option<String>) -> Result<(), JsValue> {
     let result = kreuzberg::download_model(model_type.into(), cache_dir.as_deref())
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "generateEmbeddingsForChunks")]
-pub fn generate_embeddings_for_chunks(chunks: Vec<WasmChunk>, config: WasmEmbeddingConfig) -> Result<(), JsValue> {
-    let result = kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks, config.into())
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result)
 }
@@ -16828,7 +16771,7 @@ pub fn assemble_ocr_markdown(
 ) -> String {
     kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
         &elements,
-        detection.map(Into::into).as_ref(),
+        detection.as_ref(),
         img_width,
         img_height,
         &recognized_tables,
@@ -16886,16 +16829,6 @@ pub fn map_language_code(kreuzberg_code: String) -> Option<String> {
 #[wasm_bindgen(js_name = "buildCellGrid")]
 pub fn build_cell_grid(result: String, table_bbox: Option<String>) -> JsValue {
     Vec::new()
-}
-
-#[wasm_bindgen(js_name = "applyHeuristics")]
-pub fn apply_heuristics(detections: Vec<WasmLayoutDetection>, page_width: f32, page_height: f32) -> () {
-    kreuzberg::layout::postprocessing::heuristics::apply_heuristics(&detections, page_width, page_height)
-}
-
-#[wasm_bindgen(js_name = "greedyNms")]
-pub fn greedy_nms(detections: Vec<WasmLayoutDetection>, iou_threshold: f32) -> () {
-    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections, iou_threshold)
 }
 
 #[wasm_bindgen(js_name = "preprocessImagenet")]
@@ -16966,12 +16899,6 @@ pub fn extract_bookmarks(document: String) -> Vec<WasmUri> {
 #[wasm_bindgen(js_name = "extractEmbeddedFiles")]
 pub fn extract_embedded_files(document: String) -> Vec<WasmEmbeddedFile> {
     Vec::new()
-}
-
-#[wasm_bindgen(js_name = "extractAndProcessEmbeddedFiles")]
-pub async fn extract_and_process_embedded_files(pdf_bytes: Vec<u8>, config: WasmExtractionConfig) -> String {
-    let result = kreuzberg::pdf::embedded_files::extract_and_process_embedded_files(&pdf_bytes, config.into()).await;
-    result
 }
 
 #[allow(clippy::missing_errors_doc)]

@@ -8996,25 +8996,10 @@ impl KreuzbergApi {
         ))
     }
 
-    pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> PhpResult<Option<Vec<PageBoundary>>> {
-        let result = kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
-    }
-
     pub fn detect_table_page_numbers(bytes: Vec<u8>) -> PhpResult<Vec<i64>> {
         let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
-    }
-
-    pub fn extract_ooxml_embedded_objects_async(
-        zip_bytes: Vec<u8>,
-        embeddings_prefix: String,
-        source_label: String,
-        config: &ExtractionConfig,
-    ) -> String {
-        String::from("[unimplemented: extract_ooxml_embedded_objects_async]")
     }
 
     pub fn detect_image_format(data: Vec<u8>) -> String {
@@ -9712,23 +9697,6 @@ impl KreuzbergApi {
         ))
     }
 
-    pub fn extract_structured_async(content: String, config: &StructuredExtractionConfig) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: extract_structured_async".to_string(),
-        ))
-    }
-
-    pub fn vlm_ocr_async(
-        image_bytes: Vec<u8>,
-        image_mime_type: String,
-        language: String,
-        config: &LlmConfig,
-    ) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: vlm_ocr_async".to_string(),
-        ))
-    }
-
     pub fn normalize(v: Vec<f32>) -> Vec<f32> {
         kreuzberg::embeddings::engine::normalize(v)
     }
@@ -9751,13 +9719,6 @@ impl KreuzbergApi {
     pub fn download_model(model_type: String, cache_dir: Option<String>) -> PhpResult<()> {
         let model_type_core: kreuzberg::EmbeddingModelType = model_type.clone().into();
         let result = kreuzberg::download_model(model_type_core, cache_dir.as_deref())
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
-    }
-
-    pub fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: &EmbeddingConfig) -> PhpResult<()> {
-        let config_core: kreuzberg::EmbeddingConfig = config.clone().into();
-        let result = kreuzberg::embeddings::generate_embeddings_for_chunks(chunks, config_core)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -9891,14 +9852,6 @@ impl KreuzbergApi {
         Vec::new()
     }
 
-    pub fn apply_heuristics(detections: Vec<LayoutDetection>, page_width: f32, page_height: f32) -> () {
-        kreuzberg::layout::postprocessing::heuristics::apply_heuristics(detections, page_width, page_height)
-    }
-
-    pub fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f32) -> () {
-        kreuzberg::layout::postprocessing::nms::greedy_nms(detections, iou_threshold)
-    }
-
     pub fn preprocess_imagenet(img: String, target_size: u32) -> String {
         String::from("[unimplemented: preprocess_imagenet]")
     }
@@ -9953,10 +9906,6 @@ impl KreuzbergApi {
 
     pub fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
         Vec::new()
-    }
-
-    pub fn extract_and_process_embedded_files_async(pdf_bytes: Vec<u8>, config: &ExtractionConfig) -> String {
-        String::from("[unimplemented: extract_and_process_embedded_files_async]")
     }
 
     pub fn initialize_font_cache() -> PhpResult<()> {

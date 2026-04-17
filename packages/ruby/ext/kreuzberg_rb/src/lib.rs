@@ -13549,14 +13549,13 @@ fn validate_vlm_backend_config(backend: String, vlm_config: Option<String>) -> R
             Ok::<_, magnus::Error>(core.into())
         })
         .transpose()?;
-    let result =
-        kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.map(Into::into).as_ref())
-            .map_err(|e| {
-                magnus::Error::new(
-                    unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-                    e.to_string(),
-                )
-            })?;
+    let result = kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.as_ref())
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
@@ -14197,16 +14196,6 @@ fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String, Error> {
     ))
 }
 
-fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<PageBoundary>>, Error> {
-    let result = kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes).map_err(|e| {
-        magnus::Error::new(
-            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-            e.to_string(),
-        )
-    })?;
-    Ok(result)
-}
-
 fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<usize>, Error> {
     let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes).map_err(|e| {
         magnus::Error::new(
@@ -14215,34 +14204,6 @@ fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<usize>, Error> {
         )
     })?;
     Ok(result)
-}
-
-fn extract_ooxml_embedded_objects(
-    zip_bytes: Vec<u8>,
-    embeddings_prefix: String,
-    source_label: String,
-    config: String,
-) -> Result<String, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    String::from("[unimplemented: extract_ooxml_embedded_objects]")
-}
-
-fn extract_ooxml_embedded_objects_async(
-    zip_bytes: Vec<u8>,
-    embeddings_prefix: String,
-    source_label: String,
-    config: String,
-) -> Result<String, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    String::from("[unimplemented: extract_ooxml_embedded_objects_async]")
 }
 
 fn detect_image_format(data: Vec<u8>) -> String {
@@ -15196,7 +15157,7 @@ fn classify_chunk(content: String, heading_context: Option<String>) -> ChunkType
             Ok::<_, magnus::Error>(core.into())
         })
         .transpose()?;
-    kreuzberg::chunking::classify_chunk(&content, heading_context.map(Into::into).as_ref()).into()
+    kreuzberg::chunking::classify_chunk(&content, heading_context.as_ref()).into()
 }
 
 fn chunk_text(
@@ -15302,59 +15263,6 @@ fn render_template(template: String, context: String) -> Result<String, Error> {
     ))
 }
 
-fn extract_structured(content: String, config: String) -> Result<String, Error> {
-    let config: StructuredExtractionConfig = {
-        let core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: extract_structured",
-    ))
-}
-
-fn extract_structured_async(content: String, config: String) -> Result<String, Error> {
-    let config: StructuredExtractionConfig = {
-        let core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: extract_structured_async",
-    ))
-}
-
-fn vlm_ocr(image_bytes: Vec<u8>, image_mime_type: String, language: String, config: String) -> Result<String, Error> {
-    let config: LlmConfig = {
-        let core: kreuzberg::LlmConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: vlm_ocr",
-    ))
-}
-
-fn vlm_ocr_async(
-    image_bytes: Vec<u8>,
-    image_mime_type: String,
-    language: String,
-    config: String,
-) -> Result<String, Error> {
-    let config: LlmConfig = {
-        let core: kreuzberg::LlmConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: vlm_ocr_async",
-    ))
-}
-
 fn normalize(v: Vec<f32>) -> Vec<f32> {
     kreuzberg::embeddings::engine::normalize(&v)
 }
@@ -15389,21 +15297,6 @@ fn download_model(model_type: String, cache_dir: Option<String>) -> Result<(), E
         core.into()
     };
     let result = kreuzberg::download_model(model_type.into(), cache_dir.as_deref()).map_err(|e| {
-        magnus::Error::new(
-            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-            e.to_string(),
-        )
-    })?;
-    Ok(result)
-}
-
-fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: String) -> Result<(), Error> {
-    let config: EmbeddingConfig = {
-        let core: kreuzberg::EmbeddingConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks, config.into()).map_err(|e| {
         magnus::Error::new(
             unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
             e.to_string(),
@@ -15524,7 +15417,7 @@ fn assemble_ocr_markdown(
         .transpose()?;
     kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
         &elements,
-        detection.map(Into::into).as_ref(),
+        detection.as_ref(),
         img_width,
         img_height,
         &recognized_tables,
@@ -15586,14 +15479,6 @@ fn build_cell_grid(result: String, table_bbox: Option<String>) -> Vec<Vec<String
     Vec::new()
 }
 
-fn apply_heuristics(detections: Vec<LayoutDetection>, page_width: f32, page_height: f32) -> () {
-    kreuzberg::layout::postprocessing::heuristics::apply_heuristics(&detections, page_width, page_height)
-}
-
-fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f32) -> () {
-    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections, iou_threshold)
-}
-
 fn preprocess_imagenet(img: String, target_size: u32) -> String {
     String::from("[unimplemented: preprocess_imagenet]")
 }
@@ -15653,24 +15538,6 @@ fn extract_bookmarks(document: String) -> Vec<Uri> {
 
 fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
     Vec::new()
-}
-
-fn extract_and_process_embedded_files(pdf_bytes: Vec<u8>, config: String) -> Result<String, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    String::from("[unimplemented: extract_and_process_embedded_files]")
-}
-
-fn extract_and_process_embedded_files_async(pdf_bytes: Vec<u8>, config: String) -> Result<String, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    String::from("[unimplemented: extract_and_process_embedded_files_async]")
 }
 
 fn initialize_font_cache() -> Result<(), Error> {
@@ -22075,19 +21942,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         "extract_text_with_page_breaks",
         function!(extract_text_with_page_breaks, 1),
     )?;
-    module.define_module_function(
-        "detect_page_breaks_from_docx",
-        function!(detect_page_breaks_from_docx, 1),
-    )?;
     module.define_module_function("detect_table_page_numbers", function!(detect_table_page_numbers, 1))?;
-    module.define_module_function(
-        "extract_ooxml_embedded_objects",
-        function!(extract_ooxml_embedded_objects, 4),
-    )?;
-    module.define_module_function(
-        "extract_ooxml_embedded_objects_async",
-        function!(extract_ooxml_embedded_objects_async, 4),
-    )?;
     module.define_module_function("detect_image_format", function!(detect_image_format, 1))?;
     module.define_module_function("extract_ppt_text", function!(extract_ppt_text, 1))?;
     module.define_module_function(
@@ -22255,19 +22110,11 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("precompute_utf8_boundaries", function!(precompute_utf8_boundaries, 1))?;
     module.define_module_function("validate_utf8_boundaries", function!(validate_utf8_boundaries, 2))?;
     module.define_module_function("render_template", function!(render_template, 2))?;
-    module.define_module_function("extract_structured", function!(extract_structured, 2))?;
-    module.define_module_function("extract_structured_async", function!(extract_structured_async, 2))?;
-    module.define_module_function("vlm_ocr", function!(vlm_ocr, 4))?;
-    module.define_module_function("vlm_ocr_async", function!(vlm_ocr_async, 4))?;
     module.define_module_function("normalize", function!(normalize, 1))?;
     module.define_module_function("get_preset", function!(get_preset, 1))?;
     module.define_module_function("list_presets", function!(list_presets, 0))?;
     module.define_module_function("warm_model", function!(warm_model, 2))?;
     module.define_module_function("download_model", function!(download_model, 2))?;
-    module.define_module_function(
-        "generate_embeddings_for_chunks",
-        function!(generate_embeddings_for_chunks, 2),
-    )?;
     module.define_module_function("calculate_smart_dpi", function!(calculate_smart_dpi, 5))?;
     module.define_module_function("calculate_optimal_dpi", function!(calculate_optimal_dpi, 6))?;
     module.define_module_function("resize_image", function!(resize_image, 4))?;
@@ -22295,8 +22142,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("language_to_script_family", function!(language_to_script_family, 1))?;
     module.define_module_function("map_language_code", function!(map_language_code, 1))?;
     module.define_module_function("build_cell_grid", function!(build_cell_grid, 2))?;
-    module.define_module_function("apply_heuristics", function!(apply_heuristics, 3))?;
-    module.define_module_function("greedy_nms", function!(greedy_nms, 2))?;
     module.define_module_function("preprocess_imagenet", function!(preprocess_imagenet, 2))?;
     module.define_module_function(
         "preprocess_imagenet_letterbox",
@@ -22320,14 +22165,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     )?;
     module.define_module_function("extract_bookmarks", function!(extract_bookmarks, 1))?;
     module.define_module_function("extract_embedded_files", function!(extract_embedded_files, 1))?;
-    module.define_module_function(
-        "extract_and_process_embedded_files",
-        function!(extract_and_process_embedded_files, 2),
-    )?;
-    module.define_module_function(
-        "extract_and_process_embedded_files_async",
-        function!(extract_and_process_embedded_files_async, 2),
-    )?;
     module.define_module_function("initialize_font_cache", function!(initialize_font_cache, 0))?;
     module.define_module_function("get_font_descriptors", function!(get_font_descriptors, 0))?;
     module.define_module_function("cached_font_count", function!(cached_font_count, 0))?;

@@ -13234,29 +13234,6 @@ char *kreuzberg_extract_text_with_page_breaks(const uint8_t *_bytes,
                                               uintptr_t _bytes_len);
 
 /**
- * Detect explicit page break positions in document.xml and extract full text with page boundaries.
- *
- * This is a convenience function for the extractor that combines text extraction with page
- * break detection. It returns the extracted text along with page boundaries.
- *
- * # Arguments
- * * `bytes` - The DOCX file contents (ZIP archive)
- *
- * # Returns
- * * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
- * * `Err(KreuzbergError)` - If extraction fails
- *
- * # Limitations
- * - Only detects explicit page breaks, not reflowed content
- * - Page numbers are estimates based on detected breaks
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_detect_page_breaks_from_docx(const uint8_t *bytes,
-                                             uintptr_t bytes_len);
-
-/**
  * Compute the 1-based page number for each top-level table in the document.
  *
  * Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
@@ -13275,26 +13252,6 @@ char *kreuzberg_detect_page_breaks_from_docx(const uint8_t *bytes,
  */
 char *kreuzberg_detect_table_page_numbers(const uint8_t *bytes,
                                           uintptr_t bytes_len);
-
-/**
- * Extract embedded objects from an OOXML ZIP archive and recursively process them.
- *
- * Scans the given `embeddings_prefix` directory (e.g. `word/embeddings/` or
- * `ppt/embeddings/`) inside the ZIP archive for embedded files. Known formats
- * (.xlsx, .pdf, .docx, .pptx, etc.) are recursively extracted. OLE compound
- * files (oleObject*.bin) are skipped with a warning unless their format can be
- * identified.
- *
- * Returns `(children, warnings)` suitable for attaching to `InternalDocument`.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_extract_ooxml_embedded_objects(const uint8_t *_zip_bytes,
-                                               uintptr_t _zip_bytes_len,
-                                               const char *_embeddings_prefix,
-                                               const char *_source_label,
-                                               const KREUZBERGExtractionConfig *_config);
 
 /**
  * Detect image format from raw bytes using magic byte signatures.
@@ -15874,67 +15831,6 @@ char *kreuzberg_render_template(const char *_template,
                                 const char *_context);
 
 /**
- * Extract structured data from document content using an LLM with JSON schema.
- *
- * Sends the document content to the configured LLM with a JSON schema constraint,
- * returning structured data that conforms to the schema.
- *
- * # Arguments
- *
- * * `content` - The extracted document text to send to the LLM.
- * * `config` - Structured extraction configuration including schema and LLM settings.
- *
- * # Returns
- *
- * A `serde_json::Value` conforming to the provided JSON schema.
- *
- * # Errors
- *
- * Returns an error if:
- * - The LLM client cannot be created (invalid provider/credentials).
- * - The LLM request fails (network, rate-limit, etc.).
- * - The LLM response cannot be parsed as valid JSON.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_extract_structured(const char *_content,
-                                   const KREUZBERGStructuredExtractionConfig *_config);
-
-/**
- * Perform OCR on an image using a vision language model.
- *
- * Sends the image to a VLM (e.g., GPT-4o, Claude) which extracts text.
- * The language hint is included in the prompt when the document language
- * is not English.
- *
- * # Arguments
- *
- * * `image_bytes` - Raw image data (JPEG, PNG, WebP, etc.)
- * * `image_mime_type` - MIME type of the image (e.g., `"image/png"`)
- * * `language` - ISO 639 language code or Tesseract language name
- *   (e.g., `"eng"`, `"de"`, `"fra"`)
- * * `config` - LLM provider/model configuration
- *
- * # Returns
- *
- * Extracted text from the image, or an error if the VLM call fails.
- *
- * # Errors
- *
- * - `KreuzbergError::Ocr` if the VLM returns no content or the API call fails
- * - `KreuzbergError::MissingDependency` if the liter-llm client cannot be created
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_vlm_ocr(const uint8_t *_image_bytes,
-                        uintptr_t _image_bytes_len,
-                        const char *_image_mime_type,
-                        const char *_language,
-                        const KREUZBERGLlmConfig *_config);
-
-/**
  * L2-normalize a vector.
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
@@ -15990,28 +15886,6 @@ int32_t kreuzberg_warm_model(const KREUZBERGEmbeddingModelType *model_type,
  */
 int32_t kreuzberg_download_model(const KREUZBERGEmbeddingModelType *model_type,
                                  const char *cache_dir);
-
-/**
- * Generate embeddings for text chunks using the specified configuration.
- *
- * This function modifies chunks in-place, populating their `embedding` field
- * with generated embedding vectors. It uses batch processing for efficiency.
- *
- * # Arguments
- *
- * * `chunks` - Mutable reference to vector of chunks to generate embeddings for
- * * `config` - Embedding configuration specifying model and parameters
- *
- * # Returns
- *
- * Returns `Ok(())` if embeddings were generated successfully, or an error if
- * model initialization or embedding generation fails.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-int32_t kreuzberg_generate_embeddings_for_chunks(const char *chunks,
-                                                 const KREUZBERGEmbeddingConfig *config);
 
 /**
  * Calculate smart DPI based on page dimensions, memory constraints, and target DPI
@@ -16497,36 +16371,6 @@ char *kreuzberg_build_cell_grid(const char *_result,
                                 const char *_table_bbox);
 
 /**
- * Apply Docling-style postprocessing heuristics to raw detections.
- *
- * This implements the key heuristics from `docling/utils/layout_postprocessor.py`:
- * 1. Per-class confidence thresholds
- * 2. Full-page picture removal (>90% page area)
- * 3. Overlap resolution (IoU > 0.8 or containment > 0.8)
- * 4. Cross-type overlap handling (KVR vs Table)
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-void kreuzberg_apply_heuristics(const char *detections,
-                                float page_width,
-                                float page_height);
-
-/**
- * Standard greedy Non-Maximum Suppression.
- *
- * Sorts detections by confidence (descending), then iteratively removes
- * detections that have IoU > `iou_threshold` with any higher-confidence detection.
- *
- * This is required for YOLO models. RT-DETR is NMS-free.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-void kreuzberg_greedy_nms(const char *detections,
-                          float iou_threshold);
-
-/**
  * Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
  *
  * Pipeline: resize to target_size x target_size (bilinear) -> rescale /255 -> ImageNet normalize -> NCHW f32.
@@ -16691,19 +16535,6 @@ char *kreuzberg_extract_bookmarks(const char *_document);
  * Returned pointers must be freed with the appropriate free function.
  */
 char *kreuzberg_extract_embedded_files(const char *_document);
-
-/**
- * Extract embedded files from PDF bytes and recursively process them.
- *
- * Returns `(children, warnings)`. The children are `ArchiveEntry` values
- * suitable for attaching to `InternalDocument.children`.
- * # Safety
- * Caller must ensure all pointer arguments are valid or null.
- * Returned pointers must be freed with the appropriate free function.
- */
-char *kreuzberg_extract_and_process_embedded_files(const uint8_t *_pdf_bytes,
-                                                   uintptr_t _pdf_bytes_len,
-                                                   const KREUZBERGExtractionConfig *_config);
 
 /**
  * Initialize the global font cache.

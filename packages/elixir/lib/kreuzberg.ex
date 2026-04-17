@@ -782,22 +782,10 @@ defmodule Kreuzberg do
     Kreuzberg.Native.extract_text_with_page_breaks(bytes)
   end
 
-  @doc "Detect explicit page break positions in document.xml and extract full text with page boundaries."
-  @spec detect_page_breaks_from_docx(binary()) :: {:ok, [map()] | nil} | {:error, String.t()}
-  def detect_page_breaks_from_docx(bytes) do
-    Kreuzberg.Native.detect_page_breaks_from_docx(bytes)
-  end
-
   @doc "Compute the 1-based page number for each top-level table in the document."
   @spec detect_table_page_numbers(binary()) :: {:ok, [non_neg_integer()]} | {:error, String.t()}
   def detect_table_page_numbers(bytes) do
     Kreuzberg.Native.detect_table_page_numbers(bytes)
-  end
-
-  @doc "Extract embedded objects from an OOXML ZIP archive and recursively process them."
-  @spec extract_ooxml_embedded_objects_async(binary(), String.t(), String.t(), String.t() | nil) :: String.t()
-  def extract_ooxml_embedded_objects_async(zip_bytes, embeddings_prefix, source_label, config) do
-    Kreuzberg.Native.extract_ooxml_embedded_objects_async(zip_bytes, embeddings_prefix, source_label, config)
   end
 
   @doc "Detect image format from raw bytes using magic byte signatures."
@@ -1664,18 +1652,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.render_template(template, context)
   end
 
-  @doc "Extract structured data from document content using an LLM with JSON schema."
-  @spec extract_structured_async(String.t(), map()) :: {:ok, String.t()} | {:error, String.t()}
-  def extract_structured_async(content, config) do
-    Kreuzberg.Native.extract_structured_async(content, config)
-  end
-
-  @doc "Perform OCR on an image using a vision language model."
-  @spec vlm_ocr_async(binary(), String.t(), String.t(), String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
-  def vlm_ocr_async(image_bytes, image_mime_type, language, config) do
-    Kreuzberg.Native.vlm_ocr_async(image_bytes, image_mime_type, language, config)
-  end
-
   @doc "L2-normalize a vector."
   @spec normalize([float()]) :: [float()]
   def normalize(v) do
@@ -1716,12 +1692,6 @@ defmodule Kreuzberg do
   @spec download_model(map(), String.t() | nil) :: {:ok, nil} | {:error, String.t()}
   def download_model(model_type, cache_dir) do
     Kreuzberg.Native.download_model(model_type, cache_dir)
-  end
-
-  @doc "Generate embeddings for text chunks using the specified configuration."
-  @spec generate_embeddings_for_chunks([map()], String.t() | nil) :: {:ok, nil} | {:error, String.t()}
-  def generate_embeddings_for_chunks(chunks, config) do
-    Kreuzberg.Native.generate_embeddings_for_chunks(chunks, config)
   end
 
   @doc "Calculate smart DPI based on page dimensions, memory constraints, and target DPI"
@@ -1856,18 +1826,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.build_cell_grid(result, table_bbox)
   end
 
-  @doc "Apply Docling-style postprocessing heuristics to raw detections."
-  @spec apply_heuristics([map()], float(), float()) :: nil
-  def apply_heuristics(detections, page_width, page_height) do
-    Kreuzberg.Native.apply_heuristics(detections, page_width, page_height)
-  end
-
-  @doc "Standard greedy Non-Maximum Suppression."
-  @spec greedy_nms([map()], float()) :: nil
-  def greedy_nms(detections, iou_threshold) do
-    Kreuzberg.Native.greedy_nms(detections, iou_threshold)
-  end
-
   @doc "Preprocess an image for models using ImageNet normalization (e.g., RT-DETR)."
   @spec preprocess_imagenet(String.t(), non_neg_integer()) :: String.t()
   def preprocess_imagenet(img, target_size) do
@@ -1950,12 +1908,6 @@ defmodule Kreuzberg do
   @spec extract_embedded_files(String.t()) :: [map()]
   def extract_embedded_files(document) do
     Kreuzberg.Native.extract_embedded_files(document)
-  end
-
-  @doc "Extract embedded files from PDF bytes and recursively process them."
-  @spec extract_and_process_embedded_files_async(binary(), String.t() | nil) :: String.t()
-  def extract_and_process_embedded_files_async(pdf_bytes, config) do
-    Kreuzberg.Native.extract_and_process_embedded_files_async(pdf_bytes, config)
   end
 
   @doc "Initialize the global font cache."
