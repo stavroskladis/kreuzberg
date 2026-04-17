@@ -3291,7 +3291,7 @@ pub fn blake3_hash_bytes(data: Vec<u8>) -> String {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "blake3HashFile")]
 pub fn blake3_hash_file(path: String) -> Result<String> {
-    kreuzberg::cache::blake3_hash_file(std::path::PathBuf::from(path))
+    kreuzberg::cache::blake3_hash_file(path.as_path())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -3314,7 +3314,7 @@ pub fn validate_cache_key(key: String) -> bool {
 
 #[napi(js_name = "filterOldCacheEntries")]
 pub fn filter_old_cache_entries(cache_times: Vec<f64>, current_time: f64, max_age_seconds: f64) -> Vec<i64> {
-    kreuzberg::cache::filter_old_cache_entries(cache_times, current_time, max_age_seconds)
+    kreuzberg::cache::filter_old_cache_entries(&cache_times, current_time, max_age_seconds)
 }
 
 #[napi(js_name = "sortCacheByAccessTime")]
@@ -3591,7 +3591,7 @@ pub fn validate_mime_type(mime_type: String) -> Result<String> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "detectOrValidate")]
 pub fn detect_or_validate(path: Option<String>, mime_type: Option<String>) -> Result<String> {
-    kreuzberg::detect_or_validate(&path, &mime_type)
+    kreuzberg::detect_or_validate(path.as_deref(), mime_type.as_deref())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -4197,12 +4197,12 @@ pub fn parse_xml(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<JsXmlE
 
 #[napi(js_name = "cellsToText")]
 pub fn cells_to_text(cells: Vec<Vec<String>>) -> String {
-    kreuzberg::extraction::cells_to_text(cells)
+    kreuzberg::extraction::cells_to_text(&cells)
 }
 
 #[napi(js_name = "cellsToMarkdown")]
 pub fn cells_to_markdown(cells: Vec<Vec<String>>) -> String {
-    kreuzberg::extraction::cells_to_markdown(cells)
+    kreuzberg::extraction::cells_to_markdown(&cells)
 }
 
 #[napi(js_name = "parseJotdownAttributes")]
@@ -4308,7 +4308,7 @@ pub fn extract_text_from_proto(data: Vec<u8>) -> Vec<String> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "extractTextFromIwaFiles")]
 pub fn extract_text_from_iwa_files(content: Vec<u8>, iwa_paths: Vec<String>) -> Result<String> {
-    kreuzberg::extractors::iwork::extract_text_from_iwa_files(&content, iwa_paths)
+    kreuzberg::extractors::iwork::extract_text_from_iwa_files(&content, &iwa_paths)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -4559,7 +4559,7 @@ pub fn render_plain(doc: String) -> String {
 
 #[napi(js_name = "sanitizeFilename")]
 pub fn sanitize_filename(path: String) -> String {
-    kreuzberg::telemetry::conventions::sanitize_filename(std::path::PathBuf::from(path)).into()
+    kreuzberg::telemetry::conventions::sanitize_filename(path.as_path()).into()
 }
 
 #[napi(js_name = "getMetrics")]
@@ -4580,7 +4580,7 @@ pub fn record_success_on_current_span() -> () {
 
 #[napi(js_name = "sanitizePath")]
 pub fn sanitize_path(path: String) -> String {
-    kreuzberg::telemetry::spans::sanitize_path(std::path::PathBuf::from(path))
+    kreuzberg::telemetry::spans::sanitize_path(path.as_path())
 }
 
 #[napi(js_name = "extractorSpan")]
@@ -4624,7 +4624,7 @@ pub fn from_utf8(bytes: Vec<u8>) -> Result<String> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "stringFromUtf8")]
 pub fn string_from_utf8(bytes: Vec<u8>) -> Result<String> {
-    kreuzberg::text::utf8_validation::string_from_utf8(&bytes)
+    kreuzberg::text::utf8_validation::string_from_utf8(bytes)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -4692,7 +4692,7 @@ pub fn underline(start: u32, end: u32) -> JsTextAnnotation {
 
 #[napi]
 pub fn link(start: u32, end: u32, url: String, title: Option<String>) -> JsTextAnnotation {
-    kreuzberg::builder::link(start, end, &url, &title).into()
+    kreuzberg::builder::link(start, end, &url, title.as_deref()).into()
 }
 
 #[napi]
@@ -4737,7 +4737,7 @@ pub fn classify_uri(url: String) -> JsUriKind {
 
 #[napi(js_name = "safeDecode")]
 pub fn safe_decode(byte_data: Vec<u8>, encoding: Option<String>) -> String {
-    kreuzberg::utils::safe_decode(&byte_data, &encoding)
+    kreuzberg::utils::safe_decode(&byte_data, encoding.as_deref())
 }
 
 #[napi(js_name = "calculateTextConfidence")]
@@ -4840,13 +4840,13 @@ pub fn reconstruct_table(words: Vec<String>, column_threshold: u32, row_threshol
 
 #[napi(js_name = "tableToMarkdown")]
 pub fn table_to_markdown(table: Vec<Vec<String>>) -> String {
-    kreuzberg::table_core::table_to_markdown(table)
+    kreuzberg::table_core::table_to_markdown(&table)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "loadServerConfig")]
 pub fn load_server_config(config_path: Option<String>) -> Result<JsServerConfig> {
-    kreuzberg::api::load_server_config(&config_path)
+    kreuzberg::api::load_server_config(config_path.as_deref())
         .map(|val| val.into())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -5043,7 +5043,7 @@ pub fn render_template(template: String, context: String) -> Result<String> {
 
 #[napi]
 pub fn normalize(v: Vec<f64>) -> Vec<f64> {
-    kreuzberg::embeddings::engine::normalize(v)
+    kreuzberg::embeddings::engine::normalize(&v)
 }
 
 #[napi(js_name = "getPreset")]
@@ -5504,7 +5504,7 @@ pub fn render_pdf_page_to_png(
     dpi: Option<i32>,
     password: Option<String>,
 ) -> Result<Vec<u8>> {
-    kreuzberg::pdf::render_pdf_page_to_png(&pdf_bytes, page_index as usize, dpi, &password)
+    kreuzberg::pdf::render_pdf_page_to_png(&pdf_bytes, page_index as usize, dpi, password.as_deref())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -5547,7 +5547,7 @@ pub fn post_process_table(
 
 #[napi(js_name = "isWellFormedTable")]
 pub fn is_well_formed_table(grid: Vec<Vec<String>>) -> bool {
-    kreuzberg::pdf::table_reconstruct::is_well_formed_table(grid)
+    kreuzberg::pdf::table_reconstruct::is_well_formed_table(&grid)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -5567,7 +5567,7 @@ pub fn extract_text_from_pdf_with_password(pdf_bytes: Vec<u8>, password: String)
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "extractTextFromPdfWithPasswords")]
 pub fn extract_text_from_pdf_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<String> {
-    kreuzberg::pdf::text::extract_text_from_pdf_with_passwords(&pdf_bytes, passwords)
+    kreuzberg::pdf::text::extract_text_from_pdf_with_passwords(&pdf_bytes, &passwords)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
