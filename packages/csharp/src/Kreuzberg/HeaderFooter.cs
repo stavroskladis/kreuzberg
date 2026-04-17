@@ -12,7 +12,7 @@ public sealed class HeaderFooter
     public List<string> Paragraphs { get; set; } = [];
 
     [JsonPropertyName("tables")]
-    public List<Table> Tables { get; set; } = [];
+    public List<string> Tables { get; set; } = [];
 
     [JsonPropertyName("header_type")]
     public string HeaderType { get; set; } = "";

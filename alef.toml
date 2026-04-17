@@ -323,6 +323,79 @@ types = [
     "JsOutputFormat",
     "JsTableGrid",
     "JsExtractionConfig",
+
+    # Generic types (cannot be monomorphized for bindings)
+    "ModelCache",
+    "Pool",
+
+    # Internal post-processors (plugin impls, not public API)
+    "QualityProcessor",
+    "ChunkingProcessor",
+
+    # Internal error/data types missing required derives (Serialize/Deserialize/Clone)
+    "HwpError",
+    "MathNode",
+    "SecurityError",
+    "OcrError",
+    "PdfError",
+
+    # Internal I/O and structure types
+    "FileBytes",
+    "InternedString",
+
+    # Internal extraction result types missing Clone
+    "PptExtractionResult",
+    "DocExtractionResult",
+
+    # Types with non-Clone/non-Default fields (Mutex, OpenTelemetry metrics)
+    "TelemetryMetrics",
+    "ExtractionMetrics",
+
+    # Internal layout/detection types missing serde
+    "PageLayoutRegion",
+    "ListItemMetadata",
+
+    # Plugin traits — cannot be bound across languages
+    "Renderer",
+    "OcrBackend",
+    "Plugin",
+    "PostProcessor",
+    "Validator",
+
+    # Internal docx/hwp parser types — missing Serialize/Deserialize derives
+    "Table",     # kreuzberg::extraction::docx::parser::Table
+    "TableCell", # kreuzberg::extraction::docx::parser::TableCell
+    "TableRow",  # kreuzberg::extraction::docx::parser::TableRow
+    "Section",   # kreuzberg::extraction::hwp::model::Section
+
+    # Duplicate types with internal-only versions — use public types instead
+    "BoundingBox",   # kreuzberg::pdf::hierarchy::bounding_box::BoundingBox (internal; use kreuzberg::types::BoundingBox)
+    "ImageMetadata", # kreuzberg::extraction::image::ImageMetadata (internal; use kreuzberg::types::ImageMetadata)
+    "Attributes",    # kreuzberg::extractors::djot_format::attributes::Attributes (internal type with lifetime issues)
+
+    # Internal IDs and newtype wrappers lacking required derives/conversions
+    "NodeId",    # String newtype without Serialize/From for FFI
+    "ElementId", # String newtype without Serialize/From for FFI
+
+    # Internal types from docx parser
+    "DocumentElement", # kreuzberg::extraction::docx::parser::DocumentElement (internal; missing Default)
+
+    # Dependency-owned types that cannot be converted for cross-language bindings
+    "LayoutEngine",    # tch-rs Session wrapper — can't serialize
+    "NormalizeResult", # ort output type — internal, can't serialize
+
+    # Internal stats/response types
+    "NativeTextStats",       # missing Debug
+    "ErrorResponse",         # API-only error response
+    "ApiSizeLimits",         # internal API config
+    "PdfDocument",           # pdfium_render type — can't cross FFI
+    "PdfExtractionMetadata", # internal PDF metadata
+
+    "VlmOcrBackend",
+    "ApiError",
+    "Drawing",
+    "TableProperties",
+    "TableGrid",
 ]
 functions = [
     # Internal functions not part of public API
@@ -331,8 +404,55 @@ functions = [
     "ensure_initialized",
     "register_keyword_processor",
     "register_chunking_processor",
+    "extract_bundled_pdfium",      # PDF binary extraction — internal utility, not user-facing
+
+    # Plugin registration — requires trait objects that can't be bound
+    "register_ocr_backend",
+    "register_renderer",
+
+    # Functions taking pdfium_render::PdfDocument — can't be passed from bindings
+    "extract_text_and_metadata_from_pdf_document",
+    "extract_text_from_pdf_document",
+
+    # Internal utility
+    "clear_font_cache",
+
+    "with_rotation_opt",
+    "derive_document_structure",
+    "derive_extraction_result",
+    "parse_drawing",
+    "parse_table_properties",
+    "parse_table_grid",
+    "tsv_row_to_element",
+    "extract_complete_djot_content",
+    "extract_metadata_from_yaml",
+    "calculate_page_range",
+
+    # Functions returning opaque dependency types that can't cross FFI
+    "build_session",
+    "create_layout_engine",
+    "normalize_image",
+    "build_layout_engine",
+    "create_engine",
+    "take_or_create_engine",
+    "return_engine",
+    "get_default_cache_dir",
+
+    # Functions taking opaque/internal types as params
+    "run_pipeline",
+    "serve_with_config_and_limits",
+    "normalize_image_dpi",
+    "extract_metadata_from_document",
 ]
-methods = []
+methods = [
+    "OcrElement.with_rotation_opt",
+    "VlmOcrBackend.backend_type",
+    "ApiError.validation",
+    "ApiError.unprocessable",
+    "ApiError.internal",
+    "ApiError.bad_gateway",
+    "ApiError.from",
+]
 
 # ---------------------------------------------------------------------------
 # Output directories
@@ -397,7 +517,27 @@ package_name = "kreuzberg"
 # All complex types already excluded globally; only WASM-specific overrides here
 exclude_types = []
 exclude_functions = []
-features = ["html"]
+# Everything except ort-dependent features (paddle-ocr, layout-detection, embeddings, auto-rotate)
+features = [
+    "pdf",
+    "excel-wasm",
+    "office",
+    "hwp",
+    "iwork",
+    "email",
+    "html",
+    "xml",
+    "archives",
+    "language-detection",
+    "chunking",
+    "quality",
+    "keywords",
+    "mdx",
+    "ocr-wasm",
+    "tree-sitter-wasm",
+    "liter-llm",
+    "stopwords",
+]
 
 # ---------------------------------------------------------------------------
 # DTO styles

@@ -42,7 +42,7 @@ public sealed interface FormatMetadata {
 
     record Archive(@JsonProperty("0") ArchiveMetadata 0) implements FormatMetadata { }
 
-    record Image(@JsonProperty("0") ImageMetadata 0) implements FormatMetadata { }
+    record Image(@JsonProperty("0") String 0) implements FormatMetadata { }
 
     record Xml(@JsonProperty("0") XmlMetadata 0) implements FormatMetadata { }
 

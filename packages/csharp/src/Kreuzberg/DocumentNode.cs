@@ -18,7 +18,7 @@ public sealed class DocumentNode
     /// Deterministic identifier (hash of content + position).
     /// </summary>
     [JsonPropertyName("id")]
-    public NodeId Id { get; set; } = default!;
+    public string Id { get; set; } = "";
 
     /// <summary>
     /// Node content — tagged enum, type-specific data only.
@@ -61,7 +61,7 @@ public sealed class DocumentNode
     /// Bounding box in document coordinates.
     /// </summary>
     [JsonPropertyName("bbox")]
-    public BoundingBox? Bbox { get; set; } = null;
+    public string? Bbox { get; set; } = null;
 
     /// <summary>
     /// Inline annotations (formatting, links) on this node's text content.

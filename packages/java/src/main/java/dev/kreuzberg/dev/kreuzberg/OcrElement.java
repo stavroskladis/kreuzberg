@@ -15,4 +15,7 @@ public record OcrElement(
     @JsonProperty("parent_id") Optional<String> parentId,
     @JsonProperty("backend_metadata") Map<String, Object> backendMetadata
 ) {
+    public static OcrElementBuilder builder() {
+        return new OcrElementBuilder();
+    }
 }

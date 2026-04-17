@@ -2,8 +2,6 @@
 // Re-generate with: alef generate
 #![allow(dead_code)]
 
-use kreuzberg::plugins::OcrBackend;
-use kreuzberg::plugins::Plugin;
 use napi::*;
 use napi_derive::napi;
 use std::collections::HashMap;
@@ -67,7 +65,7 @@ pub struct JsExtractionConfig {
     #[napi(js_name = "pdfOptions")]
     pub pdf_options: Option<JsPdfConfig>,
     #[napi(js_name = "tokenReduction")]
-    pub token_reduction: Option<JsTokenReductionConfig>,
+    pub token_reduction: Option<JsTokenReductionOptions>,
     #[napi(js_name = "languageDetection")]
     pub language_detection: Option<JsLanguageDetectionConfig>,
     pub pages: Option<JsPageConfig>,
@@ -81,7 +79,7 @@ pub struct JsExtractionConfig {
     #[napi(js_name = "maxConcurrentExtractions")]
     pub max_concurrent_extractions: Option<i64>,
     #[napi(js_name = "resultFormat")]
-    pub result_format: Option<JsOutputFormat>,
+    pub result_format: Option<JsExtractionMode>,
     #[napi(js_name = "securityLimits")]
     pub security_limits: Option<String>,
     #[napi(js_name = "outputFormat")]
@@ -123,7 +121,7 @@ pub struct JsFileExtractionConfig {
     #[napi(js_name = "pdfOptions")]
     pub pdf_options: Option<JsPdfConfig>,
     #[napi(js_name = "tokenReduction")]
-    pub token_reduction: Option<JsTokenReductionConfig>,
+    pub token_reduction: Option<JsTokenReductionOptions>,
     #[napi(js_name = "languageDetection")]
     pub language_detection: Option<JsLanguageDetectionConfig>,
     pub pages: Option<JsPageConfig>,
@@ -131,7 +129,7 @@ pub struct JsFileExtractionConfig {
     #[napi(js_name = "htmlOptions")]
     pub html_options: Option<String>,
     #[napi(js_name = "resultFormat")]
-    pub result_format: Option<JsOutputFormat>,
+    pub result_format: Option<JsExtractionMode>,
     #[napi(js_name = "outputFormat")]
     pub output_format: Option<JsOutputFormat>,
     #[napi(js_name = "includeDocumentStructure")]
@@ -166,7 +164,7 @@ pub struct JsImageExtractionConfig {
 
 #[derive(Clone)]
 #[napi(object)]
-pub struct JsTokenReductionConfig {
+pub struct JsTokenReductionOptions {
     pub mode: String,
     #[napi(js_name = "preserveImportantWords")]
     pub preserve_important_words: bool,
@@ -434,26 +432,6 @@ pub struct JsTreeSitterProcessConfig {
 }
 
 #[derive(Clone)]
-#[napi]
-pub struct JsFileBytes {
-    inner: Arc<kreuzberg::core::io::FileBytes>,
-}
-
-#[napi]
-impl JsFileBytes {
-    #[allow(clippy::should_implement_trait)]
-    #[napi]
-    pub fn deref(&self) -> Vec<u8> {
-        self.inner.deref().into()
-    }
-
-    #[napi(js_name = "asRef")]
-    pub fn as_ref(&self) -> Vec<u8> {
-        self.inner.as_ref().into()
-    }
-}
-
-#[derive(Clone)]
 #[napi(object)]
 pub struct JsSupportedFormat {
     pub extension: String,
@@ -482,25 +460,6 @@ pub struct JsStructuredDataResult {
     pub metadata: HashMap<String, String>,
     #[napi(js_name = "textFields")]
     pub text_fields: Vec<String>,
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsListItemMetadata {
-    #[napi(js_name = "listType")]
-    pub list_type: String,
-    #[napi(js_name = "byteStart")]
-    pub byte_start: i64,
-    #[napi(js_name = "byteEnd")]
-    pub byte_end: i64,
-    #[napi(js_name = "indentLevel")]
-    pub indent_level: u32,
-}
-
-#[derive(Clone, Default)]
-#[napi(object)]
-pub struct JsSection {
-    pub paragraphs: Option<Vec<String>>,
 }
 
 #[derive(Clone)]
@@ -590,25 +549,6 @@ pub struct JsExtractedInlineImage {
     pub attributes: Vec<String>,
 }
 
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsDocExtractionResult {
-    pub text: String,
-    pub metadata: String,
-}
-
-#[derive(Clone, Default)]
-#[napi(object)]
-pub struct JsDrawing {
-    #[napi(js_name = "drawingType")]
-    pub drawing_type: Option<String>,
-    pub extent: Option<String>,
-    #[napi(js_name = "docProperties")]
-    pub doc_properties: Option<String>,
-    #[napi(js_name = "imageRef")]
-    pub image_ref: Option<String>,
-}
-
 #[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsAnchorProperties {
@@ -628,16 +568,9 @@ pub struct JsAnchorProperties {
 
 #[derive(Clone, Default)]
 #[napi(object)]
-pub struct JsTableRow {
-    pub cells: Option<Vec<JsTableCell>>,
-    pub properties: Option<String>,
-}
-
-#[derive(Clone, Default)]
-#[napi(object)]
 pub struct JsHeaderFooter {
     pub paragraphs: Option<Vec<String>>,
-    pub tables: Option<Vec<JsTable>>,
+    pub tables: Option<Vec<String>>,
     #[napi(js_name = "headerType")]
     pub header_type: Option<String>,
 }
@@ -689,22 +622,6 @@ pub struct JsResolvedStyle {
     pub paragraph_properties: Option<String>,
     #[napi(js_name = "runProperties")]
     pub run_properties: Option<String>,
-}
-
-#[derive(Clone, Default)]
-#[napi(object)]
-pub struct JsTableProperties {
-    #[napi(js_name = "styleId")]
-    pub style_id: Option<String>,
-    pub width: Option<String>,
-    pub alignment: Option<String>,
-    pub layout: Option<String>,
-    pub look: Option<String>,
-    pub borders: Option<String>,
-    #[napi(js_name = "cellMargins")]
-    pub cell_margins: Option<String>,
-    pub indent: Option<String>,
-    pub caption: Option<String>,
 }
 
 #[derive(Clone, Default)]
@@ -799,17 +716,6 @@ pub struct JsOdtProperties {
     pub table_count: Option<i32>,
     #[napi(js_name = "imageCount")]
     pub image_count: Option<i32>,
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsPptExtractionResult {
-    pub text: String,
-    #[napi(js_name = "slideCount")]
-    pub slide_count: i64,
-    pub metadata: String,
-    #[napi(js_name = "speakerNotes")]
-    pub speaker_notes: Vec<String>,
 }
 
 #[derive(Clone)]
@@ -947,114 +853,30 @@ pub struct JsOcrFallbackDecision {
     pub fallback: bool,
 }
 
-#[derive(Clone)]
-#[napi]
-pub struct JsModelCache {
-    inner: Arc<kreuzberg::model_cache::ModelCache>,
-}
-
-#[napi]
-impl JsModelCache {
-    #[napi]
-    pub fn put(&self, model: String) -> () {
-        let _ = model;
-        ()
-    }
-
-    #[napi]
-    pub fn take(&self) -> Option<String> {
-        None
-    }
-}
-
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
-pub struct JsExtractionMetrics {
-    #[napi(js_name = "extractionTotal")]
-    pub extraction_total: String,
-    #[napi(js_name = "cacheHits")]
-    pub cache_hits: String,
-    #[napi(js_name = "cacheMisses")]
-    pub cache_misses: String,
-    #[napi(js_name = "batchTotal")]
-    pub batch_total: String,
-    #[napi(js_name = "extractionDurationMs")]
-    pub extraction_duration_ms: String,
-    #[napi(js_name = "extractionInputBytes")]
-    pub extraction_input_bytes: String,
-    #[napi(js_name = "extractionOutputBytes")]
-    pub extraction_output_bytes: String,
-    #[napi(js_name = "pipelineDurationMs")]
-    pub pipeline_duration_ms: String,
-    #[napi(js_name = "ocrDurationMs")]
-    pub ocr_duration_ms: String,
-    #[napi(js_name = "batchDurationMs")]
-    pub batch_duration_ms: String,
-    #[napi(js_name = "concurrentExtractions")]
-    pub concurrent_extractions: String,
-}
-
-#[derive(Clone)]
-#[napi]
-pub struct JsQualityProcessor {
-    inner: Arc<kreuzberg::text::QualityProcessor>,
-}
-
-#[napi]
-impl JsQualityProcessor {
-    #[napi]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[napi]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub fn initialize(&self) -> Result<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub fn shutdown(&self) -> Result<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub async fn process(&self, result: JsExtractionResult, _config: JsExtractionConfig) -> Result<()> {
-        let inner = self.inner.clone();
-        let result = inner
-            .process(result.into(), _config.into())
-            .await
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(result)
-    }
-
-    #[napi(js_name = "processingStage")]
-    pub fn processing_stage(&self) -> String {
-        String::from("[unimplemented: QualityProcessor.processing_stage]")
-    }
-
-    #[napi(js_name = "shouldProcess")]
-    pub fn should_process(&self, _result: JsExtractionResult, config: JsExtractionConfig) -> bool {
-        self.inner.should_process(_result.into(), config.into())
-    }
-
-    #[napi(js_name = "estimatedDurationMs")]
-    pub fn estimated_duration_ms(&self, result: JsExtractionResult) -> i64 {
-        self.inner.estimated_duration_ms(result.into()) as i64
-    }
+pub struct JsTokenReductionConfig {
+    pub level: Option<JsReductionLevel>,
+    #[napi(js_name = "languageHint")]
+    pub language_hint: Option<String>,
+    #[napi(js_name = "preserveMarkdown")]
+    pub preserve_markdown: Option<bool>,
+    #[napi(js_name = "preserveCode")]
+    pub preserve_code: Option<bool>,
+    #[napi(js_name = "semanticThreshold")]
+    pub semantic_threshold: Option<f64>,
+    #[napi(js_name = "enableParallel")]
+    pub enable_parallel: Option<bool>,
+    #[napi(js_name = "useSimd")]
+    pub use_simd: Option<bool>,
+    #[napi(js_name = "customStopwords")]
+    pub custom_stopwords: Option<HashMap<String, Vec<String>>>,
+    #[napi(js_name = "preservePatterns")]
+    pub preserve_patterns: Option<Vec<String>>,
+    #[napi(js_name = "targetReduction")]
+    pub target_reduction: Option<f64>,
+    #[napi(js_name = "enableSemanticClustering")]
+    pub enable_semantic_clustering: Option<bool>,
 }
 
 #[derive(Clone)]
@@ -1066,7 +888,7 @@ pub struct JsPdfAnnotation {
     #[napi(js_name = "pageNumber")]
     pub page_number: i64,
     #[napi(js_name = "boundingBox")]
-    pub bounding_box: Option<JsBoundingBox>,
+    pub bounding_box: Option<String>,
 }
 
 #[derive(Clone)]
@@ -1076,7 +898,7 @@ pub struct JsDjotContent {
     pub plain_text: String,
     pub blocks: Vec<JsFormattedBlock>,
     pub metadata: JsMetadata,
-    pub tables: Vec<JsTable>,
+    pub tables: Vec<String>,
     pub images: Vec<JsDjotImage>,
     pub links: Vec<JsDjotLink>,
     pub footnotes: Vec<JsFootnote>,
@@ -1091,7 +913,7 @@ pub struct JsFormattedBlock {
     pub level: Option<i64>,
     #[napi(js_name = "inlineContent")]
     pub inline_content: Vec<JsInlineElement>,
-    pub attributes: Option<JsAttributes>,
+    pub attributes: Option<String>,
     pub language: Option<String>,
     pub code: Option<String>,
     pub children: Vec<JsFormattedBlock>,
@@ -1103,17 +925,8 @@ pub struct JsInlineElement {
     #[napi(js_name = "elementType")]
     pub element_type: JsInlineType,
     pub content: String,
-    pub attributes: Option<JsAttributes>,
+    pub attributes: Option<String>,
     pub metadata: Option<HashMap<String, String>>,
-}
-
-#[derive(Clone, Default)]
-#[napi(object)]
-pub struct JsAttributes {
-    pub id: Option<String>,
-    pub classes: Option<Vec<String>>,
-    #[napi(js_name = "keyValues")]
-    pub key_values: Option<Vec<String>>,
 }
 
 #[derive(Clone)]
@@ -1122,7 +935,7 @@ pub struct JsDjotImage {
     pub src: String,
     pub alt: String,
     pub title: Option<String>,
-    pub attributes: Option<JsAttributes>,
+    pub attributes: Option<String>,
 }
 
 #[derive(Clone)]
@@ -1131,7 +944,7 @@ pub struct JsDjotLink {
     pub url: String,
     pub text: String,
     pub title: Option<String>,
-    pub attributes: Option<JsAttributes>,
+    pub attributes: Option<String>,
 }
 
 #[derive(Clone)]
@@ -1139,33 +952,6 @@ pub struct JsDjotLink {
 pub struct JsFootnote {
     pub label: String,
     pub content: Vec<JsFormattedBlock>,
-}
-
-#[derive(Clone)]
-#[napi]
-pub struct JsNodeId {
-    inner: Arc<kreuzberg::NodeId>,
-}
-
-#[napi]
-impl JsNodeId {
-    #[napi(js_name = "asRef")]
-    pub fn as_ref(&self) -> String {
-        self.inner.as_ref().into()
-    }
-
-    #[napi]
-    pub fn fmt(&self, f: String) -> String {
-        let _ = f;
-        String::from("[unimplemented: NodeId.fmt]")
-    }
-
-    #[napi]
-    pub fn generate(node_type: String, text: String, page: Option<u32>, index: Option<u32>) -> JsNodeId {
-        Self {
-            inner: Arc::new(kreuzberg::NodeId::generate(&node_type, &text, page, index)),
-        }
-    }
 }
 
 #[derive(Clone, Default)]
@@ -1188,7 +974,7 @@ pub struct JsDocumentRelationship {
 #[derive(Clone)]
 #[napi(object)]
 pub struct JsDocumentNode {
-    pub id: JsNodeId,
+    pub id: String,
     pub content: JsNodeContent,
     pub parent: Option<u32>,
     pub children: Vec<u32>,
@@ -1197,17 +983,9 @@ pub struct JsDocumentNode {
     pub page: Option<u32>,
     #[napi(js_name = "pageEnd")]
     pub page_end: Option<u32>,
-    pub bbox: Option<JsBoundingBox>,
+    pub bbox: Option<String>,
     pub annotations: Vec<JsTextAnnotation>,
     pub attributes: Option<HashMap<String, String>>,
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsTableGrid {
-    pub rows: u32,
-    pub cols: u32,
-    pub cells: Vec<JsGridCell>,
 }
 
 #[derive(Clone)]
@@ -1222,7 +1000,7 @@ pub struct JsGridCell {
     pub col_span: u32,
     #[napi(js_name = "isHeader")]
     pub is_header: bool,
-    pub bbox: Option<JsBoundingBox>,
+    pub bbox: Option<String>,
 }
 
 #[derive(Clone)]
@@ -1240,7 +1018,7 @@ pub struct JsExtractionResult {
     #[napi(js_name = "mimeType")]
     pub mime_type: Option<String>,
     pub metadata: Option<JsMetadata>,
-    pub tables: Option<Vec<JsTable>>,
+    pub tables: Option<Vec<String>>,
     #[napi(js_name = "detectedLanguages")]
     pub detected_languages: Option<Vec<String>>,
     pub chunks: Option<Vec<JsChunk>>,
@@ -1368,46 +1146,9 @@ pub struct JsExtractedImage {
     #[napi(js_name = "ocrResult")]
     pub ocr_result: Option<JsExtractionResult>,
     #[napi(js_name = "boundingBox")]
-    pub bounding_box: Option<JsBoundingBox>,
+    pub bounding_box: Option<String>,
     #[napi(js_name = "sourcePath")]
     pub source_path: Option<String>,
-}
-
-#[derive(Clone)]
-#[napi]
-pub struct JsElementId {
-    inner: Arc<kreuzberg::ElementId>,
-}
-
-#[napi]
-impl JsElementId {
-    #[napi(js_name = "asRef")]
-    pub fn as_ref(&self) -> String {
-        self.inner.as_ref().into()
-    }
-
-    #[napi]
-    pub fn fmt(&self, f: String) -> String {
-        let _ = f;
-        String::from("[unimplemented: ElementId.fmt]")
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub fn new(hex_str: String) -> Result<JsElementId> {
-        kreuzberg::ElementId::new(&hex_str)
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-    }
-}
-
-#[derive(Clone, Default)]
-#[napi(object)]
-pub struct JsBoundingBox {
-    pub x0: Option<f64>,
-    pub y0: Option<f64>,
-    pub x1: Option<f64>,
-    pub y1: Option<f64>,
 }
 
 #[derive(Clone)]
@@ -1416,7 +1157,7 @@ pub struct JsElementMetadata {
     #[napi(js_name = "pageNumber")]
     pub page_number: Option<i64>,
     pub filename: Option<String>,
-    pub coordinates: Option<JsBoundingBox>,
+    pub coordinates: Option<String>,
     #[napi(js_name = "elementIndex")]
     pub element_index: Option<i64>,
     pub additional: HashMap<String, String>,
@@ -1426,7 +1167,7 @@ pub struct JsElementMetadata {
 #[napi(object)]
 pub struct JsElement {
     #[napi(js_name = "elementId")]
-    pub element_id: JsElementId,
+    pub element_id: String,
     #[napi(js_name = "elementType")]
     pub element_type: JsElementType,
     pub text: String,
@@ -1743,15 +1484,6 @@ pub struct JsArchiveMetadata {
 
 #[derive(Clone)]
 #[napi(object)]
-pub struct JsImageMetadata {
-    pub width: u32,
-    pub height: u32,
-    pub format: String,
-    pub exif: HashMap<String, String>,
-}
-
-#[derive(Clone)]
-#[napi(object)]
 pub struct JsXmlMetadata {
     #[napi(js_name = "elementCount")]
     pub element_count: i64,
@@ -2008,11 +1740,11 @@ pub struct JsPstMetadata {
     pub message_count: Option<i64>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsOcrConfidence {
     pub detection: Option<f64>,
-    pub recognition: f64,
+    pub recognition: Option<f64>,
 }
 
 #[derive(Clone)]
@@ -2023,20 +1755,20 @@ pub struct JsOcrRotation {
     pub confidence: Option<f64>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsOcrElement {
-    pub text: String,
-    pub geometry: JsOcrBoundingGeometry,
-    pub confidence: JsOcrConfidence,
-    pub level: JsOcrElementLevel,
+    pub text: Option<String>,
+    pub geometry: Option<JsOcrBoundingGeometry>,
+    pub confidence: Option<JsOcrConfidence>,
+    pub level: Option<JsOcrElementLevel>,
     pub rotation: Option<JsOcrRotation>,
     #[napi(js_name = "pageNumber")]
-    pub page_number: i64,
+    pub page_number: Option<i64>,
     #[napi(js_name = "parentId")]
     pub parent_id: Option<String>,
     #[napi(js_name = "backendMetadata")]
-    pub backend_metadata: HashMap<String, String>,
+    pub backend_metadata: Option<HashMap<String, String>>,
 }
 
 #[derive(Clone, Default)]
@@ -2095,7 +1827,7 @@ pub struct JsPageContent {
     #[napi(js_name = "pageNumber")]
     pub page_number: i64,
     pub content: String,
-    pub tables: Vec<JsTable>,
+    pub tables: Vec<String>,
     pub images: Vec<JsExtractedImage>,
     pub hierarchy: Option<JsPageHierarchy>,
     #[napi(js_name = "isBlank")]
@@ -2118,29 +1850,6 @@ pub struct JsHierarchicalBlock {
     pub font_size: f64,
     pub level: String,
     pub bbox: Option<String>,
-}
-
-#[derive(Clone, Default)]
-#[napi(object)]
-pub struct JsTable {
-    pub cells: Option<Vec<Vec<String>>>,
-    pub markdown: Option<String>,
-    #[napi(js_name = "pageNumber")]
-    pub page_number: Option<i64>,
-    #[napi(js_name = "boundingBox")]
-    pub bounding_box: Option<JsBoundingBox>,
-}
-
-#[derive(Clone, Default)]
-#[napi(object)]
-pub struct JsTableCell {
-    pub content: Option<String>,
-    #[napi(js_name = "rowSpan")]
-    pub row_span: Option<i64>,
-    #[napi(js_name = "colSpan")]
-    pub col_span: Option<i64>,
-    #[napi(js_name = "isHeader")]
-    pub is_header: Option<bool>,
 }
 
 #[derive(Clone)]
@@ -2169,38 +1878,6 @@ pub struct JsByteBufferPool {
 
 #[napi]
 impl JsByteBufferPool {}
-
-#[derive(Clone)]
-#[napi]
-pub struct JsPool {
-    inner: Arc<kreuzberg::utils::Pool>,
-}
-
-#[napi]
-impl JsPool {
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub fn acquire(&self) -> Result<String> {
-        Err(napi::Error::new(
-            napi::Status::GenericFailure,
-            "Not implemented: Pool.acquire",
-        ))
-    }
-
-    #[napi]
-    pub fn size(&self) -> i64 {
-        self.inner.size() as i64
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub fn clear(&self) -> Result<()> {
-        self.inner
-            .clear()
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(())
-    }
-}
 
 #[derive(Clone)]
 #[napi]
@@ -2245,43 +1922,6 @@ impl JsPooledString {
 
 #[derive(Clone)]
 #[napi]
-pub struct JsInternedString {
-    inner: Arc<kreuzberg::utils::string_pool::InternedString>,
-}
-
-#[napi]
-impl JsInternedString {
-    #[napi(js_name = "asStr")]
-    pub fn as_str(&self) -> String {
-        self.inner.as_str().into()
-    }
-
-    #[napi(js_name = "asRef")]
-    pub fn as_ref(&self) -> String {
-        self.inner.as_ref().into()
-    }
-
-    #[napi]
-    pub fn fmt(&self, f: String) -> String {
-        let _ = f;
-        String::from("[unimplemented: InternedString.fmt]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[napi]
-    pub fn eq(&self, other: JsInternedString) -> bool {
-        self.inner.eq(&other.inner)
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    #[napi]
-    pub fn deref(&self) -> String {
-        String::from("[unimplemented: InternedString.deref]")
-    }
-}
-
-#[derive(Clone)]
-#[napi]
 pub struct JsTracingLayer {
     inner: Arc<kreuzberg::service::layers::tracing::TracingLayer>,
 }
@@ -2308,13 +1948,6 @@ impl JsMetricsLayer {
         let _ = inner;
         String::from("[unimplemented: MetricsLayer.layer]")
     }
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsApiError {
-    pub status: String,
-    pub body: String,
 }
 
 #[derive(Clone)]
@@ -2607,127 +2240,6 @@ pub struct JsChunkingResult {
     pub chunk_count: i64,
 }
 
-#[derive(Clone)]
-#[napi]
-pub struct JsChunkingProcessor {
-    inner: Arc<kreuzberg::chunking::ChunkingProcessor>,
-}
-
-#[napi]
-impl JsChunkingProcessor {
-    #[napi]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[napi]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub fn initialize(&self) -> Result<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub fn shutdown(&self) -> Result<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub async fn process(&self, result: JsExtractionResult, config: JsExtractionConfig) -> Result<()> {
-        let inner = self.inner.clone();
-        let result = inner
-            .process(result.into(), config.into())
-            .await
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(result)
-    }
-
-    #[napi(js_name = "processingStage")]
-    pub fn processing_stage(&self) -> String {
-        String::from("[unimplemented: ChunkingProcessor.processing_stage]")
-    }
-
-    #[napi(js_name = "shouldProcess")]
-    pub fn should_process(&self, _result: JsExtractionResult, config: JsExtractionConfig) -> bool {
-        self.inner.should_process(_result.into(), config.into())
-    }
-
-    #[napi(js_name = "estimatedDurationMs")]
-    pub fn estimated_duration_ms(&self, result: JsExtractionResult) -> i64 {
-        self.inner.estimated_duration_ms(result.into()) as i64
-    }
-}
-
-#[derive(Clone)]
-#[napi]
-pub struct JsVlmOcrBackend {
-    inner: Arc<kreuzberg::llm::vlm_ocr::VlmOcrBackend>,
-}
-
-#[napi]
-impl JsVlmOcrBackend {
-    #[napi]
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    #[napi]
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub fn initialize(&self) -> Result<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi]
-    pub fn shutdown(&self) -> Result<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(())
-    }
-
-    #[allow(clippy::missing_errors_doc)]
-    #[napi(js_name = "processImage")]
-    pub async fn process_image(&self, image_bytes: Vec<u8>, config: JsOcrConfig) -> Result<JsExtractionResult> {
-        let inner = self.inner.clone();
-        let result = inner
-            .process_image(&image_bytes, config.into())
-            .await
-            .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-        Ok(result.into())
-    }
-
-    #[napi(js_name = "supportsLanguage")]
-    pub fn supports_language(&self, _lang: String) -> bool {
-        self.inner.supports_language(&_lang)
-    }
-
-    #[napi(js_name = "backendType")]
-    pub fn backend_type(&self) -> JsOcrBackendType {
-        self.inner.backend_type().into()
-    }
-}
-
 #[derive(Clone, Default)]
 #[napi(object)]
 pub struct JsYakeParams {
@@ -2919,7 +2431,7 @@ pub struct JsCharData {
 #[napi(object)]
 pub struct JsHierarchyBlock {
     pub text: String,
-    pub bbox: JsBoundingBox,
+    pub bbox: String,
     #[napi(js_name = "fontSize")]
     pub font_size: f64,
     #[napi(js_name = "hierarchyLevel")]
@@ -2947,18 +2459,10 @@ pub struct JsPdfImage {
 
 #[derive(Clone)]
 #[napi(object)]
-pub struct JsPageLayoutRegion {
-    pub class: JsLayoutClass,
-    pub confidence: f64,
-    pub bbox: String,
-}
-
-#[derive(Clone)]
-#[napi(object)]
 pub struct JsPageLayoutResult {
     #[napi(js_name = "pageIndex")]
     pub page_index: i64,
-    pub regions: Vec<JsPageLayoutRegion>,
+    pub regions: Vec<String>,
     #[napi(js_name = "pageWidthPts")]
     pub page_width_pts: f64,
     #[napi(js_name = "pageHeightPts")]
@@ -2984,25 +2488,6 @@ pub struct JsPageTiming {
     pub postprocess_ms: f64,
     #[napi(js_name = "mappingMs")]
     pub mapping_ms: f64,
-}
-
-#[derive(Clone)]
-#[napi(object)]
-pub struct JsPdfExtractionMetadata {
-    pub title: Option<String>,
-    pub subject: Option<String>,
-    pub authors: Option<Vec<String>>,
-    pub keywords: Option<Vec<String>>,
-    #[napi(js_name = "createdAt")]
-    pub created_at: Option<String>,
-    #[napi(js_name = "modifiedAt")]
-    pub modified_at: Option<String>,
-    #[napi(js_name = "createdBy")]
-    pub created_by: Option<String>,
-    #[napi(js_name = "pdfSpecific")]
-    pub pdf_specific: String,
-    #[napi(js_name = "pageStructure")]
-    pub page_structure: Option<JsPageStructure>,
 }
 
 #[derive(Clone)]
@@ -3193,26 +2678,6 @@ impl Default for JsCodeContentMode {
 
 #[napi(string_enum)]
 #[derive(Clone)]
-pub enum JsHwpError {
-    InvalidFormat,
-    UnsupportedVersion,
-    Io,
-    Cfb,
-    CompressionError,
-    ParseError,
-    EncodingError,
-    NotFound,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for JsHwpError {
-    fn default() -> Self {
-        Self::InvalidFormat
-    }
-}
-
-#[napi(string_enum)]
-#[derive(Clone)]
 pub enum JsFracType {
     Bar,
     NoBar,
@@ -3224,72 +2689,6 @@ pub enum JsFracType {
 impl Default for JsFracType {
     fn default() -> Self {
         Self::Bar
-    }
-}
-
-#[napi(string_enum)]
-#[derive(Clone)]
-pub enum JsMathNode {
-    Run,
-    SSup,
-    SSub,
-    SSubSup,
-    Frac,
-    Rad,
-    Nary,
-    Delim,
-    Func,
-    Acc,
-    EqArr,
-    LimLow,
-    LimUpp,
-    Bar,
-    BorderBox,
-    Matrix,
-    Group,
-    SPre,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for JsMathNode {
-    fn default() -> Self {
-        Self::Run
-    }
-}
-
-#[napi(string_enum)]
-#[derive(Clone)]
-pub enum JsDocumentElement {
-    Paragraph,
-    Table,
-    Drawing,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for JsDocumentElement {
-    fn default() -> Self {
-        Self::Paragraph
-    }
-}
-
-#[napi(string_enum)]
-#[derive(Clone)]
-pub enum JsSecurityError {
-    ZipBombDetected,
-    ArchiveTooLarge,
-    TooManyFiles,
-    NestingTooDeep,
-    ContentTooLarge,
-    EntityTooLong,
-    TooManyIterations,
-    XmlDepthExceeded,
-    TooManyCells,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for JsSecurityError {
-    fn default() -> Self {
-        Self::ZipBombDetected
     }
 }
 
@@ -3444,7 +2843,7 @@ pub struct JsNodeContent {
     pub text: Option<String>,
     pub level: Option<u8>,
     pub ordered: Option<bool>,
-    pub grid: Option<JsTableGrid>,
+    pub grid: Option<String>,
     pub description: Option<String>,
     #[napi(js_name = "imageIndex")]
     pub image_index: Option<u32>,
@@ -3541,6 +2940,20 @@ pub enum JsChunkType {
 impl Default for JsChunkType {
     fn default() -> Self {
         Self::Heading
+    }
+}
+
+#[napi(string_enum = "snake_case")]
+#[derive(Clone)]
+pub enum JsExtractionMode {
+    Unified,
+    ElementBased,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for JsExtractionMode {
+    fn default() -> Self {
+        Self::Unified
     }
 }
 
@@ -3754,26 +3167,6 @@ impl Default for JsKeywordAlgorithm {
 
 #[napi(string_enum)]
 #[derive(Clone)]
-pub enum JsOcrError {
-    TesseractInitializationFailed,
-    UnsupportedVersion,
-    InvalidConfiguration,
-    InvalidLanguageCode,
-    ImageProcessingFailed,
-    ProcessingFailed,
-    CacheError,
-    IOError,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for JsOcrError {
-    fn default() -> Self {
-        Self::TesseractInitializationFailed
-    }
-}
-
-#[napi(string_enum)]
-#[derive(Clone)]
 pub enum JsPSMMode {
     OsdOnly,
     AutoOsd,
@@ -3849,29 +3242,6 @@ pub enum JsLayoutClass {
 impl Default for JsLayoutClass {
     fn default() -> Self {
         Self::Caption
-    }
-}
-
-#[napi(string_enum)]
-#[derive(Clone)]
-pub enum JsPdfError {
-    InvalidPdf,
-    PasswordRequired,
-    InvalidPassword,
-    EncryptionNotSupported,
-    PageNotFound,
-    TextExtractionFailed,
-    RenderingFailed,
-    MetadataExtractionFailed,
-    ExtractionFailed,
-    FontLoadingFailed,
-    IOError,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for JsPdfError {
-    fn default() -> Self {
-        Self::InvalidPdf
     }
 }
 
@@ -4010,21 +3380,19 @@ pub fn init_thread_pools(budget: i64) -> () {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "mergeConfigJson")]
 pub fn merge_config_json(base: JsExtractionConfig, override_json: String) -> Result<JsExtractionConfig> {
-    let _ = (base, override_json);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: merge_config_json",
-    ))
+    let base_core: kreuzberg::ExtractionConfig = base.into();
+    kreuzberg::core::config::merge::merge_config_json(&base_core, &override_json)
+        .map(|val| val.into())
+        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "buildConfigFromJson")]
 pub fn build_config_from_json(base: JsExtractionConfig, override_json: Option<String>) -> Result<JsExtractionConfig> {
-    let _ = (base, override_json);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: build_config_from_json",
-    ))
+    let base_core: kreuzberg::ExtractionConfig = base.into();
+    kreuzberg::core::config::merge::build_config_from_json(&base_core, override_json.as_deref())
+        .map(|val| val.into())
+        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -4134,8 +3502,8 @@ pub fn validate_llm_config_model(model: String) -> Result<()> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "validateVlmBackendConfig")]
 pub fn validate_vlm_backend_config(backend: String, vlm_config: Option<JsLlmConfig>) -> Result<()> {
-    let vlm_config_core = vlm_config.map(Into::into);
-    kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, &vlm_config_core)
+    let vlm_config_core = vlm_config.as_ref();
+    kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -4182,73 +3550,6 @@ pub fn get_pool_sizing_hint(file_size: i64, mime_type: String) -> String {
     String::from("[unimplemented: get_pool_sizing_hint]")
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractFileSync")]
-pub fn extract_file_sync(
-    path: String,
-    mime_type: Option<String>,
-    config: Option<JsExtractionConfig>,
-) -> Result<JsExtractionResult> {
-    let _ = (path, mime_type, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: extract_file_sync",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractBytesSync")]
-pub fn extract_bytes_sync(
-    content: Vec<u8>,
-    mime_type: String,
-    config: JsExtractionConfig,
-) -> Result<JsExtractionResult> {
-    let config_core = config.into();
-    kreuzberg::extract_bytes_sync(&content, &mime_type, &config_core)
-        .map(|val| val.into())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "batchExtractFileSync")]
-pub fn batch_extract_file_sync(items: Vec<String>, config: JsExtractionConfig) -> Result<Vec<JsExtractionResult>> {
-    let _ = (items, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: batch_extract_file_sync",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "batchExtractBytesSync")]
-pub fn batch_extract_bytes_sync(items: Vec<String>, config: JsExtractionConfig) -> Result<Vec<JsExtractionResult>> {
-    let _ = (items, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: batch_extract_bytes_sync",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "batchExtractFile")]
-pub async fn batch_extract_file(items: Vec<String>, config: JsExtractionConfig) -> Result<Vec<JsExtractionResult>> {
-    let _ = (items, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: batch_extract_file",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "batchExtractBytes")]
-pub async fn batch_extract_bytes(items: Vec<String>, config: JsExtractionConfig) -> Result<Vec<JsExtractionResult>> {
-    let _ = (items, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: batch_extract_bytes",
-    ))
-}
-
 #[napi(js_name = "isValidFormatField")]
 pub fn is_valid_format_field(field: String) -> bool {
     kreuzberg::is_valid_format_field(&field)
@@ -4256,19 +3557,11 @@ pub fn is_valid_format_field(field: String) -> bool {
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "openFileBytes")]
-pub fn open_file_bytes(path: String) -> Result<JsFileBytes> {
-    kreuzberg::core::io::open_file_bytes(std::path::PathBuf::from(path))
-        .map(|val| JsFileBytes { inner: Arc::new(val) })
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "readFileAsync")]
-pub async fn read_file_async(path: String) -> Result<Vec<u8>> {
+pub fn open_file_bytes(path: String) -> Result<String> {
     let _ = path;
     Err(napi::Error::new(
         napi::Status::GenericFailure,
-        "Not implemented: read_file_async",
+        "Not implemented: open_file_bytes",
     ))
 }
 
@@ -4327,7 +3620,7 @@ pub fn validate_mime_type(mime_type: String) -> Result<String> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "detectOrValidate")]
 pub fn detect_or_validate(path: Option<String>, mime_type: Option<String>) -> Result<String> {
-    kreuzberg::detect_or_validate(std::path::PathBuf::from(path), &mime_type)
+    kreuzberg::detect_or_validate(&path, &mime_type)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -4361,30 +3654,10 @@ pub fn clear_processor_cache() -> Result<()> {
 }
 
 #[napi(js_name = "applyOutputFormat")]
-pub fn apply_output_format(result: JsExtractionResult, output_format: JsOutputFormat) -> () {
-    let result_core = result.into();
-    let output_format_core = output_format.into();
-    kreuzberg::core::pipeline::apply_output_format(&result_core, output_format_core)
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "runPipeline")]
-pub async fn run_pipeline(doc: String, config: JsExtractionConfig) -> Result<JsExtractionResult> {
-    let _ = (doc, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: run_pipeline",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "runPipelineSync")]
-pub fn run_pipeline_sync(doc: String, config: JsExtractionConfig) -> Result<JsExtractionResult> {
-    let _ = (doc, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: run_pipeline_sync",
-    ))
+pub fn apply_output_format(result: JsExtractionResult, output_format: JsOutputFormat) -> JsExtractionResult {
+    let result_core: kreuzberg::ExtractionResult = result.into();
+    let output_format_core: kreuzberg::OutputFormat = output_format.into();
+    kreuzberg::core::pipeline::apply_output_format(result_core, output_format_core).into()
 }
 
 #[napi(js_name = "isPageTextBlank")]
@@ -4396,26 +3669,6 @@ pub fn is_page_text_blank(text: String) -> bool {
 pub fn resolve_relationships(doc: String) -> () {
     let _ = doc;
     ()
-}
-
-#[napi(js_name = "deriveDocumentStructure")]
-pub fn derive_document_structure(doc: String) -> JsDocumentStructure {
-    let _ = doc;
-    compile_error!(
-        "alef: derive_document_structure returns a Named/Json type but has no error variant — cannot auto-delegate"
-    )
-}
-
-#[napi(js_name = "deriveExtractionResult")]
-pub fn derive_extraction_result(
-    doc: String,
-    include_document_structure: bool,
-    output_format: JsOutputFormat,
-) -> JsExtractionResult {
-    let _ = (doc, include_document_structure, output_format);
-    compile_error!(
-        "alef: derive_extraction_result returns a Named/Json type but has no error variant — cannot auto-delegate"
-    )
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -4464,33 +3717,25 @@ pub fn parse_text(text_bytes: Vec<u8>, is_markdown: bool) -> Result<JsTextExtrac
 
 #[napi(js_name = "transformToDocumentStructure")]
 pub fn transform_to_document_structure(result: JsExtractionResult) -> JsDocumentStructure {
-    let result_core = result.into();
+    let result_core: kreuzberg::ExtractionResult = result.into();
     kreuzberg::extraction::transform_to_document_structure(&result_core).into()
 }
 
 #[napi(js_name = "detectListItems")]
-pub fn detect_list_items(text: String) -> Vec<JsListItemMetadata> {
-    kreuzberg::extraction::detect_list_items(&text)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn detect_list_items(text: String) -> Vec<String> {
+    let _ = text;
+    Vec::new()
 }
 
 #[napi(js_name = "generateElementId")]
-pub fn generate_element_id(text: String, element_type: JsElementType, page_number: Option<i64>) -> JsElementId {
-    let element_type_core = element_type.into();
-    JsElementId {
-        inner: Arc::new(kreuzberg::extraction::generate_element_id(
-            &text,
-            element_type_core,
-            page_number,
-        )),
-    }
+pub fn generate_element_id(text: String, element_type: JsElementType, page_number: Option<i64>) -> String {
+    let _ = (text, element_type, page_number);
+    String::from("[unimplemented: generate_element_id]")
 }
 
 #[napi(js_name = "transformExtractionResultToElements")]
 pub fn transform_extraction_result_to_elements(result: JsExtractionResult) -> Vec<JsElement> {
-    let result_core = result.into();
+    let result_core: kreuzberg::ExtractionResult = result.into();
     kreuzberg::extraction::transform_extraction_result_to_elements(&result_core)
         .into_iter()
         .map(Into::into)
@@ -4499,10 +3744,12 @@ pub fn transform_extraction_result_to_elements(result: JsExtractionResult) -> Ve
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "parseBodyText")]
-pub fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> Result<Vec<JsSection>> {
-    kreuzberg::extraction::hwp::parser::parse_body_text(&data, is_compressed)
-        .map(|val| val.into_iter().map(Into::into).collect())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
+pub fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> Result<Vec<String>> {
+    let _ = (data, is_compressed);
+    Err(napi::Error::new(
+        napi::Status::GenericFailure,
+        "Not implemented: parse_body_text",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -4520,35 +3767,13 @@ pub fn extract_hwp_text(bytes: Vec<u8>) -> Result<String> {
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "loadImageForOcr")]
-pub fn load_image_for_ocr(image_bytes: Vec<u8>) -> Result<String> {
-    let _ = image_bytes;
+#[napi(js_name = "extractImageMetadata")]
+pub fn extract_image_metadata(bytes: Vec<u8>) -> Result<String> {
+    let _ = bytes;
     Err(napi::Error::new(
         napi::Status::GenericFailure,
-        "Not implemented: load_image_for_ocr",
+        "Not implemented: extract_image_metadata",
     ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractImageMetadata")]
-pub fn extract_image_metadata(bytes: Vec<u8>) -> Result<JsImageMetadata> {
-    kreuzberg::extraction::extract_image_metadata(&bytes)
-        .map(|val| val.into())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractTextFromImageWithOcr")]
-pub fn extract_text_from_image_with_ocr(
-    bytes: Vec<u8>,
-    mime_type: String,
-    ocr_result: String,
-    page_config: Option<JsPageConfig>,
-) -> Result<JsImageOcrResult> {
-    let page_config_core = page_config.map(Into::into);
-    kreuzberg::extraction::image::extract_text_from_image_with_ocr(&bytes, &mime_type, ocr_result, &page_config_core)
-        .map(|val| val.into())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
 #[napi(js_name = "estimateContentCapacity")]
@@ -4746,18 +3971,8 @@ pub fn extract_email_content(
 
 #[napi(js_name = "buildEmailTextOutput")]
 pub fn build_email_text_output(result: JsEmailExtractionResult) -> String {
-    let result_core = result.into();
+    let result_core: kreuzberg::EmailExtractionResult = result.into();
     kreuzberg::extraction::build_email_text_output(&result_core)
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractPstMessages")]
-pub fn extract_pst_messages(pst_data: Vec<u8>) -> Result<String> {
-    let _ = pst_data;
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: extract_pst_messages",
-    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -4778,13 +3993,13 @@ pub fn read_excel_bytes(data: Vec<u8>, file_extension: String) -> Result<JsExcel
 
 #[napi(js_name = "excelToText")]
 pub fn excel_to_text(workbook: JsExcelWorkbook) -> String {
-    let workbook_core = workbook.into();
+    let workbook_core: kreuzberg::ExcelWorkbook = workbook.into();
     kreuzberg::extraction::excel::excel_to_text(&workbook_core)
 }
 
 #[napi(js_name = "excelToMarkdown")]
 pub fn excel_to_markdown(workbook: JsExcelWorkbook) -> String {
-    let workbook_core = workbook.into();
+    let workbook_core: kreuzberg::ExcelWorkbook = workbook.into();
     kreuzberg::extraction::excel_to_markdown(&workbook_core)
 }
 
@@ -4842,16 +4057,12 @@ pub fn extract_html_inline_images(html: String, options: Option<String>) -> Resu
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "extractDocText")]
-pub fn extract_doc_text(content: Vec<u8>) -> Result<JsDocExtractionResult> {
-    kreuzberg::extraction::extract_doc_text(&content)
-        .map(|val| val.into())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[napi(js_name = "parseDrawing")]
-pub fn parse_drawing(reader: String) -> JsDrawing {
-    let _ = reader;
-    compile_error!("alef: parse_drawing returns a Named/Json type but has no error variant — cannot auto-delegate")
+pub fn extract_doc_text(content: Vec<u8>) -> Result<String> {
+    let _ = content;
+    Err(napi::Error::new(
+        napi::Status::GenericFailure,
+        "Not implemented: extract_doc_text",
+    ))
 }
 
 #[napi(js_name = "collectAndConvertOmathPara")]
@@ -4905,14 +4116,6 @@ pub fn parse_styles_xml(xml: String) -> Result<String> {
     ))
 }
 
-#[napi(js_name = "parseTableProperties")]
-pub fn parse_table_properties(reader: String) -> JsTableProperties {
-    let _ = reader;
-    compile_error!(
-        "alef: parse_table_properties returns a Named/Json type but has no error variant — cannot auto-delegate"
-    )
-}
-
 #[napi(js_name = "parseRowProperties")]
 pub fn parse_row_properties(reader: String) -> String {
     let _ = reader;
@@ -4923,12 +4126,6 @@ pub fn parse_row_properties(reader: String) -> String {
 pub fn parse_cell_properties(reader: String) -> String {
     let _ = reader;
     String::from("[unimplemented: parse_cell_properties]")
-}
-
-#[napi(js_name = "parseTableGrid")]
-pub fn parse_table_grid(reader: String) -> JsTableGrid {
-    let _ = reader;
-    compile_error!("alef: parse_table_grid returns a Named/Json type but has no error variant — cannot auto-delegate")
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -4990,31 +4187,23 @@ pub fn detect_image_format(data: Vec<u8>) -> String {
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "processImagesWithOcr")]
-pub async fn process_images_with_ocr(
-    images: Vec<JsExtractedImage>,
-    config: JsExtractionConfig,
-) -> Result<Vec<JsExtractedImage>> {
-    let result = kreuzberg::extraction::image_ocr::process_images_with_ocr(images, &config_core)
-        .await
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-    Ok(result.into_iter().map(Into::into).collect())
-}
-
-#[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "extractPptText")]
-pub fn extract_ppt_text(content: Vec<u8>) -> Result<JsPptExtractionResult> {
-    kreuzberg::extraction::extract_ppt_text(&content)
-        .map(|val| val.into())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
+pub fn extract_ppt_text(content: Vec<u8>) -> Result<String> {
+    let _ = content;
+    Err(napi::Error::new(
+        napi::Status::GenericFailure,
+        "Not implemented: extract_ppt_text",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "extractPptTextWithOptions")]
-pub fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bool) -> Result<JsPptExtractionResult> {
-    kreuzberg::extraction::extract_ppt_text_with_options(&content, include_master_slides)
-        .map(|val| val.into())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
+pub fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bool) -> Result<String> {
+    let _ = (content, include_master_slides);
+    Err(napi::Error::new(
+        napi::Status::GenericFailure,
+        "Not implemented: extract_ppt_text_with_options",
+    ))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -5064,27 +4253,27 @@ pub fn cells_to_markdown(cells: Vec<Vec<String>>) -> String {
 }
 
 #[napi(js_name = "parseJotdownAttributes")]
-pub fn parse_jotdown_attributes(attrs: JsAttributes) -> JsAttributes {
-    let attrs_core = attrs.into();
-    kreuzberg::extractors::djot_format::attributes::parse_jotdown_attributes(&attrs_core).into()
+pub fn parse_jotdown_attributes(attrs: String) -> String {
+    let _ = attrs;
+    String::from("[unimplemented: parse_jotdown_attributes]")
 }
 
 #[napi(js_name = "renderAttributes")]
-pub fn render_attributes(attrs: JsAttributes) -> String {
-    let attrs_core = attrs.into();
-    kreuzberg::extractors::djot_format::attributes::render_attributes(&attrs_core)
+pub fn render_attributes(attrs: String) -> String {
+    let _ = attrs;
+    String::from("[unimplemented: render_attributes]")
 }
 
 #[napi(js_name = "djotContentToDjot")]
 pub fn djot_content_to_djot(content: JsDjotContent) -> String {
-    let content_core = content.into();
+    let content_core: kreuzberg::DjotContent = content.into();
     kreuzberg::extractors::djot_format::djot_content_to_djot(&content_core)
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "extractionResultToDjot")]
 pub fn extraction_result_to_djot(result: JsExtractionResult) -> Result<String> {
-    let result_core = result.into();
+    let result_core: kreuzberg::ExtractionResult = result.into();
     kreuzberg::extractors::djot_format::extraction_result_to_djot(&result_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -5096,16 +4285,8 @@ pub fn djot_to_html(djot_source: String) -> Result<String> {
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
-#[napi(js_name = "extractCompleteDjotContent")]
-pub fn extract_complete_djot_content(events: Vec<String>, metadata: JsMetadata, tables: Vec<JsTable>) -> JsDjotContent {
-    let _ = (events, metadata, tables);
-    compile_error!(
-        "alef: extract_complete_djot_content returns a Named/Json type but has no error variant — cannot auto-delegate"
-    )
-}
-
 #[napi(js_name = "extractTablesFromEvents")]
-pub fn extract_tables_from_events(events: Vec<String>) -> Vec<JsTable> {
+pub fn extract_tables_from_events(events: Vec<String>) -> Vec<String> {
     let _ = events;
     Vec::new()
 }
@@ -5117,34 +4298,27 @@ pub fn extract_text_from_events(events: Vec<String>) -> String {
 }
 
 #[napi(js_name = "renderBlockToDjot")]
-pub fn render_block_to_djot(output: String, block: JsFormattedBlock, indent_level: i64) -> () {
-    let block_core = block.into();
-    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(&output, &block_core, indent_level)
+pub fn render_block_to_djot(block: JsFormattedBlock, indent_level: i64) -> String {
+    let block_core: kreuzberg::FormattedBlock = block.into();
+    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(&block_core, indent_level)
 }
 
 #[napi(js_name = "renderListItem")]
-pub fn render_list_item(output: String, item: JsFormattedBlock, indent: String, marker: String) -> () {
-    let item_core = item.into();
-    kreuzberg::extractors::djot_format::rendering::render_list_item(&output, &item_core, &indent, &marker)
+pub fn render_list_item(item: JsFormattedBlock, indent: String, marker: String) -> String {
+    let item_core: kreuzberg::FormattedBlock = item.into();
+    kreuzberg::extractors::djot_format::rendering::render_list_item(&item_core, &indent, &marker)
 }
 
 #[napi(js_name = "renderInlineContent")]
-pub fn render_inline_content(output: String, elements: Vec<JsInlineElement>) -> () {
-    kreuzberg::extractors::djot_format::rendering::render_inline_content(&output, elements)
+pub fn render_inline_content(elements: Vec<JsInlineElement>) -> String {
+    let elements_core: Vec<_> = elements.into_iter().map(Into::into).collect();
+    kreuzberg::extractors::djot_format::rendering::render_inline_content(&elements_core)
 }
 
 #[napi(js_name = "extractFrontmatter")]
 pub fn extract_frontmatter(content: String) -> String {
     let _ = content;
     String::from("[unimplemented: extract_frontmatter]")
-}
-
-#[napi(js_name = "extractMetadataFromYaml")]
-pub fn extract_metadata_from_yaml(yaml: String) -> JsMetadata {
-    let _ = yaml;
-    compile_error!(
-        "alef: extract_metadata_from_yaml returns a Named/Json type but has no error variant — cannot auto-delegate"
-    )
 }
 
 #[napi(js_name = "extractTitleFromContent")]
@@ -5195,36 +4369,14 @@ pub fn dedup_text(texts: Vec<String>) -> Vec<String> {
     kreuzberg::extractors::iwork::dedup_text(texts)
 }
 
-#[napi(js_name = "evaluateNativeTextForOcr")]
-pub fn evaluate_native_text_for_ocr(
-    native_text: String,
-    page_count: Option<i64>,
-    thresholds: Option<JsOcrQualityThresholds>,
-) -> JsOcrFallbackDecision {
-    let thresholds_core = thresholds.expect("'thresholds' is required").into();
-    kreuzberg::extractors::pdf::evaluate_native_text_for_ocr(&native_text, page_count, &thresholds_core).into()
-}
-
-#[napi(js_name = "evaluatePerPageOcr")]
-pub fn evaluate_per_page_ocr(
-    native_text: String,
-    boundaries: Option<Vec<JsPageBoundary>>,
-    page_count: Option<i64>,
-    thresholds: Option<JsOcrQualityThresholds>,
-) -> JsOcrFallbackDecision {
-    let thresholds_core = thresholds.expect("'thresholds' is required").into();
-    kreuzberg::extractors::pdf::evaluate_per_page_ocr(&native_text, boundaries.as_deref(), page_count, &thresholds_core)
-        .into()
-}
-
 #[napi(js_name = "hexDigitToU8")]
-pub fn hex_digit_to_u8(c: String) -> Option<u8> {
-    kreuzberg::extractors::rtf::hex_digit_to_u8(&c)
+pub fn hex_digit_to_u8(c: u8) -> Option<u8> {
+    kreuzberg::extractors::rtf::hex_digit_to_u8(c)
 }
 
 #[napi(js_name = "parseHexByte")]
-pub fn parse_hex_byte(h1: String, h2: String) -> Option<u8> {
-    kreuzberg::extractors::rtf::parse_hex_byte(&h1, &h2)
+pub fn parse_hex_byte(h1: u8, h2: u8) -> Option<u8> {
+    kreuzberg::extractors::rtf::parse_hex_byte(h1, h2)
 }
 
 #[napi(js_name = "parseRtfControlWord")]
@@ -5316,13 +4468,6 @@ pub fn clear_extractors() -> Result<()> {
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "registerOcrBackend")]
-pub fn register_ocr_backend(backend: &JsOcrBackend) -> Result<()> {
-    kreuzberg::plugins::register_ocr_backend(&backend.inner)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "unregisterOcrBackend")]
 pub fn unregister_ocr_backend(name: String) -> Result<()> {
     kreuzberg::plugins::unregister_ocr_backend(&name)
@@ -5371,13 +4516,6 @@ pub fn get_validator_registry() -> String {
 #[napi(js_name = "getRendererRegistry")]
 pub fn get_renderer_registry() -> String {
     String::from("[unimplemented: get_renderer_registry]")
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "registerRenderer")]
-pub fn register_renderer(renderer: &JsRenderer) -> Result<()> {
-    kreuzberg::plugins::register_renderer(&renderer.inner)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -5472,8 +4610,8 @@ pub fn sanitize_filename(path: String) -> String {
 }
 
 #[napi(js_name = "getMetrics")]
-pub fn get_metrics() -> JsExtractionMetrics {
-    kreuzberg::telemetry::metrics::get_metrics().clone().into()
+pub fn get_metrics() -> String {
+    String::from("[unimplemented: get_metrics]")
 }
 
 #[napi(js_name = "recordErrorOnCurrentSpan")]
@@ -5545,7 +4683,7 @@ pub fn is_valid_utf8(bytes: Vec<u8>) -> bool {
 #[napi(js_name = "calculateQualityScore")]
 pub fn calculate_quality_score(text: String, metadata: Option<String>) -> f64 {
     let _ = (text, metadata);
-    0
+    0.0f64
 }
 
 #[napi(js_name = "cleanExtractedText")]
@@ -5561,7 +4699,7 @@ pub fn normalize_spaces(text: String) -> String {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "reduceTokens")]
 pub fn reduce_tokens(text: String, config: JsTokenReductionConfig, language_hint: Option<String>) -> Result<String> {
-    let config_core = config.into();
+    let config_core: kreuzberg::TokenReductionConfig = config.into();
     kreuzberg::text::reduce_tokens(&text, &config_core, language_hint.as_deref())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -5573,7 +4711,7 @@ pub fn batch_reduce_tokens(
     config: JsTokenReductionConfig,
     language_hint: Option<String>,
 ) -> Result<Vec<String>> {
-    let config_core = config.into();
+    let config_core: kreuzberg::TokenReductionConfig = config.into();
     kreuzberg::text::batch_reduce_tokens(&texts, &config_core, language_hint.as_deref())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -5706,17 +4844,15 @@ pub fn acquire_string_buffer() -> JsPooledString {
 }
 
 #[napi(js_name = "internLanguageCode")]
-pub fn intern_language_code(lang_code: String) -> JsInternedString {
-    JsInternedString {
-        inner: Arc::new(kreuzberg::utils::string_pool::intern_language_code(&lang_code)),
-    }
+pub fn intern_language_code(lang_code: String) -> String {
+    let _ = lang_code;
+    String::from("[unimplemented: intern_language_code]")
 }
 
 #[napi(js_name = "internMimeType")]
-pub fn intern_mime_type(mime_type: String) -> JsInternedString {
-    JsInternedString {
-        inner: Arc::new(kreuzberg::utils::string_pool::intern_mime_type(&mime_type)),
-    }
+pub fn intern_mime_type(mime_type: String) -> String {
+    let _ = mime_type;
+    String::from("[unimplemented: intern_mime_type]")
 }
 
 #[napi(js_name = "xmlTagName")]
@@ -5757,14 +4893,9 @@ pub fn table_to_markdown(table: Vec<Vec<String>>) -> String {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "loadServerConfig")]
 pub fn load_server_config(config_path: Option<String>) -> Result<JsServerConfig> {
-    kreuzberg::api::load_server_config(std::path::PathBuf::from(config_path))
+    kreuzberg::api::load_server_config(&config_path)
         .map(|val| val.into())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[napi(js_name = "openapiJson")]
-pub fn openapi_json() -> String {
-    kreuzberg::api::openapi::openapi_json()
 }
 
 #[napi(js_name = "createRouter")]
@@ -5803,21 +4934,6 @@ pub async fn serve_with_config(host: String, port: u16, config: JsExtractionConf
     Err(napi::Error::new(
         napi::Status::GenericFailure,
         "Not implemented: serve_with_config",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "serveWithConfigAndLimits")]
-pub async fn serve_with_config_and_limits(
-    host: String,
-    port: u16,
-    config: JsExtractionConfig,
-    limits: String,
-) -> Result<()> {
-    let _ = (host, port, config, limits);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: serve_with_config_and_limits",
     ))
 }
 
@@ -5867,46 +4983,17 @@ pub async fn start_mcp_server_with_config(config: JsExtractionConfig) -> Result<
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "startMcpServerHttp")]
-pub async fn start_mcp_server_http(host: String, port: u16) -> Result<()> {
-    let _ = (host, port);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: start_mcp_server_http",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "startMcpServerHttpWithConfig")]
-pub async fn start_mcp_server_http_with_config(host: String, port: u16, config: JsExtractionConfig) -> Result<()> {
-    let _ = (host, port, config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: start_mcp_server_http_with_config",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "validatePageBoundaries")]
 pub fn validate_page_boundaries(boundaries: Vec<JsPageBoundary>) -> Result<()> {
-    kreuzberg::chunking::validate_page_boundaries(boundaries)
+    let boundaries_core: Vec<_> = boundaries.into_iter().map(Into::into).collect();
+    kreuzberg::chunking::validate_page_boundaries(&boundaries_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "calculatePageRange")]
-pub fn calculate_page_range(byte_start: i64, byte_end: i64, boundaries: Vec<JsPageBoundary>) -> Result<String> {
-    let _ = (byte_start, byte_end, boundaries);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: calculate_page_range",
-    ))
 }
 
 #[napi(js_name = "classifyChunk")]
 pub fn classify_chunk(content: String, heading_context: Option<JsHeadingContext>) -> JsChunkType {
-    let heading_context_core = heading_context.map(Into::into);
-    kreuzberg::chunking::classify_chunk(&content, &heading_context_core).into()
+    let heading_context_core = heading_context.as_ref();
+    kreuzberg::chunking::classify_chunk(&content, heading_context_core).into()
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -5916,7 +5003,7 @@ pub fn chunk_text(
     config: JsChunkingConfig,
     page_boundaries: Option<Vec<JsPageBoundary>>,
 ) -> Result<JsChunkingResult> {
-    let config_core = config.into();
+    let config_core: kreuzberg::ChunkingConfig = config.into();
     kreuzberg::chunking::chunk_text(&text, &config_core, page_boundaries.as_deref())
         .map(|val| val.into())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
@@ -5930,7 +5017,7 @@ pub fn chunk_text_with_heading_source(
     page_boundaries: Option<Vec<JsPageBoundary>>,
     heading_source: Option<String>,
 ) -> Result<JsChunkingResult> {
-    let config_core = config.into();
+    let config_core: kreuzberg::ChunkingConfig = config.into();
     kreuzberg::chunking::chunk_text_with_heading_source(
         &text,
         &config_core,
@@ -5950,7 +5037,7 @@ pub fn chunk_text_with_type(
     trim: bool,
     chunker_type: JsChunkerType,
 ) -> Result<JsChunkingResult> {
-    let chunker_type_core = chunker_type.into();
+    let chunker_type_core: kreuzberg::ChunkerType = chunker_type.into();
     kreuzberg::chunking::chunk_text_with_type(&text, max_characters, overlap, trim, chunker_type_core)
         .map(|val| val.into())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
@@ -5959,7 +5046,7 @@ pub fn chunk_text_with_type(
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "chunkTextsBatch")]
 pub fn chunk_texts_batch(texts: Vec<String>, config: JsChunkingConfig) -> Result<Vec<JsChunkingResult>> {
-    let config_core = config.into();
+    let config_core: kreuzberg::ChunkingConfig = config.into();
     kreuzberg::chunking::chunk_texts_batch(&texts, &config_core)
         .map(|val| val.into_iter().map(Into::into).collect())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
@@ -5974,7 +5061,8 @@ pub fn precompute_utf8_boundaries(text: String) -> String {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "validateUtf8Boundaries")]
 pub fn validate_utf8_boundaries(text: String, boundaries: Vec<JsPageBoundary>) -> Result<()> {
-    kreuzberg::chunking::validate_utf8_boundaries(&text, boundaries)
+    let boundaries_core: Vec<_> = boundaries.into_iter().map(Into::into).collect();
+    kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -6042,24 +5130,25 @@ pub fn list_presets() -> Vec<String> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "warmModel")]
 pub fn warm_model(model_type: JsEmbeddingModelType, cache_dir: Option<String>) -> Result<()> {
-    let model_type_core = model_type.into();
-    kreuzberg::warm_model(&model_type_core, cache_dir.map(std::path::PathBuf::from))
+    let model_type_core: kreuzberg::EmbeddingModelType = model_type.into();
+    kreuzberg::warm_model(&model_type_core, cache_dir.as_deref())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "downloadModel")]
 pub fn download_model(model_type: JsEmbeddingModelType, cache_dir: Option<String>) -> Result<()> {
-    let model_type_core = model_type.into();
-    kreuzberg::download_model(&model_type_core, cache_dir.map(std::path::PathBuf::from))
+    let model_type_core: kreuzberg::EmbeddingModelType = model_type.into();
+    kreuzberg::download_model(&model_type_core, cache_dir.as_deref())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "generateEmbeddingsForChunks")]
 pub fn generate_embeddings_for_chunks(chunks: Vec<JsChunk>, config: JsEmbeddingConfig) -> Result<()> {
-    let config_core = config.into();
-    kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks, &config_core)
+    let chunks_core: Vec<_> = chunks.into_iter().map(Into::into).collect();
+    let config_core: kreuzberg::EmbeddingConfig = config.into();
+    kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks_core, &config_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -6087,22 +5176,6 @@ pub fn calculate_optimal_dpi(
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "normalizeImageDpi")]
-pub fn normalize_image_dpi(
-    rgb_data: Vec<u8>,
-    width: i64,
-    height: i64,
-    config: JsExtractionConfig,
-    current_dpi: Option<f64>,
-) -> Result<String> {
-    let _ = (rgb_data, width, height, config, current_dpi);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: normalize_image_dpi",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "resizeImage")]
 pub fn resize_image(image: String, new_width: u32, new_height: u32, scale_factor: f64) -> Result<String> {
     let _ = (image, new_width, new_height, scale_factor);
@@ -6115,7 +5188,7 @@ pub fn resize_image(image: String, new_width: u32, new_height: u32, scale_factor
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "detectLanguages")]
 pub fn detect_languages(text: String, config: JsLanguageDetectionConfig) -> Result<Option<Vec<String>>> {
-    let config_core = config.into();
+    let config_core: kreuzberg::LanguageDetectionConfig = config.into();
     kreuzberg::language_detection::detect_languages(&text, &config_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -6142,39 +5215,10 @@ pub fn get_stopwords_with_fallback(language: String, fallback: String) -> Option
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "extractKeywords")]
 pub fn extract_keywords(text: String, config: JsKeywordConfig) -> Result<Vec<JsKeyword>> {
-    let config_core = config.into();
+    let config_core: kreuzberg::KeywordConfig = config.into();
     kreuzberg::extract_keywords(&text, &config_core)
         .map(|val| val.into_iter().map(Into::into).collect())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "textBlockToElement")]
-pub fn text_block_to_element(block: String, page_number: i64) -> Result<Option<JsOcrElement>> {
-    let _ = (block, page_number);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: text_block_to_element",
-    ))
-}
-
-#[napi(js_name = "tsvRowToElement")]
-pub fn tsv_row_to_element(row: String) -> JsOcrElement {
-    let _ = row;
-    compile_error!("alef: tsv_row_to_element returns a Named/Json type but has no error variant — cannot auto-delegate")
-}
-
-#[napi(js_name = "iteratorWordToElement")]
-pub fn iterator_word_to_element(
-    word: String,
-    block_type: Option<String>,
-    para_info: Option<String>,
-    page_number: Option<i64>,
-) -> JsOcrElement {
-    let _ = (word, block_type, para_info, page_number);
-    compile_error!(
-        "alef: iterator_word_to_element returns a Named/Json type but has no error variant — cannot auto-delegate"
-    )
 }
 
 #[napi(js_name = "elementToHocrWord")]
@@ -6203,13 +5247,19 @@ pub fn assemble_ocr_markdown(
     img_height: Option<u32>,
     recognized_tables: Option<Vec<JsRecognizedTable>>,
 ) -> String {
-    let detection_core = detection.map(Into::into);
+    let elements_core: Vec<_> = elements.into_iter().map(Into::into).collect();
+    let detection_core = detection.as_ref();
+    let recognized_tables_core: Vec<_> = recognized_tables
+        .expect("'recognized_tables' is required")
+        .into_iter()
+        .map(Into::into)
+        .collect();
     kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
-        &elements,
-        &detection_core,
+        &elements_core,
+        detection_core,
         img_width.expect("'img_width' is required"),
         img_height.expect("'img_height' is required"),
-        recognized_tables.expect("'recognized_tables' is required"),
+        &recognized_tables_core,
     )
 }
 
@@ -6274,12 +5324,14 @@ pub fn build_cell_grid(result: String, table_bbox: Option<String>) -> Vec<Vec<St
 
 #[napi(js_name = "applyHeuristics")]
 pub fn apply_heuristics(detections: Vec<JsLayoutDetection>, page_width: f64, page_height: f64) -> () {
-    kreuzberg::layout::postprocessing::heuristics::apply_heuristics(detections, page_width, page_height)
+    let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
+    kreuzberg::layout::postprocessing::heuristics::apply_heuristics(&detections_core, page_width, page_height)
 }
 
 #[napi(js_name = "greedyNms")]
 pub fn greedy_nms(detections: Vec<JsLayoutDetection>, iou_threshold: f64) -> () {
-    kreuzberg::layout::postprocessing::nms::greedy_nms(detections, iou_threshold)
+    let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
+    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections_core, iou_threshold)
 }
 
 #[napi(js_name = "preprocessImagenet")]
@@ -6306,46 +5358,10 @@ pub fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) 
     String::from("[unimplemented: preprocess_letterbox]")
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "buildSession")]
-pub fn build_session(path: String, accel: Option<JsAccelerationConfig>, thread_budget: Option<i64>) -> Result<String> {
-    let _ = (path, accel, thread_budget);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: build_session",
-    ))
-}
-
 #[napi(js_name = "configFromExtraction")]
 pub fn config_from_extraction(layout_config: JsLayoutDetectionConfig) -> String {
     let _ = layout_config;
     String::from("[unimplemented: config_from_extraction]")
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "createEngine")]
-pub fn create_engine(layout_config: JsLayoutDetectionConfig) -> Result<String> {
-    let _ = layout_config;
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: create_engine",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "takeOrCreateEngine")]
-pub fn take_or_create_engine(layout_config: JsLayoutDetectionConfig) -> Result<String> {
-    let _ = layout_config;
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: take_or_create_engine",
-    ))
-}
-
-#[napi(js_name = "returnEngine")]
-pub fn return_engine(engine: String) -> () {
-    let _ = engine;
-    ()
 }
 
 #[napi(js_name = "takeOrCreateTatr")]
@@ -6394,14 +5410,6 @@ pub fn extract_bookmarks(document: String) -> Vec<JsUri> {
     Vec::new()
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractBundledPdfium")]
-pub fn extract_bundled_pdfium() -> Result<String> {
-    kreuzberg::pdf::extract_bundled_pdfium()
-        .map(|val| val.to_string_lossy().to_string())
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
 #[napi(js_name = "extractEmbeddedFiles")]
 pub fn extract_embedded_files(document: String) -> Vec<JsEmbeddedFile> {
     let _ = document;
@@ -6432,11 +5440,6 @@ pub fn get_font_descriptors() -> Result<Vec<String>> {
 #[napi(js_name = "cachedFontCount")]
 pub fn cached_font_count() -> i64 {
     kreuzberg::pdf::cached_font_count() as i64
-}
-
-#[napi(js_name = "clearFontCache")]
-pub fn clear_font_cache() -> () {
-    kreuzberg::pdf::fonts::clear_font_cache()
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -6520,13 +5523,6 @@ pub fn extract_images_from_pdf_with_password(pdf_bytes: Vec<u8>, password: Strin
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "reextractRawImagesViaPdfium")]
-pub fn reextract_raw_images_via_pdfium(pdf_bytes: Vec<u8>, images: Vec<JsPdfImage>) -> Result<u32> {
-    kreuzberg::pdf::images::reextract_raw_images_via_pdfium(&pdf_bytes, images)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "detectLayoutForDocument")]
 pub fn detect_layout_for_document(pdf_bytes: Vec<u8>, engine: String) -> Result<String> {
     let _ = (pdf_bytes, engine);
@@ -6573,20 +5569,6 @@ pub fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String
     Err(napi::Error::new(
         napi::Status::GenericFailure,
         "Not implemented: extract_metadata_with_passwords",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractMetadataFromDocument")]
-pub fn extract_metadata_from_document(
-    document: String,
-    page_boundaries: Option<Vec<JsPageBoundary>>,
-    content: Option<String>,
-) -> Result<JsPdfExtractionMetadata> {
-    let _ = (document, page_boundaries, content);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: extract_metadata_from_document",
     ))
 }
 
@@ -6686,36 +5668,9 @@ pub fn extract_text_from_pdf_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<S
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractTextAndMetadataFromPdfDocument")]
-pub fn extract_text_and_metadata_from_pdf_document(
-    document: String,
-    extraction_config: Option<JsExtractionConfig>,
-) -> Result<JsPdfUnifiedExtractionResult> {
-    let _ = (document, extraction_config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: extract_text_and_metadata_from_pdf_document",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractTextFromPdfDocument")]
-pub fn extract_text_from_pdf_document(
-    document: String,
-    page_config: Option<JsPageConfig>,
-    extraction_config: Option<JsExtractionConfig>,
-) -> Result<String> {
-    let _ = (document, page_config, extraction_config);
-    Err(napi::Error::new(
-        napi::Status::GenericFailure,
-        "Not implemented: extract_text_from_pdf_document",
-    ))
-}
-
-#[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "serializeToToon")]
 pub fn serialize_to_toon(result: JsExtractionResult) -> Result<String> {
-    let result_core = result.into();
+    let result_core: kreuzberg::ExtractionResult = result.into();
     kreuzberg::serialize_to_toon(&result_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -6723,7 +5678,7 @@ pub fn serialize_to_toon(result: JsExtractionResult) -> Result<String> {
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "serializeToJson")]
 pub fn serialize_to_json(result: JsExtractionResult) -> Result<String> {
-    let result_core = result.into();
+    let result_core: kreuzberg::ExtractionResult = result.into();
     kreuzberg::serialize_to_json(&result_core)
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
@@ -6954,8 +5909,8 @@ impl From<kreuzberg::ImageExtractionConfig> for JsImageExtractionConfig {
     }
 }
 
-impl From<JsTokenReductionConfig> for kreuzberg::TokenReductionConfig {
-    fn from(val: JsTokenReductionConfig) -> Self {
+impl From<JsTokenReductionOptions> for kreuzberg::TokenReductionOptions {
+    fn from(val: JsTokenReductionOptions) -> Self {
         Self {
             mode: val.mode,
             preserve_important_words: val.preserve_important_words,
@@ -6963,8 +5918,8 @@ impl From<JsTokenReductionConfig> for kreuzberg::TokenReductionConfig {
     }
 }
 
-impl From<kreuzberg::TokenReductionConfig> for JsTokenReductionConfig {
-    fn from(val: kreuzberg::TokenReductionConfig) -> Self {
+impl From<kreuzberg::TokenReductionOptions> for JsTokenReductionOptions {
+    fn from(val: kreuzberg::TokenReductionOptions) -> Self {
         Self {
             mode: val.mode,
             preserve_important_words: val.preserve_important_words,
@@ -7499,54 +6454,6 @@ impl From<kreuzberg::extraction::StructuredDataResult> for JsStructuredDataResul
     }
 }
 
-impl From<JsListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
-    fn from(val: JsListItemMetadata) -> Self {
-        Self {
-            list_type: Default::default(),
-            byte_start: val.byte_start as usize,
-            byte_end: val.byte_end as usize,
-            indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ListItemMetadata> for JsListItemMetadata {
-    fn from(val: kreuzberg::extraction::ListItemMetadata) -> Self {
-        Self {
-            list_type: format!("{:?}", val.list_type),
-            byte_start: val.byte_start as i64,
-            byte_end: val.byte_end as i64,
-            indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<JsSection> for kreuzberg::extraction::hwp::model::Section {
-    fn from(val: JsSection) -> Self {
-        Self {
-            paragraphs: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::Section> for JsSection {
-    fn from(val: kreuzberg::extraction::hwp::model::Section) -> Self {
-        Self {
-            paragraphs: Some(val.paragraphs.iter().map(|i| format!("{:?}", i)).collect()),
-        }
-    }
-}
-
-impl From<JsImageOcrResult> for kreuzberg::extraction::image::ImageOcrResult {
-    fn from(val: JsImageOcrResult) -> Self {
-        Self {
-            content: val.content,
-            boundaries: val.boundaries.map(|v| v.into_iter().map(Into::into).collect()),
-            page_contents: val.page_contents.map(|v| v.into_iter().map(Into::into).collect()),
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::image::ImageOcrResult> for JsImageOcrResult {
     fn from(val: kreuzberg::extraction::image::ImageOcrResult) -> Self {
         Self {
@@ -7580,46 +6487,6 @@ impl From<kreuzberg::extraction::html::ExtractedInlineImage> for JsExtractedInli
     }
 }
 
-impl From<JsDocExtractionResult> for kreuzberg::extraction::doc::DocExtractionResult {
-    fn from(val: JsDocExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            metadata: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::doc::DocExtractionResult> for JsDocExtractionResult {
-    fn from(val: kreuzberg::extraction::doc::DocExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            metadata: format!("{:?}", val.metadata),
-        }
-    }
-}
-
-impl From<JsDrawing> for kreuzberg::extraction::docx::drawing::Drawing {
-    fn from(val: JsDrawing) -> Self {
-        Self {
-            drawing_type: Default::default(),
-            extent: Default::default(),
-            doc_properties: Default::default(),
-            image_ref: val.image_ref,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Drawing> for JsDrawing {
-    fn from(val: kreuzberg::extraction::docx::drawing::Drawing) -> Self {
-        Self {
-            drawing_type: Some(format!("{:?}", val.drawing_type)),
-            extent: val.extent.as_ref().map(|v| format!("{:?}", v)),
-            doc_properties: val.doc_properties.as_ref().map(|v| format!("{:?}", v)),
-            image_ref: val.image_ref,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for JsAnchorProperties {
     fn from(val: kreuzberg::extraction::docx::drawing::AnchorProperties) -> Self {
         Self {
@@ -7633,20 +6500,11 @@ impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for JsAnchorPr
     }
 }
 
-impl From<kreuzberg::extraction::docx::parser::TableRow> for JsTableRow {
-    fn from(val: kreuzberg::extraction::docx::parser::TableRow) -> Self {
-        Self {
-            cells: Some(val.cells.into_iter().map(Into::into).collect()),
-            properties: val.properties.as_ref().map(|v| format!("{:?}", v)),
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::parser::HeaderFooter> for JsHeaderFooter {
     fn from(val: kreuzberg::extraction::docx::parser::HeaderFooter) -> Self {
         Self {
             paragraphs: Some(val.paragraphs.iter().map(|i| format!("{:?}", i)).collect()),
-            tables: Some(val.tables.into_iter().map(Into::into).collect()),
+            tables: Some(val.tables.iter().map(|i| format!("{:?}", i)).collect()),
             header_type: Some(format!("{:?}", val.header_type)),
         }
     }
@@ -7696,38 +6554,6 @@ impl From<kreuzberg::extraction::docx::styles::ResolvedStyle> for JsResolvedStyl
         Self {
             paragraph_properties: Some(format!("{:?}", val.paragraph_properties)),
             run_properties: Some(format!("{:?}", val.run_properties)),
-        }
-    }
-}
-
-impl From<JsTableProperties> for kreuzberg::extraction::docx::table::TableProperties {
-    fn from(val: JsTableProperties) -> Self {
-        Self {
-            style_id: val.style_id,
-            width: Default::default(),
-            alignment: val.alignment,
-            layout: val.layout,
-            look: Default::default(),
-            borders: Default::default(),
-            cell_margins: Default::default(),
-            indent: Default::default(),
-            caption: val.caption,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableProperties> for JsTableProperties {
-    fn from(val: kreuzberg::extraction::docx::table::TableProperties) -> Self {
-        Self {
-            style_id: val.style_id,
-            width: val.width.as_ref().map(|v| format!("{:?}", v)),
-            alignment: val.alignment,
-            layout: val.layout,
-            look: val.look.as_ref().map(|v| format!("{:?}", v)),
-            borders: val.borders.as_ref().map(|v| format!("{:?}", v)),
-            cell_margins: val.cell_margins.as_ref().map(|v| format!("{:?}", v)),
-            indent: val.indent.as_ref().map(|v| format!("{:?}", v)),
-            caption: val.caption,
         }
     }
 }
@@ -7795,39 +6621,6 @@ impl From<kreuzberg::extraction::OdtProperties> for JsOdtProperties {
     }
 }
 
-impl From<JsPptExtractionResult> for kreuzberg::extraction::ppt::PptExtractionResult {
-    fn from(val: JsPptExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            slide_count: val.slide_count as usize,
-            metadata: Default::default(),
-            speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ppt::PptExtractionResult> for JsPptExtractionResult {
-    fn from(val: kreuzberg::extraction::ppt::PptExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            slide_count: val.slide_count as i64,
-            metadata: format!("{:?}", val.metadata),
-            speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<JsOcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecision {
-    fn from(val: JsOcrFallbackDecision) -> Self {
-        Self {
-            stats: Default::default(),
-            avg_non_whitespace: val.avg_non_whitespace,
-            avg_alnum: val.avg_alnum,
-            fallback: val.fallback,
-        }
-    }
-}
-
 impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for JsOcrFallbackDecision {
     fn from(val: kreuzberg::extractors::pdf::OcrFallbackDecision) -> Self {
         Self {
@@ -7839,38 +6632,38 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for JsOcrFallbackDeci
     }
 }
 
-impl From<JsExtractionMetrics> for kreuzberg::telemetry::metrics::ExtractionMetrics {
-    fn from(val: JsExtractionMetrics) -> Self {
+impl From<JsTokenReductionConfig> for kreuzberg::TokenReductionConfig {
+    fn from(val: JsTokenReductionConfig) -> Self {
         Self {
-            extraction_total: Default::default(),
-            cache_hits: Default::default(),
-            cache_misses: Default::default(),
-            batch_total: Default::default(),
-            extraction_duration_ms: Default::default(),
-            extraction_input_bytes: Default::default(),
-            extraction_output_bytes: Default::default(),
-            pipeline_duration_ms: Default::default(),
-            ocr_duration_ms: Default::default(),
-            batch_duration_ms: Default::default(),
-            concurrent_extractions: Default::default(),
+            level: val.level.map(Into::into).unwrap_or_default(),
+            language_hint: val.language_hint,
+            preserve_markdown: val.preserve_markdown.unwrap_or_default(),
+            preserve_code: val.preserve_code.unwrap_or_default(),
+            semantic_threshold: val.semantic_threshold.map(|v| v as f32).unwrap_or(0.0),
+            enable_parallel: val.enable_parallel.unwrap_or_default(),
+            use_simd: val.use_simd.unwrap_or_default(),
+            custom_stopwords: val.custom_stopwords.map(|m| m.into_iter().collect()),
+            preserve_patterns: val.preserve_patterns.unwrap_or_default(),
+            target_reduction: val.target_reduction.map(|v| v as f32),
+            enable_semantic_clustering: val.enable_semantic_clustering.unwrap_or_default(),
         }
     }
 }
 
-impl From<kreuzberg::telemetry::metrics::ExtractionMetrics> for JsExtractionMetrics {
-    fn from(val: kreuzberg::telemetry::metrics::ExtractionMetrics) -> Self {
+impl From<kreuzberg::TokenReductionConfig> for JsTokenReductionConfig {
+    fn from(val: kreuzberg::TokenReductionConfig) -> Self {
         Self {
-            extraction_total: format!("{:?}", val.extraction_total),
-            cache_hits: format!("{:?}", val.cache_hits),
-            cache_misses: format!("{:?}", val.cache_misses),
-            batch_total: format!("{:?}", val.batch_total),
-            extraction_duration_ms: format!("{:?}", val.extraction_duration_ms),
-            extraction_input_bytes: format!("{:?}", val.extraction_input_bytes),
-            extraction_output_bytes: format!("{:?}", val.extraction_output_bytes),
-            pipeline_duration_ms: format!("{:?}", val.pipeline_duration_ms),
-            ocr_duration_ms: format!("{:?}", val.ocr_duration_ms),
-            batch_duration_ms: format!("{:?}", val.batch_duration_ms),
-            concurrent_extractions: format!("{:?}", val.concurrent_extractions),
+            level: Some(val.level.into()),
+            language_hint: val.language_hint,
+            preserve_markdown: Some(val.preserve_markdown),
+            preserve_code: Some(val.preserve_code),
+            semantic_threshold: Some(val.semantic_threshold as f64),
+            enable_parallel: Some(val.enable_parallel),
+            use_simd: Some(val.use_simd),
+            custom_stopwords: val.custom_stopwords.map(|m| m.into_iter().collect()),
+            preserve_patterns: Some(val.preserve_patterns),
+            target_reduction: val.target_reduction.map(|v| v as f64),
+            enable_semantic_clustering: Some(val.enable_semantic_clustering),
         }
     }
 }
@@ -7881,7 +6674,7 @@ impl From<JsPdfAnnotation> for kreuzberg::PdfAnnotation {
             annotation_type: val.annotation_type.into(),
             content: val.content,
             page_number: val.page_number as usize,
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: Default::default(),
         }
     }
 }
@@ -7892,7 +6685,7 @@ impl From<kreuzberg::PdfAnnotation> for JsPdfAnnotation {
             annotation_type: val.annotation_type.into(),
             content: val.content,
             page_number: val.page_number as i64,
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: val.bounding_box.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -7903,7 +6696,7 @@ impl From<JsDjotContent> for kreuzberg::DjotContent {
             plain_text: val.plain_text,
             blocks: val.blocks.into_iter().map(Into::into).collect(),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: Default::default(),
             images: val.images.into_iter().map(Into::into).collect(),
             links: val.links.into_iter().map(Into::into).collect(),
             footnotes: val.footnotes.into_iter().map(Into::into).collect(),
@@ -7918,7 +6711,7 @@ impl From<kreuzberg::DjotContent> for JsDjotContent {
             plain_text: val.plain_text,
             blocks: val.blocks.into_iter().map(Into::into).collect(),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             images: val.images.into_iter().map(Into::into).collect(),
             links: val.links.into_iter().map(Into::into).collect(),
             footnotes: val.footnotes.into_iter().map(Into::into).collect(),
@@ -7933,7 +6726,7 @@ impl From<JsFormattedBlock> for kreuzberg::FormattedBlock {
             block_type: val.block_type.into(),
             level: val.level.map(|v| v as usize),
             inline_content: val.inline_content.into_iter().map(Into::into).collect(),
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
             language: val.language,
             code: val.code,
             children: val.children.into_iter().map(Into::into).collect(),
@@ -7947,7 +6740,7 @@ impl From<kreuzberg::FormattedBlock> for JsFormattedBlock {
             block_type: val.block_type.into(),
             level: val.level.map(|v| v as i64),
             inline_content: val.inline_content.into_iter().map(Into::into).collect(),
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
             language: val.language,
             code: val.code,
             children: val.children.into_iter().map(Into::into).collect(),
@@ -7960,7 +6753,7 @@ impl From<JsInlineElement> for kreuzberg::InlineElement {
         Self {
             element_type: val.element_type.into(),
             content: val.content,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
             metadata: val.metadata.map(|m| m.into_iter().collect()),
         }
     }
@@ -7971,28 +6764,8 @@ impl From<kreuzberg::InlineElement> for JsInlineElement {
         Self {
             element_type: val.element_type.into(),
             content: val.content,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
             metadata: val.metadata.map(|m| m.into_iter().collect()),
-        }
-    }
-}
-
-impl From<JsAttributes> for kreuzberg::Attributes {
-    fn from(val: JsAttributes) -> Self {
-        Self {
-            id: val.id,
-            classes: val.classes.unwrap_or_default(),
-            key_values: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::Attributes> for JsAttributes {
-    fn from(val: kreuzberg::Attributes) -> Self {
-        Self {
-            id: val.id,
-            classes: Some(val.classes),
-            key_values: Some(val.key_values.iter().map(|i| format!("{:?}", i)).collect()),
         }
     }
 }
@@ -8003,7 +6776,7 @@ impl From<JsDjotImage> for kreuzberg::DjotImage {
             src: val.src,
             alt: val.alt,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
         }
     }
 }
@@ -8014,7 +6787,7 @@ impl From<kreuzberg::DjotImage> for JsDjotImage {
             src: val.src,
             alt: val.alt,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -8025,7 +6798,7 @@ impl From<JsDjotLink> for kreuzberg::DjotLink {
             url: val.url,
             text: val.text,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
         }
     }
 }
@@ -8036,7 +6809,7 @@ impl From<kreuzberg::DjotLink> for JsDjotLink {
             url: val.url,
             text: val.text,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -8108,14 +6881,14 @@ impl From<kreuzberg::DocumentRelationship> for JsDocumentRelationship {
 impl From<JsDocumentNode> for kreuzberg::DocumentNode {
     fn from(val: JsDocumentNode) -> Self {
         Self {
-            id: val.id.into(),
+            id: Default::default(),
             content: val.content.into(),
             parent: (val.parent).map(kreuzberg::NodeIndex),
             children: (val.children).into_iter().map(kreuzberg::NodeIndex).collect(),
             content_layer: val.content_layer.into(),
             page: val.page,
             page_end: val.page_end,
-            bbox: val.bbox.map(Into::into),
+            bbox: Default::default(),
             annotations: val.annotations.into_iter().map(Into::into).collect(),
             attributes: val.attributes.map(|m| m.into_iter().collect()),
         }
@@ -8125,52 +6898,16 @@ impl From<JsDocumentNode> for kreuzberg::DocumentNode {
 impl From<kreuzberg::DocumentNode> for JsDocumentNode {
     fn from(val: kreuzberg::DocumentNode) -> Self {
         Self {
-            id: JsNodeId {
-                inner: Arc::new(val.id),
-            },
+            id: format!("{:?}", val.id),
             content: val.content.into(),
             parent: val.parent.map(|v| v.0),
             children: val.children.iter().map(|v| v.0).collect::<Vec<_>>(),
             content_layer: val.content_layer.into(),
             page: val.page,
             page_end: val.page_end,
-            bbox: val.bbox.map(Into::into),
+            bbox: val.bbox.as_ref().map(|v| format!("{:?}", v)),
             annotations: val.annotations.into_iter().map(Into::into).collect(),
             attributes: val.attributes.map(|m| m.into_iter().collect()),
-        }
-    }
-}
-
-impl From<JsTableGrid> for kreuzberg::TableGrid {
-    fn from(val: JsTableGrid) -> Self {
-        Self {
-            rows: val.rows,
-            cols: val.cols,
-            cells: val.cells.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<kreuzberg::TableGrid> for JsTableGrid {
-    fn from(val: kreuzberg::TableGrid) -> Self {
-        Self {
-            rows: val.rows,
-            cols: val.cols,
-            cells: val.cells.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<JsGridCell> for kreuzberg::GridCell {
-    fn from(val: JsGridCell) -> Self {
-        Self {
-            content: val.content,
-            row: val.row,
-            col: val.col,
-            row_span: val.row_span,
-            col_span: val.col_span,
-            is_header: val.is_header,
-            bbox: val.bbox.map(Into::into),
         }
     }
 }
@@ -8184,7 +6921,7 @@ impl From<kreuzberg::GridCell> for JsGridCell {
             row_span: val.row_span,
             col_span: val.col_span,
             is_header: val.is_header,
-            bbox: val.bbox.map(Into::into),
+            bbox: val.bbox.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -8216,10 +6953,7 @@ impl From<JsExtractionResult> for kreuzberg::ExtractionResult {
             content: val.content.unwrap_or_default(),
             mime_type: Default::default(),
             metadata: val.metadata.map(Into::into).unwrap_or_default(),
-            tables: val
-                .tables
-                .map(|v| v.into_iter().map(Into::into).collect())
-                .unwrap_or_default(),
+            tables: Default::default(),
             detected_languages: val.detected_languages,
             chunks: val.chunks.map(|v| v.into_iter().map(Into::into).collect()),
             images: val.images.map(|v| v.into_iter().map(Into::into).collect()),
@@ -8255,7 +6989,7 @@ impl From<kreuzberg::ExtractionResult> for JsExtractionResult {
             content: Some(val.content),
             mime_type: Some(format!("{:?}", val.mime_type)),
             metadata: Some(val.metadata.into()),
-            tables: Some(val.tables.into_iter().map(Into::into).collect()),
+            tables: Some(val.tables.iter().map(|i| format!("{:?}", i)).collect()),
             detected_languages: val.detected_languages,
             chunks: val.chunks.map(|v| v.into_iter().map(Into::into).collect()),
             images: val.images.map(|v| v.into_iter().map(Into::into).collect()),
@@ -8444,7 +7178,7 @@ impl From<JsExtractedImage> for kreuzberg::ExtractedImage {
             is_mask: val.is_mask,
             description: val.description,
             ocr_result: val.ocr_result.map(Into::into).map(Box::new),
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: Default::default(),
             source_path: val.source_path,
         }
     }
@@ -8464,30 +7198,8 @@ impl From<kreuzberg::ExtractedImage> for JsExtractedImage {
             is_mask: val.is_mask,
             description: val.description,
             ocr_result: val.ocr_result.map(|v| (*v).into()),
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: val.bounding_box.as_ref().map(|v| format!("{:?}", v)),
             source_path: val.source_path,
-        }
-    }
-}
-
-impl From<JsBoundingBox> for kreuzberg::BoundingBox {
-    fn from(val: JsBoundingBox) -> Self {
-        Self {
-            x0: val.x0.unwrap_or(0.0),
-            y0: val.y0.unwrap_or(0.0),
-            x1: val.x1.unwrap_or(0.0),
-            y1: val.y1.unwrap_or(0.0),
-        }
-    }
-}
-
-impl From<kreuzberg::BoundingBox> for JsBoundingBox {
-    fn from(val: kreuzberg::BoundingBox) -> Self {
-        Self {
-            x0: Some(val.x0),
-            y0: Some(val.y0),
-            x1: Some(val.x1),
-            y1: Some(val.y1),
         }
     }
 }
@@ -8497,7 +7209,7 @@ impl From<JsElementMetadata> for kreuzberg::ElementMetadata {
         Self {
             page_number: val.page_number.map(|v| v as usize),
             filename: val.filename,
-            coordinates: val.coordinates.map(Into::into),
+            coordinates: Default::default(),
             element_index: val.element_index.map(|v| v as usize),
             additional: val.additional.into_iter().collect(),
         }
@@ -8509,7 +7221,7 @@ impl From<kreuzberg::ElementMetadata> for JsElementMetadata {
         Self {
             page_number: val.page_number.map(|v| v as i64),
             filename: val.filename,
-            coordinates: val.coordinates.map(Into::into),
+            coordinates: val.coordinates.as_ref().map(|v| format!("{:?}", v)),
             element_index: val.element_index.map(|v| v as i64),
             additional: val.additional.into_iter().collect(),
         }
@@ -8519,7 +7231,7 @@ impl From<kreuzberg::ElementMetadata> for JsElementMetadata {
 impl From<JsElement> for kreuzberg::Element {
     fn from(val: JsElement) -> Self {
         Self {
-            element_id: val.element_id.into(),
+            element_id: Default::default(),
             element_type: val.element_type.into(),
             text: val.text,
             metadata: val.metadata.into(),
@@ -8530,9 +7242,7 @@ impl From<JsElement> for kreuzberg::Element {
 impl From<kreuzberg::Element> for JsElement {
     fn from(val: kreuzberg::Element) -> Self {
         Self {
-            element_id: JsElementId {
-                inner: Arc::new(val.element_id),
-            },
+            element_id: format!("{:?}", val.element_id),
             element_type: val.element_type.into(),
             text: val.text,
             metadata: val.metadata.into(),
@@ -8998,28 +7708,6 @@ impl From<kreuzberg::ArchiveMetadata> for JsArchiveMetadata {
     }
 }
 
-impl From<JsImageMetadata> for kreuzberg::ImageMetadata {
-    fn from(val: JsImageMetadata) -> Self {
-        Self {
-            width: val.width,
-            height: val.height,
-            format: val.format,
-            exif: val.exif.into_iter().collect(),
-        }
-    }
-}
-
-impl From<kreuzberg::ImageMetadata> for JsImageMetadata {
-    fn from(val: kreuzberg::ImageMetadata) -> Self {
-        Self {
-            width: val.width,
-            height: val.height,
-            format: val.format,
-            exif: val.exif.into_iter().collect(),
-        }
-    }
-}
-
 impl From<kreuzberg::XmlMetadata> for JsXmlMetadata {
     fn from(val: kreuzberg::XmlMetadata) -> Self {
         Self {
@@ -9386,7 +8074,7 @@ impl From<JsOcrConfidence> for kreuzberg::OcrConfidence {
     fn from(val: JsOcrConfidence) -> Self {
         Self {
             detection: val.detection,
-            recognition: val.recognition,
+            recognition: val.recognition.unwrap_or(0.0),
         }
     }
 }
@@ -9395,7 +8083,7 @@ impl From<kreuzberg::OcrConfidence> for JsOcrConfidence {
     fn from(val: kreuzberg::OcrConfidence) -> Self {
         Self {
             detection: val.detection,
-            recognition: val.recognition,
+            recognition: Some(val.recognition),
         }
     }
 }
@@ -9421,18 +8109,14 @@ impl From<kreuzberg::OcrRotation> for JsOcrRotation {
 impl From<JsOcrElement> for kreuzberg::OcrElement {
     fn from(val: JsOcrElement) -> Self {
         Self {
-            text: val.text,
-            geometry: val.geometry.into(),
-            confidence: val.confidence.into(),
-            level: val.level.into(),
+            text: val.text.unwrap_or_default(),
+            geometry: val.geometry.map(Into::into).unwrap_or_default(),
+            confidence: val.confidence.map(Into::into).unwrap_or_default(),
+            level: val.level.map(Into::into).unwrap_or_default(),
             rotation: val.rotation.map(Into::into),
-            page_number: val.page_number as usize,
+            page_number: val.page_number.map(|v| v as usize).unwrap_or_default(),
             parent_id: val.parent_id,
-            backend_metadata: val
-                .backend_metadata
-                .into_iter()
-                .map(|(k, v)| (k, serde_json::from_str(&v).unwrap_or(serde_json::Value::String(v))))
-                .collect(),
+            backend_metadata: val.backend_metadata.unwrap_or_default().into_iter().collect(),
         }
     }
 }
@@ -9440,18 +8124,19 @@ impl From<JsOcrElement> for kreuzberg::OcrElement {
 impl From<kreuzberg::OcrElement> for JsOcrElement {
     fn from(val: kreuzberg::OcrElement) -> Self {
         Self {
-            text: val.text,
-            geometry: val.geometry.into(),
-            confidence: val.confidence.into(),
-            level: val.level.into(),
+            text: Some(val.text),
+            geometry: Some(val.geometry.into()),
+            confidence: Some(val.confidence.into()),
+            level: Some(val.level.into()),
             rotation: val.rotation.map(Into::into),
-            page_number: val.page_number as i64,
+            page_number: Some(val.page_number as i64),
             parent_id: val.parent_id,
-            backend_metadata: val
-                .backend_metadata
-                .into_iter()
-                .map(|(k, v)| (k, v.to_string()))
-                .collect(),
+            backend_metadata: Some(
+                val.backend_metadata
+                    .into_iter()
+                    .map(|(k, v)| (k, v.to_string()))
+                    .collect(),
+            ),
         }
     }
 }
@@ -9553,7 +8238,7 @@ impl From<JsPageContent> for kreuzberg::PageContent {
         Self {
             page_number: val.page_number as usize,
             content: val.content,
-            tables: val.tables.into_iter().map(|v| std::sync::Arc::new(v.into())).collect(),
+            tables: Default::default(),
             images: val.images.into_iter().map(|v| std::sync::Arc::new(v.into())).collect(),
             hierarchy: val.hierarchy.map(Into::into),
             is_blank: val.is_blank,
@@ -9566,7 +8251,7 @@ impl From<kreuzberg::PageContent> for JsPageContent {
         Self {
             page_number: val.page_number as i64,
             content: val.content,
-            tables: val.tables.into_iter().map(|v| (*v).clone().into()).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             images: val.images.into_iter().map(|v| (*v).clone().into()).collect(),
             hierarchy: val.hierarchy.map(Into::into),
             is_blank: val.is_blank,
@@ -9614,39 +8299,6 @@ impl From<kreuzberg::HierarchicalBlock> for JsHierarchicalBlock {
     }
 }
 
-impl From<JsTable> for kreuzberg::Table {
-    fn from(val: JsTable) -> Self {
-        Self {
-            cells: val.cells.unwrap_or_default(),
-            markdown: val.markdown.unwrap_or_default(),
-            page_number: val.page_number.map(|v| v as usize).unwrap_or_default(),
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::Table> for JsTable {
-    fn from(val: kreuzberg::Table) -> Self {
-        Self {
-            cells: Some(val.cells),
-            markdown: Some(val.markdown),
-            page_number: Some(val.page_number as i64),
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::TableCell> for JsTableCell {
-    fn from(val: kreuzberg::TableCell) -> Self {
-        Self {
-            content: Some(val.content),
-            row_span: Some(val.row_span as i64),
-            col_span: Some(val.col_span as i64),
-            is_header: Some(val.is_header),
-        }
-    }
-}
-
 impl From<JsUri> for kreuzberg::Uri {
     fn from(val: JsUri) -> Self {
         Self {
@@ -9665,24 +8317,6 @@ impl From<kreuzberg::Uri> for JsUri {
             label: val.label,
             page: val.page,
             kind: val.kind.into(),
-        }
-    }
-}
-
-impl From<JsApiError> for kreuzberg::api::ApiError {
-    fn from(val: JsApiError) -> Self {
-        Self {
-            status: Default::default(),
-            body: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::api::ApiError> for JsApiError {
-    fn from(val: kreuzberg::api::ApiError) -> Self {
-        Self {
-            status: format!("{:?}", val.status),
-            body: format!("{:?}", val.body),
         }
     }
 }
@@ -9710,7 +8344,7 @@ impl From<kreuzberg::api::ApiState> for JsApiState {
     fn from(val: kreuzberg::api::ApiState) -> Self {
         Self {
             default_config: (*val.default_config).clone().into(),
-            extraction_service: format!("{:?}", (*val.extraction_service).clone()),
+            extraction_service: format!("{:?}", val.extraction_service),
         }
     }
 }
@@ -10282,7 +8916,7 @@ impl From<JsHierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
     fn from(val: JsHierarchyBlock) -> Self {
         Self {
             text: val.text,
-            bbox: val.bbox.into(),
+            bbox: Default::default(),
             font_size: val.font_size as f32,
             hierarchy_level: Default::default(),
         }
@@ -10293,7 +8927,7 @@ impl From<kreuzberg::pdf::hierarchy::HierarchyBlock> for JsHierarchyBlock {
     fn from(val: kreuzberg::pdf::hierarchy::HierarchyBlock) -> Self {
         Self {
             text: val.text,
-            bbox: val.bbox.into(),
+            bbox: format!("{:?}", val.bbox),
             font_size: val.font_size as f64,
             hierarchy_level: format!("{:?}", val.hierarchy_level),
         }
@@ -10332,21 +8966,11 @@ impl From<kreuzberg::pdf::PdfImage> for JsPdfImage {
     }
 }
 
-impl From<kreuzberg::pdf::layout_runner::PageLayoutRegion> for JsPageLayoutRegion {
-    fn from(val: kreuzberg::pdf::layout_runner::PageLayoutRegion) -> Self {
-        Self {
-            class: val.class.into(),
-            confidence: val.confidence as f64,
-            bbox: format!("{:?}", val.bbox),
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageLayoutResult> for JsPageLayoutResult {
     fn from(val: kreuzberg::pdf::layout_runner::PageLayoutResult) -> Self {
         Self {
             page_index: val.page_index as i64,
-            regions: val.regions.into_iter().map(Into::into).collect(),
+            regions: val.regions.iter().map(|i| format!("{:?}", i)).collect(),
             page_width_pts: val.page_width_pts as f64,
             page_height_pts: val.page_height_pts as f64,
             render_width_px: val.render_width_px,
@@ -10364,38 +8988,6 @@ impl From<kreuzberg::pdf::layout_runner::PageTiming> for JsPageTiming {
             inference_ms: val.inference_ms,
             postprocess_ms: val.postprocess_ms,
             mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
-impl From<JsPdfExtractionMetadata> for kreuzberg::pdf::metadata::PdfExtractionMetadata {
-    fn from(val: JsPdfExtractionMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            authors: val.authors,
-            keywords: val.keywords,
-            created_at: val.created_at,
-            modified_at: val.modified_at,
-            created_by: val.created_by,
-            pdf_specific: Default::default(),
-            page_structure: val.page_structure.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::metadata::PdfExtractionMetadata> for JsPdfExtractionMetadata {
-    fn from(val: kreuzberg::pdf::metadata::PdfExtractionMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            authors: val.authors,
-            keywords: val.keywords,
-            created_at: val.created_at,
-            modified_at: val.modified_at,
-            created_by: val.created_by,
-            pdf_specific: format!("{:?}", val.pdf_specific),
-            page_structure: val.page_structure.map(Into::into),
         }
     }
 }
@@ -10668,21 +9260,6 @@ impl From<kreuzberg::CodeContentMode> for JsCodeContentMode {
     }
 }
 
-impl From<kreuzberg::extraction::hwp::error::HwpError> for JsHwpError {
-    fn from(val: kreuzberg::extraction::hwp::error::HwpError) -> Self {
-        match val {
-            kreuzberg::extraction::hwp::error::HwpError::InvalidFormat(..) => Self::InvalidFormat,
-            kreuzberg::extraction::hwp::error::HwpError::UnsupportedVersion(..) => Self::UnsupportedVersion,
-            kreuzberg::extraction::hwp::error::HwpError::Io(..) => Self::Io,
-            kreuzberg::extraction::hwp::error::HwpError::Cfb(..) => Self::Cfb,
-            kreuzberg::extraction::hwp::error::HwpError::CompressionError(..) => Self::CompressionError,
-            kreuzberg::extraction::hwp::error::HwpError::ParseError(..) => Self::ParseError,
-            kreuzberg::extraction::hwp::error::HwpError::EncodingError(..) => Self::EncodingError,
-            kreuzberg::extraction::hwp::error::HwpError::NotFound(..) => Self::NotFound,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::math::FracType> for JsFracType {
     fn from(val: kreuzberg::extraction::docx::math::FracType) -> Self {
         match val {
@@ -10694,68 +9271,6 @@ impl From<kreuzberg::extraction::docx::math::FracType> for JsFracType {
     }
 }
 
-impl From<kreuzberg::extraction::docx::math::MathNode> for JsMathNode {
-    fn from(val: kreuzberg::extraction::docx::math::MathNode) -> Self {
-        match val {
-            kreuzberg::extraction::docx::math::MathNode::Run(..) => Self::Run,
-            kreuzberg::extraction::docx::math::MathNode::SSup { .. } => Self::SSup,
-            kreuzberg::extraction::docx::math::MathNode::SSub { .. } => Self::SSub,
-            kreuzberg::extraction::docx::math::MathNode::SSubSup { .. } => Self::SSubSup,
-            kreuzberg::extraction::docx::math::MathNode::Frac { .. } => Self::Frac,
-            kreuzberg::extraction::docx::math::MathNode::Rad { .. } => Self::Rad,
-            kreuzberg::extraction::docx::math::MathNode::Nary { .. } => Self::Nary,
-            kreuzberg::extraction::docx::math::MathNode::Delim { .. } => Self::Delim,
-            kreuzberg::extraction::docx::math::MathNode::Func { .. } => Self::Func,
-            kreuzberg::extraction::docx::math::MathNode::Acc { .. } => Self::Acc,
-            kreuzberg::extraction::docx::math::MathNode::EqArr { .. } => Self::EqArr,
-            kreuzberg::extraction::docx::math::MathNode::LimLow { .. } => Self::LimLow,
-            kreuzberg::extraction::docx::math::MathNode::LimUpp { .. } => Self::LimUpp,
-            kreuzberg::extraction::docx::math::MathNode::Bar { .. } => Self::Bar,
-            kreuzberg::extraction::docx::math::MathNode::BorderBox { .. } => Self::BorderBox,
-            kreuzberg::extraction::docx::math::MathNode::Matrix { .. } => Self::Matrix,
-            kreuzberg::extraction::docx::math::MathNode::Group { .. } => Self::Group,
-            kreuzberg::extraction::docx::math::MathNode::SPre { .. } => Self::SPre,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::DocumentElement> for JsDocumentElement {
-    fn from(val: kreuzberg::extraction::docx::parser::DocumentElement) -> Self {
-        match val {
-            kreuzberg::extraction::docx::parser::DocumentElement::Paragraph(..) => Self::Paragraph,
-            kreuzberg::extraction::docx::parser::DocumentElement::Table(..) => Self::Table,
-            kreuzberg::extraction::docx::parser::DocumentElement::Drawing(..) => Self::Drawing,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::security::SecurityError> for JsSecurityError {
-    fn from(val: kreuzberg::extractors::security::SecurityError) -> Self {
-        match val {
-            kreuzberg::extractors::security::SecurityError::ZipBombDetected { .. } => Self::ZipBombDetected,
-            kreuzberg::extractors::security::SecurityError::ArchiveTooLarge { .. } => Self::ArchiveTooLarge,
-            kreuzberg::extractors::security::SecurityError::TooManyFiles { .. } => Self::TooManyFiles,
-            kreuzberg::extractors::security::SecurityError::NestingTooDeep { .. } => Self::NestingTooDeep,
-            kreuzberg::extractors::security::SecurityError::ContentTooLarge { .. } => Self::ContentTooLarge,
-            kreuzberg::extractors::security::SecurityError::EntityTooLong { .. } => Self::EntityTooLong,
-            kreuzberg::extractors::security::SecurityError::TooManyIterations { .. } => Self::TooManyIterations,
-            kreuzberg::extractors::security::SecurityError::XmlDepthExceeded { .. } => Self::XmlDepthExceeded,
-            kreuzberg::extractors::security::SecurityError::TooManyCells { .. } => Self::TooManyCells,
-        }
-    }
-}
-
-impl From<JsOcrBackendType> for kreuzberg::plugins::OcrBackendType {
-    fn from(val: JsOcrBackendType) -> Self {
-        match val {
-            JsOcrBackendType::Tesseract => Self::Tesseract,
-            JsOcrBackendType::EasyOCR => Self::EasyOCR,
-            JsOcrBackendType::PaddleOCR => Self::PaddleOCR,
-            JsOcrBackendType::Custom => Self::Custom,
-        }
-    }
-}
-
 impl From<kreuzberg::plugins::OcrBackendType> for JsOcrBackendType {
     fn from(val: kreuzberg::plugins::OcrBackendType) -> Self {
         match val {
@@ -10763,6 +9278,18 @@ impl From<kreuzberg::plugins::OcrBackendType> for JsOcrBackendType {
             kreuzberg::plugins::OcrBackendType::EasyOCR => Self::EasyOCR,
             kreuzberg::plugins::OcrBackendType::PaddleOCR => Self::PaddleOCR,
             kreuzberg::plugins::OcrBackendType::Custom => Self::Custom,
+        }
+    }
+}
+
+impl From<JsReductionLevel> for kreuzberg::text::ReductionLevel {
+    fn from(val: JsReductionLevel) -> Self {
+        match val {
+            JsReductionLevel::Off => Self::Off,
+            JsReductionLevel::Light => Self::Light,
+            JsReductionLevel::Moderate => Self::Moderate,
+            JsReductionLevel::Aggressive => Self::Aggressive,
+            JsReductionLevel::Maximum => Self::Maximum,
         }
     }
 }
@@ -10969,7 +9496,7 @@ impl From<JsNodeContent> for kreuzberg::NodeContent {
                 text: val.text.unwrap_or_default(),
             },
             "table" => Self::Table {
-                grid: val.grid.unwrap_or_default().into(),
+                grid: Default::default(),
             },
             "image" => Self::Image {
                 description: val.description,
@@ -11142,14 +9669,14 @@ impl From<kreuzberg::NodeContent> for JsNodeContent {
                 text: Some(text),
                 title: None,
             },
-            kreuzberg::NodeContent::Table { grid } => Self {
+            kreuzberg::NodeContent::Table { grid: _grid } => Self {
                 node_type_tag: "table".to_string(),
                 content: None,
                 definition: None,
                 description: None,
                 entries: None,
                 format: None,
-                grid: Some(grid.into()),
+                grid: None,
                 heading_level: None,
                 heading_text: None,
                 image_index: None,
@@ -11660,6 +10187,24 @@ impl From<kreuzberg::ChunkType> for JsChunkType {
     }
 }
 
+impl From<JsExtractionMode> for kreuzberg::ExtractionMode {
+    fn from(val: JsExtractionMode) -> Self {
+        match val {
+            JsExtractionMode::Unified => Self::Unified,
+            JsExtractionMode::ElementBased => Self::ElementBased,
+        }
+    }
+}
+
+impl From<kreuzberg::ExtractionMode> for JsExtractionMode {
+    fn from(val: kreuzberg::ExtractionMode) -> Self {
+        match val {
+            kreuzberg::ExtractionMode::Unified => Self::Unified,
+            kreuzberg::ExtractionMode::ElementBased => Self::ElementBased,
+        }
+    }
+}
+
 impl From<JsElementType> for kreuzberg::ElementType {
     fn from(val: JsElementType) -> Self {
         match val {
@@ -11705,7 +10250,7 @@ impl From<JsFormatMetadata> for kreuzberg::FormatMetadata {
             "email" => Self::Email(val._0.unwrap_or_default().into()),
             "pptx" => Self::Pptx(val._0.unwrap_or_default().into()),
             "archive" => Self::Archive(val._0.unwrap_or_default().into()),
-            "image" => Self::Image(val._0.unwrap_or_default().into()),
+            "image" => Self::Image(Default::default()),
             "xml" => Self::Xml(val._0.unwrap_or_default().into()),
             "text" => Self::Text(val._0.unwrap_or_default().into()),
             "html" => Self::Html(val._0.unwrap_or_default().into()),
@@ -11751,9 +10296,9 @@ impl From<kreuzberg::FormatMetadata> for JsFormatMetadata {
                 format_type_tag: "archive".to_string(),
                 _0: Some(_0.into()),
             },
-            kreuzberg::FormatMetadata::Image(_0) => Self {
+            kreuzberg::FormatMetadata::Image(__0) => Self {
                 format_type_tag: "image".to_string(),
-                _0: Some(_0.into()),
+                _0: None,
             },
             kreuzberg::FormatMetadata::Xml(_0) => Self {
                 format_type_tag: "xml".to_string(),
@@ -12043,21 +10588,6 @@ impl From<kreuzberg::KeywordAlgorithm> for JsKeywordAlgorithm {
     }
 }
 
-impl From<kreuzberg::ocr::OcrError> for JsOcrError {
-    fn from(val: kreuzberg::ocr::OcrError) -> Self {
-        match val {
-            kreuzberg::ocr::OcrError::TesseractInitializationFailed(..) => Self::TesseractInitializationFailed,
-            kreuzberg::ocr::OcrError::UnsupportedVersion(..) => Self::UnsupportedVersion,
-            kreuzberg::ocr::OcrError::InvalidConfiguration(..) => Self::InvalidConfiguration,
-            kreuzberg::ocr::OcrError::InvalidLanguageCode(..) => Self::InvalidLanguageCode,
-            kreuzberg::ocr::OcrError::ImageProcessingFailed(..) => Self::ImageProcessingFailed,
-            kreuzberg::ocr::OcrError::ProcessingFailed(..) => Self::ProcessingFailed,
-            kreuzberg::ocr::OcrError::CacheError(..) => Self::CacheError,
-            kreuzberg::ocr::OcrError::IOError(..) => Self::IOError,
-        }
-    }
-}
-
 impl From<kreuzberg::PSMMode> for JsPSMMode {
     fn from(val: kreuzberg::PSMMode) -> Self {
         match val {
@@ -12143,24 +10673,6 @@ impl From<kreuzberg::LayoutClass> for JsLayoutClass {
             kreuzberg::LayoutClass::CheckboxUnselected => Self::CheckboxUnselected,
             kreuzberg::LayoutClass::Form => Self::Form,
             kreuzberg::LayoutClass::KeyValueRegion => Self::KeyValueRegion,
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::PdfError> for JsPdfError {
-    fn from(val: kreuzberg::pdf::PdfError) -> Self {
-        match val {
-            kreuzberg::pdf::PdfError::InvalidPdf(..) => Self::InvalidPdf,
-            kreuzberg::pdf::PdfError::PasswordRequired => Self::PasswordRequired,
-            kreuzberg::pdf::PdfError::InvalidPassword => Self::InvalidPassword,
-            kreuzberg::pdf::PdfError::EncryptionNotSupported(..) => Self::EncryptionNotSupported,
-            kreuzberg::pdf::PdfError::PageNotFound(..) => Self::PageNotFound,
-            kreuzberg::pdf::PdfError::TextExtractionFailed(..) => Self::TextExtractionFailed,
-            kreuzberg::pdf::PdfError::RenderingFailed(..) => Self::RenderingFailed,
-            kreuzberg::pdf::PdfError::MetadataExtractionFailed(..) => Self::MetadataExtractionFailed,
-            kreuzberg::pdf::PdfError::ExtractionFailed(..) => Self::ExtractionFailed,
-            kreuzberg::pdf::PdfError::FontLoadingFailed(..) => Self::FontLoadingFailed,
-            kreuzberg::pdf::PdfError::IOError(..) => Self::IOError,
         }
     }
 }

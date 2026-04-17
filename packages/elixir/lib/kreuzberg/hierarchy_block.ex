@@ -3,7 +3,7 @@ defmodule Kreuzberg.HierarchyBlock do
   @moduledoc "A TextBlock with hierarchy level assignment."
 
   defstruct text: "",
-            bbox: nil,
+            bbox: "",
             font_size: 0.0,
             hierarchy_level: ""
 end

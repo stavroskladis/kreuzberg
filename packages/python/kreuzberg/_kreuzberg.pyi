@@ -38,7 +38,7 @@ class ExtractionConfig:
     content_filter: ContentFilterConfig | None
     images: ImageExtractionConfig | None
     pdf_options: PdfConfig | None
-    token_reduction: TokenReductionConfig | None
+    token_reduction: TokenReductionOptions | None
     language_detection: LanguageDetectionConfig | None
     pages: PageConfig | None
     postprocessor: PostProcessorConfig | None
@@ -46,7 +46,7 @@ class ExtractionConfig:
     html_output: HtmlOutputConfig | None
     extraction_timeout_secs: int | None
     max_concurrent_extractions: int | None
-    result_format: OutputFormat
+    result_format: ExtractionMode
     security_limits: str | None
     output_format: OutputFormat
     layout: LayoutDetectionConfig | None
@@ -65,7 +65,7 @@ class ExtractionConfig:
         enable_quality_processing: bool,
         force_ocr: bool,
         disable_ocr: bool,
-        result_format: OutputFormat | dict[str, Any],
+        result_format: ExtractionMode | str,
         output_format: OutputFormat | dict[str, Any],
         include_document_structure: bool,
         max_archive_depth: int,
@@ -75,7 +75,7 @@ class ExtractionConfig:
         content_filter: ContentFilterConfig | None = None,
         images: ImageExtractionConfig | None = None,
         pdf_options: PdfConfig | None = None,
-        token_reduction: TokenReductionConfig | None = None,
+        token_reduction: TokenReductionOptions | None = None,
         language_detection: LanguageDetectionConfig | None = None,
         pages: PageConfig | None = None,
         postprocessor: PostProcessorConfig | None = None,
@@ -111,12 +111,12 @@ class FileExtractionConfig:
     content_filter: ContentFilterConfig | None
     images: ImageExtractionConfig | None
     pdf_options: PdfConfig | None
-    token_reduction: TokenReductionConfig | None
+    token_reduction: TokenReductionOptions | None
     language_detection: LanguageDetectionConfig | None
     pages: PageConfig | None
     postprocessor: PostProcessorConfig | None
     html_options: str | None
-    result_format: OutputFormat | None
+    result_format: ExtractionMode | None
     output_format: OutputFormat | None
     include_document_structure: bool | None
     layout: LayoutDetectionConfig | None
@@ -134,12 +134,12 @@ class FileExtractionConfig:
         content_filter: ContentFilterConfig | None = None,
         images: ImageExtractionConfig | None = None,
         pdf_options: PdfConfig | None = None,
-        token_reduction: TokenReductionConfig | None = None,
+        token_reduction: TokenReductionOptions | None = None,
         language_detection: LanguageDetectionConfig | None = None,
         pages: PageConfig | None = None,
         postprocessor: PostProcessorConfig | None = None,
         html_options: str | None = None,
-        result_format: OutputFormat | dict[str, Any] | None = None,
+        result_format: ExtractionMode | str | None = None,
         output_format: OutputFormat | dict[str, Any] | None = None,
         include_document_structure: bool | None = None,
         layout: LayoutDetectionConfig | None = None,
@@ -167,7 +167,7 @@ class ImageExtractionConfig:
         max_dpi: int,
     ) -> None: ...
 
-class TokenReductionConfig:
+class TokenReductionOptions:
     mode: str
     preserve_important_words: bool
     def __init__(self, mode: str, preserve_important_words: bool) -> None: ...
@@ -499,10 +499,6 @@ class TreeSitterProcessConfig:
     @staticmethod
     def default() -> TreeSitterProcessConfig: ...
 
-class FileBytes:
-    def deref(self) -> bytes: ...
-    def as_ref(self) -> bytes: ...
-
 class SupportedFormat:
     extension: str
     mime_type: str
@@ -552,23 +548,6 @@ class StructuredDataResult:
         text_fields: list[str],
     ) -> None: ...
 
-class ListItemMetadata:
-    list_type: str
-    byte_start: int
-    byte_end: int
-    indent_level: int
-    def __init__(
-        self,
-        list_type: str,
-        byte_start: int,
-        byte_end: int,
-        indent_level: int,
-    ) -> None: ...
-
-class Section:
-    paragraphs: list[str]
-    def __init__(self, paragraphs: list[str]) -> None: ...
-
 class StreamReader:
     def read_u8(self) -> int: ...
     def read_u16(self) -> int: ...
@@ -616,24 +595,6 @@ class ExtractedInlineImage:
         dimensions: str | None = None,
     ) -> None: ...
 
-class DocExtractionResult:
-    text: str
-    metadata: str
-    def __init__(self, text: str, metadata: str) -> None: ...
-
-class Drawing:
-    drawing_type: str
-    extent: str | None
-    doc_properties: str | None
-    image_ref: str | None
-    def __init__(
-        self,
-        drawing_type: str,
-        extent: str | None = None,
-        doc_properties: str | None = None,
-        image_ref: str | None = None,
-    ) -> None: ...
-
 class AnchorProperties:
     behind_doc: bool
     layout_in_cell: bool
@@ -651,16 +612,11 @@ class AnchorProperties:
         position_v: str | None = None,
     ) -> None: ...
 
-class TableRow:
-    cells: list[TableCell]
-    properties: str | None
-    def __init__(self, cells: list[TableCell], properties: str | None = None) -> None: ...
-
 class HeaderFooter:
     paragraphs: list[str]
-    tables: list[Table]
+    tables: list[str]
     header_type: str
-    def __init__(self, paragraphs: list[str], tables: list[Table], header_type: str) -> None: ...
+    def __init__(self, paragraphs: list[str], tables: list[str], header_type: str) -> None: ...
 
 class Note:
     id: str
@@ -712,29 +668,6 @@ class ResolvedStyle:
     paragraph_properties: str
     run_properties: str
     def __init__(self, paragraph_properties: str, run_properties: str) -> None: ...
-
-class TableProperties:
-    style_id: str | None
-    width: str | None
-    alignment: str | None
-    layout: str | None
-    look: str | None
-    borders: str | None
-    cell_margins: str | None
-    indent: str | None
-    caption: str | None
-    def __init__(
-        self,
-        style_id: str | None = None,
-        width: str | None = None,
-        alignment: str | None = None,
-        layout: str | None = None,
-        look: str | None = None,
-        borders: str | None = None,
-        cell_margins: str | None = None,
-        indent: str | None = None,
-        caption: str | None = None,
-    ) -> None: ...
 
 class XlsxAppProperties:
     application: str | None
@@ -838,19 +771,6 @@ class OdtProperties:
         image_count: int | None = None,
     ) -> None: ...
 
-class PptExtractionResult:
-    text: str
-    slide_count: int
-    metadata: str
-    speaker_notes: list[str]
-    def __init__(
-        self,
-        text: str,
-        slide_count: int,
-        metadata: str,
-        speaker_notes: list[str],
-    ) -> None: ...
-
 class ZipBombValidator:
     ...
 
@@ -887,65 +807,53 @@ class OcrFallbackDecision:
         fallback: bool,
     ) -> None: ...
 
-class ModelCache:
-    def put(self, model: str) -> None: ...
-    def take(self) -> str | None: ...
-
-class ExtractionMetrics:
-    extraction_total: str
-    cache_hits: str
-    cache_misses: str
-    batch_total: str
-    extraction_duration_ms: str
-    extraction_input_bytes: str
-    extraction_output_bytes: str
-    pipeline_duration_ms: str
-    ocr_duration_ms: str
-    batch_duration_ms: str
-    concurrent_extractions: str
+class TokenReductionConfig:
+    level: ReductionLevel
+    language_hint: str | None
+    preserve_markdown: bool
+    preserve_code: bool
+    semantic_threshold: float
+    enable_parallel: bool
+    use_simd: bool
+    custom_stopwords: dict[str, list[str]] | None
+    preserve_patterns: list[str]
+    target_reduction: float | None
+    enable_semantic_clustering: bool
     def __init__(
         self,
-        extraction_total: str,
-        cache_hits: str,
-        cache_misses: str,
-        batch_total: str,
-        extraction_duration_ms: str,
-        extraction_input_bytes: str,
-        extraction_output_bytes: str,
-        pipeline_duration_ms: str,
-        ocr_duration_ms: str,
-        batch_duration_ms: str,
-        concurrent_extractions: str,
+        level: ReductionLevel | str,
+        preserve_markdown: bool,
+        preserve_code: bool,
+        semantic_threshold: float,
+        enable_parallel: bool,
+        use_simd: bool,
+        preserve_patterns: list[str],
+        enable_semantic_clustering: bool,
+        language_hint: str | None = None,
+        custom_stopwords: dict[str, list[str]] | None = None,
+        target_reduction: float | None = None,
     ) -> None: ...
-
-class QualityProcessor:
-    def name(self) -> str: ...
-    def version(self) -> str: ...
-    def initialize(self) -> None: ...
-    def shutdown(self) -> None: ...
-    def process(self, result: ExtractionResult, _config: ExtractionConfig) -> None: ...
-    def processing_stage(self) -> str: ...
-    def should_process(self, _result: ExtractionResult, config: ExtractionConfig) -> bool: ...
-    def estimated_duration_ms(self, result: ExtractionResult) -> int: ...
+    @staticmethod
+    def default() -> TokenReductionConfig: ...
 
 class PdfAnnotation:
     annotation_type: PdfAnnotationType
     content: str | None
     page_number: int
-    bounding_box: BoundingBox | None
+    bounding_box: str | None
     def __init__(
         self,
         annotation_type: PdfAnnotationType | str,
         page_number: int,
         content: str | None = None,
-        bounding_box: BoundingBox | None = None,
+        bounding_box: str | None = None,
     ) -> None: ...
 
 class DjotContent:
     plain_text: str
     blocks: list[FormattedBlock]
     metadata: Metadata
-    tables: list[Table]
+    tables: list[str]
     images: list[DjotImage]
     links: list[DjotLink]
     footnotes: list[Footnote]
@@ -955,7 +863,7 @@ class DjotContent:
         plain_text: str,
         blocks: list[FormattedBlock],
         metadata: Metadata,
-        tables: list[Table],
+        tables: list[str],
         images: list[DjotImage],
         links: list[DjotLink],
         footnotes: list[Footnote],
@@ -966,7 +874,7 @@ class FormattedBlock:
     block_type: BlockType
     level: int | None
     inline_content: list[InlineElement]
-    attributes: Attributes | None
+    attributes: str | None
     language: str | None
     code: str | None
     children: list[FormattedBlock]
@@ -976,7 +884,7 @@ class FormattedBlock:
         inline_content: list[InlineElement],
         children: list[FormattedBlock],
         level: int | None = None,
-        attributes: Attributes | None = None,
+        attributes: str | None = None,
         language: str | None = None,
         code: str | None = None,
     ) -> None: ...
@@ -984,63 +892,46 @@ class FormattedBlock:
 class InlineElement:
     element_type: InlineType
     content: str
-    attributes: Attributes | None
+    attributes: str | None
     metadata: dict[str, str] | None
     def __init__(
         self,
         element_type: InlineType | str,
         content: str,
-        attributes: Attributes | None = None,
+        attributes: str | None = None,
         metadata: dict[str, str] | None = None,
-    ) -> None: ...
-
-class Attributes:
-    id: str | None
-    classes: list[str]
-    key_values: list[str]
-    def __init__(
-        self,
-        classes: list[str],
-        key_values: list[str],
-        id: str | None = None,  # noqa: A002
     ) -> None: ...
 
 class DjotImage:
     src: str
     alt: str
     title: str | None
-    attributes: Attributes | None
+    attributes: str | None
     def __init__(
         self,
         src: str,
         alt: str,
         title: str | None = None,
-        attributes: Attributes | None = None,
+        attributes: str | None = None,
     ) -> None: ...
 
 class DjotLink:
     url: str
     text: str
     title: str | None
-    attributes: Attributes | None
+    attributes: str | None
     def __init__(
         self,
         url: str,
         text: str,
         title: str | None = None,
-        attributes: Attributes | None = None,
+        attributes: str | None = None,
     ) -> None: ...
 
 class Footnote:
     label: str
     content: list[FormattedBlock]
     def __init__(self, label: str, content: list[FormattedBlock]) -> None: ...
-
-class NodeId:
-    def as_ref(self) -> str: ...
-    def fmt(self, f: str) -> str: ...
-    @staticmethod
-    def generate(node_type: str, text: str, index: int, page: int | None = None) -> NodeId: ...
 
 class DocumentStructure:
     nodes: list[DocumentNode]
@@ -1072,19 +963,19 @@ class DocumentRelationship:
     def __init__(self, source: int, target: int, kind: RelationshipKind | str) -> None: ...
 
 class DocumentNode:
-    id: NodeId
+    id: str
     content: NodeContent
     parent: int | None
     children: list[int]
     content_layer: ContentLayer
     page: int | None
     page_end: int | None
-    bbox: BoundingBox | None
+    bbox: str | None
     annotations: list[TextAnnotation]
     attributes: dict[str, str] | None
     def __init__(
         self,
-        id: NodeId,  # noqa: A002
+        id: str,  # noqa: A002
         content: NodeContent | dict[str, Any],
         children: list[int],
         content_layer: ContentLayer | str,
@@ -1092,15 +983,9 @@ class DocumentNode:
         parent: int | None = None,
         page: int | None = None,
         page_end: int | None = None,
-        bbox: BoundingBox | None = None,
+        bbox: str | None = None,
         attributes: dict[str, str] | None = None,
     ) -> None: ...
-
-class TableGrid:
-    rows: int
-    cols: int
-    cells: list[GridCell]
-    def __init__(self, rows: int, cols: int, cells: list[GridCell]) -> None: ...
 
 class GridCell:
     content: str
@@ -1109,7 +994,7 @@ class GridCell:
     row_span: int
     col_span: int
     is_header: bool
-    bbox: BoundingBox | None
+    bbox: str | None
     def __init__(
         self,
         content: str,
@@ -1118,7 +1003,7 @@ class GridCell:
         row_span: int,
         col_span: int,
         is_header: bool,
-        bbox: BoundingBox | None = None,
+        bbox: str | None = None,
     ) -> None: ...
 
 class TextAnnotation:
@@ -1131,7 +1016,7 @@ class ExtractionResult:
     content: str
     mime_type: str
     metadata: Metadata
-    tables: list[Table]
+    tables: list[str]
     detected_languages: list[str] | None
     chunks: list[Chunk] | None
     images: list[ExtractedImage] | None
@@ -1155,7 +1040,7 @@ class ExtractionResult:
         content: str,
         mime_type: str,
         metadata: Metadata,
-        tables: list[Table],
+        tables: list[str],
         processing_warnings: list[ProcessingWarning],
         detected_languages: list[str] | None = None,
         chunks: list[Chunk] | None = None,
@@ -1261,7 +1146,7 @@ class ExtractedImage:
     is_mask: bool
     description: str | None
     ocr_result: ExtractionResult | None
-    bounding_box: BoundingBox | None
+    bounding_box: str | None
     source_path: str | None
     def __init__(
         self,
@@ -1276,27 +1161,14 @@ class ExtractedImage:
         bits_per_component: int | None = None,
         description: str | None = None,
         ocr_result: ExtractionResult | None = None,
-        bounding_box: BoundingBox | None = None,
+        bounding_box: str | None = None,
         source_path: str | None = None,
     ) -> None: ...
-
-class ElementId:
-    def as_ref(self) -> str: ...
-    def fmt(self, f: str) -> str: ...
-    @staticmethod
-    def new(hex_str: str) -> ElementId: ...
-
-class BoundingBox:
-    x0: float
-    y0: float
-    x1: float
-    y1: float
-    def __init__(self, x0: float, y0: float, x1: float, y1: float) -> None: ...
 
 class ElementMetadata:
     page_number: int | None
     filename: str | None
-    coordinates: BoundingBox | None
+    coordinates: str | None
     element_index: int | None
     additional: dict[str, str]
     def __init__(
@@ -1304,18 +1176,18 @@ class ElementMetadata:
         additional: dict[str, str],
         page_number: int | None = None,
         filename: str | None = None,
-        coordinates: BoundingBox | None = None,
+        coordinates: str | None = None,
         element_index: int | None = None,
     ) -> None: ...
 
 class Element:
-    element_id: ElementId
+    element_id: str
     element_type: ElementType
     text: str
     metadata: ElementMetadata
     def __init__(
         self,
-        element_id: ElementId,
+        element_id: str,
         element_type: ElementType | str,
         text: str,
         metadata: ElementMetadata,
@@ -1663,13 +1535,6 @@ class ArchiveMetadata:
         compressed_size: int | None = None,
     ) -> None: ...
 
-class ImageMetadata:
-    width: int
-    height: int
-    format: str
-    exif: dict[str, str]
-    def __init__(self, width: int, height: int, format: str, exif: dict[str, str]) -> None: ...
-
 class XmlMetadata:
     element_count: int
     unique_elements: list[str]
@@ -1996,7 +1861,6 @@ class OcrElement:
     def with_page_number(self, page_number: int) -> OcrElement: ...
     def with_parent_id(self, parent_id: str) -> OcrElement: ...
     def with_metadata(self, key: str, value: dict[str, Any]) -> OcrElement: ...
-    def with_rotation_opt(self, rotation: OcrRotation | None = None) -> OcrElement: ...
 
 class OcrElementConfig:
     include_elements: bool
@@ -2052,7 +1916,7 @@ class PageInfo:
 class PageContent:
     page_number: int
     content: str
-    tables: list[Table]
+    tables: list[str]
     images: list[ExtractedImage]
     hierarchy: PageHierarchy | None
     is_blank: bool | None
@@ -2060,7 +1924,7 @@ class PageContent:
         self,
         page_number: int,
         content: str,
-        tables: list[Table],
+        tables: list[str],
         images: list[ExtractedImage],
         hierarchy: PageHierarchy | None = None,
         is_blank: bool | None = None,
@@ -2083,26 +1947,6 @@ class HierarchicalBlock:
         level: str,
         bbox: str | None = None,
     ) -> None: ...
-
-class Table:
-    cells: list[list[str]]
-    markdown: str
-    page_number: int
-    bounding_box: BoundingBox | None
-    def __init__(
-        self,
-        cells: list[list[str]],
-        markdown: str,
-        page_number: int,
-        bounding_box: BoundingBox | None = None,
-    ) -> None: ...
-
-class TableCell:
-    content: str
-    row_span: int
-    col_span: int
-    is_header: bool
-    def __init__(self, content: str, row_span: int, col_span: int, is_header: bool) -> None: ...
 
 class Uri:
     url: str
@@ -2136,11 +1980,6 @@ class StringBufferPool:
 class ByteBufferPool:
     ...
 
-class Pool:
-    def acquire(self) -> str: ...
-    def size(self) -> int: ...
-    def clear(self) -> None: ...
-
 class PooledString:
     def buffer_mut(self) -> str: ...
     def as_str(self) -> str: ...
@@ -2149,34 +1988,11 @@ class PooledString:
     def drop(self) -> None: ...
     def fmt(self, f: str) -> str: ...
 
-class InternedString:
-    def as_str(self) -> str: ...
-    def as_ref(self) -> str: ...
-    def fmt(self, f: str) -> str: ...
-    def eq(self, other: InternedString) -> bool: ...
-    def deref(self) -> str: ...
-
 class TracingLayer:
     def layer(self, inner: str) -> str: ...
 
 class MetricsLayer:
     def layer(self, inner: str) -> str: ...
-
-class ApiError:
-    status: str
-    body: str
-    def __init__(self, status: str, body: str) -> None: ...
-    def into_response(self) -> str: ...
-    @staticmethod
-    def validation(error: str) -> ApiError: ...
-    @staticmethod
-    def unprocessable(error: str) -> ApiError: ...
-    @staticmethod
-    def internal(error: str) -> ApiError: ...
-    @staticmethod
-    def bad_gateway(error: str) -> ApiError: ...
-    @staticmethod
-    def from_(error: str) -> ApiError: ...
 
 class ApiDoc:
     ...
@@ -2436,25 +2252,6 @@ class ChunkingResult:
     chunk_count: int
     def __init__(self, chunks: list[Chunk], chunk_count: int) -> None: ...
 
-class ChunkingProcessor:
-    def name(self) -> str: ...
-    def version(self) -> str: ...
-    def initialize(self) -> None: ...
-    def shutdown(self) -> None: ...
-    def process(self, result: ExtractionResult, config: ExtractionConfig) -> None: ...
-    def processing_stage(self) -> str: ...
-    def should_process(self, _result: ExtractionResult, config: ExtractionConfig) -> bool: ...
-    def estimated_duration_ms(self, result: ExtractionResult) -> int: ...
-
-class VlmOcrBackend:
-    def name(self) -> str: ...
-    def version(self) -> str: ...
-    def initialize(self) -> None: ...
-    def shutdown(self) -> None: ...
-    def process_image(self, image_bytes: bytes, config: OcrConfig) -> ExtractionResult: ...
-    def supports_language(self, _lang: str) -> bool: ...
-    def backend_type(self) -> OcrBackendType: ...
-
 class YakeParams:
     window_size: int
     def __init__(self, window_size: int) -> None: ...
@@ -2606,7 +2403,7 @@ class LayoutDetection:
     def __init__(self, class: LayoutClass | str, confidence: float, bbox: BBox) -> None: ...
     def fmt(self, f: str) -> str: ...
     @staticmethod
-    def sort_by_confidence_desc(detections: list[LayoutDetection]) -> None: ...
+    def sort_by_confidence_desc(detections: list[LayoutDetection]) -> list[LayoutDetection]: ...
 
 class DetectionResult:
     page_width: int
@@ -2655,16 +2452,10 @@ class CharData:
 
 class HierarchyBlock:
     text: str
-    bbox: BoundingBox
+    bbox: str
     font_size: float
     hierarchy_level: str
-    def __init__(
-        self,
-        text: str,
-        bbox: BoundingBox,
-        font_size: float,
-        hierarchy_level: str,
-    ) -> None: ...
+    def __init__(self, text: str, bbox: str, font_size: float, hierarchy_level: str) -> None: ...
 
 class PdfImage:
     page_number: int
@@ -2689,15 +2480,9 @@ class PdfImage:
         bits_per_component: int | None = None,
     ) -> None: ...
 
-class PageLayoutRegion:
-    class: LayoutClass
-    confidence: float
-    bbox: str
-    def __init__(self, class: LayoutClass | str, confidence: float, bbox: str) -> None: ...
-
 class PageLayoutResult:
     page_index: int
-    regions: list[PageLayoutRegion]
+    regions: list[str]
     page_width_pts: float
     page_height_pts: float
     render_width_px: int
@@ -2705,7 +2490,7 @@ class PageLayoutResult:
     def __init__(
         self,
         page_index: int,
-        regions: list[PageLayoutRegion],
+        regions: list[str],
         page_width_pts: float,
         page_height_pts: float,
         render_width_px: int,
@@ -2727,29 +2512,6 @@ class PageTiming:
         inference_ms: float,
         postprocess_ms: float,
         mapping_ms: float,
-    ) -> None: ...
-
-class PdfExtractionMetadata:
-    title: str | None
-    subject: str | None
-    authors: list[str] | None
-    keywords: list[str] | None
-    created_at: str | None
-    modified_at: str | None
-    created_by: str | None
-    pdf_specific: str
-    page_structure: PageStructure | None
-    def __init__(
-        self,
-        pdf_specific: str,
-        title: str | None = None,
-        subject: str | None = None,
-        authors: list[str] | None = None,
-        keywords: list[str] | None = None,
-        created_at: str | None = None,
-        modified_at: str | None = None,
-        created_by: str | None = None,
-        page_structure: PageStructure | None = None,
     ) -> None: ...
 
 class CommonPdfMetadata:
@@ -2826,24 +2588,12 @@ class CodeContentMode:
     Structure: CodeContentMode = ...
     def __init__(self, value: int | str) -> None: ...
 
-class HwpError:
-    def __init__(self, value: dict[str, Any]) -> None: ...
-
 class FracType:
     Bar: FracType = ...
     NoBar: FracType = ...
     Linear: FracType = ...
     Skewed: FracType = ...
     def __init__(self, value: int | str) -> None: ...
-
-class MathNode:
-    def __init__(self, value: dict[str, Any]) -> None: ...
-
-class DocumentElement:
-    def __init__(self, value: dict[str, Any]) -> None: ...
-
-class SecurityError:
-    def __init__(self, value: dict[str, Any]) -> None: ...
 
 class OcrBackendType:
     Tesseract: OcrBackendType = ...
@@ -2947,6 +2697,11 @@ class ChunkType:
     Unknown: ChunkType = ...
     def __init__(self, value: int | str) -> None: ...
 
+class ExtractionMode:
+    Unified: ExtractionMode = ...
+    ElementBased: ExtractionMode = ...
+    def __init__(self, value: int | str) -> None: ...
+
 class ElementType:
     Title: ElementType = ...
     NarrativeText: ElementType = ...
@@ -3026,9 +2781,6 @@ class KeywordAlgorithm:
     Rake: KeywordAlgorithm = ...
     def __init__(self, value: int | str) -> None: ...
 
-class OcrError:
-    def __init__(self, value: dict[str, Any]) -> None: ...
-
 class PSMMode:
     OsdOnly: PSMMode = ...
     AutoOsd: PSMMode = ...
@@ -3081,9 +2833,6 @@ class LayoutClass:
     Form: LayoutClass = ...
     KeyValueRegion: LayoutClass = ...
     def __init__(self, value: int | str) -> None: ...
-
-class PdfError:
-    def __init__(self, value: dict[str, Any]) -> None: ...
 
 def get_cache_metadata(cache_dir: str) -> str: ...
 
@@ -3140,14 +2889,11 @@ def resolve_thread_budget(config: str | None = None) -> int: ...
 
 def init_thread_pools(budget: int) -> None: ...
 
-def merge_config_json(
-    base: ExtractionConfig,
-    override_json: dict[str, Any],
-) -> ExtractionConfig: ...
+def merge_config_json(base: ExtractionConfig, override_json: str) -> ExtractionConfig: ...
 
 def build_config_from_json(
     base: ExtractionConfig,
-    override_json: dict[str, Any] | None = None,
+    override_json: str | None = None,
 ) -> ExtractionConfig: ...
 
 def validate_port(port: int) -> None: ...
@@ -3194,37 +2940,9 @@ def extract_file(
 
 def get_pool_sizing_hint(file_size: int, mime_type: str) -> str: ...
 
-def extract_file_sync(
-    path: str,
-    config: ExtractionConfig,
-    mime_type: str | None = None,
-) -> ExtractionResult: ...
-
-def extract_bytes_sync(
-    content: bytes,
-    mime_type: str,
-    config: ExtractionConfig,
-) -> ExtractionResult: ...
-
-def batch_extract_file_sync(
-    items: list[str],
-    config: ExtractionConfig,
-) -> list[ExtractionResult]: ...
-
-def batch_extract_bytes_sync(
-    items: list[str],
-    config: ExtractionConfig,
-) -> list[ExtractionResult]: ...
-
-def batch_extract_file(items: list[str], config: ExtractionConfig) -> list[ExtractionResult]: ...
-
-def batch_extract_bytes(items: list[str], config: ExtractionConfig) -> list[ExtractionResult]: ...
-
 def is_valid_format_field(field: str) -> bool: ...
 
-def open_file_bytes(path: str) -> FileBytes: ...
-
-def read_file_async(path: str) -> bytes: ...
+def open_file_bytes(path: str) -> str: ...
 
 def read_file_sync(path: str) -> bytes: ...
 
@@ -3248,23 +2966,14 @@ def list_supported_formats() -> list[SupportedFormat]: ...
 
 def clear_processor_cache() -> None: ...
 
-def apply_output_format(result: ExtractionResult, output_format: OutputFormat) -> None: ...
-
-def run_pipeline(doc: str, config: ExtractionConfig) -> ExtractionResult: ...
-
-def run_pipeline_sync(doc: str, config: ExtractionConfig) -> ExtractionResult: ...
+def apply_output_format(
+    result: ExtractionResult,
+    output_format: OutputFormat,
+) -> ExtractionResult: ...
 
 def is_page_text_blank(text: str) -> bool: ...
 
 def resolve_relationships(doc: str) -> None: ...
-
-def derive_document_structure(doc: str) -> DocumentStructure: ...
-
-def derive_extraction_result(
-    doc: str,
-    include_document_structure: bool,
-    output_format: OutputFormat,
-) -> ExtractionResult: ...
 
 def parse_json(data: bytes, config: str | None = None) -> StructuredDataResult: ...
 
@@ -3278,32 +2987,23 @@ def parse_text(text_bytes: bytes, is_markdown: bool) -> TextExtractionResult: ..
 
 def transform_to_document_structure(result: ExtractionResult) -> DocumentStructure: ...
 
-def detect_list_items(text: str) -> list[ListItemMetadata]: ...
+def detect_list_items(text: str) -> list[str]: ...
 
 def generate_element_id(
     text: str,
     element_type: ElementType,
     page_number: int | None = None,
-) -> ElementId: ...
+) -> str: ...
 
 def transform_extraction_result_to_elements(result: ExtractionResult) -> list[Element]: ...
 
-def parse_body_text(data: bytes, is_compressed: bool) -> list[Section]: ...
+def parse_body_text(data: bytes, is_compressed: bool) -> list[str]: ...
 
 def decompress_stream(data: bytes) -> bytes: ...
 
 def extract_hwp_text(bytes: bytes) -> str: ...
 
-def load_image_for_ocr(image_bytes: bytes) -> str: ...
-
-def extract_image_metadata(bytes: bytes) -> ImageMetadata: ...
-
-def extract_text_from_image_with_ocr(
-    bytes: bytes,
-    mime_type: str,
-    ocr_result: str,
-    page_config: PageConfig | None = None,
-) -> ImageOcrResult: ...
+def extract_image_metadata(bytes: bytes) -> str: ...
 
 def estimate_content_capacity(file_size: int, format: str) -> int: ...
 
@@ -3358,8 +3058,6 @@ def extract_email_content(
 
 def build_email_text_output(result: EmailExtractionResult) -> str: ...
 
-def extract_pst_messages(pst_data: bytes) -> str: ...
-
 def read_excel_file(file_path: str) -> ExcelWorkbook: ...
 
 def read_excel_bytes(data: bytes, file_extension: str) -> ExcelWorkbook: ...
@@ -3388,9 +3086,7 @@ def convert_html_to_markdown_with_tables(
 
 def extract_html_inline_images(html: str, options: str | None = None) -> list[str]: ...
 
-def extract_doc_text(content: bytes) -> DocExtractionResult: ...
-
-def parse_drawing(reader: str) -> Drawing: ...
+def extract_doc_text(content: bytes) -> str: ...
 
 def collect_and_convert_omath_para(reader: str) -> str: ...
 
@@ -3406,13 +3102,9 @@ def parse_section_properties_streaming(reader: str) -> str: ...
 
 def parse_styles_xml(xml: str) -> str: ...
 
-def parse_table_properties(reader: str) -> TableProperties: ...
-
 def parse_row_properties(reader: str) -> str: ...
 
 def parse_cell_properties(reader: str) -> str: ...
-
-def parse_table_grid(reader: str) -> TableGrid: ...
 
 def parse_theme_xml(xml: str) -> str: ...
 
@@ -3433,17 +3125,9 @@ def extract_ooxml_embedded_objects(
 
 def detect_image_format(data: bytes) -> str: ...
 
-def process_images_with_ocr(
-    images: list[ExtractedImage],
-    config: ExtractionConfig,
-) -> list[ExtractedImage]: ...
+def extract_ppt_text(content: bytes) -> str: ...
 
-def extract_ppt_text(content: bytes) -> PptExtractionResult: ...
-
-def extract_ppt_text_with_options(
-    content: bytes,
-    include_master_slides: bool,
-) -> PptExtractionResult: ...
+def extract_ppt_text_with_options(content: bytes, include_master_slides: bool) -> str: ...
 
 def extract_pptx_from_path(path: str, options: str) -> PptxExtractionResult: ...
 
@@ -3457,9 +3141,9 @@ def cells_to_text(cells: list[list[str]]) -> str: ...
 
 def cells_to_markdown(cells: list[list[str]]) -> str: ...
 
-def parse_jotdown_attributes(attrs: Attributes) -> Attributes: ...
+def parse_jotdown_attributes(attrs: str) -> str: ...
 
-def render_attributes(attrs: Attributes) -> str: ...
+def render_attributes(attrs: str) -> str: ...
 
 def djot_content_to_djot(content: DjotContent) -> str: ...
 
@@ -3467,25 +3151,17 @@ def extraction_result_to_djot(result: ExtractionResult) -> str: ...
 
 def djot_to_html(djot_source: str) -> str: ...
 
-def extract_complete_djot_content(
-    events: list[str],
-    metadata: Metadata,
-    tables: list[Table],
-) -> DjotContent: ...
-
-def extract_tables_from_events(events: list[str]) -> list[Table]: ...
+def extract_tables_from_events(events: list[str]) -> list[str]: ...
 
 def extract_text_from_events(events: list[str]) -> str: ...
 
-def render_block_to_djot(output: str, block: FormattedBlock, indent_level: int) -> None: ...
+def render_block_to_djot(block: FormattedBlock, indent_level: int) -> str: ...
 
-def render_list_item(output: str, item: FormattedBlock, indent: str, marker: str) -> None: ...
+def render_list_item(item: FormattedBlock, indent: str, marker: str) -> str: ...
 
-def render_inline_content(output: str, elements: list[InlineElement]) -> None: ...
+def render_inline_content(elements: list[InlineElement]) -> str: ...
 
 def extract_frontmatter(content: str) -> str: ...
-
-def extract_metadata_from_yaml(yaml: str) -> Metadata: ...
 
 def extract_title_from_content(content: str) -> str | None: ...
 
@@ -3503,22 +3179,9 @@ def extract_metadata_from_zip(content: bytes) -> Metadata: ...
 
 def dedup_text(texts: list[str]) -> list[str]: ...
 
-def evaluate_native_text_for_ocr(
-    native_text: str,
-    thresholds: OcrQualityThresholds,
-    page_count: int | None = None,
-) -> OcrFallbackDecision: ...
+def hex_digit_to_u8(c: int) -> int | None: ...
 
-def evaluate_per_page_ocr(
-    native_text: str,
-    thresholds: OcrQualityThresholds,
-    boundaries: list[PageBoundary] | None = None,
-    page_count: int | None = None,
-) -> OcrFallbackDecision: ...
-
-def hex_digit_to_u8(c: str) -> int | None: ...
-
-def parse_hex_byte(h1: str, h2: str) -> int | None: ...
+def parse_hex_byte(h1: int, h2: int) -> int | None: ...
 
 def parse_rtf_control_word(chars: str) -> str: ...
 
@@ -3552,8 +3215,6 @@ def list_extractors() -> list[str]: ...
 
 def clear_extractors() -> None: ...
 
-def register_ocr_backend(backend: OcrBackend) -> None: ...
-
 def unregister_ocr_backend(name: str) -> None: ...
 
 def list_ocr_backends() -> list[str]: ...
@@ -3571,8 +3232,6 @@ def get_post_processor_registry() -> str: ...
 def get_validator_registry() -> str: ...
 
 def get_renderer_registry() -> str: ...
-
-def register_renderer(renderer: Renderer) -> None: ...
 
 def unregister_renderer(name: str) -> None: ...
 
@@ -3602,7 +3261,7 @@ def render_plain(doc: str) -> str: ...
 
 def sanitize_filename(path: str) -> str: ...
 
-def get_metrics() -> ExtractionMetrics: ...
+def get_metrics() -> str: ...
 
 def record_error_on_current_span(error: str) -> None: ...
 
@@ -3688,9 +3347,9 @@ def estimate_pool_size(file_size: int, mime_type: str) -> str: ...
 
 def acquire_string_buffer() -> PooledString: ...
 
-def intern_language_code(lang_code: str) -> InternedString: ...
+def intern_language_code(lang_code: str) -> str: ...
 
-def intern_mime_type(mime_type: str) -> InternedString: ...
+def intern_mime_type(mime_type: str) -> str: ...
 
 def xml_tag_name(name: bytes) -> str: ...
 
@@ -3710,8 +3369,6 @@ def table_to_markdown(table: list[list[str]]) -> str: ...
 
 def load_server_config(config_path: str | None = None) -> ServerConfig: ...
 
-def openapi_json() -> str: ...
-
 def create_router(config: ExtractionConfig) -> str: ...
 
 def create_router_with_limits(config: ExtractionConfig, limits: str) -> str: ...
@@ -3726,13 +3383,6 @@ def serve(host: str, port: int) -> None: ...
 
 def serve_with_config(host: str, port: int, config: ExtractionConfig) -> None: ...
 
-def serve_with_config_and_limits(
-    host: str,
-    port: int,
-    config: ExtractionConfig,
-    limits: str,
-) -> None: ...
-
 def serve_with_server_config(
     extraction_config: ExtractionConfig,
     server_config: ServerConfig,
@@ -3746,13 +3396,7 @@ def start_mcp_server() -> None: ...
 
 def start_mcp_server_with_config(config: ExtractionConfig) -> None: ...
 
-def start_mcp_server_http(host: str, port: int) -> None: ...
-
-def start_mcp_server_http_with_config(host: str, port: int, config: ExtractionConfig) -> None: ...
-
 def validate_page_boundaries(boundaries: list[PageBoundary]) -> None: ...
-
-def calculate_page_range(byte_start: int, byte_end: int, boundaries: list[PageBoundary]) -> str: ...
 
 def classify_chunk(content: str, heading_context: HeadingContext | None = None) -> ChunkType: ...
 
@@ -3820,14 +3464,6 @@ def calculate_optimal_dpi(
     max_dpi: int,
 ) -> int: ...
 
-def normalize_image_dpi(
-    rgb_data: bytes,
-    width: int,
-    height: int,
-    config: ExtractionConfig,
-    current_dpi: float | None = None,
-) -> str: ...
-
 def resize_image(image: str, new_width: int, new_height: int, scale_factor: float) -> str: ...
 
 def detect_languages(text: str, config: LanguageDetectionConfig) -> list[str] | None: ...
@@ -3839,17 +3475,6 @@ def get_stopwords(lang: str) -> str | None: ...
 def get_stopwords_with_fallback(language: str, fallback: str) -> str | None: ...
 
 def extract_keywords(text: str, config: KeywordConfig) -> list[Keyword]: ...
-
-def text_block_to_element(block: str, page_number: int) -> OcrElement | None: ...
-
-def tsv_row_to_element(row: str) -> OcrElement: ...
-
-def iterator_word_to_element(
-    word: str,
-    page_number: int,
-    block_type: str | None = None,
-    para_info: str | None = None,
-) -> OcrElement: ...
 
 def element_to_hocr_word(element: OcrElement) -> str: ...
 
@@ -3904,19 +3529,7 @@ def preprocess_rescale(img: str, target_size: int) -> str: ...
 
 def preprocess_letterbox(img: str, target_width: int, target_height: int) -> str: ...
 
-def build_session(
-    path: str,
-    thread_budget: int,
-    accel: AccelerationConfig | None = None,
-) -> str: ...
-
 def config_from_extraction(layout_config: LayoutDetectionConfig) -> str: ...
-
-def create_engine(layout_config: LayoutDetectionConfig) -> str: ...
-
-def take_or_create_engine(layout_config: LayoutDetectionConfig) -> str: ...
-
-def return_engine(engine: str) -> None: ...
 
 def take_or_create_tatr() -> str | None: ...
 
@@ -3934,8 +3547,6 @@ def extract_annotations_from_document(document: str) -> list[PdfAnnotation]: ...
 
 def extract_bookmarks(document: str) -> list[Uri]: ...
 
-def extract_bundled_pdfium() -> str: ...
-
 def extract_embedded_files(document: str) -> list[EmbeddedFile]: ...
 
 def extract_and_process_embedded_files(pdf_bytes: bytes, config: ExtractionConfig) -> str: ...
@@ -3945,8 +3556,6 @@ def initialize_font_cache() -> None: ...
 def get_font_descriptors() -> list[str]: ...
 
 def cached_font_count() -> int: ...
-
-def clear_font_cache() -> None: ...
 
 def cluster_font_sizes(blocks: list[str], k: int) -> list[FontSizeCluster]: ...
 
@@ -3975,8 +3584,6 @@ def extract_images_from_pdf(pdf_bytes: bytes) -> list[PdfImage]: ...
 
 def extract_images_from_pdf_with_password(pdf_bytes: bytes, password: str) -> list[PdfImage]: ...
 
-def reextract_raw_images_via_pdfium(pdf_bytes: bytes, images: list[PdfImage]) -> int: ...
-
 def detect_layout_for_document(pdf_bytes: bytes, engine: str) -> str: ...
 
 def detect_layout_for_images(images: list[str], engine: str) -> list[DetectionResult]: ...
@@ -3986,12 +3593,6 @@ def extract_metadata(pdf_bytes: bytes) -> str: ...
 def extract_metadata_with_password(pdf_bytes: bytes, password: str | None = None) -> str: ...
 
 def extract_metadata_with_passwords(pdf_bytes: bytes, passwords: list[str]) -> str: ...
-
-def extract_metadata_from_document(
-    document: str,
-    page_boundaries: list[PageBoundary] | None = None,
-    content: str | None = None,
-) -> PdfExtractionMetadata: ...
 
 def extract_common_metadata_from_document(document: str) -> CommonPdfMetadata: ...
 
@@ -4025,17 +3626,6 @@ def extract_text_from_pdf(pdf_bytes: bytes) -> str: ...
 def extract_text_from_pdf_with_password(pdf_bytes: bytes, password: str) -> str: ...
 
 def extract_text_from_pdf_with_passwords(pdf_bytes: bytes, passwords: list[str]) -> str: ...
-
-def extract_text_and_metadata_from_pdf_document(
-    document: str,
-    extraction_config: ExtractionConfig | None = None,
-) -> PdfUnifiedExtractionResult: ...
-
-def extract_text_from_pdf_document(
-    document: str,
-    page_config: PageConfig | None = None,
-    extraction_config: ExtractionConfig | None = None,
-) -> str: ...
 
 def serialize_to_toon(result: ExtractionResult) -> str: ...
 

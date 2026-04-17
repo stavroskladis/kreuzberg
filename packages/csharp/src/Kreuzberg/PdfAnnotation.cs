@@ -33,6 +33,6 @@ public sealed class PdfAnnotation
     /// Bounding box of the annotation on the page.
     /// </summary>
     [JsonPropertyName("bounding_box")]
-    public BoundingBox? BoundingBox { get; set; } = null;
+    public string? BoundingBox { get; set; } = null;
 
 }

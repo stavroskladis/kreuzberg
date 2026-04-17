@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record HierarchyBlock(
     String text,
-    BoundingBox bbox,
+    String bbox,
     @JsonProperty("font_size") float fontSize,
     @JsonProperty("hierarchy_level") String hierarchyLevel
 ) {

@@ -2,7 +2,7 @@
 defmodule Kreuzberg.Element do
   @moduledoc "Semantic element extracted from document."
 
-  defstruct element_id: nil,
+  defstruct element_id: "",
             element_type: :title,
             text: "",
             metadata: nil

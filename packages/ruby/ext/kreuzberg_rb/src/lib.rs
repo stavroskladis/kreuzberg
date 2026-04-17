@@ -2,8 +2,6 @@
 // Re-generate with: alef generate
 #![allow(dead_code)]
 
-use kreuzberg::plugins::OcrBackend;
-use kreuzberg::plugins::Plugin;
 use magnus::{Error, IntoValueFromNative, Ruby, function, method, prelude::*, try_convert::TryConvertOwned};
 use std::collections::HashMap;
 use std::ops::Deref;
@@ -44,7 +42,7 @@ fn json_to_ruby(handle: &Ruby, val: serde_json::Value) -> magnus::Value {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::AccelerationConfig")]
 #[serde(default)]
 pub struct AccelerationConfig {
@@ -61,15 +59,6 @@ impl magnus::TryConvert for AccelerationConfig {
     }
 }
 unsafe impl TryConvertOwned for AccelerationConfig {}
-
-impl Default for AccelerationConfig {
-    fn default() -> Self {
-        Self {
-            provider: Default::default(),
-            device_id: Default::default(),
-        }
-    }
-}
 
 impl AccelerationConfig {
     fn new(provider: Option<ExecutionProviderType>, device_id: Option<u32>) -> Self {
@@ -186,7 +175,7 @@ impl EmailConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::ExtractionConfig")]
 #[serde(default)]
 pub struct ExtractionConfig {
@@ -200,7 +189,7 @@ pub struct ExtractionConfig {
     pub content_filter: Option<ContentFilterConfig>,
     pub images: Option<ImageExtractionConfig>,
     pub pdf_options: Option<PdfConfig>,
-    pub token_reduction: Option<TokenReductionConfig>,
+    pub token_reduction: Option<TokenReductionOptions>,
     pub language_detection: Option<LanguageDetectionConfig>,
     pub pages: Option<PageConfig>,
     pub postprocessor: Option<PostProcessorConfig>,
@@ -208,7 +197,7 @@ pub struct ExtractionConfig {
     pub html_output: Option<HtmlOutputConfig>,
     pub extraction_timeout_secs: Option<u64>,
     pub max_concurrent_extractions: Option<usize>,
-    pub result_format: OutputFormat,
+    pub result_format: ExtractionMode,
     pub security_limits: Option<String>,
     pub output_format: OutputFormat,
     pub layout: Option<LayoutDetectionConfig>,
@@ -232,44 +221,6 @@ impl magnus::TryConvert for ExtractionConfig {
     }
 }
 unsafe impl TryConvertOwned for ExtractionConfig {}
-
-impl Default for ExtractionConfig {
-    fn default() -> Self {
-        Self {
-            use_cache: Default::default(),
-            enable_quality_processing: Default::default(),
-            ocr: Default::default(),
-            force_ocr: Default::default(),
-            force_ocr_pages: Default::default(),
-            disable_ocr: Default::default(),
-            chunking: Default::default(),
-            content_filter: Default::default(),
-            images: Default::default(),
-            pdf_options: Default::default(),
-            token_reduction: Default::default(),
-            language_detection: Default::default(),
-            pages: Default::default(),
-            postprocessor: Default::default(),
-            html_options: Default::default(),
-            html_output: Default::default(),
-            extraction_timeout_secs: Default::default(),
-            max_concurrent_extractions: Default::default(),
-            result_format: Default::default(),
-            security_limits: Default::default(),
-            output_format: Default::default(),
-            layout: Default::default(),
-            include_document_structure: Default::default(),
-            acceleration: Default::default(),
-            cache_namespace: Default::default(),
-            cache_ttl_secs: Default::default(),
-            email: Default::default(),
-            concurrency: Default::default(),
-            max_archive_depth: Default::default(),
-            tree_sitter: Default::default(),
-            structured_extraction: Default::default(),
-        }
-    }
-}
 
 impl ExtractionConfig {
     fn new(kwargs: magnus::RHash) -> Result<Self, magnus::Error> {
@@ -311,7 +262,7 @@ impl ExtractionConfig {
                 .and_then(|v| PdfConfig::try_convert(v).ok()),
             token_reduction: kwargs
                 .get(ruby.to_symbol("token_reduction"))
-                .and_then(|v| TokenReductionConfig::try_convert(v).ok()),
+                .and_then(|v| TokenReductionOptions::try_convert(v).ok()),
             language_detection: kwargs
                 .get(ruby.to_symbol("language_detection"))
                 .and_then(|v| LanguageDetectionConfig::try_convert(v).ok()),
@@ -335,7 +286,7 @@ impl ExtractionConfig {
                 .and_then(|v| usize::try_convert(v).ok()),
             result_format: kwargs
                 .get(ruby.to_symbol("result_format"))
-                .and_then(|v| OutputFormat::try_convert(v).ok())
+                .and_then(|v| ExtractionMode::try_convert(v).ok())
                 .unwrap_or_default(),
             security_limits: kwargs
                 .get(ruby.to_symbol("security_limits"))
@@ -419,7 +370,7 @@ impl ExtractionConfig {
         self.pdf_options.clone()
     }
 
-    fn token_reduction(&self) -> Option<TokenReductionConfig> {
+    fn token_reduction(&self) -> Option<TokenReductionOptions> {
         self.token_reduction.clone()
     }
 
@@ -451,7 +402,7 @@ impl ExtractionConfig {
         self.max_concurrent_extractions
     }
 
-    fn result_format(&self) -> OutputFormat {
+    fn result_format(&self) -> ExtractionMode {
         self.result_format.clone()
     }
 
@@ -580,9 +531,12 @@ impl ExtractionConfig {
             structured_extraction: self.structured_extraction.clone().map(Into::into),
             ..Default::default()
         };
-        let result = core_self
-            .validate()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        let result = core_self.validate().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(result)
     }
 
@@ -663,7 +617,7 @@ impl ExtractionConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::FileExtractionConfig")]
 #[serde(default)]
 pub struct FileExtractionConfig {
@@ -676,12 +630,12 @@ pub struct FileExtractionConfig {
     pub content_filter: Option<ContentFilterConfig>,
     pub images: Option<ImageExtractionConfig>,
     pub pdf_options: Option<PdfConfig>,
-    pub token_reduction: Option<TokenReductionConfig>,
+    pub token_reduction: Option<TokenReductionOptions>,
     pub language_detection: Option<LanguageDetectionConfig>,
     pub pages: Option<PageConfig>,
     pub postprocessor: Option<PostProcessorConfig>,
     pub html_options: Option<String>,
-    pub result_format: Option<OutputFormat>,
+    pub result_format: Option<ExtractionMode>,
     pub output_format: Option<OutputFormat>,
     pub include_document_structure: Option<bool>,
     pub layout: Option<LayoutDetectionConfig>,
@@ -699,34 +653,6 @@ impl magnus::TryConvert for FileExtractionConfig {
     }
 }
 unsafe impl TryConvertOwned for FileExtractionConfig {}
-
-impl Default for FileExtractionConfig {
-    fn default() -> Self {
-        Self {
-            enable_quality_processing: Default::default(),
-            ocr: Default::default(),
-            force_ocr: Default::default(),
-            force_ocr_pages: Default::default(),
-            disable_ocr: Default::default(),
-            chunking: Default::default(),
-            content_filter: Default::default(),
-            images: Default::default(),
-            pdf_options: Default::default(),
-            token_reduction: Default::default(),
-            language_detection: Default::default(),
-            pages: Default::default(),
-            postprocessor: Default::default(),
-            html_options: Default::default(),
-            result_format: Default::default(),
-            output_format: Default::default(),
-            include_document_structure: Default::default(),
-            layout: Default::default(),
-            timeout_secs: Default::default(),
-            tree_sitter: Default::default(),
-            structured_extraction: Default::default(),
-        }
-    }
-}
 
 impl FileExtractionConfig {
     fn new(kwargs: magnus::RHash) -> Result<Self, magnus::Error> {
@@ -761,7 +687,7 @@ impl FileExtractionConfig {
                 .and_then(|v| PdfConfig::try_convert(v).ok()),
             token_reduction: kwargs
                 .get(ruby.to_symbol("token_reduction"))
-                .and_then(|v| TokenReductionConfig::try_convert(v).ok()),
+                .and_then(|v| TokenReductionOptions::try_convert(v).ok()),
             language_detection: kwargs
                 .get(ruby.to_symbol("language_detection"))
                 .and_then(|v| LanguageDetectionConfig::try_convert(v).ok()),
@@ -776,7 +702,7 @@ impl FileExtractionConfig {
                 .and_then(|v| String::try_convert(v).ok()),
             result_format: kwargs
                 .get(ruby.to_symbol("result_format"))
-                .and_then(|v| OutputFormat::try_convert(v).ok()),
+                .and_then(|v| ExtractionMode::try_convert(v).ok()),
             output_format: kwargs
                 .get(ruby.to_symbol("output_format"))
                 .and_then(|v| OutputFormat::try_convert(v).ok()),
@@ -834,7 +760,7 @@ impl FileExtractionConfig {
         self.pdf_options.clone()
     }
 
-    fn token_reduction(&self) -> Option<TokenReductionConfig> {
+    fn token_reduction(&self) -> Option<TokenReductionOptions> {
         self.token_reduction.clone()
     }
 
@@ -854,7 +780,7 @@ impl FileExtractionConfig {
         self.html_options.clone()
     }
 
-    fn result_format(&self) -> Option<OutputFormat> {
+    fn result_format(&self) -> Option<ExtractionMode> {
         self.result_format.clone()
     }
 
@@ -971,23 +897,23 @@ impl ImageExtractionConfig {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::TokenReductionConfig")]
-pub struct TokenReductionConfig {
+#[magnus::wrap(class = "Kreuzberg::TokenReductionOptions")]
+pub struct TokenReductionOptions {
     pub mode: String,
     pub preserve_important_words: bool,
 }
 
-unsafe impl IntoValueFromNative for TokenReductionConfig {}
+unsafe impl IntoValueFromNative for TokenReductionOptions {}
 
-impl magnus::TryConvert for TokenReductionConfig {
+impl magnus::TryConvert for TokenReductionOptions {
     fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TokenReductionConfig = magnus::TryConvert::try_convert(val)?;
+        let r: &TokenReductionOptions = magnus::TryConvert::try_convert(val)?;
         Ok(r.clone())
     }
 }
-unsafe impl TryConvertOwned for TokenReductionConfig {}
+unsafe impl TryConvertOwned for TokenReductionOptions {}
 
-impl TokenReductionConfig {
+impl TokenReductionOptions {
     fn new(mode: String, preserve_important_words: bool) -> Self {
         Self {
             mode,
@@ -1044,7 +970,7 @@ impl LanguageDetectionConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::HtmlOutputConfig")]
 #[serde(default)]
 pub struct HtmlOutputConfig {
@@ -1064,18 +990,6 @@ impl magnus::TryConvert for HtmlOutputConfig {
     }
 }
 unsafe impl TryConvertOwned for HtmlOutputConfig {}
-
-impl Default for HtmlOutputConfig {
-    fn default() -> Self {
-        Self {
-            css: Default::default(),
-            css_file: Default::default(),
-            theme: Default::default(),
-            class_prefix: Default::default(),
-            embed_css: Default::default(),
-        }
-    }
-}
 
 impl HtmlOutputConfig {
     fn new(
@@ -1115,7 +1029,7 @@ impl HtmlOutputConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::LayoutDetectionConfig")]
 #[serde(default)]
 pub struct LayoutDetectionConfig {
@@ -1133,16 +1047,6 @@ impl magnus::TryConvert for LayoutDetectionConfig {
     }
 }
 unsafe impl TryConvertOwned for LayoutDetectionConfig {}
-
-impl Default for LayoutDetectionConfig {
-    fn default() -> Self {
-        Self {
-            confidence_threshold: Default::default(),
-            apply_heuristics: Default::default(),
-            table_model: Default::default(),
-        }
-    }
-}
 
 impl LayoutDetectionConfig {
     fn new(confidence_threshold: Option<f32>, apply_heuristics: Option<bool>, table_model: Option<TableModel>) -> Self {
@@ -1608,7 +1512,7 @@ impl OcrPipelineConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::OcrConfig")]
 #[serde(default)]
 pub struct OcrConfig {
@@ -1635,25 +1539,6 @@ impl magnus::TryConvert for OcrConfig {
     }
 }
 unsafe impl TryConvertOwned for OcrConfig {}
-
-impl Default for OcrConfig {
-    fn default() -> Self {
-        Self {
-            enabled: Default::default(),
-            backend: Default::default(),
-            language: Default::default(),
-            tesseract_config: Default::default(),
-            output_format: Default::default(),
-            paddle_ocr_config: Default::default(),
-            element_config: Default::default(),
-            quality_thresholds: Default::default(),
-            pipeline: Default::default(),
-            auto_rotate: Default::default(),
-            vlm_config: Default::default(),
-            vlm_prompt: Default::default(),
-        }
-    }
-}
 
 impl OcrConfig {
     fn new(
@@ -1752,9 +1637,12 @@ impl OcrConfig {
             vlm_config: self.vlm_config.clone().map(Into::into),
             vlm_prompt: self.vlm_prompt.clone(),
         };
-        let result = core_self
-            .validate()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        let result = core_self.validate().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(result)
     }
 
@@ -1859,7 +1747,7 @@ impl PageConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::PdfConfig")]
 #[serde(default)]
 pub struct PdfConfig {
@@ -1883,22 +1771,6 @@ impl magnus::TryConvert for PdfConfig {
     }
 }
 unsafe impl TryConvertOwned for PdfConfig {}
-
-impl Default for PdfConfig {
-    fn default() -> Self {
-        Self {
-            backend: Default::default(),
-            extract_images: Default::default(),
-            passwords: Default::default(),
-            extract_metadata: Default::default(),
-            hierarchy: Default::default(),
-            extract_annotations: Default::default(),
-            top_margin_fraction: Default::default(),
-            bottom_margin_fraction: Default::default(),
-            allow_single_column_tables: Default::default(),
-        }
-    }
-}
 
 impl PdfConfig {
     fn new(
@@ -2107,7 +1979,7 @@ impl PostProcessorConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::ChunkingConfig")]
 #[serde(default)]
 pub struct ChunkingConfig {
@@ -2130,21 +2002,6 @@ impl magnus::TryConvert for ChunkingConfig {
     }
 }
 unsafe impl TryConvertOwned for ChunkingConfig {}
-
-impl Default for ChunkingConfig {
-    fn default() -> Self {
-        Self {
-            max_characters: Default::default(),
-            overlap: Default::default(),
-            trim: Default::default(),
-            chunker_type: Default::default(),
-            embedding: Default::default(),
-            preset: Default::default(),
-            sizing: Default::default(),
-            prepend_heading_context: Default::default(),
-        }
-    }
-}
 
 impl ChunkingConfig {
     fn new(
@@ -2224,7 +2081,7 @@ impl ChunkingConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::EmbeddingConfig")]
 #[serde(default)]
 pub struct EmbeddingConfig {
@@ -2244,18 +2101,6 @@ impl magnus::TryConvert for EmbeddingConfig {
     }
 }
 unsafe impl TryConvertOwned for EmbeddingConfig {}
-
-impl Default for EmbeddingConfig {
-    fn default() -> Self {
-        Self {
-            model: Default::default(),
-            normalize: Default::default(),
-            batch_size: Default::default(),
-            show_download_progress: Default::default(),
-            cache_dir: Default::default(),
-        }
-    }
-}
 
 impl EmbeddingConfig {
     fn new(
@@ -2366,7 +2211,7 @@ impl TreeSitterConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::TreeSitterProcessConfig")]
 #[serde(default)]
 pub struct TreeSitterProcessConfig {
@@ -2390,22 +2235,6 @@ impl magnus::TryConvert for TreeSitterProcessConfig {
     }
 }
 unsafe impl TryConvertOwned for TreeSitterProcessConfig {}
-
-impl Default for TreeSitterProcessConfig {
-    fn default() -> Self {
-        Self {
-            structure: Default::default(),
-            imports: Default::default(),
-            exports: Default::default(),
-            comments: Default::default(),
-            docstrings: Default::default(),
-            symbols: Default::default(),
-            diagnostics: Default::default(),
-            chunk_max_size: Default::default(),
-            content_mode: Default::default(),
-        }
-    }
-}
 
 impl TreeSitterProcessConfig {
     fn new(
@@ -2466,33 +2295,6 @@ impl TreeSitterProcessConfig {
 
     fn content_mode(&self) -> CodeContentMode {
         self.content_mode.clone()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::FileBytes")]
-pub struct FileBytes {
-    inner: Arc<kreuzberg::core::io::FileBytes>,
-}
-
-unsafe impl IntoValueFromNative for FileBytes {}
-
-impl magnus::TryConvert for FileBytes {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &FileBytes = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for FileBytes {}
-
-impl FileBytes {
-    #[allow(clippy::should_implement_trait)]
-    fn deref(&self) -> Vec<u8> {
-        self.inner.deref().into()
-    }
-
-    fn as_ref(&self) -> Vec<u8> {
-        self.inner.as_ref().into()
     }
 }
 
@@ -2660,9 +2462,12 @@ impl ServerConfig {
             max_request_body_bytes: self.max_request_body_bytes,
             max_multipart_field_bytes: self.max_multipart_field_bytes,
         };
-        let result = core_self
-            .apply_env_overrides()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        let result = core_self.apply_env_overrides().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(result)
     }
 }
@@ -2713,89 +2518,6 @@ impl StructuredDataResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ListItemMetadata")]
-pub struct ListItemMetadata {
-    pub list_type: String,
-    pub byte_start: usize,
-    pub byte_end: usize,
-    pub indent_level: u32,
-}
-
-unsafe impl IntoValueFromNative for ListItemMetadata {}
-
-impl magnus::TryConvert for ListItemMetadata {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ListItemMetadata = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ListItemMetadata {}
-
-impl ListItemMetadata {
-    fn new(list_type: String, byte_start: usize, byte_end: usize, indent_level: u32) -> Self {
-        Self {
-            list_type,
-            byte_start,
-            byte_end,
-            indent_level,
-        }
-    }
-
-    fn list_type(&self) -> String {
-        self.list_type.clone()
-    }
-
-    fn byte_start(&self) -> usize {
-        self.byte_start
-    }
-
-    fn byte_end(&self) -> usize {
-        self.byte_end
-    }
-
-    fn indent_level(&self) -> u32 {
-        self.indent_level
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::Section")]
-#[serde(default)]
-pub struct Section {
-    pub paragraphs: Vec<String>,
-}
-
-unsafe impl IntoValueFromNative for Section {}
-
-impl magnus::TryConvert for Section {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Section = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Section {}
-
-impl Default for Section {
-    fn default() -> Self {
-        Self {
-            paragraphs: Default::default(),
-        }
-    }
-}
-
-impl Section {
-    fn new(paragraphs: Option<Vec<String>>) -> Self {
-        Self {
-            paragraphs: paragraphs.unwrap_or_default(),
-        }
-    }
-
-    fn paragraphs(&self) -> Vec<String> {
-        self.paragraphs.clone()
-    }
-}
-
 #[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::StreamReader")]
 pub struct StreamReader {
@@ -2814,34 +2536,42 @@ unsafe impl TryConvertOwned for StreamReader {}
 
 impl StreamReader {
     fn read_u8(&self) -> Result<u8, Error> {
-        let result = self
-            .inner
-            .read_u8()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        let result = self.inner.read_u8().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(result)
     }
 
     fn read_u16(&self) -> Result<u16, Error> {
-        let result = self
-            .inner
-            .read_u16()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        let result = self.inner.read_u16().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(result)
     }
 
     fn read_u32(&self) -> Result<u32, Error> {
-        let result = self
-            .inner
-            .read_u32()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        let result = self.inner.read_u32().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(result)
     }
 
     fn read_bytes(&self, len: usize) -> Result<Vec<u8>, Error> {
-        let result = self
-            .inner
-            .read_bytes(len)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        let result = self.inner.read_bytes(len).map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(result)
     }
 
@@ -2854,7 +2584,7 @@ impl StreamReader {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::ImageOcrResult")]
 pub struct ImageOcrResult {
     pub content: String,
@@ -3000,100 +2730,6 @@ impl ExtractedInlineImage {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::DocExtractionResult")]
-pub struct DocExtractionResult {
-    pub text: String,
-    pub metadata: String,
-}
-
-unsafe impl IntoValueFromNative for DocExtractionResult {}
-
-impl magnus::TryConvert for DocExtractionResult {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &DocExtractionResult = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for DocExtractionResult {}
-
-impl DocExtractionResult {
-    fn new(text: String, metadata: String) -> Self {
-        Self { text, metadata }
-    }
-
-    fn text(&self) -> String {
-        self.text.clone()
-    }
-
-    fn metadata(&self) -> String {
-        self.metadata.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::Drawing")]
-#[serde(default)]
-pub struct Drawing {
-    pub drawing_type: String,
-    pub extent: Option<String>,
-    pub doc_properties: Option<String>,
-    pub image_ref: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for Drawing {}
-
-impl magnus::TryConvert for Drawing {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Drawing = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Drawing {}
-
-impl Default for Drawing {
-    fn default() -> Self {
-        Self {
-            drawing_type: Default::default(),
-            extent: Default::default(),
-            doc_properties: Default::default(),
-            image_ref: Default::default(),
-        }
-    }
-}
-
-impl Drawing {
-    fn new(
-        drawing_type: Option<String>,
-        extent: Option<String>,
-        doc_properties: Option<String>,
-        image_ref: Option<String>,
-    ) -> Self {
-        Self {
-            drawing_type: drawing_type.unwrap_or_default(),
-            extent,
-            doc_properties,
-            image_ref,
-        }
-    }
-
-    fn drawing_type(&self) -> String {
-        self.drawing_type.clone()
-    }
-
-    fn extent(&self) -> Option<String> {
-        self.extent.clone()
-    }
-
-    fn doc_properties(&self) -> Option<String> {
-        self.doc_properties.clone()
-    }
-
-    fn image_ref(&self) -> Option<String> {
-        self.image_ref.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::AnchorProperties")]
 #[serde(default)]
 pub struct AnchorProperties {
@@ -3172,56 +2808,11 @@ impl AnchorProperties {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::TableRow")]
-#[serde(default)]
-pub struct TableRow {
-    pub cells: Vec<TableCell>,
-    pub properties: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for TableRow {}
-
-impl magnus::TryConvert for TableRow {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TableRow = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TableRow {}
-
-impl Default for TableRow {
-    fn default() -> Self {
-        Self {
-            cells: Default::default(),
-            properties: Default::default(),
-        }
-    }
-}
-
-impl TableRow {
-    fn new(cells: Option<Vec<TableCell>>, properties: Option<String>) -> Self {
-        Self {
-            cells: cells.unwrap_or_default(),
-            properties,
-        }
-    }
-
-    fn cells(&self) -> Vec<TableCell> {
-        self.cells.clone()
-    }
-
-    fn properties(&self) -> Option<String> {
-        self.properties.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::HeaderFooter")]
-#[serde(default)]
 pub struct HeaderFooter {
     pub paragraphs: Vec<String>,
-    pub tables: Vec<Table>,
+    pub tables: Vec<String>,
     pub header_type: String,
 }
 
@@ -3246,7 +2837,7 @@ impl Default for HeaderFooter {
 }
 
 impl HeaderFooter {
-    fn new(paragraphs: Option<Vec<String>>, tables: Option<Vec<Table>>, header_type: Option<String>) -> Self {
+    fn new(paragraphs: Option<Vec<String>>, tables: Option<Vec<String>>, header_type: Option<String>) -> Self {
         Self {
             paragraphs: paragraphs.unwrap_or_default(),
             tables: tables.unwrap_or_default(),
@@ -3258,7 +2849,7 @@ impl HeaderFooter {
         self.paragraphs.clone()
     }
 
-    fn tables(&self) -> Vec<Table> {
+    fn tables(&self) -> Vec<String> {
         self.tables.clone()
     }
 
@@ -3267,7 +2858,7 @@ impl HeaderFooter {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::Note")]
 pub struct Note {
     pub id: String,
@@ -3307,9 +2898,8 @@ impl Note {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::PageMarginsPoints")]
-#[serde(default)]
 pub struct PageMarginsPoints {
     pub top: Option<f64>,
     pub right: Option<f64>,
@@ -3394,7 +2984,7 @@ impl PageMarginsPoints {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::StyleDefinition")]
 pub struct StyleDefinition {
     pub id: String,
@@ -3473,9 +3063,8 @@ impl StyleDefinition {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::ResolvedStyle")]
-#[serde(default)]
 pub struct ResolvedStyle {
     pub paragraph_properties: String,
     pub run_properties: String,
@@ -3517,112 +3106,8 @@ impl ResolvedStyle {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::TableProperties")]
-#[serde(default)]
-pub struct TableProperties {
-    pub style_id: Option<String>,
-    pub width: Option<String>,
-    pub alignment: Option<String>,
-    pub layout: Option<String>,
-    pub look: Option<String>,
-    pub borders: Option<String>,
-    pub cell_margins: Option<String>,
-    pub indent: Option<String>,
-    pub caption: Option<String>,
-}
-
-unsafe impl IntoValueFromNative for TableProperties {}
-
-impl magnus::TryConvert for TableProperties {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TableProperties = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TableProperties {}
-
-impl Default for TableProperties {
-    fn default() -> Self {
-        Self {
-            style_id: Default::default(),
-            width: Default::default(),
-            alignment: Default::default(),
-            layout: Default::default(),
-            look: Default::default(),
-            borders: Default::default(),
-            cell_margins: Default::default(),
-            indent: Default::default(),
-            caption: Default::default(),
-        }
-    }
-}
-
-impl TableProperties {
-    fn new(
-        style_id: Option<String>,
-        width: Option<String>,
-        alignment: Option<String>,
-        layout: Option<String>,
-        look: Option<String>,
-        borders: Option<String>,
-        cell_margins: Option<String>,
-        indent: Option<String>,
-        caption: Option<String>,
-    ) -> Self {
-        Self {
-            style_id,
-            width,
-            alignment,
-            layout,
-            look,
-            borders,
-            cell_margins,
-            indent,
-            caption,
-        }
-    }
-
-    fn style_id(&self) -> Option<String> {
-        self.style_id.clone()
-    }
-
-    fn width(&self) -> Option<String> {
-        self.width.clone()
-    }
-
-    fn alignment(&self) -> Option<String> {
-        self.alignment.clone()
-    }
-
-    fn layout(&self) -> Option<String> {
-        self.layout.clone()
-    }
-
-    fn look(&self) -> Option<String> {
-        self.look.clone()
-    }
-
-    fn borders(&self) -> Option<String> {
-        self.borders.clone()
-    }
-
-    fn cell_margins(&self) -> Option<String> {
-        self.cell_margins.clone()
-    }
-
-    fn indent(&self) -> Option<String> {
-        self.indent.clone()
-    }
-
-    fn caption(&self) -> Option<String> {
-        self.caption.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::XlsxAppProperties")]
-#[serde(default)]
 pub struct XlsxAppProperties {
     pub application: Option<String>,
     pub app_version: Option<String>,
@@ -3723,9 +3208,8 @@ impl XlsxAppProperties {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::PptxAppProperties")]
-#[serde(default)]
 pub struct PptxAppProperties {
     pub application: Option<String>,
     pub app_version: Option<String>,
@@ -3892,9 +3376,8 @@ unsafe impl TryConvertOwned for CustomProperties {}
 
 impl CustomProperties {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::OdtProperties")]
-#[serde(default)]
 pub struct OdtProperties {
     pub title: Option<String>,
     pub subject: Option<String>,
@@ -4085,52 +3568,6 @@ impl OdtProperties {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PptExtractionResult")]
-pub struct PptExtractionResult {
-    pub text: String,
-    pub slide_count: usize,
-    pub metadata: String,
-    pub speaker_notes: Vec<String>,
-}
-
-unsafe impl IntoValueFromNative for PptExtractionResult {}
-
-impl magnus::TryConvert for PptExtractionResult {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PptExtractionResult = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PptExtractionResult {}
-
-impl PptExtractionResult {
-    fn new(text: String, slide_count: usize, metadata: String, speaker_notes: Vec<String>) -> Self {
-        Self {
-            text,
-            slide_count,
-            metadata,
-            speaker_notes,
-        }
-    }
-
-    fn text(&self) -> String {
-        self.text.clone()
-    }
-
-    fn slide_count(&self) -> usize {
-        self.slide_count
-    }
-
-    fn metadata(&self) -> String {
-        self.metadata.clone()
-    }
-
-    fn speaker_notes(&self) -> Vec<String> {
-        self.speaker_notes.clone()
-    }
-}
-
 #[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::ZipBombValidator")]
 pub struct ZipBombValidator {
@@ -4167,9 +3604,12 @@ unsafe impl TryConvertOwned for StringGrowthValidator {}
 
 impl StringGrowthValidator {
     fn check_append(&self, len: usize) -> Result<(), Error> {
-        self.inner
-            .check_append(len)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        self.inner.check_append(len).map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(())
     }
 
@@ -4196,9 +3636,12 @@ unsafe impl TryConvertOwned for IterationValidator {}
 
 impl IterationValidator {
     fn check_iteration(&self) -> Result<(), Error> {
-        self.inner
-            .check_iteration()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        self.inner.check_iteration().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(())
     }
 
@@ -4225,9 +3668,12 @@ unsafe impl TryConvertOwned for DepthValidator {}
 
 impl DepthValidator {
     fn push(&self) -> Result<(), Error> {
-        self.inner
-            .push()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        self.inner.push().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(())
     }
 
@@ -4258,9 +3704,12 @@ unsafe impl TryConvertOwned for EntityValidator {}
 
 impl EntityValidator {
     fn validate(&self, content: String) -> Result<(), Error> {
-        self.inner
-            .validate(&content)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        self.inner.validate(&content).map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(())
     }
 }
@@ -4283,9 +3732,12 @@ unsafe impl TryConvertOwned for TableValidator {}
 
 impl TableValidator {
     fn add_cells(&self, count: usize) -> Result<(), Error> {
-        self.inner
-            .add_cells(count)
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        self.inner.add_cells(count).map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(())
     }
 
@@ -4294,7 +3746,7 @@ impl TableValidator {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::OcrFallbackDecision")]
 pub struct OcrFallbackDecision {
     pub stats: String,
@@ -4340,191 +3792,104 @@ impl OcrFallbackDecision {
     }
 }
 
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::ModelCache")]
-pub struct ModelCache {
-    inner: Arc<kreuzberg::model_cache::ModelCache>,
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[magnus::wrap(class = "Kreuzberg::TokenReductionConfig")]
+#[serde(default)]
+pub struct TokenReductionConfig {
+    pub level: ReductionLevel,
+    pub language_hint: Option<String>,
+    pub preserve_markdown: bool,
+    pub preserve_code: bool,
+    pub semantic_threshold: f32,
+    pub enable_parallel: bool,
+    pub use_simd: bool,
+    pub custom_stopwords: Option<HashMap<String, Vec<String>>>,
+    pub preserve_patterns: Vec<String>,
+    pub target_reduction: Option<f32>,
+    pub enable_semantic_clustering: bool,
 }
 
-unsafe impl IntoValueFromNative for ModelCache {}
+unsafe impl IntoValueFromNative for TokenReductionConfig {}
 
-impl magnus::TryConvert for ModelCache {
+impl magnus::TryConvert for TokenReductionConfig {
     fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ModelCache = magnus::TryConvert::try_convert(val)?;
+        let r: &TokenReductionConfig = magnus::TryConvert::try_convert(val)?;
         Ok(r.clone())
     }
 }
-unsafe impl TryConvertOwned for ModelCache {}
+unsafe impl TryConvertOwned for TokenReductionConfig {}
 
-impl ModelCache {
-    fn put(&self, model: String) -> () {
-        ()
-    }
-
-    fn take(&self) -> Option<String> {
-        None
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ExtractionMetrics")]
-pub struct ExtractionMetrics {
-    pub extraction_total: String,
-    pub cache_hits: String,
-    pub cache_misses: String,
-    pub batch_total: String,
-    pub extraction_duration_ms: String,
-    pub extraction_input_bytes: String,
-    pub extraction_output_bytes: String,
-    pub pipeline_duration_ms: String,
-    pub ocr_duration_ms: String,
-    pub batch_duration_ms: String,
-    pub concurrent_extractions: String,
-}
-
-unsafe impl IntoValueFromNative for ExtractionMetrics {}
-
-impl magnus::TryConvert for ExtractionMetrics {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ExtractionMetrics = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ExtractionMetrics {}
-
-impl ExtractionMetrics {
+impl TokenReductionConfig {
     fn new(
-        extraction_total: String,
-        cache_hits: String,
-        cache_misses: String,
-        batch_total: String,
-        extraction_duration_ms: String,
-        extraction_input_bytes: String,
-        extraction_output_bytes: String,
-        pipeline_duration_ms: String,
-        ocr_duration_ms: String,
-        batch_duration_ms: String,
-        concurrent_extractions: String,
+        level: Option<ReductionLevel>,
+        language_hint: Option<String>,
+        preserve_markdown: Option<bool>,
+        preserve_code: Option<bool>,
+        semantic_threshold: Option<f32>,
+        enable_parallel: Option<bool>,
+        use_simd: Option<bool>,
+        custom_stopwords: Option<HashMap<String, Vec<String>>>,
+        preserve_patterns: Option<Vec<String>>,
+        target_reduction: Option<f32>,
+        enable_semantic_clustering: Option<bool>,
     ) -> Self {
         Self {
-            extraction_total,
-            cache_hits,
-            cache_misses,
-            batch_total,
-            extraction_duration_ms,
-            extraction_input_bytes,
-            extraction_output_bytes,
-            pipeline_duration_ms,
-            ocr_duration_ms,
-            batch_duration_ms,
-            concurrent_extractions,
+            level: level.unwrap_or(ReductionLevel::Moderate),
+            language_hint,
+            preserve_markdown: preserve_markdown.unwrap_or(false),
+            preserve_code: preserve_code.unwrap_or(true),
+            semantic_threshold: semantic_threshold.unwrap_or(0.3),
+            enable_parallel: enable_parallel.unwrap_or(true),
+            use_simd: use_simd.unwrap_or(true),
+            custom_stopwords,
+            preserve_patterns: preserve_patterns.unwrap_or_default(),
+            target_reduction,
+            enable_semantic_clustering: enable_semantic_clustering.unwrap_or(false),
         }
     }
 
-    fn extraction_total(&self) -> String {
-        self.extraction_total.clone()
+    fn level(&self) -> ReductionLevel {
+        self.level.clone()
     }
 
-    fn cache_hits(&self) -> String {
-        self.cache_hits.clone()
+    fn language_hint(&self) -> Option<String> {
+        self.language_hint.clone()
     }
 
-    fn cache_misses(&self) -> String {
-        self.cache_misses.clone()
+    fn preserve_markdown(&self) -> bool {
+        self.preserve_markdown
     }
 
-    fn batch_total(&self) -> String {
-        self.batch_total.clone()
+    fn preserve_code(&self) -> bool {
+        self.preserve_code
     }
 
-    fn extraction_duration_ms(&self) -> String {
-        self.extraction_duration_ms.clone()
+    fn semantic_threshold(&self) -> f32 {
+        self.semantic_threshold
     }
 
-    fn extraction_input_bytes(&self) -> String {
-        self.extraction_input_bytes.clone()
+    fn enable_parallel(&self) -> bool {
+        self.enable_parallel
     }
 
-    fn extraction_output_bytes(&self) -> String {
-        self.extraction_output_bytes.clone()
+    fn use_simd(&self) -> bool {
+        self.use_simd
     }
 
-    fn pipeline_duration_ms(&self) -> String {
-        self.pipeline_duration_ms.clone()
+    fn custom_stopwords(&self) -> Option<HashMap<String, Vec<String>>> {
+        self.custom_stopwords.clone()
     }
 
-    fn ocr_duration_ms(&self) -> String {
-        self.ocr_duration_ms.clone()
+    fn preserve_patterns(&self) -> Vec<String> {
+        self.preserve_patterns.clone()
     }
 
-    fn batch_duration_ms(&self) -> String {
-        self.batch_duration_ms.clone()
+    fn target_reduction(&self) -> Option<f32> {
+        self.target_reduction
     }
 
-    fn concurrent_extractions(&self) -> String {
-        self.concurrent_extractions.clone()
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::QualityProcessor")]
-pub struct QualityProcessor {
-    inner: Arc<kreuzberg::text::QualityProcessor>,
-}
-
-unsafe impl IntoValueFromNative for QualityProcessor {}
-
-impl magnus::TryConvert for QualityProcessor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &QualityProcessor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for QualityProcessor {}
-
-impl QualityProcessor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn process_async(&self, result: ExtractionResult, _config: ExtractionConfig) -> Result<(), Error> {
-        let inner = self.inner.clone();
-        let rt = tokio::runtime::Runtime::new()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        let result = rt
-            .block_on(async { inner.process(result.into(), _config.into()).await })
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result)
-    }
-
-    fn processing_stage(&self) -> String {
-        String::from("[unimplemented: processing_stage]")
-    }
-
-    fn should_process(&self, _result: ExtractionResult, config: ExtractionConfig) -> bool {
-        self.inner.should_process(_result.into(), config.into())
-    }
-
-    fn estimated_duration_ms(&self, result: ExtractionResult) -> u64 {
-        self.inner.estimated_duration_ms(result.into())
+    fn enable_semantic_clustering(&self) -> bool {
+        self.enable_semantic_clustering
     }
 }
 
@@ -4534,7 +3899,7 @@ pub struct PdfAnnotation {
     pub annotation_type: PdfAnnotationType,
     pub content: Option<String>,
     pub page_number: usize,
-    pub bounding_box: Option<BoundingBox>,
+    pub bounding_box: Option<String>,
 }
 
 unsafe impl IntoValueFromNative for PdfAnnotation {}
@@ -4552,7 +3917,7 @@ impl PdfAnnotation {
         annotation_type: PdfAnnotationType,
         page_number: usize,
         content: Option<String>,
-        bounding_box: Option<BoundingBox>,
+        bounding_box: Option<String>,
     ) -> Self {
         Self {
             annotation_type,
@@ -4574,7 +3939,7 @@ impl PdfAnnotation {
         self.page_number
     }
 
-    fn bounding_box(&self) -> Option<BoundingBox> {
+    fn bounding_box(&self) -> Option<String> {
         self.bounding_box.clone()
     }
 }
@@ -4585,7 +3950,7 @@ pub struct DjotContent {
     pub plain_text: String,
     pub blocks: Vec<FormattedBlock>,
     pub metadata: Metadata,
-    pub tables: Vec<Table>,
+    pub tables: Vec<String>,
     pub images: Vec<DjotImage>,
     pub links: Vec<DjotLink>,
     pub footnotes: Vec<Footnote>,
@@ -4607,7 +3972,7 @@ impl DjotContent {
         plain_text: String,
         blocks: Vec<FormattedBlock>,
         metadata: Metadata,
-        tables: Vec<Table>,
+        tables: Vec<String>,
         images: Vec<DjotImage>,
         links: Vec<DjotLink>,
         footnotes: Vec<Footnote>,
@@ -4637,7 +4002,7 @@ impl DjotContent {
         self.metadata.clone()
     }
 
-    fn tables(&self) -> Vec<Table> {
+    fn tables(&self) -> Vec<String> {
         self.tables.clone()
     }
 
@@ -4664,7 +4029,7 @@ pub struct FormattedBlock {
     pub block_type: BlockType,
     pub level: Option<usize>,
     pub inline_content: Vec<InlineElement>,
-    pub attributes: Option<Attributes>,
+    pub attributes: Option<String>,
     pub language: Option<String>,
     pub code: Option<String>,
     pub children: Vec<FormattedBlock>,
@@ -4686,7 +4051,7 @@ impl FormattedBlock {
         inline_content: Vec<InlineElement>,
         children: Vec<FormattedBlock>,
         level: Option<usize>,
-        attributes: Option<Attributes>,
+        attributes: Option<String>,
         language: Option<String>,
         code: Option<String>,
     ) -> Self {
@@ -4713,7 +4078,7 @@ impl FormattedBlock {
         self.inline_content.clone()
     }
 
-    fn attributes(&self) -> Option<Attributes> {
+    fn attributes(&self) -> Option<String> {
         self.attributes.clone()
     }
 
@@ -4735,7 +4100,7 @@ impl FormattedBlock {
 pub struct InlineElement {
     pub element_type: InlineType,
     pub content: String,
-    pub attributes: Option<Attributes>,
+    pub attributes: Option<String>,
     pub metadata: Option<HashMap<String, String>>,
 }
 
@@ -4753,7 +4118,7 @@ impl InlineElement {
     fn new(
         element_type: InlineType,
         content: String,
-        attributes: Option<Attributes>,
+        attributes: Option<String>,
         metadata: Option<HashMap<String, String>>,
     ) -> Self {
         Self {
@@ -4772,7 +4137,7 @@ impl InlineElement {
         self.content.clone()
     }
 
-    fn attributes(&self) -> Option<Attributes> {
+    fn attributes(&self) -> Option<String> {
         self.attributes.clone()
     }
 
@@ -4782,63 +4147,12 @@ impl InlineElement {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::Attributes")]
-#[serde(default)]
-pub struct Attributes {
-    pub id: Option<String>,
-    pub classes: Vec<String>,
-    pub key_values: Vec<String>,
-}
-
-unsafe impl IntoValueFromNative for Attributes {}
-
-impl magnus::TryConvert for Attributes {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Attributes = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Attributes {}
-
-impl Default for Attributes {
-    fn default() -> Self {
-        Self {
-            id: Default::default(),
-            classes: Default::default(),
-            key_values: Default::default(),
-        }
-    }
-}
-
-impl Attributes {
-    fn new(id: Option<String>, classes: Option<Vec<String>>, key_values: Option<Vec<String>>) -> Self {
-        Self {
-            id,
-            classes: classes.unwrap_or_default(),
-            key_values: key_values.unwrap_or_default(),
-        }
-    }
-
-    fn id(&self) -> Option<String> {
-        self.id.clone()
-    }
-
-    fn classes(&self) -> Vec<String> {
-        self.classes.clone()
-    }
-
-    fn key_values(&self) -> Vec<String> {
-        self.key_values.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DjotImage")]
 pub struct DjotImage {
     pub src: String,
     pub alt: String,
     pub title: Option<String>,
-    pub attributes: Option<Attributes>,
+    pub attributes: Option<String>,
 }
 
 unsafe impl IntoValueFromNative for DjotImage {}
@@ -4852,7 +4166,7 @@ impl magnus::TryConvert for DjotImage {
 unsafe impl TryConvertOwned for DjotImage {}
 
 impl DjotImage {
-    fn new(src: String, alt: String, title: Option<String>, attributes: Option<Attributes>) -> Self {
+    fn new(src: String, alt: String, title: Option<String>, attributes: Option<String>) -> Self {
         Self {
             src,
             alt,
@@ -4873,7 +4187,7 @@ impl DjotImage {
         self.title.clone()
     }
 
-    fn attributes(&self) -> Option<Attributes> {
+    fn attributes(&self) -> Option<String> {
         self.attributes.clone()
     }
 }
@@ -4884,7 +4198,7 @@ pub struct DjotLink {
     pub url: String,
     pub text: String,
     pub title: Option<String>,
-    pub attributes: Option<Attributes>,
+    pub attributes: Option<String>,
 }
 
 unsafe impl IntoValueFromNative for DjotLink {}
@@ -4898,7 +4212,7 @@ impl magnus::TryConvert for DjotLink {
 unsafe impl TryConvertOwned for DjotLink {}
 
 impl DjotLink {
-    fn new(url: String, text: String, title: Option<String>, attributes: Option<Attributes>) -> Self {
+    fn new(url: String, text: String, title: Option<String>, attributes: Option<String>) -> Self {
         Self {
             url,
             text,
@@ -4919,7 +4233,7 @@ impl DjotLink {
         self.title.clone()
     }
 
-    fn attributes(&self) -> Option<Attributes> {
+    fn attributes(&self) -> Option<String> {
         self.attributes.clone()
     }
 }
@@ -4955,33 +4269,7 @@ impl Footnote {
     }
 }
 
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::NodeId")]
-pub struct NodeId {
-    inner: Arc<kreuzberg::NodeId>,
-}
-
-unsafe impl IntoValueFromNative for NodeId {}
-
-impl magnus::TryConvert for NodeId {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &NodeId = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for NodeId {}
-
-impl NodeId {
-    fn as_ref(&self) -> String {
-        self.inner.as_ref().into()
-    }
-
-    fn fmt(&self, f: String) -> String {
-        String::from("[unimplemented: fmt]")
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::DocumentStructure")]
 #[serde(default)]
 pub struct DocumentStructure {
@@ -4999,16 +4287,6 @@ impl magnus::TryConvert for DocumentStructure {
     }
 }
 unsafe impl TryConvertOwned for DocumentStructure {}
-
-impl Default for DocumentStructure {
-    fn default() -> Self {
-        Self {
-            nodes: Default::default(),
-            source_format: Default::default(),
-            relationships: Default::default(),
-        }
-    }
-}
 
 impl DocumentStructure {
     fn new(
@@ -5054,9 +4332,12 @@ impl DocumentStructure {
             source_format: self.source_format.clone(),
             relationships: self.relationships.clone().into_iter().map(Into::into).collect(),
         };
-        let result = core_self
-            .validate()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        let result = core_self.validate().map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
         Ok(result)
     }
 
@@ -5135,14 +4416,14 @@ impl DocumentRelationship {
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DocumentNode")]
 pub struct DocumentNode {
-    pub id: NodeId,
+    pub id: String,
     pub content: NodeContent,
     pub parent: Option<u32>,
     pub children: Vec<u32>,
     pub content_layer: ContentLayer,
     pub page: Option<u32>,
     pub page_end: Option<u32>,
-    pub bbox: Option<BoundingBox>,
+    pub bbox: Option<String>,
     pub annotations: Vec<TextAnnotation>,
     pub attributes: Option<HashMap<String, String>>,
 }
@@ -5159,7 +4440,7 @@ unsafe impl TryConvertOwned for DocumentNode {}
 
 impl DocumentNode {
     fn new(
-        id: NodeId,
+        id: String,
         content: NodeContent,
         children: Vec<u32>,
         content_layer: ContentLayer,
@@ -5167,7 +4448,7 @@ impl DocumentNode {
         parent: Option<u32>,
         page: Option<u32>,
         page_end: Option<u32>,
-        bbox: Option<BoundingBox>,
+        bbox: Option<String>,
         attributes: Option<HashMap<String, String>>,
     ) -> Self {
         Self {
@@ -5184,7 +4465,7 @@ impl DocumentNode {
         }
     }
 
-    fn id(&self) -> NodeId {
+    fn id(&self) -> String {
         self.id.clone()
     }
 
@@ -5212,7 +4493,7 @@ impl DocumentNode {
         self.page_end
     }
 
-    fn bbox(&self) -> Option<BoundingBox> {
+    fn bbox(&self) -> Option<String> {
         self.bbox.clone()
     }
 
@@ -5226,42 +4507,6 @@ impl DocumentNode {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::TableGrid")]
-pub struct TableGrid {
-    pub rows: u32,
-    pub cols: u32,
-    pub cells: Vec<GridCell>,
-}
-
-unsafe impl IntoValueFromNative for TableGrid {}
-
-impl magnus::TryConvert for TableGrid {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TableGrid = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TableGrid {}
-
-impl TableGrid {
-    fn new(rows: u32, cols: u32, cells: Vec<GridCell>) -> Self {
-        Self { rows, cols, cells }
-    }
-
-    fn rows(&self) -> u32 {
-        self.rows
-    }
-
-    fn cols(&self) -> u32 {
-        self.cols
-    }
-
-    fn cells(&self) -> Vec<GridCell> {
-        self.cells.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::GridCell")]
 pub struct GridCell {
     pub content: String,
@@ -5270,7 +4515,7 @@ pub struct GridCell {
     pub row_span: u32,
     pub col_span: u32,
     pub is_header: bool,
-    pub bbox: Option<BoundingBox>,
+    pub bbox: Option<String>,
 }
 
 unsafe impl IntoValueFromNative for GridCell {}
@@ -5291,7 +4536,7 @@ impl GridCell {
         row_span: u32,
         col_span: u32,
         is_header: bool,
-        bbox: Option<BoundingBox>,
+        bbox: Option<String>,
     ) -> Self {
         Self {
             content,
@@ -5328,7 +4573,7 @@ impl GridCell {
         self.is_header
     }
 
-    fn bbox(&self) -> Option<BoundingBox> {
+    fn bbox(&self) -> Option<String> {
         self.bbox.clone()
     }
 }
@@ -5369,14 +4614,14 @@ impl TextAnnotation {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::ExtractionResult")]
 #[serde(default)]
 pub struct ExtractionResult {
     pub content: String,
     pub mime_type: String,
     pub metadata: Metadata,
-    pub tables: Vec<Table>,
+    pub tables: Vec<String>,
     pub detected_languages: Option<Vec<String>>,
     pub chunks: Option<Vec<Chunk>>,
     pub images: Option<Vec<ExtractedImage>>,
@@ -5407,35 +4652,6 @@ impl magnus::TryConvert for ExtractionResult {
 }
 unsafe impl TryConvertOwned for ExtractionResult {}
 
-impl Default for ExtractionResult {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            mime_type: Default::default(),
-            metadata: Default::default(),
-            tables: Default::default(),
-            detected_languages: Default::default(),
-            chunks: Default::default(),
-            images: Default::default(),
-            pages: Default::default(),
-            elements: Default::default(),
-            djot_content: Default::default(),
-            ocr_elements: Default::default(),
-            document: Default::default(),
-            quality_score: Default::default(),
-            processing_warnings: Default::default(),
-            annotations: Default::default(),
-            children: Default::default(),
-            uris: Default::default(),
-            structured_output: Default::default(),
-            code_intelligence: Default::default(),
-            llm_usage: Default::default(),
-            formatted_content: Default::default(),
-            ocr_internal_document: Default::default(),
-        }
-    }
-}
-
 impl ExtractionResult {
     fn new(kwargs: magnus::RHash) -> Result<Self, magnus::Error> {
         let ruby = unsafe { magnus::Ruby::get_unchecked() };
@@ -5454,7 +4670,7 @@ impl ExtractionResult {
                 .unwrap_or_default(),
             tables: kwargs
                 .get(ruby.to_symbol("tables"))
-                .and_then(|v| <Vec<Table>>::try_convert(v).ok())
+                .and_then(|v| <Vec<String>>::try_convert(v).ok())
                 .unwrap_or_default(),
             detected_languages: kwargs
                 .get(ruby.to_symbol("detected_languages"))
@@ -5526,7 +4742,7 @@ impl ExtractionResult {
         self.metadata.clone()
     }
 
-    fn tables(&self) -> Vec<Table> {
+    fn tables(&self) -> Vec<String> {
         self.tables.clone()
     }
 
@@ -5957,7 +5173,7 @@ pub struct ExtractedImage {
     pub is_mask: bool,
     pub description: Option<String>,
     pub ocr_result: Option<ExtractionResult>,
-    pub bounding_box: Option<BoundingBox>,
+    pub bounding_box: Option<String>,
     pub source_path: Option<String>,
 }
 
@@ -5984,7 +5200,7 @@ impl ExtractedImage {
         bits_per_component: Option<u32>,
         description: Option<String>,
         ocr_result: Option<ExtractionResult>,
-        bounding_box: Option<BoundingBox>,
+        bounding_box: Option<String>,
         source_path: Option<String>,
     ) -> Self {
         Self {
@@ -6048,7 +5264,7 @@ impl ExtractedImage {
         self.ocr_result.clone()
     }
 
-    fn bounding_box(&self) -> Option<BoundingBox> {
+    fn bounding_box(&self) -> Option<String> {
         self.bounding_box.clone()
     }
 
@@ -6057,96 +5273,12 @@ impl ExtractedImage {
     }
 }
 
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::ElementId")]
-pub struct ElementId {
-    inner: Arc<kreuzberg::ElementId>,
-}
-
-unsafe impl IntoValueFromNative for ElementId {}
-
-impl magnus::TryConvert for ElementId {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ElementId = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ElementId {}
-
-impl ElementId {
-    fn as_ref(&self) -> String {
-        self.inner.as_ref().into()
-    }
-
-    fn fmt(&self, f: String) -> String {
-        String::from("[unimplemented: fmt]")
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::BoundingBox")]
-#[serde(default)]
-pub struct BoundingBox {
-    pub x0: f64,
-    pub y0: f64,
-    pub x1: f64,
-    pub y1: f64,
-}
-
-unsafe impl IntoValueFromNative for BoundingBox {}
-
-impl magnus::TryConvert for BoundingBox {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &BoundingBox = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for BoundingBox {}
-
-impl Default for BoundingBox {
-    fn default() -> Self {
-        Self {
-            x0: Default::default(),
-            y0: Default::default(),
-            x1: Default::default(),
-            y1: Default::default(),
-        }
-    }
-}
-
-impl BoundingBox {
-    fn new(x0: Option<f64>, y0: Option<f64>, x1: Option<f64>, y1: Option<f64>) -> Self {
-        Self {
-            x0: x0.unwrap_or_default(),
-            y0: y0.unwrap_or_default(),
-            x1: x1.unwrap_or_default(),
-            y1: y1.unwrap_or_default(),
-        }
-    }
-
-    fn x0(&self) -> f64 {
-        self.x0
-    }
-
-    fn y0(&self) -> f64 {
-        self.y0
-    }
-
-    fn x1(&self) -> f64 {
-        self.x1
-    }
-
-    fn y1(&self) -> f64 {
-        self.y1
-    }
-}
-
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ElementMetadata")]
 pub struct ElementMetadata {
     pub page_number: Option<usize>,
     pub filename: Option<String>,
-    pub coordinates: Option<BoundingBox>,
+    pub coordinates: Option<String>,
     pub element_index: Option<usize>,
     pub additional: HashMap<String, String>,
 }
@@ -6166,7 +5298,7 @@ impl ElementMetadata {
         additional: HashMap<String, String>,
         page_number: Option<usize>,
         filename: Option<String>,
-        coordinates: Option<BoundingBox>,
+        coordinates: Option<String>,
         element_index: Option<usize>,
     ) -> Self {
         Self {
@@ -6186,7 +5318,7 @@ impl ElementMetadata {
         self.filename.clone()
     }
 
-    fn coordinates(&self) -> Option<BoundingBox> {
+    fn coordinates(&self) -> Option<String> {
         self.coordinates.clone()
     }
 
@@ -6202,7 +5334,7 @@ impl ElementMetadata {
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Element")]
 pub struct Element {
-    pub element_id: ElementId,
+    pub element_id: String,
     pub element_type: ElementType,
     pub text: String,
     pub metadata: ElementMetadata,
@@ -6219,7 +5351,7 @@ impl magnus::TryConvert for Element {
 unsafe impl TryConvertOwned for Element {}
 
 impl Element {
-    fn new(element_id: ElementId, element_type: ElementType, text: String, metadata: ElementMetadata) -> Self {
+    fn new(element_id: String, element_type: ElementType, text: String, metadata: ElementMetadata) -> Self {
         Self {
             element_id,
             element_type,
@@ -6228,7 +5360,7 @@ impl Element {
         }
     }
 
-    fn element_id(&self) -> ElementId {
+    fn element_id(&self) -> String {
         self.element_id.clone()
     }
 
@@ -7321,7 +6453,7 @@ impl ImagePreprocessingMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::Metadata")]
 #[serde(default)]
 pub struct Metadata {
@@ -7357,34 +6489,6 @@ impl magnus::TryConvert for Metadata {
     }
 }
 unsafe impl TryConvertOwned for Metadata {}
-
-impl Default for Metadata {
-    fn default() -> Self {
-        Self {
-            title: Default::default(),
-            subject: Default::default(),
-            authors: Default::default(),
-            keywords: Default::default(),
-            language: Default::default(),
-            created_at: Default::default(),
-            modified_at: Default::default(),
-            created_by: Default::default(),
-            modified_by: Default::default(),
-            pages: Default::default(),
-            format: Default::default(),
-            image_preprocessing: Default::default(),
-            json_schema: Default::default(),
-            error: Default::default(),
-            extraction_duration_ms: Default::default(),
-            category: Default::default(),
-            tags: Default::default(),
-            document_version: Default::default(),
-            abstract_text: Default::default(),
-            output_format: Default::default(),
-            additional: Default::default(),
-        }
-    }
-}
 
 impl Metadata {
     fn new(kwargs: magnus::RHash) -> Result<Self, magnus::Error> {
@@ -7703,52 +6807,6 @@ impl ArchiveMetadata {
 
     fn compressed_size(&self) -> Option<usize> {
         self.compressed_size
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ImageMetadata")]
-pub struct ImageMetadata {
-    pub width: u32,
-    pub height: u32,
-    pub format: String,
-    pub exif: HashMap<String, String>,
-}
-
-unsafe impl IntoValueFromNative for ImageMetadata {}
-
-impl magnus::TryConvert for ImageMetadata {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ImageMetadata = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ImageMetadata {}
-
-impl ImageMetadata {
-    fn new(width: u32, height: u32, format: String, exif: HashMap<String, String>) -> Self {
-        Self {
-            width,
-            height,
-            format,
-            exif,
-        }
-    }
-
-    fn width(&self) -> u32 {
-        self.width
-    }
-
-    fn height(&self) -> u32 {
-        self.height
-    }
-
-    fn format(&self) -> String {
-        self.format.clone()
-    }
-
-    fn exif(&self) -> HashMap<String, String> {
-        self.exif.clone()
     }
 }
 
@@ -8073,7 +7131,7 @@ impl StructuredData {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::HtmlMetadata")]
 #[serde(default)]
 pub struct HtmlMetadata {
@@ -8103,28 +7161,6 @@ impl magnus::TryConvert for HtmlMetadata {
     }
 }
 unsafe impl TryConvertOwned for HtmlMetadata {}
-
-impl Default for HtmlMetadata {
-    fn default() -> Self {
-        Self {
-            title: Default::default(),
-            description: Default::default(),
-            keywords: Default::default(),
-            author: Default::default(),
-            canonical_url: Default::default(),
-            base_href: Default::default(),
-            language: Default::default(),
-            text_direction: Default::default(),
-            open_graph: Default::default(),
-            twitter_card: Default::default(),
-            meta_tags: Default::default(),
-            headers: Default::default(),
-            links: Default::default(),
-            images: Default::default(),
-            structured_data: Default::default(),
-        }
-    }
-}
 
 impl HtmlMetadata {
     fn new(
@@ -8507,7 +7543,7 @@ impl CsvMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::BibtexMetadata")]
 #[serde(default)]
 pub struct BibtexMetadata {
@@ -8527,18 +7563,6 @@ impl magnus::TryConvert for BibtexMetadata {
     }
 }
 unsafe impl TryConvertOwned for BibtexMetadata {}
-
-impl Default for BibtexMetadata {
-    fn default() -> Self {
-        Self {
-            entry_count: Default::default(),
-            citation_keys: Default::default(),
-            authors: Default::default(),
-            year_range: Default::default(),
-            entry_types: Default::default(),
-        }
-    }
-}
 
 impl BibtexMetadata {
     fn new(
@@ -8578,7 +7602,7 @@ impl BibtexMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::CitationMetadata")]
 #[serde(default)]
 pub struct CitationMetadata {
@@ -8599,19 +7623,6 @@ impl magnus::TryConvert for CitationMetadata {
     }
 }
 unsafe impl TryConvertOwned for CitationMetadata {}
-
-impl Default for CitationMetadata {
-    fn default() -> Self {
-        Self {
-            citation_count: Default::default(),
-            format: Default::default(),
-            authors: Default::default(),
-            year_range: Default::default(),
-            dois: Default::default(),
-            keywords: Default::default(),
-        }
-    }
-}
 
 impl CitationMetadata {
     fn new(
@@ -8744,7 +7755,7 @@ impl FictionBookMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::DbfMetadata")]
 #[serde(default)]
 pub struct DbfMetadata {
@@ -8762,16 +7773,6 @@ impl magnus::TryConvert for DbfMetadata {
     }
 }
 unsafe impl TryConvertOwned for DbfMetadata {}
-
-impl Default for DbfMetadata {
-    fn default() -> Self {
-        Self {
-            record_count: Default::default(),
-            field_count: Default::default(),
-            fields: Default::default(),
-        }
-    }
-}
 
 impl DbfMetadata {
     fn new(record_count: Option<usize>, field_count: Option<usize>, fields: Option<Vec<DbfFieldInfo>>) -> Self {
@@ -8826,7 +7827,7 @@ impl DbfFieldInfo {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::JatsMetadata")]
 #[serde(default)]
 pub struct JatsMetadata {
@@ -8845,17 +7846,6 @@ impl magnus::TryConvert for JatsMetadata {
     }
 }
 unsafe impl TryConvertOwned for JatsMetadata {}
-
-impl Default for JatsMetadata {
-    fn default() -> Self {
-        Self {
-            copyright: Default::default(),
-            license: Default::default(),
-            history_dates: Default::default(),
-            contributor_roles: Default::default(),
-        }
-    }
-}
 
 impl JatsMetadata {
     fn new(
@@ -9038,6 +8028,7 @@ impl PstMetadata {
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrConfidence")]
+#[serde(default)]
 pub struct OcrConfidence {
     pub detection: Option<f64>,
     pub recognition: f64,
@@ -9053,9 +8044,21 @@ impl magnus::TryConvert for OcrConfidence {
 }
 unsafe impl TryConvertOwned for OcrConfidence {}
 
+impl Default for OcrConfidence {
+    fn default() -> Self {
+        Self {
+            detection: Default::default(),
+            recognition: Default::default(),
+        }
+    }
+}
+
 impl OcrConfidence {
-    fn new(recognition: f64, detection: Option<f64>) -> Self {
-        Self { detection, recognition }
+    fn new(detection: Option<f64>, recognition: Option<f64>) -> Self {
+        Self {
+            detection,
+            recognition: recognition.unwrap_or_default(),
+        }
     }
 
     fn detection(&self) -> Option<f64> {
@@ -9101,8 +8104,9 @@ impl OcrRotation {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::OcrElement")]
+#[serde(default)]
 pub struct OcrElement {
     pub text: String,
     pub geometry: OcrBoundingGeometry,
@@ -9126,24 +8130,24 @@ unsafe impl TryConvertOwned for OcrElement {}
 
 impl OcrElement {
     fn new(
-        text: String,
-        geometry: OcrBoundingGeometry,
-        confidence: OcrConfidence,
-        level: OcrElementLevel,
-        page_number: usize,
-        backend_metadata: HashMap<String, String>,
+        text: Option<String>,
+        geometry: Option<OcrBoundingGeometry>,
+        confidence: Option<OcrConfidence>,
+        level: Option<OcrElementLevel>,
         rotation: Option<OcrRotation>,
+        page_number: Option<usize>,
         parent_id: Option<String>,
+        backend_metadata: Option<HashMap<String, String>>,
     ) -> Self {
         Self {
-            text,
-            geometry,
-            confidence,
-            level,
+            text: text.unwrap_or_default(),
+            geometry: geometry.unwrap_or_default(),
+            confidence: confidence.unwrap_or_default(),
+            level: level.unwrap_or_default(),
             rotation,
-            page_number,
+            page_number: page_number.unwrap_or_default(),
             parent_id,
-            backend_metadata,
+            backend_metadata: backend_metadata.unwrap_or_default(),
         }
     }
 
@@ -9228,13 +8232,9 @@ impl OcrElement {
     fn with_metadata(&self, key: String, value: String) -> OcrElement {
         panic!("alef: with_metadata not auto-delegatable")
     }
-
-    fn with_rotation_opt(&self, rotation: Option<OcrRotation>) -> OcrElement {
-        panic!("alef: with_rotation_opt not auto-delegatable")
-    }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::OcrElementConfig")]
 #[serde(default)]
 pub struct OcrElementConfig {
@@ -9253,17 +8253,6 @@ impl magnus::TryConvert for OcrElementConfig {
     }
 }
 unsafe impl TryConvertOwned for OcrElementConfig {}
-
-impl Default for OcrElementConfig {
-    fn default() -> Self {
-        Self {
-            include_elements: Default::default(),
-            min_level: Default::default(),
-            min_confidence: Default::default(),
-            build_hierarchy: Default::default(),
-        }
-    }
-}
 
 impl OcrElementConfig {
     fn new(
@@ -9465,7 +8454,7 @@ impl PageInfo {
 pub struct PageContent {
     pub page_number: usize,
     pub content: String,
-    pub tables: Vec<Table>,
+    pub tables: Vec<String>,
     pub images: Vec<ExtractedImage>,
     pub hierarchy: Option<PageHierarchy>,
     pub is_blank: Option<bool>,
@@ -9485,7 +8474,7 @@ impl PageContent {
     fn new(
         page_number: usize,
         content: String,
-        tables: Vec<Table>,
+        tables: Vec<String>,
         images: Vec<ExtractedImage>,
         hierarchy: Option<PageHierarchy>,
         is_blank: Option<bool>,
@@ -9508,7 +8497,7 @@ impl PageContent {
         self.content.clone()
     }
 
-    fn tables(&self) -> Vec<Table> {
+    fn tables(&self) -> Vec<String> {
         self.tables.clone()
     }
 
@@ -9603,127 +8592,6 @@ impl HierarchicalBlock {
 }
 
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::Table")]
-#[serde(default)]
-pub struct Table {
-    pub cells: Vec<Vec<String>>,
-    pub markdown: String,
-    pub page_number: usize,
-    pub bounding_box: Option<BoundingBox>,
-}
-
-unsafe impl IntoValueFromNative for Table {}
-
-impl magnus::TryConvert for Table {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Table = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Table {}
-
-impl Default for Table {
-    fn default() -> Self {
-        Self {
-            cells: Default::default(),
-            markdown: Default::default(),
-            page_number: Default::default(),
-            bounding_box: Default::default(),
-        }
-    }
-}
-
-impl Table {
-    fn new(
-        cells: Option<Vec<Vec<String>>>,
-        markdown: Option<String>,
-        page_number: Option<usize>,
-        bounding_box: Option<BoundingBox>,
-    ) -> Self {
-        Self {
-            cells: cells.unwrap_or_default(),
-            markdown: markdown.unwrap_or_default(),
-            page_number: page_number.unwrap_or_default(),
-            bounding_box,
-        }
-    }
-
-    fn cells(&self) -> Vec<Vec<String>> {
-        self.cells.clone()
-    }
-
-    fn markdown(&self) -> String {
-        self.markdown.clone()
-    }
-
-    fn page_number(&self) -> usize {
-        self.page_number
-    }
-
-    fn bounding_box(&self) -> Option<BoundingBox> {
-        self.bounding_box.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::TableCell")]
-#[serde(default)]
-pub struct TableCell {
-    pub content: String,
-    pub row_span: usize,
-    pub col_span: usize,
-    pub is_header: bool,
-}
-
-unsafe impl IntoValueFromNative for TableCell {}
-
-impl magnus::TryConvert for TableCell {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &TableCell = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for TableCell {}
-
-impl Default for TableCell {
-    fn default() -> Self {
-        Self {
-            content: Default::default(),
-            row_span: Default::default(),
-            col_span: Default::default(),
-            is_header: Default::default(),
-        }
-    }
-}
-
-impl TableCell {
-    fn new(content: Option<String>, row_span: Option<usize>, col_span: Option<usize>, is_header: Option<bool>) -> Self {
-        Self {
-            content: content.unwrap_or_default(),
-            row_span: row_span.unwrap_or_default(),
-            col_span: col_span.unwrap_or_default(),
-            is_header: is_header.unwrap_or_default(),
-        }
-    }
-
-    fn content(&self) -> String {
-        self.content.clone()
-    }
-
-    fn row_span(&self) -> usize {
-        self.row_span
-    }
-
-    fn col_span(&self) -> usize {
-        self.col_span
-    }
-
-    fn is_header(&self) -> bool {
-        self.is_header
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Uri")]
 pub struct Uri {
     pub url: String,
@@ -9811,42 +8679,6 @@ unsafe impl TryConvertOwned for ByteBufferPool {}
 impl ByteBufferPool {}
 
 #[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::Pool")]
-pub struct Pool {
-    inner: Arc<kreuzberg::utils::Pool>,
-}
-
-unsafe impl IntoValueFromNative for Pool {}
-
-impl magnus::TryConvert for Pool {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &Pool = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for Pool {}
-
-impl Pool {
-    fn acquire(&self) -> Result<String, Error> {
-        Err(magnus::Error::new(
-            magnus::exception::runtime_error(),
-            "Not implemented: acquire",
-        ))
-    }
-
-    fn size(&self) -> usize {
-        self.inner.size()
-    }
-
-    fn clear(&self) -> Result<(), Error> {
-        self.inner
-            .clear()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-}
-
-#[derive(Clone)]
 #[magnus::wrap(class = "Kreuzberg::PooledString")]
 pub struct PooledString {
     inner: Arc<kreuzberg::utils::string_pool::PooledString>,
@@ -9886,46 +8718,6 @@ impl PooledString {
 
     fn fmt(&self, f: String) -> String {
         String::from("[unimplemented: fmt]")
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::InternedString")]
-pub struct InternedString {
-    inner: Arc<kreuzberg::utils::string_pool::InternedString>,
-}
-
-unsafe impl IntoValueFromNative for InternedString {}
-
-impl magnus::TryConvert for InternedString {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &InternedString = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for InternedString {}
-
-impl InternedString {
-    fn as_str(&self) -> String {
-        self.inner.as_str().into()
-    }
-
-    fn as_ref(&self) -> String {
-        self.inner.as_ref().into()
-    }
-
-    fn fmt(&self, f: String) -> String {
-        String::from("[unimplemented: fmt]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    fn eq(&self, other: InternedString) -> bool {
-        self.inner.eq(&other.inner)
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    fn deref(&self) -> String {
-        String::from("[unimplemented: deref]")
     }
 }
 
@@ -9970,41 +8762,6 @@ unsafe impl TryConvertOwned for MetricsLayer {}
 impl MetricsLayer {
     fn layer(&self, inner: String) -> String {
         String::from("[unimplemented: layer]")
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::ApiError")]
-pub struct ApiError {
-    pub status: String,
-    pub body: String,
-}
-
-unsafe impl IntoValueFromNative for ApiError {}
-
-impl magnus::TryConvert for ApiError {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ApiError = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ApiError {}
-
-impl ApiError {
-    fn new(status: String, body: String) -> Self {
-        Self { status, body }
-    }
-
-    fn status(&self) -> String {
-        self.status.clone()
-    }
-
-    fn body(&self) -> String {
-        self.body.clone()
-    }
-
-    fn into_response(&self) -> String {
-        String::from("[unimplemented: into_response]")
     }
 }
 
@@ -10115,7 +8872,7 @@ unsafe impl TryConvertOwned for ExtractResponse {}
 
 impl ExtractResponse {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::ApiState")]
 pub struct ApiState {
     pub default_config: ExtractionConfig,
@@ -10769,7 +9526,7 @@ impl DoclingCompatResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::ExtractFileParams")]
 pub struct ExtractFileParams {
     pub path: String,
@@ -10827,7 +9584,7 @@ impl ExtractFileParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::ExtractBytesParams")]
 pub struct ExtractBytesParams {
     pub data: String,
@@ -10885,7 +9642,7 @@ impl ExtractBytesParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::BatchExtractFilesParams")]
 pub struct BatchExtractFilesParams {
     pub paths: Vec<String>,
@@ -10943,7 +9700,7 @@ impl BatchExtractFilesParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::DetectMimeTypeParams")]
 pub struct DetectMimeTypeParams {
     pub path: String,
@@ -10974,7 +9731,7 @@ impl DetectMimeTypeParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::CacheWarmParams")]
 pub struct CacheWarmParams {
     pub all_embeddings: bool,
@@ -11008,7 +9765,7 @@ impl CacheWarmParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::EmbedTextParams")]
 pub struct EmbedTextParams {
     pub texts: Vec<String>,
@@ -11054,7 +9811,7 @@ impl EmbedTextParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::ExtractStructuredParams")]
 pub struct ExtractStructuredParams {
     pub path: String,
@@ -11133,7 +9890,7 @@ impl ExtractStructuredParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::ChunkTextParams")]
 pub struct ChunkTextParams {
     pub text: String,
@@ -11207,126 +9964,6 @@ impl ChunkingResult {
 
     fn chunk_count(&self) -> usize {
         self.chunk_count
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::ChunkingProcessor")]
-pub struct ChunkingProcessor {
-    inner: Arc<kreuzberg::chunking::ChunkingProcessor>,
-}
-
-unsafe impl IntoValueFromNative for ChunkingProcessor {}
-
-impl magnus::TryConvert for ChunkingProcessor {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &ChunkingProcessor = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for ChunkingProcessor {}
-
-impl ChunkingProcessor {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn process_async(&self, result: ExtractionResult, config: ExtractionConfig) -> Result<(), Error> {
-        let inner = self.inner.clone();
-        let rt = tokio::runtime::Runtime::new()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        let result = rt
-            .block_on(async { inner.process(result.into(), config.into()).await })
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result)
-    }
-
-    fn processing_stage(&self) -> String {
-        String::from("[unimplemented: processing_stage]")
-    }
-
-    fn should_process(&self, _result: ExtractionResult, config: ExtractionConfig) -> bool {
-        self.inner.should_process(_result.into(), config.into())
-    }
-
-    fn estimated_duration_ms(&self, result: ExtractionResult) -> u64 {
-        self.inner.estimated_duration_ms(result.into())
-    }
-}
-
-#[derive(Clone)]
-#[magnus::wrap(class = "Kreuzberg::VlmOcrBackend")]
-pub struct VlmOcrBackend {
-    inner: Arc<kreuzberg::llm::vlm_ocr::VlmOcrBackend>,
-}
-
-unsafe impl IntoValueFromNative for VlmOcrBackend {}
-
-impl magnus::TryConvert for VlmOcrBackend {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &VlmOcrBackend = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for VlmOcrBackend {}
-
-impl VlmOcrBackend {
-    fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    fn initialize(&self) -> Result<(), Error> {
-        self.inner
-            .initialize()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn shutdown(&self) -> Result<(), Error> {
-        self.inner
-            .shutdown()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(())
-    }
-
-    fn process_image_async(&self, image_bytes: Vec<u8>, config: OcrConfig) -> Result<ExtractionResult, Error> {
-        let inner = self.inner.clone();
-        let rt = tokio::runtime::Runtime::new()
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        let result = rt
-            .block_on(async { inner.process_image(&image_bytes, config.into()).await })
-            .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-        Ok(result.into())
-    }
-
-    fn supports_language(&self, _lang: String) -> bool {
-        self.inner.supports_language(&_lang)
-    }
-
-    fn backend_type(&self) -> OcrBackendType {
-        self.inner.backend_type().into()
     }
 }
 
@@ -11411,7 +10048,7 @@ impl RakeParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
 #[magnus::wrap(class = "Kreuzberg::KeywordConfig")]
 #[serde(default)]
 pub struct KeywordConfig {
@@ -11433,20 +10070,6 @@ impl magnus::TryConvert for KeywordConfig {
     }
 }
 unsafe impl TryConvertOwned for KeywordConfig {}
-
-impl Default for KeywordConfig {
-    fn default() -> Self {
-        Self {
-            algorithm: Default::default(),
-            max_keywords: Default::default(),
-            min_score: Default::default(),
-            ngram_range: Default::default(),
-            language: Default::default(),
-            yake_params: Default::default(),
-            rake_params: Default::default(),
-        }
-    }
-}
 
 impl KeywordConfig {
     fn new(
@@ -11600,9 +10223,8 @@ impl Keyword {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::OcrCacheStats")]
-#[serde(default)]
 pub struct OcrCacheStats {
     pub total_files: usize,
     pub total_size_mb: f64,
@@ -11644,7 +10266,7 @@ impl OcrCacheStats {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::RecognizedTable")]
 pub struct RecognizedTable {
     pub detection_bbox: BBox,
@@ -12053,7 +10675,7 @@ impl PaddleOcrConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::ModelPaths")]
 pub struct ModelPaths {
     pub det_model: String,
@@ -12099,7 +10721,7 @@ impl ModelPaths {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::OrientationResult")]
 pub struct OrientationResult {
     pub degrees: u32,
@@ -12315,7 +10937,7 @@ impl DetectionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::EmbeddedFile")]
 pub struct EmbeddedFile {
     pub name: String,
@@ -12351,7 +10973,7 @@ impl EmbeddedFile {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::FontSizeCluster")]
 pub struct FontSizeCluster {
     pub centroid: f32,
@@ -12382,7 +11004,7 @@ impl FontSizeCluster {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::CharData")]
 pub struct CharData {
     pub text: String,
@@ -12468,11 +11090,11 @@ impl CharData {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::HierarchyBlock")]
 pub struct HierarchyBlock {
     pub text: String,
-    pub bbox: BoundingBox,
+    pub bbox: String,
     pub font_size: f32,
     pub hierarchy_level: String,
 }
@@ -12488,7 +11110,7 @@ impl magnus::TryConvert for HierarchyBlock {
 unsafe impl TryConvertOwned for HierarchyBlock {}
 
 impl HierarchyBlock {
-    fn new(text: String, bbox: BoundingBox, font_size: f32, hierarchy_level: String) -> Self {
+    fn new(text: String, bbox: String, font_size: f32, hierarchy_level: String) -> Self {
         Self {
             text,
             bbox,
@@ -12501,7 +11123,7 @@ impl HierarchyBlock {
         self.text.clone()
     }
 
-    fn bbox(&self) -> BoundingBox {
+    fn bbox(&self) -> String {
         self.bbox.clone()
     }
 
@@ -12600,51 +11222,11 @@ impl PdfImage {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PageLayoutRegion")]
-pub struct PageLayoutRegion {
-    pub class: LayoutClass,
-    pub confidence: f32,
-    pub bbox: String,
-}
-
-unsafe impl IntoValueFromNative for PageLayoutRegion {}
-
-impl magnus::TryConvert for PageLayoutRegion {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PageLayoutRegion = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PageLayoutRegion {}
-
-impl PageLayoutRegion {
-    fn new(class: LayoutClass, confidence: f32, bbox: String) -> Self {
-        Self {
-            class,
-            confidence,
-            bbox,
-        }
-    }
-
-    fn class(&self) -> LayoutClass {
-        self.class.clone()
-    }
-
-    fn confidence(&self) -> f32 {
-        self.confidence
-    }
-
-    fn bbox(&self) -> String {
-        self.bbox.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::PageLayoutResult")]
 pub struct PageLayoutResult {
     pub page_index: usize,
-    pub regions: Vec<PageLayoutRegion>,
+    pub regions: Vec<String>,
     pub page_width_pts: f32,
     pub page_height_pts: f32,
     pub render_width_px: u32,
@@ -12664,7 +11246,7 @@ unsafe impl TryConvertOwned for PageLayoutResult {}
 impl PageLayoutResult {
     fn new(
         page_index: usize,
-        regions: Vec<PageLayoutRegion>,
+        regions: Vec<String>,
         page_width_pts: f32,
         page_height_pts: f32,
         render_width_px: u32,
@@ -12684,7 +11266,7 @@ impl PageLayoutResult {
         self.page_index
     }
 
-    fn regions(&self) -> Vec<PageLayoutRegion> {
+    fn regions(&self) -> Vec<String> {
         self.regions.clone()
     }
 
@@ -12705,7 +11287,7 @@ impl PageLayoutResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::PageTiming")]
 pub struct PageTiming {
     pub render_ms: f64,
@@ -12770,93 +11352,7 @@ impl PageTiming {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-#[magnus::wrap(class = "Kreuzberg::PdfExtractionMetadata")]
-pub struct PdfExtractionMetadata {
-    pub title: Option<String>,
-    pub subject: Option<String>,
-    pub authors: Option<Vec<String>>,
-    pub keywords: Option<Vec<String>>,
-    pub created_at: Option<String>,
-    pub modified_at: Option<String>,
-    pub created_by: Option<String>,
-    pub pdf_specific: String,
-    pub page_structure: Option<PageStructure>,
-}
-
-unsafe impl IntoValueFromNative for PdfExtractionMetadata {}
-
-impl magnus::TryConvert for PdfExtractionMetadata {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let r: &PdfExtractionMetadata = magnus::TryConvert::try_convert(val)?;
-        Ok(r.clone())
-    }
-}
-unsafe impl TryConvertOwned for PdfExtractionMetadata {}
-
-impl PdfExtractionMetadata {
-    fn new(
-        pdf_specific: String,
-        title: Option<String>,
-        subject: Option<String>,
-        authors: Option<Vec<String>>,
-        keywords: Option<Vec<String>>,
-        created_at: Option<String>,
-        modified_at: Option<String>,
-        created_by: Option<String>,
-        page_structure: Option<PageStructure>,
-    ) -> Self {
-        Self {
-            title,
-            subject,
-            authors,
-            keywords,
-            created_at,
-            modified_at,
-            created_by,
-            pdf_specific,
-            page_structure,
-        }
-    }
-
-    fn title(&self) -> Option<String> {
-        self.title.clone()
-    }
-
-    fn subject(&self) -> Option<String> {
-        self.subject.clone()
-    }
-
-    fn authors(&self) -> Option<Vec<String>> {
-        self.authors.clone()
-    }
-
-    fn keywords(&self) -> Option<Vec<String>> {
-        self.keywords.clone()
-    }
-
-    fn created_at(&self) -> Option<String> {
-        self.created_at.clone()
-    }
-
-    fn modified_at(&self) -> Option<String> {
-        self.modified_at.clone()
-    }
-
-    fn created_by(&self) -> Option<String> {
-        self.created_by.clone()
-    }
-
-    fn pdf_specific(&self) -> String {
-        self.pdf_specific.clone()
-    }
-
-    fn page_structure(&self) -> Option<PageStructure> {
-        self.page_structure.clone()
-    }
-}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug)]
 #[magnus::wrap(class = "Kreuzberg::CommonPdfMetadata")]
 pub struct CommonPdfMetadata {
     pub title: Option<String>,
@@ -13023,7 +11519,8 @@ impl magnus::IntoValue for OutputFormat {
 impl magnus::TryConvert for OutputFormat {
     fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
         let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
+        serde_json::from_str(&s)
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))
     }
 }
 
@@ -13238,7 +11735,8 @@ impl magnus::IntoValue for ChunkSizing {
 impl magnus::TryConvert for ChunkSizing {
     fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
         let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
+        serde_json::from_str(&s)
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))
     }
 }
 
@@ -13273,7 +11771,8 @@ impl magnus::IntoValue for EmbeddingModelType {
 impl magnus::TryConvert for EmbeddingModelType {
     fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
         let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
+        serde_json::from_str(&s)
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))
     }
 }
 
@@ -13322,43 +11821,6 @@ impl magnus::TryConvert for CodeContentMode {
 unsafe impl IntoValueFromNative for CodeContentMode {}
 unsafe impl TryConvertOwned for CodeContentMode {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum HwpError {
-    InvalidFormat { _0: String },
-    UnsupportedVersion { _0: String },
-    Io { _0: String },
-    Cfb { _0: String },
-    CompressionError { _0: String },
-    ParseError { _0: String },
-    EncodingError { _0: String },
-    NotFound { _0: String },
-}
-
-impl Default for HwpError {
-    fn default() -> Self {
-        Self::InvalidFormat { _0: Default::default() }
-    }
-}
-
-impl magnus::IntoValue for HwpError {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for HwpError {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for HwpError {}
-unsafe impl TryConvertOwned for HwpError {}
-
 #[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
 pub enum FracType {
     Bar,
@@ -13403,214 +11865,6 @@ impl magnus::TryConvert for FracType {
 
 unsafe impl IntoValueFromNative for FracType {}
 unsafe impl TryConvertOwned for FracType {}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum MathNode {
-    Run {
-        _0: String,
-    },
-    SSup {
-        base: String,
-        sup: String,
-    },
-    SSub {
-        base: String,
-        sub: String,
-    },
-    SSubSup {
-        base: String,
-        sub: String,
-        sup: String,
-    },
-    Frac {
-        num: String,
-        den: String,
-        frac_type: FracType,
-    },
-    Rad {
-        deg: String,
-        body: String,
-        deg_hide: bool,
-    },
-    Nary {
-        chr: String,
-        sub: String,
-        sup: String,
-        body: String,
-        sub_hide: bool,
-        sup_hide: bool,
-    },
-    Delim {
-        begin_chr: String,
-        end_chr: String,
-        sep_chr: String,
-        elements: String,
-    },
-    Func {
-        name: String,
-        body: String,
-    },
-    Acc {
-        chr: String,
-        body: String,
-    },
-    EqArr {
-        rows: String,
-    },
-    LimLow {
-        body: String,
-        lim: String,
-    },
-    LimUpp {
-        body: String,
-        lim: String,
-    },
-    Bar {
-        body: String,
-        top: bool,
-    },
-    BorderBox {
-        body: String,
-    },
-    Matrix {
-        rows: String,
-    },
-    Group {
-        children: String,
-    },
-    SPre {
-        base: String,
-        sub: String,
-        sup: String,
-    },
-}
-
-impl Default for MathNode {
-    fn default() -> Self {
-        Self::Run { _0: Default::default() }
-    }
-}
-
-impl magnus::IntoValue for MathNode {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for MathNode {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for MathNode {}
-unsafe impl TryConvertOwned for MathNode {}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum DocumentElement {
-    Paragraph { _0: usize },
-    Table { _0: usize },
-    Drawing { _0: usize },
-}
-
-impl Default for DocumentElement {
-    fn default() -> Self {
-        Self::Paragraph { _0: Default::default() }
-    }
-}
-
-impl magnus::IntoValue for DocumentElement {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for DocumentElement {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for DocumentElement {}
-unsafe impl TryConvertOwned for DocumentElement {}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum SecurityError {
-    ZipBombDetected {
-        compressed_size: u64,
-        uncompressed_size: u64,
-        ratio: f64,
-    },
-    ArchiveTooLarge {
-        size: u64,
-        max: usize,
-    },
-    TooManyFiles {
-        count: usize,
-        max: usize,
-    },
-    NestingTooDeep {
-        depth: usize,
-        max: usize,
-    },
-    ContentTooLarge {
-        size: usize,
-        max: usize,
-    },
-    EntityTooLong {
-        length: usize,
-        max: usize,
-    },
-    TooManyIterations {
-        count: usize,
-        max: usize,
-    },
-    XmlDepthExceeded {
-        depth: usize,
-        max: usize,
-    },
-    TooManyCells {
-        cells: usize,
-        max: usize,
-    },
-}
-
-impl Default for SecurityError {
-    fn default() -> Self {
-        Self::ZipBombDetected {
-            compressed_size: Default::default(),
-            uncompressed_size: Default::default(),
-            ratio: Default::default(),
-        }
-    }
-}
-
-impl magnus::IntoValue for SecurityError {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for SecurityError {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for SecurityError {}
-unsafe impl TryConvertOwned for SecurityError {}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
 pub enum OcrBackendType {
@@ -14040,7 +12294,7 @@ pub enum NodeContent {
         text: String,
     },
     Table {
-        grid: TableGrid,
+        grid: String,
     },
     Image {
         description: Option<String>,
@@ -14110,7 +12364,8 @@ impl magnus::IntoValue for NodeContent {
 impl magnus::TryConvert for NodeContent {
     fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
         let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
+        serde_json::from_str(&s)
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))
     }
 }
 
@@ -14152,7 +12407,8 @@ impl magnus::IntoValue for AnnotationKind {
 impl magnus::TryConvert for AnnotationKind {
     fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
         let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
+        serde_json::from_str(&s)
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))
     }
 }
 
@@ -14232,6 +12488,45 @@ unsafe impl IntoValueFromNative for ChunkType {}
 unsafe impl TryConvertOwned for ChunkType {}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
+pub enum ExtractionMode {
+    Unified,
+    ElementBased,
+}
+
+impl Default for ExtractionMode {
+    fn default() -> Self {
+        Self::Unified
+    }
+}
+
+impl magnus::IntoValue for ExtractionMode {
+    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
+        let sym = match self {
+            ExtractionMode::Unified => "unified",
+            ExtractionMode::ElementBased => "element_based",
+        };
+        handle.to_symbol(sym).into_value_with(handle)
+    }
+}
+
+impl magnus::TryConvert for ExtractionMode {
+    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
+        let s: String = magnus::TryConvert::try_convert(val)?;
+        match s.as_str() {
+            "unified" => Ok(ExtractionMode::Unified),
+            "element_based" => Ok(ExtractionMode::ElementBased),
+            other => Err(magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_arg_error(),
+                format!("invalid ExtractionMode value: {other}"),
+            )),
+        }
+    }
+}
+
+unsafe impl IntoValueFromNative for ExtractionMode {}
+unsafe impl TryConvertOwned for ExtractionMode {}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
 pub enum ElementType {
     Title,
     NarrativeText,
@@ -14306,7 +12601,7 @@ pub enum FormatMetadata {
     Email { _0: EmailMetadata },
     Pptx { _0: PptxMetadata },
     Archive { _0: ArchiveMetadata },
-    Image { _0: ImageMetadata },
+    Image { _0: String },
     Xml { _0: XmlMetadata },
     Text { _0: TextMetadata },
     Html { _0: HtmlMetadata },
@@ -14340,7 +12635,8 @@ impl magnus::IntoValue for FormatMetadata {
 impl magnus::TryConvert for FormatMetadata {
     fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
         let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
+        serde_json::from_str(&s)
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))
     }
 }
 
@@ -14571,7 +12867,8 @@ impl magnus::IntoValue for OcrBoundingGeometry {
 impl magnus::TryConvert for OcrBoundingGeometry {
     fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
         let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
+        serde_json::from_str(&s)
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))
     }
 }
 
@@ -14790,43 +13087,6 @@ impl magnus::TryConvert for KeywordAlgorithm {
 
 unsafe impl IntoValueFromNative for KeywordAlgorithm {}
 unsafe impl TryConvertOwned for KeywordAlgorithm {}
-
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum OcrError {
-    TesseractInitializationFailed { _0: String },
-    UnsupportedVersion { _0: String },
-    InvalidConfiguration { _0: String },
-    InvalidLanguageCode { _0: String },
-    ImageProcessingFailed { _0: String },
-    ProcessingFailed { _0: String },
-    CacheError { _0: String },
-    IOError { _0: String },
-}
-
-impl Default for OcrError {
-    fn default() -> Self {
-        Self::TesseractInitializationFailed { _0: Default::default() }
-    }
-}
-
-impl magnus::IntoValue for OcrError {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for OcrError {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for OcrError {}
-unsafe impl TryConvertOwned for OcrError {}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, serde::Serialize, serde::Deserialize)]
 pub enum PSMMode {
@@ -15059,49 +13319,9 @@ impl magnus::TryConvert for LayoutClass {
 unsafe impl IntoValueFromNative for LayoutClass {}
 unsafe impl TryConvertOwned for LayoutClass {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub enum PdfError {
-    InvalidPdf { _0: String },
-    PasswordRequired,
-    InvalidPassword,
-    EncryptionNotSupported { _0: String },
-    PageNotFound { _0: usize },
-    TextExtractionFailed { _0: String },
-    RenderingFailed { _0: String },
-    MetadataExtractionFailed { _0: String },
-    ExtractionFailed { _0: String },
-    FontLoadingFailed { _0: String },
-    IOError { _0: String },
-}
-
-impl Default for PdfError {
-    fn default() -> Self {
-        Self::InvalidPdf { _0: Default::default() }
-    }
-}
-
-impl magnus::IntoValue for PdfError {
-    fn into_value_with(self, handle: &Ruby) -> magnus::Value {
-        match serde_json::to_value(&self) {
-            Ok(v) => json_to_ruby(handle, v),
-            Err(_) => handle.qnil().into_value_with(handle),
-        }
-    }
-}
-
-impl magnus::TryConvert for PdfError {
-    fn try_convert(val: magnus::Value) -> Result<Self, magnus::Error> {
-        let s: String = magnus::TryConvert::try_convert(val)?;
-        serde_json::from_str(&s).map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))
-    }
-}
-
-unsafe impl IntoValueFromNative for PdfError {}
-unsafe impl TryConvertOwned for PdfError {}
-
 fn get_cache_metadata(cache_dir: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: get_cache_metadata",
     ))
 }
@@ -15113,7 +13333,7 @@ fn cleanup_cache(
     target_size_ratio: f64,
 ) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: cleanup_cache",
     ))
 }
@@ -15125,7 +13345,7 @@ fn smart_cleanup_cache(
     min_free_space_mb: f64,
 ) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: smart_cleanup_cache",
     ))
 }
@@ -15136,7 +13356,7 @@ fn is_cache_valid(cache_path: String, max_age_days: f64) -> bool {
 
 fn clear_cache_directory(cache_dir: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: clear_cache_directory",
     ))
 }
@@ -15148,7 +13368,7 @@ fn batch_cleanup_caches(
     min_free_space_mb: f64,
 ) -> Result<Vec<String>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: batch_cleanup_caches",
     ))
 }
@@ -15162,14 +13382,22 @@ fn blake3_hash_bytes(data: Vec<u8>) -> String {
 }
 
 fn blake3_hash_file(path: String) -> Result<String, Error> {
-    let result = kreuzberg::cache::blake3_hash_file(std::path::Path::new(&path))
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::cache::blake3_hash_file(std::path::Path::new(&path)).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn get_available_disk_space(path: String) -> Result<f64, Error> {
-    let result = kreuzberg::cache::get_available_disk_space(&path)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::cache::get_available_disk_space(&path).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -15208,114 +13436,181 @@ fn init_thread_pools(budget: usize) -> () {
 fn merge_config_json(base: String, override_json: String) -> Result<ExtractionConfig, Error> {
     let base: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&base)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: merge_config_json",
-    ))
+    let result = kreuzberg::core::config::merge::merge_config_json(base.into(), &override_json).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
+    Ok(result.into())
 }
 
 fn build_config_from_json(base: String, override_json: Option<String>) -> Result<ExtractionConfig, Error> {
     let base: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&base)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: build_config_from_json",
-    ))
+    let result = kreuzberg::core::config::merge::build_config_from_json(base.into(), override_json.as_deref())
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
+    Ok(result.into())
 }
 
 fn validate_port(port: u16) -> Result<(), Error> {
-    let result = kreuzberg::core::config_validation::validate_port(port)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::config_validation::validate_port(port).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_host(host: String) -> Result<(), Error> {
-    let result = kreuzberg::core::config_validation::validate_host(&host)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::config_validation::validate_host(&host).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_cors_origin(origin: String) -> Result<(), Error> {
-    let result = kreuzberg::core::config_validation::validate_cors_origin(&origin)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::config_validation::validate_cors_origin(&origin).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_upload_size(size: usize) -> Result<(), Error> {
-    let result = kreuzberg::core::config_validation::validate_upload_size(size)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::config_validation::validate_upload_size(size).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_binarization_method(method: String) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_binarization_method(&method)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_binarization_method(&method).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_token_reduction_level(level: String) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_token_reduction_level(&level)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_token_reduction_level(&level).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_ocr_backend(backend: String) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_ocr_backend(&backend)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_ocr_backend(&backend).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_language_code(code: String) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_language_code(&code)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_language_code(&code).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_tesseract_psm(psm: i32) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_tesseract_psm(psm)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_tesseract_psm(psm).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_tesseract_oem(oem: i32) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_tesseract_oem(oem)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_tesseract_oem(oem).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_output_format(format: String) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_output_format(&format)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_output_format(&format).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_confidence(confidence: f64) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_confidence(confidence)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_confidence(confidence).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_dpi(dpi: i32) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_dpi(dpi)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_dpi(dpi).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_chunking_params(max_chars: usize, max_overlap: usize) -> Result<(), Error> {
-    let result = kreuzberg::core::validate_chunking_params(max_chars, max_overlap)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::validate_chunking_params(max_chars, max_overlap).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_llm_config_model(model: String) -> Result<(), Error> {
-    let result = kreuzberg::core::config_validation::validate_llm_config_model(&model)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::config_validation::validate_llm_config_model(&model).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -15324,19 +13619,25 @@ fn validate_vlm_backend_config(backend: String, vlm_config: Option<String>) -> R
         .as_deref()
         .filter(|s| *s != "nil")
         .map(|s| {
-            let core: kreuzberg::LlmConfig = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            let core: kreuzberg::LlmConfig = serde_json::from_str(s).map_err(|e| {
+                magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string())
+            })?;
             Ok::<_, magnus::Error>(core.into())
         })
         .transpose()?;
-    let result = kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.map(Into::into))
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::config_validation::validate_vlm_backend_config(&backend, vlm_config.as_ref())
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
 fn validate_structured_extraction_schema(schema: String, llm_model: String) -> Result<(), Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: validate_structured_extraction_schema",
     ))
 }
@@ -15344,39 +13645,57 @@ fn validate_structured_extraction_schema(schema: String, llm_model: String) -> R
 fn extract_bytes(content: Vec<u8>, mime_type: String, config: String) -> Result<ExtractionResult, Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async { kreuzberg::extract_bytes(&content, &mime_type, config.into()).await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result.into())
 }
 
 fn extract_bytes_async(content: Vec<u8>, mime_type: String, config: String) -> Result<ExtractionResult, Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async { kreuzberg::extract_bytes(&content, &mime_type, config.into()).await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result.into())
 }
 
 fn extract_file(path: String, mime_type: Option<String>, config: Option<String>) -> Result<ExtractionResult, Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_file",
     ))
 }
@@ -15388,11 +13707,11 @@ fn extract_file_async(
 ) -> Result<ExtractionResult, Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_file_async",
     ))
 }
@@ -15401,134 +13720,20 @@ fn get_pool_sizing_hint(file_size: u64, mime_type: String) -> String {
     String::from("[unimplemented: get_pool_sizing_hint]")
 }
 
-fn extract_file_sync(
-    path: String,
-    mime_type: Option<String>,
-    config: Option<String>,
-) -> Result<ExtractionResult, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: extract_file_sync",
-    ))
-}
-
-fn extract_bytes_sync(content: Vec<u8>, mime_type: String, config: String) -> Result<ExtractionResult, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    let result = kreuzberg::extract_bytes_sync(&content, &mime_type, config.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
-}
-
-fn batch_extract_file_sync(items: Vec<String>, config: String) -> Result<Vec<ExtractionResult>, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: batch_extract_file_sync",
-    ))
-}
-
-fn batch_extract_bytes_sync(items: Vec<String>, config: String) -> Result<Vec<ExtractionResult>, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: batch_extract_bytes_sync",
-    ))
-}
-
-fn batch_extract_file(items: Vec<String>, config: String) -> Result<Vec<ExtractionResult>, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: batch_extract_file",
-    ))
-}
-
-fn batch_extract_file_async(items: Vec<String>, config: String) -> Result<Vec<ExtractionResult>, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: batch_extract_file_async",
-    ))
-}
-
-fn batch_extract_bytes(items: Vec<String>, config: String) -> Result<Vec<ExtractionResult>, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: batch_extract_bytes",
-    ))
-}
-
-fn batch_extract_bytes_async(items: Vec<String>, config: String) -> Result<Vec<ExtractionResult>, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: batch_extract_bytes_async",
-    ))
-}
-
 fn is_valid_format_field(field: String) -> bool {
     kreuzberg::is_valid_format_field(&field)
 }
 
-fn open_file_bytes(path: String) -> Result<FileBytes, Error> {
-    let result = kreuzberg::core::io::open_file_bytes(std::path::Path::new(&path))
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(FileBytes {
-        inner: Arc::new(result),
-    })
-}
-
-fn read_file_async(path: String) -> Result<Vec<u8>, Error> {
+fn open_file_bytes(path: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: read_file_async",
-    ))
-}
-
-fn read_file_async_async(path: String) -> Result<Vec<u8>, Error> {
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: read_file_async_async",
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+        "Not implemented: open_file_bytes",
     ))
 }
 
 fn read_file_sync(path: String) -> Result<Vec<u8>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: read_file_sync",
     ))
 }
@@ -15539,46 +13744,62 @@ fn file_exists(path: String) -> bool {
 
 fn validate_file_exists(path: String) -> Result<(), Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: validate_file_exists",
     ))
 }
 
 fn find_files_by_extension(dir: String, extension: String, recursive: bool) -> Result<Vec<String>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: find_files_by_extension",
     ))
 }
 
 fn detect_mime_type(path: String, check_exists: bool) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: detect_mime_type",
     ))
 }
 
 fn validate_mime_type(mime_type: String) -> Result<String, Error> {
-    let result = kreuzberg::validate_mime_type(&mime_type)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::validate_mime_type(&mime_type).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn detect_or_validate(path: Option<String>, mime_type: Option<String>) -> Result<String, Error> {
-    let result = kreuzberg::detect_or_validate(path.as_deref().map(std::path::Path::new), mime_type.as_deref())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::detect_or_validate(path.as_deref(), mime_type.as_deref()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn detect_mime_type_from_bytes(content: Vec<u8>) -> Result<String, Error> {
-    let result = kreuzberg::detect_mime_type_from_bytes(&content)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::detect_mime_type_from_bytes(&content).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn get_extensions_for_mime(mime_type: String) -> Result<Vec<String>, Error> {
-    let result = kreuzberg::get_extensions_for_mime(&mime_type)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::get_extensions_for_mime(&mime_type).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -15590,59 +13811,27 @@ fn list_supported_formats() -> Vec<SupportedFormat> {
 }
 
 fn clear_processor_cache() -> Result<(), Error> {
-    let result = kreuzberg::core::pipeline::clear_processor_cache()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::core::pipeline::clear_processor_cache().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
-fn apply_output_format(result: String, output_format: String) -> () {
+fn apply_output_format(result: String, output_format: String) -> ExtractionResult {
     let result: ExtractionResult = {
         let core: kreuzberg::ExtractionResult = serde_json::from_str(&result)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     let output_format: OutputFormat = {
         let core: kreuzberg::OutputFormat = serde_json::from_str(&output_format)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    kreuzberg::core::pipeline::apply_output_format(result.into(), output_format.into())
-}
-
-fn run_pipeline(doc: String, config: String) -> Result<ExtractionResult, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: run_pipeline",
-    ))
-}
-
-fn run_pipeline_async(doc: String, config: String) -> Result<ExtractionResult, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: run_pipeline_async",
-    ))
-}
-
-fn run_pipeline_sync(doc: String, config: String) -> Result<ExtractionResult, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: run_pipeline_sync",
-    ))
+    kreuzberg::core::pipeline::apply_output_format(result.into(), output_format.into()).into()
 }
 
 fn is_page_text_blank(text: String) -> bool {
@@ -15653,86 +13842,76 @@ fn resolve_relationships(doc: String) -> () {
     ()
 }
 
-fn derive_document_structure(doc: String) -> DocumentStructure {
-    panic!("alef: derive_document_structure not auto-delegatable")
-}
-
-fn derive_extraction_result(doc: String, include_document_structure: bool, output_format: String) -> ExtractionResult {
-    let output_format: OutputFormat = {
-        let core: kreuzberg::OutputFormat = serde_json::from_str(&output_format)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    panic!("alef: derive_extraction_result not auto-delegatable")
-}
-
 fn parse_json(data: Vec<u8>, config: Option<String>) -> Result<StructuredDataResult, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: parse_json",
     ))
 }
 
 fn parse_jsonl(data: Vec<u8>, config: Option<String>) -> Result<StructuredDataResult, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: parse_jsonl",
     ))
 }
 
 fn parse_yaml(data: Vec<u8>) -> Result<StructuredDataResult, Error> {
-    let result = kreuzberg::extraction::parse_yaml(&data)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::parse_yaml(&data).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn parse_toml(data: Vec<u8>) -> Result<StructuredDataResult, Error> {
-    let result = kreuzberg::extraction::parse_toml(&data)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::parse_toml(&data).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn parse_text(text_bytes: Vec<u8>, is_markdown: bool) -> Result<TextExtractionResult, Error> {
-    let result = kreuzberg::extraction::parse_text(&text_bytes, is_markdown)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::parse_text(&text_bytes, is_markdown).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn transform_to_document_structure(result: String) -> DocumentStructure {
     let result: ExtractionResult = {
         let core: kreuzberg::ExtractionResult = serde_json::from_str(&result)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     kreuzberg::extraction::transform_to_document_structure(result.into()).into()
 }
 
-fn detect_list_items(text: String) -> Vec<ListItemMetadata> {
-    kreuzberg::extraction::detect_list_items(&text)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+fn detect_list_items(text: String) -> Vec<String> {
+    Vec::new()
 }
 
-fn generate_element_id(text: String, element_type: String, page_number: Option<usize>) -> ElementId {
+fn generate_element_id(text: String, element_type: String, page_number: Option<usize>) -> String {
     let element_type: ElementType = {
         let core: kreuzberg::ElementType = serde_json::from_str(&element_type)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    ElementId {
-        inner: Arc::new(kreuzberg::extraction::generate_element_id(
-            &text,
-            element_type.into(),
-            page_number,
-        )),
-    }
+    String::from("[unimplemented: generate_element_id]")
 }
 
 fn transform_extraction_result_to_elements(result: String) -> Vec<Element> {
     let result: ExtractionResult = {
         let core: kreuzberg::ExtractionResult = serde_json::from_str(&result)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     kreuzberg::extraction::transform_extraction_result_to_elements(result.into())
@@ -15741,60 +13920,38 @@ fn transform_extraction_result_to_elements(result: String) -> Vec<Element> {
         .collect()
 }
 
-fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> Result<Vec<Section>, Error> {
-    let result = kreuzberg::extraction::hwp::parser::parse_body_text(&data, is_compressed)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into_iter().map(Into::into).collect())
+fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> Result<Vec<String>, Error> {
+    Err(magnus::Error::new(
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+        "Not implemented: parse_body_text",
+    ))
 }
 
 fn decompress_stream(data: Vec<u8>) -> Result<Vec<u8>, Error> {
-    let result = kreuzberg::extraction::hwp::reader::decompress_stream(&data)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::hwp::reader::decompress_stream(&data).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn extract_hwp_text(bytes: Vec<u8>) -> Result<String, Error> {
-    let result = kreuzberg::extraction::hwp::extract_hwp_text(&bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::hwp::extract_hwp_text(&bytes).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
-fn load_image_for_ocr(image_bytes: Vec<u8>) -> Result<String, Error> {
+fn extract_image_metadata(bytes: Vec<u8>) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: load_image_for_ocr",
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+        "Not implemented: extract_image_metadata",
     ))
-}
-
-fn extract_image_metadata(bytes: Vec<u8>) -> Result<ImageMetadata, Error> {
-    let result = kreuzberg::extraction::extract_image_metadata(&bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
-}
-
-fn extract_text_from_image_with_ocr(
-    bytes: Vec<u8>,
-    mime_type: String,
-    ocr_result: String,
-    page_config: Option<String>,
-) -> Result<ImageOcrResult, Error> {
-    let page_config: Option<PageConfig> = page_config
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::PageConfig = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    let result = kreuzberg::extraction::image::extract_text_from_image_with_ocr(
-        &bytes,
-        &mime_type,
-        ocr_result,
-        page_config.map(Into::into),
-    )
-    .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
 }
 
 fn estimate_content_capacity(file_size: u64, format: String) -> usize {
@@ -15819,111 +13976,119 @@ fn estimate_table_markdown_capacity(row_count: usize, col_count: usize) -> usize
 
 fn decompress_gzip(bytes: Vec<u8>, limits: String) -> Result<Vec<u8>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: decompress_gzip",
     ))
 }
 
 fn extract_gzip(bytes: Vec<u8>, limits: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_gzip",
     ))
 }
 
 fn extract_gzip_metadata(bytes: Vec<u8>, limits: String) -> Result<ArchiveMetadata, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_gzip_metadata",
     ))
 }
 
 fn extract_gzip_text_content(bytes: Vec<u8>, limits: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_gzip_text_content",
     ))
 }
 
 fn extract_gzip_with_bytes(bytes: Vec<u8>, limits: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_gzip_with_bytes",
     ))
 }
 
 fn extract_7z_metadata(bytes: Vec<u8>, limits: String) -> Result<ArchiveMetadata, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_7z_metadata",
     ))
 }
 
 fn extract_7z_text_content(bytes: Vec<u8>, limits: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_7z_text_content",
     ))
 }
 
 fn extract_7z_file_bytes(bytes: Vec<u8>, limits: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_7z_file_bytes",
     ))
 }
 
 fn extract_tar_metadata(bytes: Vec<u8>, limits: String) -> Result<ArchiveMetadata, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_tar_metadata",
     ))
 }
 
 fn extract_tar_text_content(bytes: Vec<u8>, limits: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_tar_text_content",
     ))
 }
 
 fn extract_tar_file_bytes(bytes: Vec<u8>, limits: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_tar_file_bytes",
     ))
 }
 
 fn extract_zip_metadata(bytes: Vec<u8>, limits: String) -> Result<ArchiveMetadata, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_zip_metadata",
     ))
 }
 
 fn extract_zip_text_content(bytes: Vec<u8>, limits: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_zip_text_content",
     ))
 }
 
 fn extract_zip_file_bytes(bytes: Vec<u8>, limits: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_zip_file_bytes",
     ))
 }
 
 fn parse_eml_content(data: Vec<u8>) -> Result<EmailExtractionResult, Error> {
-    let result = kreuzberg::extraction::parse_eml_content(&data)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::parse_eml_content(&data).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn parse_msg_content(data: Vec<u8>, fallback_codepage: Option<u32>) -> Result<EmailExtractionResult, Error> {
-    let result = kreuzberg::extraction::parse_msg_content(&data, fallback_codepage)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::parse_msg_content(&data, fallback_codepage).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
@@ -15932,43 +14097,48 @@ fn extract_email_content(
     mime_type: String,
     fallback_codepage: Option<u32>,
 ) -> Result<EmailExtractionResult, Error> {
-    let result = kreuzberg::extraction::extract_email_content(&data, &mime_type, fallback_codepage)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::extract_email_content(&data, &mime_type, fallback_codepage).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn build_email_text_output(result: String) -> String {
     let result: EmailExtractionResult = {
         let core: kreuzberg::EmailExtractionResult = serde_json::from_str(&result)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     kreuzberg::extraction::build_email_text_output(result.into())
 }
 
-fn extract_pst_messages(pst_data: Vec<u8>) -> Result<String, Error> {
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: extract_pst_messages",
-    ))
-}
-
 fn read_excel_file(file_path: String) -> Result<ExcelWorkbook, Error> {
-    let result = kreuzberg::extraction::read_excel_file(&file_path)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::read_excel_file(&file_path).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn read_excel_bytes(data: Vec<u8>, file_extension: String) -> Result<ExcelWorkbook, Error> {
-    let result = kreuzberg::extraction::read_excel_bytes(&data, &file_extension)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::read_excel_bytes(&data, &file_extension).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn excel_to_text(workbook: String) -> String {
     let workbook: ExcelWorkbook = {
         let core: kreuzberg::ExcelWorkbook = serde_json::from_str(&workbook)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     kreuzberg::extraction::excel::excel_to_text(workbook.into())
@@ -15977,7 +14147,7 @@ fn excel_to_text(workbook: String) -> String {
 fn excel_to_markdown(workbook: String) -> String {
     let workbook: ExcelWorkbook = {
         let core: kreuzberg::ExcelWorkbook = serde_json::from_str(&workbook)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     kreuzberg::extraction::excel_to_markdown(workbook.into())
@@ -15989,7 +14159,7 @@ fn convert_html_to_markdown(
     output_format: Option<String>,
 ) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: convert_html_to_markdown",
     ))
 }
@@ -16000,7 +14170,7 @@ fn convert_html_to_markdown_with_metadata(
     output_format: Option<String>,
 ) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: convert_html_to_markdown_with_metadata",
     ))
 }
@@ -16011,26 +14181,23 @@ fn convert_html_to_markdown_with_tables(
     output_format: Option<String>,
 ) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: convert_html_to_markdown_with_tables",
     ))
 }
 
 fn extract_html_inline_images(html: String, options: Option<String>) -> Result<Vec<String>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_html_inline_images",
     ))
 }
 
-fn extract_doc_text(content: Vec<u8>) -> Result<DocExtractionResult, Error> {
-    let result = kreuzberg::extraction::extract_doc_text(&content)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
-}
-
-fn parse_drawing(reader: String) -> Drawing {
-    panic!("alef: parse_drawing not auto-delegatable")
+fn extract_doc_text(content: Vec<u8>) -> Result<String, Error> {
+    Err(magnus::Error::new(
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+        "Not implemented: extract_doc_text",
+    ))
 }
 
 fn collect_and_convert_omath_para(reader: String) -> String {
@@ -16043,14 +14210,18 @@ fn collect_and_convert_omath(reader: String) -> String {
 
 fn parse_document(bytes: Vec<u8>) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: parse_document",
     ))
 }
 
 fn extract_text_from_bytes(bytes: Vec<u8>) -> Result<String, Error> {
-    let result = kreuzberg::extraction::docx::parser::extract_text_from_bytes(&bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::docx::parser::extract_text_from_bytes(&bytes).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16064,13 +14235,9 @@ fn parse_section_properties_streaming(reader: String) -> String {
 
 fn parse_styles_xml(xml: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: parse_styles_xml",
     ))
-}
-
-fn parse_table_properties(reader: String) -> TableProperties {
-    panic!("alef: parse_table_properties not auto-delegatable")
 }
 
 fn parse_row_properties(reader: String) -> String {
@@ -16081,39 +14248,47 @@ fn parse_cell_properties(reader: String) -> String {
     String::from("[unimplemented: parse_cell_properties]")
 }
 
-fn parse_table_grid(reader: String) -> TableGrid {
-    panic!("alef: parse_table_grid not auto-delegatable")
-}
-
 fn parse_theme_xml(xml: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: parse_theme_xml",
     ))
 }
 
 fn extract_text(bytes: Vec<u8>) -> Result<String, Error> {
-    let result = kreuzberg::extraction::docx::extract_text(&bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::docx::extract_text(&bytes).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_text_with_page_breaks",
     ))
 }
 
 fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<PageBoundary>>, Error> {
-    let result = kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<usize>, Error> {
-    let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16125,7 +14300,7 @@ fn extract_ooxml_embedded_objects(
 ) -> Result<String, Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     String::from("[unimplemented: extract_ooxml_embedded_objects]")
@@ -16139,7 +14314,7 @@ fn extract_ooxml_embedded_objects_async(
 ) -> Result<String, Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     String::from("[unimplemented: extract_ooxml_embedded_objects_async]")
@@ -16149,69 +14324,51 @@ fn detect_image_format(data: Vec<u8>) -> String {
     String::from("[unimplemented: detect_image_format]")
 }
 
-fn process_images_with_ocr(images: Vec<ExtractedImage>, config: String) -> Result<Vec<ExtractedImage>, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    let result = rt
-        .block_on(async { kreuzberg::extraction::image_ocr::process_images_with_ocr(images, config.into()).await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into_iter().map(Into::into).collect())
+fn extract_ppt_text(content: Vec<u8>) -> Result<String, Error> {
+    Err(magnus::Error::new(
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+        "Not implemented: extract_ppt_text",
+    ))
 }
 
-fn process_images_with_ocr_async(images: Vec<ExtractedImage>, config: String) -> Result<Vec<ExtractedImage>, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    let result = rt
-        .block_on(async { kreuzberg::extraction::image_ocr::process_images_with_ocr(images, config.into()).await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into_iter().map(Into::into).collect())
-}
-
-fn extract_ppt_text(content: Vec<u8>) -> Result<PptExtractionResult, Error> {
-    let result = kreuzberg::extraction::extract_ppt_text(&content)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
-}
-
-fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bool) -> Result<PptExtractionResult, Error> {
-    let result = kreuzberg::extraction::extract_ppt_text_with_options(&content, include_master_slides)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.into())
+fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bool) -> Result<String, Error> {
+    Err(magnus::Error::new(
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+        "Not implemented: extract_ppt_text_with_options",
+    ))
 }
 
 fn extract_pptx_from_path(path: String, options: String) -> Result<PptxExtractionResult, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_pptx_from_path",
     ))
 }
 
 fn extract_pptx_from_bytes(data: Vec<u8>, options: String) -> Result<PptxExtractionResult, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_pptx_from_bytes",
     ))
 }
 
 fn parse_xml_svg(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<XmlExtractionResult, Error> {
-    let result = kreuzberg::extraction::xml::parse_xml_svg(&xml_bytes, preserve_whitespace)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::xml::parse_xml_svg(&xml_bytes, preserve_whitespace).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn parse_xml(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<XmlExtractionResult, Error> {
-    let result = kreuzberg::extraction::parse_xml(&xml_bytes, preserve_whitespace)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extraction::parse_xml(&xml_bytes, preserve_whitespace).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
@@ -16223,28 +14380,18 @@ fn cells_to_markdown(cells: Vec<Vec<String>>) -> String {
     kreuzberg::extraction::cells_to_markdown(&cells)
 }
 
-fn parse_jotdown_attributes(attrs: String) -> Attributes {
-    let attrs: Attributes = {
-        let core: kreuzberg::Attributes = serde_json::from_str(&attrs)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::extractors::djot_format::attributes::parse_jotdown_attributes(attrs.into()).into()
+fn parse_jotdown_attributes(attrs: String) -> String {
+    String::from("[unimplemented: parse_jotdown_attributes]")
 }
 
 fn render_attributes(attrs: String) -> String {
-    let attrs: Attributes = {
-        let core: kreuzberg::Attributes = serde_json::from_str(&attrs)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::extractors::djot_format::attributes::render_attributes(attrs.into())
+    String::from("[unimplemented: render_attributes]")
 }
 
 fn djot_content_to_djot(content: String) -> String {
     let content: DjotContent = {
         let core: kreuzberg::DjotContent = serde_json::from_str(&content)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     kreuzberg::extractors::djot_format::djot_content_to_djot(content.into())
@@ -16253,30 +14400,29 @@ fn djot_content_to_djot(content: String) -> String {
 fn extraction_result_to_djot(result: String) -> Result<String, Error> {
     let result: ExtractionResult = {
         let core: kreuzberg::ExtractionResult = serde_json::from_str(&result)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::extractors::djot_format::extraction_result_to_djot(result.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extractors::djot_format::extraction_result_to_djot(result.into()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn djot_to_html(djot_source: String) -> Result<String, Error> {
-    let result = kreuzberg::extractors::djot_format::djot_to_html(&djot_source)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extractors::djot_format::djot_to_html(&djot_source).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
-fn extract_complete_djot_content(events: Vec<String>, metadata: String, tables: Vec<Table>) -> DjotContent {
-    let metadata: Metadata = {
-        let core: kreuzberg::Metadata = serde_json::from_str(&metadata)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    panic!("alef: extract_complete_djot_content not auto-delegatable")
-}
-
-fn extract_tables_from_events(events: Vec<String>) -> Vec<Table> {
+fn extract_tables_from_events(events: Vec<String>) -> Vec<String> {
     Vec::new()
 }
 
@@ -16284,34 +14430,30 @@ fn extract_text_from_events(events: Vec<String>) -> String {
     String::from("[unimplemented: extract_text_from_events]")
 }
 
-fn render_block_to_djot(output: String, block: String, indent_level: usize) -> () {
+fn render_block_to_djot(block: String, indent_level: usize) -> String {
     let block: FormattedBlock = {
         let core: kreuzberg::FormattedBlock = serde_json::from_str(&block)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(&output, block.into(), indent_level)
+    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(block.into(), indent_level)
 }
 
-fn render_list_item(output: String, item: String, indent: String, marker: String) -> () {
+fn render_list_item(item: String, indent: String, marker: String) -> String {
     let item: FormattedBlock = {
         let core: kreuzberg::FormattedBlock = serde_json::from_str(&item)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    kreuzberg::extractors::djot_format::rendering::render_list_item(&output, item.into(), &indent, &marker)
+    kreuzberg::extractors::djot_format::rendering::render_list_item(item.into(), &indent, &marker)
 }
 
-fn render_inline_content(output: String, elements: Vec<InlineElement>) -> () {
-    kreuzberg::extractors::djot_format::rendering::render_inline_content(&output, &elements)
+fn render_inline_content(elements: Vec<InlineElement>) -> String {
+    kreuzberg::extractors::djot_format::rendering::render_inline_content(&elements)
 }
 
 fn extract_frontmatter(content: String) -> String {
     String::from("[unimplemented: extract_frontmatter]")
-}
-
-fn extract_metadata_from_yaml(yaml: String) -> Metadata {
-    panic!("alef: extract_metadata_from_yaml not auto-delegatable")
 }
 
 fn extract_title_from_content(content: String) -> Option<String> {
@@ -16319,20 +14461,32 @@ fn extract_title_from_content(content: String) -> Option<String> {
 }
 
 fn collect_iwa_paths(content: Vec<u8>) -> Result<Vec<String>, Error> {
-    let result = kreuzberg::extractors::iwork::collect_iwa_paths(&content)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extractors::iwork::collect_iwa_paths(&content).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn read_iwa_file(content: Vec<u8>, path: String) -> Result<Vec<u8>, Error> {
-    let result = kreuzberg::extractors::iwork::read_iwa_file(&content, &path)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extractors::iwork::read_iwa_file(&content, &path).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn decode_iwa_stream(data: Vec<u8>) -> Result<Vec<u8>, Error> {
-    let result = kreuzberg::extractors::iwork::decode_iwa_stream(&data)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extractors::iwork::decode_iwa_stream(&data).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16341,8 +14495,12 @@ fn extract_text_from_proto(data: Vec<u8>) -> Vec<String> {
 }
 
 fn extract_text_from_iwa_files(content: Vec<u8>, iwa_paths: Vec<String>) -> Result<String, Error> {
-    let result = kreuzberg::extractors::iwork::extract_text_from_iwa_files(&content, &iwa_paths)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extractors::iwork::extract_text_from_iwa_files(&content, &iwa_paths).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16354,49 +14512,11 @@ fn dedup_text(texts: Vec<String>) -> Vec<String> {
     kreuzberg::extractors::iwork::dedup_text(texts)
 }
 
-fn evaluate_native_text_for_ocr(
-    native_text: String,
-    page_count: Option<usize>,
-    thresholds: Option<String>,
-) -> OcrFallbackDecision {
-    let thresholds: OcrQualityThresholds = {
-        let core: kreuzberg::OcrQualityThresholds = serde_json::from_str(&thresholds)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::extractors::pdf::evaluate_native_text_for_ocr(
-        &native_text,
-        page_count,
-        thresholds.expect("'thresholds' is required").into(),
-    )
-    .into()
-}
-
-fn evaluate_per_page_ocr(
-    native_text: String,
-    boundaries: Option<Vec<PageBoundary>>,
-    page_count: Option<usize>,
-    thresholds: Option<String>,
-) -> OcrFallbackDecision {
-    let thresholds: OcrQualityThresholds = {
-        let core: kreuzberg::OcrQualityThresholds = serde_json::from_str(&thresholds)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    kreuzberg::extractors::pdf::evaluate_per_page_ocr(
-        &native_text,
-        boundaries.as_deref(),
-        page_count,
-        thresholds.expect("'thresholds' is required").into(),
-    )
-    .into()
-}
-
-fn hex_digit_to_u8(c: String) -> Option<u8> {
+fn hex_digit_to_u8(c: u8) -> Option<u8> {
     kreuzberg::extractors::rtf::hex_digit_to_u8(c)
 }
 
-fn parse_hex_byte(h1: String, h2: String) -> Option<u8> {
+fn parse_hex_byte(h1: u8, h2: u8) -> Option<u8> {
     kreuzberg::extractors::rtf::parse_hex_byte(h1, h2)
 }
 
@@ -16433,8 +14553,12 @@ fn extract_text_from_rtf(content: String, plain: bool) -> String {
 }
 
 fn register_default_extractors() -> Result<(), Error> {
-    let result = kreuzberg::extractors::register_default_extractors()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extractors::register_default_extractors().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16444,56 +14568,78 @@ fn extract_panic_message(panic_info: String) -> String {
 
 fn register_extractor(extractor: String) -> Result<(), Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: register_extractor",
     ))
 }
 
 fn unregister_extractor(name: String) -> Result<(), Error> {
-    let result = kreuzberg::plugins::unregister_extractor(&name)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::unregister_extractor(&name).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn list_extractors() -> Result<Vec<String>, Error> {
-    let result = kreuzberg::plugins::list_extractors()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::list_extractors().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn clear_extractors() -> Result<(), Error> {
-    let result = kreuzberg::plugins::clear_extractors()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result)
-}
-
-fn register_ocr_backend(backend: OcrBackend) -> Result<(), Error> {
-    let result = kreuzberg::plugins::register_ocr_backend(&backend.inner)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::clear_extractors().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn unregister_ocr_backend(name: String) -> Result<(), Error> {
-    let result = kreuzberg::plugins::unregister_ocr_backend(&name)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::unregister_ocr_backend(&name).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn list_ocr_backends() -> Result<Vec<String>, Error> {
-    let result = kreuzberg::plugins::list_ocr_backends()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::list_ocr_backends().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn clear_ocr_backends() -> Result<(), Error> {
-    let result = kreuzberg::plugins::clear_ocr_backends()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::clear_ocr_backends().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn list_post_processors() -> Result<Vec<String>, Error> {
-    let result = kreuzberg::plugins::list_post_processors()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::list_post_processors().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16517,15 +14663,13 @@ fn get_renderer_registry() -> String {
     String::from("[unimplemented: get_renderer_registry]")
 }
 
-fn register_renderer(renderer: Renderer) -> Result<(), Error> {
-    let result = kreuzberg::plugins::register_renderer(&renderer.inner)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result)
-}
-
 fn unregister_renderer(name: String) -> Result<(), Error> {
-    let result = kreuzberg::plugins::unregister_renderer(&name)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::unregister_renderer(&name).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16534,40 +14678,56 @@ fn list_renderers() -> Vec<String> {
 }
 
 fn clear_renderers() -> Result<(), Error> {
-    let result = kreuzberg::plugins::clear_renderers()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::clear_renderers().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn validate_plugins_at_startup() -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: validate_plugins_at_startup",
     ))
 }
 
 fn register_validator(validator: String) -> Result<(), Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: register_validator",
     ))
 }
 
 fn unregister_validator(name: String) -> Result<(), Error> {
-    let result = kreuzberg::plugins::unregister_validator(&name)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::unregister_validator(&name).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn list_validators() -> Result<Vec<String>, Error> {
-    let result = kreuzberg::plugins::list_validators()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::list_validators().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn clear_validators() -> Result<(), Error> {
-    let result = kreuzberg::plugins::clear_validators()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::plugins::clear_validators().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16595,8 +14755,8 @@ fn sanitize_filename(path: String) -> String {
     kreuzberg::telemetry::conventions::sanitize_filename(std::path::Path::new(&path)).into()
 }
 
-fn get_metrics() -> ExtractionMetrics {
-    kreuzberg::telemetry::metrics::get_metrics().clone().into()
+fn get_metrics() -> String {
+    String::from("[unimplemented: get_metrics]")
 }
 
 fn record_error_on_current_span(error: String) -> () {
@@ -16632,14 +14792,22 @@ fn model_inference_span(model_name: String) -> String {
 }
 
 fn from_utf8(bytes: Vec<u8>) -> Result<String, Error> {
-    let result = kreuzberg::text::utf8_validation::from_utf8(&bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::text::utf8_validation::from_utf8(&bytes).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn string_from_utf8(bytes: Vec<u8>) -> Result<String, Error> {
-    let result = kreuzberg::text::utf8_validation::string_from_utf8(&bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::text::utf8_validation::string_from_utf8(&bytes).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16662,11 +14830,15 @@ fn normalize_spaces(text: String) -> String {
 fn reduce_tokens(text: String, config: String, language_hint: Option<String>) -> Result<String, Error> {
     let config: TokenReductionConfig = {
         let core: kreuzberg::TokenReductionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::text::reduce_tokens(&text, config.into(), language_hint.as_deref())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::text::reduce_tokens(&text, config.into(), language_hint.as_deref()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -16677,11 +14849,16 @@ fn batch_reduce_tokens(
 ) -> Result<Vec<String>, Error> {
     let config: TokenReductionConfig = {
         let core: kreuzberg::TokenReductionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::text::batch_reduce_tokens(&texts, config.into(), language_hint.as_deref())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result =
+        kreuzberg::text::batch_reduce_tokens(&texts, config.into(), language_hint.as_deref()).map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
@@ -16779,16 +14956,12 @@ fn acquire_string_buffer() -> PooledString {
     }
 }
 
-fn intern_language_code(lang_code: String) -> InternedString {
-    InternedString {
-        inner: Arc::new(kreuzberg::utils::string_pool::intern_language_code(&lang_code)),
-    }
+fn intern_language_code(lang_code: String) -> String {
+    String::from("[unimplemented: intern_language_code]")
 }
 
-fn intern_mime_type(mime_type: String) -> InternedString {
-    InternedString {
-        inner: Arc::new(kreuzberg::utils::string_pool::intern_mime_type(&mime_type)),
-    }
+fn intern_mime_type(mime_type: String) -> String {
+    String::from("[unimplemented: intern_mime_type]")
 }
 
 fn xml_tag_name(name: Vec<u8>) -> String {
@@ -16816,19 +14989,19 @@ fn table_to_markdown(table: Vec<Vec<String>>) -> String {
 }
 
 fn load_server_config(config_path: Option<String>) -> Result<ServerConfig, Error> {
-    let result = kreuzberg::api::load_server_config(config_path.as_deref().map(std::path::Path::new))
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::api::load_server_config(config_path.as_deref()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
-}
-
-fn openapi_json() -> String {
-    kreuzberg::api::openapi::openapi_json()
 }
 
 fn create_router(config: String) -> String {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     String::from("[unimplemented: create_router]")
@@ -16837,7 +15010,7 @@ fn create_router(config: String) -> String {
 fn create_router_with_limits(config: String, limits: String) -> String {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     String::from("[unimplemented: create_router_with_limits]")
@@ -16846,12 +15019,12 @@ fn create_router_with_limits(config: String, limits: String) -> String {
 fn create_router_with_limits_and_server_config(config: String, limits: String, server_config: String) -> String {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     let server_config: ServerConfig = {
         let core: kreuzberg::ServerConfig = serde_json::from_str(&server_config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     String::from("[unimplemented: create_router_with_limits_and_server_config]")
@@ -16859,14 +15032,14 @@ fn create_router_with_limits_and_server_config(config: String, limits: String, s
 
 fn serve(host: String, port: u16) -> Result<(), Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: serve",
     ))
 }
 
 fn serve_async(host: String, port: u16) -> Result<(), Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: serve_async",
     ))
 }
@@ -16874,11 +15047,11 @@ fn serve_async(host: String, port: u16) -> Result<(), Error> {
 fn serve_with_config(host: String, port: u16, config: String) -> Result<(), Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: serve_with_config",
     ))
 }
@@ -16886,96 +15059,108 @@ fn serve_with_config(host: String, port: u16, config: String) -> Result<(), Erro
 fn serve_with_config_async(host: String, port: u16, config: String) -> Result<(), Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: serve_with_config_async",
-    ))
-}
-
-fn serve_with_config_and_limits(host: String, port: u16, config: String, limits: String) -> Result<(), Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: serve_with_config_and_limits",
-    ))
-}
-
-fn serve_with_config_and_limits_async(host: String, port: u16, config: String, limits: String) -> Result<(), Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: serve_with_config_and_limits_async",
     ))
 }
 
 fn serve_with_server_config(extraction_config: String, server_config: String) -> Result<(), Error> {
     let extraction_config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&extraction_config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     let server_config: ServerConfig = {
         let core: kreuzberg::ServerConfig = serde_json::from_str(&server_config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async {
             kreuzberg::api::serve_with_server_config(extraction_config.into(), server_config.into()).await
         })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
 fn serve_with_server_config_async(extraction_config: String, server_config: String) -> Result<(), Error> {
     let extraction_config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&extraction_config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     let server_config: ServerConfig = {
         let core: kreuzberg::ServerConfig = serde_json::from_str(&server_config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async {
             kreuzberg::api::serve_with_server_config(extraction_config.into(), server_config.into()).await
         })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
 fn serve_default() -> Result<(), Error> {
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async { kreuzberg::api::serve_default().await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
 fn serve_default_async() -> Result<(), Error> {
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async { kreuzberg::api::serve_default().await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
@@ -16984,100 +15169,95 @@ fn map_kreuzberg_error_to_mcp(error: String) -> String {
 }
 
 fn start_mcp_server() -> Result<(), Error> {
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async { kreuzberg::mcp::start_mcp_server().await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
 fn start_mcp_server_async() -> Result<(), Error> {
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async { kreuzberg::mcp::start_mcp_server().await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
 fn start_mcp_server_with_config(config: String) -> Result<(), Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async { kreuzberg::mcp::start_mcp_server_with_config(config.into()).await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
 fn start_mcp_server_with_config_async(config: String) -> Result<(), Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let rt = tokio::runtime::Runtime::new()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let rt = tokio::runtime::Runtime::new().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     let result = rt
         .block_on(async { kreuzberg::mcp::start_mcp_server_with_config(config.into()).await })
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
-}
-
-fn start_mcp_server_http(host: String, port: u16) -> Result<(), Error> {
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: start_mcp_server_http",
-    ))
-}
-
-fn start_mcp_server_http_async(host: String, port: u16) -> Result<(), Error> {
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: start_mcp_server_http_async",
-    ))
-}
-
-fn start_mcp_server_http_with_config(host: String, port: u16, config: String) -> Result<(), Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: start_mcp_server_http_with_config",
-    ))
-}
-
-fn start_mcp_server_http_with_config_async(host: String, port: u16, config: String) -> Result<(), Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: start_mcp_server_http_with_config_async",
-    ))
 }
 
 fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> Result<(), Error> {
-    let result = kreuzberg::chunking::validate_page_boundaries(&boundaries)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::chunking::validate_page_boundaries(&boundaries).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
-}
-
-fn calculate_page_range(byte_start: usize, byte_end: usize, boundaries: Vec<PageBoundary>) -> Result<String, Error> {
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: calculate_page_range",
-    ))
 }
 
 fn classify_chunk(content: String, heading_context: Option<String>) -> ChunkType {
@@ -17085,12 +15265,13 @@ fn classify_chunk(content: String, heading_context: Option<String>) -> ChunkType
         .as_deref()
         .filter(|s| *s != "nil")
         .map(|s| {
-            let core: kreuzberg::HeadingContext = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            let core: kreuzberg::HeadingContext = serde_json::from_str(s).map_err(|e| {
+                magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string())
+            })?;
             Ok::<_, magnus::Error>(core.into())
         })
         .transpose()?;
-    kreuzberg::chunking::classify_chunk(&content, heading_context.map(Into::into)).into()
+    kreuzberg::chunking::classify_chunk(&content, heading_context.as_ref()).into()
 }
 
 fn chunk_text(
@@ -17100,11 +15281,15 @@ fn chunk_text(
 ) -> Result<ChunkingResult, Error> {
     let config: ChunkingConfig = {
         let core: kreuzberg::ChunkingConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::chunking::chunk_text(&text, config.into(), page_boundaries.as_deref())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::chunking::chunk_text(&text, config.into(), page_boundaries.as_deref()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
@@ -17116,7 +15301,7 @@ fn chunk_text_with_heading_source(
 ) -> Result<ChunkingResult, Error> {
     let config: ChunkingConfig = {
         let core: kreuzberg::ChunkingConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     let result = kreuzberg::chunking::chunk_text_with_heading_source(
@@ -17125,7 +15310,12 @@ fn chunk_text_with_heading_source(
         page_boundaries.as_deref(),
         heading_source.as_deref(),
     )
-    .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    .map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
@@ -17138,22 +15328,31 @@ fn chunk_text_with_type(
 ) -> Result<ChunkingResult, Error> {
     let chunker_type: ChunkerType = {
         let core: kreuzberg::ChunkerType = serde_json::from_str(&chunker_type)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     let result = kreuzberg::chunking::chunk_text_with_type(&text, max_characters, overlap, trim, chunker_type.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+        .map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into())
 }
 
 fn chunk_texts_batch(texts: Vec<String>, config: String) -> Result<Vec<ChunkingResult>, Error> {
     let config: ChunkingConfig = {
         let core: kreuzberg::ChunkingConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::chunking::chunk_texts_batch(&texts, config.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::chunking::chunk_texts_batch(&texts, config.into()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into_iter().map(Into::into).collect())
 }
 
@@ -17162,26 +15361,30 @@ fn precompute_utf8_boundaries(text: String) -> String {
 }
 
 fn validate_utf8_boundaries(text: String, boundaries: Vec<PageBoundary>) -> Result<(), Error> {
-    let result = kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn create_client(config: String) -> Result<String, Error> {
     let config: LlmConfig = {
         let core: kreuzberg::LlmConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: create_client",
     ))
 }
 
 fn render_template(template: String, context: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: render_template",
     ))
 }
@@ -17189,11 +15392,11 @@ fn render_template(template: String, context: String) -> Result<String, Error> {
 fn extract_structured(content: String, config: String) -> Result<String, Error> {
     let config: StructuredExtractionConfig = {
         let core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_structured",
     ))
 }
@@ -17201,11 +15404,11 @@ fn extract_structured(content: String, config: String) -> Result<String, Error> 
 fn extract_structured_async(content: String, config: String) -> Result<String, Error> {
     let config: StructuredExtractionConfig = {
         let core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_structured_async",
     ))
 }
@@ -17213,11 +15416,11 @@ fn extract_structured_async(content: String, config: String) -> Result<String, E
 fn vlm_ocr(image_bytes: Vec<u8>, image_mime_type: String, language: String, config: String) -> Result<String, Error> {
     let config: LlmConfig = {
         let core: kreuzberg::LlmConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: vlm_ocr",
     ))
 }
@@ -17230,11 +15433,11 @@ fn vlm_ocr_async(
 ) -> Result<String, Error> {
     let config: LlmConfig = {
         let core: kreuzberg::LlmConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: vlm_ocr_async",
     ))
 }
@@ -17254,33 +15457,45 @@ fn list_presets() -> Vec<String> {
 fn warm_model(model_type: String, cache_dir: Option<String>) -> Result<(), Error> {
     let model_type: EmbeddingModelType = {
         let core: kreuzberg::EmbeddingModelType = serde_json::from_str(&model_type)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::warm_model(model_type.into(), cache_dir.map(std::path::PathBuf::from))
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::warm_model(model_type.into(), cache_dir.as_deref()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn download_model(model_type: String, cache_dir: Option<String>) -> Result<(), Error> {
     let model_type: EmbeddingModelType = {
         let core: kreuzberg::EmbeddingModelType = serde_json::from_str(&model_type)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::download_model(model_type.into(), cache_dir.map(std::path::PathBuf::from))
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::download_model(model_type.into(), cache_dir.as_deref()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: String) -> Result<(), Error> {
     let config: EmbeddingConfig = {
         let core: kreuzberg::EmbeddingConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks, config.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks, config.into()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -17305,27 +15520,9 @@ fn calculate_optimal_dpi(
     kreuzberg::image::calculate_optimal_dpi(page_width, page_height, target_dpi, max_dimension, min_dpi, max_dpi)
 }
 
-fn normalize_image_dpi(
-    rgb_data: Vec<u8>,
-    width: usize,
-    height: usize,
-    config: String,
-    current_dpi: Option<f64>,
-) -> Result<String, Error> {
-    let config: ExtractionConfig = {
-        let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: normalize_image_dpi",
-    ))
-}
-
 fn resize_image(image: String, new_width: u32, new_height: u32, scale_factor: f64) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: resize_image",
     ))
 }
@@ -17333,17 +15530,25 @@ fn resize_image(image: String, new_width: u32, new_height: u32, scale_factor: f6
 fn detect_languages(text: String, config: String) -> Result<Option<Vec<String>>, Error> {
     let config: LanguageDetectionConfig = {
         let core: kreuzberg::LanguageDetectionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::language_detection::detect_languages(&text, config.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::language_detection::detect_languages(&text, config.into()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn register_language_detection_processor() -> Result<(), Error> {
-    let result = kreuzberg::language_detection::register_language_detection_processor()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::language_detection::register_language_detection_processor().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -17358,38 +15563,22 @@ fn get_stopwords_with_fallback(language: String, fallback: String) -> Option<Str
 fn extract_keywords(text: String, config: String) -> Result<Vec<Keyword>, Error> {
     let config: KeywordConfig = {
         let core: kreuzberg::KeywordConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::extract_keywords(&text, config.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::extract_keywords(&text, config.into()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into_iter().map(Into::into).collect())
-}
-
-fn text_block_to_element(block: String, page_number: usize) -> Result<Option<OcrElement>, Error> {
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: text_block_to_element",
-    ))
-}
-
-fn tsv_row_to_element(row: String) -> OcrElement {
-    panic!("alef: tsv_row_to_element not auto-delegatable")
-}
-
-fn iterator_word_to_element(
-    word: String,
-    block_type: Option<String>,
-    para_info: Option<String>,
-    page_number: Option<usize>,
-) -> OcrElement {
-    panic!("alef: iterator_word_to_element not auto-delegatable")
 }
 
 fn element_to_hocr_word(element: String) -> String {
     let element: OcrElement = {
         let core: kreuzberg::OcrElement = serde_json::from_str(&element)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     String::from("[unimplemented: element_to_hocr_word]")
@@ -17414,17 +15603,18 @@ fn assemble_ocr_markdown(
         .as_deref()
         .filter(|s| *s != "nil")
         .map(|s| {
-            let core: kreuzberg::DetectionResult = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            let core: kreuzberg::DetectionResult = serde_json::from_str(s).map_err(|e| {
+                magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string())
+            })?;
             Ok::<_, magnus::Error>(core.into())
         })
         .transpose()?;
     kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
         &elements,
-        detection.map(Into::into),
-        img_width.expect("'img_width' is required"),
-        img_height.expect("'img_height' is required"),
-        recognized_tables.expect("'recognized_tables' is required"),
+        detection.as_ref(),
+        img_width,
+        img_height,
+        &recognized_tables,
     )
 }
 
@@ -17436,7 +15626,7 @@ fn recognize_page_tables(
 ) -> Vec<RecognizedTable> {
     let detection: DetectionResult = {
         let core: kreuzberg::DetectionResult = serde_json::from_str(&detection)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     Vec::new()
@@ -17444,7 +15634,7 @@ fn recognize_page_tables(
 
 fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<String>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_words_from_tsv",
     ))
 }
@@ -17454,8 +15644,12 @@ fn compute_hash(data: String) -> String {
 }
 
 fn validate_tesseract_version(version: u32) -> Result<(), Error> {
-    let result = kreuzberg::ocr::validate_tesseract_version(version)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::ocr::validate_tesseract_version(version).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -17503,57 +15697,13 @@ fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) -> S
     String::from("[unimplemented: preprocess_letterbox]")
 }
 
-fn build_session(path: String, accel: Option<String>, thread_budget: Option<usize>) -> Result<String, Error> {
-    let accel: Option<AccelerationConfig> = accel
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::AccelerationConfig = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: build_session",
-    ))
-}
-
 fn config_from_extraction(layout_config: String) -> String {
     let layout_config: LayoutDetectionConfig = {
         let core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     String::from("[unimplemented: config_from_extraction]")
-}
-
-fn create_engine(layout_config: String) -> Result<String, Error> {
-    let layout_config: LayoutDetectionConfig = {
-        let core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: create_engine",
-    ))
-}
-
-fn take_or_create_engine(layout_config: String) -> Result<String, Error> {
-    let layout_config: LayoutDetectionConfig = {
-        let core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: take_or_create_engine",
-    ))
-}
-
-fn return_engine(engine: String) -> () {
-    ()
 }
 
 fn take_or_create_tatr() -> Option<String> {
@@ -17588,12 +15738,6 @@ fn extract_bookmarks(document: String) -> Vec<Uri> {
     Vec::new()
 }
 
-fn extract_bundled_pdfium() -> Result<String, Error> {
-    let result = kreuzberg::pdf::extract_bundled_pdfium()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result.to_string_lossy().to_string())
-}
-
 fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
     Vec::new()
 }
@@ -17601,7 +15745,7 @@ fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
 fn extract_and_process_embedded_files(pdf_bytes: Vec<u8>, config: String) -> Result<String, Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     String::from("[unimplemented: extract_and_process_embedded_files]")
@@ -17610,21 +15754,25 @@ fn extract_and_process_embedded_files(pdf_bytes: Vec<u8>, config: String) -> Res
 fn extract_and_process_embedded_files_async(pdf_bytes: Vec<u8>, config: String) -> Result<String, Error> {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     String::from("[unimplemented: extract_and_process_embedded_files_async]")
 }
 
 fn initialize_font_cache() -> Result<(), Error> {
-    let result = kreuzberg::pdf::initialize_font_cache()
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::pdf::initialize_font_cache().map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn get_font_descriptors() -> Result<Vec<String>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: get_font_descriptors",
     ))
 }
@@ -17633,13 +15781,9 @@ fn cached_font_count() -> usize {
     kreuzberg::pdf::cached_font_count()
 }
 
-fn clear_font_cache() -> () {
-    kreuzberg::pdf::fonts::clear_font_cache()
-}
-
 fn cluster_font_sizes(blocks: Vec<String>, k: usize) -> Result<Vec<FontSizeCluster>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: cluster_font_sizes",
     ))
 }
@@ -17662,14 +15806,14 @@ fn assign_hierarchy_levels_from_clusters(blocks: Vec<String>, clusters: Vec<Font
 
 fn extract_chars_with_fonts(page: String) -> Result<Vec<CharData>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_chars_with_fonts",
     ))
 }
 
 fn extract_segments_from_page(page: String) -> Result<Vec<String>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_segments_from_page",
     ))
 }
@@ -17681,86 +15825,77 @@ fn merge_chars_into_blocks(chars: Vec<CharData>) -> Vec<String> {
 fn should_trigger_ocr(page: String, blocks: Vec<String>, config: String) -> bool {
     let config: ExtractionConfig = {
         let core: kreuzberg::ExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
     false
 }
 
 fn extract_images_from_pdf(pdf_bytes: Vec<u8>) -> Result<Vec<PdfImage>, Error> {
-    let result = kreuzberg::pdf::extract_images_from_pdf(&pdf_bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::pdf::extract_images_from_pdf(&pdf_bytes).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into_iter().map(Into::into).collect())
 }
 
 fn extract_images_from_pdf_with_password(pdf_bytes: Vec<u8>, password: String) -> Result<Vec<PdfImage>, Error> {
-    let result = kreuzberg::pdf::images::extract_images_from_pdf_with_password(&pdf_bytes, &password)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::pdf::images::extract_images_from_pdf_with_password(&pdf_bytes, &password).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result.into_iter().map(Into::into).collect())
-}
-
-fn reextract_raw_images_via_pdfium(pdf_bytes: Vec<u8>, images: Vec<PdfImage>) -> Result<u32, Error> {
-    let result = kreuzberg::pdf::images::reextract_raw_images_via_pdfium(&pdf_bytes, &images)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
-    Ok(result)
 }
 
 fn detect_layout_for_document(pdf_bytes: Vec<u8>, engine: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: detect_layout_for_document",
     ))
 }
 
 fn detect_layout_for_images(images: Vec<String>, engine: String) -> Result<Vec<DetectionResult>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: detect_layout_for_images",
     ))
 }
 
 fn extract_metadata(pdf_bytes: Vec<u8>) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_metadata",
     ))
 }
 
 fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: Option<String>) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_metadata_with_password",
     ))
 }
 
 fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_metadata_with_passwords",
-    ))
-}
-
-fn extract_metadata_from_document(
-    document: String,
-    page_boundaries: Option<Vec<PageBoundary>>,
-    content: Option<String>,
-) -> Result<PdfExtractionMetadata, Error> {
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: extract_metadata_from_document",
     ))
 }
 
 fn extract_common_metadata_from_document(document: String) -> Result<CommonPdfMetadata, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_common_metadata_from_document",
     ))
 }
 
 fn render_page_to_image(pdf_bytes: Vec<u8>, page_index: usize, options: String) -> Result<String, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: render_page_to_image",
     ))
 }
@@ -17771,14 +15906,19 @@ fn render_pdf_page_to_png(
     dpi: Option<i32>,
     password: Option<String>,
 ) -> Result<Vec<u8>, Error> {
-    let result = kreuzberg::pdf::render_pdf_page_to_png(&pdf_bytes, page_index, dpi, password.as_deref())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result =
+        kreuzberg::pdf::render_pdf_page_to_png(&pdf_bytes, page_index, dpi, password.as_deref()).map_err(|e| {
+            magnus::Error::new(
+                unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+                e.to_string(),
+            )
+        })?;
     Ok(result)
 }
 
 fn extract_words_from_page(page: String, min_confidence: f64) -> Result<Vec<String>, Error> {
     Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
+        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
         "Not implemented: extract_words_from_page",
     ))
 }
@@ -17808,90 +15948,62 @@ fn is_well_formed_table(grid: Vec<Vec<String>>) -> bool {
 }
 
 fn extract_text_from_pdf(pdf_bytes: Vec<u8>) -> Result<String, Error> {
-    let result = kreuzberg::pdf::extract_text_from_pdf(&pdf_bytes)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::pdf::extract_text_from_pdf(&pdf_bytes).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn extract_text_from_pdf_with_password(pdf_bytes: Vec<u8>, password: String) -> Result<String, Error> {
-    let result = kreuzberg::pdf::text::extract_text_from_pdf_with_password(&pdf_bytes, &password)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::pdf::text::extract_text_from_pdf_with_password(&pdf_bytes, &password).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn extract_text_from_pdf_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<String, Error> {
-    let result = kreuzberg::pdf::text::extract_text_from_pdf_with_passwords(&pdf_bytes, &passwords)
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::pdf::text::extract_text_from_pdf_with_passwords(&pdf_bytes, &passwords).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
-}
-
-fn extract_text_and_metadata_from_pdf_document(
-    document: String,
-    extraction_config: Option<String>,
-) -> Result<PdfUnifiedExtractionResult, Error> {
-    let extraction_config: Option<ExtractionConfig> = extraction_config
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::ExtractionConfig = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: extract_text_and_metadata_from_pdf_document",
-    ))
-}
-
-fn extract_text_from_pdf_document(
-    document: String,
-    page_config: Option<String>,
-    extraction_config: Option<String>,
-) -> Result<String, Error> {
-    let page_config: Option<PageConfig> = page_config
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::PageConfig = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    let extraction_config: Option<ExtractionConfig> = extraction_config
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::ExtractionConfig = serde_json::from_str(s)
-                .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    Err(magnus::Error::new(
-        magnus::exception::runtime_error(),
-        "Not implemented: extract_text_from_pdf_document",
-    ))
 }
 
 fn serialize_to_toon(result: String) -> Result<String, Error> {
     let result: ExtractionResult = {
         let core: kreuzberg::ExtractionResult = serde_json::from_str(&result)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::serialize_to_toon(result.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::serialize_to_toon(result.into()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
 fn serialize_to_json(result: String) -> Result<String, Error> {
     let result: ExtractionResult = {
         let core: kreuzberg::ExtractionResult = serde_json::from_str(&result)
-            .map_err(|e| magnus::Error::new(magnus::exception::type_error(), e.to_string()))?;
+            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::serialize_to_json(result.into())
-        .map_err(|e| magnus::Error::new(magnus::exception::runtime_error(), e.to_string()))?;
+    let result = kreuzberg::serialize_to_json(result.into()).map_err(|e| {
+        magnus::Error::new(
+            unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
+            e.to_string(),
+        )
+    })?;
     Ok(result)
 }
 
@@ -18115,8 +16227,8 @@ impl From<kreuzberg::ImageExtractionConfig> for ImageExtractionConfig {
     }
 }
 
-impl From<TokenReductionConfig> for kreuzberg::TokenReductionConfig {
-    fn from(val: TokenReductionConfig) -> Self {
+impl From<TokenReductionOptions> for kreuzberg::TokenReductionOptions {
+    fn from(val: TokenReductionOptions) -> Self {
         Self {
             mode: val.mode,
             preserve_important_words: val.preserve_important_words,
@@ -18124,8 +16236,8 @@ impl From<TokenReductionConfig> for kreuzberg::TokenReductionConfig {
     }
 }
 
-impl From<kreuzberg::TokenReductionConfig> for TokenReductionConfig {
-    fn from(val: kreuzberg::TokenReductionConfig) -> Self {
+impl From<kreuzberg::TokenReductionOptions> for TokenReductionOptions {
+    fn from(val: kreuzberg::TokenReductionOptions) -> Self {
         Self {
             mode: val.mode,
             preserve_important_words: val.preserve_important_words,
@@ -18657,54 +16769,6 @@ impl From<kreuzberg::extraction::StructuredDataResult> for StructuredDataResult 
     }
 }
 
-impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
-    fn from(val: ListItemMetadata) -> Self {
-        Self {
-            list_type: Default::default(),
-            byte_start: val.byte_start,
-            byte_end: val.byte_end,
-            indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ListItemMetadata> for ListItemMetadata {
-    fn from(val: kreuzberg::extraction::ListItemMetadata) -> Self {
-        Self {
-            list_type: format!("{:?}", val.list_type),
-            byte_start: val.byte_start,
-            byte_end: val.byte_end,
-            indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<Section> for kreuzberg::extraction::hwp::model::Section {
-    fn from(val: Section) -> Self {
-        Self {
-            paragraphs: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::Section> for Section {
-    fn from(val: kreuzberg::extraction::hwp::model::Section) -> Self {
-        Self {
-            paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<ImageOcrResult> for kreuzberg::extraction::image::ImageOcrResult {
-    fn from(val: ImageOcrResult) -> Self {
-        Self {
-            content: val.content,
-            boundaries: val.boundaries.map(|v| v.into_iter().map(Into::into).collect()),
-            page_contents: val.page_contents.map(|v| v.into_iter().map(Into::into).collect()),
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::image::ImageOcrResult> for ImageOcrResult {
     fn from(val: kreuzberg::extraction::image::ImageOcrResult) -> Self {
         Self {
@@ -18738,46 +16802,6 @@ impl From<kreuzberg::extraction::html::ExtractedInlineImage> for ExtractedInline
     }
 }
 
-impl From<DocExtractionResult> for kreuzberg::extraction::doc::DocExtractionResult {
-    fn from(val: DocExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            metadata: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::doc::DocExtractionResult> for DocExtractionResult {
-    fn from(val: kreuzberg::extraction::doc::DocExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            metadata: format!("{:?}", val.metadata),
-        }
-    }
-}
-
-impl From<Drawing> for kreuzberg::extraction::docx::drawing::Drawing {
-    fn from(val: Drawing) -> Self {
-        Self {
-            drawing_type: Default::default(),
-            extent: Default::default(),
-            doc_properties: Default::default(),
-            image_ref: val.image_ref,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Drawing> for Drawing {
-    fn from(val: kreuzberg::extraction::docx::drawing::Drawing) -> Self {
-        Self {
-            drawing_type: format!("{:?}", val.drawing_type),
-            extent: val.extent.as_ref().map(|v| format!("{:?}", v)),
-            doc_properties: val.doc_properties.as_ref().map(|v| format!("{:?}", v)),
-            image_ref: val.image_ref,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for AnchorProperties {
     fn from(val: kreuzberg::extraction::docx::drawing::AnchorProperties) -> Self {
         Self {
@@ -18791,20 +16815,11 @@ impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for AnchorProp
     }
 }
 
-impl From<kreuzberg::extraction::docx::parser::TableRow> for TableRow {
-    fn from(val: kreuzberg::extraction::docx::parser::TableRow) -> Self {
-        Self {
-            cells: val.cells.into_iter().map(Into::into).collect(),
-            properties: val.properties.as_ref().map(|v| format!("{:?}", v)),
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::parser::HeaderFooter> for HeaderFooter {
     fn from(val: kreuzberg::extraction::docx::parser::HeaderFooter) -> Self {
         Self {
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             header_type: format!("{:?}", val.header_type),
         }
     }
@@ -18854,38 +16869,6 @@ impl From<kreuzberg::extraction::docx::styles::ResolvedStyle> for ResolvedStyle 
         Self {
             paragraph_properties: format!("{:?}", val.paragraph_properties),
             run_properties: format!("{:?}", val.run_properties),
-        }
-    }
-}
-
-impl From<TableProperties> for kreuzberg::extraction::docx::table::TableProperties {
-    fn from(val: TableProperties) -> Self {
-        Self {
-            style_id: val.style_id,
-            width: Default::default(),
-            alignment: val.alignment,
-            layout: val.layout,
-            look: Default::default(),
-            borders: Default::default(),
-            cell_margins: Default::default(),
-            indent: Default::default(),
-            caption: val.caption,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableProperties> for TableProperties {
-    fn from(val: kreuzberg::extraction::docx::table::TableProperties) -> Self {
-        Self {
-            style_id: val.style_id,
-            width: val.width.as_ref().map(|v| format!("{:?}", v)),
-            alignment: val.alignment,
-            layout: val.layout,
-            look: val.look.as_ref().map(|v| format!("{:?}", v)),
-            borders: val.borders.as_ref().map(|v| format!("{:?}", v)),
-            cell_margins: val.cell_margins.as_ref().map(|v| format!("{:?}", v)),
-            indent: val.indent.as_ref().map(|v| format!("{:?}", v)),
-            caption: val.caption,
         }
     }
 }
@@ -18953,39 +16936,6 @@ impl From<kreuzberg::extraction::OdtProperties> for OdtProperties {
     }
 }
 
-impl From<PptExtractionResult> for kreuzberg::extraction::ppt::PptExtractionResult {
-    fn from(val: PptExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            slide_count: val.slide_count,
-            metadata: Default::default(),
-            speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ppt::PptExtractionResult> for PptExtractionResult {
-    fn from(val: kreuzberg::extraction::ppt::PptExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            slide_count: val.slide_count,
-            metadata: format!("{:?}", val.metadata),
-            speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecision {
-    fn from(val: OcrFallbackDecision) -> Self {
-        Self {
-            stats: Default::default(),
-            avg_non_whitespace: val.avg_non_whitespace,
-            avg_alnum: val.avg_alnum,
-            fallback: val.fallback,
-        }
-    }
-}
-
 impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecision {
     fn from(val: kreuzberg::extractors::pdf::OcrFallbackDecision) -> Self {
         Self {
@@ -18997,38 +16947,38 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecisi
     }
 }
 
-impl From<ExtractionMetrics> for kreuzberg::telemetry::metrics::ExtractionMetrics {
-    fn from(val: ExtractionMetrics) -> Self {
+impl From<TokenReductionConfig> for kreuzberg::TokenReductionConfig {
+    fn from(val: TokenReductionConfig) -> Self {
         Self {
-            extraction_total: Default::default(),
-            cache_hits: Default::default(),
-            cache_misses: Default::default(),
-            batch_total: Default::default(),
-            extraction_duration_ms: Default::default(),
-            extraction_input_bytes: Default::default(),
-            extraction_output_bytes: Default::default(),
-            pipeline_duration_ms: Default::default(),
-            ocr_duration_ms: Default::default(),
-            batch_duration_ms: Default::default(),
-            concurrent_extractions: Default::default(),
+            level: val.level.into(),
+            language_hint: val.language_hint,
+            preserve_markdown: val.preserve_markdown,
+            preserve_code: val.preserve_code,
+            semantic_threshold: val.semantic_threshold,
+            enable_parallel: val.enable_parallel,
+            use_simd: val.use_simd,
+            custom_stopwords: val.custom_stopwords.map(|m| m.into_iter().collect()),
+            preserve_patterns: val.preserve_patterns,
+            target_reduction: val.target_reduction,
+            enable_semantic_clustering: val.enable_semantic_clustering,
         }
     }
 }
 
-impl From<kreuzberg::telemetry::metrics::ExtractionMetrics> for ExtractionMetrics {
-    fn from(val: kreuzberg::telemetry::metrics::ExtractionMetrics) -> Self {
+impl From<kreuzberg::TokenReductionConfig> for TokenReductionConfig {
+    fn from(val: kreuzberg::TokenReductionConfig) -> Self {
         Self {
-            extraction_total: format!("{:?}", val.extraction_total),
-            cache_hits: format!("{:?}", val.cache_hits),
-            cache_misses: format!("{:?}", val.cache_misses),
-            batch_total: format!("{:?}", val.batch_total),
-            extraction_duration_ms: format!("{:?}", val.extraction_duration_ms),
-            extraction_input_bytes: format!("{:?}", val.extraction_input_bytes),
-            extraction_output_bytes: format!("{:?}", val.extraction_output_bytes),
-            pipeline_duration_ms: format!("{:?}", val.pipeline_duration_ms),
-            ocr_duration_ms: format!("{:?}", val.ocr_duration_ms),
-            batch_duration_ms: format!("{:?}", val.batch_duration_ms),
-            concurrent_extractions: format!("{:?}", val.concurrent_extractions),
+            level: val.level.into(),
+            language_hint: val.language_hint,
+            preserve_markdown: val.preserve_markdown,
+            preserve_code: val.preserve_code,
+            semantic_threshold: val.semantic_threshold,
+            enable_parallel: val.enable_parallel,
+            use_simd: val.use_simd,
+            custom_stopwords: val.custom_stopwords.map(|m| m.into_iter().collect()),
+            preserve_patterns: val.preserve_patterns,
+            target_reduction: val.target_reduction,
+            enable_semantic_clustering: val.enable_semantic_clustering,
         }
     }
 }
@@ -19039,7 +16989,7 @@ impl From<PdfAnnotation> for kreuzberg::PdfAnnotation {
             annotation_type: val.annotation_type.into(),
             content: val.content,
             page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: Default::default(),
         }
     }
 }
@@ -19050,7 +17000,7 @@ impl From<kreuzberg::PdfAnnotation> for PdfAnnotation {
             annotation_type: val.annotation_type.into(),
             content: val.content,
             page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: val.bounding_box.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -19061,7 +17011,7 @@ impl From<DjotContent> for kreuzberg::DjotContent {
             plain_text: val.plain_text,
             blocks: val.blocks.into_iter().map(Into::into).collect(),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: Default::default(),
             images: val.images.into_iter().map(Into::into).collect(),
             links: val.links.into_iter().map(Into::into).collect(),
             footnotes: val.footnotes.into_iter().map(Into::into).collect(),
@@ -19076,7 +17026,7 @@ impl From<kreuzberg::DjotContent> for DjotContent {
             plain_text: val.plain_text,
             blocks: val.blocks.into_iter().map(Into::into).collect(),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             images: val.images.into_iter().map(Into::into).collect(),
             links: val.links.into_iter().map(Into::into).collect(),
             footnotes: val.footnotes.into_iter().map(Into::into).collect(),
@@ -19091,7 +17041,7 @@ impl From<FormattedBlock> for kreuzberg::FormattedBlock {
             block_type: val.block_type.into(),
             level: val.level,
             inline_content: val.inline_content.into_iter().map(Into::into).collect(),
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
             language: val.language,
             code: val.code,
             children: val.children.into_iter().map(Into::into).collect(),
@@ -19105,7 +17055,7 @@ impl From<kreuzberg::FormattedBlock> for FormattedBlock {
             block_type: val.block_type.into(),
             level: val.level,
             inline_content: val.inline_content.into_iter().map(Into::into).collect(),
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
             language: val.language,
             code: val.code,
             children: val.children.into_iter().map(Into::into).collect(),
@@ -19118,7 +17068,7 @@ impl From<InlineElement> for kreuzberg::InlineElement {
         Self {
             element_type: val.element_type.into(),
             content: val.content,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
             metadata: val.metadata.map(|m| m.into_iter().collect()),
         }
     }
@@ -19129,28 +17079,8 @@ impl From<kreuzberg::InlineElement> for InlineElement {
         Self {
             element_type: val.element_type.into(),
             content: val.content,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
             metadata: val.metadata.map(|m| m.into_iter().collect()),
-        }
-    }
-}
-
-impl From<Attributes> for kreuzberg::Attributes {
-    fn from(val: Attributes) -> Self {
-        Self {
-            id: val.id,
-            classes: val.classes,
-            key_values: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::Attributes> for Attributes {
-    fn from(val: kreuzberg::Attributes) -> Self {
-        Self {
-            id: val.id,
-            classes: val.classes,
-            key_values: val.key_values.iter().map(|i| format!("{:?}", i)).collect(),
         }
     }
 }
@@ -19161,7 +17091,7 @@ impl From<DjotImage> for kreuzberg::DjotImage {
             src: val.src,
             alt: val.alt,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
         }
     }
 }
@@ -19172,7 +17102,7 @@ impl From<kreuzberg::DjotImage> for DjotImage {
             src: val.src,
             alt: val.alt,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -19183,7 +17113,7 @@ impl From<DjotLink> for kreuzberg::DjotLink {
             url: val.url,
             text: val.text,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
         }
     }
 }
@@ -19194,7 +17124,7 @@ impl From<kreuzberg::DjotLink> for DjotLink {
             url: val.url,
             text: val.text,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -19260,14 +17190,14 @@ impl From<kreuzberg::DocumentRelationship> for DocumentRelationship {
 impl From<DocumentNode> for kreuzberg::DocumentNode {
     fn from(val: DocumentNode) -> Self {
         Self {
-            id: val.id.into(),
+            id: Default::default(),
             content: val.content.into(),
             parent: (val.parent).map(kreuzberg::NodeIndex),
             children: (val.children).into_iter().map(kreuzberg::NodeIndex).collect(),
             content_layer: val.content_layer.into(),
             page: val.page,
             page_end: val.page_end,
-            bbox: val.bbox.map(Into::into),
+            bbox: Default::default(),
             annotations: val.annotations.into_iter().map(Into::into).collect(),
             attributes: val.attributes.map(|m| m.into_iter().collect()),
         }
@@ -19277,52 +17207,16 @@ impl From<DocumentNode> for kreuzberg::DocumentNode {
 impl From<kreuzberg::DocumentNode> for DocumentNode {
     fn from(val: kreuzberg::DocumentNode) -> Self {
         Self {
-            id: NodeId {
-                inner: Arc::new(val.id),
-            },
+            id: format!("{:?}", val.id),
             content: val.content.into(),
             parent: val.parent.map(|v| v.0),
             children: val.children.iter().map(|v| v.0).collect::<Vec<_>>(),
             content_layer: val.content_layer.into(),
             page: val.page,
             page_end: val.page_end,
-            bbox: val.bbox.map(Into::into),
+            bbox: val.bbox.as_ref().map(|v| format!("{:?}", v)),
             annotations: val.annotations.into_iter().map(Into::into).collect(),
             attributes: val.attributes.map(|m| m.into_iter().collect()),
-        }
-    }
-}
-
-impl From<TableGrid> for kreuzberg::TableGrid {
-    fn from(val: TableGrid) -> Self {
-        Self {
-            rows: val.rows,
-            cols: val.cols,
-            cells: val.cells.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<kreuzberg::TableGrid> for TableGrid {
-    fn from(val: kreuzberg::TableGrid) -> Self {
-        Self {
-            rows: val.rows,
-            cols: val.cols,
-            cells: val.cells.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<GridCell> for kreuzberg::GridCell {
-    fn from(val: GridCell) -> Self {
-        Self {
-            content: val.content,
-            row: val.row,
-            col: val.col,
-            row_span: val.row_span,
-            col_span: val.col_span,
-            is_header: val.is_header,
-            bbox: val.bbox.map(Into::into),
         }
     }
 }
@@ -19336,7 +17230,7 @@ impl From<kreuzberg::GridCell> for GridCell {
             row_span: val.row_span,
             col_span: val.col_span,
             is_header: val.is_header,
-            bbox: val.bbox.map(Into::into),
+            bbox: val.bbox.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -19368,7 +17262,7 @@ impl From<ExtractionResult> for kreuzberg::ExtractionResult {
             content: val.content,
             mime_type: Default::default(),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: Default::default(),
             detected_languages: val.detected_languages,
             chunks: val.chunks.map(|v| v.into_iter().map(Into::into).collect()),
             images: val.images.map(|v| v.into_iter().map(Into::into).collect()),
@@ -19401,7 +17295,7 @@ impl From<kreuzberg::ExtractionResult> for ExtractionResult {
             content: val.content,
             mime_type: format!("{:?}", val.mime_type),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             detected_languages: val.detected_languages,
             chunks: val.chunks.map(|v| v.into_iter().map(Into::into).collect()),
             images: val.images.map(|v| v.into_iter().map(Into::into).collect()),
@@ -19590,7 +17484,7 @@ impl From<ExtractedImage> for kreuzberg::ExtractedImage {
             is_mask: val.is_mask,
             description: val.description,
             ocr_result: val.ocr_result.map(Into::into).map(Box::new),
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: Default::default(),
             source_path: val.source_path,
         }
     }
@@ -19610,30 +17504,8 @@ impl From<kreuzberg::ExtractedImage> for ExtractedImage {
             is_mask: val.is_mask,
             description: val.description,
             ocr_result: val.ocr_result.map(|v| (*v).into()),
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: val.bounding_box.as_ref().map(|v| format!("{:?}", v)),
             source_path: val.source_path,
-        }
-    }
-}
-
-impl From<BoundingBox> for kreuzberg::BoundingBox {
-    fn from(val: BoundingBox) -> Self {
-        Self {
-            x0: val.x0,
-            y0: val.y0,
-            x1: val.x1,
-            y1: val.y1,
-        }
-    }
-}
-
-impl From<kreuzberg::BoundingBox> for BoundingBox {
-    fn from(val: kreuzberg::BoundingBox) -> Self {
-        Self {
-            x0: val.x0,
-            y0: val.y0,
-            x1: val.x1,
-            y1: val.y1,
         }
     }
 }
@@ -19643,7 +17515,7 @@ impl From<ElementMetadata> for kreuzberg::ElementMetadata {
         Self {
             page_number: val.page_number,
             filename: val.filename,
-            coordinates: val.coordinates.map(Into::into),
+            coordinates: Default::default(),
             element_index: val.element_index,
             additional: val.additional.into_iter().collect(),
         }
@@ -19655,7 +17527,7 @@ impl From<kreuzberg::ElementMetadata> for ElementMetadata {
         Self {
             page_number: val.page_number,
             filename: val.filename,
-            coordinates: val.coordinates.map(Into::into),
+            coordinates: val.coordinates.as_ref().map(|v| format!("{:?}", v)),
             element_index: val.element_index,
             additional: val.additional.into_iter().collect(),
         }
@@ -19665,7 +17537,7 @@ impl From<kreuzberg::ElementMetadata> for ElementMetadata {
 impl From<Element> for kreuzberg::Element {
     fn from(val: Element) -> Self {
         Self {
-            element_id: val.element_id.into(),
+            element_id: Default::default(),
             element_type: val.element_type.into(),
             text: val.text,
             metadata: val.metadata.into(),
@@ -19676,9 +17548,7 @@ impl From<Element> for kreuzberg::Element {
 impl From<kreuzberg::Element> for Element {
     fn from(val: kreuzberg::Element) -> Self {
         Self {
-            element_id: ElementId {
-                inner: Arc::new(val.element_id),
-            },
+            element_id: format!("{:?}", val.element_id),
             element_type: val.element_type.into(),
             text: val.text,
             metadata: val.metadata.into(),
@@ -20140,28 +18010,6 @@ impl From<kreuzberg::ArchiveMetadata> for ArchiveMetadata {
             file_list: val.file_list,
             total_size: val.total_size,
             compressed_size: val.compressed_size,
-        }
-    }
-}
-
-impl From<ImageMetadata> for kreuzberg::ImageMetadata {
-    fn from(val: ImageMetadata) -> Self {
-        Self {
-            width: val.width,
-            height: val.height,
-            format: val.format,
-            exif: val.exif.into_iter().collect(),
-        }
-    }
-}
-
-impl From<kreuzberg::ImageMetadata> for ImageMetadata {
-    fn from(val: kreuzberg::ImageMetadata) -> Self {
-        Self {
-            width: val.width,
-            height: val.height,
-            format: val.format,
-            exif: val.exif.into_iter().collect(),
         }
     }
 }
@@ -20687,7 +18535,7 @@ impl From<PageContent> for kreuzberg::PageContent {
         Self {
             page_number: val.page_number,
             content: val.content,
-            tables: val.tables.into_iter().map(|v| std::sync::Arc::new(v.into())).collect(),
+            tables: Default::default(),
             images: val.images.into_iter().map(|v| std::sync::Arc::new(v.into())).collect(),
             hierarchy: val.hierarchy.map(Into::into),
             is_blank: val.is_blank,
@@ -20700,7 +18548,7 @@ impl From<kreuzberg::PageContent> for PageContent {
         Self {
             page_number: val.page_number,
             content: val.content,
-            tables: val.tables.into_iter().map(|v| (*v).clone().into()).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             images: val.images.into_iter().map(|v| (*v).clone().into()).collect(),
             hierarchy: val.hierarchy.map(Into::into),
             is_blank: val.is_blank,
@@ -20748,39 +18596,6 @@ impl From<kreuzberg::HierarchicalBlock> for HierarchicalBlock {
     }
 }
 
-impl From<Table> for kreuzberg::Table {
-    fn from(val: Table) -> Self {
-        Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::Table> for Table {
-    fn from(val: kreuzberg::Table) -> Self {
-        Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::TableCell> for TableCell {
-    fn from(val: kreuzberg::TableCell) -> Self {
-        Self {
-            content: val.content,
-            row_span: val.row_span,
-            col_span: val.col_span,
-            is_header: val.is_header,
-        }
-    }
-}
-
 impl From<Uri> for kreuzberg::Uri {
     fn from(val: Uri) -> Self {
         Self {
@@ -20799,24 +18614,6 @@ impl From<kreuzberg::Uri> for Uri {
             label: val.label,
             page: val.page,
             kind: val.kind.into(),
-        }
-    }
-}
-
-impl From<ApiError> for kreuzberg::api::ApiError {
-    fn from(val: ApiError) -> Self {
-        Self {
-            status: Default::default(),
-            body: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::api::ApiError> for ApiError {
-    fn from(val: kreuzberg::api::ApiError) -> Self {
-        Self {
-            status: format!("{:?}", val.status),
-            body: format!("{:?}", val.body),
         }
     }
 }
@@ -20844,7 +18641,7 @@ impl From<kreuzberg::api::ApiState> for ApiState {
     fn from(val: kreuzberg::api::ApiState) -> Self {
         Self {
             default_config: (*val.default_config).clone().into(),
-            extraction_service: format!("{:?}", (*val.extraction_service).clone()),
+            extraction_service: format!("{:?}", val.extraction_service),
         }
     }
 }
@@ -21416,7 +19213,7 @@ impl From<HierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
     fn from(val: HierarchyBlock) -> Self {
         Self {
             text: val.text,
-            bbox: val.bbox.into(),
+            bbox: Default::default(),
             font_size: val.font_size,
             hierarchy_level: Default::default(),
         }
@@ -21427,7 +19224,7 @@ impl From<kreuzberg::pdf::hierarchy::HierarchyBlock> for HierarchyBlock {
     fn from(val: kreuzberg::pdf::hierarchy::HierarchyBlock) -> Self {
         Self {
             text: val.text,
-            bbox: val.bbox.into(),
+            bbox: format!("{:?}", val.bbox),
             font_size: val.font_size,
             hierarchy_level: format!("{:?}", val.hierarchy_level),
         }
@@ -21466,21 +19263,11 @@ impl From<kreuzberg::pdf::PdfImage> for PdfImage {
     }
 }
 
-impl From<kreuzberg::pdf::layout_runner::PageLayoutRegion> for PageLayoutRegion {
-    fn from(val: kreuzberg::pdf::layout_runner::PageLayoutRegion) -> Self {
-        Self {
-            class: val.class.into(),
-            confidence: val.confidence,
-            bbox: format!("{:?}", val.bbox),
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageLayoutResult> for PageLayoutResult {
     fn from(val: kreuzberg::pdf::layout_runner::PageLayoutResult) -> Self {
         Self {
             page_index: val.page_index,
-            regions: val.regions.into_iter().map(Into::into).collect(),
+            regions: val.regions.iter().map(|i| format!("{:?}", i)).collect(),
             page_width_pts: val.page_width_pts,
             page_height_pts: val.page_height_pts,
             render_width_px: val.render_width_px,
@@ -21498,38 +19285,6 @@ impl From<kreuzberg::pdf::layout_runner::PageTiming> for PageTiming {
             inference_ms: val.inference_ms,
             postprocess_ms: val.postprocess_ms,
             mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
-impl From<PdfExtractionMetadata> for kreuzberg::pdf::metadata::PdfExtractionMetadata {
-    fn from(val: PdfExtractionMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            authors: val.authors,
-            keywords: val.keywords,
-            created_at: val.created_at,
-            modified_at: val.modified_at,
-            created_by: val.created_by,
-            pdf_specific: Default::default(),
-            page_structure: val.page_structure.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::metadata::PdfExtractionMetadata> for PdfExtractionMetadata {
-    fn from(val: kreuzberg::pdf::metadata::PdfExtractionMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            authors: val.authors,
-            keywords: val.keywords,
-            created_at: val.created_at,
-            modified_at: val.modified_at,
-            created_by: val.created_by,
-            pdf_specific: format!("{:?}", val.pdf_specific),
-            page_structure: val.page_structure.map(Into::into),
         }
     }
 }
@@ -21762,23 +19517,6 @@ impl From<kreuzberg::CodeContentMode> for CodeContentMode {
     }
 }
 
-impl From<kreuzberg::extraction::hwp::error::HwpError> for HwpError {
-    fn from(val: kreuzberg::extraction::hwp::error::HwpError) -> Self {
-        match val {
-            kreuzberg::extraction::hwp::error::HwpError::InvalidFormat(_0) => Self::InvalidFormat { _0 },
-            kreuzberg::extraction::hwp::error::HwpError::UnsupportedVersion(_0) => Self::UnsupportedVersion { _0 },
-            kreuzberg::extraction::hwp::error::HwpError::Io(_0) => Self::Io {
-                _0: serde_json::to_string(&_0).unwrap_or_default(),
-            },
-            kreuzberg::extraction::hwp::error::HwpError::Cfb(_0) => Self::Cfb { _0 },
-            kreuzberg::extraction::hwp::error::HwpError::CompressionError(_0) => Self::CompressionError { _0 },
-            kreuzberg::extraction::hwp::error::HwpError::ParseError(_0) => Self::ParseError { _0 },
-            kreuzberg::extraction::hwp::error::HwpError::EncodingError(_0) => Self::EncodingError { _0 },
-            kreuzberg::extraction::hwp::error::HwpError::NotFound(_0) => Self::NotFound { _0 },
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::math::FracType> for FracType {
     fn from(val: kreuzberg::extraction::docx::math::FracType) -> Self {
         match val {
@@ -21790,122 +19528,6 @@ impl From<kreuzberg::extraction::docx::math::FracType> for FracType {
     }
 }
 
-impl From<kreuzberg::extraction::docx::math::MathNode> for MathNode {
-    fn from(val: kreuzberg::extraction::docx::math::MathNode) -> Self {
-        match val {
-            kreuzberg::extraction::docx::math::MathNode::Run(_0) => Self::Run { _0 },
-            kreuzberg::extraction::docx::math::MathNode::SSup { base, sup } => Self::SSup { base, sup },
-            kreuzberg::extraction::docx::math::MathNode::SSub { base, sub } => Self::SSub { base, sub },
-            kreuzberg::extraction::docx::math::MathNode::SSubSup { base, sub, sup } => Self::SSubSup { base, sub, sup },
-            kreuzberg::extraction::docx::math::MathNode::Frac { num, den, frac_type } => Self::Frac {
-                num,
-                den,
-                frac_type: frac_type.into(),
-            },
-            kreuzberg::extraction::docx::math::MathNode::Rad { deg, body, deg_hide } => {
-                Self::Rad { deg, body, deg_hide }
-            }
-            kreuzberg::extraction::docx::math::MathNode::Nary {
-                chr,
-                sub,
-                sup,
-                body,
-                sub_hide,
-                sup_hide,
-            } => Self::Nary {
-                chr,
-                sub,
-                sup,
-                body,
-                sub_hide,
-                sup_hide,
-            },
-            kreuzberg::extraction::docx::math::MathNode::Delim {
-                begin_chr,
-                end_chr,
-                sep_chr,
-                elements,
-            } => Self::Delim {
-                begin_chr,
-                end_chr,
-                sep_chr,
-                elements,
-            },
-            kreuzberg::extraction::docx::math::MathNode::Func { name, body } => Self::Func { name, body },
-            kreuzberg::extraction::docx::math::MathNode::Acc { chr, body } => Self::Acc { chr, body },
-            kreuzberg::extraction::docx::math::MathNode::EqArr { rows } => Self::EqArr { rows },
-            kreuzberg::extraction::docx::math::MathNode::LimLow { body, lim } => Self::LimLow { body, lim },
-            kreuzberg::extraction::docx::math::MathNode::LimUpp { body, lim } => Self::LimUpp { body, lim },
-            kreuzberg::extraction::docx::math::MathNode::Bar { body, top } => Self::Bar { body, top },
-            kreuzberg::extraction::docx::math::MathNode::BorderBox { body } => Self::BorderBox { body },
-            kreuzberg::extraction::docx::math::MathNode::Matrix { rows } => Self::Matrix { rows },
-            kreuzberg::extraction::docx::math::MathNode::Group { children } => Self::Group { children },
-            kreuzberg::extraction::docx::math::MathNode::SPre { base, sub, sup } => Self::SPre { base, sub, sup },
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::DocumentElement> for DocumentElement {
-    fn from(val: kreuzberg::extraction::docx::parser::DocumentElement) -> Self {
-        match val {
-            kreuzberg::extraction::docx::parser::DocumentElement::Paragraph(_0) => Self::Paragraph { _0 },
-            kreuzberg::extraction::docx::parser::DocumentElement::Table(_0) => Self::Table { _0 },
-            kreuzberg::extraction::docx::parser::DocumentElement::Drawing(_0) => Self::Drawing { _0 },
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::security::SecurityError> for SecurityError {
-    fn from(val: kreuzberg::extractors::security::SecurityError) -> Self {
-        match val {
-            kreuzberg::extractors::security::SecurityError::ZipBombDetected {
-                compressed_size,
-                uncompressed_size,
-                ratio,
-            } => Self::ZipBombDetected {
-                compressed_size,
-                uncompressed_size,
-                ratio,
-            },
-            kreuzberg::extractors::security::SecurityError::ArchiveTooLarge { size, max } => {
-                Self::ArchiveTooLarge { size, max }
-            }
-            kreuzberg::extractors::security::SecurityError::TooManyFiles { count, max } => {
-                Self::TooManyFiles { count, max }
-            }
-            kreuzberg::extractors::security::SecurityError::NestingTooDeep { depth, max } => {
-                Self::NestingTooDeep { depth, max }
-            }
-            kreuzberg::extractors::security::SecurityError::ContentTooLarge { size, max } => {
-                Self::ContentTooLarge { size, max }
-            }
-            kreuzberg::extractors::security::SecurityError::EntityTooLong { length, max } => {
-                Self::EntityTooLong { length, max }
-            }
-            kreuzberg::extractors::security::SecurityError::TooManyIterations { count, max } => {
-                Self::TooManyIterations { count, max }
-            }
-            kreuzberg::extractors::security::SecurityError::XmlDepthExceeded { depth, max } => {
-                Self::XmlDepthExceeded { depth, max }
-            }
-            kreuzberg::extractors::security::SecurityError::TooManyCells { cells, max } => {
-                Self::TooManyCells { cells, max }
-            }
-        }
-    }
-}
-
-impl From<OcrBackendType> for kreuzberg::plugins::OcrBackendType {
-    fn from(val: OcrBackendType) -> Self {
-        match val {
-            OcrBackendType::Tesseract => Self::Tesseract,
-            OcrBackendType::EasyOCR => Self::EasyOCR,
-            OcrBackendType::PaddleOCR => Self::PaddleOCR,
-            OcrBackendType::Custom => Self::Custom,
-        }
-    }
-}
-
 impl From<kreuzberg::plugins::OcrBackendType> for OcrBackendType {
     fn from(val: kreuzberg::plugins::OcrBackendType) -> Self {
         match val {
@@ -21913,6 +19535,18 @@ impl From<kreuzberg::plugins::OcrBackendType> for OcrBackendType {
             kreuzberg::plugins::OcrBackendType::EasyOCR => Self::EasyOCR,
             kreuzberg::plugins::OcrBackendType::PaddleOCR => Self::PaddleOCR,
             kreuzberg::plugins::OcrBackendType::Custom => Self::Custom,
+        }
+    }
+}
+
+impl From<ReductionLevel> for kreuzberg::text::ReductionLevel {
+    fn from(val: ReductionLevel) -> Self {
+        match val {
+            ReductionLevel::Off => Self::Off,
+            ReductionLevel::Light => Self::Light,
+            ReductionLevel::Moderate => Self::Moderate,
+            ReductionLevel::Aggressive => Self::Aggressive,
+            ReductionLevel::Maximum => Self::Maximum,
         }
     }
 }
@@ -22107,7 +19741,9 @@ impl From<NodeContent> for kreuzberg::NodeContent {
             NodeContent::Paragraph { text } => Self::Paragraph { text },
             NodeContent::List { ordered } => Self::List { ordered },
             NodeContent::ListItem { text } => Self::ListItem { text },
-            NodeContent::Table { grid } => Self::Table { grid: grid.into() },
+            NodeContent::Table { grid } => Self::Table {
+                grid: serde_json::from_str(&grid).unwrap_or_default(),
+            },
             NodeContent::Image {
                 description,
                 image_index,
@@ -22152,7 +19788,9 @@ impl From<kreuzberg::NodeContent> for NodeContent {
             kreuzberg::NodeContent::Paragraph { text } => Self::Paragraph { text },
             kreuzberg::NodeContent::List { ordered } => Self::List { ordered },
             kreuzberg::NodeContent::ListItem { text } => Self::ListItem { text },
-            kreuzberg::NodeContent::Table { grid } => Self::Table { grid: grid.into() },
+            kreuzberg::NodeContent::Table { grid } => Self::Table {
+                grid: serde_json::to_string(&grid).unwrap_or_default(),
+            },
             kreuzberg::NodeContent::Image {
                 description,
                 image_index,
@@ -22267,6 +19905,24 @@ impl From<kreuzberg::ChunkType> for ChunkType {
     }
 }
 
+impl From<ExtractionMode> for kreuzberg::ExtractionMode {
+    fn from(val: ExtractionMode) -> Self {
+        match val {
+            ExtractionMode::Unified => Self::Unified,
+            ExtractionMode::ElementBased => Self::ElementBased,
+        }
+    }
+}
+
+impl From<kreuzberg::ExtractionMode> for ExtractionMode {
+    fn from(val: kreuzberg::ExtractionMode) -> Self {
+        match val {
+            kreuzberg::ExtractionMode::Unified => Self::Unified,
+            kreuzberg::ExtractionMode::ElementBased => Self::ElementBased,
+        }
+    }
+}
+
 impl From<ElementType> for kreuzberg::ElementType {
     fn from(val: ElementType) -> Self {
         match val {
@@ -22312,7 +19968,7 @@ impl From<FormatMetadata> for kreuzberg::FormatMetadata {
             FormatMetadata::Email { _0 } => Self::Email(_0.into()),
             FormatMetadata::Pptx { _0 } => Self::Pptx(_0.into()),
             FormatMetadata::Archive { _0 } => Self::Archive(_0.into()),
-            FormatMetadata::Image { _0 } => Self::Image(_0.into()),
+            FormatMetadata::Image { _0 } => Self::Image(serde_json::from_str(&_0).unwrap_or_default()),
             FormatMetadata::Xml { _0 } => Self::Xml(_0.into()),
             FormatMetadata::Text { _0 } => Self::Text(_0.into()),
             FormatMetadata::Html { _0 } => Self::Html(Box::new(_0.into())),
@@ -22341,7 +19997,9 @@ impl From<kreuzberg::FormatMetadata> for FormatMetadata {
             kreuzberg::FormatMetadata::Email(_0) => Self::Email { _0: _0.into() },
             kreuzberg::FormatMetadata::Pptx(_0) => Self::Pptx { _0: _0.into() },
             kreuzberg::FormatMetadata::Archive(_0) => Self::Archive { _0: _0.into() },
-            kreuzberg::FormatMetadata::Image(_0) => Self::Image { _0: _0.into() },
+            kreuzberg::FormatMetadata::Image(_0) => Self::Image {
+                _0: serde_json::to_string(&_0).unwrap_or_default(),
+            },
             kreuzberg::FormatMetadata::Xml(_0) => Self::Xml { _0: _0.into() },
             kreuzberg::FormatMetadata::Text(_0) => Self::Text { _0: _0.into() },
             kreuzberg::FormatMetadata::Html(_0) => Self::Html { _0: (*_0).into() },
@@ -22585,21 +20243,6 @@ impl From<kreuzberg::KeywordAlgorithm> for KeywordAlgorithm {
     }
 }
 
-impl From<kreuzberg::ocr::OcrError> for OcrError {
-    fn from(val: kreuzberg::ocr::OcrError) -> Self {
-        match val {
-            kreuzberg::ocr::OcrError::TesseractInitializationFailed(_0) => Self::TesseractInitializationFailed { _0 },
-            kreuzberg::ocr::OcrError::UnsupportedVersion(_0) => Self::UnsupportedVersion { _0 },
-            kreuzberg::ocr::OcrError::InvalidConfiguration(_0) => Self::InvalidConfiguration { _0 },
-            kreuzberg::ocr::OcrError::InvalidLanguageCode(_0) => Self::InvalidLanguageCode { _0 },
-            kreuzberg::ocr::OcrError::ImageProcessingFailed(_0) => Self::ImageProcessingFailed { _0 },
-            kreuzberg::ocr::OcrError::ProcessingFailed(_0) => Self::ProcessingFailed { _0 },
-            kreuzberg::ocr::OcrError::CacheError(_0) => Self::CacheError { _0 },
-            kreuzberg::ocr::OcrError::IOError(_0) => Self::IOError { _0 },
-        }
-    }
-}
-
 impl From<kreuzberg::PSMMode> for PSMMode {
     fn from(val: kreuzberg::PSMMode) -> Self {
         match val {
@@ -22689,29 +20332,11 @@ impl From<kreuzberg::LayoutClass> for LayoutClass {
     }
 }
 
-impl From<kreuzberg::pdf::PdfError> for PdfError {
-    fn from(val: kreuzberg::pdf::PdfError) -> Self {
-        match val {
-            kreuzberg::pdf::PdfError::InvalidPdf(_0) => Self::InvalidPdf { _0 },
-            kreuzberg::pdf::PdfError::PasswordRequired => Self::PasswordRequired,
-            kreuzberg::pdf::PdfError::InvalidPassword => Self::InvalidPassword,
-            kreuzberg::pdf::PdfError::EncryptionNotSupported(_0) => Self::EncryptionNotSupported { _0 },
-            kreuzberg::pdf::PdfError::PageNotFound(_0) => Self::PageNotFound { _0 },
-            kreuzberg::pdf::PdfError::TextExtractionFailed(_0) => Self::TextExtractionFailed { _0 },
-            kreuzberg::pdf::PdfError::RenderingFailed(_0) => Self::RenderingFailed { _0 },
-            kreuzberg::pdf::PdfError::MetadataExtractionFailed(_0) => Self::MetadataExtractionFailed { _0 },
-            kreuzberg::pdf::PdfError::ExtractionFailed(_0) => Self::ExtractionFailed { _0 },
-            kreuzberg::pdf::PdfError::FontLoadingFailed(_0) => Self::FontLoadingFailed { _0 },
-            kreuzberg::pdf::PdfError::IOError(_0) => Self::IOError { _0 },
-        }
-    }
-}
-
 /// Convert a `kreuzberg::error::KreuzbergError` error to a Magnus runtime error.
 #[allow(dead_code)]
 fn kreuzberg_error_to_magnus_err(e: kreuzberg::error::KreuzbergError) -> magnus::Error {
     let msg = e.to_string();
-    magnus::Error::new(magnus::exception::runtime_error(), msg)
+    magnus::Error::new(unsafe { magnus::Ruby::get_unchecked() }.exception_runtime_error(), msg)
 }
 
 #[magnus::init]
@@ -22852,12 +20477,12 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("min_dpi", method!(ImageExtractionConfig::min_dpi, 0))?;
     class.define_method("max_dpi", method!(ImageExtractionConfig::max_dpi, 0))?;
 
-    let class = module.define_class("TokenReductionConfig", ruby.class_object())?;
-    class.define_singleton_method("new", function!(TokenReductionConfig::new, 2))?;
-    class.define_method("mode", method!(TokenReductionConfig::mode, 0))?;
+    let class = module.define_class("TokenReductionOptions", ruby.class_object())?;
+    class.define_singleton_method("new", function!(TokenReductionOptions::new, 2))?;
+    class.define_method("mode", method!(TokenReductionOptions::mode, 0))?;
     class.define_method(
         "preserve_important_words",
-        method!(TokenReductionConfig::preserve_important_words, 0),
+        method!(TokenReductionOptions::preserve_important_words, 0),
     )?;
 
     let class = module.define_class("LanguageDetectionConfig", ruby.class_object())?;
@@ -23095,10 +20720,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("chunk_max_size", method!(TreeSitterProcessConfig::chunk_max_size, 0))?;
     class.define_method("content_mode", method!(TreeSitterProcessConfig::content_mode, 0))?;
 
-    let class = module.define_class("FileBytes", ruby.class_object())?;
-    class.define_method("deref", method!(FileBytes::deref, 0))?;
-    class.define_method("as_ref", method!(FileBytes::as_ref, 0))?;
-
     let class = module.define_class("SupportedFormat", ruby.class_object())?;
     class.define_singleton_method("new", function!(SupportedFormat::new, 2))?;
     class.define_method("extension", method!(SupportedFormat::extension, 0))?;
@@ -23134,17 +20755,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("metadata", method!(StructuredDataResult::metadata, 0))?;
     class.define_method("text_fields", method!(StructuredDataResult::text_fields, 0))?;
 
-    let class = module.define_class("ListItemMetadata", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ListItemMetadata::new, 4))?;
-    class.define_method("list_type", method!(ListItemMetadata::list_type, 0))?;
-    class.define_method("byte_start", method!(ListItemMetadata::byte_start, 0))?;
-    class.define_method("byte_end", method!(ListItemMetadata::byte_end, 0))?;
-    class.define_method("indent_level", method!(ListItemMetadata::indent_level, 0))?;
-
-    let class = module.define_class("Section", ruby.class_object())?;
-    class.define_singleton_method("new", function!(Section::new, 1))?;
-    class.define_method("paragraphs", method!(Section::paragraphs, 0))?;
-
     let class = module.define_class("StreamReader", ruby.class_object())?;
     class.define_method("read_u8", method!(StreamReader::read_u8, 0))?;
     class.define_method("read_u16", method!(StreamReader::read_u16, 0))?;
@@ -23174,18 +20784,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("dimensions", method!(ExtractedInlineImage::dimensions, 0))?;
     class.define_method("attributes", method!(ExtractedInlineImage::attributes, 0))?;
 
-    let class = module.define_class("DocExtractionResult", ruby.class_object())?;
-    class.define_singleton_method("new", function!(DocExtractionResult::new, 2))?;
-    class.define_method("text", method!(DocExtractionResult::text, 0))?;
-    class.define_method("metadata", method!(DocExtractionResult::metadata, 0))?;
-
-    let class = module.define_class("Drawing", ruby.class_object())?;
-    class.define_singleton_method("new", function!(Drawing::new, 4))?;
-    class.define_method("drawing_type", method!(Drawing::drawing_type, 0))?;
-    class.define_method("extent", method!(Drawing::extent, 0))?;
-    class.define_method("doc_properties", method!(Drawing::doc_properties, 0))?;
-    class.define_method("image_ref", method!(Drawing::image_ref, 0))?;
-
     let class = module.define_class("AnchorProperties", ruby.class_object())?;
     class.define_singleton_method("new", function!(AnchorProperties::new, 6))?;
     class.define_method("behind_doc", method!(AnchorProperties::behind_doc, 0))?;
@@ -23194,11 +20792,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("position_h", method!(AnchorProperties::position_h, 0))?;
     class.define_method("position_v", method!(AnchorProperties::position_v, 0))?;
     class.define_method("wrap_type", method!(AnchorProperties::wrap_type, 0))?;
-
-    let class = module.define_class("TableRow", ruby.class_object())?;
-    class.define_singleton_method("new", function!(TableRow::new, 2))?;
-    class.define_method("cells", method!(TableRow::cells, 0))?;
-    class.define_method("properties", method!(TableRow::properties, 0))?;
 
     let class = module.define_class("HeaderFooter", ruby.class_object())?;
     class.define_singleton_method("new", function!(HeaderFooter::new, 3))?;
@@ -23241,18 +20834,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("paragraph_properties", method!(ResolvedStyle::paragraph_properties, 0))?;
     class.define_method("run_properties", method!(ResolvedStyle::run_properties, 0))?;
 
-    let class = module.define_class("TableProperties", ruby.class_object())?;
-    class.define_singleton_method("new", function!(TableProperties::new, 9))?;
-    class.define_method("style_id", method!(TableProperties::style_id, 0))?;
-    class.define_method("width", method!(TableProperties::width, 0))?;
-    class.define_method("alignment", method!(TableProperties::alignment, 0))?;
-    class.define_method("layout", method!(TableProperties::layout, 0))?;
-    class.define_method("look", method!(TableProperties::look, 0))?;
-    class.define_method("borders", method!(TableProperties::borders, 0))?;
-    class.define_method("cell_margins", method!(TableProperties::cell_margins, 0))?;
-    class.define_method("indent", method!(TableProperties::indent, 0))?;
-    class.define_method("caption", method!(TableProperties::caption, 0))?;
-
     let class = module.define_class("XlsxAppProperties", ruby.class_object())?;
     class.define_singleton_method("new", function!(XlsxAppProperties::new, 9))?;
     class.define_method("application", method!(XlsxAppProperties::application, 0))?;
@@ -23286,7 +20867,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     )?;
     class.define_method("slide_titles", method!(PptxAppProperties::slide_titles, 0))?;
 
-    let class = module.define_class("CustomProperties", ruby.class_object())?;
+    let _class = module.define_class("CustomProperties", ruby.class_object())?;
 
     let class = module.define_class("OdtProperties", ruby.class_object())?;
     class.define_singleton_method("new", function!(OdtProperties::new, 1))?;
@@ -23309,14 +20890,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("table_count", method!(OdtProperties::table_count, 0))?;
     class.define_method("image_count", method!(OdtProperties::image_count, 0))?;
 
-    let class = module.define_class("PptExtractionResult", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PptExtractionResult::new, 4))?;
-    class.define_method("text", method!(PptExtractionResult::text, 0))?;
-    class.define_method("slide_count", method!(PptExtractionResult::slide_count, 0))?;
-    class.define_method("metadata", method!(PptExtractionResult::metadata, 0))?;
-    class.define_method("speaker_notes", method!(PptExtractionResult::speaker_notes, 0))?;
-
-    let class = module.define_class("ZipBombValidator", ruby.class_object())?;
+    let _class = module.define_class("ZipBombValidator", ruby.class_object())?;
 
     let class = module.define_class("StringGrowthValidator", ruby.class_object())?;
     class.define_method("check_append", method!(StringGrowthValidator::check_append, 1))?;
@@ -23348,50 +20922,24 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("avg_alnum", method!(OcrFallbackDecision::avg_alnum, 0))?;
     class.define_method("fallback", method!(OcrFallbackDecision::fallback, 0))?;
 
-    let class = module.define_class("ModelCache", ruby.class_object())?;
-    class.define_method("put", method!(ModelCache::put, 1))?;
-    class.define_method("take", method!(ModelCache::take, 0))?;
-
-    let class = module.define_class("ExtractionMetrics", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ExtractionMetrics::new, 11))?;
-    class.define_method("extraction_total", method!(ExtractionMetrics::extraction_total, 0))?;
-    class.define_method("cache_hits", method!(ExtractionMetrics::cache_hits, 0))?;
-    class.define_method("cache_misses", method!(ExtractionMetrics::cache_misses, 0))?;
-    class.define_method("batch_total", method!(ExtractionMetrics::batch_total, 0))?;
+    let class = module.define_class("TokenReductionConfig", ruby.class_object())?;
+    class.define_singleton_method("new", function!(TokenReductionConfig::new, 11))?;
+    class.define_method("level", method!(TokenReductionConfig::level, 0))?;
+    class.define_method("language_hint", method!(TokenReductionConfig::language_hint, 0))?;
+    class.define_method("preserve_markdown", method!(TokenReductionConfig::preserve_markdown, 0))?;
+    class.define_method("preserve_code", method!(TokenReductionConfig::preserve_code, 0))?;
     class.define_method(
-        "extraction_duration_ms",
-        method!(ExtractionMetrics::extraction_duration_ms, 0),
+        "semantic_threshold",
+        method!(TokenReductionConfig::semantic_threshold, 0),
     )?;
+    class.define_method("enable_parallel", method!(TokenReductionConfig::enable_parallel, 0))?;
+    class.define_method("use_simd", method!(TokenReductionConfig::use_simd, 0))?;
+    class.define_method("custom_stopwords", method!(TokenReductionConfig::custom_stopwords, 0))?;
+    class.define_method("preserve_patterns", method!(TokenReductionConfig::preserve_patterns, 0))?;
+    class.define_method("target_reduction", method!(TokenReductionConfig::target_reduction, 0))?;
     class.define_method(
-        "extraction_input_bytes",
-        method!(ExtractionMetrics::extraction_input_bytes, 0),
-    )?;
-    class.define_method(
-        "extraction_output_bytes",
-        method!(ExtractionMetrics::extraction_output_bytes, 0),
-    )?;
-    class.define_method(
-        "pipeline_duration_ms",
-        method!(ExtractionMetrics::pipeline_duration_ms, 0),
-    )?;
-    class.define_method("ocr_duration_ms", method!(ExtractionMetrics::ocr_duration_ms, 0))?;
-    class.define_method("batch_duration_ms", method!(ExtractionMetrics::batch_duration_ms, 0))?;
-    class.define_method(
-        "concurrent_extractions",
-        method!(ExtractionMetrics::concurrent_extractions, 0),
-    )?;
-
-    let class = module.define_class("QualityProcessor", ruby.class_object())?;
-    class.define_method("name", method!(QualityProcessor::name, 0))?;
-    class.define_method("version", method!(QualityProcessor::version, 0))?;
-    class.define_method("initialize", method!(QualityProcessor::initialize, 0))?;
-    class.define_method("shutdown", method!(QualityProcessor::shutdown, 0))?;
-    class.define_method("process_async", method!(QualityProcessor::process_async, 2))?;
-    class.define_method("processing_stage", method!(QualityProcessor::processing_stage, 0))?;
-    class.define_method("should_process", method!(QualityProcessor::should_process, 2))?;
-    class.define_method(
-        "estimated_duration_ms",
-        method!(QualityProcessor::estimated_duration_ms, 1),
+        "enable_semantic_clustering",
+        method!(TokenReductionConfig::enable_semantic_clustering, 0),
     )?;
 
     let class = module.define_class("PdfAnnotation", ruby.class_object())?;
@@ -23429,12 +20977,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("attributes", method!(InlineElement::attributes, 0))?;
     class.define_method("metadata", method!(InlineElement::metadata, 0))?;
 
-    let class = module.define_class("Attributes", ruby.class_object())?;
-    class.define_singleton_method("new", function!(Attributes::new, 3))?;
-    class.define_method("id", method!(Attributes::id, 0))?;
-    class.define_method("classes", method!(Attributes::classes, 0))?;
-    class.define_method("key_values", method!(Attributes::key_values, 0))?;
-
     let class = module.define_class("DjotImage", ruby.class_object())?;
     class.define_singleton_method("new", function!(DjotImage::new, 4))?;
     class.define_method("src", method!(DjotImage::src, 0))?;
@@ -23453,10 +20995,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_singleton_method("new", function!(Footnote::new, 2))?;
     class.define_method("label", method!(Footnote::label, 0))?;
     class.define_method("content", method!(Footnote::content, 0))?;
-
-    let class = module.define_class("NodeId", ruby.class_object())?;
-    class.define_method("as_ref", method!(NodeId::as_ref, 0))?;
-    class.define_method("fmt", method!(NodeId::fmt, 1))?;
 
     let class = module.define_class("DocumentStructure", ruby.class_object())?;
     class.define_singleton_method("new", function!(DocumentStructure::new, 3))?;
@@ -23490,12 +21028,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("bbox", method!(DocumentNode::bbox, 0))?;
     class.define_method("annotations", method!(DocumentNode::annotations, 0))?;
     class.define_method("attributes", method!(DocumentNode::attributes, 0))?;
-
-    let class = module.define_class("TableGrid", ruby.class_object())?;
-    class.define_singleton_method("new", function!(TableGrid::new, 3))?;
-    class.define_method("rows", method!(TableGrid::rows, 0))?;
-    class.define_method("cols", method!(TableGrid::cols, 0))?;
-    class.define_method("cells", method!(TableGrid::cells, 0))?;
 
     let class = module.define_class("GridCell", ruby.class_object())?;
     class.define_singleton_method("new", function!(GridCell::new, 7))?;
@@ -23604,17 +21136,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("ocr_result", method!(ExtractedImage::ocr_result, 0))?;
     class.define_method("bounding_box", method!(ExtractedImage::bounding_box, 0))?;
     class.define_method("source_path", method!(ExtractedImage::source_path, 0))?;
-
-    let class = module.define_class("ElementId", ruby.class_object())?;
-    class.define_method("as_ref", method!(ElementId::as_ref, 0))?;
-    class.define_method("fmt", method!(ElementId::fmt, 1))?;
-
-    let class = module.define_class("BoundingBox", ruby.class_object())?;
-    class.define_singleton_method("new", function!(BoundingBox::new, 4))?;
-    class.define_method("x0", method!(BoundingBox::x0, 0))?;
-    class.define_method("y0", method!(BoundingBox::y0, 0))?;
-    class.define_method("x1", method!(BoundingBox::x1, 0))?;
-    class.define_method("y1", method!(BoundingBox::y1, 0))?;
 
     let class = module.define_class("ElementMetadata", ruby.class_object())?;
     class.define_singleton_method("new", function!(ElementMetadata::new, 5))?;
@@ -23872,13 +21393,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("total_size", method!(ArchiveMetadata::total_size, 0))?;
     class.define_method("compressed_size", method!(ArchiveMetadata::compressed_size, 0))?;
 
-    let class = module.define_class("ImageMetadata", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ImageMetadata::new, 4))?;
-    class.define_method("width", method!(ImageMetadata::width, 0))?;
-    class.define_method("height", method!(ImageMetadata::height, 0))?;
-    class.define_method("format", method!(ImageMetadata::format, 0))?;
-    class.define_method("exif", method!(ImageMetadata::exif, 0))?;
-
     let class = module.define_class("XmlMetadata", ruby.class_object())?;
     class.define_singleton_method("new", function!(XmlMetadata::new, 2))?;
     class.define_method("element_count", method!(XmlMetadata::element_count, 0))?;
@@ -24069,7 +21583,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("with_page_number", method!(OcrElement::with_page_number, 1))?;
     class.define_method("with_parent_id", method!(OcrElement::with_parent_id, 1))?;
     class.define_method("with_metadata", method!(OcrElement::with_metadata, 2))?;
-    class.define_method("with_rotation_opt", method!(OcrElement::with_rotation_opt, 1))?;
 
     let class = module.define_class("OcrElementConfig", ruby.class_object())?;
     class.define_singleton_method("new", function!(OcrElementConfig::new, 4))?;
@@ -24122,20 +21635,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("level", method!(HierarchicalBlock::level, 0))?;
     class.define_method("bbox", method!(HierarchicalBlock::bbox, 0))?;
 
-    let class = module.define_class("Table", ruby.class_object())?;
-    class.define_singleton_method("new", function!(Table::new, 4))?;
-    class.define_method("cells", method!(Table::cells, 0))?;
-    class.define_method("markdown", method!(Table::markdown, 0))?;
-    class.define_method("page_number", method!(Table::page_number, 0))?;
-    class.define_method("bounding_box", method!(Table::bounding_box, 0))?;
-
-    let class = module.define_class("TableCell", ruby.class_object())?;
-    class.define_singleton_method("new", function!(TableCell::new, 4))?;
-    class.define_method("content", method!(TableCell::content, 0))?;
-    class.define_method("row_span", method!(TableCell::row_span, 0))?;
-    class.define_method("col_span", method!(TableCell::col_span, 0))?;
-    class.define_method("is_header", method!(TableCell::is_header, 0))?;
-
     let class = module.define_class("Uri", ruby.class_object())?;
     class.define_singleton_method("new", function!(Uri::new, 4))?;
     class.define_method("url", method!(Uri::url, 0))?;
@@ -24144,14 +21643,9 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("kind", method!(Uri::kind, 0))?;
     class.define_method("with_page", method!(Uri::with_page, 1))?;
 
-    let class = module.define_class("StringBufferPool", ruby.class_object())?;
+    let _class = module.define_class("StringBufferPool", ruby.class_object())?;
 
-    let class = module.define_class("ByteBufferPool", ruby.class_object())?;
-
-    let class = module.define_class("Pool", ruby.class_object())?;
-    class.define_method("acquire", method!(Pool::acquire, 0))?;
-    class.define_method("size", method!(Pool::size, 0))?;
-    class.define_method("clear", method!(Pool::clear, 0))?;
+    let _class = module.define_class("ByteBufferPool", ruby.class_object())?;
 
     let class = module.define_class("PooledString", ruby.class_object())?;
     class.define_method("buffer_mut", method!(PooledString::buffer_mut, 0))?;
@@ -24161,26 +21655,13 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("drop", method!(PooledString::drop, 0))?;
     class.define_method("fmt", method!(PooledString::fmt, 1))?;
 
-    let class = module.define_class("InternedString", ruby.class_object())?;
-    class.define_method("as_str", method!(InternedString::as_str, 0))?;
-    class.define_method("as_ref", method!(InternedString::as_ref, 0))?;
-    class.define_method("fmt", method!(InternedString::fmt, 1))?;
-    class.define_method("eq", method!(InternedString::eq, 1))?;
-    class.define_method("deref", method!(InternedString::deref, 0))?;
-
     let class = module.define_class("TracingLayer", ruby.class_object())?;
     class.define_method("layer", method!(TracingLayer::layer, 1))?;
 
     let class = module.define_class("MetricsLayer", ruby.class_object())?;
     class.define_method("layer", method!(MetricsLayer::layer, 1))?;
 
-    let class = module.define_class("ApiError", ruby.class_object())?;
-    class.define_singleton_method("new", function!(ApiError::new, 2))?;
-    class.define_method("status", method!(ApiError::status, 0))?;
-    class.define_method("body", method!(ApiError::body, 0))?;
-    class.define_method("into_response", method!(ApiError::into_response, 0))?;
-
-    let class = module.define_class("ApiDoc", ruby.class_object())?;
+    let _class = module.define_class("ApiDoc", ruby.class_object())?;
 
     let class = module.define_class("HealthResponse", ruby.class_object())?;
     class.define_singleton_method("new", function!(HealthResponse::new, 3))?;
@@ -24193,7 +21674,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("version", method!(InfoResponse::version, 0))?;
     class.define_method("rust_backend", method!(InfoResponse::rust_backend, 0))?;
 
-    let class = module.define_class("ExtractResponse", ruby.class_object())?;
+    let _class = module.define_class("ExtractResponse", ruby.class_object())?;
 
     let class = module.define_class("ApiState", ruby.class_object())?;
     class.define_singleton_method("new", function!(ApiState::new, 2))?;
@@ -24367,28 +21848,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("chunks", method!(ChunkingResult::chunks, 0))?;
     class.define_method("chunk_count", method!(ChunkingResult::chunk_count, 0))?;
 
-    let class = module.define_class("ChunkingProcessor", ruby.class_object())?;
-    class.define_method("name", method!(ChunkingProcessor::name, 0))?;
-    class.define_method("version", method!(ChunkingProcessor::version, 0))?;
-    class.define_method("initialize", method!(ChunkingProcessor::initialize, 0))?;
-    class.define_method("shutdown", method!(ChunkingProcessor::shutdown, 0))?;
-    class.define_method("process_async", method!(ChunkingProcessor::process_async, 2))?;
-    class.define_method("processing_stage", method!(ChunkingProcessor::processing_stage, 0))?;
-    class.define_method("should_process", method!(ChunkingProcessor::should_process, 2))?;
-    class.define_method(
-        "estimated_duration_ms",
-        method!(ChunkingProcessor::estimated_duration_ms, 1),
-    )?;
-
-    let class = module.define_class("VlmOcrBackend", ruby.class_object())?;
-    class.define_method("name", method!(VlmOcrBackend::name, 0))?;
-    class.define_method("version", method!(VlmOcrBackend::version, 0))?;
-    class.define_method("initialize", method!(VlmOcrBackend::initialize, 0))?;
-    class.define_method("shutdown", method!(VlmOcrBackend::shutdown, 0))?;
-    class.define_method("process_image_async", method!(VlmOcrBackend::process_image_async, 2))?;
-    class.define_method("supports_language", method!(VlmOcrBackend::supports_language, 1))?;
-    class.define_method("backend_type", method!(VlmOcrBackend::backend_type, 0))?;
-
     let class = module.define_class("YakeParams", ruby.class_object())?;
     class.define_singleton_method("new", function!(YakeParams::new, 1))?;
     class.define_method("window_size", method!(YakeParams::window_size, 0))?;
@@ -24559,12 +22018,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("data", method!(PdfImage::data, 0))?;
     class.define_method("decoded_format", method!(PdfImage::decoded_format, 0))?;
 
-    let class = module.define_class("PageLayoutRegion", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PageLayoutRegion::new, 3))?;
-    class.define_method("class", method!(PageLayoutRegion::class, 0))?;
-    class.define_method("confidence", method!(PageLayoutRegion::confidence, 0))?;
-    class.define_method("bbox", method!(PageLayoutRegion::bbox, 0))?;
-
     let class = module.define_class("PageLayoutResult", ruby.class_object())?;
     class.define_singleton_method("new", function!(PageLayoutResult::new, 6))?;
     class.define_method("page_index", method!(PageLayoutResult::page_index, 0))?;
@@ -24583,18 +22036,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("postprocess_ms", method!(PageTiming::postprocess_ms, 0))?;
     class.define_method("mapping_ms", method!(PageTiming::mapping_ms, 0))?;
 
-    let class = module.define_class("PdfExtractionMetadata", ruby.class_object())?;
-    class.define_singleton_method("new", function!(PdfExtractionMetadata::new, 9))?;
-    class.define_method("title", method!(PdfExtractionMetadata::title, 0))?;
-    class.define_method("subject", method!(PdfExtractionMetadata::subject, 0))?;
-    class.define_method("authors", method!(PdfExtractionMetadata::authors, 0))?;
-    class.define_method("keywords", method!(PdfExtractionMetadata::keywords, 0))?;
-    class.define_method("created_at", method!(PdfExtractionMetadata::created_at, 0))?;
-    class.define_method("modified_at", method!(PdfExtractionMetadata::modified_at, 0))?;
-    class.define_method("created_by", method!(PdfExtractionMetadata::created_by, 0))?;
-    class.define_method("pdf_specific", method!(PdfExtractionMetadata::pdf_specific, 0))?;
-    class.define_method("page_structure", method!(PdfExtractionMetadata::page_structure, 0))?;
-
     let class = module.define_class("CommonPdfMetadata", ruby.class_object())?;
     class.define_singleton_method("new", function!(CommonPdfMetadata::new, 7))?;
     class.define_method("title", method!(CommonPdfMetadata::title, 0))?;
@@ -24605,7 +22046,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     class.define_method("modified_at", method!(CommonPdfMetadata::modified_at, 0))?;
     class.define_method("created_by", method!(CommonPdfMetadata::created_by, 0))?;
 
-    let class = module.define_class("PdfUnifiedExtractionResult", ruby.class_object())?;
+    let _class = module.define_class("PdfUnifiedExtractionResult", ruby.class_object())?;
 
     module.define_module_function("get_cache_metadata", function!(get_cache_metadata, 1))?;
     module.define_module_function("cleanup_cache", function!(cleanup_cache, 4))?;
@@ -24658,18 +22099,8 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("extract_file", function!(extract_file, 3))?;
     module.define_module_function("extract_file_async", function!(extract_file_async, 3))?;
     module.define_module_function("get_pool_sizing_hint", function!(get_pool_sizing_hint, 2))?;
-    module.define_module_function("extract_file_sync", function!(extract_file_sync, 3))?;
-    module.define_module_function("extract_bytes_sync", function!(extract_bytes_sync, 3))?;
-    module.define_module_function("batch_extract_file_sync", function!(batch_extract_file_sync, 2))?;
-    module.define_module_function("batch_extract_bytes_sync", function!(batch_extract_bytes_sync, 2))?;
-    module.define_module_function("batch_extract_file", function!(batch_extract_file, 2))?;
-    module.define_module_function("batch_extract_file_async", function!(batch_extract_file_async, 2))?;
-    module.define_module_function("batch_extract_bytes", function!(batch_extract_bytes, 2))?;
-    module.define_module_function("batch_extract_bytes_async", function!(batch_extract_bytes_async, 2))?;
     module.define_module_function("is_valid_format_field", function!(is_valid_format_field, 1))?;
     module.define_module_function("open_file_bytes", function!(open_file_bytes, 1))?;
-    module.define_module_function("read_file_async", function!(read_file_async, 1))?;
-    module.define_module_function("read_file_async_async", function!(read_file_async_async, 1))?;
     module.define_module_function("read_file_sync", function!(read_file_sync, 1))?;
     module.define_module_function("file_exists", function!(file_exists, 1))?;
     module.define_module_function("validate_file_exists", function!(validate_file_exists, 1))?;
@@ -24682,13 +22113,8 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("list_supported_formats", function!(list_supported_formats, 0))?;
     module.define_module_function("clear_processor_cache", function!(clear_processor_cache, 0))?;
     module.define_module_function("apply_output_format", function!(apply_output_format, 2))?;
-    module.define_module_function("run_pipeline", function!(run_pipeline, 2))?;
-    module.define_module_function("run_pipeline_async", function!(run_pipeline_async, 2))?;
-    module.define_module_function("run_pipeline_sync", function!(run_pipeline_sync, 2))?;
     module.define_module_function("is_page_text_blank", function!(is_page_text_blank, 1))?;
     module.define_module_function("resolve_relationships", function!(resolve_relationships, 1))?;
-    module.define_module_function("derive_document_structure", function!(derive_document_structure, 1))?;
-    module.define_module_function("derive_extraction_result", function!(derive_extraction_result, 3))?;
     module.define_module_function("parse_json", function!(parse_json, 2))?;
     module.define_module_function("parse_jsonl", function!(parse_jsonl, 2))?;
     module.define_module_function("parse_yaml", function!(parse_yaml, 1))?;
@@ -24707,12 +22133,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("parse_body_text", function!(parse_body_text, 2))?;
     module.define_module_function("decompress_stream", function!(decompress_stream, 1))?;
     module.define_module_function("extract_hwp_text", function!(extract_hwp_text, 1))?;
-    module.define_module_function("load_image_for_ocr", function!(load_image_for_ocr, 1))?;
     module.define_module_function("extract_image_metadata", function!(extract_image_metadata, 1))?;
-    module.define_module_function(
-        "extract_text_from_image_with_ocr",
-        function!(extract_text_from_image_with_ocr, 4),
-    )?;
     module.define_module_function("estimate_content_capacity", function!(estimate_content_capacity, 2))?;
     module.define_module_function(
         "estimate_html_markdown_capacity",
@@ -24748,7 +22169,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("parse_msg_content", function!(parse_msg_content, 2))?;
     module.define_module_function("extract_email_content", function!(extract_email_content, 3))?;
     module.define_module_function("build_email_text_output", function!(build_email_text_output, 1))?;
-    module.define_module_function("extract_pst_messages", function!(extract_pst_messages, 1))?;
     module.define_module_function("read_excel_file", function!(read_excel_file, 1))?;
     module.define_module_function("read_excel_bytes", function!(read_excel_bytes, 2))?;
     module.define_module_function("excel_to_text", function!(excel_to_text, 1))?;
@@ -24764,7 +22184,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     )?;
     module.define_module_function("extract_html_inline_images", function!(extract_html_inline_images, 2))?;
     module.define_module_function("extract_doc_text", function!(extract_doc_text, 1))?;
-    module.define_module_function("parse_drawing", function!(parse_drawing, 1))?;
     module.define_module_function(
         "collect_and_convert_omath_para",
         function!(collect_and_convert_omath_para, 1),
@@ -24778,10 +22197,8 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         function!(parse_section_properties_streaming, 1),
     )?;
     module.define_module_function("parse_styles_xml", function!(parse_styles_xml, 1))?;
-    module.define_module_function("parse_table_properties", function!(parse_table_properties, 1))?;
     module.define_module_function("parse_row_properties", function!(parse_row_properties, 1))?;
     module.define_module_function("parse_cell_properties", function!(parse_cell_properties, 1))?;
-    module.define_module_function("parse_table_grid", function!(parse_table_grid, 1))?;
     module.define_module_function("parse_theme_xml", function!(parse_theme_xml, 1))?;
     module.define_module_function("extract_text", function!(extract_text, 1))?;
     module.define_module_function(
@@ -24802,11 +22219,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         function!(extract_ooxml_embedded_objects_async, 4),
     )?;
     module.define_module_function("detect_image_format", function!(detect_image_format, 1))?;
-    module.define_module_function("process_images_with_ocr", function!(process_images_with_ocr, 2))?;
-    module.define_module_function(
-        "process_images_with_ocr_async",
-        function!(process_images_with_ocr_async, 2),
-    )?;
     module.define_module_function("extract_ppt_text", function!(extract_ppt_text, 1))?;
     module.define_module_function(
         "extract_ppt_text_with_options",
@@ -24823,17 +22235,12 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("djot_content_to_djot", function!(djot_content_to_djot, 1))?;
     module.define_module_function("extraction_result_to_djot", function!(extraction_result_to_djot, 1))?;
     module.define_module_function("djot_to_html", function!(djot_to_html, 1))?;
-    module.define_module_function(
-        "extract_complete_djot_content",
-        function!(extract_complete_djot_content, 3),
-    )?;
     module.define_module_function("extract_tables_from_events", function!(extract_tables_from_events, 1))?;
     module.define_module_function("extract_text_from_events", function!(extract_text_from_events, 1))?;
-    module.define_module_function("render_block_to_djot", function!(render_block_to_djot, 3))?;
-    module.define_module_function("render_list_item", function!(render_list_item, 4))?;
-    module.define_module_function("render_inline_content", function!(render_inline_content, 2))?;
+    module.define_module_function("render_block_to_djot", function!(render_block_to_djot, 2))?;
+    module.define_module_function("render_list_item", function!(render_list_item, 3))?;
+    module.define_module_function("render_inline_content", function!(render_inline_content, 1))?;
     module.define_module_function("extract_frontmatter", function!(extract_frontmatter, 1))?;
-    module.define_module_function("extract_metadata_from_yaml", function!(extract_metadata_from_yaml, 1))?;
     module.define_module_function("extract_title_from_content", function!(extract_title_from_content, 1))?;
     module.define_module_function("collect_iwa_paths", function!(collect_iwa_paths, 1))?;
     module.define_module_function("read_iwa_file", function!(read_iwa_file, 2))?;
@@ -24842,11 +22249,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("extract_text_from_iwa_files", function!(extract_text_from_iwa_files, 2))?;
     module.define_module_function("extract_metadata_from_zip", function!(extract_metadata_from_zip, 1))?;
     module.define_module_function("dedup_text", function!(dedup_text, 1))?;
-    module.define_module_function(
-        "evaluate_native_text_for_ocr",
-        function!(evaluate_native_text_for_ocr, 3),
-    )?;
-    module.define_module_function("evaluate_per_page_ocr", function!(evaluate_per_page_ocr, 4))?;
     module.define_module_function("hex_digit_to_u8", function!(hex_digit_to_u8, 1))?;
     module.define_module_function("parse_hex_byte", function!(parse_hex_byte, 2))?;
     module.define_module_function("parse_rtf_control_word", function!(parse_rtf_control_word, 1))?;
@@ -24863,7 +22265,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("unregister_extractor", function!(unregister_extractor, 1))?;
     module.define_module_function("list_extractors", function!(list_extractors, 0))?;
     module.define_module_function("clear_extractors", function!(clear_extractors, 0))?;
-    module.define_module_function("register_ocr_backend", function!(register_ocr_backend, 1))?;
     module.define_module_function("unregister_ocr_backend", function!(unregister_ocr_backend, 1))?;
     module.define_module_function("list_ocr_backends", function!(list_ocr_backends, 0))?;
     module.define_module_function("clear_ocr_backends", function!(clear_ocr_backends, 0))?;
@@ -24876,7 +22277,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("get_post_processor_registry", function!(get_post_processor_registry, 0))?;
     module.define_module_function("get_validator_registry", function!(get_validator_registry, 0))?;
     module.define_module_function("get_renderer_registry", function!(get_renderer_registry, 0))?;
-    module.define_module_function("register_renderer", function!(register_renderer, 1))?;
     module.define_module_function("unregister_renderer", function!(unregister_renderer, 1))?;
     module.define_module_function("list_renderers", function!(list_renderers, 0))?;
     module.define_module_function("clear_renderers", function!(clear_renderers, 0))?;
@@ -24945,7 +22345,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("reconstruct_table", function!(reconstruct_table, 3))?;
     module.define_module_function("table_to_markdown", function!(table_to_markdown, 1))?;
     module.define_module_function("load_server_config", function!(load_server_config, 1))?;
-    module.define_module_function("openapi_json", function!(openapi_json, 0))?;
     module.define_module_function("create_router", function!(create_router, 1))?;
     module.define_module_function("create_router_with_limits", function!(create_router_with_limits, 2))?;
     module.define_module_function(
@@ -24956,14 +22355,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("serve_async", function!(serve_async, 2))?;
     module.define_module_function("serve_with_config", function!(serve_with_config, 3))?;
     module.define_module_function("serve_with_config_async", function!(serve_with_config_async, 3))?;
-    module.define_module_function(
-        "serve_with_config_and_limits",
-        function!(serve_with_config_and_limits, 4),
-    )?;
-    module.define_module_function(
-        "serve_with_config_and_limits_async",
-        function!(serve_with_config_and_limits_async, 4),
-    )?;
     module.define_module_function("serve_with_server_config", function!(serve_with_server_config, 2))?;
     module.define_module_function(
         "serve_with_server_config_async",
@@ -24982,18 +22373,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         "start_mcp_server_with_config_async",
         function!(start_mcp_server_with_config_async, 1),
     )?;
-    module.define_module_function("start_mcp_server_http", function!(start_mcp_server_http, 2))?;
-    module.define_module_function("start_mcp_server_http_async", function!(start_mcp_server_http_async, 2))?;
-    module.define_module_function(
-        "start_mcp_server_http_with_config",
-        function!(start_mcp_server_http_with_config, 3),
-    )?;
-    module.define_module_function(
-        "start_mcp_server_http_with_config_async",
-        function!(start_mcp_server_http_with_config_async, 3),
-    )?;
     module.define_module_function("validate_page_boundaries", function!(validate_page_boundaries, 1))?;
-    module.define_module_function("calculate_page_range", function!(calculate_page_range, 3))?;
     module.define_module_function("classify_chunk", function!(classify_chunk, 2))?;
     module.define_module_function("chunk_text", function!(chunk_text, 3))?;
     module.define_module_function(
@@ -25021,7 +22401,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     )?;
     module.define_module_function("calculate_smart_dpi", function!(calculate_smart_dpi, 5))?;
     module.define_module_function("calculate_optimal_dpi", function!(calculate_optimal_dpi, 6))?;
-    module.define_module_function("normalize_image_dpi", function!(normalize_image_dpi, 5))?;
     module.define_module_function("resize_image", function!(resize_image, 4))?;
     module.define_module_function("detect_languages", function!(detect_languages, 2))?;
     module.define_module_function(
@@ -25031,9 +22410,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("get_stopwords", function!(get_stopwords, 1))?;
     module.define_module_function("get_stopwords_with_fallback", function!(get_stopwords_with_fallback, 2))?;
     module.define_module_function("extract_keywords", function!(extract_keywords, 2))?;
-    module.define_module_function("text_block_to_element", function!(text_block_to_element, 2))?;
-    module.define_module_function("tsv_row_to_element", function!(tsv_row_to_element, 1))?;
-    module.define_module_function("iterator_word_to_element", function!(iterator_word_to_element, 4))?;
     module.define_module_function("element_to_hocr_word", function!(element_to_hocr_word, 1))?;
     module.define_module_function("elements_to_hocr_words", function!(elements_to_hocr_words, 2))?;
     module.define_module_function(
@@ -25059,11 +22435,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     )?;
     module.define_module_function("preprocess_rescale", function!(preprocess_rescale, 2))?;
     module.define_module_function("preprocess_letterbox", function!(preprocess_letterbox, 3))?;
-    module.define_module_function("build_session", function!(build_session, 3))?;
     module.define_module_function("config_from_extraction", function!(config_from_extraction, 1))?;
-    module.define_module_function("create_engine", function!(create_engine, 1))?;
-    module.define_module_function("take_or_create_engine", function!(take_or_create_engine, 1))?;
-    module.define_module_function("return_engine", function!(return_engine, 1))?;
     module.define_module_function("take_or_create_tatr", function!(take_or_create_tatr, 0))?;
     module.define_module_function("return_tatr", function!(return_tatr, 1))?;
     module.define_module_function("take_or_create_slanet", function!(take_or_create_slanet, 1))?;
@@ -25078,7 +22450,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         function!(extract_annotations_from_document, 1),
     )?;
     module.define_module_function("extract_bookmarks", function!(extract_bookmarks, 1))?;
-    module.define_module_function("extract_bundled_pdfium", function!(extract_bundled_pdfium, 0))?;
     module.define_module_function("extract_embedded_files", function!(extract_embedded_files, 1))?;
     module.define_module_function(
         "extract_and_process_embedded_files",
@@ -25091,7 +22462,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("initialize_font_cache", function!(initialize_font_cache, 0))?;
     module.define_module_function("get_font_descriptors", function!(get_font_descriptors, 0))?;
     module.define_module_function("cached_font_count", function!(cached_font_count, 0))?;
-    module.define_module_function("clear_font_cache", function!(clear_font_cache, 0))?;
     module.define_module_function("cluster_font_sizes", function!(cluster_font_sizes, 2))?;
     module.define_module_function("assign_heading_levels_smart", function!(assign_heading_levels_smart, 3))?;
     module.define_module_function("assign_hierarchy_levels", function!(assign_hierarchy_levels, 2))?;
@@ -25108,10 +22478,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
         "extract_images_from_pdf_with_password",
         function!(extract_images_from_pdf_with_password, 2),
     )?;
-    module.define_module_function(
-        "reextract_raw_images_via_pdfium",
-        function!(reextract_raw_images_via_pdfium, 2),
-    )?;
     module.define_module_function("detect_layout_for_document", function!(detect_layout_for_document, 2))?;
     module.define_module_function("detect_layout_for_images", function!(detect_layout_for_images, 2))?;
     module.define_module_function("extract_metadata", function!(extract_metadata, 1))?;
@@ -25122,10 +22488,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function(
         "extract_metadata_with_passwords",
         function!(extract_metadata_with_passwords, 2),
-    )?;
-    module.define_module_function(
-        "extract_metadata_from_document",
-        function!(extract_metadata_from_document, 3),
     )?;
     module.define_module_function(
         "extract_common_metadata_from_document",
@@ -25147,14 +22509,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function(
         "extract_text_from_pdf_with_passwords",
         function!(extract_text_from_pdf_with_passwords, 2),
-    )?;
-    module.define_module_function(
-        "extract_text_and_metadata_from_pdf_document",
-        function!(extract_text_and_metadata_from_pdf_document, 2),
-    )?;
-    module.define_module_function(
-        "extract_text_from_pdf_document",
-        function!(extract_text_from_pdf_document, 3),
     )?;
     module.define_module_function("serialize_to_toon", function!(serialize_to_toon, 1))?;
     module.define_module_function("serialize_to_json", function!(serialize_to_json, 1))?;

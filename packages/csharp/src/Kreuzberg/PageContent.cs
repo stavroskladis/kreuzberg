@@ -43,7 +43,7 @@ public sealed class PageContent
     /// Arc semantics in-memory for zero-copy sharing.
     /// </summary>
     [JsonPropertyName("tables")]
-    public List<Table> Tables { get; set; } = [];
+    public List<string> Tables { get; set; } = [];
 
     /// <summary>
     /// Images found on this page (uses Arc for memory efficiency)

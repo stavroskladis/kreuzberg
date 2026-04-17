@@ -16,7 +16,7 @@ public record ExtractedImage(
     @JsonProperty("is_mask") boolean isMask,
     Optional<String> description,
     @JsonProperty("ocr_result") Optional<ExtractionResult> ocrResult,
-    @JsonProperty("bounding_box") Optional<BoundingBox> boundingBox,
+    @JsonProperty("bounding_box") Optional<String> boundingBox,
     @JsonProperty("source_path") Optional<String> sourcePath
 ) {
 }

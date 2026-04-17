@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record PageLayoutResult(
     @JsonProperty("page_index") long pageIndex,
-    List<PageLayoutRegion> regions,
+    List<String> regions,
     @JsonProperty("page_width_pts") float pageWidthPts,
     @JsonProperty("page_height_pts") float pageHeightPts,
     @JsonProperty("render_width_px") int renderWidthPx,

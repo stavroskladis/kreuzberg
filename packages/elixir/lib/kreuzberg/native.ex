@@ -60,15 +60,8 @@ defmodule Kreuzberg.Native do
   def extract_bytes_async(_content, _mime_type, _config), do: :erlang.nif_error(:nif_not_loaded)
   def extract_file_async(_path, _mime_type, _config), do: :erlang.nif_error(:nif_not_loaded)
   def get_pool_sizing_hint(_file_size, _mime_type), do: :erlang.nif_error(:nif_not_loaded)
-  def extract_file_sync(_path, _mime_type, _config), do: :erlang.nif_error(:nif_not_loaded)
-  def extract_bytes_sync(_content, _mime_type, _config), do: :erlang.nif_error(:nif_not_loaded)
-  def batch_extract_file_sync(_items, _config), do: :erlang.nif_error(:nif_not_loaded)
-  def batch_extract_bytes_sync(_items, _config), do: :erlang.nif_error(:nif_not_loaded)
-  def batch_extract_file_async(_items, _config), do: :erlang.nif_error(:nif_not_loaded)
-  def batch_extract_bytes_async(_items, _config), do: :erlang.nif_error(:nif_not_loaded)
   def is_valid_format_field(_field), do: :erlang.nif_error(:nif_not_loaded)
   def open_file_bytes(_path), do: :erlang.nif_error(:nif_not_loaded)
-  def read_file_async_async(_path), do: :erlang.nif_error(:nif_not_loaded)
   def read_file_sync(_path), do: :erlang.nif_error(:nif_not_loaded)
   def file_exists(_path), do: :erlang.nif_error(:nif_not_loaded)
   def validate_file_exists(_path), do: :erlang.nif_error(:nif_not_loaded)
@@ -84,15 +77,8 @@ defmodule Kreuzberg.Native do
   def list_supported_formats, do: :erlang.nif_error(:nif_not_loaded)
   def clear_processor_cache, do: :erlang.nif_error(:nif_not_loaded)
   def apply_output_format(_result, _output_format), do: :erlang.nif_error(:nif_not_loaded)
-  def run_pipeline_async(_doc, _config), do: :erlang.nif_error(:nif_not_loaded)
-  def run_pipeline_sync(_doc, _config), do: :erlang.nif_error(:nif_not_loaded)
   def is_page_text_blank(_text), do: :erlang.nif_error(:nif_not_loaded)
   def resolve_relationships(_doc), do: :erlang.nif_error(:nif_not_loaded)
-  def derive_document_structure(_doc), do: :erlang.nif_error(:nif_not_loaded)
-
-  def derive_extraction_result(_doc, _include_document_structure, _output_format),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def parse_json(_data, _config), do: :erlang.nif_error(:nif_not_loaded)
   def parse_jsonl(_data, _config), do: :erlang.nif_error(:nif_not_loaded)
   def parse_yaml(_data), do: :erlang.nif_error(:nif_not_loaded)
@@ -108,12 +94,7 @@ defmodule Kreuzberg.Native do
   def parse_body_text(_data, _is_compressed), do: :erlang.nif_error(:nif_not_loaded)
   def decompress_stream(_data), do: :erlang.nif_error(:nif_not_loaded)
   def extract_hwp_text(_bytes), do: :erlang.nif_error(:nif_not_loaded)
-  def load_image_for_ocr(_image_bytes), do: :erlang.nif_error(:nif_not_loaded)
   def extract_image_metadata(_bytes), do: :erlang.nif_error(:nif_not_loaded)
-
-  def extract_text_from_image_with_ocr(_bytes, _mime_type, _ocr_result, _page_config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def estimate_content_capacity(_file_size, _format), do: :erlang.nif_error(:nif_not_loaded)
   def estimate_html_markdown_capacity(_html_size), do: :erlang.nif_error(:nif_not_loaded)
   def estimate_spreadsheet_capacity(_file_size), do: :erlang.nif_error(:nif_not_loaded)
@@ -143,7 +124,6 @@ defmodule Kreuzberg.Native do
     do: :erlang.nif_error(:nif_not_loaded)
 
   def build_email_text_output(_result), do: :erlang.nif_error(:nif_not_loaded)
-  def extract_pst_messages(_pst_data), do: :erlang.nif_error(:nif_not_loaded)
   def read_excel_file(_file_path), do: :erlang.nif_error(:nif_not_loaded)
   def read_excel_bytes(_data, _file_extension), do: :erlang.nif_error(:nif_not_loaded)
   def excel_to_text(_workbook), do: :erlang.nif_error(:nif_not_loaded)
@@ -160,7 +140,6 @@ defmodule Kreuzberg.Native do
 
   def extract_html_inline_images(_html, _options), do: :erlang.nif_error(:nif_not_loaded)
   def extract_doc_text(_content), do: :erlang.nif_error(:nif_not_loaded)
-  def parse_drawing(_reader), do: :erlang.nif_error(:nif_not_loaded)
   def collect_and_convert_omath_para(_reader), do: :erlang.nif_error(:nif_not_loaded)
   def collect_and_convert_omath(_reader), do: :erlang.nif_error(:nif_not_loaded)
   def parse_document(_bytes), do: :erlang.nif_error(:nif_not_loaded)
@@ -168,10 +147,8 @@ defmodule Kreuzberg.Native do
   def parse_section_properties(_node), do: :erlang.nif_error(:nif_not_loaded)
   def parse_section_properties_streaming(_reader), do: :erlang.nif_error(:nif_not_loaded)
   def parse_styles_xml(_xml), do: :erlang.nif_error(:nif_not_loaded)
-  def parse_table_properties(_reader), do: :erlang.nif_error(:nif_not_loaded)
   def parse_row_properties(_reader), do: :erlang.nif_error(:nif_not_loaded)
   def parse_cell_properties(_reader), do: :erlang.nif_error(:nif_not_loaded)
-  def parse_table_grid(_reader), do: :erlang.nif_error(:nif_not_loaded)
   def parse_theme_xml(_xml), do: :erlang.nif_error(:nif_not_loaded)
   def extract_text(_bytes), do: :erlang.nif_error(:nif_not_loaded)
   def extract_text_with_page_breaks(_bytes), do: :erlang.nif_error(:nif_not_loaded)
@@ -182,7 +159,6 @@ defmodule Kreuzberg.Native do
     do: :erlang.nif_error(:nif_not_loaded)
 
   def detect_image_format(_data), do: :erlang.nif_error(:nif_not_loaded)
-  def process_images_with_ocr_async(_images, _config), do: :erlang.nif_error(:nif_not_loaded)
   def extract_ppt_text(_content), do: :erlang.nif_error(:nif_not_loaded)
 
   def extract_ppt_text_with_options(_content, _include_master_slides),
@@ -199,17 +175,12 @@ defmodule Kreuzberg.Native do
   def djot_content_to_djot(_content), do: :erlang.nif_error(:nif_not_loaded)
   def extraction_result_to_djot(_result), do: :erlang.nif_error(:nif_not_loaded)
   def djot_to_html(_djot_source), do: :erlang.nif_error(:nif_not_loaded)
-
-  def extract_complete_djot_content(_events, _metadata, _tables),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def extract_tables_from_events(_events), do: :erlang.nif_error(:nif_not_loaded)
   def extract_text_from_events(_events), do: :erlang.nif_error(:nif_not_loaded)
-  def render_block_to_djot(_output, _block, _indent_level), do: :erlang.nif_error(:nif_not_loaded)
-  def render_list_item(_output, _item, _indent, _marker), do: :erlang.nif_error(:nif_not_loaded)
-  def render_inline_content(_output, _elements), do: :erlang.nif_error(:nif_not_loaded)
+  def render_block_to_djot(_block, _indent_level), do: :erlang.nif_error(:nif_not_loaded)
+  def render_list_item(_item, _indent, _marker), do: :erlang.nif_error(:nif_not_loaded)
+  def render_inline_content(_elements), do: :erlang.nif_error(:nif_not_loaded)
   def extract_frontmatter(_content), do: :erlang.nif_error(:nif_not_loaded)
-  def extract_metadata_from_yaml(_yaml), do: :erlang.nif_error(:nif_not_loaded)
   def extract_title_from_content(_content), do: :erlang.nif_error(:nif_not_loaded)
   def collect_iwa_paths(_content), do: :erlang.nif_error(:nif_not_loaded)
   def read_iwa_file(_content, _path), do: :erlang.nif_error(:nif_not_loaded)
@@ -218,13 +189,6 @@ defmodule Kreuzberg.Native do
   def extract_text_from_iwa_files(_content, _iwa_paths), do: :erlang.nif_error(:nif_not_loaded)
   def extract_metadata_from_zip(_content), do: :erlang.nif_error(:nif_not_loaded)
   def dedup_text(_texts), do: :erlang.nif_error(:nif_not_loaded)
-
-  def evaluate_native_text_for_ocr(_native_text, _page_count, _thresholds),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def evaluate_per_page_ocr(_native_text, _boundaries, _page_count, _thresholds),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def hex_digit_to_u8(_c), do: :erlang.nif_error(:nif_not_loaded)
   def parse_hex_byte(_h1, _h2), do: :erlang.nif_error(:nif_not_loaded)
   def parse_rtf_control_word(_chars), do: :erlang.nif_error(:nif_not_loaded)
@@ -244,7 +208,6 @@ defmodule Kreuzberg.Native do
   def unregister_extractor(_name), do: :erlang.nif_error(:nif_not_loaded)
   def list_extractors, do: :erlang.nif_error(:nif_not_loaded)
   def clear_extractors, do: :erlang.nif_error(:nif_not_loaded)
-  def register_ocr_backend(_backend), do: :erlang.nif_error(:nif_not_loaded)
   def unregister_ocr_backend(_name), do: :erlang.nif_error(:nif_not_loaded)
   def list_ocr_backends, do: :erlang.nif_error(:nif_not_loaded)
   def clear_ocr_backends, do: :erlang.nif_error(:nif_not_loaded)
@@ -254,7 +217,6 @@ defmodule Kreuzberg.Native do
   def get_post_processor_registry, do: :erlang.nif_error(:nif_not_loaded)
   def get_validator_registry, do: :erlang.nif_error(:nif_not_loaded)
   def get_renderer_registry, do: :erlang.nif_error(:nif_not_loaded)
-  def register_renderer(_renderer), do: :erlang.nif_error(:nif_not_loaded)
   def unregister_renderer(_name), do: :erlang.nif_error(:nif_not_loaded)
   def list_renderers, do: :erlang.nif_error(:nif_not_loaded)
   def clear_renderers, do: :erlang.nif_error(:nif_not_loaded)
@@ -328,7 +290,6 @@ defmodule Kreuzberg.Native do
 
   def table_to_markdown(_table), do: :erlang.nif_error(:nif_not_loaded)
   def load_server_config(_config_path), do: :erlang.nif_error(:nif_not_loaded)
-  def openapi_json, do: :erlang.nif_error(:nif_not_loaded)
   def create_router(_config), do: :erlang.nif_error(:nif_not_loaded)
   def create_router_with_limits(_config, _limits), do: :erlang.nif_error(:nif_not_loaded)
 
@@ -338,9 +299,6 @@ defmodule Kreuzberg.Native do
   def serve_async(_host, _port), do: :erlang.nif_error(:nif_not_loaded)
   def serve_with_config_async(_host, _port, _config), do: :erlang.nif_error(:nif_not_loaded)
 
-  def serve_with_config_and_limits_async(_host, _port, _config, _limits),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def serve_with_server_config_async(_extraction_config, _server_config),
     do: :erlang.nif_error(:nif_not_loaded)
 
@@ -348,16 +306,7 @@ defmodule Kreuzberg.Native do
   def map_kreuzberg_error_to_mcp(_error), do: :erlang.nif_error(:nif_not_loaded)
   def start_mcp_server_async, do: :erlang.nif_error(:nif_not_loaded)
   def start_mcp_server_with_config_async(_config), do: :erlang.nif_error(:nif_not_loaded)
-  def start_mcp_server_http_async(_host, _port), do: :erlang.nif_error(:nif_not_loaded)
-
-  def start_mcp_server_http_with_config_async(_host, _port, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def validate_page_boundaries(_boundaries), do: :erlang.nif_error(:nif_not_loaded)
-
-  def calculate_page_range(_byte_start, _byte_end, _boundaries),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def classify_chunk(_content, _heading_context), do: :erlang.nif_error(:nif_not_loaded)
   def chunk_text(_text, _config, _page_boundaries), do: :erlang.nif_error(:nif_not_loaded)
 
@@ -390,9 +339,6 @@ defmodule Kreuzberg.Native do
   def calculate_optimal_dpi(_page_width, _page_height, _target_dpi, _max_dimension, _min_dpi, _max_dpi),
     do: :erlang.nif_error(:nif_not_loaded)
 
-  def normalize_image_dpi(_rgb_data, _width, _height, _config, _current_dpi),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def resize_image(_image, _new_width, _new_height, _scale_factor),
     do: :erlang.nif_error(:nif_not_loaded)
 
@@ -401,12 +347,6 @@ defmodule Kreuzberg.Native do
   def get_stopwords(_lang), do: :erlang.nif_error(:nif_not_loaded)
   def get_stopwords_with_fallback(_language, _fallback), do: :erlang.nif_error(:nif_not_loaded)
   def extract_keywords(_text, _config), do: :erlang.nif_error(:nif_not_loaded)
-  def text_block_to_element(_block, _page_number), do: :erlang.nif_error(:nif_not_loaded)
-  def tsv_row_to_element(_row), do: :erlang.nif_error(:nif_not_loaded)
-
-  def iterator_word_to_element(_word, _block_type, _para_info, _page_number),
-    do: :erlang.nif_error(:nif_not_loaded)
-
   def element_to_hocr_word(_element), do: :erlang.nif_error(:nif_not_loaded)
   def elements_to_hocr_words(_elements, _min_confidence), do: :erlang.nif_error(:nif_not_loaded)
   def parse_hocr_to_internal_document(_hocr_html), do: :erlang.nif_error(:nif_not_loaded)
@@ -437,11 +377,7 @@ defmodule Kreuzberg.Native do
   def preprocess_letterbox(_img, _target_width, _target_height),
     do: :erlang.nif_error(:nif_not_loaded)
 
-  def build_session(_path, _accel, _thread_budget), do: :erlang.nif_error(:nif_not_loaded)
   def config_from_extraction(_layout_config), do: :erlang.nif_error(:nif_not_loaded)
-  def create_engine(_layout_config), do: :erlang.nif_error(:nif_not_loaded)
-  def take_or_create_engine(_layout_config), do: :erlang.nif_error(:nif_not_loaded)
-  def return_engine(_engine), do: :erlang.nif_error(:nif_not_loaded)
   def take_or_create_tatr, do: :erlang.nif_error(:nif_not_loaded)
   def return_tatr(_model), do: :erlang.nif_error(:nif_not_loaded)
   def take_or_create_slanet(_variant), do: :erlang.nif_error(:nif_not_loaded)
@@ -450,7 +386,6 @@ defmodule Kreuzberg.Native do
   def return_table_classifier(_model), do: :erlang.nif_error(:nif_not_loaded)
   def extract_annotations_from_document(_document), do: :erlang.nif_error(:nif_not_loaded)
   def extract_bookmarks(_document), do: :erlang.nif_error(:nif_not_loaded)
-  def extract_bundled_pdfium, do: :erlang.nif_error(:nif_not_loaded)
   def extract_embedded_files(_document), do: :erlang.nif_error(:nif_not_loaded)
 
   def extract_and_process_embedded_files_async(_pdf_bytes, _config),
@@ -459,7 +394,6 @@ defmodule Kreuzberg.Native do
   def initialize_font_cache, do: :erlang.nif_error(:nif_not_loaded)
   def get_font_descriptors, do: :erlang.nif_error(:nif_not_loaded)
   def cached_font_count, do: :erlang.nif_error(:nif_not_loaded)
-  def clear_font_cache, do: :erlang.nif_error(:nif_not_loaded)
   def cluster_font_sizes(_blocks, _k), do: :erlang.nif_error(:nif_not_loaded)
 
   def assign_heading_levels_smart(_clusters, _min_heading_ratio, _min_heading_gap),
@@ -479,7 +413,6 @@ defmodule Kreuzberg.Native do
   def extract_images_from_pdf_with_password(_pdf_bytes, _password),
     do: :erlang.nif_error(:nif_not_loaded)
 
-  def reextract_raw_images_via_pdfium(_pdf_bytes, _images), do: :erlang.nif_error(:nif_not_loaded)
   def detect_layout_for_document(_pdf_bytes, _engine), do: :erlang.nif_error(:nif_not_loaded)
   def detect_layout_for_images(_images, _engine), do: :erlang.nif_error(:nif_not_loaded)
   def extract_metadata(_pdf_bytes), do: :erlang.nif_error(:nif_not_loaded)
@@ -488,9 +421,6 @@ defmodule Kreuzberg.Native do
     do: :erlang.nif_error(:nif_not_loaded)
 
   def extract_metadata_with_passwords(_pdf_bytes, _passwords),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def extract_metadata_from_document(_document, _page_boundaries, _content),
     do: :erlang.nif_error(:nif_not_loaded)
 
   def extract_common_metadata_from_document(_document), do: :erlang.nif_error(:nif_not_loaded)
@@ -516,12 +446,6 @@ defmodule Kreuzberg.Native do
     do: :erlang.nif_error(:nif_not_loaded)
 
   def extract_text_from_pdf_with_passwords(_pdf_bytes, _passwords),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def extract_text_and_metadata_from_pdf_document(_document, _extraction_config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def extract_text_from_pdf_document(_document, _page_config, _extraction_config),
     do: :erlang.nif_error(:nif_not_loaded)
 
   def serialize_to_toon(_result), do: :erlang.nif_error(:nif_not_loaded)
@@ -561,8 +485,6 @@ defmodule Kreuzberg.Native do
   def embeddingconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def treesitterconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def treesitterprocessconfig_default, do: :erlang.nif_error(:nif_not_loaded)
-  def filebytes_deref(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def filebytes_as_ref(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def serverconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def serverconfig_listen_addr(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def serverconfig_cors_allows_all(_obj), do: :erlang.nif_error(:nif_not_loaded)
@@ -590,27 +512,7 @@ defmodule Kreuzberg.Native do
   def entityvalidator_validate(_obj, _content), do: :erlang.nif_error(:nif_not_loaded)
   def tablevalidator_add_cells(_obj, _count), do: :erlang.nif_error(:nif_not_loaded)
   def tablevalidator_current_cells(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def modelcache_put(_obj, _model), do: :erlang.nif_error(:nif_not_loaded)
-  def modelcache_take(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def qualityprocessor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def qualityprocessor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def qualityprocessor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def qualityprocessor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
-
-  def qualityprocessor_process_async(_obj, _result, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def qualityprocessor_processing_stage(_obj), do: :erlang.nif_error(:nif_not_loaded)
-
-  def qualityprocessor_should_process(_obj, _result, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def qualityprocessor_estimated_duration_ms(_obj, _result),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def nodeid_generate(_node_type, _text, _page, _index), do: :erlang.nif_error(:nif_not_loaded)
-  def nodeid_as_ref(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def nodeid_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
+  def tokenreductionconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def documentstructure_with_capacity(_capacity), do: :erlang.nif_error(:nif_not_loaded)
   def documentstructure_push_node(_obj, _node), do: :erlang.nif_error(:nif_not_loaded)
   def documentstructure_add_child(_obj, _parent, _child), do: :erlang.nif_error(:nif_not_loaded)
@@ -621,9 +523,6 @@ defmodule Kreuzberg.Native do
   def documentstructure_len(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def documentstructure_is_empty(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def documentstructure_default, do: :erlang.nif_error(:nif_not_loaded)
-  def elementid_new(_hex_str), do: :erlang.nif_error(:nif_not_loaded)
-  def elementid_as_ref(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def elementid_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
   def imagepreprocessingconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def tesseractconfig_default, do: :erlang.nif_error(:nif_not_loaded)
   def htmlmetadata_is_empty(_obj), do: :erlang.nif_error(:nif_not_loaded)
@@ -636,7 +535,6 @@ defmodule Kreuzberg.Native do
   def ocrelement_with_page_number(_obj, _page_number), do: :erlang.nif_error(:nif_not_loaded)
   def ocrelement_with_parent_id(_obj, _parent_id), do: :erlang.nif_error(:nif_not_loaded)
   def ocrelement_with_metadata(_obj, _key, _value), do: :erlang.nif_error(:nif_not_loaded)
-  def ocrelement_with_rotation_opt(_obj, _rotation), do: :erlang.nif_error(:nif_not_loaded)
   def uri_hyperlink(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
   def uri_image(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
   def uri_citation(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
@@ -644,54 +542,14 @@ defmodule Kreuzberg.Native do
   def uri_email(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
   def uri_reference(_url, _label), do: :erlang.nif_error(:nif_not_loaded)
   def uri_with_page(_obj, _page), do: :erlang.nif_error(:nif_not_loaded)
-  def pool_acquire(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def pool_size(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def pool_clear(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def pooledstring_buffer_mut(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def pooledstring_as_str(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def pooledstring_deref(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def pooledstring_deref_mut(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def pooledstring_drop(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def pooledstring_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
-  def internedstring_as_str(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def internedstring_as_ref(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def internedstring_fmt(_obj, _f), do: :erlang.nif_error(:nif_not_loaded)
-  def internedstring_eq(_obj, _other), do: :erlang.nif_error(:nif_not_loaded)
-  def internedstring_deref(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def tracinglayer_layer(_obj, _inner), do: :erlang.nif_error(:nif_not_loaded)
   def metricslayer_layer(_obj, _inner), do: :erlang.nif_error(:nif_not_loaded)
-  def apierror_validation(_error), do: :erlang.nif_error(:nif_not_loaded)
-  def apierror_unprocessable(_error), do: :erlang.nif_error(:nif_not_loaded)
-  def apierror_internal(_error), do: :erlang.nif_error(:nif_not_loaded)
-  def apierror_bad_gateway(_error), do: :erlang.nif_error(:nif_not_loaded)
-  def apierror_into_response(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def apierror_from(_error), do: :erlang.nif_error(:nif_not_loaded)
-  def chunkingprocessor_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def chunkingprocessor_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def chunkingprocessor_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def chunkingprocessor_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
-
-  def chunkingprocessor_process_async(_obj, _result, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def chunkingprocessor_processing_stage(_obj), do: :erlang.nif_error(:nif_not_loaded)
-
-  def chunkingprocessor_should_process(_obj, _result, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def chunkingprocessor_estimated_duration_ms(_obj, _result),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def vlmocrbackend_name(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def vlmocrbackend_version(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def vlmocrbackend_initialize(_obj), do: :erlang.nif_error(:nif_not_loaded)
-  def vlmocrbackend_shutdown(_obj), do: :erlang.nif_error(:nif_not_loaded)
-
-  def vlmocrbackend_process_image_async(_obj, _image_bytes, _config),
-    do: :erlang.nif_error(:nif_not_loaded)
-
-  def vlmocrbackend_supports_language(_obj, _lang), do: :erlang.nif_error(:nif_not_loaded)
-  def vlmocrbackend_backend_type(_obj), do: :erlang.nif_error(:nif_not_loaded)
   def yakeparams_default, do: :erlang.nif_error(:nif_not_loaded)
   def rakeparams_default, do: :erlang.nif_error(:nif_not_loaded)
   def keywordconfig_default, do: :erlang.nif_error(:nif_not_loaded)

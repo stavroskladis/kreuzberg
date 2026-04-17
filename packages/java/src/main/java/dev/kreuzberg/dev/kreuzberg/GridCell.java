@@ -11,6 +11,6 @@ public record GridCell(
     @JsonProperty("row_span") int rowSpan,
     @JsonProperty("col_span") int colSpan,
     @JsonProperty("is_header") boolean isHeader,
-    Optional<BoundingBox> bbox
+    Optional<String> bbox
 ) {
 }

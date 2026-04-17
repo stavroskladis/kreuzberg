@@ -23,7 +23,7 @@ public sealed class ExtractionResult
     public Metadata Metadata { get; set; } = default!;
 
     [JsonPropertyName("tables")]
-    public List<Table> Tables { get; set; } = [];
+    public List<string> Tables { get; set; } = [];
 
     [JsonPropertyName("detected_languages")]
     public List<string>? DetectedLanguages { get; set; } = null;

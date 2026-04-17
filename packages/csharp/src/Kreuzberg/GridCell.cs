@@ -51,6 +51,6 @@ public sealed class GridCell
     /// Bounding box for this cell (if available).
     /// </summary>
     [JsonPropertyName("bbox")]
-    public BoundingBox? Bbox { get; set; } = null;
+    public string? Bbox { get; set; } = null;
 
 }

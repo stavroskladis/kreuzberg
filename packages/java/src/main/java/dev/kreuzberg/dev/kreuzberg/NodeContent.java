@@ -45,7 +45,7 @@ public sealed interface NodeContent {
 
     record ListItem(@JsonProperty("text") String text) implements NodeContent { }
 
-    record Table(@JsonProperty("grid") TableGrid grid) implements NodeContent { }
+    record Table(@JsonProperty("grid") String grid) implements NodeContent { }
 
     record Image(
         @JsonProperty("description") Optional<String> description,

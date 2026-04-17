@@ -7,6 +7,6 @@ public record DjotImage(
     String src,
     String alt,
     Optional<String> title,
-    Optional<Attributes> attributes
+    Optional<String> attributes
 ) {
 }

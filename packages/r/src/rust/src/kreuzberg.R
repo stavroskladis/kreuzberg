@@ -243,42 +243,6 @@ get_pool_sizing_hint <- function(file_size, mime_type) {
   .Call("kreuzberg_get_pool_sizing_hint", file_size, mime_type)
 }
 
-#' Synchronous wrapper for `extract_file`.
-#' @export
-extract_file_sync <- function(path, mime_type = NULL, config) {
-  .Call("kreuzberg_extract_file_sync", path, mime_type, config)
-}
-
-#' Synchronous wrapper for `extract_bytes`.
-#' @export
-extract_bytes_sync <- function(content, mime_type, config) {
-  .Call("kreuzberg_extract_bytes_sync", content, mime_type, config)
-}
-
-#' Synchronous wrapper for `batch_extract_file`.
-#' @export
-batch_extract_file_sync <- function(items, config) {
-  .Call("kreuzberg_batch_extract_file_sync", items, config)
-}
-
-#' Synchronous wrapper for `batch_extract_bytes`.
-#' @export
-batch_extract_bytes_sync <- function(items, config) {
-  .Call("kreuzberg_batch_extract_bytes_sync", items, config)
-}
-
-#' Extract content from multiple files concurrently.
-#' @export
-batch_extract_file <- function(items, config) {
-  .Call("kreuzberg_batch_extract_file", items, config)
-}
-
-#' Extract content from multiple byte arrays concurrently.
-#' @export
-batch_extract_bytes <- function(items, config) {
-  .Call("kreuzberg_batch_extract_bytes", items, config)
-}
-
 #' Validates whether a field name is in the known formats registry.
 #' @export
 is_valid_format_field <- function(field) {
@@ -289,12 +253,6 @@ is_valid_format_field <- function(field) {
 #' @export
 open_file_bytes <- function(path) {
   .Call("kreuzberg_open_file_bytes", path)
-}
-
-#' Read a file asynchronously.
-#' @export
-read_file_async <- function(path) {
-  .Call("kreuzberg_read_file_async", path)
 }
 
 #' Read a file synchronously.
@@ -369,18 +327,6 @@ apply_output_format <- function(result, output_format) {
   .Call("kreuzberg_apply_output_format", result, output_format)
 }
 
-#' Run the post-processing pipeline on an `InternalDocument`.
-#' @export
-run_pipeline <- function(doc, config) {
-  .Call("kreuzberg_run_pipeline", doc, config)
-}
-
-#' Run the post-processing pipeline synchronously (WASM-compatible version).
-#' @export
-run_pipeline_sync <- function(doc, config) {
-  .Call("kreuzberg_run_pipeline_sync", doc, config)
-}
-
 #' Determine if a page's text content indicates a blank page.
 #' @export
 is_page_text_blank <- function(text) {
@@ -391,18 +337,6 @@ is_page_text_blank <- function(text) {
 #' @export
 resolve_relationships <- function(doc) {
   .Call("kreuzberg_resolve_relationships", doc)
-}
-
-#' Derive a hierarchical `DocumentStructure` from the flat internal document.
-#' @export
-derive_document_structure <- function(doc) {
-  .Call("kreuzberg_derive_document_structure", doc)
-}
-
-#' Derive a complete `ExtractionResult` from an `InternalDocument`.
-#' @export
-derive_extraction_result <- function(doc, include_document_structure, output_format) {
-  .Call("kreuzberg_derive_extraction_result", doc, include_document_structure, output_format)
 }
 
 #' Function
@@ -477,22 +411,10 @@ extract_hwp_text <- function(bytes) {
   .Call("kreuzberg_extract_hwp_text", bytes)
 }
 
-#' Load image bytes for OCR, with JPEG 2000 and JBIG2 fallback support.
-#' @export
-load_image_for_ocr <- function(image_bytes) {
-  .Call("kreuzberg_load_image_for_ocr", image_bytes)
-}
-
 #' Extract metadata from image bytes.
 #' @export
 extract_image_metadata <- function(bytes) {
   .Call("kreuzberg_extract_image_metadata", bytes)
-}
-
-#' Extract text from image bytes using OCR with optional page tracking for multi-frame TIFFs.
-#' @export
-extract_text_from_image_with_ocr <- function(bytes, mime_type, ocr_result, page_config = NULL) {
-  .Call("kreuzberg_extract_text_from_image_with_ocr", bytes, mime_type, ocr_result, page_config)
 }
 
 #' Estimate the capacity needed for content extracted from a file.
@@ -633,12 +555,6 @@ build_email_text_output <- function(result) {
   .Call("kreuzberg_build_email_text_output", result)
 }
 
-#' Extract all email messages from a PST file.
-#' @export
-extract_pst_messages <- function(pst_data) {
-  .Call("kreuzberg_extract_pst_messages", pst_data)
-}
-
 #' Function
 #' @export
 read_excel_file <- function(file_path) {
@@ -693,12 +609,6 @@ extract_doc_text <- function(content) {
   .Call("kreuzberg_extract_doc_text", content)
 }
 
-#' Parse a drawing object starting after the `<w:drawing>` Start event.
-#' @export
-parse_drawing <- function(reader) {
-  .Call("kreuzberg_parse_drawing", reader)
-}
-
 #' Collect an `m:oMathPara` subtree and convert to LaTeX (display math).
 #' @export
 collect_and_convert_omath_para <- function(reader) {
@@ -741,12 +651,6 @@ parse_styles_xml <- function(xml) {
   .Call("kreuzberg_parse_styles_xml", xml)
 }
 
-#' Parse table-level properties from streaming XML reader.
-#' @export
-parse_table_properties <- function(reader) {
-  .Call("kreuzberg_parse_table_properties", reader)
-}
-
 #' Parse row-level properties from streaming XML reader.
 #' @export
 parse_row_properties <- function(reader) {
@@ -757,12 +661,6 @@ parse_row_properties <- function(reader) {
 #' @export
 parse_cell_properties <- function(reader) {
   .Call("kreuzberg_parse_cell_properties", reader)
-}
-
-#' Parse table grid (column widths) from streaming XML reader.
-#' @export
-parse_table_grid <- function(reader) {
-  .Call("kreuzberg_parse_table_grid", reader)
 }
 
 #' Parse `word/theme/theme1.xml` content into a `Theme`.
@@ -805,12 +703,6 @@ extract_ooxml_embedded_objects <- function(zip_bytes, embeddings_prefix, source_
 #' @export
 detect_image_format <- function(data) {
   .Call("kreuzberg_detect_image_format", data)
-}
-
-#' Process extracted images with OCR if configured.
-#' @export
-process_images_with_ocr <- function(images, config) {
-  .Call("kreuzberg_process_images_with_ocr", images, config)
 }
 
 #' Extract text from PPT bytes.
@@ -891,12 +783,6 @@ djot_to_html <- function(djot_source) {
   .Call("kreuzberg_djot_to_html", djot_source)
 }
 
-#' Extract complete djot content with 100% feature extraction.
-#' @export
-extract_complete_djot_content <- function(events, metadata, tables) {
-  .Call("kreuzberg_extract_complete_djot_content", events, metadata, tables)
-}
-
 #' Extract tables from Djot events.
 #' @export
 extract_tables_from_events <- function(events) {
@@ -911,32 +797,26 @@ extract_text_from_events <- function(events) {
 
 #' Render a single block to djot markup.
 #' @export
-render_block_to_djot <- function(output, block, indent_level) {
-  .Call("kreuzberg_render_block_to_djot", output, block, indent_level)
+render_block_to_djot <- function(block, indent_level) {
+  .Call("kreuzberg_render_block_to_djot", block, indent_level)
 }
 
 #' Render a list item with the given marker.
 #' @export
-render_list_item <- function(output, item, indent, marker) {
-  .Call("kreuzberg_render_list_item", output, item, indent, marker)
+render_list_item <- function(item, indent, marker) {
+  .Call("kreuzberg_render_list_item", item, indent, marker)
 }
 
 #' Render inline content to djot markup.
 #' @export
-render_inline_content <- function(output, elements) {
-  .Call("kreuzberg_render_inline_content", output, elements)
+render_inline_content <- function(elements) {
+  .Call("kreuzberg_render_inline_content", elements)
 }
 
 #' Extract YAML frontmatter from document content.
 #' @export
 extract_frontmatter <- function(content) {
   .Call("kreuzberg_extract_frontmatter", content)
-}
-
-#' Extract metadata from YAML frontmatter.
-#' @export
-extract_metadata_from_yaml <- function(yaml) {
-  .Call("kreuzberg_extract_metadata_from_yaml", yaml)
 }
 
 #' Extract first heading as title from content.
@@ -987,25 +867,13 @@ dedup_text <- function(texts) {
   .Call("kreuzberg_dedup_text", texts)
 }
 
-#' Evaluates native PDF text quality to determine if OCR fallback is needed.
-#' @export
-evaluate_native_text_for_ocr <- function(native_text, page_count = NULL, thresholds) {
-  .Call("kreuzberg_evaluate_native_text_for_ocr", native_text, page_count, thresholds)
-}
-
-#' Function
-#' @export
-evaluate_per_page_ocr <- function(native_text, boundaries = NULL, page_count = NULL, thresholds) {
-  .Call("kreuzberg_evaluate_per_page_ocr", native_text, boundaries, page_count, thresholds)
-}
-
 #' Convert a hex digit character to its numeric value.
 #' @export
 hex_digit_to_u8 <- function(c) {
   .Call("kreuzberg_hex_digit_to_u8", c)
 }
 
-#' Parse a hex-encoded byte from two characters.
+#' Parse a hex-encoded byte from two bytes.
 #' @export
 parse_hex_byte <- function(h1, h2) {
   .Call("kreuzberg_parse_hex_byte", h1, h2)
@@ -1095,12 +963,6 @@ clear_extractors <- function() {
   .Call("kreuzberg_clear_extractors")
 }
 
-#' Register an OCR backend with the global registry.
-#' @export
-register_ocr_backend <- function(backend) {
-  .Call("kreuzberg_register_ocr_backend", backend)
-}
-
 #' Unregister an OCR backend by name.
 #' @export
 unregister_ocr_backend <- function(name) {
@@ -1153,12 +1015,6 @@ get_validator_registry <- function() {
 #' @export
 get_renderer_registry <- function() {
   .Call("kreuzberg_get_renderer_registry")
-}
-
-#' Register a renderer with the global registry.
-#' @export
-register_renderer <- function(renderer) {
-  .Call("kreuzberg_register_renderer", renderer)
 }
 
 #' Unregister a renderer by name.
@@ -1533,12 +1389,6 @@ load_server_config <- function(config_path = NULL) {
   .Call("kreuzberg_load_server_config", config_path)
 }
 
-#' Generate OpenAPI JSON schema.
-#' @export
-openapi_json <- function() {
-  .Call("kreuzberg_openapi_json")
-}
-
 #' Create the API router with all routes configured.
 #' @export
 create_router <- function(config) {
@@ -1567,12 +1417,6 @@ serve <- function(host, port) {
 #' @export
 serve_with_config <- function(host, port, config) {
   .Call("kreuzberg_serve_with_config", host, port, config)
-}
-
-#' Start the API server with explicit config and size limits.
-#' @export
-serve_with_config_and_limits <- function(host, port, config, limits) {
-  .Call("kreuzberg_serve_with_config_and_limits", host, port, config, limits)
 }
 
 #' Start the API server with explicit extraction config and server config.
@@ -1605,28 +1449,10 @@ start_mcp_server_with_config <- function(config) {
   .Call("kreuzberg_start_mcp_server_with_config", config)
 }
 
-#' Start MCP server with HTTP Stream transport.
-#' @export
-start_mcp_server_http <- function(host, port) {
-  .Call("kreuzberg_start_mcp_server_http", host, port)
-}
-
-#' Start MCP HTTP server with custom extraction config.
-#' @export
-start_mcp_server_http_with_config <- function(host, port, config) {
-  .Call("kreuzberg_start_mcp_server_http_with_config", host, port, config)
-}
-
 #' Validates the consistency and correctness of page boundaries.
 #' @export
 validate_page_boundaries <- function(boundaries) {
   .Call("kreuzberg_validate_page_boundaries", boundaries)
-}
-
-#' Calculate which pages a byte range spans.
-#' @export
-calculate_page_range <- function(byte_start, byte_end, boundaries) {
-  .Call("kreuzberg_calculate_page_range", byte_start, byte_end, boundaries)
 }
 
 #' Classify a single chunk based on its content and optional heading context.
@@ -1743,12 +1569,6 @@ calculate_optimal_dpi <- function(page_width, page_height, target_dpi, max_dimen
   .Call("kreuzberg_calculate_optimal_dpi", page_width, page_height, target_dpi, max_dimension, min_dpi, max_dpi)
 }
 
-#' Normalize image DPI based on extraction configuration
-#' @export
-normalize_image_dpi <- function(rgb_data, width, height, config, current_dpi = NULL) {
-  .Call("kreuzberg_normalize_image_dpi", rgb_data, width, height, config, current_dpi)
-}
-
 #' Resize an image using fast_image_resize with appropriate algorithm based on scale factor
 #' @export
 resize_image <- function(image, new_width, new_height, scale_factor) {
@@ -1783,24 +1603,6 @@ get_stopwords_with_fallback <- function(language, fallback) {
 #' @export
 extract_keywords <- function(text, config) {
   .Call("kreuzberg_extract_keywords", text, config)
-}
-
-#' Convert a PaddleOCR TextBlock to a unified OcrElement.
-#' @export
-text_block_to_element <- function(block, page_number) {
-  .Call("kreuzberg_text_block_to_element", block, page_number)
-}
-
-#' Convert a Tesseract TSV row to a unified OcrElement.
-#' @export
-tsv_row_to_element <- function(row) {
-  .Call("kreuzberg_tsv_row_to_element", row)
-}
-
-#' Convert a Tesseract iterator WordData to a unified OcrElement with rich metadata.
-#' @export
-iterator_word_to_element <- function(word, block_type = NULL, para_info = NULL, page_number) {
-  .Call("kreuzberg_iterator_word_to_element", word, block_type, para_info, page_number)
 }
 
 #' Convert an OcrElement to an HocrWord for table reconstruction.
@@ -1917,34 +1719,10 @@ preprocess_letterbox <- function(img, target_width, target_height) {
   .Call("kreuzberg_preprocess_letterbox", img, target_width, target_height)
 }
 
-#' Build an optimized ORT session from an ONNX model file.
-#' @export
-build_session <- function(path, accel = NULL, thread_budget) {
-  .Call("kreuzberg_build_session", path, accel, thread_budget)
-}
-
 #' Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
 #' @export
 config_from_extraction <- function(layout_config) {
   .Call("kreuzberg_config_from_extraction", layout_config)
-}
-
-#' Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
-#' @export
-create_engine <- function(layout_config) {
-  .Call("kreuzberg_create_engine", layout_config)
-}
-
-#' Take the cached layout engine, or create a new one if the cache is empty.
-#' @export
-take_or_create_engine <- function(layout_config) {
-  .Call("kreuzberg_take_or_create_engine", layout_config)
-}
-
-#' Return a layout engine to the global cache for reuse by future extractions.
-#' @export
-return_engine <- function(engine) {
-  .Call("kreuzberg_return_engine", engine)
 }
 
 #' Take the cached TATR model, or create a new one if the cache is empty.
@@ -1995,12 +1773,6 @@ extract_bookmarks <- function(document) {
   .Call("kreuzberg_extract_bookmarks", document)
 }
 
-#' Extract bundled PDFium library to temporary directory.
-#' @export
-extract_bundled_pdfium <- function() {
-  .Call("kreuzberg_extract_bundled_pdfium")
-}
-
 #' Extract embedded file descriptors from a PDF document loaded via lopdf.
 #' @export
 extract_embedded_files <- function(document) {
@@ -2029,12 +1801,6 @@ get_font_descriptors <- function() {
 #' @export
 cached_font_count <- function() {
   .Call("kreuzberg_cached_font_count")
-}
-
-#' Clear the font cache (for testing purposes).
-#' @export
-clear_font_cache <- function() {
-  .Call("kreuzberg_clear_font_cache")
 }
 
 #' Cluster text blocks by font size using k-means algorithm.
@@ -2097,12 +1863,6 @@ extract_images_from_pdf_with_password <- function(pdf_bytes, password) {
   .Call("kreuzberg_extract_images_from_pdf_with_password", pdf_bytes, password)
 }
 
-#' Re-extract images that have unusable formats (`"raw"`, `"ccitt"`, `"jbig2"`) by
-#' @export
-reextract_raw_images_via_pdfium <- function(pdf_bytes, images) {
-  .Call("kreuzberg_reextract_raw_images_via_pdfium", pdf_bytes, images)
-}
-
 #' Run layout detection on all pages of a PDF document.
 #' @export
 detect_layout_for_document <- function(pdf_bytes, engine) {
@@ -2131,12 +1891,6 @@ extract_metadata_with_password <- function(pdf_bytes, password = NULL) {
 #' @export
 extract_metadata_with_passwords <- function(pdf_bytes, passwords) {
   .Call("kreuzberg_extract_metadata_with_passwords", pdf_bytes, passwords)
-}
-
-#' Extract complete PDF metadata from a document.
-#' @export
-extract_metadata_from_document <- function(document, page_boundaries = NULL, content = NULL) {
-  .Call("kreuzberg_extract_metadata_from_document", document, page_boundaries, content)
 }
 
 #' Extract common metadata from a PDF document.
@@ -2209,18 +1963,6 @@ extract_text_from_pdf_with_password <- function(pdf_bytes, password) {
 #' @export
 extract_text_from_pdf_with_passwords <- function(pdf_bytes, passwords) {
   .Call("kreuzberg_extract_text_from_pdf_with_passwords", pdf_bytes, passwords)
-}
-
-#' Extract text and metadata from PDF document in a single pass.
-#' @export
-extract_text_and_metadata_from_pdf_document <- function(document, extraction_config = NULL) {
-  .Call("kreuzberg_extract_text_and_metadata_from_pdf_document", document, extraction_config)
-}
-
-#' Extract text from PDF document with optional page boundary tracking.
-#' @export
-extract_text_from_pdf_document <- function(document, page_config = NULL, extraction_config = NULL) {
-  .Call("kreuzberg_extract_text_from_pdf_document", document, page_config, extraction_config)
 }
 
 #' Serialize an [`ExtractionResult`] to TOON (Token-Oriented Object Notation).

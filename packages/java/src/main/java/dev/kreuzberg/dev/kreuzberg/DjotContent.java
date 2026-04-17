@@ -8,7 +8,7 @@ public record DjotContent(
     @JsonProperty("plain_text") String plainText,
     List<FormattedBlock> blocks,
     Metadata metadata,
-    List<Table> tables,
+    List<String> tables,
     List<DjotImage> images,
     List<DjotLink> links,
     List<Footnote> footnotes,

@@ -63,6 +63,21 @@ class CodeContentMode(str, Enum):
     STRUCTURE = "structure"
 
 
+class ReductionLevel(str, Enum):
+    OFF = "off"
+    LIGHT = "light"
+    MODERATE = "moderate"
+    AGGRESSIVE = "aggressive"
+    MAXIMUM = "maximum"
+
+
+class ExtractionMode(str, Enum):
+    """Output format selection for extraction results."""
+
+    UNIFIED = "unified"
+    ELEMENT_BASED = "element_based"
+
+
 class TextDirection(str, Enum):
     """Text direction enumeration for HTML documents."""
 
@@ -87,40 +102,44 @@ class KeywordAlgorithm(str, Enum):
     RAKE = "rake"
 
 
-class ErrorMetadata:
-    """Placeholder for ErrorMetadata type."""
-
-
-class StructuredExtractionConfig:
-    """Placeholder for StructuredExtractionConfig type."""
-
-
-class DjotContent:
-    """Placeholder for DjotContent type."""
-
-
-class YearRange:
-    """Placeholder for YearRange type."""
-
-
-class TokenReductionConfig:
-    """Placeholder for TokenReductionConfig type."""
-
-
 class LanguageDetectionConfig:
     """Placeholder for LanguageDetectionConfig type."""
-
-
-class OcrPipelineConfig:
-    """Placeholder for OcrPipelineConfig type."""
 
 
 class PageStructure:
     """Placeholder for PageStructure type."""
 
 
+class YearRange:
+    """Placeholder for YearRange type."""
+
+
+class OcrRotation:
+    """Placeholder for OcrRotation type."""
+
+
+class StructuredExtractionConfig:
+    """Placeholder for StructuredExtractionConfig type."""
+
+
+class TokenReductionOptions:
+    """Placeholder for TokenReductionOptions type."""
+
+
+class OcrPipelineConfig:
+    """Placeholder for OcrPipelineConfig type."""
+
+
+class DjotContent:
+    """Placeholder for DjotContent type."""
+
+
 class ImagePreprocessingMetadata:
     """Placeholder for ImagePreprocessingMetadata type."""
+
+
+class ErrorMetadata:
+    """Placeholder for ErrorMetadata type."""
 
 
 @dataclass
@@ -216,7 +235,7 @@ class ExtractionConfig(TypedDict, total=False):
     max_concurrent_extractions: int | None
     """Maximum concurrent extractions in batch operations (None = (num_cpus × 1.5).ceil())."""
 
-    result_format: dict
+    result_format: str
     """Result structure format"""
 
     security_limits: str | None
@@ -302,7 +321,7 @@ class FileExtractionConfig:
     html_options: str | None = None
     """Override HTML conversion options for this file."""
 
-    result_format: dict | None = None
+    result_format: str | None = None
     """Override result format for this file."""
 
     output_format: dict | None = None
@@ -712,20 +731,6 @@ class ServerConfig(TypedDict, total=False):
 
 
 @dataclass
-class Section:
-    """A body-text section containing a flat list of paragraphs."""
-
-    paragraphs: list[str] = field(default_factory=list)
-
-class Drawing(TypedDict, total=False):
-    """A drawing object extracted from `<w:drawing>`."""
-
-    drawing_type: str
-    extent: str | None
-    doc_properties: str | None
-    image_ref: str | None
-
-@dataclass
 class AnchorProperties:
     """Properties for anchored drawings."""
 
@@ -737,14 +742,9 @@ class AnchorProperties:
     wrap_type: str = ""
 
 @dataclass
-class TableRow:
-    cells: list[Any] = field(default_factory=list)
-    properties: str | None = None
-
-@dataclass
 class HeaderFooter:
     paragraphs: list[str] = field(default_factory=list)
-    tables: list[Any] = field(default_factory=list)
+    tables: list[str] = field(default_factory=list)
     header_type: str = ""
 
 @dataclass
@@ -765,19 +765,6 @@ class ResolvedStyle:
 
     paragraph_properties: str = ""
     run_properties: str = ""
-
-class TableProperties(TypedDict, total=False):
-    """Table-level properties from `<w:tblPr>`."""
-
-    style_id: str | None
-    width: str | None
-    alignment: str | None
-    layout: str | None
-    look: str | None
-    borders: str | None
-    cell_margins: str | None
-    indent: str | None
-    caption: str | None
 
 @dataclass
 class XlsxAppProperties:
@@ -920,18 +907,19 @@ class OdtProperties:
     """Document statistics - image count (meta:image-count)"""
 
 
-class Attributes(TypedDict, total=False):
-    """Element attributes in Djot."""
-
-    id: str | None
-    """Element ID (#identifier)"""
-
-    classes: list[str]
-    """CSS classes (.class1 .class2)"""
-
-    key_values: list[str]
-    """Key-value pairs (key="value")"""
-
+@dataclass
+class TokenReductionConfig:
+    level: str = "moderate"
+    language_hint: str | None = None
+    preserve_markdown: bool = False
+    preserve_code: bool = True
+    semantic_threshold: float = 0.3
+    enable_parallel: bool = True
+    use_simd: bool = True
+    custom_stopwords: dict[str, list[str]] | None = None
+    preserve_patterns: list[str] = field(default_factory=list)
+    target_reduction: float | None = None
+    enable_semantic_clustering: bool = False
 
 class DocumentStructure(TypedDict, total=False):
     """Top-level structured document representation."""
@@ -952,7 +940,7 @@ class ExtractionResult(TypedDict, total=False):
     content: str
     mime_type: str
     metadata: Any
-    tables: list[Any]
+    tables: list[str]
     detected_languages: list[str] | None
     chunks: list[Any] | None
     """Text chunks when chunking is enabled."""
@@ -1030,23 +1018,6 @@ class LlmUsage:
 
     finish_reason: str | None = None
     """Why the model stopped generating (e.g. "stop", "length", "content_filter")."""
-
-
-@dataclass
-class BoundingBox:
-    """Bounding box coordinates for element positioning."""
-
-    x0: float = 0.0
-    """Left x-coordinate"""
-
-    y0: float = 0.0
-    """Bottom y-coordinate"""
-
-    x1: float = 0.0
-    """Right x-coordinate"""
-
-    y1: float = 0.0
-    """Top y-coordinate"""
 
 
 @dataclass
@@ -1334,6 +1305,45 @@ class PstMetadata:
     message_count: int = 0
 
 @dataclass
+class OcrConfidence:
+    """Confidence scores for an OCR element."""
+
+    detection: float | None = None
+    """Detection confidence: how confident the OCR engine is that text exists here."""
+
+    recognition: float = 0.0
+    """Recognition confidence: how confident about the text content."""
+
+
+class OcrElement(TypedDict, total=False):
+    """A unified OCR element representing detected text with full metadata."""
+
+    text: str
+    """The recognized text content."""
+
+    geometry: dict
+    """Bounding geometry (rectangle or quadrilateral)."""
+
+    confidence: Any
+    """Confidence scores for detection and recognition."""
+
+    level: str
+    """Hierarchical level (word, line, block, page)."""
+
+    rotation: Any | None
+    """Rotation information (if detected)."""
+
+    page_number: int
+    """Page number (1-indexed)."""
+
+    parent_id: str | None
+    """Parent element ID for hierarchical relationships."""
+
+    backend_metadata: dict[str, str]
+    """Backend-specific metadata that doesn't fit the unified schema."""
+
+
+@dataclass
 class OcrElementConfig:
     """Configuration for OCR element extraction."""
 
@@ -1348,40 +1358,6 @@ class OcrElementConfig:
 
     build_hierarchy: bool = False
     """Whether to build hierarchical relationships between elements."""
-
-
-@dataclass
-class Table:
-    """Extracted table structure."""
-
-    cells: list[list[str]] = field(default_factory=list)
-    """Table cells as a 2D vector (rows × columns)"""
-
-    markdown: str = ""
-    """Markdown representation of the table"""
-
-    page_number: int = 0
-    """Page number where the table was found (1-indexed)"""
-
-    bounding_box: Any | None = None
-    """Bounding box of the table on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top)."""
-
-
-@dataclass
-class TableCell:
-    """Individual table cell with content and optional styling."""
-
-    content: str = ""
-    """Cell content as text"""
-
-    row_span: int = 0
-    """Row span (number of rows this cell spans)"""
-
-    col_span: int = 0
-    """Column span (number of columns this cell spans)"""
-
-    is_header: bool = False
-    """Whether this is a header cell"""
 
 
 @dataclass

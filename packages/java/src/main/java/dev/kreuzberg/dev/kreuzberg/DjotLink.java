@@ -7,6 +7,6 @@ public record DjotLink(
     String url,
     String text,
     Optional<String> title,
-    Optional<Attributes> attributes
+    Optional<String> attributes
 ) {
 }

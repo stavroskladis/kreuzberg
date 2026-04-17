@@ -9,7 +9,7 @@ public record ExtractionResult(
     String content,
     @JsonProperty("mime_type") String mimeType,
     Metadata metadata,
-    List<Table> tables,
+    List<String> tables,
     @JsonProperty("detected_languages") Optional<List<String>> detectedLanguages,
     Optional<List<Chunk>> chunks,
     Optional<List<ExtractedImage>> images,

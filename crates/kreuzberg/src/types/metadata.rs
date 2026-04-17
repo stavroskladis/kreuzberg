@@ -84,6 +84,19 @@ pub enum FormatMetadata {
     Code(tree_sitter_language_pack::ProcessResult),
 }
 
+impl Default for FormatMetadata {
+    fn default() -> Self {
+        Self::Text(TextMetadata {
+            line_count: 0,
+            word_count: 0,
+            character_count: 0,
+            headers: None,
+            links: None,
+            code_blocks: None,
+        })
+    }
+}
+
 /// Extraction result metadata.
 ///
 /// Contains common fields applicable to all formats, format-specific metadata

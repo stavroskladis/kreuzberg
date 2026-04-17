@@ -6,21 +6,39 @@ using System.Text.Json.Serialization;
 
 namespace Kreuzberg;
 
-/// <summary>
-/// Token reduction configuration.
-/// </summary>
 public sealed class TokenReductionConfig
 {
-    /// <summary>
-    /// Reduction mode: "off", "light", "moderate", "aggressive", "maximum"
-    /// </summary>
-    [JsonPropertyName("mode")]
-    public string Mode { get; set; } = "";
+    [JsonPropertyName("level")]
+    public ReductionLevel Level { get; set; } = ReductionLevel.Moderate;
 
-    /// <summary>
-    /// Preserve important words (capitalized, technical terms)
-    /// </summary>
-    [JsonPropertyName("preserve_important_words")]
-    public bool PreserveImportantWords { get; set; } = false;
+    [JsonPropertyName("language_hint")]
+    public string? LanguageHint { get; set; } = null;
+
+    [JsonPropertyName("preserve_markdown")]
+    public bool PreserveMarkdown { get; set; } = false;
+
+    [JsonPropertyName("preserve_code")]
+    public bool PreserveCode { get; set; } = true;
+
+    [JsonPropertyName("semantic_threshold")]
+    public float SemanticThreshold { get; set; } = 0.3;
+
+    [JsonPropertyName("enable_parallel")]
+    public bool EnableParallel { get; set; } = true;
+
+    [JsonPropertyName("use_simd")]
+    public bool UseSimd { get; set; } = true;
+
+    [JsonPropertyName("custom_stopwords")]
+    public Dictionary<string, List<string>>? CustomStopwords { get; set; } = null;
+
+    [JsonPropertyName("preserve_patterns")]
+    public List<string> PreservePatterns { get; set; } = [];
+
+    [JsonPropertyName("target_reduction")]
+    public float? TargetReduction { get; set; } = null;
+
+    [JsonPropertyName("enable_semantic_clustering")]
+    public bool EnableSemanticClustering { get; set; } = false;
 
 }

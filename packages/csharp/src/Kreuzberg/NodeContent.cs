@@ -54,7 +54,7 @@ public abstract record NodeContent
     /// Table with structured cell grid.
     /// </summary>
     public sealed record Table(
-        [property: JsonPropertyName("grid")] TableGrid Grid
+        [property: JsonPropertyName("grid")] string Grid
     ) : NodeContent;
 
     /// <summary>

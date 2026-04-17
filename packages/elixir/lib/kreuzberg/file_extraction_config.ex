@@ -16,7 +16,7 @@ defmodule Kreuzberg.FileExtractionConfig do
             pages: nil,
             postprocessor: nil,
             html_options: "",
-            result_format: :plain,
+            result_format: :unified,
             output_format: :plain,
             include_document_structure: false,
             layout: nil,

@@ -6,7 +6,7 @@ import java.util.List;
 public class HeaderFooterBuilder {
 
     private List<String> paragraphs = List.of();
-    private List<Table> tables = List.of();
+    private List<String> tables = List.of();
     private String headerType = "";
 
     public HeaderFooterBuilder withParagraphs(List<String> value) {
@@ -14,7 +14,7 @@ public class HeaderFooterBuilder {
         return this;
     }
 
-    public HeaderFooterBuilder withTables(List<Table> value) {
+    public HeaderFooterBuilder withTables(List<String> value) {
         this.tables = value;
         return this;
     }

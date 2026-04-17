@@ -1,8 +1,6 @@
 #![allow(dead_code)]
 
 use ext_php_rs::prelude::*;
-use kreuzberg::plugins::OcrBackend;
-use kreuzberg::plugins::Plugin;
 use std::collections::HashMap;
 use std::ops::Deref;
 use std::ops::DerefMut;
@@ -188,7 +186,7 @@ pub struct ExtractionConfig {
     /// PDF-specific options (None = use defaults)
     pub pdf_options: Option<PdfConfig>,
     /// Token reduction configuration (None = no token reduction)
-    pub token_reduction: Option<TokenReductionConfig>,
+    pub token_reduction: Option<TokenReductionOptions>,
     /// Language detection configuration (None = no language detection)
     pub language_detection: Option<LanguageDetectionConfig>,
     /// Page extraction configuration (None = no page tracking)
@@ -349,7 +347,7 @@ impl ExtractionConfig {
     }
 
     #[php(getter)]
-    pub fn get_token_reduction(&self) -> Option<TokenReductionConfig> {
+    pub fn get_token_reduction(&self) -> Option<TokenReductionOptions> {
         self.token_reduction.clone()
     }
 
@@ -426,14 +424,9 @@ impl ExtractionConfig {
             extraction_timeout_secs: self.extraction_timeout_secs.map(|v| v as u64),
             max_concurrent_extractions: self.max_concurrent_extractions.map(|v| v as usize),
             result_format: match self.result_format.as_str() {
-                "Plain" => kreuzberg::OutputFormat::Plain,
-                "Markdown" => kreuzberg::OutputFormat::Markdown,
-                "Djot" => kreuzberg::OutputFormat::Djot,
-                "Html" => kreuzberg::OutputFormat::Html,
-                "Json" => kreuzberg::OutputFormat::Json,
-                "Structured" => kreuzberg::OutputFormat::Structured,
-                "Custom" => kreuzberg::OutputFormat::Custom(Default::default()),
-                _ => kreuzberg::OutputFormat::Plain,
+                "Unified" => kreuzberg::ExtractionMode::Unified,
+                "ElementBased" => kreuzberg::ExtractionMode::ElementBased,
+                _ => kreuzberg::ExtractionMode::Unified,
             },
             security_limits: Default::default(),
             output_format: match self.output_format.as_str() {
@@ -485,14 +478,9 @@ impl ExtractionConfig {
             extraction_timeout_secs: self.extraction_timeout_secs.map(|v| v as u64),
             max_concurrent_extractions: self.max_concurrent_extractions.map(|v| v as usize),
             result_format: match self.result_format.as_str() {
-                "Plain" => kreuzberg::OutputFormat::Plain,
-                "Markdown" => kreuzberg::OutputFormat::Markdown,
-                "Djot" => kreuzberg::OutputFormat::Djot,
-                "Html" => kreuzberg::OutputFormat::Html,
-                "Json" => kreuzberg::OutputFormat::Json,
-                "Structured" => kreuzberg::OutputFormat::Structured,
-                "Custom" => kreuzberg::OutputFormat::Custom(Default::default()),
-                _ => kreuzberg::OutputFormat::Plain,
+                "Unified" => kreuzberg::ExtractionMode::Unified,
+                "ElementBased" => kreuzberg::ExtractionMode::ElementBased,
+                _ => kreuzberg::ExtractionMode::Unified,
             },
             security_limits: Default::default(),
             output_format: match self.output_format.as_str() {
@@ -547,14 +535,9 @@ impl ExtractionConfig {
             extraction_timeout_secs: self.extraction_timeout_secs.map(|v| v as u64),
             max_concurrent_extractions: self.max_concurrent_extractions.map(|v| v as usize),
             result_format: match self.result_format.as_str() {
-                "Plain" => kreuzberg::OutputFormat::Plain,
-                "Markdown" => kreuzberg::OutputFormat::Markdown,
-                "Djot" => kreuzberg::OutputFormat::Djot,
-                "Html" => kreuzberg::OutputFormat::Html,
-                "Json" => kreuzberg::OutputFormat::Json,
-                "Structured" => kreuzberg::OutputFormat::Structured,
-                "Custom" => kreuzberg::OutputFormat::Custom(Default::default()),
-                _ => kreuzberg::OutputFormat::Plain,
+                "Unified" => kreuzberg::ExtractionMode::Unified,
+                "ElementBased" => kreuzberg::ExtractionMode::ElementBased,
+                _ => kreuzberg::ExtractionMode::Unified,
             },
             security_limits: Default::default(),
             output_format: match self.output_format.as_str() {
@@ -606,14 +589,9 @@ impl ExtractionConfig {
             extraction_timeout_secs: self.extraction_timeout_secs.map(|v| v as u64),
             max_concurrent_extractions: self.max_concurrent_extractions.map(|v| v as usize),
             result_format: match self.result_format.as_str() {
-                "Plain" => kreuzberg::OutputFormat::Plain,
-                "Markdown" => kreuzberg::OutputFormat::Markdown,
-                "Djot" => kreuzberg::OutputFormat::Djot,
-                "Html" => kreuzberg::OutputFormat::Html,
-                "Json" => kreuzberg::OutputFormat::Json,
-                "Structured" => kreuzberg::OutputFormat::Structured,
-                "Custom" => kreuzberg::OutputFormat::Custom(Default::default()),
-                _ => kreuzberg::OutputFormat::Plain,
+                "Unified" => kreuzberg::ExtractionMode::Unified,
+                "ElementBased" => kreuzberg::ExtractionMode::ElementBased,
+                _ => kreuzberg::ExtractionMode::Unified,
             },
             security_limits: Default::default(),
             output_format: match self.output_format.as_str() {
@@ -674,7 +652,7 @@ pub struct FileExtractionConfig {
     /// Override PDF options for this file.
     pub pdf_options: Option<PdfConfig>,
     /// Override token reduction for this file.
-    pub token_reduction: Option<TokenReductionConfig>,
+    pub token_reduction: Option<TokenReductionOptions>,
     /// Override language detection for this file.
     pub language_detection: Option<LanguageDetectionConfig>,
     /// Override page extraction for this file.
@@ -744,7 +722,7 @@ impl FileExtractionConfig {
     }
 
     #[php(getter)]
-    pub fn get_token_reduction(&self) -> Option<TokenReductionConfig> {
+    pub fn get_token_reduction(&self) -> Option<TokenReductionOptions> {
         self.token_reduction.clone()
     }
 
@@ -835,8 +813,8 @@ impl ImageExtractionConfig {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[php_class]
-#[php(name = "Kreuzberg\\TokenReductionConfig")]
-pub struct TokenReductionConfig {
+#[php(name = "Kreuzberg\\TokenReductionOptions")]
+pub struct TokenReductionOptions {
     /// Reduction mode: "off", "light", "moderate", "aggressive", "maximum"
     #[php(prop, name = "mode")]
     pub mode: String,
@@ -846,7 +824,7 @@ pub struct TokenReductionConfig {
 }
 
 #[php_impl]
-impl TokenReductionConfig {
+impl TokenReductionOptions {
     pub fn __construct(mode: String, preserve_important_words: bool) -> Self {
         Self {
             mode,
@@ -1834,25 +1812,6 @@ impl TreeSitterProcessConfig {
     }
 }
 
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\FileBytes")]
-pub struct FileBytes {
-    inner: Arc<kreuzberg::core::io::FileBytes>,
-}
-
-#[php_impl]
-impl FileBytes {
-    #[allow(clippy::should_implement_trait)]
-    pub fn deref(&self) -> Vec<u8> {
-        self.inner.deref().into()
-    }
-
-    pub fn as_ref(&self) -> Vec<u8> {
-        self.inner.as_ref().into()
-    }
-}
-
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[php_class]
 #[php(name = "Kreuzberg\\SupportedFormat")]
@@ -2050,53 +2009,6 @@ impl StructuredDataResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\ListItemMetadata")]
-pub struct ListItemMetadata {
-    /// Type of list (Bullet, Numbered, etc.)
-    #[php(prop, name = "list_type")]
-    pub list_type: String,
-    /// Starting byte offset in the content string
-    #[php(prop, name = "byte_start")]
-    pub byte_start: i64,
-    /// Ending byte offset in the content string
-    #[php(prop, name = "byte_end")]
-    pub byte_end: i64,
-    /// List item indent level
-    #[php(prop, name = "indent_level")]
-    pub indent_level: u32,
-}
-
-#[php_impl]
-impl ListItemMetadata {
-    pub fn __construct(list_type: String, byte_start: i64, byte_end: i64, indent_level: u32) -> Self {
-        Self {
-            list_type,
-            byte_start,
-            byte_end,
-            indent_level,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzberg\\Section")]
-pub struct Section {
-    #[php(prop, name = "paragraphs")]
-    pub paragraphs: Vec<String>,
-}
-
-#[php_impl]
-impl Section {
-    pub fn __construct(paragraphs: Option<Vec<String>>) -> Self {
-        Self {
-            paragraphs: paragraphs.unwrap_or_default(),
-        }
-    }
-}
-
 #[derive(Clone)]
 #[php_class]
 #[php(name = "Kreuzberg\\StreamReader")]
@@ -2244,56 +2156,6 @@ impl ExtractedInlineImage {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\DocExtractionResult")]
-pub struct DocExtractionResult {
-    /// Extracted text content.
-    #[php(prop, name = "text")]
-    pub text: String,
-    /// Document metadata.
-    #[php(prop, name = "metadata")]
-    pub metadata: String,
-}
-
-#[php_impl]
-impl DocExtractionResult {
-    pub fn __construct(text: String, metadata: String) -> Self {
-        Self { text, metadata }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzberg\\Drawing")]
-pub struct Drawing {
-    #[php(prop, name = "drawing_type")]
-    pub drawing_type: String,
-    #[php(prop, name = "extent")]
-    pub extent: Option<String>,
-    #[php(prop, name = "doc_properties")]
-    pub doc_properties: Option<String>,
-    #[php(prop, name = "image_ref")]
-    pub image_ref: Option<String>,
-}
-
-#[php_impl]
-impl Drawing {
-    pub fn __construct(
-        drawing_type: Option<String>,
-        extent: Option<String>,
-        doc_properties: Option<String>,
-        image_ref: Option<String>,
-    ) -> Self {
-        Self {
-            drawing_type: drawing_type.unwrap_or_default(),
-            extent,
-            doc_properties,
-            image_ref,
-        }
-    }
-}
-
 #[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\AnchorProperties")]
@@ -2336,45 +2198,28 @@ impl AnchorProperties {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
-#[php(name = "Kreuzberg\\TableRow")]
-pub struct TableRow {
-    pub cells: Vec<TableCell>,
-    #[php(prop, name = "properties")]
-    pub properties: Option<String>,
-}
-
-#[php_impl]
-impl TableRow {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_cells(&self) -> Vec<TableCell> {
-        self.cells.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
 #[php(name = "Kreuzberg\\HeaderFooter")]
 pub struct HeaderFooter {
     #[php(prop, name = "paragraphs")]
     pub paragraphs: Vec<String>,
-    pub tables: Vec<Table>,
+    #[php(prop, name = "tables")]
+    pub tables: Vec<String>,
     #[php(prop, name = "header_type")]
     pub header_type: String,
 }
 
 #[php_impl]
 impl HeaderFooter {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_tables(&self) -> Vec<Table> {
-        self.tables.clone()
+    pub fn __construct(
+        paragraphs: Option<Vec<String>>,
+        tables: Option<Vec<String>>,
+        header_type: Option<String>,
+    ) -> Self {
+        Self {
+            paragraphs: paragraphs.unwrap_or_default(),
+            tables: tables.unwrap_or_default(),
+            header_type: header_type.unwrap_or_default(),
+        }
     }
 }
 
@@ -2515,57 +2360,6 @@ impl ResolvedStyle {
         Self {
             paragraph_properties: paragraph_properties.unwrap_or_default(),
             run_properties: run_properties.unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzberg\\TableProperties")]
-pub struct TableProperties {
-    #[php(prop, name = "style_id")]
-    pub style_id: Option<String>,
-    #[php(prop, name = "width")]
-    pub width: Option<String>,
-    #[php(prop, name = "alignment")]
-    pub alignment: Option<String>,
-    #[php(prop, name = "layout")]
-    pub layout: Option<String>,
-    #[php(prop, name = "look")]
-    pub look: Option<String>,
-    #[php(prop, name = "borders")]
-    pub borders: Option<String>,
-    #[php(prop, name = "cell_margins")]
-    pub cell_margins: Option<String>,
-    #[php(prop, name = "indent")]
-    pub indent: Option<String>,
-    #[php(prop, name = "caption")]
-    pub caption: Option<String>,
-}
-
-#[php_impl]
-impl TableProperties {
-    pub fn __construct(
-        style_id: Option<String>,
-        width: Option<String>,
-        alignment: Option<String>,
-        layout: Option<String>,
-        look: Option<String>,
-        borders: Option<String>,
-        cell_margins: Option<String>,
-        indent: Option<String>,
-        caption: Option<String>,
-    ) -> Self {
-        Self {
-            style_id,
-            width,
-            alignment,
-            layout,
-            look,
-            borders,
-            cell_margins,
-            indent,
-            caption,
         }
     }
 }
@@ -2835,36 +2629,6 @@ impl OdtProperties {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\PptExtractionResult")]
-pub struct PptExtractionResult {
-    /// Extracted text content, with slides separated by double newlines.
-    #[php(prop, name = "text")]
-    pub text: String,
-    /// Number of slides found.
-    #[php(prop, name = "slide_count")]
-    pub slide_count: i64,
-    /// Document metadata.
-    #[php(prop, name = "metadata")]
-    pub metadata: String,
-    /// Speaker notes text per slide (if available).
-    #[php(prop, name = "speaker_notes")]
-    pub speaker_notes: Vec<String>,
-}
-
-#[php_impl]
-impl PptExtractionResult {
-    pub fn __construct(text: String, slide_count: i64, metadata: String, speaker_notes: Vec<String>) -> Self {
-        Self {
-            text,
-            slide_count,
-            metadata,
-            speaker_notes,
-        }
-    }
-}
-
 #[derive(Clone)]
 #[php_class]
 #[php(name = "Kreuzberg\\ZipBombValidator")]
@@ -3006,146 +2770,47 @@ impl OcrFallbackDecision {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
-#[php(name = "Kreuzberg\\ModelCache")]
-pub struct ModelCache {
-    inner: Arc<kreuzberg::model_cache::ModelCache>,
+#[php(name = "Kreuzberg\\TokenReductionConfig")]
+pub struct TokenReductionConfig {
+    #[php(prop, name = "level")]
+    pub level: String,
+    #[php(prop, name = "language_hint")]
+    pub language_hint: Option<String>,
+    #[php(prop, name = "preserve_markdown")]
+    pub preserve_markdown: bool,
+    #[php(prop, name = "preserve_code")]
+    pub preserve_code: bool,
+    #[php(prop, name = "semantic_threshold")]
+    pub semantic_threshold: f32,
+    #[php(prop, name = "enable_parallel")]
+    pub enable_parallel: bool,
+    #[php(prop, name = "use_simd")]
+    pub use_simd: bool,
+    pub custom_stopwords: Option<HashMap<String, Vec<String>>>,
+    #[php(prop, name = "preserve_patterns")]
+    pub preserve_patterns: Vec<String>,
+    #[php(prop, name = "target_reduction")]
+    pub target_reduction: Option<f32>,
+    #[php(prop, name = "enable_semantic_clustering")]
+    pub enable_semantic_clustering: bool,
 }
 
 #[php_impl]
-impl ModelCache {
-    pub fn put(&self, model: String) -> () {
-        ()
+impl TokenReductionConfig {
+    pub fn from_json(json: String) -> PhpResult<Self> {
+        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
     }
 
-    pub fn take(&self) -> Option<String> {
-        None
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\ExtractionMetrics")]
-pub struct ExtractionMetrics {
-    /// Total extractions (attributes: mime_type, extractor, status).
-    #[php(prop, name = "extraction_total")]
-    pub extraction_total: String,
-    /// Cache hits.
-    #[php(prop, name = "cache_hits")]
-    pub cache_hits: String,
-    /// Cache misses.
-    #[php(prop, name = "cache_misses")]
-    pub cache_misses: String,
-    /// Total batch requests (attributes: status).
-    #[php(prop, name = "batch_total")]
-    pub batch_total: String,
-    /// Extraction wall-clock duration in milliseconds (attributes: mime_type, extractor).
-    #[php(prop, name = "extraction_duration_ms")]
-    pub extraction_duration_ms: String,
-    /// Input document size in bytes (attributes: mime_type).
-    #[php(prop, name = "extraction_input_bytes")]
-    pub extraction_input_bytes: String,
-    /// Output content size in bytes (attributes: mime_type).
-    #[php(prop, name = "extraction_output_bytes")]
-    pub extraction_output_bytes: String,
-    /// Pipeline stage duration in milliseconds (attributes: stage).
-    #[php(prop, name = "pipeline_duration_ms")]
-    pub pipeline_duration_ms: String,
-    /// OCR duration in milliseconds (attributes: backend, language).
-    #[php(prop, name = "ocr_duration_ms")]
-    pub ocr_duration_ms: String,
-    /// Batch total duration in milliseconds.
-    #[php(prop, name = "batch_duration_ms")]
-    pub batch_duration_ms: String,
-    /// Currently in-flight extractions.
-    #[php(prop, name = "concurrent_extractions")]
-    pub concurrent_extractions: String,
-}
-
-#[php_impl]
-impl ExtractionMetrics {
-    pub fn __construct(
-        extraction_total: String,
-        cache_hits: String,
-        cache_misses: String,
-        batch_total: String,
-        extraction_duration_ms: String,
-        extraction_input_bytes: String,
-        extraction_output_bytes: String,
-        pipeline_duration_ms: String,
-        ocr_duration_ms: String,
-        batch_duration_ms: String,
-        concurrent_extractions: String,
-    ) -> Self {
-        Self {
-            extraction_total,
-            cache_hits,
-            cache_misses,
-            batch_total,
-            extraction_duration_ms,
-            extraction_input_bytes,
-            extraction_output_bytes,
-            pipeline_duration_ms,
-            ocr_duration_ms,
-            batch_duration_ms,
-            concurrent_extractions,
-        }
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\QualityProcessor")]
-pub struct QualityProcessor {
-    inner: Arc<kreuzberg::text::QualityProcessor>,
-}
-
-#[php_impl]
-impl QualityProcessor {
-    pub fn name(&self) -> String {
-        self.inner.name().into()
+    #[php(getter)]
+    pub fn get_custom_stopwords(&self) -> Option<HashMap<String, Vec<String>>> {
+        self.custom_stopwords.clone()
     }
 
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    pub fn initialize(&self) -> PhpResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
-    }
-
-    pub fn shutdown(&self) -> PhpResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
-    }
-
-    pub fn process_async(&self, result: &ExtractionResult, _config: &ExtractionConfig) -> PhpResult<()> {
-        let inner = self.inner.clone();
-        WORKER_RUNTIME.block_on(async {
-            let result = inner
-                .process(result.clone().into(), _config.clone().into())
-                .await
-                .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-            Ok(result)
-        })
-    }
-
-    pub fn processing_stage(&self) -> String {
-        String::from("[unimplemented: processing_stage]")
-    }
-
-    pub fn should_process(&self, _result: &ExtractionResult, config: &ExtractionConfig) -> bool {
-        self.inner.should_process(_result.clone().into(), config.clone().into())
-    }
-
-    pub fn estimated_duration_ms(&self, result: &ExtractionResult) -> i64 {
-        self.inner.estimated_duration_ms(result.clone().into())
+    #[allow(clippy::should_implement_trait)]
+    pub fn default() -> TokenReductionConfig {
+        kreuzberg::TokenReductionConfig::default().into()
     }
 }
 
@@ -3163,18 +2828,14 @@ pub struct PdfAnnotation {
     #[php(prop, name = "page_number")]
     pub page_number: i64,
     /// Bounding box of the annotation on the page.
-    pub bounding_box: Option<BoundingBox>,
+    #[php(prop, name = "bounding_box")]
+    pub bounding_box: Option<String>,
 }
 
 #[php_impl]
 impl PdfAnnotation {
     pub fn from_json(json: String) -> PhpResult<Self> {
         serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_bounding_box(&self) -> Option<BoundingBox> {
-        self.bounding_box.clone()
     }
 }
 
@@ -3190,7 +2851,8 @@ pub struct DjotContent {
     /// Metadata from YAML frontmatter
     pub metadata: Metadata,
     /// Extracted tables as structured data
-    pub tables: Vec<Table>,
+    #[php(prop, name = "tables")]
+    pub tables: Vec<String>,
     /// Extracted images with metadata
     pub images: Vec<DjotImage>,
     /// Extracted links with URLs
@@ -3216,11 +2878,6 @@ impl DjotContent {
     #[php(getter)]
     pub fn get_metadata(&self) -> Metadata {
         self.metadata.clone()
-    }
-
-    #[php(getter)]
-    pub fn get_tables(&self) -> Vec<Table> {
-        self.tables.clone()
     }
 
     #[php(getter)]
@@ -3252,7 +2909,8 @@ pub struct FormattedBlock {
     /// Inline content within the block
     pub inline_content: Vec<InlineElement>,
     /// Element attributes (classes, IDs, key-value pairs)
-    pub attributes: Option<Attributes>,
+    #[php(prop, name = "attributes")]
+    pub attributes: Option<String>,
     /// Language identifier for code blocks
     #[php(prop, name = "language")]
     pub language: Option<String>,
@@ -3275,11 +2933,6 @@ impl FormattedBlock {
     }
 
     #[php(getter)]
-    pub fn get_attributes(&self) -> Option<Attributes> {
-        self.attributes.clone()
-    }
-
-    #[php(getter)]
     pub fn get_children(&self) -> Vec<FormattedBlock> {
         self.children.clone()
     }
@@ -3296,7 +2949,8 @@ pub struct InlineElement {
     #[php(prop, name = "content")]
     pub content: String,
     /// Element attributes
-    pub attributes: Option<Attributes>,
+    #[php(prop, name = "attributes")]
+    pub attributes: Option<String>,
     /// Additional metadata (e.g., href for links, src/alt for images)
     pub metadata: Option<HashMap<String, String>>,
 }
@@ -3308,39 +2962,8 @@ impl InlineElement {
     }
 
     #[php(getter)]
-    pub fn get_attributes(&self) -> Option<Attributes> {
-        self.attributes.clone()
-    }
-
-    #[php(getter)]
     pub fn get_metadata(&self) -> Option<HashMap<String, String>> {
         self.metadata.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzberg\\Attributes")]
-pub struct Attributes {
-    /// Element ID (#identifier)
-    #[php(prop, name = "id")]
-    pub id: Option<String>,
-    /// CSS classes (.class1 .class2)
-    #[php(prop, name = "classes")]
-    pub classes: Vec<String>,
-    /// Key-value pairs (key="value")
-    #[php(prop, name = "key_values")]
-    pub key_values: Vec<String>,
-}
-
-#[php_impl]
-impl Attributes {
-    pub fn __construct(id: Option<String>, classes: Option<Vec<String>>, key_values: Option<Vec<String>>) -> Self {
-        Self {
-            id,
-            classes: classes.unwrap_or_default(),
-            key_values: key_values.unwrap_or_default(),
-        }
     }
 }
 
@@ -3358,18 +2981,19 @@ pub struct DjotImage {
     #[php(prop, name = "title")]
     pub title: Option<String>,
     /// Element attributes
-    pub attributes: Option<Attributes>,
+    #[php(prop, name = "attributes")]
+    pub attributes: Option<String>,
 }
 
 #[php_impl]
 impl DjotImage {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_attributes(&self) -> Option<Attributes> {
-        self.attributes.clone()
+    pub fn __construct(src: String, alt: String, title: Option<String>, attributes: Option<String>) -> Self {
+        Self {
+            src,
+            alt,
+            title,
+            attributes,
+        }
     }
 }
 
@@ -3387,18 +3011,19 @@ pub struct DjotLink {
     #[php(prop, name = "title")]
     pub title: Option<String>,
     /// Element attributes
-    pub attributes: Option<Attributes>,
+    #[php(prop, name = "attributes")]
+    pub attributes: Option<String>,
 }
 
 #[php_impl]
 impl DjotLink {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_attributes(&self) -> Option<Attributes> {
-        self.attributes.clone()
+    pub fn __construct(url: String, text: String, title: Option<String>, attributes: Option<String>) -> Self {
+        Self {
+            url,
+            text,
+            title,
+            attributes,
+        }
     }
 }
 
@@ -3422,30 +3047,6 @@ impl Footnote {
     #[php(getter)]
     pub fn get_content(&self) -> Vec<FormattedBlock> {
         self.content.clone()
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\NodeId")]
-pub struct NodeId {
-    inner: Arc<kreuzberg::NodeId>,
-}
-
-#[php_impl]
-impl NodeId {
-    pub fn as_ref(&self) -> String {
-        self.inner.as_ref().into()
-    }
-
-    pub fn fmt(&self, f: String) -> String {
-        String::from("[unimplemented: fmt]")
-    }
-
-    pub fn generate(node_type: String, text: String, page: Option<u32>, index: u32) -> NodeId {
-        Self {
-            inner: Arc::new(kreuzberg::NodeId::generate(&node_type, &text, page, index)),
-        }
     }
 }
 
@@ -3581,7 +3182,8 @@ impl DocumentRelationship {
 #[php(name = "Kreuzberg\\DocumentNode")]
 pub struct DocumentNode {
     /// Deterministic identifier (hash of content + position).
-    pub id: NodeId,
+    #[php(prop, name = "id")]
+    pub id: String,
     /// Node content — tagged enum, type-specific data only.
     #[php(prop, name = "content")]
     pub content: String,
@@ -3601,7 +3203,8 @@ pub struct DocumentNode {
     #[php(prop, name = "page_end")]
     pub page_end: Option<u32>,
     /// Bounding box in document coordinates.
-    pub bbox: Option<BoundingBox>,
+    #[php(prop, name = "bbox")]
+    pub bbox: Option<String>,
     /// Inline annotations (formatting, links) on this node's text content.
     ///
     /// Only meaningful for text-carrying nodes; empty for containers.
@@ -3620,16 +3223,6 @@ impl DocumentNode {
     }
 
     #[php(getter)]
-    pub fn get_id(&self) -> NodeId {
-        self.id.clone()
-    }
-
-    #[php(getter)]
-    pub fn get_bbox(&self) -> Option<BoundingBox> {
-        self.bbox.clone()
-    }
-
-    #[php(getter)]
     pub fn get_annotations(&self) -> Vec<TextAnnotation> {
         self.annotations.clone()
     }
@@ -3637,33 +3230,6 @@ impl DocumentNode {
     #[php(getter)]
     pub fn get_attributes(&self) -> Option<HashMap<String, String>> {
         self.attributes.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\TableGrid")]
-#[allow(clippy::similar_names)]
-pub struct TableGrid {
-    /// Number of rows in the table.
-    #[php(prop, name = "rows")]
-    pub rows: u32,
-    /// Number of columns in the table.
-    #[php(prop, name = "cols")]
-    pub cols: u32,
-    /// All cells in row-major order.
-    pub cells: Vec<GridCell>,
-}
-
-#[php_impl]
-impl TableGrid {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_cells(&self) -> Vec<GridCell> {
-        self.cells.clone()
     }
 }
 
@@ -3691,18 +3257,30 @@ pub struct GridCell {
     #[php(prop, name = "is_header")]
     pub is_header: bool,
     /// Bounding box for this cell (if available).
-    pub bbox: Option<BoundingBox>,
+    #[php(prop, name = "bbox")]
+    pub bbox: Option<String>,
 }
 
 #[php_impl]
 impl GridCell {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_bbox(&self) -> Option<BoundingBox> {
-        self.bbox.clone()
+    pub fn __construct(
+        content: String,
+        row: u32,
+        col: u32,
+        row_span: u32,
+        col_span: u32,
+        is_header: bool,
+        bbox: Option<String>,
+    ) -> Self {
+        Self {
+            content,
+            row,
+            col,
+            row_span,
+            col_span,
+            is_header,
+            bbox,
+        }
     }
 }
 
@@ -3737,7 +3315,8 @@ pub struct ExtractionResult {
     #[php(prop, name = "mime_type")]
     pub mime_type: String,
     pub metadata: Metadata,
-    pub tables: Vec<Table>,
+    #[php(prop, name = "tables")]
+    pub tables: Vec<String>,
     #[php(prop, name = "detected_languages")]
     pub detected_languages: Option<Vec<String>>,
     /// Text chunks when chunking is enabled.
@@ -3880,11 +3459,6 @@ impl ExtractionResult {
     #[php(getter)]
     pub fn get_metadata(&self) -> Metadata {
         self.metadata.clone()
-    }
-
-    #[php(getter)]
-    pub fn get_tables(&self) -> Vec<Table> {
-        self.tables.clone()
     }
 
     #[php(getter)]
@@ -4217,7 +3791,8 @@ pub struct ExtractedImage {
     pub ocr_result: Option<ExtractionResult>,
     /// Bounding box of the image on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top).
     /// Only populated for PDF-extracted images when position data is available from pdfium.
-    pub bounding_box: Option<BoundingBox>,
+    #[php(prop, name = "bounding_box")]
+    pub bounding_box: Option<String>,
     /// Original source path of the image within the document archive (e.g., "media/image1.png" in DOCX).
     /// Used for rendering image references when the binary data is not extracted.
     #[php(prop, name = "source_path")]
@@ -4239,66 +3814,6 @@ impl ExtractedImage {
     pub fn get_ocr_result(&self) -> Option<ExtractionResult> {
         self.ocr_result.clone()
     }
-
-    #[php(getter)]
-    pub fn get_bounding_box(&self) -> Option<BoundingBox> {
-        self.bounding_box.clone()
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\ElementId")]
-pub struct ElementId {
-    inner: Arc<kreuzberg::ElementId>,
-}
-
-#[php_impl]
-impl ElementId {
-    pub fn as_ref(&self) -> String {
-        self.inner.as_ref().into()
-    }
-
-    pub fn fmt(&self, f: String) -> String {
-        String::from("[unimplemented: fmt]")
-    }
-
-    pub fn new(hex_str: String) -> PhpResult<ElementId> {
-        kreuzberg::ElementId::new(&hex_str)
-            .map(|val| Self { inner: Arc::new(val) })
-            .map_err(|e| PhpException::default(e.to_string()))
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzberg\\BoundingBox")]
-#[allow(clippy::similar_names)]
-pub struct BoundingBox {
-    /// Left x-coordinate
-    #[php(prop, name = "x0")]
-    pub x0: f64,
-    /// Bottom y-coordinate
-    #[php(prop, name = "y0")]
-    pub y0: f64,
-    /// Right x-coordinate
-    #[php(prop, name = "x1")]
-    pub x1: f64,
-    /// Top y-coordinate
-    #[php(prop, name = "y1")]
-    pub y1: f64,
-}
-
-#[php_impl]
-impl BoundingBox {
-    pub fn __construct(x0: Option<f64>, y0: Option<f64>, x1: Option<f64>, y1: Option<f64>) -> Self {
-        Self {
-            x0: x0.unwrap_or_default(),
-            y0: y0.unwrap_or_default(),
-            x1: x1.unwrap_or_default(),
-            y1: y1.unwrap_or_default(),
-        }
-    }
 }
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
@@ -4312,7 +3827,8 @@ pub struct ElementMetadata {
     #[php(prop, name = "filename")]
     pub filename: Option<String>,
     /// Bounding box coordinates if available
-    pub coordinates: Option<BoundingBox>,
+    #[php(prop, name = "coordinates")]
+    pub coordinates: Option<String>,
     /// Position index in the element sequence
     #[php(prop, name = "element_index")]
     pub element_index: Option<i64>,
@@ -4322,13 +3838,20 @@ pub struct ElementMetadata {
 
 #[php_impl]
 impl ElementMetadata {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_coordinates(&self) -> Option<BoundingBox> {
-        self.coordinates.clone()
+    pub fn __construct(
+        additional: HashMap<String, String>,
+        page_number: Option<i64>,
+        filename: Option<String>,
+        coordinates: Option<String>,
+        element_index: Option<i64>,
+    ) -> Self {
+        Self {
+            page_number,
+            filename,
+            coordinates,
+            element_index,
+            additional,
+        }
     }
 
     #[php(getter)]
@@ -4342,7 +3865,8 @@ impl ElementMetadata {
 #[php(name = "Kreuzberg\\Element")]
 pub struct Element {
     /// Unique element identifier
-    pub element_id: ElementId,
+    #[php(prop, name = "element_id")]
+    pub element_id: String,
     /// Semantic type of this element
     #[php(prop, name = "element_type")]
     pub element_type: String,
@@ -4357,11 +3881,6 @@ pub struct Element {
 impl Element {
     pub fn from_json(json: String) -> PhpResult<Self> {
         serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_element_id(&self) -> ElementId {
-        self.element_id.clone()
     }
 
     #[php(getter)]
@@ -5272,40 +4791,6 @@ impl ArchiveMetadata {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[php_class]
-#[php(name = "Kreuzberg\\ImageMetadata")]
-pub struct ImageMetadata {
-    /// Image width in pixels
-    #[php(prop, name = "width")]
-    pub width: u32,
-    /// Image height in pixels
-    #[php(prop, name = "height")]
-    pub height: u32,
-    /// Image format (e.g., "PNG", "JPEG", "TIFF")
-    #[php(prop, name = "format")]
-    pub format: String,
-    /// EXIF metadata tags
-    pub exif: HashMap<String, String>,
-}
-
-#[php_impl]
-impl ImageMetadata {
-    pub fn __construct(width: u32, height: u32, format: String, exif: HashMap<String, String>) -> Self {
-        Self {
-            width,
-            height,
-            format,
-            exif,
-        }
-    }
-
-    #[php(getter)]
-    pub fn get_exif(&self) -> HashMap<String, String> {
-        self.exif.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
 #[php(name = "Kreuzberg\\XmlMetadata")]
 pub struct XmlMetadata {
     /// Total number of XML elements processed
@@ -6032,7 +5517,7 @@ impl PstMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrConfidence")]
 pub struct OcrConfidence {
@@ -6051,8 +5536,11 @@ pub struct OcrConfidence {
 
 #[php_impl]
 impl OcrConfidence {
-    pub fn __construct(recognition: f64, detection: Option<f64>) -> Self {
-        Self { detection, recognition }
+    pub fn __construct(detection: Option<f64>, recognition: Option<f64>) -> Self {
+        Self {
+            detection,
+            recognition: recognition.unwrap_or_default(),
+        }
     }
 
     pub fn from_tesseract(confidence: f64) -> OcrConfidence {
@@ -6092,7 +5580,7 @@ impl OcrRotation {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrElement")]
 pub struct OcrElement {
@@ -6224,10 +5712,6 @@ impl OcrElement {
 
     pub fn with_metadata(&self, key: String, value: String) -> OcrElement {
         panic!("alef: with_metadata not auto-delegatable")
-    }
-
-    pub fn with_rotation_opt(&self, rotation: Option<&OcrRotation>) -> OcrElement {
-        panic!("alef: with_rotation_opt not auto-delegatable")
     }
 }
 
@@ -6395,7 +5879,8 @@ pub struct PageContent {
     ///
     /// Serializes as Vec<Table> for JSON compatibility while maintaining
     /// Arc semantics in-memory for zero-copy sharing.
-    pub tables: Vec<Table>,
+    #[php(prop, name = "tables")]
+    pub tables: Vec<String>,
     /// Images found on this page (uses Arc for memory efficiency)
     ///
     /// Serializes as Vec<ExtractedImage> for JSON compatibility while maintaining
@@ -6418,11 +5903,6 @@ pub struct PageContent {
 impl PageContent {
     pub fn from_json(json: String) -> PhpResult<Self> {
         serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_tables(&self) -> Vec<Table> {
-        self.tables.clone()
     }
 
     #[php(getter)]
@@ -6496,76 +5976,6 @@ impl HierarchicalBlock {
             font_size,
             level,
             bbox,
-        }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzberg\\Table")]
-pub struct Table {
-    /// Table cells as a 2D vector (rows × columns)
-    pub cells: Vec<Vec<String>>,
-    /// Markdown representation of the table
-    #[php(prop, name = "markdown")]
-    pub markdown: String,
-    /// Page number where the table was found (1-indexed)
-    #[php(prop, name = "page_number")]
-    pub page_number: i64,
-    /// Bounding box of the table on the page (PDF coordinates: x0=left, y0=bottom, x1=right, y1=top).
-    /// Only populated for PDF-extracted tables when position data is available.
-    pub bounding_box: Option<BoundingBox>,
-}
-
-#[php_impl]
-impl Table {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_cells(&self) -> Vec<Vec<String>> {
-        self.cells.clone()
-    }
-
-    #[php(getter)]
-    pub fn get_bounding_box(&self) -> Option<BoundingBox> {
-        self.bounding_box.clone()
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
-#[php_class]
-#[php(name = "Kreuzberg\\TableCell")]
-#[allow(clippy::similar_names)]
-pub struct TableCell {
-    /// Cell content as text
-    #[php(prop, name = "content")]
-    pub content: String,
-    /// Row span (number of rows this cell spans)
-    #[php(prop, name = "row_span")]
-    pub row_span: i64,
-    /// Column span (number of columns this cell spans)
-    #[php(prop, name = "col_span")]
-    pub col_span: i64,
-    /// Whether this is a header cell
-    #[php(prop, name = "is_header")]
-    pub is_header: bool,
-}
-
-#[php_impl]
-impl TableCell {
-    pub fn __construct(
-        content: Option<String>,
-        row_span: Option<i64>,
-        col_span: Option<i64>,
-        is_header: Option<bool>,
-    ) -> Self {
-        Self {
-            content: content.unwrap_or_default(),
-            row_span: row_span.unwrap_or_default(),
-            col_span: col_span.unwrap_or_default(),
-            is_header: is_header.unwrap_or_default(),
         }
     }
 }
@@ -6659,33 +6069,6 @@ impl ByteBufferPool {}
 
 #[derive(Clone)]
 #[php_class]
-#[php(name = "Kreuzberg\\Pool")]
-pub struct Pool {
-    inner: Arc<kreuzberg::utils::Pool>,
-}
-
-#[php_impl]
-impl Pool {
-    pub fn acquire(&self) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: acquire".to_string(),
-        ))
-    }
-
-    pub fn size(&self) -> i64 {
-        self.inner.size()
-    }
-
-    pub fn clear(&self) -> PhpResult<()> {
-        self.inner
-            .clear()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
 #[php(name = "Kreuzberg\\PooledString")]
 pub struct PooledString {
     inner: Arc<kreuzberg::utils::string_pool::PooledString>,
@@ -6721,38 +6104,6 @@ impl PooledString {
 
 #[derive(Clone)]
 #[php_class]
-#[php(name = "Kreuzberg\\InternedString")]
-pub struct InternedString {
-    inner: Arc<kreuzberg::utils::string_pool::InternedString>,
-}
-
-#[php_impl]
-impl InternedString {
-    pub fn as_str(&self) -> String {
-        self.inner.as_str().into()
-    }
-
-    pub fn as_ref(&self) -> String {
-        self.inner.as_ref().into()
-    }
-
-    pub fn fmt(&self, f: String) -> String {
-        String::from("[unimplemented: fmt]")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn eq(&self, other: &InternedString) -> bool {
-        self.inner.eq(&other.inner)
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn deref(&self) -> String {
-        String::from("[unimplemented: deref]")
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
 #[php(name = "Kreuzberg\\TracingLayer")]
 pub struct TracingLayer {
     inner: Arc<kreuzberg::service::layers::tracing::TracingLayer>,
@@ -6776,50 +6127,6 @@ pub struct MetricsLayer {
 impl MetricsLayer {
     pub fn layer(&self, inner: String) -> String {
         String::from("[unimplemented: layer]")
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\ApiError")]
-pub struct ApiError {
-    /// HTTP status code
-    #[php(prop, name = "status")]
-    pub status: String,
-    /// Error response body
-    #[php(prop, name = "body")]
-    pub body: String,
-}
-
-#[php_impl]
-impl ApiError {
-    pub fn __construct(status: String, body: String) -> Self {
-        Self { status, body }
-    }
-
-    pub fn into_response(&self) -> String {
-        String::from("[unimplemented: into_response]")
-    }
-
-    pub fn validation(error: String) -> ApiError {
-        panic!("alef: validation not auto-delegatable")
-    }
-
-    pub fn unprocessable(error: String) -> ApiError {
-        panic!("alef: unprocessable not auto-delegatable")
-    }
-
-    pub fn internal(error: String) -> ApiError {
-        panic!("alef: internal not auto-delegatable")
-    }
-
-    pub fn bad_gateway(error: String) -> ApiError {
-        panic!("alef: bad_gateway not auto-delegatable")
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn from(error: String) -> ApiError {
-        panic!("alef: from not auto-delegatable")
     }
 }
 
@@ -7650,112 +6957,6 @@ impl ChunkingResult {
     }
 }
 
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\ChunkingProcessor")]
-pub struct ChunkingProcessor {
-    inner: Arc<kreuzberg::chunking::ChunkingProcessor>,
-}
-
-#[php_impl]
-impl ChunkingProcessor {
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    pub fn initialize(&self) -> PhpResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
-    }
-
-    pub fn shutdown(&self) -> PhpResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
-    }
-
-    pub fn process_async(&self, result: &ExtractionResult, config: &ExtractionConfig) -> PhpResult<()> {
-        let inner = self.inner.clone();
-        WORKER_RUNTIME.block_on(async {
-            let result = inner
-                .process(result.clone().into(), config.clone().into())
-                .await
-                .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-            Ok(result)
-        })
-    }
-
-    pub fn processing_stage(&self) -> String {
-        String::from("[unimplemented: processing_stage]")
-    }
-
-    pub fn should_process(&self, _result: &ExtractionResult, config: &ExtractionConfig) -> bool {
-        self.inner.should_process(_result.clone().into(), config.clone().into())
-    }
-
-    pub fn estimated_duration_ms(&self, result: &ExtractionResult) -> i64 {
-        self.inner.estimated_duration_ms(result.clone().into())
-    }
-}
-
-#[derive(Clone)]
-#[php_class]
-#[php(name = "Kreuzberg\\VlmOcrBackend")]
-pub struct VlmOcrBackend {
-    inner: Arc<kreuzberg::llm::vlm_ocr::VlmOcrBackend>,
-}
-
-#[php_impl]
-impl VlmOcrBackend {
-    pub fn name(&self) -> String {
-        self.inner.name().into()
-    }
-
-    pub fn version(&self) -> String {
-        self.inner.version()
-    }
-
-    pub fn initialize(&self) -> PhpResult<()> {
-        self.inner
-            .initialize()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
-    }
-
-    pub fn shutdown(&self) -> PhpResult<()> {
-        self.inner
-            .shutdown()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(())
-    }
-
-    pub fn process_image_async(&self, image_bytes: Vec<u8>, config: &OcrConfig) -> PhpResult<ExtractionResult> {
-        let inner = self.inner.clone();
-        WORKER_RUNTIME.block_on(async {
-            let result = inner
-                .process_image(&image_bytes, config.clone().into())
-                .await
-                .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-            Ok(result.into())
-        })
-    }
-
-    pub fn supports_language(&self, _lang: String) -> bool {
-        self.inner.supports_language(&_lang)
-    }
-
-    pub fn backend_type(&self) -> String {
-        self.inner.backend_type().into()
-    }
-}
-
 #[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\YakeParams")]
@@ -8500,8 +7701,11 @@ impl LayoutDetection {
         String::from("[unimplemented: fmt]")
     }
 
-    pub fn sort_by_confidence_desc(detections: Vec<LayoutDetection>) -> () {
+    pub fn sort_by_confidence_desc(detections: Vec<LayoutDetection>) -> Vec<LayoutDetection> {
         kreuzberg::LayoutDetection::sort_by_confidence_desc(detections)
+            .into_iter()
+            .map(Into::into)
+            .collect()
     }
 }
 
@@ -8642,7 +7846,8 @@ pub struct HierarchyBlock {
     #[php(prop, name = "text")]
     pub text: String,
     /// The bounding box of the block
-    pub bbox: BoundingBox,
+    #[php(prop, name = "bbox")]
+    pub bbox: String,
     /// The font size of the text in this block
     #[php(prop, name = "font_size")]
     pub font_size: f32,
@@ -8653,13 +7858,13 @@ pub struct HierarchyBlock {
 
 #[php_impl]
 impl HierarchyBlock {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_bbox(&self) -> BoundingBox {
-        self.bbox.clone()
+    pub fn __construct(text: String, bbox: String, font_size: f32, hierarchy_level: String) -> Self {
+        Self {
+            text,
+            bbox,
+            font_size,
+            hierarchy_level,
+        }
     }
 }
 
@@ -8723,30 +7928,12 @@ impl PdfImage {
 
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 #[php_class]
-#[php(name = "Kreuzberg\\PageLayoutRegion")]
-pub struct PageLayoutRegion {
-    #[php(prop, name = "class")]
-    pub class: String,
-    #[php(prop, name = "confidence")]
-    pub confidence: f32,
-    #[php(prop, name = "bbox")]
-    pub bbox: String,
-}
-
-#[php_impl]
-impl PageLayoutRegion {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
 #[php(name = "Kreuzberg\\PageLayoutResult")]
 pub struct PageLayoutResult {
     #[php(prop, name = "page_index")]
     pub page_index: i64,
-    pub regions: Vec<PageLayoutRegion>,
+    #[php(prop, name = "regions")]
+    pub regions: Vec<String>,
     #[php(prop, name = "page_width_pts")]
     pub page_width_pts: f32,
     #[php(prop, name = "page_height_pts")]
@@ -8761,13 +7948,22 @@ pub struct PageLayoutResult {
 
 #[php_impl]
 impl PageLayoutResult {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_regions(&self) -> Vec<PageLayoutRegion> {
-        self.regions.clone()
+    pub fn __construct(
+        page_index: i64,
+        regions: Vec<String>,
+        page_width_pts: f32,
+        page_height_pts: f32,
+        render_width_px: u32,
+        render_height_px: u32,
+    ) -> Self {
+        Self {
+            page_index,
+            regions,
+            page_width_pts,
+            page_height_pts,
+            render_width_px,
+            render_height_px,
+        }
     }
 }
 
@@ -8813,51 +8009,6 @@ impl PageTiming {
             postprocess_ms,
             mapping_ms,
         }
-    }
-}
-
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
-#[php_class]
-#[php(name = "Kreuzberg\\PdfExtractionMetadata")]
-#[allow(clippy::similar_names)]
-pub struct PdfExtractionMetadata {
-    /// Document title
-    #[php(prop, name = "title")]
-    pub title: Option<String>,
-    /// Document subject or description
-    #[php(prop, name = "subject")]
-    pub subject: Option<String>,
-    /// Document authors (parsed from PDF Author field)
-    #[php(prop, name = "authors")]
-    pub authors: Option<Vec<String>>,
-    /// Document keywords (parsed from PDF Keywords field)
-    #[php(prop, name = "keywords")]
-    pub keywords: Option<Vec<String>>,
-    /// Creation timestamp (ISO 8601 format)
-    #[php(prop, name = "created_at")]
-    pub created_at: Option<String>,
-    /// Last modification timestamp (ISO 8601 format)
-    #[php(prop, name = "modified_at")]
-    pub modified_at: Option<String>,
-    /// Application or user that created the document
-    #[php(prop, name = "created_by")]
-    pub created_by: Option<String>,
-    /// PDF-specific metadata
-    #[php(prop, name = "pdf_specific")]
-    pub pdf_specific: String,
-    /// Page structure with boundaries and optional per-page metadata
-    pub page_structure: Option<PageStructure>,
-}
-
-#[php_impl]
-impl PdfExtractionMetadata {
-    pub fn from_json(json: String) -> PhpResult<Self> {
-        serde_json::from_str(&json).map_err(|e| PhpException::default(e.to_string()))
-    }
-
-    #[php(getter)]
-    pub fn get_page_structure(&self) -> Option<PageStructure> {
-        self.page_structure.clone()
     }
 }
 
@@ -8970,57 +8121,11 @@ pub const CODECONTENTMODE_CHUNKS: &str = "Chunks";
 pub const CODECONTENTMODE_RAW: &str = "Raw";
 pub const CODECONTENTMODE_STRUCTURE: &str = "Structure";
 
-// HwpError enum values
-pub const HWPERROR_INVALIDFORMAT: &str = "InvalidFormat";
-pub const HWPERROR_UNSUPPORTEDVERSION: &str = "UnsupportedVersion";
-pub const HWPERROR_IO: &str = "Io";
-pub const HWPERROR_CFB: &str = "Cfb";
-pub const HWPERROR_COMPRESSIONERROR: &str = "CompressionError";
-pub const HWPERROR_PARSEERROR: &str = "ParseError";
-pub const HWPERROR_ENCODINGERROR: &str = "EncodingError";
-pub const HWPERROR_NOTFOUND: &str = "NotFound";
-
 // FracType enum values
 pub const FRACTYPE_BAR: &str = "Bar";
 pub const FRACTYPE_NOBAR: &str = "NoBar";
 pub const FRACTYPE_LINEAR: &str = "Linear";
 pub const FRACTYPE_SKEWED: &str = "Skewed";
-
-// MathNode enum values
-pub const MATHNODE_RUN: &str = "Run";
-pub const MATHNODE_SSUP: &str = "SSup";
-pub const MATHNODE_SSUB: &str = "SSub";
-pub const MATHNODE_SSUBSUP: &str = "SSubSup";
-pub const MATHNODE_FRAC: &str = "Frac";
-pub const MATHNODE_RAD: &str = "Rad";
-pub const MATHNODE_NARY: &str = "Nary";
-pub const MATHNODE_DELIM: &str = "Delim";
-pub const MATHNODE_FUNC: &str = "Func";
-pub const MATHNODE_ACC: &str = "Acc";
-pub const MATHNODE_EQARR: &str = "EqArr";
-pub const MATHNODE_LIMLOW: &str = "LimLow";
-pub const MATHNODE_LIMUPP: &str = "LimUpp";
-pub const MATHNODE_BAR: &str = "Bar";
-pub const MATHNODE_BORDERBOX: &str = "BorderBox";
-pub const MATHNODE_MATRIX: &str = "Matrix";
-pub const MATHNODE_GROUP: &str = "Group";
-pub const MATHNODE_SPRE: &str = "SPre";
-
-// DocumentElement enum values
-pub const DOCUMENTELEMENT_PARAGRAPH: &str = "Paragraph";
-pub const DOCUMENTELEMENT_TABLE: &str = "Table";
-pub const DOCUMENTELEMENT_DRAWING: &str = "Drawing";
-
-// SecurityError enum values
-pub const SECURITYERROR_ZIPBOMBDETECTED: &str = "ZipBombDetected";
-pub const SECURITYERROR_ARCHIVETOOLARGE: &str = "ArchiveTooLarge";
-pub const SECURITYERROR_TOOMANYFILES: &str = "TooManyFiles";
-pub const SECURITYERROR_NESTINGTOODEEP: &str = "NestingTooDeep";
-pub const SECURITYERROR_CONTENTTOOLARGE: &str = "ContentTooLarge";
-pub const SECURITYERROR_ENTITYTOOLONG: &str = "EntityTooLong";
-pub const SECURITYERROR_TOOMANYITERATIONS: &str = "TooManyIterations";
-pub const SECURITYERROR_XMLDEPTHEXCEEDED: &str = "XmlDepthExceeded";
-pub const SECURITYERROR_TOOMANYCELLS: &str = "TooManyCells";
 
 // OcrBackendType enum values
 pub const OCRBACKENDTYPE_TESSERACT: &str = "Tesseract";
@@ -9146,6 +8251,10 @@ pub const CHUNKTYPE_ORGCHART: &str = "OrgChart";
 pub const CHUNKTYPE_DIAGRAM: &str = "Diagram";
 pub const CHUNKTYPE_UNKNOWN: &str = "Unknown";
 
+// ExtractionMode enum values
+pub const EXTRACTIONMODE_UNIFIED: &str = "Unified";
+pub const EXTRACTIONMODE_ELEMENTBASED: &str = "ElementBased";
+
 // ElementType enum values
 pub const ELEMENTTYPE_TITLE: &str = "Title";
 pub const ELEMENTTYPE_NARRATIVETEXT: &str = "NarrativeText";
@@ -9235,16 +8344,6 @@ pub const POOLERROR_LOCKPOISONED: &str = "LockPoisoned";
 pub const KEYWORDALGORITHM_YAKE: &str = "Yake";
 pub const KEYWORDALGORITHM_RAKE: &str = "Rake";
 
-// OcrError enum values
-pub const OCRERROR_TESSERACTINITIALIZATIONFAILED: &str = "TesseractInitializationFailed";
-pub const OCRERROR_UNSUPPORTEDVERSION: &str = "UnsupportedVersion";
-pub const OCRERROR_INVALIDCONFIGURATION: &str = "InvalidConfiguration";
-pub const OCRERROR_INVALIDLANGUAGECODE: &str = "InvalidLanguageCode";
-pub const OCRERROR_IMAGEPROCESSINGFAILED: &str = "ImageProcessingFailed";
-pub const OCRERROR_PROCESSINGFAILED: &str = "ProcessingFailed";
-pub const OCRERROR_CACHEERROR: &str = "CacheError";
-pub const OCRERROR_IOERROR: &str = "IOError";
-
 // PSMMode enum values
 pub const PSMMODE_OSDONLY: &str = "OsdOnly";
 pub const PSMMODE_AUTOOSD: &str = "AutoOsd";
@@ -9294,19 +8393,6 @@ pub const LAYOUTCLASS_CHECKBOXSELECTED: &str = "CheckboxSelected";
 pub const LAYOUTCLASS_CHECKBOXUNSELECTED: &str = "CheckboxUnselected";
 pub const LAYOUTCLASS_FORM: &str = "Form";
 pub const LAYOUTCLASS_KEYVALUEREGION: &str = "KeyValueRegion";
-
-// PdfError enum values
-pub const PDFERROR_INVALIDPDF: &str = "InvalidPdf";
-pub const PDFERROR_PASSWORDREQUIRED: &str = "PasswordRequired";
-pub const PDFERROR_INVALIDPASSWORD: &str = "InvalidPassword";
-pub const PDFERROR_ENCRYPTIONNOTSUPPORTED: &str = "EncryptionNotSupported";
-pub const PDFERROR_PAGENOTFOUND: &str = "PageNotFound";
-pub const PDFERROR_TEXTEXTRACTIONFAILED: &str = "TextExtractionFailed";
-pub const PDFERROR_RENDERINGFAILED: &str = "RenderingFailed";
-pub const PDFERROR_METADATAEXTRACTIONFAILED: &str = "MetadataExtractionFailed";
-pub const PDFERROR_EXTRACTIONFAILED: &str = "ExtractionFailed";
-pub const PDFERROR_FONTLOADINGFAILED: &str = "FontLoadingFailed";
-pub const PDFERROR_IOERROR: &str = "IOError";
 
 #[php_class]
 #[php(name = "Kreuzberg\\KreuzbergApi")]
@@ -9416,18 +8502,20 @@ impl KreuzbergApi {
     }
 
     pub fn merge_config_json(base: &ExtractionConfig, override_json: String) -> PhpResult<ExtractionConfig> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: merge_config_json".to_string(),
-        ))
+        let base_core: kreuzberg::ExtractionConfig = base.clone().into();
+        let result = kreuzberg::core::config::merge::merge_config_json(base_core, &override_json)
+            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
+        Ok(result.into())
     }
 
     pub fn build_config_from_json(
         base: &ExtractionConfig,
         override_json: Option<String>,
     ) -> PhpResult<ExtractionConfig> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: build_config_from_json".to_string(),
-        ))
+        let base_core: kreuzberg::ExtractionConfig = base.clone().into();
+        let result = kreuzberg::core::config::merge::build_config_from_json(base_core, override_json.as_deref())
+            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
+        Ok(result.into())
     }
 
     pub fn validate_port(port: u16) -> PhpResult<()> {
@@ -9561,69 +8649,13 @@ impl KreuzbergApi {
         String::from("[unimplemented: get_pool_sizing_hint]")
     }
 
-    pub fn extract_file_sync(
-        path: String,
-        mime_type: Option<String>,
-        config: &ExtractionConfig,
-    ) -> PhpResult<ExtractionResult> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: extract_file_sync".to_string(),
-        ))
-    }
-
-    pub fn extract_bytes_sync(
-        content: Vec<u8>,
-        mime_type: String,
-        config: &ExtractionConfig,
-    ) -> PhpResult<ExtractionResult> {
-        let config_core: kreuzberg::ExtractionConfig = config.clone().into();
-        let result = kreuzberg::extract_bytes_sync(&content, &mime_type, config_core)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    pub fn batch_extract_file_sync(items: Vec<String>, config: &ExtractionConfig) -> PhpResult<Vec<ExtractionResult>> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: batch_extract_file_sync".to_string(),
-        ))
-    }
-
-    pub fn batch_extract_bytes_sync(items: Vec<String>, config: &ExtractionConfig) -> PhpResult<Vec<ExtractionResult>> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: batch_extract_bytes_sync".to_string(),
-        ))
-    }
-
-    pub fn batch_extract_file_async(items: Vec<String>, config: &ExtractionConfig) -> PhpResult<Vec<ExtractionResult>> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: batch_extract_file_async".to_string(),
-        ))
-    }
-
-    pub fn batch_extract_bytes_async(
-        items: Vec<String>,
-        config: &ExtractionConfig,
-    ) -> PhpResult<Vec<ExtractionResult>> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: batch_extract_bytes_async".to_string(),
-        ))
-    }
-
     pub fn is_valid_format_field(field: String) -> bool {
         kreuzberg::is_valid_format_field(&field)
     }
 
-    pub fn open_file_bytes(path: String) -> PhpResult<FileBytes> {
-        let result = kreuzberg::core::io::open_file_bytes(std::path::PathBuf::from(path))
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(FileBytes {
-            inner: Arc::new(result),
-        })
-    }
-
-    pub fn read_file_async_async(path: String) -> PhpResult<Vec<u8>> {
+    pub fn open_file_bytes(path: String) -> PhpResult<String> {
         Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: read_file_async_async".to_string(),
+            "Not implemented: open_file_bytes".to_string(),
         ))
     }
 
@@ -9662,7 +8694,7 @@ impl KreuzbergApi {
     }
 
     pub fn detect_or_validate(path: Option<String>, mime_type: Option<String>) -> PhpResult<String> {
-        let result = kreuzberg::detect_or_validate(path.map(std::path::PathBuf::from), mime_type.as_deref())
+        let result = kreuzberg::detect_or_validate(path.as_deref(), mime_type.as_deref())
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -9692,22 +8724,10 @@ impl KreuzbergApi {
         Ok(result)
     }
 
-    pub fn apply_output_format(result: &ExtractionResult, output_format: String) -> () {
+    pub fn apply_output_format(result: &ExtractionResult, output_format: String) -> ExtractionResult {
         let result_core: kreuzberg::ExtractionResult = result.clone().into();
         let output_format_core: kreuzberg::OutputFormat = output_format.clone().into();
-        kreuzberg::core::pipeline::apply_output_format(result_core, output_format_core)
-    }
-
-    pub fn run_pipeline_async(doc: String, config: &ExtractionConfig) -> PhpResult<ExtractionResult> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: run_pipeline_async".to_string(),
-        ))
-    }
-
-    pub fn run_pipeline_sync(doc: String, config: &ExtractionConfig) -> PhpResult<ExtractionResult> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: run_pipeline_sync".to_string(),
-        ))
+        kreuzberg::core::pipeline::apply_output_format(result_core, output_format_core).into()
     }
 
     pub fn is_page_text_blank(text: String) -> bool {
@@ -9716,18 +8736,6 @@ impl KreuzbergApi {
 
     pub fn resolve_relationships(doc: String) -> () {
         ()
-    }
-
-    pub fn derive_document_structure(doc: String) -> DocumentStructure {
-        panic!("alef: derive_document_structure not auto-delegatable")
-    }
-
-    pub fn derive_extraction_result(
-        doc: String,
-        include_document_structure: bool,
-        output_format: String,
-    ) -> ExtractionResult {
-        panic!("alef: derive_extraction_result not auto-delegatable")
     }
 
     pub fn parse_json(data: Vec<u8>, config: Option<String>) -> PhpResult<StructuredDataResult> {
@@ -9765,22 +8773,12 @@ impl KreuzbergApi {
         kreuzberg::extraction::transform_to_document_structure(result_core).into()
     }
 
-    pub fn detect_list_items(text: String) -> Vec<ListItemMetadata> {
-        kreuzberg::extraction::detect_list_items(&text)
-            .into_iter()
-            .map(Into::into)
-            .collect()
+    pub fn detect_list_items(text: String) -> Vec<String> {
+        Vec::new()
     }
 
-    pub fn generate_element_id(text: String, element_type: String, page_number: Option<i64>) -> ElementId {
-        let element_type_core: kreuzberg::ElementType = element_type.clone().into();
-        ElementId {
-            inner: Arc::new(kreuzberg::extraction::generate_element_id(
-                &text,
-                element_type_core,
-                page_number,
-            )),
-        }
+    pub fn generate_element_id(text: String, element_type: String, page_number: Option<i64>) -> String {
+        String::from("[unimplemented: generate_element_id]")
     }
 
     pub fn transform_extraction_result_to_elements(result: &ExtractionResult) -> Vec<Element> {
@@ -9791,10 +8789,10 @@ impl KreuzbergApi {
             .collect()
     }
 
-    pub fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> PhpResult<Vec<Section>> {
-        let result = kreuzberg::extraction::hwp::parser::parse_body_text(&data, is_compressed)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into_iter().map(Into::into).collect())
+    pub fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> PhpResult<Vec<String>> {
+        Err(ext_php_rs::exception::PhpException::default(
+            "Not implemented: parse_body_text".to_string(),
+        ))
     }
 
     pub fn decompress_stream(data: Vec<u8>) -> PhpResult<Vec<u8>> {
@@ -9809,33 +8807,10 @@ impl KreuzbergApi {
         Ok(result)
     }
 
-    pub fn load_image_for_ocr(image_bytes: Vec<u8>) -> PhpResult<String> {
+    pub fn extract_image_metadata(bytes: Vec<u8>) -> PhpResult<String> {
         Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: load_image_for_ocr".to_string(),
+            "Not implemented: extract_image_metadata".to_string(),
         ))
-    }
-
-    pub fn extract_image_metadata(bytes: Vec<u8>) -> PhpResult<ImageMetadata> {
-        let result = kreuzberg::extraction::extract_image_metadata(&bytes)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    pub fn extract_text_from_image_with_ocr(
-        bytes: Vec<u8>,
-        mime_type: String,
-        ocr_result: String,
-        page_config: Option<&PageConfig>,
-    ) -> PhpResult<ImageOcrResult> {
-        let page_config_core: Option<kreuzberg::PageConfig> = page_config.map(|v| v.clone().into());
-        let result = kreuzberg::extraction::image::extract_text_from_image_with_ocr(
-            &bytes,
-            &mime_type,
-            &ocr_result,
-            page_config_core,
-        )
-        .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into())
     }
 
     pub fn estimate_content_capacity(file_size: i64, format: String) -> i64 {
@@ -9969,12 +8944,6 @@ impl KreuzbergApi {
         kreuzberg::extraction::build_email_text_output(result_core)
     }
 
-    pub fn extract_pst_messages(pst_data: Vec<u8>) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: extract_pst_messages".to_string(),
-        ))
-    }
-
     pub fn read_excel_file(file_path: String) -> PhpResult<ExcelWorkbook> {
         let result = kreuzberg::extraction::read_excel_file(&file_path)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
@@ -10033,14 +9002,10 @@ impl KreuzbergApi {
         ))
     }
 
-    pub fn extract_doc_text(content: Vec<u8>) -> PhpResult<DocExtractionResult> {
-        let result = kreuzberg::extraction::extract_doc_text(&content)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    pub fn parse_drawing(reader: String) -> Drawing {
-        panic!("alef: parse_drawing not auto-delegatable")
+    pub fn extract_doc_text(content: Vec<u8>) -> PhpResult<String> {
+        Err(ext_php_rs::exception::PhpException::default(
+            "Not implemented: extract_doc_text".to_string(),
+        ))
     }
 
     pub fn collect_and_convert_omath_para(reader: String) -> String {
@@ -10077,20 +9042,12 @@ impl KreuzbergApi {
         ))
     }
 
-    pub fn parse_table_properties(reader: String) -> TableProperties {
-        panic!("alef: parse_table_properties not auto-delegatable")
-    }
-
     pub fn parse_row_properties(reader: String) -> String {
         String::from("[unimplemented: parse_row_properties]")
     }
 
     pub fn parse_cell_properties(reader: String) -> String {
         String::from("[unimplemented: parse_cell_properties]")
-    }
-
-    pub fn parse_table_grid(reader: String) -> TableGrid {
-        panic!("alef: parse_table_grid not auto-delegatable")
     }
 
     pub fn parse_theme_xml(xml: String) -> PhpResult<String> {
@@ -10136,32 +9093,16 @@ impl KreuzbergApi {
         String::from("[unimplemented: detect_image_format]")
     }
 
-    pub fn process_images_with_ocr_async(
-        images: Vec<ExtractedImage>,
-        config: &ExtractionConfig,
-    ) -> PhpResult<Vec<ExtractedImage>> {
-        let config_core: kreuzberg::ExtractionConfig = config.clone().into();
-        WORKER_RUNTIME.block_on(async {
-            let result = kreuzberg::extraction::image_ocr::process_images_with_ocr(images, config_core)
-                .await
-                .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-            Ok(result.into_iter().map(Into::into).collect())
-        })
+    pub fn extract_ppt_text(content: Vec<u8>) -> PhpResult<String> {
+        Err(ext_php_rs::exception::PhpException::default(
+            "Not implemented: extract_ppt_text".to_string(),
+        ))
     }
 
-    pub fn extract_ppt_text(content: Vec<u8>) -> PhpResult<PptExtractionResult> {
-        let result = kreuzberg::extraction::extract_ppt_text(&content)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    pub fn extract_ppt_text_with_options(
-        content: Vec<u8>,
-        include_master_slides: bool,
-    ) -> PhpResult<PptExtractionResult> {
-        let result = kreuzberg::extraction::extract_ppt_text_with_options(&content, include_master_slides)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into())
+    pub fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bool) -> PhpResult<String> {
+        Err(ext_php_rs::exception::PhpException::default(
+            "Not implemented: extract_ppt_text_with_options".to_string(),
+        ))
     }
 
     pub fn extract_pptx_from_path(path: String, options: String) -> PhpResult<PptxExtractionResult> {
@@ -10196,14 +9137,12 @@ impl KreuzbergApi {
         kreuzberg::extraction::cells_to_markdown(cells)
     }
 
-    pub fn parse_jotdown_attributes(attrs: &Attributes) -> Attributes {
-        let attrs_core: kreuzberg::Attributes = attrs.clone().into();
-        kreuzberg::extractors::djot_format::attributes::parse_jotdown_attributes(attrs_core).into()
+    pub fn parse_jotdown_attributes(attrs: String) -> String {
+        String::from("[unimplemented: parse_jotdown_attributes]")
     }
 
-    pub fn render_attributes(attrs: &Attributes) -> String {
-        let attrs_core: kreuzberg::Attributes = attrs.clone().into();
-        kreuzberg::extractors::djot_format::attributes::render_attributes(attrs_core)
+    pub fn render_attributes(attrs: String) -> String {
+        String::from("[unimplemented: render_attributes]")
     }
 
     pub fn djot_content_to_djot(content: &DjotContent) -> String {
@@ -10224,11 +9163,7 @@ impl KreuzbergApi {
         Ok(result)
     }
 
-    pub fn extract_complete_djot_content(events: Vec<String>, metadata: &Metadata, tables: Vec<Table>) -> DjotContent {
-        panic!("alef: extract_complete_djot_content not auto-delegatable")
-    }
-
-    pub fn extract_tables_from_events(events: Vec<String>) -> Vec<Table> {
+    pub fn extract_tables_from_events(events: Vec<String>) -> Vec<String> {
         Vec::new()
     }
 
@@ -10236,26 +9171,22 @@ impl KreuzbergApi {
         String::from("[unimplemented: extract_text_from_events]")
     }
 
-    pub fn render_block_to_djot(output: String, block: &FormattedBlock, indent_level: i64) -> () {
+    pub fn render_block_to_djot(block: &FormattedBlock, indent_level: i64) -> String {
         let block_core: kreuzberg::FormattedBlock = block.clone().into();
-        kreuzberg::extractors::djot_format::rendering::render_block_to_djot(&output, block_core, indent_level)
+        kreuzberg::extractors::djot_format::rendering::render_block_to_djot(block_core, indent_level)
     }
 
-    pub fn render_list_item(output: String, item: &FormattedBlock, indent: String, marker: String) -> () {
+    pub fn render_list_item(item: &FormattedBlock, indent: String, marker: String) -> String {
         let item_core: kreuzberg::FormattedBlock = item.clone().into();
-        kreuzberg::extractors::djot_format::rendering::render_list_item(&output, item_core, &indent, &marker)
+        kreuzberg::extractors::djot_format::rendering::render_list_item(item_core, &indent, &marker)
     }
 
-    pub fn render_inline_content(output: String, elements: Vec<InlineElement>) -> () {
-        kreuzberg::extractors::djot_format::rendering::render_inline_content(&output, elements)
+    pub fn render_inline_content(elements: Vec<InlineElement>) -> String {
+        kreuzberg::extractors::djot_format::rendering::render_inline_content(elements)
     }
 
     pub fn extract_frontmatter(content: String) -> String {
         String::from("[unimplemented: extract_frontmatter]")
-    }
-
-    pub fn extract_metadata_from_yaml(yaml: String) -> Metadata {
-        panic!("alef: extract_metadata_from_yaml not auto-delegatable")
     }
 
     pub fn extract_title_from_content(content: String) -> Option<String> {
@@ -10298,31 +9229,12 @@ impl KreuzbergApi {
         kreuzberg::extractors::iwork::dedup_text(texts)
     }
 
-    pub fn evaluate_native_text_for_ocr(
-        native_text: String,
-        page_count: Option<i64>,
-        thresholds: &OcrQualityThresholds,
-    ) -> OcrFallbackDecision {
-        let thresholds_core: kreuzberg::OcrQualityThresholds = thresholds.clone().into();
-        kreuzberg::extractors::pdf::evaluate_native_text_for_ocr(&native_text, page_count, thresholds_core).into()
+    pub fn hex_digit_to_u8(c: u8) -> Option<u8> {
+        kreuzberg::extractors::rtf::hex_digit_to_u8(c)
     }
 
-    pub fn evaluate_per_page_ocr(
-        native_text: String,
-        boundaries: Option<Vec<PageBoundary>>,
-        page_count: Option<i64>,
-        thresholds: &OcrQualityThresholds,
-    ) -> OcrFallbackDecision {
-        let thresholds_core: kreuzberg::OcrQualityThresholds = thresholds.clone().into();
-        kreuzberg::extractors::pdf::evaluate_per_page_ocr(&native_text, boundaries, page_count, thresholds_core).into()
-    }
-
-    pub fn hex_digit_to_u8(c: String) -> Option<u8> {
-        kreuzberg::extractors::rtf::hex_digit_to_u8(&c)
-    }
-
-    pub fn parse_hex_byte(h1: String, h2: String) -> Option<u8> {
-        kreuzberg::extractors::rtf::parse_hex_byte(&h1, &h2)
+    pub fn parse_hex_byte(h1: u8, h2: u8) -> Option<u8> {
+        kreuzberg::extractors::rtf::parse_hex_byte(h1, h2)
     }
 
     pub fn parse_rtf_control_word(chars: String) -> String {
@@ -10391,12 +9303,6 @@ impl KreuzbergApi {
         Ok(result)
     }
 
-    pub fn register_ocr_backend(backend: &OcrBackend) -> PhpResult<()> {
-        let result = kreuzberg::plugins::register_ocr_backend(&backend.inner)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
-    }
-
     pub fn unregister_ocr_backend(name: String) -> PhpResult<()> {
         let result = kreuzberg::plugins::unregister_ocr_backend(&name)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
@@ -10439,12 +9345,6 @@ impl KreuzbergApi {
 
     pub fn get_renderer_registry() -> String {
         String::from("[unimplemented: get_renderer_registry]")
-    }
-
-    pub fn register_renderer(renderer: &Renderer) -> PhpResult<()> {
-        let result = kreuzberg::plugins::register_renderer(&renderer.inner)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
     }
 
     pub fn unregister_renderer(name: String) -> PhpResult<()> {
@@ -10517,8 +9417,8 @@ impl KreuzbergApi {
         kreuzberg::telemetry::conventions::sanitize_filename(std::path::PathBuf::from(path)).into()
     }
 
-    pub fn get_metrics() -> ExtractionMetrics {
-        kreuzberg::telemetry::metrics::get_metrics().clone().into()
+    pub fn get_metrics() -> String {
+        String::from("[unimplemented: get_metrics]")
     }
 
     pub fn record_error_on_current_span(error: String) -> () {
@@ -10697,16 +9597,12 @@ impl KreuzbergApi {
         }
     }
 
-    pub fn intern_language_code(lang_code: String) -> InternedString {
-        InternedString {
-            inner: Arc::new(kreuzberg::utils::string_pool::intern_language_code(&lang_code)),
-        }
+    pub fn intern_language_code(lang_code: String) -> String {
+        String::from("[unimplemented: intern_language_code]")
     }
 
-    pub fn intern_mime_type(mime_type: String) -> InternedString {
-        InternedString {
-            inner: Arc::new(kreuzberg::utils::string_pool::intern_mime_type(&mime_type)),
-        }
+    pub fn intern_mime_type(mime_type: String) -> String {
+        String::from("[unimplemented: intern_mime_type]")
     }
 
     pub fn xml_tag_name(name: Vec<u8>) -> String {
@@ -10734,13 +9630,9 @@ impl KreuzbergApi {
     }
 
     pub fn load_server_config(config_path: Option<String>) -> PhpResult<ServerConfig> {
-        let result = kreuzberg::api::load_server_config(config_path.map(std::path::PathBuf::from))
+        let result = kreuzberg::api::load_server_config(config_path.as_deref())
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result.into())
-    }
-
-    pub fn openapi_json() -> String {
-        kreuzberg::api::openapi::openapi_json()
     }
 
     pub fn create_router(config: &ExtractionConfig) -> String {
@@ -10768,17 +9660,6 @@ impl KreuzbergApi {
     pub fn serve_with_config_async(host: String, port: u16, config: &ExtractionConfig) -> PhpResult<()> {
         Err(ext_php_rs::exception::PhpException::default(
             "Not implemented: serve_with_config_async".to_string(),
-        ))
-    }
-
-    pub fn serve_with_config_and_limits_async(
-        host: String,
-        port: u16,
-        config: &ExtractionConfig,
-        limits: String,
-    ) -> PhpResult<()> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: serve_with_config_and_limits_async".to_string(),
         ))
     }
 
@@ -10828,32 +9709,10 @@ impl KreuzbergApi {
         })
     }
 
-    pub fn start_mcp_server_http_async(host: String, port: u16) -> PhpResult<()> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: start_mcp_server_http_async".to_string(),
-        ))
-    }
-
-    pub fn start_mcp_server_http_with_config_async(
-        host: String,
-        port: u16,
-        config: &ExtractionConfig,
-    ) -> PhpResult<()> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: start_mcp_server_http_with_config_async".to_string(),
-        ))
-    }
-
     pub fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> PhpResult<()> {
         let result = kreuzberg::chunking::validate_page_boundaries(boundaries)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
-    }
-
-    pub fn calculate_page_range(byte_start: i64, byte_end: i64, boundaries: Vec<PageBoundary>) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: calculate_page_range".to_string(),
-        ))
     }
 
     pub fn classify_chunk(content: String, heading_context: Option<&HeadingContext>) -> String {
@@ -10962,14 +9821,14 @@ impl KreuzbergApi {
 
     pub fn warm_model(model_type: String, cache_dir: Option<String>) -> PhpResult<()> {
         let model_type_core: kreuzberg::EmbeddingModelType = model_type.clone().into();
-        let result = kreuzberg::warm_model(model_type_core, cache_dir.map(std::path::PathBuf::from))
+        let result = kreuzberg::warm_model(model_type_core, cache_dir.as_deref())
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
 
     pub fn download_model(model_type: String, cache_dir: Option<String>) -> PhpResult<()> {
         let model_type_core: kreuzberg::EmbeddingModelType = model_type.clone().into();
-        let result = kreuzberg::download_model(model_type_core, cache_dir.map(std::path::PathBuf::from))
+        let result = kreuzberg::download_model(model_type_core, cache_dir.as_deref())
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
     }
@@ -11000,18 +9859,6 @@ impl KreuzbergApi {
         max_dpi: i32,
     ) -> i32 {
         kreuzberg::image::calculate_optimal_dpi(page_width, page_height, target_dpi, max_dimension, min_dpi, max_dpi)
-    }
-
-    pub fn normalize_image_dpi(
-        rgb_data: Vec<u8>,
-        width: i64,
-        height: i64,
-        config: &ExtractionConfig,
-        current_dpi: Option<f64>,
-    ) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: normalize_image_dpi".to_string(),
-        ))
     }
 
     pub fn resize_image(image: String, new_width: u32, new_height: u32, scale_factor: f64) -> PhpResult<String> {
@@ -11046,25 +9893,6 @@ impl KreuzbergApi {
         let result = kreuzberg::extract_keywords(&text, config_core)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result.into_iter().map(Into::into).collect())
-    }
-
-    pub fn text_block_to_element(block: String, page_number: i64) -> PhpResult<Option<OcrElement>> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: text_block_to_element".to_string(),
-        ))
-    }
-
-    pub fn tsv_row_to_element(row: String) -> OcrElement {
-        panic!("alef: tsv_row_to_element not auto-delegatable")
-    }
-
-    pub fn iterator_word_to_element(
-        word: String,
-        block_type: Option<String>,
-        para_info: Option<String>,
-        page_number: i64,
-    ) -> OcrElement {
-        panic!("alef: iterator_word_to_element not auto-delegatable")
     }
 
     pub fn element_to_hocr_word(element: &OcrElement) -> String {
@@ -11165,30 +9993,8 @@ impl KreuzbergApi {
         String::from("[unimplemented: preprocess_letterbox]")
     }
 
-    pub fn build_session(path: String, accel: Option<&AccelerationConfig>, thread_budget: i64) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: build_session".to_string(),
-        ))
-    }
-
     pub fn config_from_extraction(layout_config: &LayoutDetectionConfig) -> String {
         String::from("[unimplemented: config_from_extraction]")
-    }
-
-    pub fn create_engine(layout_config: &LayoutDetectionConfig) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: create_engine".to_string(),
-        ))
-    }
-
-    pub fn take_or_create_engine(layout_config: &LayoutDetectionConfig) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: take_or_create_engine".to_string(),
-        ))
-    }
-
-    pub fn return_engine(engine: String) -> () {
-        ()
     }
 
     pub fn take_or_create_tatr() -> Option<String> {
@@ -11223,12 +10029,6 @@ impl KreuzbergApi {
         Vec::new()
     }
 
-    pub fn extract_bundled_pdfium() -> PhpResult<String> {
-        let result = kreuzberg::pdf::extract_bundled_pdfium()
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.to_string_lossy().to_string())
-    }
-
     pub fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
         Vec::new()
     }
@@ -11251,10 +10051,6 @@ impl KreuzbergApi {
 
     pub fn cached_font_count() -> i64 {
         kreuzberg::pdf::cached_font_count()
-    }
-
-    pub fn clear_font_cache() -> () {
-        kreuzberg::pdf::fonts::clear_font_cache()
     }
 
     pub fn cluster_font_sizes(blocks: Vec<String>, k: i64) -> PhpResult<Vec<FontSizeCluster>> {
@@ -11311,12 +10107,6 @@ impl KreuzbergApi {
         Ok(result.into_iter().map(Into::into).collect())
     }
 
-    pub fn reextract_raw_images_via_pdfium(pdf_bytes: Vec<u8>, images: Vec<PdfImage>) -> PhpResult<u32> {
-        let result = kreuzberg::pdf::images::reextract_raw_images_via_pdfium(&pdf_bytes, images)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
-    }
-
     pub fn detect_layout_for_document(pdf_bytes: Vec<u8>, engine: String) -> PhpResult<String> {
         Err(ext_php_rs::exception::PhpException::default(
             "Not implemented: detect_layout_for_document".to_string(),
@@ -11344,16 +10134,6 @@ impl KreuzbergApi {
     pub fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> PhpResult<String> {
         Err(ext_php_rs::exception::PhpException::default(
             "Not implemented: extract_metadata_with_passwords".to_string(),
-        ))
-    }
-
-    pub fn extract_metadata_from_document(
-        document: String,
-        page_boundaries: Option<Vec<PageBoundary>>,
-        content: Option<String>,
-    ) -> PhpResult<PdfExtractionMetadata> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: extract_metadata_from_document".to_string(),
         ))
     }
 
@@ -11426,25 +10206,6 @@ impl KreuzbergApi {
         let result = kreuzberg::pdf::text::extract_text_from_pdf_with_passwords(&pdf_bytes, passwords)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
         Ok(result)
-    }
-
-    pub fn extract_text_and_metadata_from_pdf_document(
-        document: String,
-        extraction_config: Option<&ExtractionConfig>,
-    ) -> PhpResult<PdfUnifiedExtractionResult> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: extract_text_and_metadata_from_pdf_document".to_string(),
-        ))
-    }
-
-    pub fn extract_text_from_pdf_document(
-        document: String,
-        page_config: Option<&PageConfig>,
-        extraction_config: Option<&ExtractionConfig>,
-    ) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: extract_text_from_pdf_document".to_string(),
-        ))
     }
 
     pub fn serialize_to_toon(result: &ExtractionResult) -> PhpResult<String> {
@@ -11649,8 +10410,8 @@ impl From<kreuzberg::ImageExtractionConfig> for ImageExtractionConfig {
     }
 }
 
-impl From<TokenReductionConfig> for kreuzberg::TokenReductionConfig {
-    fn from(val: TokenReductionConfig) -> Self {
+impl From<TokenReductionOptions> for kreuzberg::TokenReductionOptions {
+    fn from(val: TokenReductionOptions) -> Self {
         Self {
             mode: val.mode,
             preserve_important_words: val.preserve_important_words,
@@ -11658,8 +10419,8 @@ impl From<TokenReductionConfig> for kreuzberg::TokenReductionConfig {
     }
 }
 
-impl From<kreuzberg::TokenReductionConfig> for TokenReductionConfig {
-    fn from(val: kreuzberg::TokenReductionConfig) -> Self {
+impl From<kreuzberg::TokenReductionOptions> for TokenReductionOptions {
+    fn from(val: kreuzberg::TokenReductionOptions) -> Self {
         Self {
             mode: val.mode,
             preserve_important_words: val.preserve_important_words,
@@ -12155,51 +10916,6 @@ impl From<kreuzberg::extraction::StructuredDataResult> for StructuredDataResult 
     }
 }
 
-impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
-    fn from(val: ListItemMetadata) -> Self {
-        Self {
-            list_type: Default::default(),
-            byte_start: val.byte_start as usize,
-            byte_end: val.byte_end as usize,
-            indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ListItemMetadata> for ListItemMetadata {
-    fn from(val: kreuzberg::extraction::ListItemMetadata) -> Self {
-        Self {
-            list_type: format!("{:?}", val.list_type),
-            byte_start: val.byte_start as i64,
-            byte_end: val.byte_end as i64,
-            indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<Section> for kreuzberg::extraction::hwp::model::Section {
-    fn from(val: Section) -> Self {
-        Self {
-            paragraphs: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::Section> for Section {
-    fn from(val: kreuzberg::extraction::hwp::model::Section) -> Self {
-        Self {
-            paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<ImageOcrResult> for kreuzberg::extraction::image::ImageOcrResult {
-    fn from(val: ImageOcrResult) -> Self {
-        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
-        serde_json::from_str(&json).expect("alef: deserialize to core type")
-    }
-}
-
 impl From<kreuzberg::extraction::image::ImageOcrResult> for ImageOcrResult {
     fn from(val: kreuzberg::extraction::image::ImageOcrResult) -> Self {
         Self {
@@ -12233,46 +10949,6 @@ impl From<kreuzberg::extraction::html::ExtractedInlineImage> for ExtractedInline
     }
 }
 
-impl From<DocExtractionResult> for kreuzberg::extraction::doc::DocExtractionResult {
-    fn from(val: DocExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            metadata: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::doc::DocExtractionResult> for DocExtractionResult {
-    fn from(val: kreuzberg::extraction::doc::DocExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            metadata: format!("{:?}", val.metadata),
-        }
-    }
-}
-
-impl From<Drawing> for kreuzberg::extraction::docx::drawing::Drawing {
-    fn from(val: Drawing) -> Self {
-        Self {
-            drawing_type: Default::default(),
-            extent: Default::default(),
-            doc_properties: Default::default(),
-            image_ref: val.image_ref,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Drawing> for Drawing {
-    fn from(val: kreuzberg::extraction::docx::drawing::Drawing) -> Self {
-        Self {
-            drawing_type: format!("{:?}", val.drawing_type),
-            extent: val.extent.as_ref().map(|v| format!("{:?}", v)),
-            doc_properties: val.doc_properties.as_ref().map(|v| format!("{:?}", v)),
-            image_ref: val.image_ref,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for AnchorProperties {
     fn from(val: kreuzberg::extraction::docx::drawing::AnchorProperties) -> Self {
         Self {
@@ -12286,20 +10962,11 @@ impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for AnchorProp
     }
 }
 
-impl From<kreuzberg::extraction::docx::parser::TableRow> for TableRow {
-    fn from(val: kreuzberg::extraction::docx::parser::TableRow) -> Self {
-        Self {
-            cells: val.cells.into_iter().map(Into::into).collect(),
-            properties: val.properties.as_ref().map(|v| format!("{:?}", v)),
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::parser::HeaderFooter> for HeaderFooter {
     fn from(val: kreuzberg::extraction::docx::parser::HeaderFooter) -> Self {
         Self {
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             header_type: format!("{:?}", val.header_type),
         }
     }
@@ -12349,38 +11016,6 @@ impl From<kreuzberg::extraction::docx::styles::ResolvedStyle> for ResolvedStyle 
         Self {
             paragraph_properties: format!("{:?}", val.paragraph_properties),
             run_properties: format!("{:?}", val.run_properties),
-        }
-    }
-}
-
-impl From<TableProperties> for kreuzberg::extraction::docx::table::TableProperties {
-    fn from(val: TableProperties) -> Self {
-        Self {
-            style_id: val.style_id,
-            width: Default::default(),
-            alignment: val.alignment,
-            layout: val.layout,
-            look: Default::default(),
-            borders: Default::default(),
-            cell_margins: Default::default(),
-            indent: Default::default(),
-            caption: val.caption,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableProperties> for TableProperties {
-    fn from(val: kreuzberg::extraction::docx::table::TableProperties) -> Self {
-        Self {
-            style_id: val.style_id,
-            width: val.width.as_ref().map(|v| format!("{:?}", v)),
-            alignment: val.alignment,
-            layout: val.layout,
-            look: val.look.as_ref().map(|v| format!("{:?}", v)),
-            borders: val.borders.as_ref().map(|v| format!("{:?}", v)),
-            cell_margins: val.cell_margins.as_ref().map(|v| format!("{:?}", v)),
-            indent: val.indent.as_ref().map(|v| format!("{:?}", v)),
-            caption: val.caption,
         }
     }
 }
@@ -12448,39 +11083,6 @@ impl From<kreuzberg::extraction::OdtProperties> for OdtProperties {
     }
 }
 
-impl From<PptExtractionResult> for kreuzberg::extraction::ppt::PptExtractionResult {
-    fn from(val: PptExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            slide_count: val.slide_count as usize,
-            metadata: Default::default(),
-            speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ppt::PptExtractionResult> for PptExtractionResult {
-    fn from(val: kreuzberg::extraction::ppt::PptExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            slide_count: val.slide_count as i64,
-            metadata: format!("{:?}", val.metadata),
-            speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecision {
-    fn from(val: OcrFallbackDecision) -> Self {
-        Self {
-            stats: Default::default(),
-            avg_non_whitespace: val.avg_non_whitespace,
-            avg_alnum: val.avg_alnum,
-            fallback: val.fallback,
-        }
-    }
-}
-
 impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecision {
     fn from(val: kreuzberg::extractors::pdf::OcrFallbackDecision) -> Self {
         Self {
@@ -12492,38 +11094,30 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecisi
     }
 }
 
-impl From<ExtractionMetrics> for kreuzberg::telemetry::metrics::ExtractionMetrics {
-    fn from(val: ExtractionMetrics) -> Self {
-        Self {
-            extraction_total: Default::default(),
-            cache_hits: Default::default(),
-            cache_misses: Default::default(),
-            batch_total: Default::default(),
-            extraction_duration_ms: Default::default(),
-            extraction_input_bytes: Default::default(),
-            extraction_output_bytes: Default::default(),
-            pipeline_duration_ms: Default::default(),
-            ocr_duration_ms: Default::default(),
-            batch_duration_ms: Default::default(),
-            concurrent_extractions: Default::default(),
-        }
+impl From<TokenReductionConfig> for kreuzberg::TokenReductionConfig {
+    fn from(val: TokenReductionConfig) -> Self {
+        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
+        serde_json::from_str(&json).expect("alef: deserialize to core type")
     }
 }
 
-impl From<kreuzberg::telemetry::metrics::ExtractionMetrics> for ExtractionMetrics {
-    fn from(val: kreuzberg::telemetry::metrics::ExtractionMetrics) -> Self {
+impl From<kreuzberg::TokenReductionConfig> for TokenReductionConfig {
+    fn from(val: kreuzberg::TokenReductionConfig) -> Self {
         Self {
-            extraction_total: format!("{:?}", val.extraction_total),
-            cache_hits: format!("{:?}", val.cache_hits),
-            cache_misses: format!("{:?}", val.cache_misses),
-            batch_total: format!("{:?}", val.batch_total),
-            extraction_duration_ms: format!("{:?}", val.extraction_duration_ms),
-            extraction_input_bytes: format!("{:?}", val.extraction_input_bytes),
-            extraction_output_bytes: format!("{:?}", val.extraction_output_bytes),
-            pipeline_duration_ms: format!("{:?}", val.pipeline_duration_ms),
-            ocr_duration_ms: format!("{:?}", val.ocr_duration_ms),
-            batch_duration_ms: format!("{:?}", val.batch_duration_ms),
-            concurrent_extractions: format!("{:?}", val.concurrent_extractions),
+            level: serde_json::to_value(val.level)
+                .ok()
+                .and_then(|s| s.as_str().map(String::from))
+                .unwrap_or_default(),
+            language_hint: val.language_hint,
+            preserve_markdown: val.preserve_markdown,
+            preserve_code: val.preserve_code,
+            semantic_threshold: val.semantic_threshold,
+            enable_parallel: val.enable_parallel,
+            use_simd: val.use_simd,
+            custom_stopwords: val.custom_stopwords.map(|m| m.into_iter().collect()),
+            preserve_patterns: val.preserve_patterns,
+            target_reduction: val.target_reduction,
+            enable_semantic_clustering: val.enable_semantic_clustering,
         }
     }
 }
@@ -12544,7 +11138,7 @@ impl From<kreuzberg::PdfAnnotation> for PdfAnnotation {
                 .unwrap_or_default(),
             content: val.content,
             page_number: val.page_number as i64,
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: val.bounding_box.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -12562,7 +11156,7 @@ impl From<kreuzberg::DjotContent> for DjotContent {
             plain_text: val.plain_text,
             blocks: val.blocks.into_iter().map(Into::into).collect(),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             images: val.images.into_iter().map(Into::into).collect(),
             links: val.links.into_iter().map(Into::into).collect(),
             footnotes: val.footnotes.into_iter().map(Into::into).collect(),
@@ -12587,7 +11181,7 @@ impl From<kreuzberg::FormattedBlock> for FormattedBlock {
                 .unwrap_or_default(),
             level: val.level.map(|v| v as i64),
             inline_content: val.inline_content.into_iter().map(Into::into).collect(),
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
             language: val.language,
             code: val.code,
             children: val.children.into_iter().map(Into::into).collect(),
@@ -12610,28 +11204,8 @@ impl From<kreuzberg::InlineElement> for InlineElement {
                 .and_then(|s| s.as_str().map(String::from))
                 .unwrap_or_default(),
             content: val.content,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
             metadata: val.metadata.map(|m| m.into_iter().collect()),
-        }
-    }
-}
-
-impl From<Attributes> for kreuzberg::Attributes {
-    fn from(val: Attributes) -> Self {
-        Self {
-            id: val.id,
-            classes: val.classes,
-            key_values: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::Attributes> for Attributes {
-    fn from(val: kreuzberg::Attributes) -> Self {
-        Self {
-            id: val.id,
-            classes: val.classes,
-            key_values: val.key_values.iter().map(|i| format!("{:?}", i)).collect(),
         }
     }
 }
@@ -12642,7 +11216,7 @@ impl From<DjotImage> for kreuzberg::DjotImage {
             src: val.src,
             alt: val.alt,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
         }
     }
 }
@@ -12653,7 +11227,7 @@ impl From<kreuzberg::DjotImage> for DjotImage {
             src: val.src,
             alt: val.alt,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -12664,7 +11238,7 @@ impl From<DjotLink> for kreuzberg::DjotLink {
             url: val.url,
             text: val.text,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
         }
     }
 }
@@ -12675,7 +11249,7 @@ impl From<kreuzberg::DjotLink> for DjotLink {
             url: val.url,
             text: val.text,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -12743,9 +11317,7 @@ impl From<DocumentNode> for kreuzberg::DocumentNode {
 impl From<kreuzberg::DocumentNode> for DocumentNode {
     fn from(val: kreuzberg::DocumentNode) -> Self {
         Self {
-            id: NodeId {
-                inner: Arc::new(val.id),
-            },
+            id: format!("{:?}", val.id),
             content: serde_json::to_value(val.content)
                 .ok()
                 .and_then(|s| s.as_str().map(String::from))
@@ -12758,43 +11330,9 @@ impl From<kreuzberg::DocumentNode> for DocumentNode {
                 .unwrap_or_default(),
             page: val.page,
             page_end: val.page_end,
-            bbox: val.bbox.map(Into::into),
+            bbox: val.bbox.as_ref().map(|v| format!("{:?}", v)),
             annotations: val.annotations.into_iter().map(Into::into).collect(),
             attributes: val.attributes.map(|m| m.into_iter().collect()),
-        }
-    }
-}
-
-impl From<TableGrid> for kreuzberg::TableGrid {
-    fn from(val: TableGrid) -> Self {
-        Self {
-            rows: val.rows,
-            cols: val.cols,
-            cells: val.cells.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<kreuzberg::TableGrid> for TableGrid {
-    fn from(val: kreuzberg::TableGrid) -> Self {
-        Self {
-            rows: val.rows,
-            cols: val.cols,
-            cells: val.cells.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<GridCell> for kreuzberg::GridCell {
-    fn from(val: GridCell) -> Self {
-        Self {
-            content: val.content,
-            row: val.row,
-            col: val.col,
-            row_span: val.row_span,
-            col_span: val.col_span,
-            is_header: val.is_header,
-            bbox: val.bbox.map(Into::into),
         }
     }
 }
@@ -12808,7 +11346,7 @@ impl From<kreuzberg::GridCell> for GridCell {
             row_span: val.row_span,
             col_span: val.col_span,
             is_header: val.is_header,
-            bbox: val.bbox.map(Into::into),
+            bbox: val.bbox.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -12846,7 +11384,7 @@ impl From<kreuzberg::ExtractionResult> for ExtractionResult {
             content: val.content,
             mime_type: format!("{:?}", val.mime_type),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             detected_languages: val.detected_languages,
             chunks: val.chunks.map(|v| v.into_iter().map(Into::into).collect()),
             images: val.images.map(|v| v.into_iter().map(Into::into).collect()),
@@ -13038,30 +11576,8 @@ impl From<kreuzberg::ExtractedImage> for ExtractedImage {
             is_mask: val.is_mask,
             description: val.description,
             ocr_result: val.ocr_result.map(|v| (*v).into()),
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: val.bounding_box.as_ref().map(|v| format!("{:?}", v)),
             source_path: val.source_path,
-        }
-    }
-}
-
-impl From<BoundingBox> for kreuzberg::BoundingBox {
-    fn from(val: BoundingBox) -> Self {
-        Self {
-            x0: val.x0,
-            y0: val.y0,
-            x1: val.x1,
-            y1: val.y1,
-        }
-    }
-}
-
-impl From<kreuzberg::BoundingBox> for BoundingBox {
-    fn from(val: kreuzberg::BoundingBox) -> Self {
-        Self {
-            x0: val.x0,
-            y0: val.y0,
-            x1: val.x1,
-            y1: val.y1,
         }
     }
 }
@@ -13071,7 +11587,7 @@ impl From<ElementMetadata> for kreuzberg::ElementMetadata {
         Self {
             page_number: val.page_number.map(|v| v as usize),
             filename: val.filename,
-            coordinates: val.coordinates.map(Into::into),
+            coordinates: Default::default(),
             element_index: val.element_index.map(|v| v as usize),
             additional: val.additional.into_iter().collect(),
         }
@@ -13083,7 +11599,7 @@ impl From<kreuzberg::ElementMetadata> for ElementMetadata {
         Self {
             page_number: val.page_number.map(|v| v as i64),
             filename: val.filename,
-            coordinates: val.coordinates.map(Into::into),
+            coordinates: val.coordinates.as_ref().map(|v| format!("{:?}", v)),
             element_index: val.element_index.map(|v| v as i64),
             additional: val.additional.into_iter().collect(),
         }
@@ -13100,9 +11616,7 @@ impl From<Element> for kreuzberg::Element {
 impl From<kreuzberg::Element> for Element {
     fn from(val: kreuzberg::Element) -> Self {
         Self {
-            element_id: ElementId {
-                inner: Arc::new(val.element_id),
-            },
+            element_id: format!("{:?}", val.element_id),
             element_type: serde_json::to_value(val.element_type)
                 .ok()
                 .and_then(|s| s.as_str().map(String::from))
@@ -13540,28 +12054,6 @@ impl From<kreuzberg::ArchiveMetadata> for ArchiveMetadata {
             file_list: val.file_list,
             total_size: val.total_size as i64,
             compressed_size: val.compressed_size.map(|v| v as i64),
-        }
-    }
-}
-
-impl From<ImageMetadata> for kreuzberg::ImageMetadata {
-    fn from(val: ImageMetadata) -> Self {
-        Self {
-            width: val.width,
-            height: val.height,
-            format: val.format,
-            exif: val.exif.into_iter().collect(),
-        }
-    }
-}
-
-impl From<kreuzberg::ImageMetadata> for ImageMetadata {
-    fn from(val: kreuzberg::ImageMetadata) -> Self {
-        Self {
-            width: val.width,
-            height: val.height,
-            format: val.format,
-            exif: val.exif.into_iter().collect(),
         }
     }
 }
@@ -14070,7 +12562,7 @@ impl From<kreuzberg::PageContent> for PageContent {
         Self {
             page_number: val.page_number as i64,
             content: val.content,
-            tables: val.tables.into_iter().map(|v| (*v).clone().into()).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             images: val.images.into_iter().map(|v| (*v).clone().into()).collect(),
             hierarchy: val.hierarchy.map(Into::into),
             is_blank: val.is_blank,
@@ -14118,39 +12610,6 @@ impl From<kreuzberg::HierarchicalBlock> for HierarchicalBlock {
     }
 }
 
-impl From<Table> for kreuzberg::Table {
-    fn from(val: Table) -> Self {
-        Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number as usize,
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::Table> for Table {
-    fn from(val: kreuzberg::Table) -> Self {
-        Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number as i64,
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::TableCell> for TableCell {
-    fn from(val: kreuzberg::TableCell) -> Self {
-        Self {
-            content: val.content,
-            row_span: val.row_span as i64,
-            col_span: val.col_span as i64,
-            is_header: val.is_header,
-        }
-    }
-}
-
 impl From<Uri> for kreuzberg::Uri {
     fn from(val: Uri) -> Self {
         let json = serde_json::to_string(&val).expect("alef: serialize binding type");
@@ -14168,24 +12627,6 @@ impl From<kreuzberg::Uri> for Uri {
                 .ok()
                 .and_then(|s| s.as_str().map(String::from))
                 .unwrap_or_default(),
-        }
-    }
-}
-
-impl From<ApiError> for kreuzberg::api::ApiError {
-    fn from(val: ApiError) -> Self {
-        Self {
-            status: Default::default(),
-            body: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::api::ApiError> for ApiError {
-    fn from(val: kreuzberg::api::ApiError) -> Self {
-        Self {
-            status: format!("{:?}", val.status),
-            body: format!("{:?}", val.body),
         }
     }
 }
@@ -14213,7 +12654,7 @@ impl From<kreuzberg::api::ApiState> for ApiState {
     fn from(val: kreuzberg::api::ApiState) -> Self {
         Self {
             default_config: (*val.default_config).clone().into(),
-            extraction_service: format!("{:?}", (*val.extraction_service).clone()),
+            extraction_service: format!("{:?}", val.extraction_service),
         }
     }
 }
@@ -14773,7 +13214,7 @@ impl From<HierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
     fn from(val: HierarchyBlock) -> Self {
         Self {
             text: val.text,
-            bbox: val.bbox.into(),
+            bbox: Default::default(),
             font_size: val.font_size,
             hierarchy_level: Default::default(),
         }
@@ -14784,7 +13225,7 @@ impl From<kreuzberg::pdf::hierarchy::HierarchyBlock> for HierarchyBlock {
     fn from(val: kreuzberg::pdf::hierarchy::HierarchyBlock) -> Self {
         Self {
             text: val.text,
-            bbox: val.bbox.into(),
+            bbox: format!("{:?}", val.bbox),
             font_size: val.font_size,
             hierarchy_level: format!("{:?}", val.hierarchy_level),
         }
@@ -14823,24 +13264,11 @@ impl From<kreuzberg::pdf::PdfImage> for PdfImage {
     }
 }
 
-impl From<kreuzberg::pdf::layout_runner::PageLayoutRegion> for PageLayoutRegion {
-    fn from(val: kreuzberg::pdf::layout_runner::PageLayoutRegion) -> Self {
-        Self {
-            class: serde_json::to_value(val.class)
-                .ok()
-                .and_then(|s| s.as_str().map(String::from))
-                .unwrap_or_default(),
-            confidence: val.confidence,
-            bbox: format!("{:?}", val.bbox),
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageLayoutResult> for PageLayoutResult {
     fn from(val: kreuzberg::pdf::layout_runner::PageLayoutResult) -> Self {
         Self {
             page_index: val.page_index as i64,
-            regions: val.regions.into_iter().map(Into::into).collect(),
+            regions: val.regions.iter().map(|i| format!("{:?}", i)).collect(),
             page_width_pts: val.page_width_pts,
             page_height_pts: val.page_height_pts,
             render_width_px: val.render_width_px,
@@ -14858,29 +13286,6 @@ impl From<kreuzberg::pdf::layout_runner::PageTiming> for PageTiming {
             inference_ms: val.inference_ms,
             postprocess_ms: val.postprocess_ms,
             mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
-impl From<PdfExtractionMetadata> for kreuzberg::pdf::metadata::PdfExtractionMetadata {
-    fn from(val: PdfExtractionMetadata) -> Self {
-        let json = serde_json::to_string(&val).expect("alef: serialize binding type");
-        serde_json::from_str(&json).expect("alef: deserialize to core type")
-    }
-}
-
-impl From<kreuzberg::pdf::metadata::PdfExtractionMetadata> for PdfExtractionMetadata {
-    fn from(val: kreuzberg::pdf::metadata::PdfExtractionMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            authors: val.authors,
-            keywords: val.keywords,
-            created_at: val.created_at,
-            modified_at: val.modified_at,
-            created_by: val.created_by,
-            pdf_specific: format!("{:?}", val.pdf_specific),
-            page_structure: val.page_structure.map(Into::into),
         }
     }
 }
@@ -14974,7 +13379,7 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<ExtractionConfig>()
         .class::<FileExtractionConfig>()
         .class::<ImageExtractionConfig>()
-        .class::<TokenReductionConfig>()
+        .class::<TokenReductionOptions>()
         .class::<LanguageDetectionConfig>()
         .class::<HtmlOutputConfig>()
         .class::<LayoutDetectionConfig>()
@@ -14992,31 +13397,23 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<EmbeddingConfig>()
         .class::<TreeSitterConfig>()
         .class::<TreeSitterProcessConfig>()
-        .class::<FileBytes>()
         .class::<SupportedFormat>()
         .class::<ServerConfig>()
         .class::<StructuredDataResult>()
-        .class::<ListItemMetadata>()
-        .class::<Section>()
         .class::<StreamReader>()
         .class::<ImageOcrResult>()
         .class::<HtmlExtractionResult>()
         .class::<ExtractedInlineImage>()
-        .class::<DocExtractionResult>()
-        .class::<Drawing>()
         .class::<AnchorProperties>()
-        .class::<TableRow>()
         .class::<HeaderFooter>()
         .class::<Note>()
         .class::<PageMarginsPoints>()
         .class::<StyleDefinition>()
         .class::<ResolvedStyle>()
-        .class::<TableProperties>()
         .class::<XlsxAppProperties>()
         .class::<PptxAppProperties>()
         .class::<CustomProperties>()
         .class::<OdtProperties>()
-        .class::<PptExtractionResult>()
         .class::<ZipBombValidator>()
         .class::<StringGrowthValidator>()
         .class::<IterationValidator>()
@@ -15024,22 +13421,17 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<EntityValidator>()
         .class::<TableValidator>()
         .class::<OcrFallbackDecision>()
-        .class::<ModelCache>()
-        .class::<ExtractionMetrics>()
-        .class::<QualityProcessor>()
+        .class::<TokenReductionConfig>()
         .class::<PdfAnnotation>()
         .class::<DjotContent>()
         .class::<FormattedBlock>()
         .class::<InlineElement>()
-        .class::<Attributes>()
         .class::<DjotImage>()
         .class::<DjotLink>()
         .class::<Footnote>()
-        .class::<NodeId>()
         .class::<DocumentStructure>()
         .class::<DocumentRelationship>()
         .class::<DocumentNode>()
-        .class::<TableGrid>()
         .class::<GridCell>()
         .class::<TextAnnotation>()
         .class::<ExtractionResult>()
@@ -15051,8 +13443,6 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<HeadingLevel>()
         .class::<ChunkMetadata>()
         .class::<ExtractedImage>()
-        .class::<ElementId>()
-        .class::<BoundingBox>()
         .class::<ElementMetadata>()
         .class::<Element>()
         .class::<ExcelWorkbook>()
@@ -15072,7 +13462,6 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<ExcelMetadata>()
         .class::<EmailMetadata>()
         .class::<ArchiveMetadata>()
-        .class::<ImageMetadata>()
         .class::<XmlMetadata>()
         .class::<TextMetadata>()
         .class::<HeaderMetadata>()
@@ -15105,17 +13494,12 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<PageContent>()
         .class::<PageHierarchy>()
         .class::<HierarchicalBlock>()
-        .class::<Table>()
-        .class::<TableCell>()
         .class::<Uri>()
         .class::<StringBufferPool>()
         .class::<ByteBufferPool>()
-        .class::<Pool>()
         .class::<PooledString>()
-        .class::<InternedString>()
         .class::<TracingLayer>()
         .class::<MetricsLayer>()
-        .class::<ApiError>()
         .class::<ApiDoc>()
         .class::<HealthResponse>()
         .class::<InfoResponse>()
@@ -15145,8 +13529,6 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<ExtractStructuredParams>()
         .class::<ChunkTextParams>()
         .class::<ChunkingResult>()
-        .class::<ChunkingProcessor>()
-        .class::<VlmOcrBackend>()
         .class::<YakeParams>()
         .class::<RakeParams>()
         .class::<KeywordConfig>()
@@ -15165,10 +13547,8 @@ pub fn get_module(module: ModuleBuilder) -> ModuleBuilder {
         .class::<CharData>()
         .class::<HierarchyBlock>()
         .class::<PdfImage>()
-        .class::<PageLayoutRegion>()
         .class::<PageLayoutResult>()
         .class::<PageTiming>()
-        .class::<PdfExtractionMetadata>()
         .class::<CommonPdfMetadata>()
         .class::<PdfUnifiedExtractionResult>()
         .class::<KreuzbergApi>()

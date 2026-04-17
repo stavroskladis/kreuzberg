@@ -13,20 +13,6 @@ class KreuzbergException extends \RuntimeException
     public function getErrorCode(): int { }
 }
 
-/**
- * An owned buffer of file bytes.
- *
- * On non-WASM platforms this may be backed by a memory-mapped file (zero heap
- * allocation for the file contents) or by a `Vec<u8>` for small files.
- * On WASM it is always a `Vec<u8>`.
- *
- * Implements `Deref<Target = [u8]>` so callers can pass `&FileBytes` as `&[u8]`
- * without any additional copy.
- */
-class FileBytes
-{
-}
-
 class StreamReader
 {
 }
@@ -83,54 +69,6 @@ class TableValidator
 {
 }
 
-class ModelCache
-{
-}
-
-/**
- * Post-processor that calculates quality score and cleans text.
- *
- * This processor:
- * - Runs in the Early processing stage
- * - Calculates quality score when `config.enable_quality_processing` is true
- * - Stores quality score in `metadata.additional["quality_score"]`
- * - Cleans and normalizes extracted text
- *
- * # Example
- *
- * ```rust,no_run
- * use kreuzberg::plugins::{Plugin, PostProcessor};
- * use kreuzberg::text::QualityProcessor;
- *
- * let processor = QualityProcessor;
- * assert_eq!(processor.name(), "quality-processing");
- * ```
- */
-class QualityProcessor
-{
-}
-
-/**
- * Deterministic node identifier.
- *
- * Generated from a hash of `node_type + text + page`. The same document
- * always produces the same IDs, making them useful for diffing, caching,
- * and external references.
- */
-class NodeId
-{
-}
-
-/**
- * Unique identifier for semantic elements.
- *
- * Wraps a string identifier that is deterministically generated
- * from element type, content, and page number.
- */
-class ElementId
-{
-}
-
 /**
  * Convenience type alias for a pooled String.
  */
@@ -145,26 +83,12 @@ class ByteBufferPool
 {
 }
 
-class Pool
-{
-}
-
 /**
  * RAII wrapper for a pooled string buffer.
  *
  * Automatically returns the buffer to the pool when dropped.
  */
 class PooledString
-{
-}
-
-/**
- * A reference to an interned string stored in an Arc.
- *
- * This wraps an Arc<String> and provides convenient access to the string content.
- * Multiple calls with the same string content will share the same Arc, reducing memory usage.
- */
-class InternedString
 {
 }
 
@@ -196,39 +120,6 @@ class ApiDoc
  * Extraction response (list of results).
  */
 class ExtractResponse
-{
-}
-
-/**
- * Post-processor that chunks text in document content.
- *
- * This processor:
- * - Runs in the Middle processing stage
- * - Only processes when `config.chunking` is configured
- * - Stores chunks in `result.chunks`
- * - Uses configurable chunk size and overlap
- *
- * # Example
- *
- * ```rust,no_run
- * use kreuzberg::plugins::{Plugin, PostProcessor};
- * use kreuzberg::chunking::processor::ChunkingProcessor;
- *
- * let processor = ChunkingProcessor;
- * assert_eq!(processor.name(), "text-chunking");
- * ```
- */
-class ChunkingProcessor
-{
-}
-
-/**
- * VLM-based OCR backend using liter-llm vision models.
- *
- * This backend sends images to a vision language model (e.g., GPT-4o, Claude)
- * for text extraction, as an alternative to traditional OCR backends.
- */
-class VlmOcrBackend
 {
 }
 
@@ -359,7 +250,7 @@ class ExtractionConfig
     public ?ContentFilterConfig $content_filter;
     public ?ImageExtractionConfig $images;
     public ?PdfConfig $pdf_options;
-    public ?TokenReductionConfig $token_reduction;
+    public ?TokenReductionOptions $token_reduction;
     public ?LanguageDetectionConfig $language_detection;
     public ?PageConfig $pages;
     public ?PostProcessorConfig $postprocessor;
@@ -367,7 +258,7 @@ class ExtractionConfig
     public ?HtmlOutputConfig $html_output;
     public ?int $extraction_timeout_secs;
     public ?int $max_concurrent_extractions;
-    public OutputFormat $result_format;
+    public ExtractionMode $result_format;
     public ?string $security_limits;
     public OutputFormat $output_format;
     public ?LayoutDetectionConfig $layout;
@@ -389,7 +280,7 @@ class ExtractionConfig
         bool $enable_quality_processing,
         bool $force_ocr,
         bool $disable_ocr,
-        OutputFormat $result_format,
+        ExtractionMode $result_format,
         OutputFormat $output_format,
         bool $include_document_structure,
         int $max_archive_depth,
@@ -399,7 +290,7 @@ class ExtractionConfig
         ?ContentFilterConfig $content_filter = null,
         ?ImageExtractionConfig $images = null,
         ?PdfConfig $pdf_options = null,
-        ?TokenReductionConfig $token_reduction = null,
+        ?TokenReductionOptions $token_reduction = null,
         ?LanguageDetectionConfig $language_detection = null,
         ?PageConfig $pages = null,
         ?PostProcessorConfig $postprocessor = null,
@@ -429,7 +320,7 @@ class ExtractionConfig
     public function getContentFilter(): ?ContentFilterConfig { }
     public function getImages(): ?ImageExtractionConfig { }
     public function getPdfOptions(): ?PdfConfig { }
-    public function getTokenReduction(): ?TokenReductionConfig { }
+    public function getTokenReduction(): ?TokenReductionOptions { }
     public function getLanguageDetection(): ?LanguageDetectionConfig { }
     public function getPages(): ?PageConfig { }
     public function getPostprocessor(): ?PostProcessorConfig { }
@@ -437,7 +328,7 @@ class ExtractionConfig
     public function getHtmlOutput(): ?HtmlOutputConfig { }
     public function getExtractionTimeoutSecs(): ?int { }
     public function getMaxConcurrentExtractions(): ?int { }
-    public function getResultFormat(): OutputFormat { }
+    public function getResultFormat(): ExtractionMode { }
     public function getSecurityLimits(): ?string { }
     public function getOutputFormat(): OutputFormat { }
     public function getLayout(): ?LayoutDetectionConfig { }
@@ -493,12 +384,12 @@ class FileExtractionConfig
     public ?ContentFilterConfig $content_filter;
     public ?ImageExtractionConfig $images;
     public ?PdfConfig $pdf_options;
-    public ?TokenReductionConfig $token_reduction;
+    public ?TokenReductionOptions $token_reduction;
     public ?LanguageDetectionConfig $language_detection;
     public ?PageConfig $pages;
     public ?PostProcessorConfig $postprocessor;
     public ?string $html_options;
-    public ?OutputFormat $result_format;
+    public ?ExtractionMode $result_format;
     public ?OutputFormat $output_format;
     public ?bool $include_document_structure;
     public ?LayoutDetectionConfig $layout;
@@ -519,12 +410,12 @@ class FileExtractionConfig
         ?ContentFilterConfig $content_filter = null,
         ?ImageExtractionConfig $images = null,
         ?PdfConfig $pdf_options = null,
-        ?TokenReductionConfig $token_reduction = null,
+        ?TokenReductionOptions $token_reduction = null,
         ?LanguageDetectionConfig $language_detection = null,
         ?PageConfig $pages = null,
         ?PostProcessorConfig $postprocessor = null,
         ?string $html_options = null,
-        ?OutputFormat $result_format = null,
+        ?ExtractionMode $result_format = null,
         ?OutputFormat $output_format = null,
         ?bool $include_document_structure = null,
         ?LayoutDetectionConfig $layout = null,
@@ -543,12 +434,12 @@ class FileExtractionConfig
     public function getContentFilter(): ?ContentFilterConfig { }
     public function getImages(): ?ImageExtractionConfig { }
     public function getPdfOptions(): ?PdfConfig { }
-    public function getTokenReduction(): ?TokenReductionConfig { }
+    public function getTokenReduction(): ?TokenReductionOptions { }
     public function getLanguageDetection(): ?LanguageDetectionConfig { }
     public function getPages(): ?PageConfig { }
     public function getPostprocessor(): ?PostProcessorConfig { }
     public function getHtmlOptions(): ?string { }
-    public function getResultFormat(): ?OutputFormat { }
+    public function getResultFormat(): ?ExtractionMode { }
     public function getOutputFormat(): ?OutputFormat { }
     public function getIncludeDocumentStructure(): ?bool { }
     public function getLayout(): ?LayoutDetectionConfig { }
@@ -592,7 +483,7 @@ class ImageExtractionConfig
 /**
  * Token reduction configuration.
  */
-class TokenReductionConfig
+class TokenReductionOptions
 {
     public string $mode;
     public bool $preserve_important_words;
@@ -1334,48 +1225,6 @@ class StructuredDataResult
 }
 
 /**
- * Metadata about a detected list item.
- */
-class ListItemMetadata
-{
-    public string $list_type;
-    public int $byte_start;
-    public int $byte_end;
-    public int $indent_level;
-
-    public function __construct(
-        string $list_type,
-        int $byte_start,
-        int $byte_end,
-        int $indent_level
-    ) { }
-
-    public function getListType(): string { }
-    public function getByteStart(): int { }
-    public function getByteEnd(): int { }
-    public function getIndentLevel(): int { }
-}
-
-/**
- * A body-text section containing a flat list of paragraphs.
- */
-class Section
-{
-    /** @var array<string> */
-    public array $paragraphs;
-
-    /**
-     * @param array<string> $paragraphs
-     */
-    public function __construct(
-        array $paragraphs
-    ) { }
-
-    /** @return array<string> */
-    public function getParagraphs(): array { }
-}
-
-/**
  * Result of OCR extraction from an image with optional page tracking.
  */
 class ImageOcrResult
@@ -1466,46 +1315,6 @@ class ExtractedInlineImage
 }
 
 /**
- * Result of DOC text extraction.
- */
-class DocExtractionResult
-{
-    public string $text;
-    public string $metadata;
-
-    public function __construct(
-        string $text,
-        string $metadata
-    ) { }
-
-    public function getText(): string { }
-    public function getMetadata(): string { }
-}
-
-/**
- * A drawing object extracted from `<w:drawing>`.
- */
-class Drawing
-{
-    public string $drawing_type;
-    public ?string $extent;
-    public ?string $doc_properties;
-    public ?string $image_ref;
-
-    public function __construct(
-        string $drawing_type,
-        ?string $extent = null,
-        ?string $doc_properties = null,
-        ?string $image_ref = null
-    ) { }
-
-    public function getDrawingType(): string { }
-    public function getExtent(): ?string { }
-    public function getDocProperties(): ?string { }
-    public function getImageRef(): ?string { }
-}
-
-/**
  * Properties for anchored drawings.
  */
 class AnchorProperties
@@ -1534,36 +1343,17 @@ class AnchorProperties
     public function getWrapType(): string { }
 }
 
-class TableRow
-{
-    /** @var array<TableCell> */
-    public array $cells;
-    public ?string $properties;
-
-    /**
-     * @param array<TableCell> $cells
-     */
-    public function __construct(
-        array $cells,
-        ?string $properties = null
-    ) { }
-
-    /** @return array<TableCell> */
-    public function getCells(): array { }
-    public function getProperties(): ?string { }
-}
-
 class HeaderFooter
 {
     /** @var array<string> */
     public array $paragraphs;
-    /** @var array<Table> */
+    /** @var array<string> */
     public array $tables;
     public string $header_type;
 
     /**
      * @param array<string> $paragraphs
-     * @param array<Table> $tables
+     * @param array<string> $tables
      */
     public function __construct(
         array $paragraphs,
@@ -1573,7 +1363,7 @@ class HeaderFooter
 
     /** @return array<string> */
     public function getParagraphs(): array { }
-    /** @return array<Table> */
+    /** @return array<string> */
     public function getTables(): array { }
     public function getHeaderType(): string { }
 }
@@ -1682,44 +1472,6 @@ class ResolvedStyle
 
     public function getParagraphProperties(): string { }
     public function getRunProperties(): string { }
-}
-
-/**
- * Table-level properties from `<w:tblPr>`.
- */
-class TableProperties
-{
-    public ?string $style_id;
-    public ?string $width;
-    public ?string $alignment;
-    public ?string $layout;
-    public ?string $look;
-    public ?string $borders;
-    public ?string $cell_margins;
-    public ?string $indent;
-    public ?string $caption;
-
-    public function __construct(
-        ?string $style_id = null,
-        ?string $width = null,
-        ?string $alignment = null,
-        ?string $layout = null,
-        ?string $look = null,
-        ?string $borders = null,
-        ?string $cell_margins = null,
-        ?string $indent = null,
-        ?string $caption = null
-    ) { }
-
-    public function getStyleId(): ?string { }
-    public function getWidth(): ?string { }
-    public function getAlignment(): ?string { }
-    public function getLayout(): ?string { }
-    public function getLook(): ?string { }
-    public function getBorders(): ?string { }
-    public function getCellMargins(): ?string { }
-    public function getIndent(): ?string { }
-    public function getCaption(): ?string { }
 }
 
 /**
@@ -1898,34 +1650,6 @@ class OdtProperties
     public function getImageCount(): ?int { }
 }
 
-/**
- * Result of PPT text extraction.
- */
-class PptExtractionResult
-{
-    public string $text;
-    public int $slide_count;
-    public string $metadata;
-    /** @var array<string> */
-    public array $speaker_notes;
-
-    /**
-     * @param array<string> $speaker_notes
-     */
-    public function __construct(
-        string $text,
-        int $slide_count,
-        string $metadata,
-        array $speaker_notes
-    ) { }
-
-    public function getText(): string { }
-    public function getSlideCount(): int { }
-    public function getMetadata(): string { }
-    /** @return array<string> */
-    public function getSpeakerNotes(): array { }
-}
-
 class OcrFallbackDecision
 {
     public string $stats;
@@ -1946,48 +1670,53 @@ class OcrFallbackDecision
     public function getFallback(): bool { }
 }
 
-/**
- * Collection of all kreuzberg metric instruments.
- */
-class ExtractionMetrics
+class TokenReductionConfig
 {
-    public string $extraction_total;
-    public string $cache_hits;
-    public string $cache_misses;
-    public string $batch_total;
-    public string $extraction_duration_ms;
-    public string $extraction_input_bytes;
-    public string $extraction_output_bytes;
-    public string $pipeline_duration_ms;
-    public string $ocr_duration_ms;
-    public string $batch_duration_ms;
-    public string $concurrent_extractions;
+    public ReductionLevel $level;
+    public ?string $language_hint;
+    public bool $preserve_markdown;
+    public bool $preserve_code;
+    public float $semantic_threshold;
+    public bool $enable_parallel;
+    public bool $use_simd;
+    /** @var ?array<string, array<string>> */
+    public ?array $custom_stopwords;
+    /** @var array<string> */
+    public array $preserve_patterns;
+    public ?float $target_reduction;
+    public bool $enable_semantic_clustering;
 
+    /**
+     * @param array<string> $preserve_patterns
+     * @param ?array<string, array<string>> $custom_stopwords
+     */
     public function __construct(
-        string $extraction_total,
-        string $cache_hits,
-        string $cache_misses,
-        string $batch_total,
-        string $extraction_duration_ms,
-        string $extraction_input_bytes,
-        string $extraction_output_bytes,
-        string $pipeline_duration_ms,
-        string $ocr_duration_ms,
-        string $batch_duration_ms,
-        string $concurrent_extractions
+        ReductionLevel $level,
+        bool $preserve_markdown,
+        bool $preserve_code,
+        float $semantic_threshold,
+        bool $enable_parallel,
+        bool $use_simd,
+        array $preserve_patterns,
+        bool $enable_semantic_clustering,
+        ?string $language_hint = null,
+        ?array $custom_stopwords = null,
+        ?float $target_reduction = null
     ) { }
 
-    public function getExtractionTotal(): string { }
-    public function getCacheHits(): string { }
-    public function getCacheMisses(): string { }
-    public function getBatchTotal(): string { }
-    public function getExtractionDurationMs(): string { }
-    public function getExtractionInputBytes(): string { }
-    public function getExtractionOutputBytes(): string { }
-    public function getPipelineDurationMs(): string { }
-    public function getOcrDurationMs(): string { }
-    public function getBatchDurationMs(): string { }
-    public function getConcurrentExtractions(): string { }
+    public function getLevel(): ReductionLevel { }
+    public function getLanguageHint(): ?string { }
+    public function getPreserveMarkdown(): bool { }
+    public function getPreserveCode(): bool { }
+    public function getSemanticThreshold(): float { }
+    public function getEnableParallel(): bool { }
+    public function getUseSimd(): bool { }
+    /** @return ?array<string, array<string>> */
+    public function getCustomStopwords(): ?array { }
+    /** @return array<string> */
+    public function getPreservePatterns(): array { }
+    public function getTargetReduction(): ?float { }
+    public function getEnableSemanticClustering(): bool { }
 }
 
 /**
@@ -1998,19 +1727,19 @@ class PdfAnnotation
     public PdfAnnotationType $annotation_type;
     public ?string $content;
     public int $page_number;
-    public ?BoundingBox $bounding_box;
+    public ?string $bounding_box;
 
     public function __construct(
         PdfAnnotationType $annotation_type,
         int $page_number,
         ?string $content = null,
-        ?BoundingBox $bounding_box = null
+        ?string $bounding_box = null
     ) { }
 
     public function getAnnotationType(): PdfAnnotationType { }
     public function getContent(): ?string { }
     public function getPageNumber(): int { }
-    public function getBoundingBox(): ?BoundingBox { }
+    public function getBoundingBox(): ?string { }
 }
 
 /**
@@ -2032,7 +1761,7 @@ class DjotContent
     /** @var array<FormattedBlock> */
     public array $blocks;
     public Metadata $metadata;
-    /** @var array<Table> */
+    /** @var array<string> */
     public array $tables;
     /** @var array<DjotImage> */
     public array $images;
@@ -2045,7 +1774,7 @@ class DjotContent
 
     /**
      * @param array<FormattedBlock> $blocks
-     * @param array<Table> $tables
+     * @param array<string> $tables
      * @param array<DjotImage> $images
      * @param array<DjotLink> $links
      * @param array<Footnote> $footnotes
@@ -2066,7 +1795,7 @@ class DjotContent
     /** @return array<FormattedBlock> */
     public function getBlocks(): array { }
     public function getMetadata(): Metadata { }
-    /** @return array<Table> */
+    /** @return array<string> */
     public function getTables(): array { }
     /** @return array<DjotImage> */
     public function getImages(): array { }
@@ -2089,7 +1818,7 @@ class FormattedBlock
     public ?int $level;
     /** @var array<InlineElement> */
     public array $inline_content;
-    public ?Attributes $attributes;
+    public ?string $attributes;
     public ?string $language;
     public ?string $code;
     /** @var array<FormattedBlock> */
@@ -2104,7 +1833,7 @@ class FormattedBlock
         array $inline_content,
         array $children,
         ?int $level = null,
-        ?Attributes $attributes = null,
+        ?string $attributes = null,
         ?string $language = null,
         ?string $code = null
     ) { }
@@ -2113,7 +1842,7 @@ class FormattedBlock
     public function getLevel(): ?int { }
     /** @return array<InlineElement> */
     public function getInlineContent(): array { }
-    public function getAttributes(): ?Attributes { }
+    public function getAttributes(): ?string { }
     public function getLanguage(): ?string { }
     public function getCode(): ?string { }
     /** @return array<FormattedBlock> */
@@ -2129,7 +1858,7 @@ class InlineElement
 {
     public InlineType $element_type;
     public string $content;
-    public ?Attributes $attributes;
+    public ?string $attributes;
     /** @var ?array<string, string> */
     public ?array $metadata;
 
@@ -2139,45 +1868,15 @@ class InlineElement
     public function __construct(
         InlineType $element_type,
         string $content,
-        ?Attributes $attributes = null,
+        ?string $attributes = null,
         ?array $metadata = null
     ) { }
 
     public function getElementType(): InlineType { }
     public function getContent(): string { }
-    public function getAttributes(): ?Attributes { }
+    public function getAttributes(): ?string { }
     /** @return ?array<string, string> */
     public function getMetadata(): ?array { }
-}
-
-/**
- * Element attributes in Djot.
- *
- * Represents the attributes attached to elements using {.class #id key="value"} syntax.
- */
-class Attributes
-{
-    public ?string $id;
-    /** @var array<string> */
-    public array $classes;
-    /** @var array<string> */
-    public array $key_values;
-
-    /**
-     * @param array<string> $classes
-     * @param array<string> $key_values
-     */
-    public function __construct(
-        array $classes,
-        array $key_values,
-        ?string $id = null
-    ) { }
-
-    public function getId(): ?string { }
-    /** @return array<string> */
-    public function getClasses(): array { }
-    /** @return array<string> */
-    public function getKeyValues(): array { }
 }
 
 /**
@@ -2188,19 +1887,19 @@ class DjotImage
     public string $src;
     public string $alt;
     public ?string $title;
-    public ?Attributes $attributes;
+    public ?string $attributes;
 
     public function __construct(
         string $src,
         string $alt,
         ?string $title = null,
-        ?Attributes $attributes = null
+        ?string $attributes = null
     ) { }
 
     public function getSrc(): string { }
     public function getAlt(): string { }
     public function getTitle(): ?string { }
-    public function getAttributes(): ?Attributes { }
+    public function getAttributes(): ?string { }
 }
 
 /**
@@ -2211,19 +1910,19 @@ class DjotLink
     public string $url;
     public string $text;
     public ?string $title;
-    public ?Attributes $attributes;
+    public ?string $attributes;
 
     public function __construct(
         string $url,
         string $text,
         ?string $title = null,
-        ?Attributes $attributes = null
+        ?string $attributes = null
     ) { }
 
     public function getUrl(): string { }
     public function getText(): string { }
     public function getTitle(): ?string { }
-    public function getAttributes(): ?Attributes { }
+    public function getAttributes(): ?string { }
 }
 
 /**
@@ -2313,7 +2012,7 @@ class DocumentRelationship
  */
 class DocumentNode
 {
-    public NodeId $id;
+    public string $id;
     public NodeContent $content;
     public ?int $parent;
     /** @var array<int> */
@@ -2321,7 +2020,7 @@ class DocumentNode
     public ContentLayer $content_layer;
     public ?int $page;
     public ?int $page_end;
-    public ?BoundingBox $bbox;
+    public ?string $bbox;
     /** @var array<TextAnnotation> */
     public array $annotations;
     /** @var ?array<string, string> */
@@ -2333,7 +2032,7 @@ class DocumentNode
      * @param ?array<string, string> $attributes
      */
     public function __construct(
-        NodeId $id,
+        string $id,
         NodeContent $content,
         array $children,
         ContentLayer $content_layer,
@@ -2341,11 +2040,11 @@ class DocumentNode
         ?int $parent = null,
         ?int $page = null,
         ?int $page_end = null,
-        ?BoundingBox $bbox = null,
+        ?string $bbox = null,
         ?array $attributes = null
     ) { }
 
-    public function getId(): NodeId { }
+    public function getId(): string { }
     public function getContent(): NodeContent { }
     public function getParent(): ?int { }
     /** @return array<int> */
@@ -2353,38 +2052,11 @@ class DocumentNode
     public function getContentLayer(): ContentLayer { }
     public function getPage(): ?int { }
     public function getPageEnd(): ?int { }
-    public function getBbox(): ?BoundingBox { }
+    public function getBbox(): ?string { }
     /** @return array<TextAnnotation> */
     public function getAnnotations(): array { }
     /** @return ?array<string, string> */
     public function getAttributes(): ?array { }
-}
-
-/**
- * Structured table grid with cell-level metadata.
- *
- * Stores row/column dimensions and a flat list of cells with position info.
- */
-class TableGrid
-{
-    public int $rows;
-    public int $cols;
-    /** @var array<GridCell> */
-    public array $cells;
-
-    /**
-     * @param array<GridCell> $cells
-     */
-    public function __construct(
-        int $rows,
-        int $cols,
-        array $cells
-    ) { }
-
-    public function getRows(): int { }
-    public function getCols(): int { }
-    /** @return array<GridCell> */
-    public function getCells(): array { }
 }
 
 /**
@@ -2398,7 +2070,7 @@ class GridCell
     public int $row_span;
     public int $col_span;
     public bool $is_header;
-    public ?BoundingBox $bbox;
+    public ?string $bbox;
 
     public function __construct(
         string $content,
@@ -2407,7 +2079,7 @@ class GridCell
         int $row_span,
         int $col_span,
         bool $is_header,
-        ?BoundingBox $bbox = null
+        ?string $bbox = null
     ) { }
 
     public function getContent(): string { }
@@ -2416,7 +2088,7 @@ class GridCell
     public function getRowSpan(): int { }
     public function getColSpan(): int { }
     public function getIsHeader(): bool { }
-    public function getBbox(): ?BoundingBox { }
+    public function getBbox(): ?string { }
 }
 
 /**
@@ -2452,7 +2124,7 @@ class ExtractionResult
     public string $content;
     public string $mime_type;
     public Metadata $metadata;
-    /** @var array<Table> */
+    /** @var array<string> */
     public array $tables;
     /** @var ?array<string> */
     public ?array $detected_languages;
@@ -2485,7 +2157,7 @@ class ExtractionResult
     public ?string $ocr_internal_document;
 
     /**
-     * @param array<Table> $tables
+     * @param array<string> $tables
      * @param array<ProcessingWarning> $processing_warnings
      * @param ?array<string> $detected_languages
      * @param ?array<Chunk> $chunks
@@ -2526,7 +2198,7 @@ class ExtractionResult
     public function getContent(): string { }
     public function getMimeType(): string { }
     public function getMetadata(): Metadata { }
-    /** @return array<Table> */
+    /** @return array<string> */
     public function getTables(): array { }
     /** @return ?array<string> */
     public function getDetectedLanguages(): ?array { }
@@ -2763,7 +2435,7 @@ class ExtractedImage
     public bool $is_mask;
     public ?string $description;
     public ?ExtractionResult $ocr_result;
-    public ?BoundingBox $bounding_box;
+    public ?string $bounding_box;
     public ?string $source_path;
 
     public function __construct(
@@ -2778,7 +2450,7 @@ class ExtractedImage
         ?int $bits_per_component = null,
         ?string $description = null,
         ?ExtractionResult $ocr_result = null,
-        ?BoundingBox $bounding_box = null,
+        ?string $bounding_box = null,
         ?string $source_path = null
     ) { }
 
@@ -2793,31 +2465,8 @@ class ExtractedImage
     public function getIsMask(): bool { }
     public function getDescription(): ?string { }
     public function getOcrResult(): ?ExtractionResult { }
-    public function getBoundingBox(): ?BoundingBox { }
+    public function getBoundingBox(): ?string { }
     public function getSourcePath(): ?string { }
-}
-
-/**
- * Bounding box coordinates for element positioning.
- */
-class BoundingBox
-{
-    public float $x0;
-    public float $y0;
-    public float $x1;
-    public float $y1;
-
-    public function __construct(
-        float $x0,
-        float $y0,
-        float $x1,
-        float $y1
-    ) { }
-
-    public function getX0(): float { }
-    public function getY0(): float { }
-    public function getX1(): float { }
-    public function getY1(): float { }
 }
 
 /**
@@ -2827,7 +2476,7 @@ class ElementMetadata
 {
     public ?int $page_number;
     public ?string $filename;
-    public ?BoundingBox $coordinates;
+    public ?string $coordinates;
     public ?int $element_index;
     /** @var array<string, string> */
     public array $additional;
@@ -2839,13 +2488,13 @@ class ElementMetadata
         array $additional,
         ?int $page_number = null,
         ?string $filename = null,
-        ?BoundingBox $coordinates = null,
+        ?string $coordinates = null,
         ?int $element_index = null
     ) { }
 
     public function getPageNumber(): ?int { }
     public function getFilename(): ?string { }
-    public function getCoordinates(): ?BoundingBox { }
+    public function getCoordinates(): ?string { }
     public function getElementIndex(): ?int { }
     /** @return array<string, string> */
     public function getAdditional(): array { }
@@ -2859,19 +2508,19 @@ class ElementMetadata
  */
 class Element
 {
-    public ElementId $element_id;
+    public string $element_id;
     public ElementType $element_type;
     public string $text;
     public ElementMetadata $metadata;
 
     public function __construct(
-        ElementId $element_id,
+        string $element_id,
         ElementType $element_type,
         string $text,
         ElementMetadata $metadata
     ) { }
 
-    public function getElementId(): ElementId { }
+    public function getElementId(): string { }
     public function getElementType(): ElementType { }
     public function getText(): string { }
     public function getMetadata(): ElementMetadata { }
@@ -3626,36 +3275,6 @@ class ArchiveMetadata
     public function getFileList(): array { }
     public function getTotalSize(): int { }
     public function getCompressedSize(): ?int { }
-}
-
-/**
- * Image metadata extracted from image files.
- *
- * Includes dimensions, format, and EXIF data.
- */
-class ImageMetadata
-{
-    public int $width;
-    public int $height;
-    public string $format;
-    /** @var array<string, string> */
-    public array $exif;
-
-    /**
-     * @param array<string, string> $exif
-     */
-    public function __construct(
-        int $width,
-        int $height,
-        string $format,
-        array $exif
-    ) { }
-
-    public function getWidth(): int { }
-    public function getHeight(): int { }
-    public function getFormat(): string { }
-    /** @return array<string, string> */
-    public function getExif(): array { }
 }
 
 /**
@@ -4545,7 +4164,7 @@ class PageContent
 {
     public int $page_number;
     public string $content;
-    /** @var array<Table> */
+    /** @var array<string> */
     public array $tables;
     /** @var array<ExtractedImage> */
     public array $images;
@@ -4553,7 +4172,7 @@ class PageContent
     public ?bool $is_blank;
 
     /**
-     * @param array<Table> $tables
+     * @param array<string> $tables
      * @param array<ExtractedImage> $images
      */
     public function __construct(
@@ -4567,7 +4186,7 @@ class PageContent
 
     public function getPageNumber(): int { }
     public function getContent(): string { }
-    /** @return array<Table> */
+    /** @return array<string> */
     public function getTables(): array { }
     /** @return array<ExtractedImage> */
     public function getImages(): array { }
@@ -4627,62 +4246,6 @@ class HierarchicalBlock
 }
 
 /**
- * Extracted table structure.
- *
- * Represents a table detected and extracted from a document (PDF, image, etc.).
- * Tables are converted to both structured cell data and Markdown format.
- */
-class Table
-{
-    /** @var array<array<string>> */
-    public array $cells;
-    public string $markdown;
-    public int $page_number;
-    public ?BoundingBox $bounding_box;
-
-    /**
-     * @param array<array<string>> $cells
-     */
-    public function __construct(
-        array $cells,
-        string $markdown,
-        int $page_number,
-        ?BoundingBox $bounding_box = null
-    ) { }
-
-    /** @return array<array<string>> */
-    public function getCells(): array { }
-    public function getMarkdown(): string { }
-    public function getPageNumber(): int { }
-    public function getBoundingBox(): ?BoundingBox { }
-}
-
-/**
- * Individual table cell with content and optional styling.
- *
- * Future extension point for rich table support with cell-level metadata.
- */
-class TableCell
-{
-    public string $content;
-    public int $row_span;
-    public int $col_span;
-    public bool $is_header;
-
-    public function __construct(
-        string $content,
-        int $row_span,
-        int $col_span,
-        bool $is_header
-    ) { }
-
-    public function getContent(): string { }
-    public function getRowSpan(): int { }
-    public function getColSpan(): int { }
-    public function getIsHeader(): bool { }
-}
-
-/**
  * A URI extracted from a document.
  *
  * Represents any link, reference, or resource pointer found during extraction.
@@ -4707,23 +4270,6 @@ class Uri
     public function getLabel(): ?string { }
     public function getPage(): ?int { }
     public function getKind(): UriKind { }
-}
-
-/**
- * API-specific error wrapper.
- */
-class ApiError
-{
-    public string $status;
-    public string $body;
-
-    public function __construct(
-        string $status,
-        string $body
-    ) { }
-
-    public function getStatus(): string { }
-    public function getBody(): string { }
 }
 
 /**
@@ -5739,19 +5285,19 @@ class CharData
 class HierarchyBlock
 {
     public string $text;
-    public BoundingBox $bbox;
+    public string $bbox;
     public float $font_size;
     public string $hierarchy_level;
 
     public function __construct(
         string $text,
-        BoundingBox $bbox,
+        string $bbox,
         float $font_size,
         string $hierarchy_level
     ) { }
 
     public function getText(): string { }
-    public function getBbox(): BoundingBox { }
+    public function getBbox(): string { }
     public function getFontSize(): float { }
     public function getHierarchyLevel(): string { }
 }
@@ -5797,32 +5343,12 @@ class PdfImage
 }
 
 /**
- * A detected layout region mapped to PDF coordinate space.
- */
-class PageLayoutRegion
-{
-    public LayoutClass $class;
-    public float $confidence;
-    public string $bbox;
-
-    public function __construct(
-        LayoutClass $class,
-        float $confidence,
-        string $bbox
-    ) { }
-
-    public function getClass(): LayoutClass { }
-    public function getConfidence(): float { }
-    public function getBbox(): string { }
-}
-
-/**
  * Layout detection results for a single page.
  */
 class PageLayoutResult
 {
     public int $page_index;
-    /** @var array<PageLayoutRegion> */
+    /** @var array<string> */
     public array $regions;
     public float $page_width_pts;
     public float $page_height_pts;
@@ -5830,7 +5356,7 @@ class PageLayoutResult
     public int $render_height_px;
 
     /**
-     * @param array<PageLayoutRegion> $regions
+     * @param array<string> $regions
      */
     public function __construct(
         int $page_index,
@@ -5842,7 +5368,7 @@ class PageLayoutResult
     ) { }
 
     public function getPageIndex(): int { }
-    /** @return array<PageLayoutRegion> */
+    /** @return array<string> */
     public function getRegions(): array { }
     public function getPageWidthPts(): float { }
     public function getPageHeightPts(): float { }
@@ -5877,56 +5403,6 @@ class PageTiming
     public function getInferenceMs(): float { }
     public function getPostprocessMs(): float { }
     public function getMappingMs(): float { }
-}
-
-/**
- * Complete PDF extraction metadata including common and PDF-specific fields.
- *
- * This struct combines common document fields (title, authors, dates) with
- * PDF-specific metadata and optional page structure information. It is returned
- * by `extract_metadata_from_document()` when page boundaries are provided.
- */
-class PdfExtractionMetadata
-{
-    public ?string $title;
-    public ?string $subject;
-    /** @var ?array<string> */
-    public ?array $authors;
-    /** @var ?array<string> */
-    public ?array $keywords;
-    public ?string $created_at;
-    public ?string $modified_at;
-    public ?string $created_by;
-    public string $pdf_specific;
-    public ?PageStructure $page_structure;
-
-    /**
-     * @param ?array<string> $authors
-     * @param ?array<string> $keywords
-     */
-    public function __construct(
-        string $pdf_specific,
-        ?string $title = null,
-        ?string $subject = null,
-        ?array $authors = null,
-        ?array $keywords = null,
-        ?string $created_at = null,
-        ?string $modified_at = null,
-        ?string $created_by = null,
-        ?PageStructure $page_structure = null
-    ) { }
-
-    public function getTitle(): ?string { }
-    public function getSubject(): ?string { }
-    /** @return ?array<string> */
-    public function getAuthors(): ?array { }
-    /** @return ?array<string> */
-    public function getKeywords(): ?array { }
-    public function getCreatedAt(): ?string { }
-    public function getModifiedAt(): ?string { }
-    public function getCreatedBy(): ?string { }
-    public function getPdfSpecific(): string { }
-    public function getPageStructure(): ?PageStructure { }
 }
 
 /**
@@ -6042,66 +5518,12 @@ enum CodeContentMode: string
     case Structure = 'Structure';
 }
 
-enum HwpError: string
-{
-    case InvalidFormat = 'InvalidFormat';
-    case UnsupportedVersion = 'UnsupportedVersion';
-    case Io = 'Io';
-    case Cfb = 'Cfb';
-    case CompressionError = 'CompressionError';
-    case ParseError = 'ParseError';
-    case EncodingError = 'EncodingError';
-    case NotFound = 'NotFound';
-}
-
 enum FracType: string
 {
     case Bar = 'Bar';
     case NoBar = 'NoBar';
     case Linear = 'Linear';
     case Skewed = 'Skewed';
-}
-
-enum MathNode: string
-{
-    case Run = 'Run';
-    case SSup = 'SSup';
-    case SSub = 'SSub';
-    case SSubSup = 'SSubSup';
-    case Frac = 'Frac';
-    case Rad = 'Rad';
-    case Nary = 'Nary';
-    case Delim = 'Delim';
-    case Func = 'Func';
-    case Acc = 'Acc';
-    case EqArr = 'EqArr';
-    case LimLow = 'LimLow';
-    case LimUpp = 'LimUpp';
-    case Bar = 'Bar';
-    case BorderBox = 'BorderBox';
-    case Matrix = 'Matrix';
-    case Group = 'Group';
-    case SPre = 'SPre';
-}
-
-enum DocumentElement: string
-{
-    case Paragraph = 'Paragraph';
-    case Table = 'Table';
-    case Drawing = 'Drawing';
-}
-
-enum SecurityError: string
-{
-    case ZipBombDetected = 'ZipBombDetected';
-    case ArchiveTooLarge = 'ArchiveTooLarge';
-    case TooManyFiles = 'TooManyFiles';
-    case NestingTooDeep = 'NestingTooDeep';
-    case ContentTooLarge = 'ContentTooLarge';
-    case EntityTooLong = 'EntityTooLong';
-    case TooManyIterations = 'TooManyIterations';
-    case XmlDepthExceeded = 'XmlDepthExceeded';
-    case TooManyCells = 'TooManyCells';
 }
 
 enum OcrBackendType: string
@@ -6248,6 +5670,12 @@ enum ChunkType: string
     case Unknown = 'Unknown';
 }
 
+enum ExtractionMode: string
+{
+    case Unified = 'Unified';
+    case ElementBased = 'ElementBased';
+}
+
 enum ElementType: string
 {
     case Title = 'Title';
@@ -6361,18 +5789,6 @@ enum KeywordAlgorithm: string
     case Rake = 'Rake';
 }
 
-enum OcrError: string
-{
-    case TesseractInitializationFailed = 'TesseractInitializationFailed';
-    case UnsupportedVersion = 'UnsupportedVersion';
-    case InvalidConfiguration = 'InvalidConfiguration';
-    case InvalidLanguageCode = 'InvalidLanguageCode';
-    case ImageProcessingFailed = 'ImageProcessingFailed';
-    case ProcessingFailed = 'ProcessingFailed';
-    case CacheError = 'CacheError';
-    case IOError = 'IOError';
-}
-
 enum PSMMode: string
 {
     case OsdOnly = 'OsdOnly';
@@ -6427,21 +5843,6 @@ enum LayoutClass: string
     case CheckboxUnselected = 'CheckboxUnselected';
     case Form = 'Form';
     case KeyValueRegion = 'KeyValueRegion';
-}
-
-enum PdfError: string
-{
-    case InvalidPdf = 'InvalidPdf';
-    case PasswordRequired = 'PasswordRequired';
-    case InvalidPassword = 'InvalidPassword';
-    case EncryptionNotSupported = 'EncryptionNotSupported';
-    case PageNotFound = 'PageNotFound';
-    case TextExtractionFailed = 'TextExtractionFailed';
-    case RenderingFailed = 'RenderingFailed';
-    case MetadataExtractionFailed = 'MetadataExtractionFailed';
-    case ExtractionFailed = 'ExtractionFailed';
-    case FontLoadingFailed = 'FontLoadingFailed';
-    case IOError = 'IOError';
 }
 
 class KreuzbergApi
@@ -6507,35 +5908,8 @@ class KreuzbergApi
     public static function extractBytesAsync(string $content, string $mime_type, \Kreuzberg\ExtractionConfig $config): \Kreuzberg\ExtractionResult { }
     public static function extractFileAsync(string $path, ?string $mime_type = null, \Kreuzberg\ExtractionConfig $config): \Kreuzberg\ExtractionResult { }
     public static function getPoolSizingHint(int $file_size, string $mime_type): string { }
-    public static function extractFileSync(string $path, ?string $mime_type = null, \Kreuzberg\ExtractionConfig $config): \Kreuzberg\ExtractionResult { }
-    public static function extractBytesSync(string $content, string $mime_type, \Kreuzberg\ExtractionConfig $config): \Kreuzberg\ExtractionResult { }
-    /**
-     * @param array<string> $items
-     * @param \Kreuzberg\ExtractionConfig $config
-     * @return array<\Kreuzberg\ExtractionResult>
-     */
-    public static function batchExtractFileSync(array $items, \Kreuzberg\ExtractionConfig $config): array { }
-    /**
-     * @param array<string> $items
-     * @param \Kreuzberg\ExtractionConfig $config
-     * @return array<\Kreuzberg\ExtractionResult>
-     */
-    public static function batchExtractBytesSync(array $items, \Kreuzberg\ExtractionConfig $config): array { }
-    /**
-     * @param array<string> $items
-     * @param \Kreuzberg\ExtractionConfig $config
-     * @return array<\Kreuzberg\ExtractionResult>
-     */
-    public static function batchExtractFileAsync(array $items, \Kreuzberg\ExtractionConfig $config): array { }
-    /**
-     * @param array<string> $items
-     * @param \Kreuzberg\ExtractionConfig $config
-     * @return array<\Kreuzberg\ExtractionResult>
-     */
-    public static function batchExtractBytesAsync(array $items, \Kreuzberg\ExtractionConfig $config): array { }
     public static function isValidFormatField(string $field): bool { }
-    public static function openFileBytes(string $path): \Kreuzberg\FileBytes { }
-    public static function readFileAsyncAsync(string $path): string { }
+    public static function openFileBytes(string $path): string { }
     public static function readFileSync(string $path): string { }
     public static function fileExists(string $path): bool { }
     public static function validateFileExists(string $path): void { }
@@ -6547,13 +5921,9 @@ class KreuzbergApi
     public static function getExtensionsForMime(string $mime_type): array { }
     public static function listSupportedFormats(): array { }
     public static function clearProcessorCache(): void { }
-    public static function applyOutputFormat(\Kreuzberg\ExtractionResult $result, \Kreuzberg\OutputFormat $output_format): void { }
-    public static function runPipelineAsync(string $doc, \Kreuzberg\ExtractionConfig $config): \Kreuzberg\ExtractionResult { }
-    public static function runPipelineSync(string $doc, \Kreuzberg\ExtractionConfig $config): \Kreuzberg\ExtractionResult { }
+    public static function applyOutputFormat(\Kreuzberg\ExtractionResult $result, \Kreuzberg\OutputFormat $output_format): \Kreuzberg\ExtractionResult { }
     public static function isPageTextBlank(string $text): bool { }
     public static function resolveRelationships(string $doc): void { }
-    public static function deriveDocumentStructure(string $doc): \Kreuzberg\DocumentStructure { }
-    public static function deriveExtractionResult(string $doc, bool $include_document_structure, \Kreuzberg\OutputFormat $output_format): \Kreuzberg\ExtractionResult { }
     public static function parseJson(string $data, ?string $config = null): \Kreuzberg\StructuredDataResult { }
     public static function parseJsonl(string $data, ?string $config = null): \Kreuzberg\StructuredDataResult { }
     public static function parseYaml(string $data): \Kreuzberg\StructuredDataResult { }
@@ -6561,14 +5931,12 @@ class KreuzbergApi
     public static function parseText(string $text_bytes, bool $is_markdown): \Kreuzberg\TextExtractionResult { }
     public static function transformToDocumentStructure(\Kreuzberg\ExtractionResult $result): \Kreuzberg\DocumentStructure { }
     public static function detectListItems(string $text): array { }
-    public static function generateElementId(string $text, \Kreuzberg\ElementType $element_type, ?int $page_number = null): \Kreuzberg\ElementId { }
+    public static function generateElementId(string $text, \Kreuzberg\ElementType $element_type, ?int $page_number = null): string { }
     public static function transformExtractionResultToElements(\Kreuzberg\ExtractionResult $result): array { }
     public static function parseBodyText(string $data, bool $is_compressed): array { }
     public static function decompressStream(string $data): string { }
     public static function extractHwpText(string $bytes): string { }
-    public static function loadImageForOcr(string $image_bytes): string { }
-    public static function extractImageMetadata(string $bytes): \Kreuzberg\ImageMetadata { }
-    public static function extractTextFromImageWithOcr(string $bytes, string $mime_type, string $ocr_result, ?\Kreuzberg\PageConfig $page_config = null): \Kreuzberg\ImageOcrResult { }
+    public static function extractImageMetadata(string $bytes): string { }
     public static function estimateContentCapacity(int $file_size, string $format): int { }
     public static function estimateHtmlMarkdownCapacity(int $html_size): int { }
     public static function estimateSpreadsheetCapacity(int $file_size): int { }
@@ -6592,7 +5960,6 @@ class KreuzbergApi
     public static function parseMsgContent(string $data, ?int $fallback_codepage = null): \Kreuzberg\EmailExtractionResult { }
     public static function extractEmailContent(string $data, string $mime_type, ?int $fallback_codepage = null): \Kreuzberg\EmailExtractionResult { }
     public static function buildEmailTextOutput(\Kreuzberg\EmailExtractionResult $result): string { }
-    public static function extractPstMessages(string $pst_data): string { }
     public static function readExcelFile(string $file_path): \Kreuzberg\ExcelWorkbook { }
     public static function readExcelBytes(string $data, string $file_extension): \Kreuzberg\ExcelWorkbook { }
     public static function excelToText(\Kreuzberg\ExcelWorkbook $workbook): string { }
@@ -6601,8 +5968,7 @@ class KreuzbergApi
     public static function convertHtmlToMarkdownWithMetadata(string $html, ?string $options = null, ?string $output_format = null): string { }
     public static function convertHtmlToMarkdownWithTables(string $html, ?string $options = null, ?string $output_format = null): string { }
     public static function extractHtmlInlineImages(string $html, ?string $options = null): array { }
-    public static function extractDocText(string $content): \Kreuzberg\DocExtractionResult { }
-    public static function parseDrawing(string $reader): \Kreuzberg\Drawing { }
+    public static function extractDocText(string $content): string { }
     public static function collectAndConvertOmathPara(string $reader): string { }
     public static function collectAndConvertOmath(string $reader): string { }
     public static function parseDocument(string $bytes): string { }
@@ -6610,10 +5976,8 @@ class KreuzbergApi
     public static function parseSectionProperties(string $node): string { }
     public static function parseSectionPropertiesStreaming(string $reader): string { }
     public static function parseStylesXml(string $xml): string { }
-    public static function parseTableProperties(string $reader): \Kreuzberg\TableProperties { }
     public static function parseRowProperties(string $reader): string { }
     public static function parseCellProperties(string $reader): string { }
-    public static function parseTableGrid(string $reader): \Kreuzberg\TableGrid { }
     public static function parseThemeXml(string $xml): string { }
     public static function extractText(string $bytes): string { }
     public static function extractTextWithPageBreaks(string $bytes): string { }
@@ -6621,14 +5985,8 @@ class KreuzbergApi
     public static function detectTablePageNumbers(string $bytes): array { }
     public static function extractOoxmlEmbeddedObjectsAsync(string $zip_bytes, string $embeddings_prefix, string $source_label, \Kreuzberg\ExtractionConfig $config): string { }
     public static function detectImageFormat(string $data): string { }
-    /**
-     * @param array<\Kreuzberg\ExtractedImage> $images
-     * @param \Kreuzberg\ExtractionConfig $config
-     * @return array<\Kreuzberg\ExtractedImage>
-     */
-    public static function processImagesWithOcrAsync(array $images, \Kreuzberg\ExtractionConfig $config): array { }
-    public static function extractPptText(string $content): \Kreuzberg\PptExtractionResult { }
-    public static function extractPptTextWithOptions(string $content, bool $include_master_slides): \Kreuzberg\PptExtractionResult { }
+    public static function extractPptText(string $content): string { }
+    public static function extractPptTextWithOptions(string $content, bool $include_master_slides): string { }
     public static function extractPptxFromPath(string $path, string $options): \Kreuzberg\PptxExtractionResult { }
     public static function extractPptxFromBytes(string $data, string $options): \Kreuzberg\PptxExtractionResult { }
     public static function parseXmlSvg(string $xml_bytes, bool $preserve_whitespace): \Kreuzberg\XmlExtractionResult { }
@@ -6643,21 +6001,14 @@ class KreuzbergApi
      * @return string
      */
     public static function cellsToMarkdown(array $cells): string { }
-    public static function parseJotdownAttributes(\Kreuzberg\Attributes $attrs): \Kreuzberg\Attributes { }
-    public static function renderAttributes(\Kreuzberg\Attributes $attrs): string { }
+    public static function parseJotdownAttributes(string $attrs): string { }
+    public static function renderAttributes(string $attrs): string { }
     public static function djotContentToDjot(\Kreuzberg\DjotContent $content): string { }
     public static function extractionResultToDjot(\Kreuzberg\ExtractionResult $result): string { }
     public static function djotToHtml(string $djot_source): string { }
     /**
      * @param array<string> $events
-     * @param \Kreuzberg\Metadata $metadata
-     * @param array<\Kreuzberg\Table> $tables
-     * @return \Kreuzberg\DjotContent
-     */
-    public static function extractCompleteDjotContent(array $events, \Kreuzberg\Metadata $metadata, array $tables): \Kreuzberg\DjotContent { }
-    /**
-     * @param array<string> $events
-     * @return array<\Kreuzberg\Table>
+     * @return array<string>
      */
     public static function extractTablesFromEvents(array $events): array { }
     /**
@@ -6665,16 +6016,14 @@ class KreuzbergApi
      * @return string
      */
     public static function extractTextFromEvents(array $events): string { }
-    public static function renderBlockToDjot(string $output, \Kreuzberg\FormattedBlock $block, int $indent_level): void { }
-    public static function renderListItem(string $output, \Kreuzberg\FormattedBlock $item, string $indent, string $marker): void { }
+    public static function renderBlockToDjot(\Kreuzberg\FormattedBlock $block, int $indent_level): string { }
+    public static function renderListItem(\Kreuzberg\FormattedBlock $item, string $indent, string $marker): string { }
     /**
-     * @param string $output
      * @param array<\Kreuzberg\InlineElement> $elements
-     * @return void
+     * @return string
      */
-    public static function renderInlineContent(string $output, array $elements): void { }
+    public static function renderInlineContent(array $elements): string { }
     public static function extractFrontmatter(string $content): string { }
-    public static function extractMetadataFromYaml(string $yaml): \Kreuzberg\Metadata { }
     public static function extractTitleFromContent(string $content): ?string { }
     public static function collectIwaPaths(string $content): array { }
     public static function readIwaFile(string $content, string $path): string { }
@@ -6692,17 +6041,8 @@ class KreuzbergApi
      * @return array<string>
      */
     public static function dedupText(array $texts): array { }
-    public static function evaluateNativeTextForOcr(string $native_text, ?int $page_count = null, \Kreuzberg\OcrQualityThresholds $thresholds): \Kreuzberg\OcrFallbackDecision { }
-    /**
-     * @param string $native_text
-     * @param ?array<\Kreuzberg\PageBoundary> $boundaries
-     * @param ?int $page_count
-     * @param \Kreuzberg\OcrQualityThresholds $thresholds
-     * @return \Kreuzberg\OcrFallbackDecision
-     */
-    public static function evaluatePerPageOcr(string $native_text, ?array $boundaries = null, ?int $page_count = null, \Kreuzberg\OcrQualityThresholds $thresholds): \Kreuzberg\OcrFallbackDecision { }
-    public static function hexDigitToU8(string $c): ?int { }
-    public static function parseHexByte(string $h1, string $h2): ?int { }
+    public static function hexDigitToU8(int $c): ?int { }
+    public static function parseHexByte(int $h1, int $h2): ?int { }
     public static function parseRtfControlWord(string $chars): string { }
     public static function normalizeWhitespace(string $s): string { }
     public static function extractPictImage(string $chars): string { }
@@ -6717,7 +6057,6 @@ class KreuzbergApi
     public static function unregisterExtractor(string $name): void { }
     public static function listExtractors(): array { }
     public static function clearExtractors(): void { }
-    public static function registerOcrBackend(\Kreuzberg\OcrBackend $backend): void { }
     public static function unregisterOcrBackend(string $name): void { }
     public static function listOcrBackends(): array { }
     public static function clearOcrBackends(): void { }
@@ -6727,7 +6066,6 @@ class KreuzbergApi
     public static function getPostProcessorRegistry(): string { }
     public static function getValidatorRegistry(): string { }
     public static function getRendererRegistry(): string { }
-    public static function registerRenderer(\Kreuzberg\Renderer $renderer): void { }
     public static function unregisterRenderer(string $name): void { }
     public static function listRenderers(): array { }
     public static function clearRenderers(): void { }
@@ -6742,7 +6080,7 @@ class KreuzbergApi
     public static function renderMarkdown(string $doc): string { }
     public static function renderPlain(string $doc): string { }
     public static function sanitizeFilename(string $path): string { }
-    public static function getMetrics(): \Kreuzberg\ExtractionMetrics { }
+    public static function getMetrics(): string { }
     public static function recordErrorOnCurrentSpan(string $error): void { }
     public static function recordSuccessOnCurrentSpan(): void { }
     public static function sanitizePath(string $path): string { }
@@ -6787,8 +6125,8 @@ class KreuzbergApi
     public static function createByteBufferPool(int $pool_size, int $buffer_capacity): \Kreuzberg\ByteBufferPool { }
     public static function estimatePoolSize(int $file_size, string $mime_type): string { }
     public static function acquireStringBuffer(): \Kreuzberg\PooledString { }
-    public static function internLanguageCode(string $lang_code): \Kreuzberg\InternedString { }
-    public static function internMimeType(string $mime_type): \Kreuzberg\InternedString { }
+    public static function internLanguageCode(string $lang_code): string { }
+    public static function internMimeType(string $mime_type): string { }
     public static function xmlTagName(string $name): string { }
     public static function escapeHtmlEntities(string $text): string { }
     /**
@@ -6816,32 +6154,21 @@ class KreuzbergApi
      */
     public static function tableToMarkdown(array $table): string { }
     public static function loadServerConfig(?string $config_path = null): \Kreuzberg\ServerConfig { }
-    public static function openapiJson(): string { }
     public static function createRouter(\Kreuzberg\ExtractionConfig $config): string { }
     public static function createRouterWithLimits(\Kreuzberg\ExtractionConfig $config, string $limits): string { }
     public static function createRouterWithLimitsAndServerConfig(\Kreuzberg\ExtractionConfig $config, string $limits, \Kreuzberg\ServerConfig $server_config): string { }
     public static function serveAsync(string $host, int $port): void { }
     public static function serveWithConfigAsync(string $host, int $port, \Kreuzberg\ExtractionConfig $config): void { }
-    public static function serveWithConfigAndLimitsAsync(string $host, int $port, \Kreuzberg\ExtractionConfig $config, string $limits): void { }
     public static function serveWithServerConfigAsync(\Kreuzberg\ExtractionConfig $extraction_config, \Kreuzberg\ServerConfig $server_config): void { }
     public static function serveDefaultAsync(): void { }
     public static function mapKreuzbergErrorToMcp(string $error): string { }
     public static function startMcpServerAsync(): void { }
     public static function startMcpServerWithConfigAsync(\Kreuzberg\ExtractionConfig $config): void { }
-    public static function startMcpServerHttpAsync(string $host, int $port): void { }
-    public static function startMcpServerHttpWithConfigAsync(string $host, int $port, \Kreuzberg\ExtractionConfig $config): void { }
     /**
      * @param array<\Kreuzberg\PageBoundary> $boundaries
      * @return void
      */
     public static function validatePageBoundaries(array $boundaries): void { }
-    /**
-     * @param int $byte_start
-     * @param int $byte_end
-     * @param array<\Kreuzberg\PageBoundary> $boundaries
-     * @return string
-     */
-    public static function calculatePageRange(int $byte_start, int $byte_end, array $boundaries): string { }
     public static function classifyChunk(string $content, ?\Kreuzberg\HeadingContext $heading_context = null): \Kreuzberg\ChunkType { }
     /**
      * @param string $text
@@ -6893,16 +6220,12 @@ class KreuzbergApi
     public static function generateEmbeddingsForChunks(array $chunks, \Kreuzberg\EmbeddingConfig $config): void { }
     public static function calculateSmartDpi(float $page_width, float $page_height, int $target_dpi, int $max_dimension, float $max_memory_mb): int { }
     public static function calculateOptimalDpi(float $page_width, float $page_height, int $target_dpi, int $max_dimension, int $min_dpi, int $max_dpi): int { }
-    public static function normalizeImageDpi(string $rgb_data, int $width, int $height, \Kreuzberg\ExtractionConfig $config, ?float $current_dpi = null): string { }
     public static function resizeImage(string $image, int $new_width, int $new_height, float $scale_factor): string { }
     public static function detectLanguages(string $text, \Kreuzberg\LanguageDetectionConfig $config): ?array { }
     public static function registerLanguageDetectionProcessor(): void { }
     public static function getStopwords(string $lang): ?string { }
     public static function getStopwordsWithFallback(string $language, string $fallback): ?string { }
     public static function extractKeywords(string $text, \Kreuzberg\KeywordConfig $config): array { }
-    public static function textBlockToElement(string $block, int $page_number): ?\Kreuzberg\OcrElement { }
-    public static function tsvRowToElement(string $row): \Kreuzberg\OcrElement { }
-    public static function iteratorWordToElement(string $word, ?string $block_type = null, ?string $para_info = null, int $page_number): \Kreuzberg\OcrElement { }
     public static function elementToHocrWord(\Kreuzberg\OcrElement $element): string { }
     /**
      * @param array<\Kreuzberg\OcrElement> $elements
@@ -6953,11 +6276,7 @@ class KreuzbergApi
     public static function preprocessImagenetLetterbox(string $img, int $target_size): string { }
     public static function preprocessRescale(string $img, int $target_size): string { }
     public static function preprocessLetterbox(string $img, int $target_width, int $target_height): string { }
-    public static function buildSession(string $path, ?\Kreuzberg\AccelerationConfig $accel = null, int $thread_budget): string { }
     public static function configFromExtraction(\Kreuzberg\LayoutDetectionConfig $layout_config): string { }
-    public static function createEngine(\Kreuzberg\LayoutDetectionConfig $layout_config): string { }
-    public static function takeOrCreateEngine(\Kreuzberg\LayoutDetectionConfig $layout_config): string { }
-    public static function returnEngine(string $engine): void { }
     public static function takeOrCreateTatr(): ?string { }
     public static function returnTatr(string $model): void { }
     public static function takeOrCreateSlanet(string $variant): ?string { }
@@ -6966,13 +6285,11 @@ class KreuzbergApi
     public static function returnTableClassifier(string $model): void { }
     public static function extractAnnotationsFromDocument(string $document): array { }
     public static function extractBookmarks(string $document): array { }
-    public static function extractBundledPdfium(): string { }
     public static function extractEmbeddedFiles(string $document): array { }
     public static function extractAndProcessEmbeddedFilesAsync(string $pdf_bytes, \Kreuzberg\ExtractionConfig $config): string { }
     public static function initializeFontCache(): void { }
     public static function getFontDescriptors(): array { }
     public static function cachedFontCount(): int { }
-    public static function clearFontCache(): void { }
     /**
      * @param array<string> $blocks
      * @param int $k
@@ -7014,12 +6331,6 @@ class KreuzbergApi
     public static function shouldTriggerOcr(string $page, array $blocks, \Kreuzberg\ExtractionConfig $config): bool { }
     public static function extractImagesFromPdf(string $pdf_bytes): array { }
     public static function extractImagesFromPdfWithPassword(string $pdf_bytes, string $password): array { }
-    /**
-     * @param string $pdf_bytes
-     * @param array<\Kreuzberg\PdfImage> $images
-     * @return int
-     */
-    public static function reextractRawImagesViaPdfium(string $pdf_bytes, array $images): int { }
     public static function detectLayoutForDocument(string $pdf_bytes, string $engine): string { }
     /**
      * @param array<string> $images
@@ -7035,13 +6346,6 @@ class KreuzbergApi
      * @return string
      */
     public static function extractMetadataWithPasswords(string $pdf_bytes, array $passwords): string { }
-    /**
-     * @param string $document
-     * @param ?array<\Kreuzberg\PageBoundary> $page_boundaries
-     * @param ?string $content
-     * @return \Kreuzberg\PdfExtractionMetadata
-     */
-    public static function extractMetadataFromDocument(string $document, ?array $page_boundaries = null, ?string $content = null): \Kreuzberg\PdfExtractionMetadata { }
     public static function extractCommonMetadataFromDocument(string $document): \Kreuzberg\CommonPdfMetadata { }
     public static function renderPageToImage(string $pdf_bytes, int $page_index, string $options): string { }
     public static function renderPdfPageToPng(string $pdf_bytes, int $page_index, ?int $dpi = null, ?string $password = null): string { }
@@ -7074,8 +6378,6 @@ class KreuzbergApi
      * @return string
      */
     public static function extractTextFromPdfWithPasswords(string $pdf_bytes, array $passwords): string { }
-    public static function extractTextAndMetadataFromPdfDocument(string $document, ?\Kreuzberg\ExtractionConfig $extraction_config = null): \Kreuzberg\PdfUnifiedExtractionResult { }
-    public static function extractTextFromPdfDocument(string $document, ?\Kreuzberg\PageConfig $page_config = null, ?\Kreuzberg\ExtractionConfig $extraction_config = null): string { }
     public static function serializeToToon(\Kreuzberg\ExtractionResult $result): string { }
     public static function serializeToJson(\Kreuzberg\ExtractionResult $result): string { }
 }

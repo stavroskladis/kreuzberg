@@ -39,7 +39,7 @@ public abstract record FormatMetadata
     ) : FormatMetadata;
 
     public sealed record Image(
-        [property: JsonPropertyName("0")] ImageMetadata 0
+        [property: JsonPropertyName("0")] string 0
     ) : FormatMetadata;
 
     public sealed record Xml(

@@ -9,7 +9,7 @@ public record FormattedBlock(
     @JsonProperty("block_type") BlockType blockType,
     Optional<Long> level,
     @JsonProperty("inline_content") List<InlineElement> inlineContent,
-    Optional<Attributes> attributes,
+    Optional<String> attributes,
     Optional<String> language,
     Optional<String> code,
     List<FormattedBlock> children

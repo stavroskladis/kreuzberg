@@ -21,7 +21,7 @@ public sealed class HierarchyBlock
     /// The bounding box of the block
     /// </summary>
     [JsonPropertyName("bbox")]
-    public BoundingBox Bbox { get; set; } = default!;
+    public string Bbox { get; set; } = "";
 
     /// <summary>
     /// The font size of the text in this block

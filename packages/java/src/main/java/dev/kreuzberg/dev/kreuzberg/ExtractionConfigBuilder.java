@@ -16,7 +16,7 @@ public class ExtractionConfigBuilder {
     private Optional<ContentFilterConfig> contentFilter = Optional.empty();
     private Optional<ImageExtractionConfig> images = Optional.empty();
     private Optional<PdfConfig> pdfOptions = Optional.empty();
-    private Optional<TokenReductionConfig> tokenReduction = Optional.empty();
+    private Optional<TokenReductionOptions> tokenReduction = Optional.empty();
     private Optional<LanguageDetectionConfig> languageDetection = Optional.empty();
     private Optional<PageConfig> pages = Optional.empty();
     private Optional<PostProcessorConfig> postprocessor = Optional.empty();
@@ -24,7 +24,7 @@ public class ExtractionConfigBuilder {
     private Optional<HtmlOutputConfig> htmlOutput = Optional.empty();
     private Optional<Long> extractionTimeoutSecs = Optional.empty();
     private Optional<Long> maxConcurrentExtractions = Optional.empty();
-    private OutputFormat resultFormat = null;
+    private ExtractionMode resultFormat = null;
     private Optional<String> securityLimits = Optional.empty();
     private OutputFormat outputFormat = null;
     private Optional<LayoutDetectionConfig> layout = Optional.empty();
@@ -88,7 +88,7 @@ public class ExtractionConfigBuilder {
         return this;
     }
 
-    public ExtractionConfigBuilder withTokenReduction(Optional<TokenReductionConfig> value) {
+    public ExtractionConfigBuilder withTokenReduction(Optional<TokenReductionOptions> value) {
         this.tokenReduction = value;
         return this;
     }
@@ -128,7 +128,7 @@ public class ExtractionConfigBuilder {
         return this;
     }
 
-    public ExtractionConfigBuilder withResultFormat(OutputFormat value) {
+    public ExtractionConfigBuilder withResultFormat(ExtractionMode value) {
         this.resultFormat = value;
         return this;
     }

@@ -18,7 +18,7 @@ public sealed class Element
     /// Unique element identifier
     /// </summary>
     [JsonPropertyName("element_id")]
-    public ElementId ElementId { get; set; } = default!;
+    public string ElementId { get; set; } = "";
 
     /// <summary>
     /// Semantic type of this element

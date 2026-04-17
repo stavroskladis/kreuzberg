@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record HeaderFooter(
     List<String> paragraphs,
-    List<Table> tables,
+    List<String> tables,
     @JsonProperty("header_type") String headerType
 ) {
     public static HeaderFooterBuilder builder() {

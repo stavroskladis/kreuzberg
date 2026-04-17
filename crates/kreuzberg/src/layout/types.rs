@@ -226,8 +226,9 @@ pub struct LayoutDetection {
 
 impl LayoutDetection {
     /// Sort detections by confidence in descending order.
-    pub fn sort_by_confidence_desc(detections: &mut [LayoutDetection]) {
+    pub fn sort_by_confidence_desc(mut detections: Vec<LayoutDetection>) -> Vec<LayoutDetection> {
         detections.sort_by(|a, b| b.confidence.total_cmp(&a.confidence));
+        detections
     }
 
     pub fn new(class: LayoutClass, confidence: f32, bbox: BBox) -> Self {

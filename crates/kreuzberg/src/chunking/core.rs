@@ -257,13 +257,13 @@ pub fn chunk_text_with_type(
 ///
 /// # fn example() -> kreuzberg::Result<()> {
 /// let config = ChunkingConfig::default();
-/// let texts = vec!["First text", "Second text"];
+/// let texts: Vec<String> = vec!["First text".to_string(), "Second text".to_string()];
 /// let results = chunk_texts_batch(&texts, &config)?;
 /// assert_eq!(results.len(), 2);
 /// # Ok(())
 /// # }
 /// ```
-pub fn chunk_texts_batch(texts: &[&str], config: &ChunkingConfig) -> Result<Vec<ChunkingResult>> {
+pub fn chunk_texts_batch(texts: &[String], config: &ChunkingConfig) -> Result<Vec<ChunkingResult>> {
     texts.iter().map(|text| chunk_text(text, config, None)).collect()
 }
 
@@ -444,7 +444,7 @@ mod tests {
     #[test]
     fn test_chunk_texts_batch_empty() {
         let config = ChunkingConfig::default();
-        let texts: Vec<&str> = vec![];
+        let texts: Vec<String> = vec![];
         let results = chunk_texts_batch(&texts, &config).unwrap();
         assert_eq!(results.len(), 0);
     }
@@ -458,7 +458,11 @@ mod tests {
             chunker_type: ChunkerType::Text,
             ..Default::default()
         };
-        let texts = vec!["First text", "Second text", "Third text"];
+        let texts: Vec<String> = vec![
+            "First text".to_string(),
+            "Second text".to_string(),
+            "Third text".to_string(),
+        ];
         let results = chunk_texts_batch(&texts, &config).unwrap();
         assert_eq!(results.len(), 3);
         assert!(results.iter().all(|r| r.chunk_count >= 1));
@@ -473,10 +477,10 @@ mod tests {
             chunker_type: ChunkerType::Text,
             ..Default::default()
         };
-        let texts = vec![
-            "Short",
-            "This is a longer text that should be split into multiple chunks",
-            "",
+        let texts: Vec<String> = vec![
+            "Short".to_string(),
+            "This is a longer text that should be split into multiple chunks".to_string(),
+            String::new(),
         ];
         let results = chunk_texts_batch(&texts, &config).unwrap();
         assert_eq!(results.len(), 3);
@@ -494,7 +498,7 @@ mod tests {
             chunker_type: ChunkerType::Text,
             ..Default::default()
         };
-        let texts = vec!["Text one", "Text two"];
+        let texts: Vec<String> = vec!["Text one".to_string(), "Text two".to_string()];
         let result = chunk_texts_batch(&texts, &config);
         assert!(result.is_err());
     }

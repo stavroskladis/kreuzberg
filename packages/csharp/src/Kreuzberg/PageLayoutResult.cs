@@ -15,7 +15,7 @@ public sealed class PageLayoutResult
     public ulong PageIndex { get; set; } = 0;
 
     [JsonPropertyName("regions")]
-    public List<PageLayoutRegion> Regions { get; set; } = [];
+    public List<string> Regions { get; set; } = [];
 
     [JsonPropertyName("page_width_pts")]
     public float PageWidthPts { get; set; } = 0.0;

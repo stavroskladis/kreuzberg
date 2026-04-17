@@ -8,6 +8,6 @@ public record PdfAnnotation(
     @JsonProperty("annotation_type") PdfAnnotationType annotationType,
     Optional<String> content,
     @JsonProperty("page_number") long pageNumber,
-    @JsonProperty("bounding_box") Optional<BoundingBox> boundingBox
+    @JsonProperty("bounding_box") Optional<String> boundingBox
 ) {
 }

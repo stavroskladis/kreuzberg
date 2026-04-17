@@ -8,8 +8,7 @@ from typing import TYPE_CHECKING
 import kreuzberg._kreuzberg as _rust
 
 if TYPE_CHECKING:
-    from ._kreuzberg import OcrBackend, Renderer
-    from .options import AccelerationConfig, Attributes, CharData, Chunk, ChunkerType, ChunkingConfig, ContentFilterConfig, DetectionResult, DjotContent, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractedImage, ExtractionConfig, ExtractionResult, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, KeywordConfig, LanguageDetectionConfig, LayoutDetection, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PdfConfig, PdfImage, PostProcessorConfig, RakeParams, RecognizedTable, ServerConfig, StructuredExtractionConfig, Table, TesseractConfig, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, YakeParams
+    from .options import AccelerationConfig, CharData, Chunk, ChunkerType, ChunkingConfig, ContentFilterConfig, DetectionResult, DjotContent, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractionConfig, ExtractionResult, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, KeywordConfig, LanguageDetectionConfig, LayoutDetection, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfidence, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PdfConfig, PostProcessorConfig, RakeParams, RecognizedTable, ServerConfig, StructuredExtractionConfig, TesseractConfig, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, YakeParams
 
 
 _TO_RUST_CHUNKERTYPE_MAP = {
@@ -32,6 +31,12 @@ _TO_RUST_EXECUTIONPROVIDERTYPE_MAP = {
     "core_ml": _rust.ExecutionProviderType.CoreMl,
     "cuda": _rust.ExecutionProviderType.Cuda,
     "tensor_rt": _rust.ExecutionProviderType.TensorRt,
+}
+
+
+_TO_RUST_EXTRACTIONMODE_MAP = {
+    "unified": _rust.ExtractionMode.Unified,
+    "element_based": _rust.ExtractionMode.ElementBased,
 }
 
 
@@ -62,6 +67,15 @@ _TO_RUST_PDFBACKEND_MAP = {
     "pdfium": _rust.PdfBackend.Pdfium,
     "pdf_oxide": _rust.PdfBackend.PdfOxide,
     "auto": _rust.PdfBackend.Auto,
+}
+
+
+_TO_RUST_REDUCTIONLEVEL_MAP = {
+    "off": _rust.ReductionLevel.Off,
+    "light": _rust.ReductionLevel.Light,
+    "moderate": _rust.ReductionLevel.Moderate,
+    "aggressive": _rust.ReductionLevel.Aggressive,
+    "maximum": _rust.ReductionLevel.Maximum,
 }
 
 
@@ -411,7 +425,7 @@ def _to_rust_extraction_config(value: ExtractionConfig | None) -> _rust.Extracti
         html_output=_to_rust_html_output_config(value.html_output),
         extraction_timeout_secs=value.extraction_timeout_secs,
         max_concurrent_extractions=value.max_concurrent_extractions,
-        result_format=_rust.OutputFormat(value.result_format),
+        result_format=_TO_RUST_EXTRACTIONMODE_MAP[value.result_format],
         security_limits=value.security_limits,
         output_format=_rust.OutputFormat(value.output_format),
         layout=_to_rust_layout_detection_config(value.layout),
@@ -497,14 +511,24 @@ def _to_rust_extraction_result(value: ExtractionResult | None) -> _rust.Extracti
     )
 
 
-def _to_rust_attributes(value: Attributes | None) -> _rust.Attributes | None:
-    """Convert Python Attributes to Rust binding type."""
+def _to_rust_token_reduction_config(
+    value: TokenReductionConfig | None,
+) -> _rust.TokenReductionConfig | None:
+    """Convert Python TokenReductionConfig to Rust binding type."""
     if value is None:
         return None
-    return _rust.Attributes(
-        id=value.id,
-        classes=value.classes,
-        key_values=value.key_values,
+    return _rust.TokenReductionConfig(
+        level=_TO_RUST_REDUCTIONLEVEL_MAP[value.level],
+        language_hint=value.language_hint,
+        preserve_markdown=value.preserve_markdown,
+        preserve_code=value.preserve_code,
+        semantic_threshold=value.semantic_threshold,
+        enable_parallel=value.enable_parallel,
+        use_simd=value.use_simd,
+        custom_stopwords=value.custom_stopwords,
+        preserve_patterns=value.preserve_patterns,
+        target_reduction=value.target_reduction,
+        enable_semantic_clustering=value.enable_semantic_clustering,
     )
 
 
@@ -552,6 +576,32 @@ def _to_rust_keyword_config(value: KeywordConfig | None) -> _rust.KeywordConfig 
         language=value.language,
         yake_params=_to_rust_yake_params(value.yake_params),
         rake_params=_to_rust_rake_params(value.rake_params),
+    )
+
+
+def _to_rust_ocr_confidence(value: OcrConfidence | None) -> _rust.OcrConfidence | None:
+    """Convert Python OcrConfidence to Rust binding type."""
+    if value is None:
+        return None
+    return _rust.OcrConfidence(
+        detection=value.detection,
+        recognition=value.recognition,
+    )
+
+
+def _to_rust_ocr_element(value: OcrElement | None) -> _rust.OcrElement | None:
+    """Convert Python OcrElement to Rust binding type."""
+    if value is None:
+        return None
+    return _rust.OcrElement(
+        text=value.text,
+        geometry=_rust.OcrBoundingGeometry(value.geometry),
+        confidence=_to_rust_ocr_confidence(value.confidence),  # type: ignore[arg-type]
+        level=_TO_RUST_OCRELEMENTLEVEL_MAP[value.level],
+        rotation=value.rotation,
+        page_number=value.page_number,
+        parent_id=value.parent_id,
+        backend_metadata=value.backend_metadata,
     )
 
 
@@ -634,13 +684,13 @@ def init_thread_pools(budget: int) -> None:
     return _rust.init_thread_pools(budget)
 
 
-def merge_config_json(base: ExtractionConfig, override_json: dict[str, Any]) -> _rust.ExtractionConfig:
+def merge_config_json(base: ExtractionConfig, override_json: str) -> _rust.ExtractionConfig:
     """Merge extraction configuration using JSON-level field override."""
     _rust_base = _to_rust_extraction_config(base)
     return _rust.merge_config_json(_rust_base, override_json)
 
 
-def build_config_from_json(base: ExtractionConfig, override_json: dict[str, Any] | None = None) -> _rust.ExtractionConfig:
+def build_config_from_json(base: ExtractionConfig, override_json: str | None = None) -> _rust.ExtractionConfig:
     """Build extraction config by optionally merging JSON overrides into a base config."""
     _rust_base = _to_rust_extraction_config(base)
     return _rust.build_config_from_json(_rust_base, override_json)
@@ -748,55 +798,14 @@ def get_pool_sizing_hint(file_size: int, mime_type: str) -> str:
     return _rust.get_pool_sizing_hint(file_size, mime_type)
 
 
-def extract_file_sync(path: str, mime_type: str | None = None, config: ExtractionConfig) -> _rust.ExtractionResult:
-    """Synchronous wrapper for `extract_file`."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.extract_file_sync(path, mime_type, _rust_config)
-
-
-def extract_bytes_sync(content: bytes, mime_type: str, config: ExtractionConfig) -> _rust.ExtractionResult:
-    """Synchronous wrapper for `extract_bytes`."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.extract_bytes_sync(content, mime_type, _rust_config)
-
-
-def batch_extract_file_sync(items: list[str], config: ExtractionConfig) -> list[_rust.ExtractionResult]:
-    """Synchronous wrapper for `batch_extract_file`."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.batch_extract_file_sync(items, _rust_config)
-
-
-def batch_extract_bytes_sync(items: list[str], config: ExtractionConfig) -> list[_rust.ExtractionResult]:
-    """Synchronous wrapper for `batch_extract_bytes`."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.batch_extract_bytes_sync(items, _rust_config)
-
-
-def batch_extract_file(items: list[str], config: ExtractionConfig) -> list[_rust.ExtractionResult]:
-    """Extract content from multiple files concurrently."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.batch_extract_file(items, _rust_config)
-
-
-def batch_extract_bytes(items: list[str], config: ExtractionConfig) -> list[_rust.ExtractionResult]:
-    """Extract content from multiple byte arrays concurrently."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.batch_extract_bytes(items, _rust_config)
-
-
 def is_valid_format_field(field: str) -> bool:
     """Validates whether a field name is in the known formats registry."""
     return _rust.is_valid_format_field(field)
 
 
-def open_file_bytes(path: str) -> _rust.FileBytes:
+def open_file_bytes(path: str) -> str:
     """Open a file and return its bytes with zero-copy for large files."""
     return _rust.open_file_bytes(path)
-
-
-def read_file_async(path: str) -> bytes:
-    """Read a file asynchronously."""
-    return _rust.read_file_async(path)
 
 
 def read_file_sync(path: str) -> bytes:
@@ -854,22 +863,10 @@ def clear_processor_cache() -> None:
     return _rust.clear_processor_cache()
 
 
-def apply_output_format(result: ExtractionResult, output_format: OutputFormat) -> None:
+def apply_output_format(result: ExtractionResult, output_format: OutputFormat) -> _rust.ExtractionResult:
     """Apply output format conversion to the extraction result."""
     _rust_result = _to_rust_extraction_result(result)
     return _rust.apply_output_format(_rust_result, output_format)
-
-
-def run_pipeline(doc: str, config: ExtractionConfig) -> _rust.ExtractionResult:
-    """Run the post-processing pipeline on an `InternalDocument`."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.run_pipeline(doc, _rust_config)
-
-
-def run_pipeline_sync(doc: str, config: ExtractionConfig) -> _rust.ExtractionResult:
-    """Run the post-processing pipeline synchronously (WASM-compatible version)."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.run_pipeline_sync(doc, _rust_config)
 
 
 def is_page_text_blank(text: str) -> bool:
@@ -880,16 +877,6 @@ def is_page_text_blank(text: str) -> bool:
 def resolve_relationships(doc: str) -> None:
     """Resolve `RelationshipTarget::Key` entries to `RelationshipTarget::Index`."""
     return _rust.resolve_relationships(doc)
-
-
-def derive_document_structure(doc: str) -> _rust.DocumentStructure:
-    """Derive a hierarchical `DocumentStructure` from the flat internal document."""
-    return _rust.derive_document_structure(doc)
-
-
-def derive_extraction_result(doc: str, include_document_structure: bool, output_format: OutputFormat) -> _rust.ExtractionResult:
-    """Derive a complete `ExtractionResult` from an `InternalDocument`."""
-    return _rust.derive_extraction_result(doc, include_document_structure, output_format)
 
 
 def parse_json(data: bytes, config: str | None = None) -> _rust.StructuredDataResult:
@@ -919,12 +906,12 @@ def transform_to_document_structure(result: ExtractionResult) -> _rust.DocumentS
     return _rust.transform_to_document_structure(_rust_result)
 
 
-def detect_list_items(text: str) -> list[_rust.ListItemMetadata]:
+def detect_list_items(text: str) -> list[str]:
     """Detect list items in text with support for multiple formats."""
     return _rust.detect_list_items(text)
 
 
-def generate_element_id(text: str, element_type: ElementType, page_number: int | None = None) -> _rust.ElementId:
+def generate_element_id(text: str, element_type: ElementType, page_number: int | None = None) -> str:
     """Generate a unique element ID for semantic content."""
     return _rust.generate_element_id(text, element_type, page_number)
 
@@ -935,7 +922,7 @@ def transform_extraction_result_to_elements(result: ExtractionResult) -> list[_r
     return _rust.transform_extraction_result_to_elements(_rust_result)
 
 
-def parse_body_text(data: bytes, is_compressed: bool) -> list[_rust.Section]:
+def parse_body_text(data: bytes, is_compressed: bool) -> list[str]:
     """Parse a raw (possibly compressed) BodyText/SectionN stream."""
     return _rust.parse_body_text(data, is_compressed)
 
@@ -950,20 +937,9 @@ def extract_hwp_text(bytes: bytes) -> str:
     return _rust.extract_hwp_text(bytes)
 
 
-def load_image_for_ocr(image_bytes: bytes) -> str:
-    """Load image bytes for OCR, with JPEG 2000 and JBIG2 fallback support."""
-    return _rust.load_image_for_ocr(image_bytes)
-
-
-def extract_image_metadata(bytes: bytes) -> _rust.ImageMetadata:
+def extract_image_metadata(bytes: bytes) -> str:
     """Extract metadata from image bytes."""
     return _rust.extract_image_metadata(bytes)
-
-
-def extract_text_from_image_with_ocr(bytes: bytes, mime_type: str, ocr_result: str, page_config: PageConfig | None = None) -> _rust.ImageOcrResult:
-    """Extract text from image bytes using OCR with optional page tracking for multi-frame TIFFs."""
-    _rust_page_config = _to_rust_page_config(page_config)
-    return _rust.extract_text_from_image_with_ocr(bytes, mime_type, ocr_result, _rust_page_config)
 
 
 def estimate_content_capacity(file_size: int, format: str) -> int:
@@ -1081,11 +1057,6 @@ def build_email_text_output(result: EmailExtractionResult) -> str:
     return _rust.build_email_text_output(result)
 
 
-def extract_pst_messages(pst_data: bytes) -> str:
-    """Extract all email messages from a PST file."""
-    return _rust.extract_pst_messages(pst_data)
-
-
 def read_excel_file(file_path: str) -> _rust.ExcelWorkbook:
     return _rust.read_excel_file(file_path)
 
@@ -1123,14 +1094,9 @@ def extract_html_inline_images(html: str, options: str | None = None) -> list[st
     return _rust.extract_html_inline_images(html, options)
 
 
-def extract_doc_text(content: bytes) -> _rust.DocExtractionResult:
+def extract_doc_text(content: bytes) -> str:
     """Extract text from DOC bytes."""
     return _rust.extract_doc_text(content)
-
-
-def parse_drawing(reader: str) -> _rust.Drawing:
-    """Parse a drawing object starting after the `<w:drawing>` Start event."""
-    return _rust.parse_drawing(reader)
 
 
 def collect_and_convert_omath_para(reader: str) -> str:
@@ -1168,11 +1134,6 @@ def parse_styles_xml(xml: str) -> str:
     return _rust.parse_styles_xml(xml)
 
 
-def parse_table_properties(reader: str) -> _rust.TableProperties:
-    """Parse table-level properties from streaming XML reader."""
-    return _rust.parse_table_properties(reader)
-
-
 def parse_row_properties(reader: str) -> str:
     """Parse row-level properties from streaming XML reader."""
     return _rust.parse_row_properties(reader)
@@ -1181,11 +1142,6 @@ def parse_row_properties(reader: str) -> str:
 def parse_cell_properties(reader: str) -> str:
     """Parse cell-level properties from streaming XML reader."""
     return _rust.parse_cell_properties(reader)
-
-
-def parse_table_grid(reader: str) -> _rust.TableGrid:
-    """Parse table grid (column widths) from streaming XML reader."""
-    return _rust.parse_table_grid(reader)
 
 
 def parse_theme_xml(xml: str) -> str:
@@ -1224,18 +1180,12 @@ def detect_image_format(data: bytes) -> str:
     return _rust.detect_image_format(data)
 
 
-def process_images_with_ocr(images: list[ExtractedImage], config: ExtractionConfig) -> list[_rust.ExtractedImage]:
-    """Process extracted images with OCR if configured."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.process_images_with_ocr(images, _rust_config)
-
-
-def extract_ppt_text(content: bytes) -> _rust.PptExtractionResult:
+def extract_ppt_text(content: bytes) -> str:
     """Extract text from PPT bytes."""
     return _rust.extract_ppt_text(content)
 
 
-def extract_ppt_text_with_options(content: bytes, include_master_slides: bool) -> _rust.PptExtractionResult:
+def extract_ppt_text_with_options(content: bytes, include_master_slides: bool) -> str:
     """Extract text from PPT bytes with configurable master slide inclusion."""
     return _rust.extract_ppt_text_with_options(content, include_master_slides)
 
@@ -1268,16 +1218,14 @@ def cells_to_markdown(cells: list[list[str]]) -> str:
     return _rust.cells_to_markdown(cells)
 
 
-def parse_jotdown_attributes(attrs: Attributes) -> _rust.Attributes:
+def parse_jotdown_attributes(attrs: str) -> str:
     """Parse jotdown attributes into our Attributes representation."""
-    _rust_attrs = _to_rust_attributes(attrs)
-    return _rust.parse_jotdown_attributes(_rust_attrs)
+    return _rust.parse_jotdown_attributes(attrs)
 
 
-def render_attributes(attrs: Attributes) -> str:
+def render_attributes(attrs: str) -> str:
     """Render attributes to djot attribute syntax."""
-    _rust_attrs = _to_rust_attributes(attrs)
-    return _rust.render_attributes(_rust_attrs)
+    return _rust.render_attributes(attrs)
 
 
 def djot_content_to_djot(content: DjotContent) -> str:
@@ -1296,13 +1244,7 @@ def djot_to_html(djot_source: str) -> str:
     return _rust.djot_to_html(djot_source)
 
 
-def extract_complete_djot_content(events: list[str], metadata: Metadata, tables: list[Table]) -> _rust.DjotContent:
-    """Extract complete djot content with 100% feature extraction."""
-    _rust_metadata = _to_rust_metadata(metadata)
-    return _rust.extract_complete_djot_content(events, _rust_metadata, tables)
-
-
-def extract_tables_from_events(events: list[str]) -> list[_rust.Table]:
+def extract_tables_from_events(events: list[str]) -> list[str]:
     """Extract tables from Djot events."""
     return _rust.extract_tables_from_events(events)
 
@@ -1312,29 +1254,24 @@ def extract_text_from_events(events: list[str]) -> str:
     return _rust.extract_text_from_events(events)
 
 
-def render_block_to_djot(output: str, block: FormattedBlock, indent_level: int) -> None:
+def render_block_to_djot(block: FormattedBlock, indent_level: int) -> str:
     """Render a single block to djot markup."""
-    return _rust.render_block_to_djot(output, block, indent_level)
+    return _rust.render_block_to_djot(block, indent_level)
 
 
-def render_list_item(output: str, item: FormattedBlock, indent: str, marker: str) -> None:
+def render_list_item(item: FormattedBlock, indent: str, marker: str) -> str:
     """Render a list item with the given marker."""
-    return _rust.render_list_item(output, item, indent, marker)
+    return _rust.render_list_item(item, indent, marker)
 
 
-def render_inline_content(output: str, elements: list[InlineElement]) -> None:
+def render_inline_content(elements: list[InlineElement]) -> str:
     """Render inline content to djot markup."""
-    return _rust.render_inline_content(output, elements)
+    return _rust.render_inline_content(elements)
 
 
 def extract_frontmatter(content: str) -> str:
     """Extract YAML frontmatter from document content."""
     return _rust.extract_frontmatter(content)
-
-
-def extract_metadata_from_yaml(yaml: str) -> _rust.Metadata:
-    """Extract metadata from YAML frontmatter."""
-    return _rust.extract_metadata_from_yaml(yaml)
 
 
 def extract_title_from_content(content: str) -> str | None:
@@ -1377,24 +1314,13 @@ def dedup_text(texts: list[str]) -> list[str]:
     return _rust.dedup_text(texts)
 
 
-def evaluate_native_text_for_ocr(native_text: str, page_count: int | None = None, thresholds: OcrQualityThresholds) -> _rust.OcrFallbackDecision:
-    """Evaluates native PDF text quality to determine if OCR fallback is needed."""
-    _rust_thresholds = _to_rust_ocr_quality_thresholds(thresholds)
-    return _rust.evaluate_native_text_for_ocr(native_text, page_count, _rust_thresholds)
-
-
-def evaluate_per_page_ocr(native_text: str, boundaries: list[PageBoundary] | None = None, page_count: int | None = None, thresholds: OcrQualityThresholds) -> _rust.OcrFallbackDecision:
-    _rust_thresholds = _to_rust_ocr_quality_thresholds(thresholds)
-    return _rust.evaluate_per_page_ocr(native_text, boundaries, page_count, _rust_thresholds)
-
-
-def hex_digit_to_u8(c: str) -> int | None:
+def hex_digit_to_u8(c: int) -> int | None:
     """Convert a hex digit character to its numeric value."""
     return _rust.hex_digit_to_u8(c)
 
 
-def parse_hex_byte(h1: str, h2: str) -> int | None:
-    """Parse a hex-encoded byte from two characters."""
+def parse_hex_byte(h1: int, h2: int) -> int | None:
+    """Parse a hex-encoded byte from two bytes."""
     return _rust.parse_hex_byte(h1, h2)
 
 
@@ -1468,11 +1394,6 @@ def clear_extractors() -> None:
     return _rust.clear_extractors()
 
 
-def register_ocr_backend(backend: OcrBackend) -> None:
-    """Register an OCR backend with the global registry."""
-    return _rust.register_ocr_backend(backend)
-
-
 def unregister_ocr_backend(name: str) -> None:
     """Unregister an OCR backend by name."""
     return _rust.unregister_ocr_backend(name)
@@ -1516,11 +1437,6 @@ def get_validator_registry() -> str:
 def get_renderer_registry() -> str:
     """Get the global renderer registry."""
     return _rust.get_renderer_registry()
-
-
-def register_renderer(renderer: Renderer) -> None:
-    """Register a renderer with the global registry."""
-    return _rust.register_renderer(renderer)
 
 
 def unregister_renderer(name: str) -> None:
@@ -1593,7 +1509,7 @@ def sanitize_filename(path: str) -> str:
     return _rust.sanitize_filename(path)
 
 
-def get_metrics() -> _rust.ExtractionMetrics:
+def get_metrics() -> str:
     """Get the global extraction metrics, initialising on first call."""
     return _rust.get_metrics()
 
@@ -1667,12 +1583,14 @@ def normalize_spaces(text: str) -> str:
 
 def reduce_tokens(text: str, config: TokenReductionConfig, language_hint: str | None = None) -> str:
     """Reduces token count in text while preserving meaning and structure."""
-    return _rust.reduce_tokens(text, config, language_hint)
+    _rust_config = _to_rust_token_reduction_config(config)
+    return _rust.reduce_tokens(text, _rust_config, language_hint)
 
 
 def batch_reduce_tokens(texts: list[str], config: TokenReductionConfig, language_hint: str | None = None) -> list[str]:
     """Reduces token count for multiple texts efficiently using parallel processing."""
-    return _rust.batch_reduce_tokens(texts, config, language_hint)
+    _rust_config = _to_rust_token_reduction_config(config)
+    return _rust.batch_reduce_tokens(texts, _rust_config, language_hint)
 
 
 def get_reduction_statistics(original: str, reduced: str) -> str:
@@ -1785,12 +1703,12 @@ def acquire_string_buffer() -> _rust.PooledString:
     return _rust.acquire_string_buffer()
 
 
-def intern_language_code(lang_code: str) -> _rust.InternedString:
+def intern_language_code(lang_code: str) -> str:
     """Get or intern a language code string."""
     return _rust.intern_language_code(lang_code)
 
 
-def intern_mime_type(mime_type: str) -> _rust.InternedString:
+def intern_mime_type(mime_type: str) -> str:
     """Get or intern a MIME type string."""
     return _rust.intern_mime_type(mime_type)
 
@@ -1830,11 +1748,6 @@ def load_server_config(config_path: str | None = None) -> _rust.ServerConfig:
     return _rust.load_server_config(config_path)
 
 
-def openapi_json() -> str:
-    """Generate OpenAPI JSON schema."""
-    return _rust.openapi_json()
-
-
 def create_router(config: ExtractionConfig) -> str:
     """Create the API router with all routes configured."""
     _rust_config = _to_rust_extraction_config(config)
@@ -1865,12 +1778,6 @@ def serve_with_config(host: str, port: int, config: ExtractionConfig) -> None:
     return _rust.serve_with_config(host, port, _rust_config)
 
 
-def serve_with_config_and_limits(host: str, port: int, config: ExtractionConfig, limits: str) -> None:
-    """Start the API server with explicit config and size limits."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.serve_with_config_and_limits(host, port, _rust_config, limits)
-
-
 def serve_with_server_config(extraction_config: ExtractionConfig, server_config: ServerConfig) -> None:
     """Start the API server with explicit extraction config and server config."""
     _rust_extraction_config = _to_rust_extraction_config(extraction_config)
@@ -1899,25 +1806,9 @@ def start_mcp_server_with_config(config: ExtractionConfig) -> None:
     return _rust.start_mcp_server_with_config(_rust_config)
 
 
-def start_mcp_server_http(host: str, port: int) -> None:
-    """Start MCP server with HTTP Stream transport."""
-    return _rust.start_mcp_server_http(host, port)
-
-
-def start_mcp_server_http_with_config(host: str, port: int, config: ExtractionConfig) -> None:
-    """Start MCP HTTP server with custom extraction config."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.start_mcp_server_http_with_config(host, port, _rust_config)
-
-
 def validate_page_boundaries(boundaries: list[PageBoundary]) -> None:
     """Validates the consistency and correctness of page boundaries."""
     return _rust.validate_page_boundaries(boundaries)
-
-
-def calculate_page_range(byte_start: int, byte_end: int, boundaries: list[PageBoundary]) -> str:
-    """Calculate which pages a byte range spans."""
-    return _rust.calculate_page_range(byte_start, byte_end, boundaries)
 
 
 def classify_chunk(content: str, heading_context: HeadingContext | None = None) -> _rust.ChunkType:
@@ -2021,12 +1912,6 @@ def calculate_optimal_dpi(page_width: float, page_height: float, target_dpi: int
     return _rust.calculate_optimal_dpi(page_width, page_height, target_dpi, max_dimension, min_dpi, max_dpi)
 
 
-def normalize_image_dpi(rgb_data: bytes, width: int, height: int, config: ExtractionConfig, current_dpi: float | None = None) -> str:
-    """Normalize image DPI based on extraction configuration."""
-    _rust_config = _to_rust_extraction_config(config)
-    return _rust.normalize_image_dpi(rgb_data, width, height, _rust_config, current_dpi)
-
-
 def resize_image(image: str, new_width: int, new_height: int, scale_factor: float) -> str:
     """Resize an image using fast_image_resize with appropriate algorithm based on scale factor."""
     return _rust.resize_image(image, new_width, new_height, scale_factor)
@@ -2058,24 +1943,10 @@ def extract_keywords(text: str, config: KeywordConfig) -> list[_rust.Keyword]:
     return _rust.extract_keywords(text, _rust_config)
 
 
-def text_block_to_element(block: str, page_number: int) -> _rust.OcrElement | None:
-    """Convert a PaddleOCR TextBlock to a unified OcrElement."""
-    return _rust.text_block_to_element(block, page_number)
-
-
-def tsv_row_to_element(row: str) -> _rust.OcrElement:
-    """Convert a Tesseract TSV row to a unified OcrElement."""
-    return _rust.tsv_row_to_element(row)
-
-
-def iterator_word_to_element(word: str, block_type: str | None = None, para_info: str | None = None, page_number: int) -> _rust.OcrElement:
-    """Convert a Tesseract iterator WordData to a unified OcrElement with rich metadata."""
-    return _rust.iterator_word_to_element(word, block_type, para_info, page_number)
-
-
 def element_to_hocr_word(element: OcrElement) -> str:
     """Convert an OcrElement to an HocrWord for table reconstruction."""
-    return _rust.element_to_hocr_word(element)
+    _rust_element = _to_rust_ocr_element(element)
+    return _rust.element_to_hocr_word(_rust_element)
 
 
 def elements_to_hocr_words(elements: list[OcrElement], min_confidence: float) -> list[str]:
@@ -2167,33 +2038,10 @@ def preprocess_letterbox(img: str, target_width: int, target_height: int) -> str
     return _rust.preprocess_letterbox(img, target_width, target_height)
 
 
-def build_session(path: str, accel: AccelerationConfig | None = None, thread_budget: int) -> str:
-    """Build an optimized ORT session from an ONNX model file."""
-    _rust_accel = _to_rust_acceleration_config(accel)
-    return _rust.build_session(path, _rust_accel, thread_budget)
-
-
 def config_from_extraction(layout_config: LayoutDetectionConfig) -> str:
     """Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`]."""
     _rust_layout_config = _to_rust_layout_detection_config(layout_config)
     return _rust.config_from_extraction(_rust_layout_config)
-
-
-def create_engine(layout_config: LayoutDetectionConfig) -> str:
-    """Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`]."""
-    _rust_layout_config = _to_rust_layout_detection_config(layout_config)
-    return _rust.create_engine(_rust_layout_config)
-
-
-def take_or_create_engine(layout_config: LayoutDetectionConfig) -> str:
-    """Take the cached layout engine, or create a new one if the cache is empty."""
-    _rust_layout_config = _to_rust_layout_detection_config(layout_config)
-    return _rust.take_or_create_engine(_rust_layout_config)
-
-
-def return_engine(engine: str) -> None:
-    """Return a layout engine to the global cache for reuse by future extractions."""
-    return _rust.return_engine(engine)
 
 
 def take_or_create_tatr() -> str | None:
@@ -2236,11 +2084,6 @@ def extract_bookmarks(document: str) -> list[_rust.Uri]:
     return _rust.extract_bookmarks(document)
 
 
-def extract_bundled_pdfium() -> str:
-    """Extract bundled PDFium library to temporary directory."""
-    return _rust.extract_bundled_pdfium()
-
-
 def extract_embedded_files(document: str) -> list[_rust.EmbeddedFile]:
     """Extract embedded file descriptors from a PDF document loaded via lopdf."""
     return _rust.extract_embedded_files(document)
@@ -2265,11 +2108,6 @@ def get_font_descriptors() -> list[str]:
 def cached_font_count() -> int:
     """Get the number of cached fonts."""
     return _rust.cached_font_count()
-
-
-def clear_font_cache() -> None:
-    """Clear the font cache (for testing purposes)."""
-    return _rust.clear_font_cache()
 
 
 def cluster_font_sizes(blocks: list[str], k: int) -> list[_rust.FontSizeCluster]:
@@ -2321,11 +2159,6 @@ def extract_images_from_pdf_with_password(pdf_bytes: bytes, password: str) -> li
     return _rust.extract_images_from_pdf_with_password(pdf_bytes, password)
 
 
-def reextract_raw_images_via_pdfium(pdf_bytes: bytes, images: list[PdfImage]) -> int:
-    """Re-extract images that have unusable formats (`"raw"`, `"ccitt"`, `"jbig2"`) by."""
-    return _rust.reextract_raw_images_via_pdfium(pdf_bytes, images)
-
-
 def detect_layout_for_document(pdf_bytes: bytes, engine: str) -> str:
     """Run layout detection on all pages of a PDF document."""
     return _rust.detect_layout_for_document(pdf_bytes, engine)
@@ -2348,11 +2181,6 @@ def extract_metadata_with_password(pdf_bytes: bytes, password: str | None = None
 
 def extract_metadata_with_passwords(pdf_bytes: bytes, passwords: list[str]) -> str:
     return _rust.extract_metadata_with_passwords(pdf_bytes, passwords)
-
-
-def extract_metadata_from_document(document: str, page_boundaries: list[PageBoundary] | None = None, content: str | None = None) -> _rust.PdfExtractionMetadata:
-    """Extract complete PDF metadata from a document."""
-    return _rust.extract_metadata_from_document(document, page_boundaries, content)
 
 
 def extract_common_metadata_from_document(document: str) -> _rust.CommonPdfMetadata:
@@ -2409,19 +2237,6 @@ def extract_text_from_pdf_with_password(pdf_bytes: bytes, password: str) -> str:
 
 def extract_text_from_pdf_with_passwords(pdf_bytes: bytes, passwords: list[str]) -> str:
     return _rust.extract_text_from_pdf_with_passwords(pdf_bytes, passwords)
-
-
-def extract_text_and_metadata_from_pdf_document(document: str, extraction_config: ExtractionConfig | None = None) -> _rust.PdfUnifiedExtractionResult:
-    """Extract text and metadata from PDF document in a single pass."""
-    _rust_extraction_config = _to_rust_extraction_config(extraction_config)
-    return _rust.extract_text_and_metadata_from_pdf_document(document, _rust_extraction_config)
-
-
-def extract_text_from_pdf_document(document: str, page_config: PageConfig | None = None, extraction_config: ExtractionConfig | None = None) -> str:
-    """Extract text from PDF document with optional page boundary tracking."""
-    _rust_page_config = _to_rust_page_config(page_config)
-    _rust_extraction_config = _to_rust_extraction_config(extraction_config)
-    return _rust.extract_text_from_pdf_document(document, _rust_page_config, _rust_extraction_config)
 
 
 def serialize_to_toon(result: ExtractionResult) -> str:

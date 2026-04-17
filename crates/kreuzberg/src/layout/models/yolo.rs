@@ -188,7 +188,7 @@ impl YoloModel {
             nms::greedy_nms(&mut detections, NMS_IOU_THRESHOLD);
         }
 
-        LayoutDetection::sort_by_confidence_desc(&mut detections);
+        detections = LayoutDetection::sort_by_confidence_desc(detections);
 
         Ok(detections)
     }
@@ -315,7 +315,7 @@ impl YoloModel {
 
         nms::greedy_nms(&mut detections, NMS_IOU_THRESHOLD);
 
-        LayoutDetection::sort_by_confidence_desc(&mut detections);
+        detections = LayoutDetection::sort_by_confidence_desc(detections);
 
         Ok(detections)
     }

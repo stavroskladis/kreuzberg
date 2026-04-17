@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record ElementMetadata(
     @JsonProperty("page_number") Optional<Long> pageNumber,
     Optional<String> filename,
-    Optional<BoundingBox> coordinates,
+    Optional<String> coordinates,
     @JsonProperty("element_index") Optional<Long> elementIndex,
     Map<String, String> additional
 ) {

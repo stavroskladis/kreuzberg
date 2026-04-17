@@ -15,12 +15,12 @@ public class FileExtractionConfigBuilder {
     private Optional<ContentFilterConfig> contentFilter = Optional.empty();
     private Optional<ImageExtractionConfig> images = Optional.empty();
     private Optional<PdfConfig> pdfOptions = Optional.empty();
-    private Optional<TokenReductionConfig> tokenReduction = Optional.empty();
+    private Optional<TokenReductionOptions> tokenReduction = Optional.empty();
     private Optional<LanguageDetectionConfig> languageDetection = Optional.empty();
     private Optional<PageConfig> pages = Optional.empty();
     private Optional<PostProcessorConfig> postprocessor = Optional.empty();
     private Optional<String> htmlOptions = Optional.empty();
-    private Optional<OutputFormat> resultFormat = Optional.empty();
+    private Optional<ExtractionMode> resultFormat = Optional.empty();
     private Optional<OutputFormat> outputFormat = Optional.empty();
     private Optional<Boolean> includeDocumentStructure = Optional.empty();
     private Optional<LayoutDetectionConfig> layout = Optional.empty();
@@ -73,7 +73,7 @@ public class FileExtractionConfigBuilder {
         return this;
     }
 
-    public FileExtractionConfigBuilder withTokenReduction(Optional<TokenReductionConfig> value) {
+    public FileExtractionConfigBuilder withTokenReduction(Optional<TokenReductionOptions> value) {
         this.tokenReduction = value;
         return this;
     }
@@ -98,7 +98,7 @@ public class FileExtractionConfigBuilder {
         return this;
     }
 
-    public FileExtractionConfigBuilder withResultFormat(Optional<OutputFormat> value) {
+    public FileExtractionConfigBuilder withResultFormat(Optional<ExtractionMode> value) {
         this.resultFormat = value;
         return this;
     }

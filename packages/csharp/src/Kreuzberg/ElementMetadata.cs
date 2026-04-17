@@ -27,7 +27,7 @@ public sealed class ElementMetadata
     /// Bounding box coordinates if available
     /// </summary>
     [JsonPropertyName("coordinates")]
-    public BoundingBox? Coordinates { get; set; } = null;
+    public string? Coordinates { get; set; } = null;
 
     /// <summary>
     /// Position index in the element sequence

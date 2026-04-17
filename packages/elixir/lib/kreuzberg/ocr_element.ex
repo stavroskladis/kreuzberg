@@ -8,6 +8,6 @@ defmodule Kreuzberg.OcrElement do
             level: :line,
             rotation: nil,
             page_number: 0,
-            parent_id: nil,
+            parent_id: "",
             backend_metadata: %{}
 end

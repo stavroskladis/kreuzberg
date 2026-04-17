@@ -4,7 +4,7 @@ package dev.kreuzberg;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record Element(
-    @JsonProperty("element_id") ElementId elementId,
+    @JsonProperty("element_id") String elementId,
     @JsonProperty("element_type") ElementType elementType,
     String text,
     ElementMetadata metadata

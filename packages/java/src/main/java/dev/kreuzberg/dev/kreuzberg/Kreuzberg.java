@@ -206,13 +206,13 @@ public final class Kreuzberg {
      * let mut base = ExtractionConfig::default();
      * base.use_cache = true;
      * 
-     * let overrides = json!({"force_ocr": true});
+     * let overrides = r#"{"force_ocr": true}"#;
      * let merged = kreuzberg::core::config::merge::merge_config_json(&base, overrides).unwrap();
      * assert!(merged.use_cache);   // preserved from base
      * assert!(merged.force_ocr);   // applied from override
      * ```
      */
-    public static ExtractionConfig mergeConfigJson(ExtractionConfig base, Object overrideJson) throws KreuzbergRsException {
+    public static ExtractionConfig mergeConfigJson(ExtractionConfig base, String overrideJson) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(base, "base must not be null");
         java.util.Objects.requireNonNull(overrideJson, "overrideJson must not be null");
         return KreuzbergRs.mergeConfigJson(base, overrideJson);
@@ -224,7 +224,7 @@ public final class Kreuzberg {
      * If `override_json` is `None`, returns a clone of `base`. Otherwise delegates
      * to [`merge_config_json`].
      */
-    public static ExtractionConfig buildConfigFromJson(ExtractionConfig base, Object overrideJson) throws KreuzbergRsException {
+    public static ExtractionConfig buildConfigFromJson(ExtractionConfig base, String overrideJson) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(base, "base must not be null");
         return KreuzbergRs.buildConfigFromJson(base, overrideJson);
     }
@@ -857,269 +857,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Synchronous wrapper for `extract_file`.
-     * 
-     * This is a convenience function that blocks the current thread until extraction completes.
-     * For async code, use `extract_file` directly.
-     * 
-     * Uses the global Tokio runtime for 100x+ performance improvement over creating
-     * a new runtime per call. Always uses the global runtime to avoid nested runtime issues.
-     * 
-     * This function is only available with the `tokio-runtime` feature. For WASM targets,
-     * use a truly synchronous extraction approach instead.
-     * 
-     * # Example
-     * 
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::extract_file_sync;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * 
-     * let config = ExtractionConfig::default();
-     * let result = extract_file_sync("document.pdf", None, &config)?;
-     * println!("Content: {}", result.content);
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * ```
-     */
-    public static ExtractionResult extractFileSync(String path, String mimeType, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(path, "path must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.extractFileSync(path, mimeType, config);
-    }
-
-    public static ExtractionResult extractFileSync(String path, ExtractionConfig config) throws KreuzbergRsException {
-        return extractFileSync(path, null, config);
-    }
-
-    /**
-     * Synchronous wrapper for `extract_bytes`.
-     * 
-     * Uses the global Tokio runtime for 100x+ performance improvement over creating
-     * a new runtime per call.
-     * 
-     * With the `tokio-runtime` feature, this blocks the current thread using the global
-     * Tokio runtime. Without it (WASM), this calls a truly synchronous implementation.
-     * 
-     * # Example
-     * 
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::extract_bytes_sync;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * 
-     * let config = ExtractionConfig::default();
-     * let bytes = b"Hello, world!";
-     * let result = extract_bytes_sync(bytes, "text/plain", &config)?;
-     * println!("Content: {}", result.content);
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * ```
-     */
-    public static ExtractionResult extractBytesSync(byte[] content, String mimeType, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(content, "content must not be null");
-        java.util.Objects.requireNonNull(mimeType, "mimeType must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.extractBytesSync(content, mimeType, config);
-    }
-
-    /**
-     * Synchronous wrapper for `batch_extract_file`.
-     * 
-     * Uses the global Tokio runtime for optimal performance.
-     * Only available with `tokio-runtime` (WASM has no filesystem).
-     * 
-     * # Example
-     * 
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_file_sync;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use kreuzberg::FileExtractionConfig;
-     * use std::path::PathBuf;
-     * 
-     * let config = ExtractionConfig::default();
-     * let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
-     *     ("doc1.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-     *     ("doc2.pdf".into(), None),
-     * ];
-     * let results = batch_extract_file_sync(items, &config)?;
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * ```
-     */
-    public static List<ExtractionResult> batchExtractFileSync(List<String> items, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(items, "items must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.batchExtractFileSync(items, config);
-    }
-
-    /**
-     * Synchronous wrapper for `batch_extract_bytes`.
-     * 
-     * Uses the global Tokio runtime for optimal performance.
-     * With the `tokio-runtime` feature, this blocks the current thread using the global
-     * Tokio runtime. Without it (WASM), this calls a truly synchronous implementation
-     * that iterates through items and calls `extract_bytes_sync()`.
-     * 
-     * # Example
-     * 
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_bytes_sync;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use kreuzberg::FileExtractionConfig;
-     * 
-     * let config = ExtractionConfig::default();
-     * let items = vec![
-     *     (b"content".to_vec(), "text/plain".to_string(), None),
-     *     (b"other".to_vec(), "text/plain".to_string(),
-     *      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-     * ];
-     * let results = batch_extract_bytes_sync(items, &config)?;
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * ```
-     */
-    public static List<ExtractionResult> batchExtractBytesSync(List<String> items, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(items, "items must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.batchExtractBytesSync(items, config);
-    }
-
-    /**
-     * Extract content from multiple files concurrently.
-     * 
-     * This function processes multiple files in parallel, automatically managing
-     * concurrency to prevent resource exhaustion. The concurrency limit can be
-     * configured via `ExtractionConfig::max_concurrent_extractions` or defaults
-     * to `(num_cpus * 1.5).ceil()`.
-     * 
-     * Each file can optionally specify a [`FileExtractionConfig`] that overrides specific
-     * fields from the batch-level `config`. Pass `None` for a file to use the batch defaults.
-     * Batch-level settings like `max_concurrent_extractions` and `use_cache` are always
-     * taken from the batch-level `config`.
-     * 
-     * # Arguments
-     * 
-     * * `items` - Vector of `(path, optional_file_config)` tuples. Pass `None` as the
-     *   config to use the batch-level defaults for that file.
-     * * `config` - Batch-level extraction configuration (provides defaults and batch settings)
-     * 
-     * # Returns
-     * 
-     * A vector of `ExtractionResult` in the same order as the input items.
-     * 
-     * # Errors
-     * 
-     * Individual file errors are captured in the result metadata. System errors
-     * (IO, RuntimeError equivalents) will bubble up and fail the entire batch.
-     * 
-     * # Examples
-     * 
-     * Simple usage with no per-file overrides:
-     * 
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_file;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use std::path::PathBuf;
-     * 
-     * # async fn example() -> kreuzberg::Result<()> {
-     * let config = ExtractionConfig::default();
-     * let items: Vec<(PathBuf, Option<kreuzberg::FileExtractionConfig>)> = vec![
-     *     ("doc1.pdf".into(), None),
-     *     ("doc2.pdf".into(), None),
-     * ];
-     * let results = batch_extract_file(items, &config).await?;
-     * println!("Processed {} files", results.len());
-     * # Ok(())
-     * # }
-     * ```
-     * 
-     * Per-file configuration overrides:
-     * 
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_file;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use kreuzberg::FileExtractionConfig;
-     * use std::path::PathBuf;
-     * 
-     * # async fn example() -> kreuzberg::Result<()> {
-     * let config = ExtractionConfig::default();
-     * let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
-     *     ("scan.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-     *     ("notes.txt".into(), None),
-     * ];
-     * let results = batch_extract_file(items, &config).await?;
-     * # Ok(())
-     * # }
-     * ```
-     */
-    public static List<ExtractionResult> batchExtractFile(List<String> items, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(items, "items must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.batchExtractFile(items, config);
-    }
-
-    /**
-     * Extract content from multiple byte arrays concurrently.
-     * 
-     * This function processes multiple byte arrays in parallel, automatically managing
-     * concurrency to prevent resource exhaustion. The concurrency limit can be
-     * configured via `ExtractionConfig::max_concurrent_extractions` or defaults
-     * to `(num_cpus * 1.5).ceil()`.
-     * 
-     * Each item can optionally specify a [`FileExtractionConfig`] that overrides specific
-     * fields from the batch-level `config`. Pass `None` as the config to use
-     * the batch-level defaults for that item.
-     * 
-     * # Arguments
-     * 
-     * * `items` - Vector of `(bytes, mime_type, optional_file_config)` tuples
-     * * `config` - Batch-level extraction configuration
-     * 
-     * # Returns
-     * 
-     * A vector of `ExtractionResult` in the same order as the input items.
-     * 
-     * # Examples
-     * 
-     * Simple usage with no per-item overrides:
-     * 
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_bytes;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * 
-     * # async fn example() -> kreuzberg::Result<()> {
-     * let config = ExtractionConfig::default();
-     * let items = vec![
-     *     (b"content 1".to_vec(), "text/plain".to_string(), None),
-     *     (b"content 2".to_vec(), "text/plain".to_string(), None),
-     * ];
-     * let results = batch_extract_bytes(items, &config).await?;
-     * println!("Processed {} items", results.len());
-     * # Ok(())
-     * # }
-     * ```
-     * 
-     * Per-item configuration overrides:
-     * 
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_bytes;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use kreuzberg::FileExtractionConfig;
-     * 
-     * # async fn example() -> kreuzberg::Result<()> {
-     * let config = ExtractionConfig::default();
-     * let items = vec![
-     *     (b"content".to_vec(), "text/plain".to_string(), None),
-     *     (b"<html>test</html>".to_vec(), "text/html".to_string(),
-     *      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-     * ];
-     * let results = batch_extract_bytes(items, &config).await?;
-     * # Ok(())
-     * # }
-     * ```
-     */
-    public static List<ExtractionResult> batchExtractBytes(List<String> items, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(items, "items must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.batchExtractBytes(items, config);
-    }
-
-    /**
      * Validates whether a field name is in the known formats registry.
      * 
      * This uses a pre-built hash set for O(1) lookups instead of linear search,
@@ -1162,29 +899,9 @@ public final class Kreuzberg {
      * 
      * Returns `KreuzbergError::Io` for any I/O failure.
      */
-    public static FileBytes openFileBytes(java.nio.file.Path path) throws KreuzbergRsException {
+    public static String openFileBytes(java.nio.file.Path path) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(path, "path must not be null");
         return KreuzbergRs.openFileBytes(path);
-    }
-
-    /**
-     * Read a file asynchronously.
-     * 
-     * # Arguments
-     * 
-     * * `path` - Path to the file to read
-     * 
-     * # Returns
-     * 
-     * The file contents as bytes.
-     * 
-     * # Errors
-     * 
-     * Returns `KreuzbergError::Io` for I/O errors (these always bubble up).
-     */
-    public static byte[] readFileAsync(String path) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(path, "path must not be null");
-        return KreuzbergRs.readFileAsync(path);
     }
 
     /**
@@ -1323,7 +1040,7 @@ public final class Kreuzberg {
      * 
      * The validated MIME type string.
      */
-    public static String detectOrValidate(java.nio.file.Path path, String mimeType) throws KreuzbergRsException {
+    public static String detectOrValidate(String path, String mimeType) throws KreuzbergRsException {
         return KreuzbergRs.detectOrValidate(path, mimeType);
     }
 
@@ -1430,75 +1147,10 @@ public final class Kreuzberg {
      * * `result` - The extraction result to modify
      * * `output_format` - The desired output format
      */
-    public static void applyOutputFormat(ExtractionResult result, OutputFormat outputFormat) throws KreuzbergRsException {
+    public static ExtractionResult applyOutputFormat(ExtractionResult result, OutputFormat outputFormat) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(result, "result must not be null");
         java.util.Objects.requireNonNull(outputFormat, "outputFormat must not be null");
-        KreuzbergRs.applyOutputFormat(result, outputFormat);
-    }
-
-    /**
-     * Run the post-processing pipeline on an `InternalDocument`.
-     * 
-     * Derives `ExtractionResult` from `InternalDocument` via the derivation pipeline,
-     * then executes post-processing in the following order:
-     * 1. Post-Processors - Execute by stage (Early, Middle, Late) to modify/enhance the result
-     * 2. Quality Processing - Text cleaning and quality scoring
-     * 3. Chunking - Text splitting if enabled
-     * 4. Validators - Run validation hooks on the processed result (can fail fast)
-     * 
-     * # Arguments
-     * 
-     * * `doc` - The internal document produced by the extractor
-     * * `config` - Extraction configuration
-     * 
-     * # Returns
-     * 
-     * The processed extraction result.
-     * 
-     * # Errors
-     * 
-     * - Validator errors bubble up immediately
-     * - Post-processor errors are caught and recorded in metadata
-     * - System errors (IO, RuntimeError equivalents) always bubble up
-     */
-    public static ExtractionResult runPipeline(String doc, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(doc, "doc must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.runPipeline(doc, config);
-    }
-
-    /**
-     * Run the post-processing pipeline synchronously (WASM-compatible version).
-     * 
-     * This is a synchronous implementation for WASM and non-async contexts.
-     * It performs a subset of the full async pipeline, excluding async post-processors
-     * and validators.
-     * 
-     * # Arguments
-     * 
-     * * `doc` - The internal document produced by the extractor
-     * * `config` - Extraction configuration
-     * 
-     * # Returns
-     * 
-     * The processed extraction result.
-     * 
-     * # Notes
-     * 
-     * This function is only available when the `tokio-runtime` feature is disabled.
-     * It handles:
-     * - Quality processing (if enabled)
-     * - Chunking (if enabled)
-     * - Language detection (if enabled)
-     * 
-     * It does NOT handle:
-     * - Async post-processors
-     * - Async validators
-     */
-    public static ExtractionResult runPipelineSync(String doc, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(doc, "doc must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.runPipelineSync(doc, config);
+        return KreuzbergRs.applyOutputFormat(result, outputFormat);
     }
 
     /**
@@ -1530,46 +1182,6 @@ public final class Kreuzberg {
     public static void resolveRelationships(String doc) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(doc, "doc must not be null");
         KreuzbergRs.resolveRelationships(doc);
-    }
-
-    /**
-     * Derive a hierarchical `DocumentStructure` from the flat internal document.
-     * 
-     * Calls `resolve_relationships` first to resolve any key-based relationship targets,
-     * then builds the tree.
-     * 
-     * # Algorithm
-     * 
-     * 1. Walk elements in reading order, maintaining a stack of `(depth, NodeIndex)`.
-     * 2. Container start markers (`ListStart`, `QuoteStart`, `GroupStart`) push
-     *    onto the stack; their matching end markers pop.
-     * 3. Headings pop the stack to a shallower depth, then create a `Group` node
-     *    with a `Heading` child and push the group.
-     * 4. All other elements are parented under the current stack top.
-     * 5. Resolved relationships are mapped from element indices to node indices.
-     */
-    public static DocumentStructure deriveDocumentStructure(String doc) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(doc, "doc must not be null");
-        return KreuzbergRs.deriveDocumentStructure(doc);
-    }
-
-    /**
-     * Derive a complete `ExtractionResult` from an `InternalDocument`.
-     * 
-     * This is the main entry point for the derivation pipeline. It:
-     * 1. Resolves relationships (needed by renderers for footnotes)
-     * 2. Renders plain-text content (for post-processors)
-     * 3. Pre-renders formatted content if output_format != Plain
-     * 4. Groups elements by page into `PageContent`
-     * 5. Extracts OCR elements for backward compatibility
-     * 6. Optionally derives `DocumentStructure` (assumes relationships resolved)
-     * 7. Assembles the final `ExtractionResult`
-     */
-    public static ExtractionResult deriveExtractionResult(String doc, boolean includeDocumentStructure, OutputFormat outputFormat) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(doc, "doc must not be null");
-        java.util.Objects.requireNonNull(includeDocumentStructure, "includeDocumentStructure must not be null");
-        java.util.Objects.requireNonNull(outputFormat, "outputFormat must not be null");
-        return KreuzbergRs.deriveExtractionResult(doc, includeDocumentStructure, outputFormat);
     }
 
     public static StructuredDataResult parseJson(byte[] data, String config) throws KreuzbergRsException {
@@ -1669,7 +1281,7 @@ public final class Kreuzberg {
      * 
      * A vector of ListItemMetadata structs describing detected list items
      */
-    public static List<ListItemMetadata> detectListItems(String text) throws KreuzbergRsException {
+    public static List<String> detectListItems(String text) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(text, "text must not be null");
         return KreuzbergRs.detectListItems(text);
     }
@@ -1691,13 +1303,13 @@ public final class Kreuzberg {
      * 
      * An ElementId suitable for referencing this semantic element
      */
-    public static ElementId generateElementId(String text, ElementType elementType, long pageNumber) throws KreuzbergRsException {
+    public static String generateElementId(String text, ElementType elementType, long pageNumber) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(text, "text must not be null");
         java.util.Objects.requireNonNull(elementType, "elementType must not be null");
         return KreuzbergRs.generateElementId(text, elementType, pageNumber);
     }
 
-    public static ElementId generateElementId(String text, ElementType elementType) throws KreuzbergRsException {
+    public static String generateElementId(String text, ElementType elementType) throws KreuzbergRsException {
         return generateElementId(text, elementType, null);
     }
 
@@ -1736,7 +1348,7 @@ public final class Kreuzberg {
      * Returns the list of sections found. Each section contains zero or more
      * paragraphs that carry the plain-text content.
      */
-    public static List<Section> parseBodyText(byte[] data, boolean isCompressed) throws KreuzbergRsException {
+    public static List<String> parseBodyText(byte[] data, boolean isCompressed) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(data, "data must not be null");
         java.util.Objects.requireNonNull(isCompressed, "isCompressed must not be null");
         return KreuzbergRs.parseBodyText(data, isCompressed);
@@ -1767,57 +1379,15 @@ public final class Kreuzberg {
     }
 
     /**
-     * Load image bytes for OCR, with JPEG 2000 and JBIG2 fallback support.
-     * 
-     * The standard `image` crate does not support JPEG 2000 or JBIG2 formats.
-     * This function detects these formats by magic bytes and uses `hayro-jpeg2000`
-     * / `hayro-jbig2` for decoding, falling back to the standard `image` crate
-     * for all other formats.
-     */
-    public static String loadImageForOcr(byte[] imageBytes) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(imageBytes, "imageBytes must not be null");
-        return KreuzbergRs.loadImageForOcr(imageBytes);
-    }
-
-    /**
      * Extract metadata from image bytes.
      * 
      * Extracts dimensions, format, and EXIF data from the image.
      * Attempts to decode using the standard image crate first, then falls back to
      * pure Rust JP2 box parsing for JPEG 2000 formats if the standard decoder fails.
      */
-    public static ImageMetadata extractImageMetadata(byte[] bytes) throws KreuzbergRsException {
+    public static String extractImageMetadata(byte[] bytes) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(bytes, "bytes must not be null");
         return KreuzbergRs.extractImageMetadata(bytes);
-    }
-
-    /**
-     * Extract text from image bytes using OCR with optional page tracking for multi-frame TIFFs.
-     * 
-     * This function:
-     * - Detects if the image is a multi-frame TIFF
-     * - For multi-frame TIFFs with PageConfig enabled, iterates frames and tracks boundaries
-     * - For single-frame images or when page tracking is disabled, runs OCR on the whole image
-     * - Returns (content, boundaries, page_contents) tuple
-     * 
-     * # Arguments
-     * * `bytes` - Image file bytes
-     * * `mime_type` - MIME type (e.g., "image/tiff")
-     * * `ocr_result` - OCR backend result containing the text
-     * * `page_config` - Optional page configuration for boundary tracking
-     * 
-     * # Returns
-     * ImageOcrResult with content and optional boundaries for pagination
-     */
-    public static ImageOcrResult extractTextFromImageWithOcr(byte[] bytes, String mimeType, String ocrResult, PageConfig pageConfig) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(bytes, "bytes must not be null");
-        java.util.Objects.requireNonNull(mimeType, "mimeType must not be null");
-        java.util.Objects.requireNonNull(ocrResult, "ocrResult must not be null");
-        return KreuzbergRs.extractTextFromImageWithOcr(bytes, mimeType, ocrResult, pageConfig);
-    }
-
-    public static ImageOcrResult extractTextFromImageWithOcr(byte[] bytes, String mimeType, String ocrResult) throws KreuzbergRsException {
-        return extractTextFromImageWithOcr(bytes, mimeType, ocrResult, null);
     }
 
     /**
@@ -2275,30 +1845,6 @@ public final class Kreuzberg {
         return KreuzbergRs.buildEmailTextOutput(result);
     }
 
-    /**
-     * Extract all email messages from a PST file.
-     * 
-     * Opens the PST file and traverses the full folder hierarchy, extracting
-     * every message including subject, sender, recipients, and body text.
-     * 
-     * # Arguments
-     * 
-     * * `pst_data` - Raw bytes of the PST file
-     * 
-     * # Returns
-     * 
-     * A vector of `EmailExtractionResult`, one per message found.
-     * 
-     * # Errors
-     * 
-     * Returns an error if the PST data cannot be written to a temporary file,
-     * or if the PST format is invalid.
-     */
-    public static String extractPstMessages(byte[] pstData) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(pstData, "pstData must not be null");
-        return KreuzbergRs.extractPstMessages(pstData);
-    }
-
     public static ExcelWorkbook readExcelFile(String filePath) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(filePath, "filePath must not be null");
         return KreuzbergRs.readExcelFile(filePath);
@@ -2436,20 +1982,9 @@ public final class Kreuzberg {
      * Parses the OLE/CFB compound document, reads the FIB (File Information Block),
      * and extracts text from the piece table.
      */
-    public static DocExtractionResult extractDocText(byte[] content) throws KreuzbergRsException {
+    public static String extractDocText(byte[] content) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(content, "content must not be null");
         return KreuzbergRs.extractDocText(content);
-    }
-
-    /**
-     * Parse a drawing object starting after the `<w:drawing>` Start event.
-     * 
-     * This function reads events until it encounters the closing `</w:drawing>` tag,
-     * parsing the drawing type (inline or anchored), extent, properties, and image references.
-     */
-    public static Drawing parseDrawing(String reader) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(reader, "reader must not be null");
-        return KreuzbergRs.parseDrawing(reader);
     }
 
     /**
@@ -2520,17 +2055,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Parse table-level properties from streaming XML reader.
-     * 
-     * Expects the reader to be positioned just after the `<w:tblPr>` start tag.
-     * Reads all child elements until the matching `</w:tblPr>` end tag.
-     */
-    public static TableProperties parseTableProperties(String reader) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(reader, "reader must not be null");
-        return KreuzbergRs.parseTableProperties(reader);
-    }
-
-    /**
      * Parse row-level properties from streaming XML reader.
      * 
      * Expects the reader to be positioned just after the `<w:trPr>` start tag.
@@ -2548,16 +2072,6 @@ public final class Kreuzberg {
     public static String parseCellProperties(String reader) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(reader, "reader must not be null");
         return KreuzbergRs.parseCellProperties(reader);
-    }
-
-    /**
-     * Parse table grid (column widths) from streaming XML reader.
-     * 
-     * Expects the reader to be positioned just after the `<w:tblGrid>` start tag.
-     */
-    public static TableGrid parseTableGrid(String reader) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(reader, "reader must not be null");
-        return KreuzbergRs.parseTableGrid(reader);
     }
 
     /**
@@ -2684,33 +2198,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Process extracted images with OCR if configured.
-     * 
-     * For each image, spawns a blocking OCR task and stores the result
-     * in `image.ocr_result`. If OCR is not configured or fails for an
-     * individual image, that image's `ocr_result` remains `None`.
-     * 
-     * This function is the single shared implementation used by all
-     * document extractors (DOCX, PPTX, Jupyter, Markdown, etc.).
-     * 
-     * # Recursion Safety
-     * 
-     * The produced `ExtractionResult` for each image explicitly sets
-     * `images: None`, preventing further image extraction cycles when
-     * OCR results are consumed by archive or recursive extraction paths.
-     * 
-     * # Concurrency
-     * 
-     * Concurrency is bounded by the configured thread budget
-     * using a semaphore to prevent resource exhaustion.
-     */
-    public static List<ExtractedImage> processImagesWithOcr(List<ExtractedImage> images, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(images, "images must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.processImagesWithOcr(images, config);
-    }
-
-    /**
      * Extract text from PPT bytes.
      * 
      * Parses the OLE/CFB compound document, reads the "PowerPoint Document" stream,
@@ -2719,7 +2206,7 @@ public final class Kreuzberg {
      * When `include_master_slides` is `true`, master slide content (placeholder text
      * like "Click to edit Master title style") is included instead of being skipped.
      */
-    public static PptExtractionResult extractPptText(byte[] content) throws KreuzbergRsException {
+    public static String extractPptText(byte[] content) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(content, "content must not be null");
         return KreuzbergRs.extractPptText(content);
     }
@@ -2730,7 +2217,7 @@ public final class Kreuzberg {
      * When `include_master_slides` is `true`, `RT_MAIN_MASTER` containers are not
      * skipped, so master slide placeholder text is included in the output.
      */
-    public static PptExtractionResult extractPptTextWithOptions(byte[] content, boolean includeMasterSlides) throws KreuzbergRsException {
+    public static String extractPptTextWithOptions(byte[] content, boolean includeMasterSlides) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(content, "content must not be null");
         java.util.Objects.requireNonNull(includeMasterSlides, "includeMasterSlides must not be null");
         return KreuzbergRs.extractPptTextWithOptions(content, includeMasterSlides);
@@ -2858,7 +2345,7 @@ public final class Kreuzberg {
      * Converts jotdown's internal attribute representation to Kreuzberg's
      * standardized Attributes struct, handling IDs, classes, and key-value pairs.
      */
-    public static Attributes parseJotdownAttributes(Attributes attrs) throws KreuzbergRsException {
+    public static String parseJotdownAttributes(String attrs) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(attrs, "attrs must not be null");
         return KreuzbergRs.parseJotdownAttributes(attrs);
     }
@@ -2869,7 +2356,7 @@ public final class Kreuzberg {
      * Converts Kreuzberg's Attributes struct back to djot attribute syntax:
      * {.class #id key="value"}
      */
-    public static String renderAttributes(Attributes attrs) throws KreuzbergRsException {
+    public static String renderAttributes(String attrs) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(attrs, "attrs must not be null");
         return KreuzbergRs.renderAttributes(attrs);
     }
@@ -2961,36 +2448,12 @@ public final class Kreuzberg {
     }
 
     /**
-     * Extract complete djot content with 100% feature extraction.
-     * 
-     * Processes ALL djot events to build a rich DjotContent structure including:
-     * - Block structure (headings, lists, blockquotes, divs, sections, code blocks)
-     * - Inline formatting (strong, emphasis, highlight, subscript, superscript, insert, delete)
-     * - Attributes (classes, IDs, key-value pairs)
-     * - Links and images with full metadata (href, src, alt, title)
-     * - Math blocks (inline & display)
-     * - Definition lists (term/description pairs)
-     * - Task lists with checked state
-     * - Raw blocks (HTML/LaTeX)
-     * - Footnotes (references and definitions)
-     * - Captions
-     * - Smart punctuation
-     * - All other djot features
-     */
-    public static DjotContent extractCompleteDjotContent(List<String> events, Metadata metadata, List<Table> tables) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(events, "events must not be null");
-        java.util.Objects.requireNonNull(metadata, "metadata must not be null");
-        java.util.Objects.requireNonNull(tables, "tables must not be null");
-        return KreuzbergRs.extractCompleteDjotContent(events, metadata, tables);
-    }
-
-    /**
      * Extract tables from Djot events.
      * 
      * Parses table events and extracts table data as a Vec<Vec<String>>,
      * converting each table to markdown representation for storage.
      */
-    public static List<Table> extractTablesFromEvents(List<String> events) throws KreuzbergRsException {
+    public static List<String> extractTablesFromEvents(List<String> events) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(events, "events must not be null");
         return KreuzbergRs.extractTablesFromEvents(events);
     }
@@ -3012,31 +2475,28 @@ public final class Kreuzberg {
     /**
      * Render a single block to djot markup.
      */
-    public static void renderBlockToDjot(String output, FormattedBlock block, long indentLevel) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(output, "output must not be null");
+    public static String renderBlockToDjot(FormattedBlock block, long indentLevel) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(block, "block must not be null");
         java.util.Objects.requireNonNull(indentLevel, "indentLevel must not be null");
-        KreuzbergRs.renderBlockToDjot(output, block, indentLevel);
+        return KreuzbergRs.renderBlockToDjot(block, indentLevel);
     }
 
     /**
      * Render a list item with the given marker.
      */
-    public static void renderListItem(String output, FormattedBlock item, String indent, String marker) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(output, "output must not be null");
+    public static String renderListItem(FormattedBlock item, String indent, String marker) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(item, "item must not be null");
         java.util.Objects.requireNonNull(indent, "indent must not be null");
         java.util.Objects.requireNonNull(marker, "marker must not be null");
-        KreuzbergRs.renderListItem(output, item, indent, marker);
+        return KreuzbergRs.renderListItem(item, indent, marker);
     }
 
     /**
      * Render inline content to djot markup.
      */
-    public static void renderInlineContent(String output, List<InlineElement> elements) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(output, "output must not be null");
+    public static String renderInlineContent(List<InlineElement> elements) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(elements, "elements must not be null");
-        KreuzbergRs.renderInlineContent(output, elements);
+        return KreuzbergRs.renderInlineContent(elements);
     }
 
     /**
@@ -3062,35 +2522,6 @@ public final class Kreuzberg {
     public static String extractFrontmatter(String content) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(content, "content must not be null");
         return KreuzbergRs.extractFrontmatter(content);
-    }
-
-    /**
-     * Extract metadata from YAML frontmatter.
-     * 
-     * Extracts the following YAML fields into Kreuzberg metadata:
-     * - **Standard fields**: title, author, date, description (as subject)
-     * - **Extended fields**: abstract, subject, category, tags, language, version
-     * - **Array fields** (keywords, tags): stored as `Vec<String>` in typed fields
-     * 
-     * # Arguments
-     * 
-     * * `yaml` - The parsed YAML value from frontmatter
-     * 
-     * # Returns
-     * 
-     * A `Metadata` struct populated with extracted fields
-     * 
-     * # Examples
-     * 
-     * ```rust,ignore
-     * let yaml = serde_yaml_ng::from_str("title: Test\nauthor: John").unwrap();
-     * let metadata = extract_metadata_from_yaml(&yaml);
-     * assert_eq!(metadata.title.as_deref(), Some("Test"));
-     * ```
-     */
-    public static Metadata extractMetadataFromYaml(String yaml) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(yaml, "yaml must not be null");
-        return KreuzbergRs.extractMetadataFromYaml(yaml);
     }
 
     /**
@@ -3210,46 +2641,21 @@ public final class Kreuzberg {
     }
 
     /**
-     * Evaluates native PDF text quality to determine if OCR fallback is needed.
-     * 
-     * Uses the provided quality thresholds (or defaults) to make the decision.
-     */
-    public static OcrFallbackDecision evaluateNativeTextForOcr(String nativeText, long pageCount, OcrQualityThresholds thresholds) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(nativeText, "nativeText must not be null");
-        java.util.Objects.requireNonNull(thresholds, "thresholds must not be null");
-        return KreuzbergRs.evaluateNativeTextForOcr(nativeText, pageCount, thresholds);
-    }
-
-    public static OcrFallbackDecision evaluateNativeTextForOcr(String nativeText, OcrQualityThresholds thresholds) throws KreuzbergRsException {
-        return evaluateNativeTextForOcr(nativeText, null, thresholds);
-    }
-
-    public static OcrFallbackDecision evaluatePerPageOcr(String nativeText, List<PageBoundary> boundaries, long pageCount, OcrQualityThresholds thresholds) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(nativeText, "nativeText must not be null");
-        java.util.Objects.requireNonNull(thresholds, "thresholds must not be null");
-        return KreuzbergRs.evaluatePerPageOcr(nativeText, boundaries, pageCount, thresholds);
-    }
-
-    public static OcrFallbackDecision evaluatePerPageOcr(String nativeText, OcrQualityThresholds thresholds) throws KreuzbergRsException {
-        return evaluatePerPageOcr(nativeText, null, null, thresholds);
-    }
-
-    /**
      * Convert a hex digit character to its numeric value.
      * 
      * Returns None if the character is not a valid hex digit.
      */
-    public static Byte hexDigitToU8(String c) throws KreuzbergRsException {
+    public static Byte hexDigitToU8(byte c) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(c, "c must not be null");
         return KreuzbergRs.hexDigitToU8(c);
     }
 
     /**
-     * Parse a hex-encoded byte from two characters.
+     * Parse a hex-encoded byte from two bytes.
      * 
-     * Returns the decoded byte if both characters are valid hex digits.
+     * Returns the decoded byte if both bytes are valid hex digits.
      */
-    public static Byte parseHexByte(String h1, String h2) throws KreuzbergRsException {
+    public static Byte parseHexByte(byte h1, byte h2) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(h1, "h1 must not be null");
         java.util.Objects.requireNonNull(h2, "h2 must not be null");
         return KreuzbergRs.parseHexByte(h1, h2);
@@ -3549,71 +2955,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Register an OCR backend with the global registry.
-     * 
-     * The OCR backend will be registered with its name from the `name()` method
-     * and can be used for OCR processing via the extraction pipeline.
-     * 
-     * # Arguments
-     * 
-     * * `backend` - The OCR backend implementation wrapped in Arc
-     * 
-     * # Returns
-     * 
-     * - `Ok(())` if registration succeeded
-     * - `Err(...)` if validation failed or initialization failed
-     * 
-     * # Errors
-     * 
-     * - `KreuzbergError::Validation` - Invalid backend name (empty or contains whitespace)
-     * - Any error from the backend's `initialize()` method
-     * 
-     * # Example
-     * 
-     * ```rust
-     * use kreuzberg::plugins::{Plugin, OcrBackend, register_ocr_backend, OcrBackendType};
-     * use kreuzberg::{Result, OcrConfig};
-     * use kreuzberg::types::{ExtractionResult, Metadata};
-     * use async_trait::async_trait;
-     * use std::borrow::Cow;
-     * use std::sync::Arc;
-     * use std::path::Path;
-     * 
-     * struct CustomOcr;
-     * 
-     * impl Plugin for CustomOcr {
-     *     fn name(&self) -> &str { "custom-ocr" }
-     *     fn version(&self) -> String { "1.0.0".to_string() }
-     *     fn initialize(&self) -> Result<()> { Ok(()) }
-     *     fn shutdown(&self) -> Result<()> { Ok(()) }
-     * }
-     * 
-     * #[async_trait]
-     * impl OcrBackend for CustomOcr {
-     *     async fn process_image(&self, _: &[u8], _: &OcrConfig) -> Result<ExtractionResult> {
-     *         Ok(ExtractionResult {
-     *             content: "text".to_string(),
-     *             mime_type: Cow::Borrowed("text/plain"),
-     *             ..Default::default()
-     *         })
-     *     }
-     *     fn supports_language(&self, _: &str) -> bool { true }
-     *     fn backend_type(&self) -> OcrBackendType { OcrBackendType::Custom }
-     * }
-     * 
-     * # tokio_test::block_on(async {
-     * let backend = Arc::new(CustomOcr);
-     * register_ocr_backend(backend)?;
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * # });
-     * ```
-     */
-    public static void registerOcrBackend(OcrBackend backend) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(backend, "backend must not be null");
-        KreuzbergRs.registerOcrBackend(backend);
-    }
-
-    /**
      * Unregister an OCR backend by name.
      * 
      * Removes the OCR backend from the global registry and calls its `shutdown()` method.
@@ -3757,42 +3098,6 @@ public final class Kreuzberg {
      */
     public static String getRendererRegistry() throws KreuzbergRsException {
         return KreuzbergRs.getRendererRegistry();
-    }
-
-    /**
-     * Register a renderer with the global registry.
-     * 
-     * # Arguments
-     * 
-     * * `renderer` - The renderer implementation wrapped in Arc
-     * 
-     * # Returns
-     * 
-     * - `Ok(())` if registration succeeded
-     * - `Err(...)` if validation failed
-     * 
-     * # Example
-     * 
-     * ```rust
-     * use kreuzberg::plugins::{Renderer, register_renderer};
-     * use kreuzberg::types::internal::InternalDocument;
-     * use kreuzberg::Result;
-     * use std::sync::Arc;
-     * 
-     * struct MyRenderer;
-     * impl Renderer for MyRenderer {
-     *     fn name(&self) -> &str { "my-format" }
-     *     fn render(&self, _doc: &InternalDocument) -> Result<String> {
-     *         Ok("rendered".to_string())
-     *     }
-     * }
-     * 
-     * register_renderer(Arc::new(MyRenderer)).unwrap();
-     * ```
-     */
-    public static void registerRenderer(Renderer renderer) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(renderer, "renderer must not be null");
-        KreuzbergRs.registerRenderer(renderer);
     }
 
     /**
@@ -4086,7 +3391,7 @@ public final class Kreuzberg {
      * 
      * Uses the global [`opentelemetry::global::meter`] to create instruments.
      */
-    public static ExtractionMetrics getMetrics() throws KreuzbergRsException {
+    public static String getMetrics() throws KreuzbergRsException {
         return KreuzbergRs.getMetrics();
     }
 
@@ -4326,10 +3631,10 @@ public final class Kreuzberg {
      * ```rust
      * use kreuzberg::text::token_reduction::{batch_reduce_tokens, TokenReductionConfig, ReductionLevel};
      * 
-     * let texts = vec![
-     *     "This is the first document with some text.",
-     *     "Here is another document with different content.",
-     *     "And finally, a third document to process.",
+     * let texts: Vec<String> = vec![
+     *     "This is the first document with some text.".to_string(),
+     *     "Here is another document with different content.".to_string(),
+     *     "And finally, a third document to process.".to_string(),
      * ];
      * let config = TokenReductionConfig::default();
      * let reduced = batch_reduce_tokens(&texts, &config, Some("eng"))?;
@@ -4694,7 +3999,7 @@ public final class Kreuzberg {
      * assert_eq!(en1, en2); // Same pointer
      * ```
      */
-    public static InternedString internLanguageCode(String langCode) throws KreuzbergRsException {
+    public static String internLanguageCode(String langCode) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(langCode, "langCode must not be null");
         return KreuzbergRs.internLanguageCode(langCode);
     }
@@ -4722,7 +4027,7 @@ public final class Kreuzberg {
      * assert_eq!(pdf1, pdf2); // Same pointer
      * ```
      */
-    public static InternedString internMimeType(String mimeType) throws KreuzbergRsException {
+    public static String internMimeType(String mimeType) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(mimeType, "mimeType must not be null");
         return KreuzbergRs.internMimeType(mimeType);
     }
@@ -4834,11 +4139,10 @@ public final class Kreuzberg {
      * 
      * ```no_run
      * use kreuzberg::api::load_server_config;
-     * use std::path::Path;
      * 
      * # fn example() -> kreuzberg::Result<()> {
      * // Load from file with env overrides
-     * let config = load_server_config(Some(Path::new("server.toml")))?;
+     * let config = load_server_config(Some("server.toml"))?;
      * 
      * // Or use defaults with env overrides
      * let config = load_server_config(None)?;
@@ -4846,30 +4150,12 @@ public final class Kreuzberg {
      * # }
      * ```
      */
-    public static ServerConfig loadServerConfig(java.nio.file.Path configPath) throws KreuzbergRsException {
+    public static ServerConfig loadServerConfig(String configPath) throws KreuzbergRsException {
         return KreuzbergRs.loadServerConfig(configPath);
     }
 
     public static ServerConfig loadServerConfig() throws KreuzbergRsException {
         return loadServerConfig(null);
-    }
-
-    /**
-     * Generate OpenAPI JSON schema.
-     * 
-     * Returns the complete OpenAPI 3.1 specification as a JSON string.
-     * 
-     * # Examples
-     * 
-     * ```no_run
-     * use kreuzberg::api::openapi::openapi_json;
-     * 
-     * let schema = openapi_json();
-     * println!("{}", schema);
-     * ```
-     */
-    public static String openapiJson() throws KreuzbergRsException {
-        return KreuzbergRs.openapiJson();
     }
 
     /**
@@ -5072,38 +4358,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Start the API server with explicit config and size limits.
-     * 
-     * # Arguments
-     * 
-     * * `host` - IP address to bind to (e.g., "127.0.0.1" or "0.0.0.0")
-     * * `port` - Port number to bind to (e.g., 8000)
-     * * `config` - Default extraction configuration for all requests
-     * * `limits` - Size limits for request bodies and multipart uploads
-     * 
-     * # Examples
-     * 
-     * ```no_run
-     * use kreuzberg::{ExtractionConfig, api::{serve_with_config_and_limits, ApiSizeLimits}};
-     * 
-     * #[tokio::main]
-     * async fn main() -> kreuzberg::Result<()> {
-     *     let config = ExtractionConfig::from_toml_file("config/kreuzberg.toml")?;
-     *     let limits = ApiSizeLimits::from_mb(200, 200);
-     *     serve_with_config_and_limits("127.0.0.1", 8000, config, limits).await?;
-     *     Ok(())
-     * }
-     * ```
-     */
-    public static void serveWithConfigAndLimits(String host, short port, ExtractionConfig config, String limits) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(host, "host must not be null");
-        java.util.Objects.requireNonNull(port, "port must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        java.util.Objects.requireNonNull(limits, "limits must not be null");
-        KreuzbergRs.serveWithConfigAndLimits(host, port, config, limits);
-    }
-
-    /**
      * Start the API server with explicit extraction config and server config.
      * 
      * This function accepts a fully-configured ServerConfig, including CORS origins,
@@ -5207,67 +4461,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Start MCP server with HTTP Stream transport.
-     * 
-     * Uses rmcp's built-in StreamableHttpService for HTTP/SSE support per MCP spec.
-     * 
-     * # Arguments
-     * 
-     * * `host` - Host to bind to (e.g., "127.0.0.1" or "0.0.0.0")
-     * * `port` - Port number (e.g., 8001)
-     * 
-     * # Example
-     * 
-     * ```no_run
-     * use kreuzberg::mcp::start_mcp_server_http;
-     * 
-     * #[tokio::main]
-     * async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-     *     start_mcp_server_http("127.0.0.1", 8001).await?;
-     *     Ok(())
-     * }
-     * ```
-     */
-    public static void startMcpServerHttp(String host, short port) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(host, "host must not be null");
-        java.util.Objects.requireNonNull(port, "port must not be null");
-        KreuzbergRs.startMcpServerHttp(host, port);
-    }
-
-    /**
-     * Start MCP HTTP server with custom extraction config.
-     * 
-     * This variant allows specifying a custom extraction configuration
-     * while using HTTP Stream transport.
-     * 
-     * # Arguments
-     * 
-     * * `host` - Host to bind to (e.g., "127.0.0.1" or "0.0.0.0")
-     * * `port` - Port number (e.g., 8001)
-     * * `config` - Custom extraction configuration
-     * 
-     * # Example
-     * 
-     * ```no_run
-     * use kreuzberg::mcp::start_mcp_server_http_with_config;
-     * use kreuzberg::ExtractionConfig;
-     * 
-     * #[tokio::main]
-     * async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-     *     let config = ExtractionConfig::default();
-     *     start_mcp_server_http_with_config("127.0.0.1", 8001, config).await?;
-     *     Ok(())
-     * }
-     * ```
-     */
-    public static void startMcpServerHttpWithConfig(String host, short port, ExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(host, "host must not be null");
-        java.util.Objects.requireNonNull(port, "port must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        KreuzbergRs.startMcpServerHttpWithConfig(host, port, config);
-    }
-
-    /**
      * Validates the consistency and correctness of page boundaries.
      * 
      * # Validation Rules
@@ -5288,48 +4481,6 @@ public final class Kreuzberg {
     public static void validatePageBoundaries(List<PageBoundary> boundaries) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(boundaries, "boundaries must not be null");
         KreuzbergRs.validatePageBoundaries(boundaries);
-    }
-
-    /**
-     * Calculate which pages a byte range spans.
-     * 
-     * # Arguments
-     * 
-     * * `byte_start` - Starting byte offset of the chunk
-     * * `byte_end` - Ending byte offset of the chunk
-     * * `boundaries` - Page boundary markers from the document
-     * 
-     * # Returns
-     * 
-     * A tuple of (first_page, last_page) where page numbers are 1-indexed.
-     * Returns (None, None) if boundaries are empty or chunk doesn't overlap any page.
-     * 
-     * # Errors
-     * 
-     * Returns `KreuzbergError::Validation` if boundaries are invalid.
-     * 
-     * # Examples
-     * 
-     * ```rust,ignore
-     * use kreuzberg::chunking::boundaries::calculate_page_range;
-     * use kreuzberg::types::PageBoundary;
-     * 
-     * let boundaries = vec![
-     *     PageBoundary { byte_start: 0, byte_end: 100, page_number: 1 },
-     *     PageBoundary { byte_start: 100, byte_end: 200, page_number: 2 },
-     * ];
-     * 
-     * let (first, last) = calculate_page_range(50, 150, &boundaries)?;
-     * assert_eq!(first, Some(1));
-     * assert_eq!(last, Some(2));
-     * # Ok::<(), kreuzberg::Result<()>>(())
-     * ```
-     */
-    public static String calculatePageRange(long byteStart, long byteEnd, List<PageBoundary> boundaries) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(byteStart, "byteStart must not be null");
-        java.util.Objects.requireNonNull(byteEnd, "byteEnd must not be null");
-        java.util.Objects.requireNonNull(boundaries, "boundaries must not be null");
-        return KreuzbergRs.calculatePageRange(byteStart, byteEnd, boundaries);
     }
 
     /**
@@ -5495,7 +4646,7 @@ public final class Kreuzberg {
      * 
      * # fn example() -> kreuzberg::Result<()> {
      * let config = ChunkingConfig::default();
-     * let texts = vec!["First text", "Second text"];
+     * let texts: Vec<String> = vec!["First text".to_string(), "Second text".to_string()];
      * let results = chunk_texts_batch(&texts, &config)?;
      * assert_eq!(results.len(), 2);
      * # Ok(())
@@ -5699,7 +4850,7 @@ public final class Kreuzberg {
      * requires ONNX Runtime and uses significant memory. For download-only
      * scenarios (e.g., init containers), use [`download_model`] instead.
      */
-    public static void warmModel(EmbeddingModelType modelType, java.nio.file.Path cacheDir) throws KreuzbergRsException {
+    public static void warmModel(EmbeddingModelType modelType, String cacheDir) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(modelType, "modelType must not be null");
         KreuzbergRs.warmModel(modelType, cacheDir);
     }
@@ -5718,7 +4869,7 @@ public final class Kreuzberg {
      * This is ideal for init containers or CI environments where you want to
      * pre-populate the cache without loading models into memory.
      */
-    public static void downloadModel(EmbeddingModelType modelType, java.nio.file.Path cacheDir) throws KreuzbergRsException {
+    public static void downloadModel(EmbeddingModelType modelType, String cacheDir) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(modelType, "modelType must not be null");
         KreuzbergRs.downloadModel(modelType, cacheDir);
     }
@@ -5772,31 +4923,6 @@ public final class Kreuzberg {
         java.util.Objects.requireNonNull(minDpi, "minDpi must not be null");
         java.util.Objects.requireNonNull(maxDpi, "maxDpi must not be null");
         return KreuzbergRs.calculateOptimalDpi(pageWidth, pageHeight, targetDpi, maxDimension, minDpi, maxDpi);
-    }
-
-    /**
-     * Normalize image DPI based on extraction configuration
-     * 
-     * # Arguments
-     * * `rgb_data` - RGB image data as a flat `Vec<u8>` (height * width * 3 bytes, row-major)
-     * * `width` - Image width in pixels
-     * * `height` - Image height in pixels
-     * * `config` - Extraction configuration containing DPI settings
-     * * `current_dpi` - Optional current DPI of the image (defaults to 72 if None)
-     * 
-     * # Returns
-     * * `NormalizeResult` containing processed image data and metadata
-     */
-    public static String normalizeImageDpi(byte[] rgbData, long width, long height, ExtractionConfig config, double currentDpi) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(rgbData, "rgbData must not be null");
-        java.util.Objects.requireNonNull(width, "width must not be null");
-        java.util.Objects.requireNonNull(height, "height must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.normalizeImageDpi(rgbData, width, height, config, currentDpi);
-    }
-
-    public static String normalizeImageDpi(byte[] rgbData, long width, long height, ExtractionConfig config) throws KreuzbergRsException {
-        return normalizeImageDpi(rgbData, width, height, config, null);
     }
 
     /**
@@ -6050,86 +5176,6 @@ public final class Kreuzberg {
         java.util.Objects.requireNonNull(text, "text must not be null");
         java.util.Objects.requireNonNull(config, "config must not be null");
         return KreuzbergRs.extractKeywords(text, config);
-    }
-
-    /**
-     * Convert a PaddleOCR TextBlock to a unified OcrElement.
-     * 
-     * Preserves all spatial information including:
-     * - 4-point quadrilateral bounding box
-     * - Detection and recognition confidence scores
-     * - Rotation angle and confidence
-     * 
-     * # Arguments
-     * 
-     * * `block` - PaddleOCR TextBlock containing OCR results
-     * * `page_number` - 1-indexed page number
-     * 
-     * # Returns
-     * 
-     * A fully populated `OcrElement` with all available metadata.
-     * 
-     * # Errors
-     * 
-     * Returns an error if:
-     * - `box_points` has fewer than 4 points (malformed detection)
-     * - `angle_index` is outside the valid range (0-3)
-     * 
-     * Returns `Ok(None)` if the detection is filtered out due to low `box_score`.
-     */
-    public static OcrElement textBlockToElement(String block, long pageNumber) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(block, "block must not be null");
-        java.util.Objects.requireNonNull(pageNumber, "pageNumber must not be null");
-        return KreuzbergRs.textBlockToElement(block, pageNumber);
-    }
-
-    /**
-     * Convert a Tesseract TSV row to a unified OcrElement.
-     * 
-     * Preserves:
-     * - Axis-aligned bounding box
-     * - Recognition confidence (Tesseract doesn't have separate detection confidence)
-     * - Hierarchical level information
-     * 
-     * # Arguments
-     * 
-     * * `row` - Parsed TSV row from Tesseract output
-     * 
-     * # Returns
-     * 
-     * An `OcrElement` with rectangle geometry and Tesseract metadata.
-     */
-    public static OcrElement tsvRowToElement(String row) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(row, "row must not be null");
-        return KreuzbergRs.tsvRowToElement(row);
-    }
-
-    /**
-     * Convert a Tesseract iterator WordData to a unified OcrElement with rich metadata.
-     * 
-     * Unlike `tsv_row_to_element` which only has text, bbox, and confidence,
-     * this populates font attributes (bold, italic, monospace, pointsize) and
-     * block/paragraph context from the Tesseract layout analysis.
-     * 
-     * # Arguments
-     * 
-     * * `word` - WordData from the Tesseract result iterator
-     * * `block_type` - Optional block type from Tesseract layout analysis
-     * * `para_info` - Optional paragraph metadata (justification, list item flag)
-     * * `page_number` - 1-indexed page number
-     * 
-     * # Returns
-     * 
-     * An `OcrElement` at `Word` level with all available font and layout metadata.
-     */
-    public static OcrElement iteratorWordToElement(String word, String blockType, String paraInfo, long pageNumber) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(word, "word must not be null");
-        java.util.Objects.requireNonNull(pageNumber, "pageNumber must not be null");
-        return KreuzbergRs.iteratorWordToElement(word, blockType, paraInfo, pageNumber);
-    }
-
-    public static OcrElement iteratorWordToElement(String word, long pageNumber) throws KreuzbergRsException {
-        return iteratorWordToElement(word, null, null, pageNumber);
     }
 
     /**
@@ -6431,65 +5477,11 @@ public final class Kreuzberg {
     }
 
     /**
-     * Build an optimized ORT session from an ONNX model file.
-     * 
-     * `thread_budget` controls the number of intra-op threads for this session.
-     * Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
-     * to respect the user's `ConcurrencyConfig`.
-     * 
-     * When `accel` is `None` or `Auto`, uses platform defaults:
-     * - macOS: CoreML (Neural Engine / GPU)
-     * - Linux: CUDA (GPU)
-     * - Others: CPU only
-     * 
-     * ORT silently falls back to CPU if the requested EP is unavailable.
-     */
-    public static String buildSession(String path, AccelerationConfig accel, long threadBudget) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(path, "path must not be null");
-        java.util.Objects.requireNonNull(threadBudget, "threadBudget must not be null");
-        return KreuzbergRs.buildSession(path, accel, threadBudget);
-    }
-
-    public static String buildSession(String path, long threadBudget) throws KreuzbergRsException {
-        return buildSession(path, null, threadBudget);
-    }
-
-    /**
      * Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
      */
     public static String configFromExtraction(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(layoutConfig, "layoutConfig must not be null");
         return KreuzbergRs.configFromExtraction(layoutConfig);
-    }
-
-    /**
-     * Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
-     * 
-     * Ensures ORT is available, then creates the engine with model download.
-     */
-    public static String createEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(layoutConfig, "layoutConfig must not be null");
-        return KreuzbergRs.createEngine(layoutConfig);
-    }
-
-    /**
-     * Take the cached layout engine, or create a new one if the cache is empty.
-     * 
-     * The caller owns the engine for the duration of its work and should
-     * return it via [`return_engine`] when done. This avoids holding the
-     * global mutex during inference.
-     */
-    public static String takeOrCreateEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(layoutConfig, "layoutConfig must not be null");
-        return KreuzbergRs.takeOrCreateEngine(layoutConfig);
-    }
-
-    /**
-     * Return a layout engine to the global cache for reuse by future extractions.
-     */
-    public static void returnEngine(String engine) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(engine, "engine must not be null");
-        KreuzbergRs.returnEngine(engine);
     }
 
     /**
@@ -6577,48 +5569,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Extract bundled PDFium library to temporary directory.
-     * 
-     * # Behavior
-     * 
-     * - Embeds PDFium library using `include_bytes!`
-     * - Extracts to `$TMPDIR/kreuzberg-pdfium/` (non-WASM only)
-     * - Reuses extracted library if size matches
-     * - Sets permissions to 0755 on Unix
-     * - Returns path to extracted library
-     * - **Thread-safe**: Synchronized with a global `Mutex` to prevent concurrent writes
-     * 
-     * # Concurrency
-     * 
-     * This function is fully thread-safe. When multiple threads call it simultaneously,
-     * only the first thread performs the actual extraction while others wait. This prevents
-     * the "file too short" error that occurs when one thread reads a partially-written file.
-     * 
-     * # WASM Handling
-     * 
-     * On WASM targets (wasm32-*), this function returns an error with a helpful
-     * message directing users to use WASM-specific initialization. WASM PDFium
-     * is initialized through the runtime, not via file extraction.
-     * 
-     * # Errors
-     * 
-     * Returns `std::io::Error` if:
-     * - Cannot create extraction directory
-     * - Cannot write library file
-     * - Cannot set file permissions (Unix only)
-     * - Target is WASM (filesystem access not available)
-     * 
-     * # Platform-Specific Library Names
-     * 
-     * - Linux: `libpdfium.so`
-     * - macOS: `libpdfium.dylib`
-     * - Windows: `pdfium.dll`
-     */
-    public static java.nio.file.Path extractBundledPdfium() throws KreuzbergRsException {
-        return KreuzbergRs.extractBundledPdfium();
-    }
-
-    /**
      * Extract embedded file descriptors from a PDF document loaded via lopdf.
      * 
      * Walks the `/Names` → `/EmbeddedFiles` name tree in the catalog.
@@ -6690,18 +5640,6 @@ public final class Kreuzberg {
      */
     public static long cachedFontCount() throws KreuzbergRsException {
         return KreuzbergRs.cachedFontCount();
-    }
-
-    /**
-     * Clear the font cache (for testing purposes).
-     * 
-     * # Panics
-     * 
-     * Panics if the cache lock is poisoned, which should only happen in test scenarios
-     * with deliberate panic injection.
-     */
-    public static void clearFontCache() throws KreuzbergRsException {
-        KreuzbergRs.clearFontCache();
     }
 
     /**
@@ -6982,19 +5920,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Re-extract images that have unusable formats (`"raw"`, `"ccitt"`, `"jbig2"`) by
-     * rendering them through pdfium's bitmap pipeline, which handles all PDF filter
-     * chains internally.
-     * 
-     * Returns the number of images successfully re-extracted.
-     */
-    public static int reextractRawImagesViaPdfium(byte[] pdfBytes, List<PdfImage> images) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(pdfBytes, "pdfBytes must not be null");
-        java.util.Objects.requireNonNull(images, "images must not be null");
-        return KreuzbergRs.reextractRawImagesViaPdfium(pdfBytes, images);
-    }
-
-    /**
      * Run layout detection on all pages of a PDF document.
      * 
      * Under the hood, this uses batched layout detection to prevent holding too many
@@ -7047,35 +5972,6 @@ public final class Kreuzberg {
         java.util.Objects.requireNonNull(pdfBytes, "pdfBytes must not be null");
         java.util.Objects.requireNonNull(passwords, "passwords must not be null");
         return KreuzbergRs.extractMetadataWithPasswords(pdfBytes, passwords);
-    }
-
-    /**
-     * Extract complete PDF metadata from a document.
-     * 
-     * Extracts common fields (title, subject, authors, keywords, dates, creator),
-     * PDF-specific metadata, and optionally builds a PageStructure with boundaries.
-     * 
-     * # Arguments
-     * 
-     * * `document` - The PDF document to extract metadata from
-     * * `page_boundaries` - Optional vector of PageBoundary entries for building PageStructure.
-     *   If provided, a PageStructure will be built with these boundaries.
-     * * `content` - Optional extracted text content, used for blank page detection.
-     *   If provided, `PageInfo.is_blank` will be populated based on text content analysis.
-     *   If `None`, `is_blank` will be `None` for all pages.
-     * 
-     * # Returns
-     * 
-     * Returns a `PdfExtractionMetadata` struct containing all extracted metadata,
-     * including page structure if boundaries were provided.
-     */
-    public static PdfExtractionMetadata extractMetadataFromDocument(String document, List<PageBoundary> pageBoundaries, String content) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(document, "document must not be null");
-        return KreuzbergRs.extractMetadataFromDocument(document, pageBoundaries, content);
-    }
-
-    public static PdfExtractionMetadata extractMetadataFromDocument(String document) throws KreuzbergRsException {
-        return extractMetadataFromDocument(document, null, null);
     }
 
     /**
@@ -7269,77 +6165,6 @@ public final class Kreuzberg {
         java.util.Objects.requireNonNull(pdfBytes, "pdfBytes must not be null");
         java.util.Objects.requireNonNull(passwords, "passwords must not be null");
         return KreuzbergRs.extractTextFromPdfWithPasswords(pdfBytes, passwords);
-    }
-
-    /**
-     * Extract text and metadata from PDF document in a single pass.
-     * 
-     * This is an optimized function that extracts both text and metadata in one pass
-     * through the document, avoiding redundant document parsing. It combines the
-     * functionality of `extract_text_from_pdf_document` and
-     * `extract_metadata_from_document` into a single unified operation.
-     * 
-     * # Arguments
-     * 
-     * * `document` - The PDF document to extract from
-     * * `extraction_config` - Optional extraction configuration for hierarchy and page tracking
-     * 
-     * # Returns
-     * 
-     * A tuple containing:
-     * - The extracted text content (String)
-     * - Optional page boundaries when page tracking is enabled (Vec<PageBoundary>)
-     * - Optional per-page content when extract_pages is enabled (Vec<PageContent>)
-     * - Complete extraction metadata (PdfExtractionMetadata)
-     * 
-     * # Performance
-     * 
-     * This function is optimized for single-pass extraction. It performs all document
-     * scanning in one iteration, avoiding redundant pdfium operations compared to
-     * calling text and metadata extraction separately.
-     */
-    public static PdfUnifiedExtractionResult extractTextAndMetadataFromPdfDocument(String document, ExtractionConfig extractionConfig) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(document, "document must not be null");
-        return KreuzbergRs.extractTextAndMetadataFromPdfDocument(document, extractionConfig);
-    }
-
-    public static PdfUnifiedExtractionResult extractTextAndMetadataFromPdfDocument(String document) throws KreuzbergRsException {
-        return extractTextAndMetadataFromPdfDocument(document, null);
-    }
-
-    /**
-     * Extract text from PDF document with optional page boundary tracking.
-     * 
-     * # Arguments
-     * 
-     * * `document` - The PDF document to extract text from
-     * * `page_config` - Optional page configuration for boundary tracking and page markers
-     * * `extraction_config` - Optional extraction configuration for hierarchy detection
-     * 
-     * # Returns
-     * 
-     * A tuple containing:
-     * - The extracted text content (String)
-     * - Optional page boundaries when page tracking is enabled (Vec<PageBoundary>)
-     * - Optional per-page content when extract_pages is enabled (Vec<PageContent>)
-     * 
-     * # Implementation Details
-     * 
-     * Uses lazy page-by-page iteration to reduce memory footprint. Pages are processed
-     * one at a time and released after extraction, rather than accumulating all pages
-     * in memory. This approach saves 40-50MB for large documents while improving
-     * performance by 15-25% through reduced upfront work.
-     * 
-     * When page_config is None, uses fast path with minimal overhead.
-     * When page_config is Some, tracks byte offsets using .len() for O(1) performance (UTF-8 valid boundaries).
-     */
-    public static String extractTextFromPdfDocument(String document, PageConfig pageConfig, ExtractionConfig extractionConfig) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(document, "document must not be null");
-        return KreuzbergRs.extractTextFromPdfDocument(document, pageConfig, extractionConfig);
-    }
-
-    public static String extractTextFromPdfDocument(String document) throws KreuzbergRsException {
-        return extractTextFromPdfDocument(document, null, null);
     }
 
     /**

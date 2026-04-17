@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record PageContent(
     @JsonProperty("page_number") long pageNumber,
     String content,
-    List<Table> tables,
+    List<String> tables,
     List<ExtractedImage> images,
     Optional<PageHierarchy> hierarchy,
     @JsonProperty("is_blank") Optional<Boolean> isBlank

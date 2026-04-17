@@ -516,7 +516,7 @@ impl KreuzbergMcp {
                     &crate::core::config::EmbeddingModelType::Preset {
                         name: preset.name.to_string(),
                     },
-                    Some(embeddings_dir.clone()),
+                    embeddings_dir.to_str(),
                 )
                 .map_err(|e| {
                     rmcp::ErrorData::internal_error(

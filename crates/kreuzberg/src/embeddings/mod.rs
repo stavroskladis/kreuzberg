@@ -585,12 +585,9 @@ fn panic_to_string(payload: Box<dyn std::any::Any + Send>) -> String {
 /// **Note**: This function downloads AND initializes the ONNX model, which
 /// requires ONNX Runtime and uses significant memory. For download-only
 /// scenarios (e.g., init containers), use [`download_model`] instead.
-pub fn warm_model(
-    model_type: &crate::core::config::EmbeddingModelType,
-    cache_dir: Option<std::path::PathBuf>,
-) -> crate::Result<()> {
+pub fn warm_model(model_type: &crate::core::config::EmbeddingModelType, cache_dir: Option<&str>) -> crate::Result<()> {
     let (repo, model_file, pooling) = resolve_model_info(model_type)?;
-    get_or_init_engine(repo, model_file, pooling, cache_dir).map(|_| ())
+    get_or_init_engine(repo, model_file, pooling, cache_dir.map(std::path::PathBuf::from)).map(|_| ())
 }
 
 /// Download an embedding model's files without initializing ONNX Runtime.
@@ -603,10 +600,10 @@ pub fn warm_model(
 /// pre-populate the cache without loading models into memory.
 pub fn download_model(
     model_type: &crate::core::config::EmbeddingModelType,
-    cache_dir: Option<std::path::PathBuf>,
+    cache_dir: Option<&str>,
 ) -> crate::Result<()> {
     let (repo_name, model_file, _pooling) = resolve_model_info(model_type)?;
-    let cache_directory = resolve_cache_dir(cache_dir);
+    let cache_directory = resolve_cache_dir(cache_dir.map(std::path::PathBuf::from));
 
     let files = &[
         model_file,

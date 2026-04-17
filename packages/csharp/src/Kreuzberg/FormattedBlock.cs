@@ -35,7 +35,7 @@ public sealed class FormattedBlock
     /// Element attributes (classes, IDs, key-value pairs)
     /// </summary>
     [JsonPropertyName("attributes")]
-    public Attributes? Attributes { get; set; } = null;
+    public string? Attributes { get; set; } = null;
 
     /// <summary>
     /// Language identifier for code blocks

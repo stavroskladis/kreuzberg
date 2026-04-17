@@ -20,7 +20,7 @@ defmodule Kreuzberg.ExtractionConfig do
             html_output: nil,
             extraction_timeout_secs: nil,
             max_concurrent_extractions: nil,
-            result_format: :plain,
+            result_format: :unified,
             security_limits: nil,
             output_format: :plain,
             layout: nil,

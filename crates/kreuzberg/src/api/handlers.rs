@@ -1080,7 +1080,7 @@ pub async fn cache_warm_handler(JsonApi(request): JsonApi<WarmRequest>) -> Resul
                 &crate::core::config::EmbeddingModelType::Preset {
                     name: preset.name.to_string(),
                 },
-                Some(embeddings_dir.clone()),
+                embeddings_dir.to_str(),
             )
             .map_err(|e| {
                 ApiError::bad_gateway(crate::error::KreuzbergError::Other(format!(

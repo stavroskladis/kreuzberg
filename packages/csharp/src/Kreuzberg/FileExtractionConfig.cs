@@ -95,7 +95,7 @@ public sealed class FileExtractionConfig
     /// Override token reduction for this file.
     /// </summary>
     [JsonPropertyName("token_reduction")]
-    public TokenReductionConfig? TokenReduction { get; set; } = null;
+    public TokenReductionOptions? TokenReduction { get; set; } = null;
 
     /// <summary>
     /// Override language detection for this file.
@@ -125,7 +125,7 @@ public sealed class FileExtractionConfig
     /// Override result format for this file.
     /// </summary>
     [JsonPropertyName("result_format")]
-    public JsonElement? ResultFormat { get; set; } = null;
+    public ExtractionMode? ResultFormat { get; set; } = null;
 
     /// <summary>
     /// Override output content format for this file.

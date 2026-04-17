@@ -479,7 +479,7 @@ pub struct ExtractedImage {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 #[serde(rename_all = "snake_case")]
-pub enum OutputFormat {
+pub enum ExtractionMode {
     /// Unified format with all content in `content` field
     #[default]
     Unified,
@@ -491,7 +491,7 @@ pub enum OutputFormat {
 ///
 /// Wraps a string identifier that is deterministically generated
 /// from element type, content, and page number.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 #[cfg_attr(feature = "api", schema(value_type = String))]
 pub struct ElementId(String);

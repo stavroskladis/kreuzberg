@@ -127,8 +127,11 @@ pub use core::config::{
     AccelerationConfig, ChunkSizing, ChunkerType, ChunkingConfig, ContentFilterConfig, EmailConfig, EmbeddingConfig,
     EmbeddingModelType, ExecutionProviderType, ExtractionConfig, FileExtractionConfig, ImageExtractionConfig,
     LanguageDetectionConfig, LlmConfig, OcrConfig, OutputFormat, PageConfig, PostProcessorConfig,
-    StructuredExtractionConfig, TokenReductionConfig,
+    StructuredExtractionConfig, TokenReductionOptions,
 };
+
+#[cfg(feature = "quality")]
+pub use text::TokenReductionConfig;
 
 #[cfg(feature = "api")]
 pub use core::server_config::ServerConfig;

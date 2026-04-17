@@ -4,4 +4,7 @@ package dev.kreuzberg;
 import java.util.Optional;
 
 public record OcrConfidence(Optional<Double> detection, double recognition) {
+    public static OcrConfidenceBuilder builder() {
+        return new OcrConfidenceBuilder();
+    }
 }

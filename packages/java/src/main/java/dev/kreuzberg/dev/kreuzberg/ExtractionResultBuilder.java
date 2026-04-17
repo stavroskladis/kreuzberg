@@ -9,7 +9,7 @@ public class ExtractionResultBuilder {
     private String content = "";
     private String mimeType = "";
     private Metadata metadata = null;
-    private List<Table> tables = List.of();
+    private List<String> tables = List.of();
     private Optional<List<String>> detectedLanguages = Optional.empty();
     private Optional<List<Chunk>> chunks = Optional.empty();
     private Optional<List<ExtractedImage>> images = Optional.empty();
@@ -44,7 +44,7 @@ public class ExtractionResultBuilder {
         return this;
     }
 
-    public ExtractionResultBuilder withTables(List<Table> value) {
+    public ExtractionResultBuilder withTables(List<String> value) {
         this.tables = value;
         return this;
     }

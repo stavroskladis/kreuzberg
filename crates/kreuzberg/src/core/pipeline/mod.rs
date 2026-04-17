@@ -205,7 +205,7 @@ pub async fn run_pipeline(doc: InternalDocument, config: &ExtractionConfig) -> R
     }
 
     // Apply output format conversion as the final step
-    apply_output_format(&mut result, config.output_format.clone());
+    result = apply_output_format(result, config.output_format.clone());
 
     Ok(result)
 }
@@ -310,14 +310,14 @@ pub fn run_pipeline_sync(doc: InternalDocument, config: &ExtractionConfig) -> Re
     normalize_nfc(&mut result);
 
     // Apply output format conversion as the final step
-    apply_output_format(&mut result, config.output_format.clone());
+    result = apply_output_format(result, config.output_format.clone());
 
     Ok(result)
 }
 
 /// Transform to element-based output if requested by the config.
 fn apply_element_transform(result: &mut ExtractionResult, config: &ExtractionConfig) {
-    if config.result_format == crate::types::OutputFormat::ElementBased {
+    if config.result_format == crate::types::ExtractionMode::ElementBased {
         result.elements = Some(crate::extraction::transform::transform_extraction_result_to_elements(
             result,
         ));

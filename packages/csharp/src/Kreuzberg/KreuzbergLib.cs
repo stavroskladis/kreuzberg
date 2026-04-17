@@ -342,7 +342,7 @@ public static class KreuzbergLib
     /// let mut base = ExtractionConfig::default();
     /// base.use_cache = true;
     ///
-    /// let overrides = json!({"force_ocr": true});
+    /// let overrides = r#"{"force_ocr": true}"#;
     /// let merged = kreuzberg::core::config::merge::merge_config_json(&base, overrides).unwrap();
     /// assert!(merged.use_cache);   // preserved from base
     /// assert!(merged.force_ocr);   // applied from override
@@ -350,9 +350,10 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="base"></param>
     /// <param name="overrideJson"></param>
-    public static ExtractionConfig MergeConfigJson(ExtractionConfig base, object overrideJson)
+    public static ExtractionConfig MergeConfigJson(ExtractionConfig base, string overrideJson)
     {
         ArgumentNullException.ThrowIfNull(base);
+        ArgumentNullException.ThrowIfNull(overrideJson);
         var baseJson = JsonSerializer.Serialize(base, JsonOptions);
         var baseHandle = NativeMethods.ExtractionConfigFromJson(baseJson);
         var result = NativeMethods.MergeConfigJson(
@@ -377,7 +378,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="base"></param>
     /// <param name="overrideJson">Optional.</param>
-    public static ExtractionConfig BuildConfigFromJson(ExtractionConfig base, object? overrideJson)
+    public static ExtractionConfig BuildConfigFromJson(ExtractionConfig base, string? overrideJson)
     {
         ArgumentNullException.ThrowIfNull(base);
         var baseJson = JsonSerializer.Serialize(base, JsonOptions);
@@ -1129,371 +1130,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Synchronous wrapper for `extract_file`.
-    ///
-    /// This is a convenience function that blocks the current thread until extraction completes.
-    /// For async code, use `extract_file` directly.
-    ///
-    /// Uses the global Tokio runtime for 100x+ performance improvement over creating
-    /// a new runtime per call. Always uses the global runtime to avoid nested runtime issues.
-    ///
-    /// This function is only available with the `tokio-runtime` feature. For WASM targets,
-    /// use a truly synchronous extraction approach instead.
-    ///
-    /// # Example
-    ///
-    /// ```rust,no_run
-    /// use kreuzberg::core::extractor::extract_file_sync;
-    /// use kreuzberg::core::config::ExtractionConfig;
-    ///
-    /// let config = ExtractionConfig::default();
-    /// let result = extract_file_sync("document.pdf", None, &config)?;
-    /// println!("Content: {}", result.content);
-    /// # Ok::<(), kreuzberg::KreuzbergError>(())
-    /// ```
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="mimeType">Optional.</param>
-    /// <param name="config"></param>
-    public static ExtractionResult ExtractFileSync(string path, string? mimeType, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(path);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var result = NativeMethods.ExtractFileSync(
-            path,
-            mimeType!,
-            configHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ExtractionResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.ExtractionConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Synchronous wrapper for `extract_bytes`.
-    ///
-    /// Uses the global Tokio runtime for 100x+ performance improvement over creating
-    /// a new runtime per call.
-    ///
-    /// With the `tokio-runtime` feature, this blocks the current thread using the global
-    /// Tokio runtime. Without it (WASM), this calls a truly synchronous implementation.
-    ///
-    /// # Example
-    ///
-    /// ```rust,no_run
-    /// use kreuzberg::core::extractor::extract_bytes_sync;
-    /// use kreuzberg::core::config::ExtractionConfig;
-    ///
-    /// let config = ExtractionConfig::default();
-    /// let bytes = b"Hello, world!";
-    /// let result = extract_bytes_sync(bytes, "text/plain", &config)?;
-    /// println!("Content: {}", result.content);
-    /// # Ok::<(), kreuzberg::KreuzbergError>(())
-    /// ```
-    /// </summary>
-    /// <param name="content"></param>
-    /// <param name="mimeType"></param>
-    /// <param name="config"></param>
-    public static ExtractionResult ExtractBytesSync(byte[] content, string mimeType, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(content);
-        ArgumentNullException.ThrowIfNull(mimeType);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var result = NativeMethods.ExtractBytesSync(
-            content,
-            mimeType,
-            configHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ExtractionResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.ExtractionConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Synchronous wrapper for `batch_extract_file`.
-    ///
-    /// Uses the global Tokio runtime for optimal performance.
-    /// Only available with `tokio-runtime` (WASM has no filesystem).
-    ///
-    /// # Example
-    ///
-    /// ```rust,no_run
-    /// use kreuzberg::core::extractor::batch_extract_file_sync;
-    /// use kreuzberg::core::config::ExtractionConfig;
-    /// use kreuzberg::FileExtractionConfig;
-    /// use std::path::PathBuf;
-    ///
-    /// let config = ExtractionConfig::default();
-    /// let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
-    ///     ("doc1.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-    ///     ("doc2.pdf".into(), None),
-    /// ];
-    /// let results = batch_extract_file_sync(items, &config)?;
-    /// # Ok::<(), kreuzberg::KreuzbergError>(())
-    /// ```
-    /// </summary>
-    /// <param name="items"></param>
-    /// <param name="config"></param>
-    public static List<ExtractionResult> BatchExtractFileSync(List<string> items, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-        var itemsJson = JsonSerializer.Serialize(items, JsonOptions);
-        var itemsHandle = Marshal.StringToHGlobalAnsi(itemsJson);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var result = NativeMethods.BatchExtractFileSync(
-            itemsHandle,
-            configHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<ExtractionResult>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(itemsHandle);
-        NativeMethods.ExtractionConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Synchronous wrapper for `batch_extract_bytes`.
-    ///
-    /// Uses the global Tokio runtime for optimal performance.
-    /// With the `tokio-runtime` feature, this blocks the current thread using the global
-    /// Tokio runtime. Without it (WASM), this calls a truly synchronous implementation
-    /// that iterates through items and calls `extract_bytes_sync()`.
-    ///
-    /// # Example
-    ///
-    /// ```rust,no_run
-    /// use kreuzberg::core::extractor::batch_extract_bytes_sync;
-    /// use kreuzberg::core::config::ExtractionConfig;
-    /// use kreuzberg::FileExtractionConfig;
-    ///
-    /// let config = ExtractionConfig::default();
-    /// let items = vec![
-    ///     (b"content".to_vec(), "text/plain".to_string(), None),
-    ///     (b"other".to_vec(), "text/plain".to_string(),
-    ///      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-    /// ];
-    /// let results = batch_extract_bytes_sync(items, &config)?;
-    /// # Ok::<(), kreuzberg::KreuzbergError>(())
-    /// ```
-    /// </summary>
-    /// <param name="items"></param>
-    /// <param name="config"></param>
-    public static List<ExtractionResult> BatchExtractBytesSync(List<string> items, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-        var itemsJson = JsonSerializer.Serialize(items, JsonOptions);
-        var itemsHandle = Marshal.StringToHGlobalAnsi(itemsJson);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var result = NativeMethods.BatchExtractBytesSync(
-            itemsHandle,
-            configHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<ExtractionResult>>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(itemsHandle);
-        NativeMethods.ExtractionConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Extract content from multiple files concurrently.
-    ///
-    /// This function processes multiple files in parallel, automatically managing
-    /// concurrency to prevent resource exhaustion. The concurrency limit can be
-    /// configured via `ExtractionConfig::max_concurrent_extractions` or defaults
-    /// to `(num_cpus * 1.5).ceil()`.
-    ///
-    /// Each file can optionally specify a [`FileExtractionConfig`] that overrides specific
-    /// fields from the batch-level `config`. Pass `None` for a file to use the batch defaults.
-    /// Batch-level settings like `max_concurrent_extractions` and `use_cache` are always
-    /// taken from the batch-level `config`.
-    ///
-    /// # Arguments
-    ///
-    /// * `items` - Vector of `(path, optional_file_config)` tuples. Pass `None` as the
-    ///   config to use the batch-level defaults for that file.
-    /// * `config` - Batch-level extraction configuration (provides defaults and batch settings)
-    ///
-    /// # Returns
-    ///
-    /// A vector of `ExtractionResult` in the same order as the input items.
-    ///
-    /// # Errors
-    ///
-    /// Individual file errors are captured in the result metadata. System errors
-    /// (IO, RuntimeError equivalents) will bubble up and fail the entire batch.
-    ///
-    /// # Examples
-    ///
-    /// Simple usage with no per-file overrides:
-    ///
-    /// ```rust,no_run
-    /// use kreuzberg::core::extractor::batch_extract_file;
-    /// use kreuzberg::core::config::ExtractionConfig;
-    /// use std::path::PathBuf;
-    ///
-    /// # async fn example() -> kreuzberg::Result<()> {
-    /// let config = ExtractionConfig::default();
-    /// let items: Vec<(PathBuf, Option<kreuzberg::FileExtractionConfig>)> = vec![
-    ///     ("doc1.pdf".into(), None),
-    ///     ("doc2.pdf".into(), None),
-    /// ];
-    /// let results = batch_extract_file(items, &config).await?;
-    /// println!("Processed {} files", results.len());
-    /// # Ok(())
-    /// # }
-    /// ```
-    ///
-    /// Per-file configuration overrides:
-    ///
-    /// ```rust,no_run
-    /// use kreuzberg::core::extractor::batch_extract_file;
-    /// use kreuzberg::core::config::ExtractionConfig;
-    /// use kreuzberg::FileExtractionConfig;
-    /// use std::path::PathBuf;
-    ///
-    /// # async fn example() -> kreuzberg::Result<()> {
-    /// let config = ExtractionConfig::default();
-    /// let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
-    ///     ("scan.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-    ///     ("notes.txt".into(), None),
-    /// ];
-    /// let results = batch_extract_file(items, &config).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
-    /// </summary>
-    /// <param name="items"></param>
-    /// <param name="config"></param>
-    public static async Task<List<ExtractionResult>> BatchExtractFile(List<string> items, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-        var itemsJson = JsonSerializer.Serialize(items, JsonOptions);
-        var itemsHandle = Marshal.StringToHGlobalAnsi(itemsJson);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.BatchExtractFile(
-                itemsHandle,
-                configHandle
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var json = Marshal.PtrToStringUTF8(result);
-            NativeMethods.FreeString(result);
-            var returnValue = JsonSerializer.Deserialize<List<ExtractionResult>>(json ?? "null", JsonOptions)!;
-            Marshal.FreeHGlobal(itemsHandle);
-            NativeMethods.ExtractionConfigFree(configHandle);
-            return returnValue;
-        });
-    }
-
-    /// <summary>
-    /// Extract content from multiple byte arrays concurrently.
-    ///
-    /// This function processes multiple byte arrays in parallel, automatically managing
-    /// concurrency to prevent resource exhaustion. The concurrency limit can be
-    /// configured via `ExtractionConfig::max_concurrent_extractions` or defaults
-    /// to `(num_cpus * 1.5).ceil()`.
-    ///
-    /// Each item can optionally specify a [`FileExtractionConfig`] that overrides specific
-    /// fields from the batch-level `config`. Pass `None` as the config to use
-    /// the batch-level defaults for that item.
-    ///
-    /// # Arguments
-    ///
-    /// * `items` - Vector of `(bytes, mime_type, optional_file_config)` tuples
-    /// * `config` - Batch-level extraction configuration
-    ///
-    /// # Returns
-    ///
-    /// A vector of `ExtractionResult` in the same order as the input items.
-    ///
-    /// # Examples
-    ///
-    /// Simple usage with no per-item overrides:
-    ///
-    /// ```rust,no_run
-    /// use kreuzberg::core::extractor::batch_extract_bytes;
-    /// use kreuzberg::core::config::ExtractionConfig;
-    ///
-    /// # async fn example() -> kreuzberg::Result<()> {
-    /// let config = ExtractionConfig::default();
-    /// let items = vec![
-    ///     (b"content 1".to_vec(), "text/plain".to_string(), None),
-    ///     (b"content 2".to_vec(), "text/plain".to_string(), None),
-    /// ];
-    /// let results = batch_extract_bytes(items, &config).await?;
-    /// println!("Processed {} items", results.len());
-    /// # Ok(())
-    /// # }
-    /// ```
-    ///
-    /// Per-item configuration overrides:
-    ///
-    /// ```rust,no_run
-    /// use kreuzberg::core::extractor::batch_extract_bytes;
-    /// use kreuzberg::core::config::ExtractionConfig;
-    /// use kreuzberg::FileExtractionConfig;
-    ///
-    /// # async fn example() -> kreuzberg::Result<()> {
-    /// let config = ExtractionConfig::default();
-    /// let items = vec![
-    ///     (b"content".to_vec(), "text/plain".to_string(), None),
-    ///     (b"<html>test</html>".to_vec(), "text/html".to_string(),
-    ///      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-    /// ];
-    /// let results = batch_extract_bytes(items, &config).await?;
-    /// # Ok(())
-    /// # }
-    /// ```
-    /// </summary>
-    /// <param name="items"></param>
-    /// <param name="config"></param>
-    public static async Task<List<ExtractionResult>> BatchExtractBytes(List<string> items, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-        var itemsJson = JsonSerializer.Serialize(items, JsonOptions);
-        var itemsHandle = Marshal.StringToHGlobalAnsi(itemsJson);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.BatchExtractBytes(
-                itemsHandle,
-                configHandle
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var json = Marshal.PtrToStringUTF8(result);
-            NativeMethods.FreeString(result);
-            var returnValue = JsonSerializer.Deserialize<List<ExtractionResult>>(json ?? "null", JsonOptions)!;
-            Marshal.FreeHGlobal(itemsHandle);
-            NativeMethods.ExtractionConfigFree(configHandle);
-            return returnValue;
-        });
-    }
-
-    /// <summary>
     /// Validates whether a field name is in the known formats registry.
     ///
     /// This uses a pre-built hash set for O(1) lookups instead of linear search,
@@ -1544,46 +1180,15 @@ public static class KreuzbergLib
     /// Returns `KreuzbergError::Io` for any I/O failure.
     /// </summary>
     /// <param name="path"></param>
-    public static FileBytes OpenFileBytes(string path)
+    public static string OpenFileBytes(string path)
     {
         var result = NativeMethods.OpenFileBytes(
             path
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = new FileBytes(result);
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
-    }
-
-    /// <summary>
-    /// Read a file asynchronously.
-    ///
-    /// # Arguments
-    ///
-    /// * `path` - Path to the file to read
-    ///
-    /// # Returns
-    ///
-    /// The file contents as bytes.
-    ///
-    /// # Errors
-    ///
-    /// Returns `KreuzbergError::Io` for I/O errors (these always bubble up).
-    /// </summary>
-    /// <param name="path"></param>
-    public static async Task<byte[]> ReadFileAsync(string path)
-    {
-        ArgumentNullException.ThrowIfNull(path);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.ReadFileAsync(
-                path
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var json = Marshal.PtrToStringUTF8(result);
-            NativeMethods.FreeString(result);
-            var returnValue = JsonSerializer.Deserialize<byte[]>(json ?? "null", JsonOptions)!;
-            return returnValue;
-        });
     }
 
     /// <summary>
@@ -1910,7 +1515,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="result"></param>
     /// <param name="outputFormat"></param>
-    public static void ApplyOutputFormat(ExtractionResult result, OutputFormat outputFormat)
+    public static ExtractionResult ApplyOutputFormat(ExtractionResult result, OutputFormat outputFormat)
     {
         ArgumentNullException.ThrowIfNull(result);
         ArgumentNullException.ThrowIfNull(outputFormat);
@@ -1918,103 +1523,9 @@ public static class KreuzbergLib
         var resultHandle = NativeMethods.ExtractionResultFromJson(resultJson);
         var outputFormatJson = JsonSerializer.Serialize(outputFormat, JsonOptions);
         var outputFormatHandle = NativeMethods.OutputFormatFromJson(outputFormatJson);
-        NativeMethods.ApplyOutputFormat(
+        var result = NativeMethods.ApplyOutputFormat(
             resultHandle,
             outputFormatHandle
-        );
-        NativeMethods.ExtractionResultFree(resultHandle);
-        NativeMethods.OutputFormatFree(outputFormatHandle);
-    }
-
-    /// <summary>
-    /// Run the post-processing pipeline on an `InternalDocument`.
-    ///
-    /// Derives `ExtractionResult` from `InternalDocument` via the derivation pipeline,
-    /// then executes post-processing in the following order:
-    /// 1. Post-Processors - Execute by stage (Early, Middle, Late) to modify/enhance the result
-    /// 2. Quality Processing - Text cleaning and quality scoring
-    /// 3. Chunking - Text splitting if enabled
-    /// 4. Validators - Run validation hooks on the processed result (can fail fast)
-    ///
-    /// # Arguments
-    ///
-    /// * `doc` - The internal document produced by the extractor
-    /// * `config` - Extraction configuration
-    ///
-    /// # Returns
-    ///
-    /// The processed extraction result.
-    ///
-    /// # Errors
-    ///
-    /// - Validator errors bubble up immediately
-    /// - Post-processor errors are caught and recorded in metadata
-    /// - System errors (IO, RuntimeError equivalents) always bubble up
-    /// </summary>
-    /// <param name="doc"></param>
-    /// <param name="config"></param>
-    public static async Task<ExtractionResult> RunPipeline(string doc, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(doc);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.RunPipeline(
-                doc,
-                configHandle
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var jsonPtr = NativeMethods.ExtractionResultToJson(result);
-            var json = Marshal.PtrToStringUTF8(jsonPtr);
-            NativeMethods.FreeString(jsonPtr);
-            NativeMethods.ExtractionResultFree(result);
-            var returnValue = JsonSerializer.Deserialize<ExtractionResult>(json ?? "null", JsonOptions)!;
-            NativeMethods.ExtractionConfigFree(configHandle);
-            return returnValue;
-        });
-    }
-
-    /// <summary>
-    /// Run the post-processing pipeline synchronously (WASM-compatible version).
-    ///
-    /// This is a synchronous implementation for WASM and non-async contexts.
-    /// It performs a subset of the full async pipeline, excluding async post-processors
-    /// and validators.
-    ///
-    /// # Arguments
-    ///
-    /// * `doc` - The internal document produced by the extractor
-    /// * `config` - Extraction configuration
-    ///
-    /// # Returns
-    ///
-    /// The processed extraction result.
-    ///
-    /// # Notes
-    ///
-    /// This function is only available when the `tokio-runtime` feature is disabled.
-    /// It handles:
-    /// - Quality processing (if enabled)
-    /// - Chunking (if enabled)
-    /// - Language detection (if enabled)
-    ///
-    /// It does NOT handle:
-    /// - Async post-processors
-    /// - Async validators
-    /// </summary>
-    /// <param name="doc"></param>
-    /// <param name="config"></param>
-    public static ExtractionResult RunPipelineSync(string doc, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(doc);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var result = NativeMethods.RunPipelineSync(
-            doc,
-            configHandle
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var jsonPtr = NativeMethods.ExtractionResultToJson(result);
@@ -2022,7 +1533,8 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.ExtractionResultFree(result);
         var returnValue = JsonSerializer.Deserialize<ExtractionResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.ExtractionConfigFree(configHandle);
+        NativeMethods.ExtractionResultFree(resultHandle);
+        NativeMethods.OutputFormatFree(outputFormatHandle);
         return returnValue;
     }
 
@@ -2066,74 +1578,6 @@ public static class KreuzbergLib
         NativeMethods.ResolveRelationships(
             doc
         );
-    }
-
-    /// <summary>
-    /// Derive a hierarchical `DocumentStructure` from the flat internal document.
-    ///
-    /// Calls `resolve_relationships` first to resolve any key-based relationship targets,
-    /// then builds the tree.
-    ///
-    /// # Algorithm
-    ///
-    /// 1. Walk elements in reading order, maintaining a stack of `(depth, NodeIndex)`.
-    /// 2. Container start markers (`ListStart`, `QuoteStart`, `GroupStart`) push
-    ///    onto the stack; their matching end markers pop.
-    /// 3. Headings pop the stack to a shallower depth, then create a `Group` node
-    ///    with a `Heading` child and push the group.
-    /// 4. All other elements are parented under the current stack top.
-    /// 5. Resolved relationships are mapped from element indices to node indices.
-    /// </summary>
-    /// <param name="doc"></param>
-    public static DocumentStructure DeriveDocumentStructure(string doc)
-    {
-        ArgumentNullException.ThrowIfNull(doc);
-        var result = NativeMethods.DeriveDocumentStructure(
-            doc
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.DocumentStructureToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.DocumentStructureFree(result);
-        var returnValue = JsonSerializer.Deserialize<DocumentStructure>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Derive a complete `ExtractionResult` from an `InternalDocument`.
-    ///
-    /// This is the main entry point for the derivation pipeline. It:
-    /// 1. Resolves relationships (needed by renderers for footnotes)
-    /// 2. Renders plain-text content (for post-processors)
-    /// 3. Pre-renders formatted content if output_format != Plain
-    /// 4. Groups elements by page into `PageContent`
-    /// 5. Extracts OCR elements for backward compatibility
-    /// 6. Optionally derives `DocumentStructure` (assumes relationships resolved)
-    /// 7. Assembles the final `ExtractionResult`
-    /// </summary>
-    /// <param name="doc"></param>
-    /// <param name="includeDocumentStructure"></param>
-    /// <param name="outputFormat"></param>
-    public static ExtractionResult DeriveExtractionResult(string doc, bool includeDocumentStructure, OutputFormat outputFormat)
-    {
-        ArgumentNullException.ThrowIfNull(doc);
-        ArgumentNullException.ThrowIfNull(outputFormat);
-        var outputFormatJson = JsonSerializer.Serialize(outputFormat, JsonOptions);
-        var outputFormatHandle = NativeMethods.OutputFormatFromJson(outputFormatJson);
-        var result = NativeMethods.DeriveExtractionResult(
-            doc,
-            includeDocumentStructure,
-            outputFormatHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ExtractionResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.OutputFormatFree(outputFormatHandle);
-        return returnValue;
     }
 
     public static StructuredDataResult ParseJson(byte[] data, string? config)
@@ -2294,7 +1738,7 @@ public static class KreuzbergLib
     /// A vector of ListItemMetadata structs describing detected list items
     /// </summary>
     /// <param name="text"></param>
-    public static List<ListItemMetadata> DetectListItems(string text)
+    public static List<string> DetectListItems(string text)
     {
         ArgumentNullException.ThrowIfNull(text);
         var result = NativeMethods.DetectListItems(
@@ -2303,7 +1747,7 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<ListItemMetadata>>(json ?? "null", JsonOptions)!;
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -2327,7 +1771,7 @@ public static class KreuzbergLib
     /// <param name="text"></param>
     /// <param name="elementType"></param>
     /// <param name="pageNumber">Optional.</param>
-    public static ElementId GenerateElementId(string text, ElementType elementType, ulong? pageNumber)
+    public static string GenerateElementId(string text, ElementType elementType, ulong? pageNumber)
     {
         ArgumentNullException.ThrowIfNull(text);
         ArgumentNullException.ThrowIfNull(elementType);
@@ -2339,7 +1783,8 @@ public static class KreuzbergLib
             pageNumber!
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = new ElementId(result);
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         NativeMethods.ElementTypeFree(elementTypeHandle);
         return returnValue;
     }
@@ -2393,7 +1838,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="data"></param>
     /// <param name="isCompressed"></param>
-    public static List<Section> ParseBodyText(byte[] data, bool isCompressed)
+    public static List<string> ParseBodyText(byte[] data, bool isCompressed)
     {
         ArgumentNullException.ThrowIfNull(data);
         var result = NativeMethods.ParseBodyText(
@@ -2403,7 +1848,7 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<Section>>(json ?? "null", JsonOptions)!;
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -2449,27 +1894,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Load image bytes for OCR, with JPEG 2000 and JBIG2 fallback support.
-    ///
-    /// The standard `image` crate does not support JPEG 2000 or JBIG2 formats.
-    /// This function detects these formats by magic bytes and uses `hayro-jpeg2000`
-    /// / `hayro-jbig2` for decoding, falling back to the standard `image` crate
-    /// for all other formats.
-    /// </summary>
-    /// <param name="imageBytes"></param>
-    public static string LoadImageForOcr(byte[] imageBytes)
-    {
-        ArgumentNullException.ThrowIfNull(imageBytes);
-        var result = NativeMethods.LoadImageForOcr(
-            imageBytes
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Extract metadata from image bytes.
     ///
     /// Extracts dimensions, format, and EXIF data from the image.
@@ -2477,63 +1901,15 @@ public static class KreuzbergLib
     /// pure Rust JP2 box parsing for JPEG 2000 formats if the standard decoder fails.
     /// </summary>
     /// <param name="bytes"></param>
-    public static ImageMetadata ExtractImageMetadata(byte[] bytes)
+    public static string ExtractImageMetadata(byte[] bytes)
     {
         ArgumentNullException.ThrowIfNull(bytes);
         var result = NativeMethods.ExtractImageMetadata(
             bytes
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ImageMetadataToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ImageMetadataFree(result);
-        var returnValue = JsonSerializer.Deserialize<ImageMetadata>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Extract text from image bytes using OCR with optional page tracking for multi-frame TIFFs.
-    ///
-    /// This function:
-    /// - Detects if the image is a multi-frame TIFF
-    /// - For multi-frame TIFFs with PageConfig enabled, iterates frames and tracks boundaries
-    /// - For single-frame images or when page tracking is disabled, runs OCR on the whole image
-    /// - Returns (content, boundaries, page_contents) tuple
-    ///
-    /// # Arguments
-    /// * `bytes` - Image file bytes
-    /// * `mime_type` - MIME type (e.g., "image/tiff")
-    /// * `ocr_result` - OCR backend result containing the text
-    /// * `page_config` - Optional page configuration for boundary tracking
-    ///
-    /// # Returns
-    /// ImageOcrResult with content and optional boundaries for pagination
-    /// </summary>
-    /// <param name="bytes"></param>
-    /// <param name="mimeType"></param>
-    /// <param name="ocrResult"></param>
-    /// <param name="pageConfig">Optional.</param>
-    public static ImageOcrResult ExtractTextFromImageWithOcr(byte[] bytes, string mimeType, string ocrResult, PageConfig? pageConfig)
-    {
-        ArgumentNullException.ThrowIfNull(bytes);
-        ArgumentNullException.ThrowIfNull(mimeType);
-        ArgumentNullException.ThrowIfNull(ocrResult);
-        var pageConfigJson = pageConfig != null ? JsonSerializer.Serialize(pageConfig, JsonOptions) : "null";
-        var pageConfigHandle = NativeMethods.PageConfigFromJson(pageConfigJson);
-        var result = NativeMethods.ExtractTextFromImageWithOcr(
-            bytes,
-            mimeType,
-            ocrResult,
-            pageConfigHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ImageOcrResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ImageOcrResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<ImageOcrResult>(json ?? "null", JsonOptions)!;
-        NativeMethods.PageConfigFree(pageConfigHandle);
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -3220,38 +2596,6 @@ public static class KreuzbergLib
         return returnValue;
     }
 
-    /// <summary>
-    /// Extract all email messages from a PST file.
-    ///
-    /// Opens the PST file and traverses the full folder hierarchy, extracting
-    /// every message including subject, sender, recipients, and body text.
-    ///
-    /// # Arguments
-    ///
-    /// * `pst_data` - Raw bytes of the PST file
-    ///
-    /// # Returns
-    ///
-    /// A vector of `EmailExtractionResult`, one per message found.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if the PST data cannot be written to a temporary file,
-    /// or if the PST format is invalid.
-    /// </summary>
-    /// <param name="pstData"></param>
-    public static string ExtractPstMessages(byte[] pstData)
-    {
-        ArgumentNullException.ThrowIfNull(pstData);
-        var result = NativeMethods.ExtractPstMessages(
-            pstData
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
     public static ExcelWorkbook ReadExcelFile(string filePath)
     {
         ArgumentNullException.ThrowIfNull(filePath);
@@ -3463,40 +2807,15 @@ public static class KreuzbergLib
     /// and extracts text from the piece table.
     /// </summary>
     /// <param name="content"></param>
-    public static DocExtractionResult ExtractDocText(byte[] content)
+    public static string ExtractDocText(byte[] content)
     {
         ArgumentNullException.ThrowIfNull(content);
         var result = NativeMethods.ExtractDocText(
             content
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.DocExtractionResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.DocExtractionResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<DocExtractionResult>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Parse a drawing object starting after the `<w:drawing>` Start event.
-    ///
-    /// This function reads events until it encounters the closing `</w:drawing>` tag,
-    /// parsing the drawing type (inline or anchored), extent, properties, and image references.
-    /// </summary>
-    /// <param name="reader"></param>
-    public static Drawing ParseDrawing(string reader)
-    {
-        ArgumentNullException.ThrowIfNull(reader);
-        var result = NativeMethods.ParseDrawing(
-            reader
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.DrawingToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.DrawingFree(result);
-        var returnValue = JsonSerializer.Deserialize<Drawing>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -3624,28 +2943,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Parse table-level properties from streaming XML reader.
-    ///
-    /// Expects the reader to be positioned just after the `<w:tblPr>` start tag.
-    /// Reads all child elements until the matching `</w:tblPr>` end tag.
-    /// </summary>
-    /// <param name="reader"></param>
-    public static TableProperties ParseTableProperties(string reader)
-    {
-        ArgumentNullException.ThrowIfNull(reader);
-        var result = NativeMethods.ParseTableProperties(
-            reader
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.TablePropertiesToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.TablePropertiesFree(result);
-        var returnValue = JsonSerializer.Deserialize<TableProperties>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
     /// Parse row-level properties from streaming XML reader.
     ///
     /// Expects the reader to be positioned just after the `<w:trPr>` start tag.
@@ -3678,27 +2975,6 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Parse table grid (column widths) from streaming XML reader.
-    ///
-    /// Expects the reader to be positioned just after the `<w:tblGrid>` start tag.
-    /// </summary>
-    /// <param name="reader"></param>
-    public static TableGrid ParseTableGrid(string reader)
-    {
-        ArgumentNullException.ThrowIfNull(reader);
-        var result = NativeMethods.ParseTableGrid(
-            reader
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.TableGridToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.TableGridFree(result);
-        var returnValue = JsonSerializer.Deserialize<TableGrid>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -3896,52 +3172,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Process extracted images with OCR if configured.
-    ///
-    /// For each image, spawns a blocking OCR task and stores the result
-    /// in `image.ocr_result`. If OCR is not configured or fails for an
-    /// individual image, that image's `ocr_result` remains `None`.
-    ///
-    /// This function is the single shared implementation used by all
-    /// document extractors (DOCX, PPTX, Jupyter, Markdown, etc.).
-    ///
-    /// # Recursion Safety
-    ///
-    /// The produced `ExtractionResult` for each image explicitly sets
-    /// `images: None`, preventing further image extraction cycles when
-    /// OCR results are consumed by archive or recursive extraction paths.
-    ///
-    /// # Concurrency
-    ///
-    /// Concurrency is bounded by the configured thread budget
-    /// using a semaphore to prevent resource exhaustion.
-    /// </summary>
-    /// <param name="images"></param>
-    /// <param name="config"></param>
-    public static async Task<List<ExtractedImage>> ProcessImagesWithOcr(List<ExtractedImage> images, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-        var imagesJson = JsonSerializer.Serialize(images, JsonOptions);
-        var imagesHandle = Marshal.StringToHGlobalAnsi(imagesJson);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.ProcessImagesWithOcr(
-                imagesHandle,
-                configHandle
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var json = Marshal.PtrToStringUTF8(result);
-            NativeMethods.FreeString(result);
-            var returnValue = JsonSerializer.Deserialize<List<ExtractedImage>>(json ?? "null", JsonOptions)!;
-            Marshal.FreeHGlobal(imagesHandle);
-            NativeMethods.ExtractionConfigFree(configHandle);
-            return returnValue;
-        });
-    }
-
-    /// <summary>
     /// Extract text from PPT bytes.
     ///
     /// Parses the OLE/CFB compound document, reads the "PowerPoint Document" stream,
@@ -3951,18 +3181,15 @@ public static class KreuzbergLib
     /// like "Click to edit Master title style") is included instead of being skipped.
     /// </summary>
     /// <param name="content"></param>
-    public static PptExtractionResult ExtractPptText(byte[] content)
+    public static string ExtractPptText(byte[] content)
     {
         ArgumentNullException.ThrowIfNull(content);
         var result = NativeMethods.ExtractPptText(
             content
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.PptExtractionResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PptExtractionResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<PptExtractionResult>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -3974,7 +3201,7 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="content"></param>
     /// <param name="includeMasterSlides"></param>
-    public static PptExtractionResult ExtractPptTextWithOptions(byte[] content, bool includeMasterSlides)
+    public static string ExtractPptTextWithOptions(byte[] content, bool includeMasterSlides)
     {
         ArgumentNullException.ThrowIfNull(content);
         var result = NativeMethods.ExtractPptTextWithOptions(
@@ -3982,11 +3209,8 @@ public static class KreuzbergLib
             includeMasterSlides
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.PptExtractionResultToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PptExtractionResultFree(result);
-        var returnValue = JsonSerializer.Deserialize<PptExtractionResult>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -4180,21 +3404,15 @@ public static class KreuzbergLib
     /// standardized Attributes struct, handling IDs, classes, and key-value pairs.
     /// </summary>
     /// <param name="attrs"></param>
-    public static Attributes ParseJotdownAttributes(Attributes attrs)
+    public static string ParseJotdownAttributes(string attrs)
     {
         ArgumentNullException.ThrowIfNull(attrs);
-        var attrsJson = JsonSerializer.Serialize(attrs, JsonOptions);
-        var attrsHandle = NativeMethods.AttributesFromJson(attrsJson);
         var result = NativeMethods.ParseJotdownAttributes(
-            attrsHandle
+            attrs
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.AttributesToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.AttributesFree(result);
-        var returnValue = JsonSerializer.Deserialize<Attributes>(json ?? "null", JsonOptions)!;
-        NativeMethods.AttributesFree(attrsHandle);
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -4205,18 +3423,15 @@ public static class KreuzbergLib
     /// {.class #id key="value"}
     /// </summary>
     /// <param name="attrs"></param>
-    public static string RenderAttributes(Attributes attrs)
+    public static string RenderAttributes(string attrs)
     {
         ArgumentNullException.ThrowIfNull(attrs);
-        var attrsJson = JsonSerializer.Serialize(attrs, JsonOptions);
-        var attrsHandle = NativeMethods.AttributesFromJson(attrsJson);
         var result = NativeMethods.RenderAttributes(
-            attrsHandle
+            attrs
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
-        NativeMethods.AttributesFree(attrsHandle);
         return returnValue;
     }
 
@@ -4337,59 +3552,13 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Extract complete djot content with 100% feature extraction.
-    ///
-    /// Processes ALL djot events to build a rich DjotContent structure including:
-    /// - Block structure (headings, lists, blockquotes, divs, sections, code blocks)
-    /// - Inline formatting (strong, emphasis, highlight, subscript, superscript, insert, delete)
-    /// - Attributes (classes, IDs, key-value pairs)
-    /// - Links and images with full metadata (href, src, alt, title)
-    /// - Math blocks (inline & display)
-    /// - Definition lists (term/description pairs)
-    /// - Task lists with checked state
-    /// - Raw blocks (HTML/LaTeX)
-    /// - Footnotes (references and definitions)
-    /// - Captions
-    /// - Smart punctuation
-    /// - All other djot features
-    /// </summary>
-    /// <param name="events"></param>
-    /// <param name="metadata"></param>
-    /// <param name="tables"></param>
-    public static DjotContent ExtractCompleteDjotContent(List<string> events, Metadata metadata, List<Table> tables)
-    {
-        ArgumentNullException.ThrowIfNull(metadata);
-        var eventsJson = JsonSerializer.Serialize(events, JsonOptions);
-        var eventsHandle = Marshal.StringToHGlobalAnsi(eventsJson);
-        var metadataJson = JsonSerializer.Serialize(metadata, JsonOptions);
-        var metadataHandle = NativeMethods.MetadataFromJson(metadataJson);
-        var tablesJson = JsonSerializer.Serialize(tables, JsonOptions);
-        var tablesHandle = Marshal.StringToHGlobalAnsi(tablesJson);
-        var result = NativeMethods.ExtractCompleteDjotContent(
-            eventsHandle,
-            metadataHandle,
-            tablesHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.DjotContentToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.DjotContentFree(result);
-        var returnValue = JsonSerializer.Deserialize<DjotContent>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(eventsHandle);
-        NativeMethods.MetadataFree(metadataHandle);
-        Marshal.FreeHGlobal(tablesHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Extract tables from Djot events.
     ///
     /// Parses table events and extracts table data as a Vec<Vec<String>>,
     /// converting each table to markdown representation for storage.
     /// </summary>
     /// <param name="events"></param>
-    public static List<Table> ExtractTablesFromEvents(List<string> events)
+    public static List<string> ExtractTablesFromEvents(List<string> events)
     {
         var eventsJson = JsonSerializer.Serialize(events, JsonOptions);
         var eventsHandle = Marshal.StringToHGlobalAnsi(eventsJson);
@@ -4399,7 +3568,7 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var json = Marshal.PtrToStringUTF8(result);
         NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<List<Table>>(json ?? "null", JsonOptions)!;
+        var returnValue = JsonSerializer.Deserialize<List<string>>(json ?? "null", JsonOptions)!;
         Marshal.FreeHGlobal(eventsHandle);
         return returnValue;
     }
@@ -4431,62 +3600,65 @@ public static class KreuzbergLib
     /// <summary>
     /// Render a single block to djot markup.
     /// </summary>
-    /// <param name="output"></param>
     /// <param name="block"></param>
     /// <param name="indentLevel"></param>
-    public static void RenderBlockToDjot(string output, FormattedBlock block, ulong indentLevel)
+    public static string RenderBlockToDjot(FormattedBlock block, ulong indentLevel)
     {
-        ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(block);
         var blockJson = JsonSerializer.Serialize(block, JsonOptions);
         var blockHandle = NativeMethods.FormattedBlockFromJson(blockJson);
-        NativeMethods.RenderBlockToDjot(
-            output,
+        var result = NativeMethods.RenderBlockToDjot(
             blockHandle,
             indentLevel
         );
+        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         NativeMethods.FormattedBlockFree(blockHandle);
+        return returnValue;
     }
 
     /// <summary>
     /// Render a list item with the given marker.
     /// </summary>
-    /// <param name="output"></param>
     /// <param name="item"></param>
     /// <param name="indent"></param>
     /// <param name="marker"></param>
-    public static void RenderListItem(string output, FormattedBlock item, string indent, string marker)
+    public static string RenderListItem(FormattedBlock item, string indent, string marker)
     {
-        ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(item);
         ArgumentNullException.ThrowIfNull(indent);
         ArgumentNullException.ThrowIfNull(marker);
         var itemJson = JsonSerializer.Serialize(item, JsonOptions);
         var itemHandle = NativeMethods.FormattedBlockFromJson(itemJson);
-        NativeMethods.RenderListItem(
-            output,
+        var result = NativeMethods.RenderListItem(
             itemHandle,
             indent,
             marker
         );
+        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         NativeMethods.FormattedBlockFree(itemHandle);
+        return returnValue;
     }
 
     /// <summary>
     /// Render inline content to djot markup.
     /// </summary>
-    /// <param name="output"></param>
     /// <param name="elements"></param>
-    public static void RenderInlineContent(string output, List<InlineElement> elements)
+    public static string RenderInlineContent(List<InlineElement> elements)
     {
-        ArgumentNullException.ThrowIfNull(output);
         var elementsJson = JsonSerializer.Serialize(elements, JsonOptions);
         var elementsHandle = Marshal.StringToHGlobalAnsi(elementsJson);
-        NativeMethods.RenderInlineContent(
-            output,
+        var result = NativeMethods.RenderInlineContent(
             elementsHandle
         );
+        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         Marshal.FreeHGlobal(elementsHandle);
+        return returnValue;
     }
 
     /// <summary>
@@ -4519,46 +3691,6 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Extract metadata from YAML frontmatter.
-    ///
-    /// Extracts the following YAML fields into Kreuzberg metadata:
-    /// - **Standard fields**: title, author, date, description (as subject)
-    /// - **Extended fields**: abstract, subject, category, tags, language, version
-    /// - **Array fields** (keywords, tags): stored as `Vec<String>` in typed fields
-    ///
-    /// # Arguments
-    ///
-    /// * `yaml` - The parsed YAML value from frontmatter
-    ///
-    /// # Returns
-    ///
-    /// A `Metadata` struct populated with extracted fields
-    ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// let yaml = serde_yaml_ng::from_str("title: Test\nauthor: John").unwrap();
-    /// let metadata = extract_metadata_from_yaml(&yaml);
-    /// assert_eq!(metadata.title.as_deref(), Some("Test"));
-    /// ```
-    /// </summary>
-    /// <param name="yaml"></param>
-    public static Metadata ExtractMetadataFromYaml(string yaml)
-    {
-        ArgumentNullException.ThrowIfNull(yaml);
-        var result = NativeMethods.ExtractMetadataFromYaml(
-            yaml
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.MetadataToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.MetadataFree(result);
-        var returnValue = JsonSerializer.Deserialize<Metadata>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -4760,66 +3892,12 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Evaluates native PDF text quality to determine if OCR fallback is needed.
-    ///
-    /// Uses the provided quality thresholds (or defaults) to make the decision.
-    /// </summary>
-    /// <param name="nativeText"></param>
-    /// <param name="pageCount">Optional.</param>
-    /// <param name="thresholds"></param>
-    public static OcrFallbackDecision EvaluateNativeTextForOcr(string nativeText, ulong? pageCount, OcrQualityThresholds thresholds)
-    {
-        ArgumentNullException.ThrowIfNull(nativeText);
-        ArgumentNullException.ThrowIfNull(thresholds);
-        var thresholdsJson = JsonSerializer.Serialize(thresholds, JsonOptions);
-        var thresholdsHandle = NativeMethods.OcrQualityThresholdsFromJson(thresholdsJson);
-        var result = NativeMethods.EvaluateNativeTextForOcr(
-            nativeText,
-            pageCount!,
-            thresholdsHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.OcrFallbackDecisionToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.OcrFallbackDecisionFree(result);
-        var returnValue = JsonSerializer.Deserialize<OcrFallbackDecision>(json ?? "null", JsonOptions)!;
-        NativeMethods.OcrQualityThresholdsFree(thresholdsHandle);
-        return returnValue;
-    }
-
-    public static OcrFallbackDecision EvaluatePerPageOcr(string nativeText, List<PageBoundary>? boundaries, ulong? pageCount, OcrQualityThresholds thresholds)
-    {
-        ArgumentNullException.ThrowIfNull(nativeText);
-        ArgumentNullException.ThrowIfNull(thresholds);
-        var boundariesJson = JsonSerializer.Serialize(boundaries, JsonOptions);
-        var boundariesHandle = Marshal.StringToHGlobalAnsi(boundariesJson);
-        var thresholdsJson = JsonSerializer.Serialize(thresholds, JsonOptions);
-        var thresholdsHandle = NativeMethods.OcrQualityThresholdsFromJson(thresholdsJson);
-        var result = NativeMethods.EvaluatePerPageOcr(
-            nativeText,
-            boundariesHandle,
-            pageCount!,
-            thresholdsHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.OcrFallbackDecisionToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.OcrFallbackDecisionFree(result);
-        var returnValue = JsonSerializer.Deserialize<OcrFallbackDecision>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(boundariesHandle);
-        NativeMethods.OcrQualityThresholdsFree(thresholdsHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Convert a hex digit character to its numeric value.
     ///
     /// Returns None if the character is not a valid hex digit.
     /// </summary>
     /// <param name="c"></param>
-    public static byte? HexDigitToU8(string c)
+    public static byte? HexDigitToU8(byte c)
     {
         var result = NativeMethods.HexDigitToU8(
             c
@@ -4832,13 +3910,13 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Parse a hex-encoded byte from two characters.
+    /// Parse a hex-encoded byte from two bytes.
     ///
-    /// Returns the decoded byte if both characters are valid hex digits.
+    /// Returns the decoded byte if both bytes are valid hex digits.
     /// </summary>
     /// <param name="h1"></param>
     /// <param name="h2"></param>
-    public static byte? ParseHexByte(string h1, string h2)
+    public static byte? ParseHexByte(byte h1, byte h2)
     {
         var result = NativeMethods.ParseHexByte(
             h1,
@@ -5240,75 +4318,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Register an OCR backend with the global registry.
-    ///
-    /// The OCR backend will be registered with its name from the `name()` method
-    /// and can be used for OCR processing via the extraction pipeline.
-    ///
-    /// # Arguments
-    ///
-    /// * `backend` - The OCR backend implementation wrapped in Arc
-    ///
-    /// # Returns
-    ///
-    /// - `Ok(())` if registration succeeded
-    /// - `Err(...)` if validation failed or initialization failed
-    ///
-    /// # Errors
-    ///
-    /// - `KreuzbergError::Validation` - Invalid backend name (empty or contains whitespace)
-    /// - Any error from the backend's `initialize()` method
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use kreuzberg::plugins::{Plugin, OcrBackend, register_ocr_backend, OcrBackendType};
-    /// use kreuzberg::{Result, OcrConfig};
-    /// use kreuzberg::types::{ExtractionResult, Metadata};
-    /// use async_trait::async_trait;
-    /// use std::borrow::Cow;
-    /// use std::sync::Arc;
-    /// use std::path::Path;
-    ///
-    /// struct CustomOcr;
-    ///
-    /// impl Plugin for CustomOcr {
-    ///     fn name(&self) -> &str { "custom-ocr" }
-    ///     fn version(&self) -> String { "1.0.0".to_string() }
-    ///     fn initialize(&self) -> Result<()> { Ok(()) }
-    ///     fn shutdown(&self) -> Result<()> { Ok(()) }
-    /// }
-    ///
-    /// #[async_trait]
-    /// impl OcrBackend for CustomOcr {
-    ///     async fn process_image(&self, _: &[u8], _: &OcrConfig) -> Result<ExtractionResult> {
-    ///         Ok(ExtractionResult {
-    ///             content: "text".to_string(),
-    ///             mime_type: Cow::Borrowed("text/plain"),
-    ///             ..Default::default()
-    ///         })
-    ///     }
-    ///     fn supports_language(&self, _: &str) -> bool { true }
-    ///     fn backend_type(&self) -> OcrBackendType { OcrBackendType::Custom }
-    /// }
-    ///
-    /// # tokio_test::block_on(async {
-    /// let backend = Arc::new(CustomOcr);
-    /// register_ocr_backend(backend)?;
-    /// # Ok::<(), kreuzberg::KreuzbergError>(())
-    /// # });
-    /// ```
-    /// </summary>
-    /// <param name="backend"></param>
-    public static void RegisterOcrBackend(OcrBackend backend)
-    {
-        ArgumentNullException.ThrowIfNull(backend);
-        NativeMethods.RegisterOcrBackend(
-            backend.Handle
-        );
-    }
-
-    /// <summary>
     /// Unregister an OCR backend by name.
     ///
     /// Removes the OCR backend from the global registry and calls its `shutdown()` method.
@@ -5494,46 +4503,6 @@ public static class KreuzbergLib
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
         return returnValue;
-    }
-
-    /// <summary>
-    /// Register a renderer with the global registry.
-    ///
-    /// # Arguments
-    ///
-    /// * `renderer` - The renderer implementation wrapped in Arc
-    ///
-    /// # Returns
-    ///
-    /// - `Ok(())` if registration succeeded
-    /// - `Err(...)` if validation failed
-    ///
-    /// # Example
-    ///
-    /// ```rust
-    /// use kreuzberg::plugins::{Renderer, register_renderer};
-    /// use kreuzberg::types::internal::InternalDocument;
-    /// use kreuzberg::Result;
-    /// use std::sync::Arc;
-    ///
-    /// struct MyRenderer;
-    /// impl Renderer for MyRenderer {
-    ///     fn name(&self) -> &str { "my-format" }
-    ///     fn render(&self, _doc: &InternalDocument) -> Result<String> {
-    ///         Ok("rendered".to_string())
-    ///     }
-    /// }
-    ///
-    /// register_renderer(Arc::new(MyRenderer)).unwrap();
-    /// ```
-    /// </summary>
-    /// <param name="renderer"></param>
-    public static void RegisterRenderer(Renderer renderer)
-    {
-        ArgumentNullException.ThrowIfNull(renderer);
-        NativeMethods.RegisterRenderer(
-            renderer.Handle
-        );
     }
 
     /// <summary>
@@ -5905,15 +4874,12 @@ public static class KreuzbergLib
     ///
     /// Uses the global [`opentelemetry::global::meter`] to create instruments.
     /// </summary>
-    public static ExtractionMetrics GetMetrics()
+    public static string GetMetrics()
     {
         var result = NativeMethods.GetMetrics();
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.ExtractionMetricsToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ExtractionMetricsFree(result);
-        var returnValue = JsonSerializer.Deserialize<ExtractionMetrics>(json ?? "null", JsonOptions)!;
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -6263,10 +5229,10 @@ public static class KreuzbergLib
     /// ```rust
     /// use kreuzberg::text::token_reduction::{batch_reduce_tokens, TokenReductionConfig, ReductionLevel};
     ///
-    /// let texts = vec![
-    ///     "This is the first document with some text.",
-    ///     "Here is another document with different content.",
-    ///     "And finally, a third document to process.",
+    /// let texts: Vec<String> = vec![
+    ///     "This is the first document with some text.".to_string(),
+    ///     "Here is another document with different content.".to_string(),
+    ///     "And finally, a third document to process.".to_string(),
     /// ];
     /// let config = TokenReductionConfig::default();
     /// let reduced = batch_reduce_tokens(&texts, &config, Some("eng"))?;
@@ -6854,14 +5820,15 @@ public static class KreuzbergLib
     /// ```
     /// </summary>
     /// <param name="langCode"></param>
-    public static InternedString InternLanguageCode(string langCode)
+    public static string InternLanguageCode(string langCode)
     {
         ArgumentNullException.ThrowIfNull(langCode);
         var result = NativeMethods.InternLanguageCode(
             langCode
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = new InternedString(result);
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -6889,14 +5856,15 @@ public static class KreuzbergLib
     /// ```
     /// </summary>
     /// <param name="mimeType"></param>
-    public static InternedString InternMimeType(string mimeType)
+    public static string InternMimeType(string mimeType)
     {
         ArgumentNullException.ThrowIfNull(mimeType);
         var result = NativeMethods.InternMimeType(
             mimeType
         );
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = new InternedString(result);
+        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
+        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -7070,11 +6038,10 @@ public static class KreuzbergLib
     ///
     /// ```no_run
     /// use kreuzberg::api::load_server_config;
-    /// use std::path::Path;
     ///
     /// # fn example() -> kreuzberg::Result<()> {
     /// // Load from file with env overrides
-    /// let config = load_server_config(Some(Path::new("server.toml")))?;
+    /// let config = load_server_config(Some("server.toml"))?;
     ///
     /// // Or use defaults with env overrides
     /// let config = load_server_config(None)?;
@@ -7094,29 +6061,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.ServerConfigFree(result);
         var returnValue = JsonSerializer.Deserialize<ServerConfig>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Generate OpenAPI JSON schema.
-    ///
-    /// Returns the complete OpenAPI 3.1 specification as a JSON string.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use kreuzberg::api::openapi::openapi_json;
-    ///
-    /// let schema = openapi_json();
-    /// println!("{}", schema);
-    /// ```
-    /// </summary>
-    public static string OpenapiJson()
-    {
-        var result = NativeMethods.OpenapiJson();
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
         return returnValue;
     }
 
@@ -7383,53 +6327,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Start the API server with explicit config and size limits.
-    ///
-    /// # Arguments
-    ///
-    /// * `host` - IP address to bind to (e.g., "127.0.0.1" or "0.0.0.0")
-    /// * `port` - Port number to bind to (e.g., 8000)
-    /// * `config` - Default extraction configuration for all requests
-    /// * `limits` - Size limits for request bodies and multipart uploads
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use kreuzberg::{ExtractionConfig, api::{serve_with_config_and_limits, ApiSizeLimits}};
-    ///
-    /// #[tokio::main]
-    /// async fn main() -> kreuzberg::Result<()> {
-    ///     let config = ExtractionConfig::from_toml_file("config/kreuzberg.toml")?;
-    ///     let limits = ApiSizeLimits::from_mb(200, 200);
-    ///     serve_with_config_and_limits("127.0.0.1", 8000, config, limits).await?;
-    ///     Ok(())
-    /// }
-    /// ```
-    /// </summary>
-    /// <param name="host"></param>
-    /// <param name="port"></param>
-    /// <param name="config"></param>
-    /// <param name="limits"></param>
-    public static async Task ServeWithConfigAndLimits(string host, ushort port, ExtractionConfig config, string limits)
-    {
-        ArgumentNullException.ThrowIfNull(host);
-        ArgumentNullException.ThrowIfNull(config);
-        ArgumentNullException.ThrowIfNull(limits);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            NativeMethods.ServeWithConfigAndLimits(
-                host,
-                port,
-                configHandle,
-                limits
-            );
-            NativeMethods.ExtractionConfigFree(configHandle);
-        });
-    }
-
-    /// <summary>
     /// Start the API server with explicit extraction config and server config.
     ///
     /// This function accepts a fully-configured ServerConfig, including CORS origins,
@@ -7574,88 +6471,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Start MCP server with HTTP Stream transport.
-    ///
-    /// Uses rmcp's built-in StreamableHttpService for HTTP/SSE support per MCP spec.
-    ///
-    /// # Arguments
-    ///
-    /// * `host` - Host to bind to (e.g., "127.0.0.1" or "0.0.0.0")
-    /// * `port` - Port number (e.g., 8001)
-    ///
-    /// # Example
-    ///
-    /// ```no_run
-    /// use kreuzberg::mcp::start_mcp_server_http;
-    ///
-    /// #[tokio::main]
-    /// async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    ///     start_mcp_server_http("127.0.0.1", 8001).await?;
-    ///     Ok(())
-    /// }
-    /// ```
-    /// </summary>
-    /// <param name="host"></param>
-    /// <param name="port"></param>
-    public static async Task StartMcpServerHttp(string host, ushort port)
-    {
-        ArgumentNullException.ThrowIfNull(host);
-        return await Task.Run(() =>
-        {
-            NativeMethods.StartMcpServerHttp(
-                host,
-                port
-            );
-        });
-    }
-
-    /// <summary>
-    /// Start MCP HTTP server with custom extraction config.
-    ///
-    /// This variant allows specifying a custom extraction configuration
-    /// while using HTTP Stream transport.
-    ///
-    /// # Arguments
-    ///
-    /// * `host` - Host to bind to (e.g., "127.0.0.1" or "0.0.0.0")
-    /// * `port` - Port number (e.g., 8001)
-    /// * `config` - Custom extraction configuration
-    ///
-    /// # Example
-    ///
-    /// ```no_run
-    /// use kreuzberg::mcp::start_mcp_server_http_with_config;
-    /// use kreuzberg::ExtractionConfig;
-    ///
-    /// #[tokio::main]
-    /// async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    ///     let config = ExtractionConfig::default();
-    ///     start_mcp_server_http_with_config("127.0.0.1", 8001, config).await?;
-    ///     Ok(())
-    /// }
-    /// ```
-    /// </summary>
-    /// <param name="host"></param>
-    /// <param name="port"></param>
-    /// <param name="config"></param>
-    public static async Task StartMcpServerHttpWithConfig(string host, ushort port, ExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(host);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            NativeMethods.StartMcpServerHttpWithConfig(
-                host,
-                port,
-                configHandle
-            );
-            NativeMethods.ExtractionConfigFree(configHandle);
-        });
-    }
-
-    /// <summary>
     /// Validates the consistency and correctness of page boundaries.
     ///
     /// # Validation Rules
@@ -7682,60 +6497,6 @@ public static class KreuzbergLib
             boundariesHandle
         );
         Marshal.FreeHGlobal(boundariesHandle);
-    }
-
-    /// <summary>
-    /// Calculate which pages a byte range spans.
-    ///
-    /// # Arguments
-    ///
-    /// * `byte_start` - Starting byte offset of the chunk
-    /// * `byte_end` - Ending byte offset of the chunk
-    /// * `boundaries` - Page boundary markers from the document
-    ///
-    /// # Returns
-    ///
-    /// A tuple of (first_page, last_page) where page numbers are 1-indexed.
-    /// Returns (None, None) if boundaries are empty or chunk doesn't overlap any page.
-    ///
-    /// # Errors
-    ///
-    /// Returns `KreuzbergError::Validation` if boundaries are invalid.
-    ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// use kreuzberg::chunking::boundaries::calculate_page_range;
-    /// use kreuzberg::types::PageBoundary;
-    ///
-    /// let boundaries = vec![
-    ///     PageBoundary { byte_start: 0, byte_end: 100, page_number: 1 },
-    ///     PageBoundary { byte_start: 100, byte_end: 200, page_number: 2 },
-    /// ];
-    ///
-    /// let (first, last) = calculate_page_range(50, 150, &boundaries)?;
-    /// assert_eq!(first, Some(1));
-    /// assert_eq!(last, Some(2));
-    /// # Ok::<(), kreuzberg::Result<()>>(())
-    /// ```
-    /// </summary>
-    /// <param name="byteStart"></param>
-    /// <param name="byteEnd"></param>
-    /// <param name="boundaries"></param>
-    public static string CalculatePageRange(ulong byteStart, ulong byteEnd, List<PageBoundary> boundaries)
-    {
-        var boundariesJson = JsonSerializer.Serialize(boundaries, JsonOptions);
-        var boundariesHandle = Marshal.StringToHGlobalAnsi(boundariesJson);
-        var result = NativeMethods.CalculatePageRange(
-            byteStart,
-            byteEnd,
-            boundariesHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        Marshal.FreeHGlobal(boundariesHandle);
-        return returnValue;
     }
 
     /// <summary>
@@ -7966,7 +6727,7 @@ public static class KreuzbergLib
     ///
     /// # fn example() -> kreuzberg::Result<()> {
     /// let config = ChunkingConfig::default();
-    /// let texts = vec!["First text", "Second text"];
+    /// let texts: Vec<String> = vec!["First text".to_string(), "Second text".to_string()];
     /// let results = chunk_texts_batch(&texts, &config)?;
     /// assert_eq!(results.len(), 2);
     /// # Ok(())
@@ -8403,44 +7164,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Normalize image DPI based on extraction configuration
-    ///
-    /// # Arguments
-    /// * `rgb_data` - RGB image data as a flat `Vec<u8>` (height * width * 3 bytes, row-major)
-    /// * `width` - Image width in pixels
-    /// * `height` - Image height in pixels
-    /// * `config` - Extraction configuration containing DPI settings
-    /// * `current_dpi` - Optional current DPI of the image (defaults to 72 if None)
-    ///
-    /// # Returns
-    /// * `NormalizeResult` containing processed image data and metadata
-    /// </summary>
-    /// <param name="rgbData"></param>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <param name="config"></param>
-    /// <param name="currentDpi">Optional.</param>
-    public static string NormalizeImageDpi(byte[] rgbData, ulong width, ulong height, ExtractionConfig config, double? currentDpi)
-    {
-        ArgumentNullException.ThrowIfNull(rgbData);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.ExtractionConfigFromJson(configJson);
-        var result = NativeMethods.NormalizeImageDpi(
-            rgbData,
-            width,
-            height,
-            configHandle,
-            currentDpi!
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        NativeMethods.ExtractionConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Resize an image using fast_image_resize with appropriate algorithm based on scale factor
     /// </summary>
     /// <param name="image"></param>
@@ -8750,119 +7473,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(result);
         var returnValue = JsonSerializer.Deserialize<List<Keyword>>(json ?? "null", JsonOptions)!;
         NativeMethods.KeywordConfigFree(configHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convert a PaddleOCR TextBlock to a unified OcrElement.
-    ///
-    /// Preserves all spatial information including:
-    /// - 4-point quadrilateral bounding box
-    /// - Detection and recognition confidence scores
-    /// - Rotation angle and confidence
-    ///
-    /// # Arguments
-    ///
-    /// * `block` - PaddleOCR TextBlock containing OCR results
-    /// * `page_number` - 1-indexed page number
-    ///
-    /// # Returns
-    ///
-    /// A fully populated `OcrElement` with all available metadata.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if:
-    /// - `box_points` has fewer than 4 points (malformed detection)
-    /// - `angle_index` is outside the valid range (0-3)
-    ///
-    /// Returns `Ok(None)` if the detection is filtered out due to low `box_score`.
-    /// </summary>
-    /// <param name="block"></param>
-    /// <param name="pageNumber"></param>
-    public static OcrElement? TextBlockToElement(string block, ulong pageNumber)
-    {
-        ArgumentNullException.ThrowIfNull(block);
-        var result = NativeMethods.TextBlockToElement(
-            block,
-            pageNumber
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var json = Marshal.PtrToStringUTF8(result);
-        NativeMethods.FreeString(result);
-        var returnValue = JsonSerializer.Deserialize<OcrElement?>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convert a Tesseract TSV row to a unified OcrElement.
-    ///
-    /// Preserves:
-    /// - Axis-aligned bounding box
-    /// - Recognition confidence (Tesseract doesn't have separate detection confidence)
-    /// - Hierarchical level information
-    ///
-    /// # Arguments
-    ///
-    /// * `row` - Parsed TSV row from Tesseract output
-    ///
-    /// # Returns
-    ///
-    /// An `OcrElement` with rectangle geometry and Tesseract metadata.
-    /// </summary>
-    /// <param name="row"></param>
-    public static OcrElement TsvRowToElement(string row)
-    {
-        ArgumentNullException.ThrowIfNull(row);
-        var result = NativeMethods.TsvRowToElement(
-            row
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.OcrElementToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.OcrElementFree(result);
-        var returnValue = JsonSerializer.Deserialize<OcrElement>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Convert a Tesseract iterator WordData to a unified OcrElement with rich metadata.
-    ///
-    /// Unlike `tsv_row_to_element` which only has text, bbox, and confidence,
-    /// this populates font attributes (bold, italic, monospace, pointsize) and
-    /// block/paragraph context from the Tesseract layout analysis.
-    ///
-    /// # Arguments
-    ///
-    /// * `word` - WordData from the Tesseract result iterator
-    /// * `block_type` - Optional block type from Tesseract layout analysis
-    /// * `para_info` - Optional paragraph metadata (justification, list item flag)
-    /// * `page_number` - 1-indexed page number
-    ///
-    /// # Returns
-    ///
-    /// An `OcrElement` at `Word` level with all available font and layout metadata.
-    /// </summary>
-    /// <param name="word"></param>
-    /// <param name="blockType">Optional.</param>
-    /// <param name="paraInfo">Optional.</param>
-    /// <param name="pageNumber"></param>
-    public static OcrElement IteratorWordToElement(string word, string? blockType, string? paraInfo, ulong pageNumber)
-    {
-        ArgumentNullException.ThrowIfNull(word);
-        var result = NativeMethods.IteratorWordToElement(
-            word,
-            blockType!,
-            paraInfo!,
-            pageNumber
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.OcrElementToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.OcrElementFree(result);
-        var returnValue = JsonSerializer.Deserialize<OcrElement>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -9337,40 +7947,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Build an optimized ORT session from an ONNX model file.
-    ///
-    /// `thread_budget` controls the number of intra-op threads for this session.
-    /// Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
-    /// to respect the user's `ConcurrencyConfig`.
-    ///
-    /// When `accel` is `None` or `Auto`, uses platform defaults:
-    /// - macOS: CoreML (Neural Engine / GPU)
-    /// - Linux: CUDA (GPU)
-    /// - Others: CPU only
-    ///
-    /// ORT silently falls back to CPU if the requested EP is unavailable.
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="accel">Optional.</param>
-    /// <param name="threadBudget"></param>
-    public static string BuildSession(string path, AccelerationConfig? accel, ulong threadBudget)
-    {
-        ArgumentNullException.ThrowIfNull(path);
-        var accelJson = accel != null ? JsonSerializer.Serialize(accel, JsonOptions) : "null";
-        var accelHandle = NativeMethods.AccelerationConfigFromJson(accelJson);
-        var result = NativeMethods.BuildSession(
-            path,
-            accelHandle,
-            threadBudget
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        NativeMethods.AccelerationConfigFree(accelHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
     /// </summary>
     /// <param name="layoutConfig"></param>
@@ -9387,62 +7963,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(result);
         NativeMethods.LayoutDetectionConfigFree(layoutConfigHandle);
         return returnValue;
-    }
-
-    /// <summary>
-    /// Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
-    ///
-    /// Ensures ORT is available, then creates the engine with model download.
-    /// </summary>
-    /// <param name="layoutConfig"></param>
-    public static string CreateEngine(LayoutDetectionConfig layoutConfig)
-    {
-        ArgumentNullException.ThrowIfNull(layoutConfig);
-        var layoutConfigJson = JsonSerializer.Serialize(layoutConfig, JsonOptions);
-        var layoutConfigHandle = NativeMethods.LayoutDetectionConfigFromJson(layoutConfigJson);
-        var result = NativeMethods.CreateEngine(
-            layoutConfigHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        NativeMethods.LayoutDetectionConfigFree(layoutConfigHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Take the cached layout engine, or create a new one if the cache is empty.
-    ///
-    /// The caller owns the engine for the duration of its work and should
-    /// return it via [`return_engine`] when done. This avoids holding the
-    /// global mutex during inference.
-    /// </summary>
-    /// <param name="layoutConfig"></param>
-    public static string TakeOrCreateEngine(LayoutDetectionConfig layoutConfig)
-    {
-        ArgumentNullException.ThrowIfNull(layoutConfig);
-        var layoutConfigJson = JsonSerializer.Serialize(layoutConfig, JsonOptions);
-        var layoutConfigHandle = NativeMethods.LayoutDetectionConfigFromJson(layoutConfigJson);
-        var result = NativeMethods.TakeOrCreateEngine(
-            layoutConfigHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        NativeMethods.LayoutDetectionConfigFree(layoutConfigHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Return a layout engine to the global cache for reuse by future extractions.
-    /// </summary>
-    /// <param name="engine"></param>
-    public static void ReturnEngine(string engine)
-    {
-        ArgumentNullException.ThrowIfNull(engine);
-        NativeMethods.ReturnEngine(
-            engine
-        );
     }
 
     /// <summary>
@@ -9583,53 +8103,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Extract bundled PDFium library to temporary directory.
-    ///
-    /// # Behavior
-    ///
-    /// - Embeds PDFium library using `include_bytes!`
-    /// - Extracts to `$TMPDIR/kreuzberg-pdfium/` (non-WASM only)
-    /// - Reuses extracted library if size matches
-    /// - Sets permissions to 0755 on Unix
-    /// - Returns path to extracted library
-    /// - **Thread-safe**: Synchronized with a global `Mutex` to prevent concurrent writes
-    ///
-    /// # Concurrency
-    ///
-    /// This function is fully thread-safe. When multiple threads call it simultaneously,
-    /// only the first thread performs the actual extraction while others wait. This prevents
-    /// the "file too short" error that occurs when one thread reads a partially-written file.
-    ///
-    /// # WASM Handling
-    ///
-    /// On WASM targets (wasm32-*), this function returns an error with a helpful
-    /// message directing users to use WASM-specific initialization. WASM PDFium
-    /// is initialized through the runtime, not via file extraction.
-    ///
-    /// # Errors
-    ///
-    /// Returns `std::io::Error` if:
-    /// - Cannot create extraction directory
-    /// - Cannot write library file
-    /// - Cannot set file permissions (Unix only)
-    /// - Target is WASM (filesystem access not available)
-    ///
-    /// # Platform-Specific Library Names
-    ///
-    /// - Linux: `libpdfium.so`
-    /// - macOS: `libpdfium.dylib`
-    /// - Windows: `pdfium.dll`
-    /// </summary>
-    public static string ExtractBundledPdfium()
-    {
-        var result = NativeMethods.ExtractBundledPdfium();
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Extract embedded file descriptors from a PDF document loaded via lopdf.
     ///
     /// Walks the `/Names` → `/EmbeddedFiles` name tree in the catalog.
@@ -9737,19 +8210,6 @@ public static class KreuzbergLib
         if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
         var returnValue = result;
         return returnValue;
-    }
-
-    /// <summary>
-    /// Clear the font cache (for testing purposes).
-    ///
-    /// # Panics
-    ///
-    /// Panics if the cache lock is poisoned, which should only happen in test scenarios
-    /// with deliberate panic injection.
-    /// </summary>
-    public static void ClearFontCache()
-    {
-        NativeMethods.ClearFontCache();
     }
 
     /// <summary>
@@ -10145,30 +8605,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Re-extract images that have unusable formats (`"raw"`, `"ccitt"`, `"jbig2"`) by
-    /// rendering them through pdfium's bitmap pipeline, which handles all PDF filter
-    /// chains internally.
-    ///
-    /// Returns the number of images successfully re-extracted.
-    /// </summary>
-    /// <param name="pdfBytes"></param>
-    /// <param name="images"></param>
-    public static uint ReextractRawImagesViaPdfium(byte[] pdfBytes, List<PdfImage> images)
-    {
-        ArgumentNullException.ThrowIfNull(pdfBytes);
-        var imagesJson = JsonSerializer.Serialize(images, JsonOptions);
-        var imagesHandle = Marshal.StringToHGlobalAnsi(imagesJson);
-        var result = NativeMethods.ReextractRawImagesViaPdfium(
-            pdfBytes,
-            imagesHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = result;
-        Marshal.FreeHGlobal(imagesHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Run layout detection on all pages of a PDF document.
     ///
     /// Under the hood, this uses batched layout detection to prevent holding too many
@@ -10267,49 +8703,6 @@ public static class KreuzbergLib
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
         Marshal.FreeHGlobal(passwordsHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Extract complete PDF metadata from a document.
-    ///
-    /// Extracts common fields (title, subject, authors, keywords, dates, creator),
-    /// PDF-specific metadata, and optionally builds a PageStructure with boundaries.
-    ///
-    /// # Arguments
-    ///
-    /// * `document` - The PDF document to extract metadata from
-    /// * `page_boundaries` - Optional vector of PageBoundary entries for building PageStructure.
-    ///   If provided, a PageStructure will be built with these boundaries.
-    /// * `content` - Optional extracted text content, used for blank page detection.
-    ///   If provided, `PageInfo.is_blank` will be populated based on text content analysis.
-    ///   If `None`, `is_blank` will be `None` for all pages.
-    ///
-    /// # Returns
-    ///
-    /// Returns a `PdfExtractionMetadata` struct containing all extracted metadata,
-    /// including page structure if boundaries were provided.
-    /// </summary>
-    /// <param name="document"></param>
-    /// <param name="pageBoundaries">Optional.</param>
-    /// <param name="content">Optional.</param>
-    public static PdfExtractionMetadata ExtractMetadataFromDocument(string document, List<PageBoundary>? pageBoundaries, string? content)
-    {
-        ArgumentNullException.ThrowIfNull(document);
-        var pageBoundariesJson = JsonSerializer.Serialize(pageBoundaries, JsonOptions);
-        var pageBoundariesHandle = Marshal.StringToHGlobalAnsi(pageBoundariesJson);
-        var result = NativeMethods.ExtractMetadataFromDocument(
-            document,
-            pageBoundariesHandle,
-            content!
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var jsonPtr = NativeMethods.PdfExtractionMetadataToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.PdfExtractionMetadataFree(result);
-        var returnValue = JsonSerializer.Deserialize<PdfExtractionMetadata>(json ?? "null", JsonOptions)!;
-        Marshal.FreeHGlobal(pageBoundariesHandle);
         return returnValue;
     }
 
@@ -10620,99 +9013,6 @@ public static class KreuzbergLib
         var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
         NativeMethods.FreeString(result);
         Marshal.FreeHGlobal(passwordsHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Extract text and metadata from PDF document in a single pass.
-    ///
-    /// This is an optimized function that extracts both text and metadata in one pass
-    /// through the document, avoiding redundant document parsing. It combines the
-    /// functionality of `extract_text_from_pdf_document` and
-    /// `extract_metadata_from_document` into a single unified operation.
-    ///
-    /// # Arguments
-    ///
-    /// * `document` - The PDF document to extract from
-    /// * `extraction_config` - Optional extraction configuration for hierarchy and page tracking
-    ///
-    /// # Returns
-    ///
-    /// A tuple containing:
-    /// - The extracted text content (String)
-    /// - Optional page boundaries when page tracking is enabled (Vec<PageBoundary>)
-    /// - Optional per-page content when extract_pages is enabled (Vec<PageContent>)
-    /// - Complete extraction metadata (PdfExtractionMetadata)
-    ///
-    /// # Performance
-    ///
-    /// This function is optimized for single-pass extraction. It performs all document
-    /// scanning in one iteration, avoiding redundant pdfium operations compared to
-    /// calling text and metadata extraction separately.
-    /// </summary>
-    /// <param name="document"></param>
-    /// <param name="extractionConfig">Optional.</param>
-    public static PdfUnifiedExtractionResult ExtractTextAndMetadataFromPdfDocument(string document, ExtractionConfig? extractionConfig)
-    {
-        ArgumentNullException.ThrowIfNull(document);
-        var extractionConfigJson = extractionConfig != null ? JsonSerializer.Serialize(extractionConfig, JsonOptions) : "null";
-        var extractionConfigHandle = NativeMethods.ExtractionConfigFromJson(extractionConfigJson);
-        var result = NativeMethods.ExtractTextAndMetadataFromPdfDocument(
-            document,
-            extractionConfigHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = new PdfUnifiedExtractionResult(result);
-        NativeMethods.ExtractionConfigFree(extractionConfigHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Extract text from PDF document with optional page boundary tracking.
-    ///
-    /// # Arguments
-    ///
-    /// * `document` - The PDF document to extract text from
-    /// * `page_config` - Optional page configuration for boundary tracking and page markers
-    /// * `extraction_config` - Optional extraction configuration for hierarchy detection
-    ///
-    /// # Returns
-    ///
-    /// A tuple containing:
-    /// - The extracted text content (String)
-    /// - Optional page boundaries when page tracking is enabled (Vec<PageBoundary>)
-    /// - Optional per-page content when extract_pages is enabled (Vec<PageContent>)
-    ///
-    /// # Implementation Details
-    ///
-    /// Uses lazy page-by-page iteration to reduce memory footprint. Pages are processed
-    /// one at a time and released after extraction, rather than accumulating all pages
-    /// in memory. This approach saves 40-50MB for large documents while improving
-    /// performance by 15-25% through reduced upfront work.
-    ///
-    /// When page_config is None, uses fast path with minimal overhead.
-    /// When page_config is Some, tracks byte offsets using .len() for O(1) performance (UTF-8 valid boundaries).
-    /// </summary>
-    /// <param name="document"></param>
-    /// <param name="pageConfig">Optional.</param>
-    /// <param name="extractionConfig">Optional.</param>
-    public static string ExtractTextFromPdfDocument(string document, PageConfig? pageConfig, ExtractionConfig? extractionConfig)
-    {
-        ArgumentNullException.ThrowIfNull(document);
-        var pageConfigJson = pageConfig != null ? JsonSerializer.Serialize(pageConfig, JsonOptions) : "null";
-        var pageConfigHandle = NativeMethods.PageConfigFromJson(pageConfigJson);
-        var extractionConfigJson = extractionConfig != null ? JsonSerializer.Serialize(extractionConfig, JsonOptions) : "null";
-        var extractionConfigHandle = NativeMethods.ExtractionConfigFromJson(extractionConfigJson);
-        var result = NativeMethods.ExtractTextFromPdfDocument(
-            document,
-            pageConfigHandle,
-            extractionConfigHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        NativeMethods.PageConfigFree(pageConfigHandle);
-        NativeMethods.ExtractionConfigFree(extractionConfigHandle);
         return returnValue;
     }
 
@@ -11448,6 +9748,17 @@ public static class KreuzbergLib
         return returnValue;
     }
 
+    public static TokenReductionConfig TokenReductionConfigDefault()
+    {
+        var result = NativeMethods.TokenReductionConfigDefault();
+        var jsonPtr = NativeMethods.TokenReductionConfigToJson(result);
+        var json = Marshal.PtrToStringUTF8(jsonPtr);
+        NativeMethods.FreeString(jsonPtr);
+        NativeMethods.TokenReductionConfigFree(result);
+        var returnValue = JsonSerializer.Deserialize<TokenReductionConfig>(json ?? "null", JsonOptions)!;
+        return returnValue;
+    }
+
     /// <summary>
     /// Create a `DocumentStructure` with pre-allocated capacity.
     /// </summary>
@@ -11800,22 +10111,6 @@ public static class KreuzbergLib
         return returnValue;
     }
 
-    public static OcrElement OcrElementWithRotationOpt(OcrRotation? rotation)
-    {
-        var rotationJson = rotation != null ? JsonSerializer.Serialize(rotation, JsonOptions) : "null";
-        var rotationHandle = NativeMethods.OcrRotationFromJson(rotationJson);
-        var result = NativeMethods.OcrElementWithRotationOpt(
-            rotationHandle
-        );
-        var jsonPtr = NativeMethods.OcrElementToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.OcrElementFree(result);
-        var returnValue = JsonSerializer.Deserialize<OcrElement>(json ?? "null", JsonOptions)!;
-        NativeMethods.OcrRotationFree(rotationHandle);
-        return returnValue;
-    }
-
     /// <summary>
     /// Create a new hyperlink URI, auto-classifying `mailto:` as Email and `#` as Anchor.
     /// </summary>
@@ -11950,102 +10245,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(jsonPtr);
         NativeMethods.UriFree(result);
         var returnValue = JsonSerializer.Deserialize<Uri>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Create a validation error (400).
-    /// </summary>
-    /// <param name="error"></param>
-    public static ApiError ApiErrorValidation(string error)
-    {
-        ArgumentNullException.ThrowIfNull(error);
-        var result = NativeMethods.ApiErrorValidation(
-            error
-        );
-        var jsonPtr = NativeMethods.ApiErrorToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ApiErrorFree(result);
-        var returnValue = JsonSerializer.Deserialize<ApiError>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Create an unprocessable entity error (422).
-    /// </summary>
-    /// <param name="error"></param>
-    public static ApiError ApiErrorUnprocessable(string error)
-    {
-        ArgumentNullException.ThrowIfNull(error);
-        var result = NativeMethods.ApiErrorUnprocessable(
-            error
-        );
-        var jsonPtr = NativeMethods.ApiErrorToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ApiErrorFree(result);
-        var returnValue = JsonSerializer.Deserialize<ApiError>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Create an internal server error (500).
-    /// </summary>
-    /// <param name="error"></param>
-    public static ApiError ApiErrorInternal(string error)
-    {
-        ArgumentNullException.ThrowIfNull(error);
-        var result = NativeMethods.ApiErrorInternal(
-            error
-        );
-        var jsonPtr = NativeMethods.ApiErrorToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ApiErrorFree(result);
-        var returnValue = JsonSerializer.Deserialize<ApiError>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Create a bad gateway error (502).
-    ///
-    /// Use when an upstream service (e.g., model download from HuggingFace) fails.
-    /// </summary>
-    /// <param name="error"></param>
-    public static ApiError ApiErrorBadGateway(string error)
-    {
-        ArgumentNullException.ThrowIfNull(error);
-        var result = NativeMethods.ApiErrorBadGateway(
-            error
-        );
-        var jsonPtr = NativeMethods.ApiErrorToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ApiErrorFree(result);
-        var returnValue = JsonSerializer.Deserialize<ApiError>(json ?? "null", JsonOptions)!;
-        return returnValue;
-    }
-
-    public static string ApiErrorIntoResponse()
-    {
-        var result = NativeMethods.ApiErrorIntoResponse();
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        return returnValue;
-    }
-
-    public static ApiError ApiErrorFrom(string error)
-    {
-        ArgumentNullException.ThrowIfNull(error);
-        var result = NativeMethods.ApiErrorFrom(
-            error
-        );
-        var jsonPtr = NativeMethods.ApiErrorToJson(result);
-        var json = Marshal.PtrToStringUTF8(jsonPtr);
-        NativeMethods.FreeString(jsonPtr);
-        NativeMethods.ApiErrorFree(result);
-        var returnValue = JsonSerializer.Deserialize<ApiError>(json ?? "null", JsonOptions)!;
         return returnValue;
     }
 
@@ -12588,14 +10787,18 @@ public static class KreuzbergLib
     /// Sort detections by confidence in descending order.
     /// </summary>
     /// <param name="detections"></param>
-    public static void LayoutDetectionSortByConfidenceDesc(List<LayoutDetection> detections)
+    public static List<LayoutDetection> LayoutDetectionSortByConfidenceDesc(List<LayoutDetection> detections)
     {
         var detectionsJson = JsonSerializer.Serialize(detections, JsonOptions);
         var detectionsHandle = Marshal.StringToHGlobalAnsi(detectionsJson);
-        NativeMethods.LayoutDetectionSortByConfidenceDesc(
+        var result = NativeMethods.LayoutDetectionSortByConfidenceDesc(
             detectionsHandle
         );
+        var json = Marshal.PtrToStringUTF8(result);
+        NativeMethods.FreeString(result);
+        var returnValue = JsonSerializer.Deserialize<List<LayoutDetection>>(json ?? "null", JsonOptions)!;
         Marshal.FreeHGlobal(detectionsHandle);
+        return returnValue;
     }
 
     public static string LayoutDetectionFmt(string f)

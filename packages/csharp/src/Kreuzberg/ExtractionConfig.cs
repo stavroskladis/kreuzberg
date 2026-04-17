@@ -107,7 +107,7 @@ public sealed class ExtractionConfig
     /// Token reduction configuration (None = no token reduction)
     /// </summary>
     [JsonPropertyName("token_reduction")]
-    public TokenReductionConfig? TokenReduction { get; set; } = null;
+    public TokenReductionOptions? TokenReduction { get; set; } = null;
 
     /// <summary>
     /// Language detection configuration (None = no language detection)
@@ -176,7 +176,7 @@ public sealed class ExtractionConfig
     /// elements (for Unstructured-compatible output).
     /// </summary>
     [JsonPropertyName("result_format")]
-    public JsonElement ResultFormat { get; set; } = default;
+    public ExtractionMode ResultFormat { get; set; } = default;
 
     /// <summary>
     /// Security limits for archive extraction.

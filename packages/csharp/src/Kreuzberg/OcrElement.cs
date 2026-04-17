@@ -25,7 +25,7 @@ public sealed class OcrElement
     /// </summary>
     [JsonConverter(typeof(OcrBoundingGeometryJsonConverter))]
     [JsonPropertyName("geometry")]
-    public OcrBoundingGeometry Geometry { get; set; } = default!;
+    public OcrBoundingGeometry Geometry { get; set; } = default;
 
     /// <summary>
     /// Confidence scores for detection and recognition.
@@ -37,7 +37,7 @@ public sealed class OcrElement
     /// Hierarchical level (word, line, block, page).
     /// </summary>
     [JsonPropertyName("level")]
-    public OcrElementLevel Level { get; set; } = default!;
+    public OcrElementLevel Level { get; set; } = default;
 
     /// <summary>
     /// Rotation information (if detected).
@@ -63,6 +63,6 @@ public sealed class OcrElement
     /// Backend-specific metadata that doesn't fit the unified schema.
     /// </summary>
     [JsonPropertyName("backend_metadata")]
-    public Dictionary<string, object> BackendMetadata { get; set; } = default!;
+    public Dictionary<string, object> BackendMetadata { get; set; } = new Dictionary<string, object>();
 
 }

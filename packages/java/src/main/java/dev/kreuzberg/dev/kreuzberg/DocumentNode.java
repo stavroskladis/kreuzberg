@@ -7,14 +7,14 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record DocumentNode(
-    NodeId id,
+    String id,
     NodeContent content,
     Optional<Integer> parent,
     List<Integer> children,
     @JsonProperty("content_layer") ContentLayer contentLayer,
     Optional<Integer> page,
     @JsonProperty("page_end") Optional<Integer> pageEnd,
-    Optional<BoundingBox> bbox,
+    Optional<String> bbox,
     List<TextAnnotation> annotations,
     Optional<Map<String, String>> attributes
 ) {

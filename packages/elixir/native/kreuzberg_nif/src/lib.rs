@@ -2,8 +2,6 @@
 // Re-generate with: alef generate
 #![allow(dead_code)]
 
-use kreuzberg::plugins::OcrBackend;
-use kreuzberg::plugins::Plugin;
 use rustler::ResourceArc;
 use std::collections::HashMap;
 use std::ops::Deref;
@@ -81,7 +79,7 @@ pub struct ExtractionConfig {
     pub content_filter: Option<ContentFilterConfig>,
     pub images: Option<ImageExtractionConfig>,
     pub pdf_options: Option<PdfConfig>,
-    pub token_reduction: Option<TokenReductionConfig>,
+    pub token_reduction: Option<TokenReductionOptions>,
     pub language_detection: Option<LanguageDetectionConfig>,
     pub pages: Option<PageConfig>,
     pub postprocessor: Option<PostProcessorConfig>,
@@ -89,7 +87,7 @@ pub struct ExtractionConfig {
     pub html_output: Option<HtmlOutputConfig>,
     pub extraction_timeout_secs: Option<u64>,
     pub max_concurrent_extractions: Option<usize>,
-    pub result_format: OutputFormat,
+    pub result_format: ExtractionMode,
     pub security_limits: Option<String>,
     pub output_format: OutputFormat,
     pub layout: Option<LayoutDetectionConfig>,
@@ -168,12 +166,12 @@ pub struct FileExtractionConfig {
     pub content_filter: Option<ContentFilterConfig>,
     pub images: Option<ImageExtractionConfig>,
     pub pdf_options: Option<PdfConfig>,
-    pub token_reduction: Option<TokenReductionConfig>,
+    pub token_reduction: Option<TokenReductionOptions>,
     pub language_detection: Option<LanguageDetectionConfig>,
     pub pages: Option<PageConfig>,
     pub postprocessor: Option<PostProcessorConfig>,
     pub html_options: Option<String>,
-    pub result_format: Option<OutputFormat>,
+    pub result_format: Option<ExtractionMode>,
     pub output_format: Option<OutputFormat>,
     pub include_document_structure: Option<bool>,
     pub layout: Option<LayoutDetectionConfig>,
@@ -248,8 +246,8 @@ impl ImageExtractionConfig {
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.TokenReductionConfig"]
-pub struct TokenReductionConfig {
+#[module = "Kreuzberg.TokenReductionOptions"]
+pub struct TokenReductionOptions {
     pub mode: String,
     pub preserve_important_words: bool,
 }
@@ -704,16 +702,6 @@ impl TreeSitterProcessConfig {
     }
 }
 
-#[derive(Clone)]
-pub struct FileBytes {
-    inner: Arc<kreuzberg::core::io::FileBytes>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for FileBytes {}
-
-impl rustler::Resource for FileBytes {}
-
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.SupportedFormat"]
 pub struct SupportedFormat {
@@ -760,28 +748,6 @@ pub struct StructuredDataResult {
     pub text_fields: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ListItemMetadata"]
-pub struct ListItemMetadata {
-    pub list_type: String,
-    pub byte_start: usize,
-    pub byte_end: usize,
-    pub indent_level: u32,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct Section {
-    pub paragraphs: Vec<String>,
-}
-
-impl Section {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            paragraphs: opts.get("paragraphs").and_then(|t| t.decode().ok()).unwrap_or_default(),
-        }
-    }
-}
-
 #[derive(Clone)]
 pub struct StreamReader {
     inner: Arc<kreuzberg::extraction::hwp::reader::StreamReader>,
@@ -819,35 +785,6 @@ pub struct ExtractedInlineImage {
     pub attributes: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.DocExtractionResult"]
-pub struct DocExtractionResult {
-    pub text: String,
-    pub metadata: String,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct Drawing {
-    pub drawing_type: String,
-    pub extent: Option<String>,
-    pub doc_properties: Option<String>,
-    pub image_ref: Option<String>,
-}
-
-impl Drawing {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            drawing_type: opts
-                .get("drawing_type")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            extent: opts.get("extent").and_then(|t| t.decode().ok()),
-            doc_properties: opts.get("doc_properties").and_then(|t| t.decode().ok()),
-            image_ref: opts.get("image_ref").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
 #[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct AnchorProperties {
     pub behind_doc: bool,
@@ -875,24 +812,9 @@ impl AnchorProperties {
 }
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct TableRow {
-    pub cells: Vec<TableCell>,
-    pub properties: Option<String>,
-}
-
-impl TableRow {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            cells: opts.get("cells").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            properties: opts.get("properties").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct HeaderFooter {
     pub paragraphs: Vec<String>,
-    pub tables: Vec<Table>,
+    pub tables: Vec<String>,
     pub header_type: String,
 }
 
@@ -972,35 +894,6 @@ impl ResolvedStyle {
                 .get("run_properties")
                 .and_then(|t| t.decode().ok())
                 .unwrap_or_default(),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct TableProperties {
-    pub style_id: Option<String>,
-    pub width: Option<String>,
-    pub alignment: Option<String>,
-    pub layout: Option<String>,
-    pub look: Option<String>,
-    pub borders: Option<String>,
-    pub cell_margins: Option<String>,
-    pub indent: Option<String>,
-    pub caption: Option<String>,
-}
-
-impl TableProperties {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            style_id: opts.get("style_id").and_then(|t| t.decode().ok()),
-            width: opts.get("width").and_then(|t| t.decode().ok()),
-            alignment: opts.get("alignment").and_then(|t| t.decode().ok()),
-            layout: opts.get("layout").and_then(|t| t.decode().ok()),
-            look: opts.get("look").and_then(|t| t.decode().ok()),
-            borders: opts.get("borders").and_then(|t| t.decode().ok()),
-            cell_margins: opts.get("cell_margins").and_then(|t| t.decode().ok()),
-            indent: opts.get("indent").and_then(|t| t.decode().ok()),
-            caption: opts.get("caption").and_then(|t| t.decode().ok()),
         }
     }
 }
@@ -1138,15 +1031,6 @@ impl OdtProperties {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.PptExtractionResult"]
-pub struct PptExtractionResult {
-    pub text: String,
-    pub slide_count: usize,
-    pub metadata: String,
-    pub speaker_notes: Vec<String>,
-}
-
 #[derive(Clone)]
 pub struct ZipBombValidator {
     inner: Arc<kreuzberg::extractors::security::ZipBombValidator>,
@@ -1216,41 +1100,56 @@ pub struct OcrFallbackDecision {
     pub fallback: bool,
 }
 
-#[derive(Clone)]
-pub struct ModelCache {
-    inner: Arc<kreuzberg::model_cache::ModelCache>,
+#[derive(Debug, Clone, Default, rustler::NifMap)]
+pub struct TokenReductionConfig {
+    pub level: ReductionLevel,
+    pub language_hint: Option<String>,
+    pub preserve_markdown: bool,
+    pub preserve_code: bool,
+    pub semantic_threshold: f32,
+    pub enable_parallel: bool,
+    pub use_simd: bool,
+    pub custom_stopwords: Option<HashMap<String, Vec<String>>>,
+    pub preserve_patterns: Vec<String>,
+    pub target_reduction: Option<f32>,
+    pub enable_semantic_clustering: bool,
 }
 
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for ModelCache {}
-
-impl rustler::Resource for ModelCache {}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ExtractionMetrics"]
-pub struct ExtractionMetrics {
-    pub extraction_total: String,
-    pub cache_hits: String,
-    pub cache_misses: String,
-    pub batch_total: String,
-    pub extraction_duration_ms: String,
-    pub extraction_input_bytes: String,
-    pub extraction_output_bytes: String,
-    pub pipeline_duration_ms: String,
-    pub ocr_duration_ms: String,
-    pub batch_duration_ms: String,
-    pub concurrent_extractions: String,
+impl TokenReductionConfig {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            level: opts
+                .get("level")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or(ReductionLevel::Moderate),
+            language_hint: opts.get("language_hint").and_then(|t| t.decode().ok()),
+            preserve_markdown: opts
+                .get("preserve_markdown")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or(false),
+            preserve_code: opts.get("preserve_code").and_then(|t| t.decode().ok()).unwrap_or(true),
+            semantic_threshold: opts
+                .get("semantic_threshold")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or(0.3),
+            enable_parallel: opts
+                .get("enable_parallel")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or(true),
+            use_simd: opts.get("use_simd").and_then(|t| t.decode().ok()).unwrap_or(true),
+            custom_stopwords: opts.get("custom_stopwords").and_then(|t| t.decode().ok()),
+            preserve_patterns: opts
+                .get("preserve_patterns")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            target_reduction: opts.get("target_reduction").and_then(|t| t.decode().ok()),
+            enable_semantic_clustering: opts
+                .get("enable_semantic_clustering")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or(false),
+        }
+    }
 }
-
-#[derive(Clone)]
-pub struct QualityProcessor {
-    inner: Arc<kreuzberg::text::QualityProcessor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for QualityProcessor {}
-
-impl rustler::Resource for QualityProcessor {}
 
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.PdfAnnotation"]
@@ -1258,7 +1157,7 @@ pub struct PdfAnnotation {
     pub annotation_type: PdfAnnotationType,
     pub content: Option<String>,
     pub page_number: usize,
-    pub bounding_box: Option<BoundingBox>,
+    pub bounding_box: Option<String>,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -1267,7 +1166,7 @@ pub struct DjotContent {
     pub plain_text: String,
     pub blocks: Vec<FormattedBlock>,
     pub metadata: Metadata,
-    pub tables: Vec<Table>,
+    pub tables: Vec<String>,
     pub images: Vec<DjotImage>,
     pub links: Vec<DjotLink>,
     pub footnotes: Vec<Footnote>,
@@ -1280,7 +1179,7 @@ pub struct FormattedBlock {
     pub block_type: BlockType,
     pub level: Option<usize>,
     pub inline_content: Vec<InlineElement>,
-    pub attributes: Option<Attributes>,
+    pub attributes: Option<String>,
     pub language: Option<String>,
     pub code: Option<String>,
     pub children: Vec<FormattedBlock>,
@@ -1291,25 +1190,8 @@ pub struct FormattedBlock {
 pub struct InlineElement {
     pub element_type: InlineType,
     pub content: String,
-    pub attributes: Option<Attributes>,
+    pub attributes: Option<String>,
     pub metadata: Option<HashMap<String, String>>,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct Attributes {
-    pub id: Option<String>,
-    pub classes: Vec<String>,
-    pub key_values: Vec<String>,
-}
-
-impl Attributes {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            id: opts.get("id").and_then(|t| t.decode().ok()),
-            classes: opts.get("classes").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            key_values: opts.get("key_values").and_then(|t| t.decode().ok()).unwrap_or_default(),
-        }
-    }
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -1318,7 +1200,7 @@ pub struct DjotImage {
     pub src: String,
     pub alt: String,
     pub title: Option<String>,
-    pub attributes: Option<Attributes>,
+    pub attributes: Option<String>,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -1327,7 +1209,7 @@ pub struct DjotLink {
     pub url: String,
     pub text: String,
     pub title: Option<String>,
-    pub attributes: Option<Attributes>,
+    pub attributes: Option<String>,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -1336,16 +1218,6 @@ pub struct Footnote {
     pub label: String,
     pub content: Vec<FormattedBlock>,
 }
-
-#[derive(Clone)]
-pub struct NodeId {
-    inner: Arc<kreuzberg::NodeId>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for NodeId {}
-
-impl rustler::Resource for NodeId {}
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct DocumentStructure {
@@ -1378,24 +1250,16 @@ pub struct DocumentRelationship {
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.DocumentNode"]
 pub struct DocumentNode {
-    pub id: NodeId,
+    pub id: String,
     pub content: NodeContent,
     pub parent: Option<u32>,
     pub children: Vec<u32>,
     pub content_layer: ContentLayer,
     pub page: Option<u32>,
     pub page_end: Option<u32>,
-    pub bbox: Option<BoundingBox>,
+    pub bbox: Option<String>,
     pub annotations: Vec<TextAnnotation>,
     pub attributes: Option<HashMap<String, String>>,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.TableGrid"]
-pub struct TableGrid {
-    pub rows: u32,
-    pub cols: u32,
-    pub cells: Vec<GridCell>,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -1407,7 +1271,7 @@ pub struct GridCell {
     pub row_span: u32,
     pub col_span: u32,
     pub is_header: bool,
-    pub bbox: Option<BoundingBox>,
+    pub bbox: Option<String>,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -1423,7 +1287,7 @@ pub struct ExtractionResult {
     pub content: String,
     pub mime_type: String,
     pub metadata: Metadata,
-    pub tables: Vec<Table>,
+    pub tables: Vec<String>,
     pub detected_languages: Option<Vec<String>>,
     pub chunks: Option<Vec<Chunk>>,
     pub images: Option<Vec<ExtractedImage>>,
@@ -1565,37 +1429,8 @@ pub struct ExtractedImage {
     pub is_mask: bool,
     pub description: Option<String>,
     pub ocr_result: Option<ExtractionResult>,
-    pub bounding_box: Option<BoundingBox>,
+    pub bounding_box: Option<String>,
     pub source_path: Option<String>,
-}
-
-#[derive(Clone)]
-pub struct ElementId {
-    inner: Arc<kreuzberg::ElementId>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for ElementId {}
-
-impl rustler::Resource for ElementId {}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct BoundingBox {
-    pub x0: f64,
-    pub y0: f64,
-    pub x1: f64,
-    pub y1: f64,
-}
-
-impl BoundingBox {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            x0: opts.get("x0").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            y0: opts.get("y0").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            x1: opts.get("x1").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            y1: opts.get("y1").and_then(|t| t.decode().ok()).unwrap_or_default(),
-        }
-    }
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -1603,7 +1438,7 @@ impl BoundingBox {
 pub struct ElementMetadata {
     pub page_number: Option<usize>,
     pub filename: Option<String>,
-    pub coordinates: Option<BoundingBox>,
+    pub coordinates: Option<String>,
     pub element_index: Option<usize>,
     pub additional: HashMap<String, String>,
 }
@@ -1611,7 +1446,7 @@ pub struct ElementMetadata {
 #[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.Element"]
 pub struct Element {
-    pub element_id: ElementId,
+    pub element_id: String,
     pub element_type: ElementType,
     pub text: String,
     pub metadata: ElementMetadata,
@@ -1960,15 +1795,6 @@ pub struct ArchiveMetadata {
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ImageMetadata"]
-pub struct ImageMetadata {
-    pub width: u32,
-    pub height: u32,
-    pub format: String,
-    pub exif: HashMap<String, String>,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.XmlMetadata"]
 pub struct XmlMetadata {
     pub element_count: usize,
@@ -2311,11 +2137,22 @@ impl PstMetadata {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.OcrConfidence"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct OcrConfidence {
     pub detection: Option<f64>,
     pub recognition: f64,
+}
+
+impl OcrConfidence {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            detection: opts.get("detection").and_then(|t| t.decode().ok()),
+            recognition: opts
+                .get("recognition")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -2325,8 +2162,7 @@ pub struct OcrRotation {
     pub confidence: Option<f64>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.OcrElement"]
+#[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct OcrElement {
     pub text: String,
     pub geometry: OcrBoundingGeometry,
@@ -2336,6 +2172,27 @@ pub struct OcrElement {
     pub page_number: usize,
     pub parent_id: Option<String>,
     pub backend_metadata: HashMap<String, String>,
+}
+
+impl OcrElement {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            text: opts.get("text").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            geometry: opts.get("geometry").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            confidence: opts.get("confidence").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            level: opts.get("level").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            rotation: opts.get("rotation").and_then(|t| t.decode().ok()),
+            page_number: opts
+                .get("page_number")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            parent_id: opts.get("parent_id").and_then(|t| t.decode().ok()),
+            backend_metadata: opts
+                .get("backend_metadata")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Default, rustler::NifMap)]
@@ -2400,7 +2257,7 @@ pub struct PageInfo {
 pub struct PageContent {
     pub page_number: usize,
     pub content: String,
-    pub tables: Vec<Table>,
+    pub tables: Vec<String>,
     pub images: Vec<ExtractedImage>,
     pub hierarchy: Option<PageHierarchy>,
     pub is_blank: Option<bool>,
@@ -2420,47 +2277,6 @@ pub struct HierarchicalBlock {
     pub font_size: f32,
     pub level: String,
     pub bbox: Option<String>,
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct Table {
-    pub cells: Vec<Vec<String>>,
-    pub markdown: String,
-    pub page_number: usize,
-    pub bounding_box: Option<BoundingBox>,
-}
-
-impl Table {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            cells: opts.get("cells").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            markdown: opts.get("markdown").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            page_number: opts
-                .get("page_number")
-                .and_then(|t| t.decode().ok())
-                .unwrap_or_default(),
-            bounding_box: opts.get("bounding_box").and_then(|t| t.decode().ok()),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, rustler::NifMap)]
-pub struct TableCell {
-    pub content: String,
-    pub row_span: usize,
-    pub col_span: usize,
-    pub is_header: bool,
-}
-
-impl TableCell {
-    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
-        Self {
-            content: opts.get("content").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            row_span: opts.get("row_span").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            col_span: opts.get("col_span").and_then(|t| t.decode().ok()).unwrap_or_default(),
-            is_header: opts.get("is_header").and_then(|t| t.decode().ok()).unwrap_or_default(),
-        }
-    }
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -2493,16 +2309,6 @@ impl std::panic::RefUnwindSafe for ByteBufferPool {}
 impl rustler::Resource for ByteBufferPool {}
 
 #[derive(Clone)]
-pub struct Pool {
-    inner: Arc<kreuzberg::utils::Pool>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for Pool {}
-
-impl rustler::Resource for Pool {}
-
-#[derive(Clone)]
 pub struct PooledString {
     inner: Arc<kreuzberg::utils::string_pool::PooledString>,
 }
@@ -2511,16 +2317,6 @@ pub struct PooledString {
 impl std::panic::RefUnwindSafe for PooledString {}
 
 impl rustler::Resource for PooledString {}
-
-#[derive(Clone)]
-pub struct InternedString {
-    inner: Arc<kreuzberg::utils::string_pool::InternedString>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for InternedString {}
-
-impl rustler::Resource for InternedString {}
 
 #[derive(Clone)]
 pub struct TracingLayer {
@@ -2541,13 +2337,6 @@ pub struct MetricsLayer {
 impl std::panic::RefUnwindSafe for MetricsLayer {}
 
 impl rustler::Resource for MetricsLayer {}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ApiError"]
-pub struct ApiError {
-    pub status: String,
-    pub body: String,
-}
 
 #[derive(Clone)]
 pub struct ApiDoc {
@@ -2805,26 +2594,6 @@ pub struct ChunkingResult {
     pub chunk_count: usize,
 }
 
-#[derive(Clone)]
-pub struct ChunkingProcessor {
-    inner: Arc<kreuzberg::chunking::ChunkingProcessor>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for ChunkingProcessor {}
-
-impl rustler::Resource for ChunkingProcessor {}
-
-#[derive(Clone)]
-pub struct VlmOcrBackend {
-    inner: Arc<kreuzberg::llm::vlm_ocr::VlmOcrBackend>,
-}
-
-// SAFETY: See gen_opaque_resource in alef-backend-rustler for rationale.
-impl std::panic::RefUnwindSafe for VlmOcrBackend {}
-
-impl rustler::Resource for VlmOcrBackend {}
-
 #[derive(Debug, Clone, Default, rustler::NifMap)]
 pub struct YakeParams {
     pub window_size: usize,
@@ -3062,7 +2831,7 @@ pub struct CharData {
 #[module = "Kreuzberg.HierarchyBlock"]
 pub struct HierarchyBlock {
     pub text: String,
-    pub bbox: BoundingBox,
+    pub bbox: String,
     pub font_size: f32,
     pub hierarchy_level: String,
 }
@@ -3082,18 +2851,10 @@ pub struct PdfImage {
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.PageLayoutRegion"]
-pub struct PageLayoutRegion {
-    pub class: LayoutClass,
-    pub confidence: f32,
-    pub bbox: String,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
 #[module = "Kreuzberg.PageLayoutResult"]
 pub struct PageLayoutResult {
     pub page_index: usize,
-    pub regions: Vec<PageLayoutRegion>,
+    pub regions: Vec<String>,
     pub page_width_pts: f32,
     pub page_height_pts: f32,
     pub render_width_px: u32,
@@ -3109,20 +2870,6 @@ pub struct PageTiming {
     pub inference_ms: f64,
     pub postprocess_ms: f64,
     pub mapping_ms: f64,
-}
-
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.PdfExtractionMetadata"]
-pub struct PdfExtractionMetadata {
-    pub title: Option<String>,
-    pub subject: Option<String>,
-    pub authors: Option<Vec<String>>,
-    pub keywords: Option<Vec<String>>,
-    pub created_at: Option<String>,
-    pub modified_at: Option<String>,
-    pub created_by: Option<String>,
-    pub pdf_specific: String,
-    pub page_structure: Option<PageStructure>,
 }
 
 #[derive(Debug, Clone, rustler::NifStruct)]
@@ -3284,25 +3031,6 @@ impl Default for CodeContentMode {
 }
 
 #[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum HwpError {
-    InvalidFormat,
-    UnsupportedVersion,
-    Io,
-    Cfb,
-    CompressionError,
-    ParseError,
-    EncodingError,
-    NotFound,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for HwpError {
-    fn default() -> Self {
-        Self::InvalidFormat
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
 pub enum FracType {
     Bar,
     NoBar,
@@ -3314,69 +3042,6 @@ pub enum FracType {
 impl Default for FracType {
     fn default() -> Self {
         Self::Bar
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum MathNode {
-    Run,
-    SSup,
-    SSub,
-    SSubSup,
-    Frac,
-    Rad,
-    Nary,
-    Delim,
-    Func,
-    Acc,
-    EqArr,
-    LimLow,
-    LimUpp,
-    Bar,
-    BorderBox,
-    Matrix,
-    Group,
-    SPre,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for MathNode {
-    fn default() -> Self {
-        Self::Run
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum DocumentElement {
-    Paragraph,
-    Table,
-    Drawing,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for DocumentElement {
-    fn default() -> Self {
-        Self::Paragraph
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum SecurityError {
-    ZipBombDetected,
-    ArchiveTooLarge,
-    TooManyFiles,
-    NestingTooDeep,
-    ContentTooLarge,
-    EntityTooLong,
-    TooManyIterations,
-    XmlDepthExceeded,
-    TooManyCells,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for SecurityError {
-    fn default() -> Self {
-        Self::ZipBombDetected
     }
 }
 
@@ -3595,6 +3260,19 @@ impl Default for ChunkType {
 }
 
 #[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
+pub enum ExtractionMode {
+    Unified,
+    ElementBased,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ExtractionMode {
+    fn default() -> Self {
+        Self::Unified
+    }
+}
+
+#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
 pub enum ElementType {
     Title,
     NarrativeText,
@@ -3792,25 +3470,6 @@ impl Default for KeywordAlgorithm {
 }
 
 #[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum OcrError {
-    TesseractInitializationFailed,
-    UnsupportedVersion,
-    InvalidConfiguration,
-    InvalidLanguageCode,
-    ImageProcessingFailed,
-    ProcessingFailed,
-    CacheError,
-    IOError,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for OcrError {
-    fn default() -> Self {
-        Self::TesseractInitializationFailed
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
 pub enum PSMMode {
     OsdOnly,
     AutoOsd,
@@ -3884,28 +3543,6 @@ pub enum LayoutClass {
 impl Default for LayoutClass {
     fn default() -> Self {
         Self::Caption
-    }
-}
-
-#[derive(Debug, Clone, Copy, rustler::NifUnitEnum)]
-pub enum PdfError {
-    InvalidPdf,
-    PasswordRequired,
-    InvalidPassword,
-    EncryptionNotSupported,
-    PageNotFound,
-    TextExtractionFailed,
-    RenderingFailed,
-    MetadataExtractionFailed,
-    ExtractionFailed,
-    FontLoadingFailed,
-    IOError,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for PdfError {
-    fn default() -> Self {
-        Self::InvalidPdf
     }
 }
 
@@ -4022,7 +3659,7 @@ pub fn merge_config_json(base: Option<String>, override_json: String) -> Result<
         .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
         .transpose()
         .map_err(|e| e.to_string())?;
-    let result = kreuzberg::core::config::merge::merge_config_json(Some(base_core.unwrap_or_default()), override_json)
+    let result = kreuzberg::core::config::merge::merge_config_json(Some(base_core.unwrap_or_default()), &override_json)
         .map_err(|e| e.to_string())?;
     Ok(result.into())
 }
@@ -4034,7 +3671,7 @@ pub fn build_config_from_json(base: Option<String>, override_json: String) -> Re
         .transpose()
         .map_err(|e| e.to_string())?;
     let result =
-        kreuzberg::core::config::merge::build_config_from_json(Some(base_core.unwrap_or_default()), override_json)
+        kreuzberg::core::config::merge::build_config_from_json(Some(base_core.unwrap_or_default()), &override_json)
             .map_err(|e| e.to_string())?;
     Ok(result.into())
 }
@@ -4184,95 +3821,13 @@ pub fn get_pool_sizing_hint(file_size: u64, mime_type: String) -> String {
 }
 
 #[rustler::nif]
-pub fn extract_file_sync(path: String, mime_type: String, config: Option<String>) -> Result<ExtractionResult, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::extract_file_sync(&path, &mime_type, Some(config_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn extract_bytes_sync(
-    content: Vec<u8>,
-    mime_type: String,
-    config: Option<String>,
-) -> Result<ExtractionResult, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::extract_bytes_sync(&content, &mime_type, Some(config_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn batch_extract_file_sync(items: Vec<String>, config: Option<String>) -> Result<Vec<ExtractionResult>, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result =
-        kreuzberg::batch_extract_file_sync(items, Some(config_core.unwrap_or_default())).map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
-}
-
-#[rustler::nif]
-pub fn batch_extract_bytes_sync(items: Vec<String>, config: Option<String>) -> Result<Vec<ExtractionResult>, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result =
-        kreuzberg::batch_extract_bytes_sync(items, Some(config_core.unwrap_or_default())).map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn batch_extract_file_async(items: Vec<String>, config: Option<String>) -> Result<Vec<ExtractionResult>, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async { kreuzberg::batch_extract_file(items, Some(config_core.unwrap_or_default())).await })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn batch_extract_bytes_async(items: Vec<String>, config: Option<String>) -> Result<Vec<ExtractionResult>, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async { kreuzberg::batch_extract_bytes(items, Some(config_core.unwrap_or_default())).await })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
-}
-
-#[rustler::nif]
 pub fn is_valid_format_field(field: String) -> bool {
     kreuzberg::is_valid_format_field(&field)
 }
 
 #[rustler::nif]
-pub fn open_file_bytes(path: String) -> Result<ResourceArc<FileBytes>, String> {
-    let result = kreuzberg::core::io::open_file_bytes(std::path::PathBuf::from(path)).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(FileBytes {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn read_file_async_async(path: String) -> Result<Vec<u8>, String> {
-    Err(String::from("Not implemented: read_file_async_async"))
+pub fn open_file_bytes(path: String) -> Result<String, String> {
+    Err(String::from("Not implemented: open_file_bytes"))
 }
 
 #[rustler::nif]
@@ -4308,8 +3863,7 @@ pub fn validate_mime_type(mime_type: String) -> Result<String, String> {
 
 #[rustler::nif]
 pub fn detect_or_validate(path: String, mime_type: String) -> Result<String, String> {
-    let result =
-        kreuzberg::detect_or_validate(std::path::PathBuf::from(path), &mime_type).map_err(|e| e.to_string())?;
+    let result = kreuzberg::detect_or_validate(&path, &mime_type).map_err(|e| e.to_string())?;
     Ok(result.into())
 }
 
@@ -4340,36 +3894,12 @@ pub fn clear_processor_cache() -> Result<(), String> {
 }
 
 #[rustler::nif]
-pub fn apply_output_format(result: Option<String>, output_format: OutputFormat) -> () {
+pub fn apply_output_format(result: Option<String>, output_format: OutputFormat) -> ExtractionResult {
     let result_core: Option<kreuzberg::ExtractionResult> = result
         .map(|s| serde_json::from_str::<kreuzberg::ExtractionResult>(&s))
         .transpose()
         .map_err(|e| e.to_string())?;
-    kreuzberg::core::pipeline::apply_output_format(Some(result_core.unwrap_or_default()), output_format.into())
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn run_pipeline_async(doc: String, config: Option<String>) -> Result<ExtractionResult, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async { kreuzberg::core::pipeline::run_pipeline(&doc, Some(config_core.unwrap_or_default())).await })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn run_pipeline_sync(doc: String, config: Option<String>) -> Result<ExtractionResult, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::core::pipeline::run_pipeline_sync(&doc, Some(config_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
+    kreuzberg::core::pipeline::apply_output_format(Some(result_core.unwrap_or_default()), output_format.into()).into()
 }
 
 #[rustler::nif]
@@ -4380,20 +3910,6 @@ pub fn is_page_text_blank(text: String) -> bool {
 #[rustler::nif]
 pub fn resolve_relationships(doc: String) -> () {
     ()
-}
-
-#[rustler::nif]
-pub fn derive_document_structure(doc: String) -> DocumentStructure {
-    panic!("alef: derive_document_structure not auto-delegatable")
-}
-
-#[rustler::nif]
-pub fn derive_extraction_result(
-    doc: String,
-    include_document_structure: bool,
-    output_format: OutputFormat,
-) -> ExtractionResult {
-    panic!("alef: derive_extraction_result not auto-delegatable")
 }
 
 #[rustler::nif]
@@ -4434,22 +3950,13 @@ pub fn transform_to_document_structure(result: Option<String>) -> DocumentStruct
 }
 
 #[rustler::nif]
-pub fn detect_list_items(text: String) -> Vec<ListItemMetadata> {
-    kreuzberg::extraction::detect_list_items(&text)
-        .into_iter()
-        .map(Into::into)
-        .collect()
+pub fn detect_list_items(text: String) -> Vec<String> {
+    Vec::new()
 }
 
 #[rustler::nif]
-pub fn generate_element_id(text: String, element_type: ElementType, page_number: usize) -> ResourceArc<ElementId> {
-    ResourceArc::new(ElementId {
-        inner: Arc::new(kreuzberg::extraction::generate_element_id(
-            &text,
-            element_type.into(),
-            page_number,
-        )),
-    })
+pub fn generate_element_id(text: String, element_type: ElementType, page_number: usize) -> String {
+    String::from("[unimplemented: generate_element_id]")
 }
 
 #[rustler::nif]
@@ -4465,10 +3972,8 @@ pub fn transform_extraction_result_to_elements(result: Option<String>) -> Vec<El
 }
 
 #[rustler::nif]
-pub fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> Result<Vec<Section>, String> {
-    let result =
-        kreuzberg::extraction::hwp::parser::parse_body_text(&data, is_compressed).map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
+pub fn parse_body_text(data: Vec<u8>, is_compressed: bool) -> Result<Vec<String>, String> {
+    Err(String::from("Not implemented: parse_body_text"))
 }
 
 #[rustler::nif]
@@ -4484,35 +3989,8 @@ pub fn extract_hwp_text(bytes: Vec<u8>) -> Result<String, String> {
 }
 
 #[rustler::nif]
-pub fn load_image_for_ocr(image_bytes: Vec<u8>) -> Result<String, String> {
-    Err(String::from("Not implemented: load_image_for_ocr"))
-}
-
-#[rustler::nif]
-pub fn extract_image_metadata(bytes: Vec<u8>) -> Result<ImageMetadata, String> {
-    let result = kreuzberg::extraction::extract_image_metadata(&bytes).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn extract_text_from_image_with_ocr(
-    bytes: Vec<u8>,
-    mime_type: String,
-    ocr_result: String,
-    page_config: Option<String>,
-) -> Result<ImageOcrResult, String> {
-    let page_config_core: Option<kreuzberg::PageConfig> = page_config
-        .map(|s| serde_json::from_str::<kreuzberg::PageConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::extraction::image::extract_text_from_image_with_ocr(
-        &bytes,
-        &mime_type,
-        &ocr_result,
-        Some(page_config_core.unwrap_or_default()),
-    )
-    .map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn extract_image_metadata(bytes: Vec<u8>) -> Result<String, String> {
+    Err(String::from("Not implemented: extract_image_metadata"))
 }
 
 #[rustler::nif]
@@ -4639,11 +4117,6 @@ pub fn build_email_text_output(result: EmailExtractionResult) -> String {
 }
 
 #[rustler::nif]
-pub fn extract_pst_messages(pst_data: Vec<u8>) -> Result<String, String> {
-    Err(String::from("Not implemented: extract_pst_messages"))
-}
-
-#[rustler::nif]
 pub fn read_excel_file(file_path: String) -> Result<ExcelWorkbook, String> {
     let result = kreuzberg::extraction::read_excel_file(&file_path).map_err(|e| e.to_string())?;
     Ok(result.into())
@@ -4694,14 +4167,8 @@ pub fn extract_html_inline_images(html: String, options: String) -> Result<Vec<S
 }
 
 #[rustler::nif]
-pub fn extract_doc_text(content: Vec<u8>) -> Result<DocExtractionResult, String> {
-    let result = kreuzberg::extraction::extract_doc_text(&content).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn parse_drawing(reader: String) -> Drawing {
-    panic!("alef: parse_drawing not auto-delegatable")
+pub fn extract_doc_text(content: Vec<u8>) -> Result<String, String> {
+    Err(String::from("Not implemented: extract_doc_text"))
 }
 
 #[rustler::nif]
@@ -4741,11 +4208,6 @@ pub fn parse_styles_xml(xml: String) -> Result<String, String> {
 }
 
 #[rustler::nif]
-pub fn parse_table_properties(reader: String) -> TableProperties {
-    panic!("alef: parse_table_properties not auto-delegatable")
-}
-
-#[rustler::nif]
 pub fn parse_row_properties(reader: String) -> String {
     String::from("[unimplemented: parse_row_properties]")
 }
@@ -4753,11 +4215,6 @@ pub fn parse_row_properties(reader: String) -> String {
 #[rustler::nif]
 pub fn parse_cell_properties(reader: String) -> String {
     String::from("[unimplemented: parse_cell_properties]")
-}
-
-#[rustler::nif]
-pub fn parse_table_grid(reader: String) -> TableGrid {
-    panic!("alef: parse_table_grid not auto-delegatable")
 }
 
 #[rustler::nif]
@@ -4817,39 +4274,14 @@ pub fn detect_image_format(data: Vec<u8>) -> String {
     String::from("[unimplemented: detect_image_format]")
 }
 
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn process_images_with_ocr_async(
-    images: Vec<ExtractedImage>,
-    config: Option<String>,
-) -> Result<Vec<ExtractedImage>, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            kreuzberg::extraction::image_ocr::process_images_with_ocr(images, Some(config_core.unwrap_or_default()))
-                .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
+#[rustler::nif]
+pub fn extract_ppt_text(content: Vec<u8>) -> Result<String, String> {
+    Err(String::from("Not implemented: extract_ppt_text"))
 }
 
 #[rustler::nif]
-pub fn extract_ppt_text(content: Vec<u8>) -> Result<PptExtractionResult, String> {
-    let result = kreuzberg::extraction::extract_ppt_text(&content).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn extract_ppt_text_with_options(
-    content: Vec<u8>,
-    include_master_slides: bool,
-) -> Result<PptExtractionResult, String> {
-    let result = kreuzberg::extraction::extract_ppt_text_with_options(&content, include_master_slides)
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
+pub fn extract_ppt_text_with_options(content: Vec<u8>, include_master_slides: bool) -> Result<String, String> {
+    Err(String::from("Not implemented: extract_ppt_text_with_options"))
 }
 
 #[rustler::nif]
@@ -4886,22 +4318,13 @@ pub fn cells_to_markdown(cells: Vec<Vec<String>>) -> String {
 }
 
 #[rustler::nif]
-pub fn parse_jotdown_attributes(attrs: Option<String>) -> Attributes {
-    let attrs_core: Option<kreuzberg::Attributes> = attrs
-        .map(|s| serde_json::from_str::<kreuzberg::Attributes>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::extractors::djot_format::attributes::parse_jotdown_attributes(Some(attrs_core.unwrap_or_default()))
-        .into()
+pub fn parse_jotdown_attributes(attrs: String) -> String {
+    String::from("[unimplemented: parse_jotdown_attributes]")
 }
 
 #[rustler::nif]
-pub fn render_attributes(attrs: Option<String>) -> String {
-    let attrs_core: Option<kreuzberg::Attributes> = attrs
-        .map(|s| serde_json::from_str::<kreuzberg::Attributes>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::extractors::djot_format::attributes::render_attributes(Some(attrs_core.unwrap_or_default())).into()
+pub fn render_attributes(attrs: String) -> String {
+    String::from("[unimplemented: render_attributes]")
 }
 
 #[rustler::nif]
@@ -4927,21 +4350,7 @@ pub fn djot_to_html(djot_source: String) -> Result<String, String> {
 }
 
 #[rustler::nif]
-pub fn extract_complete_djot_content(events: Vec<String>, metadata: Option<String>, tables: Vec<Table>) -> DjotContent {
-    let metadata_core: Option<kreuzberg::Metadata> = metadata
-        .map(|s| serde_json::from_str::<kreuzberg::Metadata>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::extractors::djot_format::parsing::extract_complete_djot_content(
-        events,
-        Some(metadata_core.unwrap_or_default()),
-        tables,
-    )
-    .into()
-}
-
-#[rustler::nif]
-pub fn extract_tables_from_events(events: Vec<String>) -> Vec<Table> {
+pub fn extract_tables_from_events(events: Vec<String>) -> Vec<String> {
     Vec::new()
 }
 
@@ -4951,28 +4360,23 @@ pub fn extract_text_from_events(events: Vec<String>) -> String {
 }
 
 #[rustler::nif]
-pub fn render_block_to_djot(output: String, block: FormattedBlock, indent_level: usize) -> () {
-    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(&output, block.into(), indent_level)
+pub fn render_block_to_djot(block: FormattedBlock, indent_level: usize) -> String {
+    kreuzberg::extractors::djot_format::rendering::render_block_to_djot(block.into(), indent_level).into()
 }
 
 #[rustler::nif]
-pub fn render_list_item(output: String, item: FormattedBlock, indent: String, marker: String) -> () {
-    kreuzberg::extractors::djot_format::rendering::render_list_item(&output, item.into(), &indent, &marker)
+pub fn render_list_item(item: FormattedBlock, indent: String, marker: String) -> String {
+    kreuzberg::extractors::djot_format::rendering::render_list_item(item.into(), &indent, &marker).into()
 }
 
 #[rustler::nif]
-pub fn render_inline_content(output: String, elements: Vec<InlineElement>) -> () {
-    kreuzberg::extractors::djot_format::rendering::render_inline_content(&output, elements)
+pub fn render_inline_content(elements: Vec<InlineElement>) -> String {
+    kreuzberg::extractors::djot_format::rendering::render_inline_content(elements).into()
 }
 
 #[rustler::nif]
 pub fn extract_frontmatter(content: String) -> String {
     String::from("[unimplemented: extract_frontmatter]")
-}
-
-#[rustler::nif]
-pub fn extract_metadata_from_yaml(yaml: String) -> Metadata {
-    panic!("alef: extract_metadata_from_yaml not auto-delegatable")
 }
 
 #[rustler::nif]
@@ -5021,51 +4425,13 @@ pub fn dedup_text(texts: Vec<String>) -> Vec<String> {
 }
 
 #[rustler::nif]
-pub fn evaluate_native_text_for_ocr(
-    native_text: String,
-    page_count: usize,
-    thresholds: Option<String>,
-) -> OcrFallbackDecision {
-    let thresholds_core: Option<kreuzberg::OcrQualityThresholds> = thresholds
-        .map(|s| serde_json::from_str::<kreuzberg::OcrQualityThresholds>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::extractors::pdf::evaluate_native_text_for_ocr(
-        &native_text,
-        page_count,
-        Some(thresholds_core.unwrap_or_default()),
-    )
-    .into()
+pub fn hex_digit_to_u8(c: u8) -> Option<u8> {
+    kreuzberg::extractors::rtf::hex_digit_to_u8(c)
 }
 
 #[rustler::nif]
-pub fn evaluate_per_page_ocr(
-    native_text: String,
-    boundaries: Vec<PageBoundary>,
-    page_count: usize,
-    thresholds: Option<String>,
-) -> OcrFallbackDecision {
-    let thresholds_core: Option<kreuzberg::OcrQualityThresholds> = thresholds
-        .map(|s| serde_json::from_str::<kreuzberg::OcrQualityThresholds>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    kreuzberg::extractors::pdf::evaluate_per_page_ocr(
-        &native_text,
-        boundaries,
-        page_count,
-        Some(thresholds_core.unwrap_or_default()),
-    )
-    .into()
-}
-
-#[rustler::nif]
-pub fn hex_digit_to_u8(c: String) -> Option<u8> {
-    kreuzberg::extractors::rtf::hex_digit_to_u8(&c)
-}
-
-#[rustler::nif]
-pub fn parse_hex_byte(h1: String, h2: String) -> Option<u8> {
-    kreuzberg::extractors::rtf::parse_hex_byte(&h1, &h2)
+pub fn parse_hex_byte(h1: u8, h2: u8) -> Option<u8> {
+    kreuzberg::extractors::rtf::parse_hex_byte(h1, h2)
 }
 
 #[rustler::nif]
@@ -5143,12 +4509,6 @@ pub fn clear_extractors() -> Result<(), String> {
 }
 
 #[rustler::nif]
-pub fn register_ocr_backend(backend: ResourceArc<OcrBackend>) -> Result<(), String> {
-    let result = kreuzberg::plugins::register_ocr_backend(&backend.inner).map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
 pub fn unregister_ocr_backend(name: String) -> Result<(), String> {
     let result = kreuzberg::plugins::unregister_ocr_backend(&name).map_err(|e| e.to_string())?;
     Ok(result)
@@ -5195,12 +4555,6 @@ pub fn get_validator_registry() -> String {
 #[rustler::nif]
 pub fn get_renderer_registry() -> String {
     String::from("[unimplemented: get_renderer_registry]")
-}
-
-#[rustler::nif]
-pub fn register_renderer(renderer: ResourceArc<Renderer>) -> Result<(), String> {
-    let result = kreuzberg::plugins::register_renderer(&renderer.inner).map_err(|e| e.to_string())?;
-    Ok(result)
 }
 
 #[rustler::nif]
@@ -5279,8 +4633,8 @@ pub fn sanitize_filename(path: String) -> String {
 }
 
 #[rustler::nif]
-pub fn get_metrics() -> ExtractionMetrics {
-    kreuzberg::telemetry::metrics::get_metrics().clone().into()
+pub fn get_metrics() -> String {
+    String::from("[unimplemented: get_metrics]")
 }
 
 #[rustler::nif]
@@ -5356,19 +4710,28 @@ pub fn normalize_spaces(text: String) -> String {
 }
 
 #[rustler::nif]
-pub fn reduce_tokens(text: String, config: TokenReductionConfig, language_hint: String) -> Result<String, String> {
-    let result = kreuzberg::text::reduce_tokens(&text, config.into(), &language_hint).map_err(|e| e.to_string())?;
+pub fn reduce_tokens(text: String, config: Option<String>, language_hint: String) -> Result<String, String> {
+    let config_core: Option<kreuzberg::TokenReductionConfig> = config
+        .map(|s| serde_json::from_str::<kreuzberg::TokenReductionConfig>(&s))
+        .transpose()
+        .map_err(|e| e.to_string())?;
+    let result = kreuzberg::text::reduce_tokens(&text, Some(config_core.unwrap_or_default()), &language_hint)
+        .map_err(|e| e.to_string())?;
     Ok(result.into())
 }
 
 #[rustler::nif]
 pub fn batch_reduce_tokens(
     texts: Vec<String>,
-    config: TokenReductionConfig,
+    config: Option<String>,
     language_hint: String,
 ) -> Result<Vec<String>, String> {
-    let result =
-        kreuzberg::text::batch_reduce_tokens(texts, config.into(), &language_hint).map_err(|e| e.to_string())?;
+    let config_core: Option<kreuzberg::TokenReductionConfig> = config
+        .map(|s| serde_json::from_str::<kreuzberg::TokenReductionConfig>(&s))
+        .transpose()
+        .map_err(|e| e.to_string())?;
+    let result = kreuzberg::text::batch_reduce_tokens(texts, Some(config_core.unwrap_or_default()), &language_hint)
+        .map_err(|e| e.to_string())?;
     Ok(result)
 }
 
@@ -5489,17 +4852,13 @@ pub fn acquire_string_buffer() -> ResourceArc<PooledString> {
 }
 
 #[rustler::nif]
-pub fn intern_language_code(lang_code: String) -> ResourceArc<InternedString> {
-    ResourceArc::new(InternedString {
-        inner: Arc::new(kreuzberg::utils::string_pool::intern_language_code(&lang_code)),
-    })
+pub fn intern_language_code(lang_code: String) -> String {
+    String::from("[unimplemented: intern_language_code]")
 }
 
 #[rustler::nif]
-pub fn intern_mime_type(mime_type: String) -> ResourceArc<InternedString> {
-    ResourceArc::new(InternedString {
-        inner: Arc::new(kreuzberg::utils::string_pool::intern_mime_type(&mime_type)),
-    })
+pub fn intern_mime_type(mime_type: String) -> String {
+    String::from("[unimplemented: intern_mime_type]")
 }
 
 #[rustler::nif]
@@ -5534,14 +4893,8 @@ pub fn table_to_markdown(table: Vec<Vec<String>>) -> String {
 
 #[rustler::nif]
 pub fn load_server_config(config_path: String) -> Result<ServerConfig, String> {
-    let result =
-        kreuzberg::api::load_server_config(std::path::PathBuf::from(config_path)).map_err(|e| e.to_string())?;
+    let result = kreuzberg::api::load_server_config(&config_path).map_err(|e| e.to_string())?;
     Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn openapi_json() -> String {
-    kreuzberg::api::openapi::openapi_json().into()
 }
 
 #[rustler::nif]
@@ -5598,27 +4951,6 @@ pub fn serve_with_config_async(host: String, port: u16, config: Option<String>) 
     let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
     let result = rt
         .block_on(async { kreuzberg::api::serve_with_config(&host, port, Some(config_core.unwrap_or_default())).await })
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn serve_with_config_and_limits_async(
-    host: String,
-    port: u16,
-    config: Option<String>,
-    limits: String,
-) -> Result<(), String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            kreuzberg::api::serve_with_config_and_limits(&host, port, Some(config_core.unwrap_or_default()), &limits)
-                .await
-        })
         .map_err(|e| e.to_string())?;
     Ok(result)
 }
@@ -5685,39 +5017,10 @@ pub fn start_mcp_server_with_config_async(config: Option<String>) -> Result<(), 
     Ok(result)
 }
 
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn start_mcp_server_http_async(host: String, port: u16) -> Result<(), String> {
-    Err(String::from("Not implemented: start_mcp_server_http_async"))
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn start_mcp_server_http_with_config_async(host: String, port: u16, config: Option<String>) -> Result<(), String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            kreuzberg::mcp::start_mcp_server_http_with_config(&host, port, Some(config_core.unwrap_or_default())).await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
 #[rustler::nif]
 pub fn validate_page_boundaries(boundaries: Vec<PageBoundary>) -> Result<(), String> {
     let result = kreuzberg::chunking::validate_page_boundaries(boundaries).map_err(|e| e.to_string())?;
     Ok(result)
-}
-
-#[rustler::nif]
-pub fn calculate_page_range(
-    byte_start: usize,
-    byte_end: usize,
-    boundaries: Vec<PageBoundary>,
-) -> Result<String, String> {
-    Err(String::from("Not implemented: calculate_page_range"))
 }
 
 #[rustler::nif]
@@ -5860,15 +5163,13 @@ pub fn list_presets() -> Vec<String> {
 
 #[rustler::nif]
 pub fn warm_model(model_type: EmbeddingModelType, cache_dir: String) -> Result<(), String> {
-    let result =
-        kreuzberg::warm_model(model_type.into(), std::path::PathBuf::from(cache_dir)).map_err(|e| e.to_string())?;
+    let result = kreuzberg::warm_model(model_type.into(), &cache_dir).map_err(|e| e.to_string())?;
     Ok(result)
 }
 
 #[rustler::nif]
 pub fn download_model(model_type: EmbeddingModelType, cache_dir: String) -> Result<(), String> {
-    let result =
-        kreuzberg::download_model(model_type.into(), std::path::PathBuf::from(cache_dir)).map_err(|e| e.to_string())?;
+    let result = kreuzberg::download_model(model_type.into(), &cache_dir).map_err(|e| e.to_string())?;
     Ok(result)
 }
 
@@ -5904,29 +5205,6 @@ pub fn calculate_optimal_dpi(
     max_dpi: i32,
 ) -> i32 {
     kreuzberg::image::calculate_optimal_dpi(page_width, page_height, target_dpi, max_dimension, min_dpi, max_dpi)
-}
-
-#[rustler::nif]
-pub fn normalize_image_dpi(
-    rgb_data: Vec<u8>,
-    width: usize,
-    height: usize,
-    config: Option<String>,
-    current_dpi: f64,
-) -> Result<String, String> {
-    let config_core: Option<kreuzberg::ExtractionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::image::normalize_image_dpi(
-        &rgb_data,
-        width,
-        height,
-        Some(config_core.unwrap_or_default()),
-        current_dpi,
-    )
-    .map_err(|e| e.to_string())?;
-    Ok(result.into())
 }
 
 #[rustler::nif]
@@ -5968,23 +5246,12 @@ pub fn extract_keywords(text: String, config: Option<String>) -> Result<Vec<Keyw
 }
 
 #[rustler::nif]
-pub fn text_block_to_element(block: String, page_number: usize) -> Result<Option<OcrElement>, String> {
-    Err(String::from("Not implemented: text_block_to_element"))
-}
-
-#[rustler::nif]
-pub fn tsv_row_to_element(row: String) -> OcrElement {
-    panic!("alef: tsv_row_to_element not auto-delegatable")
-}
-
-#[rustler::nif]
-pub fn iterator_word_to_element(word: String, block_type: String, para_info: String, page_number: usize) -> OcrElement {
-    panic!("alef: iterator_word_to_element not auto-delegatable")
-}
-
-#[rustler::nif]
-pub fn element_to_hocr_word(element: OcrElement) -> String {
-    String::from("[unimplemented: element_to_hocr_word]")
+pub fn element_to_hocr_word(element: Option<String>) -> String {
+    let element_core: Option<kreuzberg::OcrElement> = element
+        .map(|s| serde_json::from_str::<kreuzberg::OcrElement>(&s))
+        .transpose()
+        .map_err(|e| e.to_string())?;
+    kreuzberg::ocr::element_to_hocr_word(Some(element_core.unwrap_or_default())).into()
 }
 
 #[rustler::nif]
@@ -6097,50 +5364,12 @@ pub fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) 
 }
 
 #[rustler::nif]
-pub fn build_session(path: String, accel: Option<String>, thread_budget: usize) -> Result<String, String> {
-    let accel_core: Option<kreuzberg::AccelerationConfig> = accel
-        .map(|s| serde_json::from_str::<kreuzberg::AccelerationConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::layout::session::build_session(&path, Some(accel_core.unwrap_or_default()), thread_budget)
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
 pub fn config_from_extraction(layout_config: Option<String>) -> String {
     let layout_config_core: Option<kreuzberg::LayoutDetectionConfig> = layout_config
         .map(|s| serde_json::from_str::<kreuzberg::LayoutDetectionConfig>(&s))
         .transpose()
         .map_err(|e| e.to_string())?;
     kreuzberg::layout::config_from_extraction(Some(layout_config_core.unwrap_or_default())).into()
-}
-
-#[rustler::nif]
-pub fn create_engine(layout_config: Option<String>) -> Result<String, String> {
-    let layout_config_core: Option<kreuzberg::LayoutDetectionConfig> = layout_config
-        .map(|s| serde_json::from_str::<kreuzberg::LayoutDetectionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result =
-        kreuzberg::layout::create_engine(Some(layout_config_core.unwrap_or_default())).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn take_or_create_engine(layout_config: Option<String>) -> Result<String, String> {
-    let layout_config_core: Option<kreuzberg::LayoutDetectionConfig> = layout_config
-        .map(|s| serde_json::from_str::<kreuzberg::LayoutDetectionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::layout::take_or_create_engine(Some(layout_config_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn return_engine(engine: String) -> () {
-    ()
 }
 
 #[rustler::nif]
@@ -6184,12 +5413,6 @@ pub fn extract_bookmarks(document: String) -> Vec<Uri> {
 }
 
 #[rustler::nif]
-pub fn extract_bundled_pdfium() -> Result<String, String> {
-    let result = kreuzberg::pdf::extract_bundled_pdfium().map_err(|e| e.to_string())?;
-    Ok(result.to_string_lossy().to_string())
-}
-
-#[rustler::nif]
 pub fn extract_embedded_files(document: String) -> Vec<EmbeddedFile> {
     Vec::new()
 }
@@ -6225,11 +5448,6 @@ pub fn get_font_descriptors() -> Result<Vec<String>, String> {
 #[rustler::nif]
 pub fn cached_font_count() -> usize {
     kreuzberg::pdf::cached_font_count()
-}
-
-#[rustler::nif]
-pub fn clear_font_cache() -> () {
-    kreuzberg::pdf::fonts::clear_font_cache()
 }
 
 #[rustler::nif]
@@ -6294,13 +5512,6 @@ pub fn extract_images_from_pdf_with_password(pdf_bytes: Vec<u8>, password: Strin
 }
 
 #[rustler::nif]
-pub fn reextract_raw_images_via_pdfium(pdf_bytes: Vec<u8>, images: Vec<PdfImage>) -> Result<u32, String> {
-    let result =
-        kreuzberg::pdf::images::reextract_raw_images_via_pdfium(&pdf_bytes, images).map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
 pub fn detect_layout_for_document(pdf_bytes: Vec<u8>, engine: String) -> Result<String, String> {
     Err(String::from("Not implemented: detect_layout_for_document"))
 }
@@ -6323,15 +5534,6 @@ pub fn extract_metadata_with_password(pdf_bytes: Vec<u8>, password: String) -> R
 #[rustler::nif]
 pub fn extract_metadata_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<String, String> {
     Err(String::from("Not implemented: extract_metadata_with_passwords"))
-}
-
-#[rustler::nif]
-pub fn extract_metadata_from_document(
-    document: String,
-    page_boundaries: Vec<PageBoundary>,
-    content: String,
-) -> Result<PdfExtractionMetadata, String> {
-    Err(String::from("Not implemented: extract_metadata_from_document"))
 }
 
 #[rustler::nif]
@@ -6407,48 +5609,6 @@ pub fn extract_text_from_pdf_with_password(pdf_bytes: Vec<u8>, password: String)
 pub fn extract_text_from_pdf_with_passwords(pdf_bytes: Vec<u8>, passwords: Vec<String>) -> Result<String, String> {
     let result =
         kreuzberg::pdf::text::extract_text_from_pdf_with_passwords(&pdf_bytes, passwords).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn extract_text_and_metadata_from_pdf_document(
-    document: String,
-    extraction_config: Option<String>,
-) -> Result<ResourceArc<PdfUnifiedExtractionResult>, String> {
-    let extraction_config_core: Option<kreuzberg::ExtractionConfig> = extraction_config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::pdf::text::extract_text_and_metadata_from_pdf_document(
-        &document,
-        Some(extraction_config_core.unwrap_or_default()),
-    )
-    .map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(PdfUnifiedExtractionResult {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn extract_text_from_pdf_document(
-    document: String,
-    page_config: Option<String>,
-    extraction_config: Option<String>,
-) -> Result<String, String> {
-    let page_config_core: Option<kreuzberg::PageConfig> = page_config
-        .map(|s| serde_json::from_str::<kreuzberg::PageConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let extraction_config_core: Option<kreuzberg::ExtractionConfig> = extraction_config
-        .map(|s| serde_json::from_str::<kreuzberg::ExtractionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::pdf::text::extract_text_from_pdf_document(
-        &document,
-        Some(page_config_core.unwrap_or_default()),
-        Some(extraction_config_core.unwrap_or_default()),
-    )
-    .map_err(|e| e.to_string())?;
     Ok(result.into())
 }
 
@@ -6613,16 +5773,6 @@ pub fn treesitterconfig_default() -> TreeSitterConfig {
 #[rustler::nif]
 pub fn treesitterprocessconfig_default() -> TreeSitterProcessConfig {
     kreuzberg::TreeSitterProcessConfig::default().into()
-}
-
-#[rustler::nif]
-pub fn filebytes_deref(resource: ResourceArc<FileBytes>) -> Vec<u8> {
-    resource.inner.as_ref().clone().deref().into()
-}
-
-#[rustler::nif]
-pub fn filebytes_as_ref(resource: ResourceArc<FileBytes>) -> Vec<u8> {
-    resource.inner.as_ref().clone().as_ref().into()
 }
 
 #[rustler::nif]
@@ -6801,103 +5951,8 @@ pub fn tablevalidator_current_cells(resource: ResourceArc<TableValidator>) -> us
 }
 
 #[rustler::nif]
-pub fn modelcache_put(resource: ResourceArc<ModelCache>, model: String) -> () {
-    ()
-}
-
-#[rustler::nif]
-pub fn modelcache_take(resource: ResourceArc<ModelCache>) -> Option<String> {
-    None
-}
-
-#[rustler::nif]
-pub fn qualityprocessor_name(resource: ResourceArc<QualityProcessor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn qualityprocessor_version(resource: ResourceArc<QualityProcessor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn qualityprocessor_initialize(resource: ResourceArc<QualityProcessor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn qualityprocessor_shutdown(resource: ResourceArc<QualityProcessor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn qualityprocessor_process_async(
-    resource: ResourceArc<QualityProcessor>,
-    result: ExtractionResult,
-    _config: ExtractionConfig,
-) -> Result<(), String> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            resource
-                .inner
-                .as_ref()
-                .clone()
-                .process(result.into(), _config.into())
-                .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn qualityprocessor_processing_stage(resource: ResourceArc<QualityProcessor>) -> String {
-    String::from("[unimplemented: qualityprocessor_processing_stage]")
-}
-
-#[rustler::nif]
-pub fn qualityprocessor_should_process(
-    resource: ResourceArc<QualityProcessor>,
-    _result: ExtractionResult,
-    config: ExtractionConfig,
-) -> bool {
-    resource
-        .inner
-        .as_ref()
-        .clone()
-        .should_process(_result.into(), config.into())
-}
-
-#[rustler::nif]
-pub fn qualityprocessor_estimated_duration_ms(
-    resource: ResourceArc<QualityProcessor>,
-    result: ExtractionResult,
-) -> u64 {
-    resource.inner.as_ref().clone().estimated_duration_ms(result.into())
-}
-
-#[rustler::nif]
-pub fn nodeid_generate(node_type: String, text: String, page: u32, index: u32) -> ResourceArc<NodeId> {
-    ResourceArc::new(NodeId {
-        inner: Arc::new(kreuzberg::NodeId::generate(&node_type, &text, page, index)),
-    })
-}
-
-#[rustler::nif]
-pub fn nodeid_as_ref(resource: ResourceArc<NodeId>) -> String {
-    resource.inner.as_ref().clone().as_ref().into()
-}
-
-#[rustler::nif]
-pub fn nodeid_fmt(resource: ResourceArc<NodeId>, f: String) -> String {
-    String::from("[unimplemented: nodeid_fmt]")
+pub fn tokenreductionconfig_default() -> TokenReductionConfig {
+    kreuzberg::TokenReductionConfig::default().into()
 }
 
 #[rustler::nif]
@@ -6951,24 +6006,6 @@ pub fn documentstructure_is_empty(obj: DocumentStructure) -> bool {
 #[rustler::nif]
 pub fn documentstructure_default() -> DocumentStructure {
     kreuzberg::DocumentStructure::default().into()
-}
-
-#[rustler::nif]
-pub fn elementid_new(hex_str: String) -> Result<ResourceArc<ElementId>, String> {
-    let result = kreuzberg::ElementId::new(&hex_str).map_err(|e| e.to_string())?;
-    Ok(ResourceArc::new(ElementId {
-        inner: Arc::new(result),
-    }))
-}
-
-#[rustler::nif]
-pub fn elementid_as_ref(resource: ResourceArc<ElementId>) -> String {
-    resource.inner.as_ref().clone().as_ref().into()
-}
-
-#[rustler::nif]
-pub fn elementid_fmt(resource: ResourceArc<ElementId>, f: String) -> String {
-    String::from("[unimplemented: elementid_fmt]")
 }
 
 #[rustler::nif]
@@ -7033,13 +6070,6 @@ pub fn ocrelement_with_metadata(obj: OcrElement, key: String, value: String) -> 
 }
 
 #[rustler::nif]
-pub fn ocrelement_with_rotation_opt(obj: OcrElement, rotation: OcrRotation) -> OcrElement {
-    kreuzberg::OcrElement::from(obj)
-        .with_rotation_opt(rotation.map(Into::into))
-        .into()
-}
-
-#[rustler::nif]
 pub fn uri_hyperlink(url: String, label: String) -> Uri {
     kreuzberg::Uri::hyperlink(&url, &label).into()
 }
@@ -7075,22 +6105,6 @@ pub fn uri_with_page(obj: Uri, page: u32) -> Uri {
 }
 
 #[rustler::nif]
-pub fn pool_acquire(resource: ResourceArc<Pool>) -> Result<String, String> {
-    Err(String::from("Not implemented: pool_acquire"))
-}
-
-#[rustler::nif]
-pub fn pool_size(resource: ResourceArc<Pool>) -> usize {
-    resource.inner.as_ref().clone().size()
-}
-
-#[rustler::nif]
-pub fn pool_clear(resource: ResourceArc<Pool>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().clear().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
 pub fn pooledstring_buffer_mut(resource: ResourceArc<PooledString>) -> String {
     resource.inner.as_ref().clone().buffer_mut().into()
 }
@@ -7121,31 +6135,6 @@ pub fn pooledstring_fmt(resource: ResourceArc<PooledString>, f: String) -> Strin
 }
 
 #[rustler::nif]
-pub fn internedstring_as_str(resource: ResourceArc<InternedString>) -> String {
-    resource.inner.as_ref().clone().as_str().into()
-}
-
-#[rustler::nif]
-pub fn internedstring_as_ref(resource: ResourceArc<InternedString>) -> String {
-    resource.inner.as_ref().clone().as_ref().into()
-}
-
-#[rustler::nif]
-pub fn internedstring_fmt(resource: ResourceArc<InternedString>, f: String) -> String {
-    String::from("[unimplemented: internedstring_fmt]")
-}
-
-#[rustler::nif]
-pub fn internedstring_eq(resource: ResourceArc<InternedString>, other: ResourceArc<InternedString>) -> bool {
-    resource.inner.as_ref().clone().eq(&other.inner)
-}
-
-#[rustler::nif]
-pub fn internedstring_deref(resource: ResourceArc<InternedString>) -> String {
-    String::from("[unimplemented: internedstring_deref]")
-}
-
-#[rustler::nif]
 pub fn tracinglayer_layer(resource: ResourceArc<TracingLayer>, inner: String) -> String {
     String::from("[unimplemented: tracinglayer_layer]")
 }
@@ -7153,166 +6142,6 @@ pub fn tracinglayer_layer(resource: ResourceArc<TracingLayer>, inner: String) ->
 #[rustler::nif]
 pub fn metricslayer_layer(resource: ResourceArc<MetricsLayer>, inner: String) -> String {
     String::from("[unimplemented: metricslayer_layer]")
-}
-
-#[rustler::nif]
-pub fn apierror_validation(error: String) -> ApiError {
-    panic!("alef: apierror_validation not auto-delegatable")
-}
-
-#[rustler::nif]
-pub fn apierror_unprocessable(error: String) -> ApiError {
-    panic!("alef: apierror_unprocessable not auto-delegatable")
-}
-
-#[rustler::nif]
-pub fn apierror_internal(error: String) -> ApiError {
-    panic!("alef: apierror_internal not auto-delegatable")
-}
-
-#[rustler::nif]
-pub fn apierror_bad_gateway(error: String) -> ApiError {
-    panic!("alef: apierror_bad_gateway not auto-delegatable")
-}
-
-#[rustler::nif]
-pub fn apierror_into_response(obj: ApiError) -> String {
-    String::from("[unimplemented: apierror_into_response]")
-}
-
-#[rustler::nif]
-pub fn apierror_from(error: String) -> ApiError {
-    panic!("alef: apierror_from not auto-delegatable")
-}
-
-#[rustler::nif]
-pub fn chunkingprocessor_name(resource: ResourceArc<ChunkingProcessor>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn chunkingprocessor_version(resource: ResourceArc<ChunkingProcessor>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn chunkingprocessor_initialize(resource: ResourceArc<ChunkingProcessor>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn chunkingprocessor_shutdown(resource: ResourceArc<ChunkingProcessor>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn chunkingprocessor_process_async(
-    resource: ResourceArc<ChunkingProcessor>,
-    result: ExtractionResult,
-    config: ExtractionConfig,
-) -> Result<(), String> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            resource
-                .inner
-                .as_ref()
-                .clone()
-                .process(result.into(), config.into())
-                .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn chunkingprocessor_processing_stage(resource: ResourceArc<ChunkingProcessor>) -> String {
-    String::from("[unimplemented: chunkingprocessor_processing_stage]")
-}
-
-#[rustler::nif]
-pub fn chunkingprocessor_should_process(
-    resource: ResourceArc<ChunkingProcessor>,
-    _result: ExtractionResult,
-    config: ExtractionConfig,
-) -> bool {
-    resource
-        .inner
-        .as_ref()
-        .clone()
-        .should_process(_result.into(), config.into())
-}
-
-#[rustler::nif]
-pub fn chunkingprocessor_estimated_duration_ms(
-    resource: ResourceArc<ChunkingProcessor>,
-    result: ExtractionResult,
-) -> u64 {
-    resource.inner.as_ref().clone().estimated_duration_ms(result.into())
-}
-
-#[rustler::nif]
-pub fn vlmocrbackend_name(resource: ResourceArc<VlmOcrBackend>) -> String {
-    resource.inner.as_ref().clone().name().into()
-}
-
-#[rustler::nif]
-pub fn vlmocrbackend_version(resource: ResourceArc<VlmOcrBackend>) -> String {
-    resource.inner.as_ref().clone().version().into()
-}
-
-#[rustler::nif]
-pub fn vlmocrbackend_initialize(resource: ResourceArc<VlmOcrBackend>) -> Result<(), String> {
-    let result = resource
-        .inner
-        .as_ref()
-        .clone()
-        .initialize()
-        .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif]
-pub fn vlmocrbackend_shutdown(resource: ResourceArc<VlmOcrBackend>) -> Result<(), String> {
-    let result = resource.inner.as_ref().clone().shutdown().map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn vlmocrbackend_process_image_async(
-    resource: ResourceArc<VlmOcrBackend>,
-    image_bytes: Vec<u8>,
-    config: OcrConfig,
-) -> Result<ExtractionResult, String> {
-    let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
-    let result = rt
-        .block_on(async {
-            resource
-                .inner
-                .as_ref()
-                .clone()
-                .process_image(&image_bytes, config.into())
-                .await
-        })
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn vlmocrbackend_supports_language(resource: ResourceArc<VlmOcrBackend>, _lang: String) -> bool {
-    resource.inner.as_ref().clone().supports_language(&_lang)
-}
-
-#[rustler::nif]
-pub fn vlmocrbackend_backend_type(resource: ResourceArc<VlmOcrBackend>) -> OcrBackendType {
-    resource.inner.as_ref().clone().backend_type().into()
 }
 
 #[rustler::nif]
@@ -7499,8 +6328,11 @@ pub fn bbox_fmt(obj: BBox, f: String) -> String {
 }
 
 #[rustler::nif]
-pub fn layoutdetection_sort_by_confidence_desc(detections: Vec<LayoutDetection>) -> () {
+pub fn layoutdetection_sort_by_confidence_desc(detections: Vec<LayoutDetection>) -> Vec<LayoutDetection> {
     kreuzberg::LayoutDetection::sort_by_confidence_desc(detections)
+        .into_iter()
+        .map(Into::into)
+        .collect()
 }
 
 #[rustler::nif]
@@ -7728,8 +6560,8 @@ impl From<kreuzberg::ImageExtractionConfig> for ImageExtractionConfig {
     }
 }
 
-impl From<TokenReductionConfig> for kreuzberg::TokenReductionConfig {
-    fn from(val: TokenReductionConfig) -> Self {
+impl From<TokenReductionOptions> for kreuzberg::TokenReductionOptions {
+    fn from(val: TokenReductionOptions) -> Self {
         Self {
             mode: val.mode,
             preserve_important_words: val.preserve_important_words,
@@ -7737,8 +6569,8 @@ impl From<TokenReductionConfig> for kreuzberg::TokenReductionConfig {
     }
 }
 
-impl From<kreuzberg::TokenReductionConfig> for TokenReductionConfig {
-    fn from(val: kreuzberg::TokenReductionConfig) -> Self {
+impl From<kreuzberg::TokenReductionOptions> for TokenReductionOptions {
+    fn from(val: kreuzberg::TokenReductionOptions) -> Self {
         Self {
             mode: val.mode,
             preserve_important_words: val.preserve_important_words,
@@ -8270,54 +7102,6 @@ impl From<kreuzberg::extraction::StructuredDataResult> for StructuredDataResult 
     }
 }
 
-impl From<ListItemMetadata> for kreuzberg::extraction::ListItemMetadata {
-    fn from(val: ListItemMetadata) -> Self {
-        Self {
-            list_type: Default::default(),
-            byte_start: val.byte_start,
-            byte_end: val.byte_end,
-            indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ListItemMetadata> for ListItemMetadata {
-    fn from(val: kreuzberg::extraction::ListItemMetadata) -> Self {
-        Self {
-            list_type: format!("{:?}", val.list_type),
-            byte_start: val.byte_start,
-            byte_end: val.byte_end,
-            indent_level: val.indent_level,
-        }
-    }
-}
-
-impl From<Section> for kreuzberg::extraction::hwp::model::Section {
-    fn from(val: Section) -> Self {
-        Self {
-            paragraphs: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::hwp::model::Section> for Section {
-    fn from(val: kreuzberg::extraction::hwp::model::Section) -> Self {
-        Self {
-            paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-        }
-    }
-}
-
-impl From<ImageOcrResult> for kreuzberg::extraction::image::ImageOcrResult {
-    fn from(val: ImageOcrResult) -> Self {
-        Self {
-            content: val.content,
-            boundaries: val.boundaries.map(|v| v.into_iter().map(Into::into).collect()),
-            page_contents: val.page_contents.map(|v| v.into_iter().map(Into::into).collect()),
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::image::ImageOcrResult> for ImageOcrResult {
     fn from(val: kreuzberg::extraction::image::ImageOcrResult) -> Self {
         Self {
@@ -8351,46 +7135,6 @@ impl From<kreuzberg::extraction::html::ExtractedInlineImage> for ExtractedInline
     }
 }
 
-impl From<DocExtractionResult> for kreuzberg::extraction::doc::DocExtractionResult {
-    fn from(val: DocExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            metadata: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::doc::DocExtractionResult> for DocExtractionResult {
-    fn from(val: kreuzberg::extraction::doc::DocExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            metadata: format!("{:?}", val.metadata),
-        }
-    }
-}
-
-impl From<Drawing> for kreuzberg::extraction::docx::drawing::Drawing {
-    fn from(val: Drawing) -> Self {
-        Self {
-            drawing_type: Default::default(),
-            extent: Default::default(),
-            doc_properties: Default::default(),
-            image_ref: val.image_ref,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::drawing::Drawing> for Drawing {
-    fn from(val: kreuzberg::extraction::docx::drawing::Drawing) -> Self {
-        Self {
-            drawing_type: format!("{:?}", val.drawing_type),
-            extent: val.extent.as_ref().map(|v| format!("{:?}", v)),
-            doc_properties: val.doc_properties.as_ref().map(|v| format!("{:?}", v)),
-            image_ref: val.image_ref,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for AnchorProperties {
     fn from(val: kreuzberg::extraction::docx::drawing::AnchorProperties) -> Self {
         Self {
@@ -8404,20 +7148,11 @@ impl From<kreuzberg::extraction::docx::drawing::AnchorProperties> for AnchorProp
     }
 }
 
-impl From<kreuzberg::extraction::docx::parser::TableRow> for TableRow {
-    fn from(val: kreuzberg::extraction::docx::parser::TableRow) -> Self {
-        Self {
-            cells: val.cells.into_iter().map(Into::into).collect(),
-            properties: val.properties.as_ref().map(|v| format!("{:?}", v)),
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::parser::HeaderFooter> for HeaderFooter {
     fn from(val: kreuzberg::extraction::docx::parser::HeaderFooter) -> Self {
         Self {
             paragraphs: val.paragraphs.iter().map(|i| format!("{:?}", i)).collect(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             header_type: format!("{:?}", val.header_type),
         }
     }
@@ -8467,38 +7202,6 @@ impl From<kreuzberg::extraction::docx::styles::ResolvedStyle> for ResolvedStyle 
         Self {
             paragraph_properties: format!("{:?}", val.paragraph_properties),
             run_properties: format!("{:?}", val.run_properties),
-        }
-    }
-}
-
-impl From<TableProperties> for kreuzberg::extraction::docx::table::TableProperties {
-    fn from(val: TableProperties) -> Self {
-        Self {
-            style_id: val.style_id,
-            width: Default::default(),
-            alignment: val.alignment,
-            layout: val.layout,
-            look: Default::default(),
-            borders: Default::default(),
-            cell_margins: Default::default(),
-            indent: Default::default(),
-            caption: val.caption,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::table::TableProperties> for TableProperties {
-    fn from(val: kreuzberg::extraction::docx::table::TableProperties) -> Self {
-        Self {
-            style_id: val.style_id,
-            width: val.width.as_ref().map(|v| format!("{:?}", v)),
-            alignment: val.alignment,
-            layout: val.layout,
-            look: val.look.as_ref().map(|v| format!("{:?}", v)),
-            borders: val.borders.as_ref().map(|v| format!("{:?}", v)),
-            cell_margins: val.cell_margins.as_ref().map(|v| format!("{:?}", v)),
-            indent: val.indent.as_ref().map(|v| format!("{:?}", v)),
-            caption: val.caption,
         }
     }
 }
@@ -8566,39 +7269,6 @@ impl From<kreuzberg::extraction::OdtProperties> for OdtProperties {
     }
 }
 
-impl From<PptExtractionResult> for kreuzberg::extraction::ppt::PptExtractionResult {
-    fn from(val: PptExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            slide_count: val.slide_count,
-            metadata: Default::default(),
-            speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::ppt::PptExtractionResult> for PptExtractionResult {
-    fn from(val: kreuzberg::extraction::ppt::PptExtractionResult) -> Self {
-        Self {
-            text: val.text,
-            slide_count: val.slide_count,
-            metadata: format!("{:?}", val.metadata),
-            speaker_notes: val.speaker_notes,
-        }
-    }
-}
-
-impl From<OcrFallbackDecision> for kreuzberg::extractors::pdf::OcrFallbackDecision {
-    fn from(val: OcrFallbackDecision) -> Self {
-        Self {
-            stats: Default::default(),
-            avg_non_whitespace: val.avg_non_whitespace,
-            avg_alnum: val.avg_alnum,
-            fallback: val.fallback,
-        }
-    }
-}
-
 impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecision {
     fn from(val: kreuzberg::extractors::pdf::OcrFallbackDecision) -> Self {
         Self {
@@ -8610,38 +7280,38 @@ impl From<kreuzberg::extractors::pdf::OcrFallbackDecision> for OcrFallbackDecisi
     }
 }
 
-impl From<ExtractionMetrics> for kreuzberg::telemetry::metrics::ExtractionMetrics {
-    fn from(val: ExtractionMetrics) -> Self {
+impl From<TokenReductionConfig> for kreuzberg::TokenReductionConfig {
+    fn from(val: TokenReductionConfig) -> Self {
         Self {
-            extraction_total: Default::default(),
-            cache_hits: Default::default(),
-            cache_misses: Default::default(),
-            batch_total: Default::default(),
-            extraction_duration_ms: Default::default(),
-            extraction_input_bytes: Default::default(),
-            extraction_output_bytes: Default::default(),
-            pipeline_duration_ms: Default::default(),
-            ocr_duration_ms: Default::default(),
-            batch_duration_ms: Default::default(),
-            concurrent_extractions: Default::default(),
+            level: val.level.into(),
+            language_hint: val.language_hint,
+            preserve_markdown: val.preserve_markdown,
+            preserve_code: val.preserve_code,
+            semantic_threshold: val.semantic_threshold,
+            enable_parallel: val.enable_parallel,
+            use_simd: val.use_simd,
+            custom_stopwords: val.custom_stopwords.map(|m| m.into_iter().collect()),
+            preserve_patterns: val.preserve_patterns,
+            target_reduction: val.target_reduction,
+            enable_semantic_clustering: val.enable_semantic_clustering,
         }
     }
 }
 
-impl From<kreuzberg::telemetry::metrics::ExtractionMetrics> for ExtractionMetrics {
-    fn from(val: kreuzberg::telemetry::metrics::ExtractionMetrics) -> Self {
+impl From<kreuzberg::TokenReductionConfig> for TokenReductionConfig {
+    fn from(val: kreuzberg::TokenReductionConfig) -> Self {
         Self {
-            extraction_total: format!("{:?}", val.extraction_total),
-            cache_hits: format!("{:?}", val.cache_hits),
-            cache_misses: format!("{:?}", val.cache_misses),
-            batch_total: format!("{:?}", val.batch_total),
-            extraction_duration_ms: format!("{:?}", val.extraction_duration_ms),
-            extraction_input_bytes: format!("{:?}", val.extraction_input_bytes),
-            extraction_output_bytes: format!("{:?}", val.extraction_output_bytes),
-            pipeline_duration_ms: format!("{:?}", val.pipeline_duration_ms),
-            ocr_duration_ms: format!("{:?}", val.ocr_duration_ms),
-            batch_duration_ms: format!("{:?}", val.batch_duration_ms),
-            concurrent_extractions: format!("{:?}", val.concurrent_extractions),
+            level: val.level.into(),
+            language_hint: val.language_hint,
+            preserve_markdown: val.preserve_markdown,
+            preserve_code: val.preserve_code,
+            semantic_threshold: val.semantic_threshold,
+            enable_parallel: val.enable_parallel,
+            use_simd: val.use_simd,
+            custom_stopwords: val.custom_stopwords.map(|m| m.into_iter().collect()),
+            preserve_patterns: val.preserve_patterns,
+            target_reduction: val.target_reduction,
+            enable_semantic_clustering: val.enable_semantic_clustering,
         }
     }
 }
@@ -8652,7 +7322,7 @@ impl From<PdfAnnotation> for kreuzberg::PdfAnnotation {
             annotation_type: val.annotation_type.into(),
             content: val.content,
             page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: Default::default(),
         }
     }
 }
@@ -8663,7 +7333,7 @@ impl From<kreuzberg::PdfAnnotation> for PdfAnnotation {
             annotation_type: val.annotation_type.into(),
             content: val.content,
             page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: val.bounding_box.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -8674,7 +7344,7 @@ impl From<DjotContent> for kreuzberg::DjotContent {
             plain_text: val.plain_text,
             blocks: val.blocks.into_iter().map(Into::into).collect(),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: Default::default(),
             images: val.images.into_iter().map(Into::into).collect(),
             links: val.links.into_iter().map(Into::into).collect(),
             footnotes: val.footnotes.into_iter().map(Into::into).collect(),
@@ -8689,7 +7359,7 @@ impl From<kreuzberg::DjotContent> for DjotContent {
             plain_text: val.plain_text,
             blocks: val.blocks.into_iter().map(Into::into).collect(),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             images: val.images.into_iter().map(Into::into).collect(),
             links: val.links.into_iter().map(Into::into).collect(),
             footnotes: val.footnotes.into_iter().map(Into::into).collect(),
@@ -8704,7 +7374,7 @@ impl From<FormattedBlock> for kreuzberg::FormattedBlock {
             block_type: val.block_type.into(),
             level: val.level,
             inline_content: val.inline_content.into_iter().map(Into::into).collect(),
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
             language: val.language,
             code: val.code,
             children: val.children.into_iter().map(Into::into).collect(),
@@ -8718,7 +7388,7 @@ impl From<kreuzberg::FormattedBlock> for FormattedBlock {
             block_type: val.block_type.into(),
             level: val.level,
             inline_content: val.inline_content.into_iter().map(Into::into).collect(),
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
             language: val.language,
             code: val.code,
             children: val.children.into_iter().map(Into::into).collect(),
@@ -8731,7 +7401,7 @@ impl From<InlineElement> for kreuzberg::InlineElement {
         Self {
             element_type: val.element_type.into(),
             content: val.content,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
             metadata: val.metadata.map(|m| m.into_iter().collect()),
         }
     }
@@ -8742,28 +7412,8 @@ impl From<kreuzberg::InlineElement> for InlineElement {
         Self {
             element_type: val.element_type.into(),
             content: val.content,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
             metadata: val.metadata.map(|m| m.into_iter().collect()),
-        }
-    }
-}
-
-impl From<Attributes> for kreuzberg::Attributes {
-    fn from(val: Attributes) -> Self {
-        Self {
-            id: val.id,
-            classes: val.classes,
-            key_values: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::Attributes> for Attributes {
-    fn from(val: kreuzberg::Attributes) -> Self {
-        Self {
-            id: val.id,
-            classes: val.classes,
-            key_values: val.key_values.iter().map(|i| format!("{:?}", i)).collect(),
         }
     }
 }
@@ -8774,7 +7424,7 @@ impl From<DjotImage> for kreuzberg::DjotImage {
             src: val.src,
             alt: val.alt,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
         }
     }
 }
@@ -8785,7 +7435,7 @@ impl From<kreuzberg::DjotImage> for DjotImage {
             src: val.src,
             alt: val.alt,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -8796,7 +7446,7 @@ impl From<DjotLink> for kreuzberg::DjotLink {
             url: val.url,
             text: val.text,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: Default::default(),
         }
     }
 }
@@ -8807,7 +7457,7 @@ impl From<kreuzberg::DjotLink> for DjotLink {
             url: val.url,
             text: val.text,
             title: val.title,
-            attributes: val.attributes.map(Into::into),
+            attributes: val.attributes.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -8873,14 +7523,14 @@ impl From<kreuzberg::DocumentRelationship> for DocumentRelationship {
 impl From<DocumentNode> for kreuzberg::DocumentNode {
     fn from(val: DocumentNode) -> Self {
         Self {
-            id: val.id.into(),
+            id: Default::default(),
             content: val.content.into(),
             parent: (val.parent).map(kreuzberg::NodeIndex),
             children: (val.children).into_iter().map(kreuzberg::NodeIndex).collect(),
             content_layer: val.content_layer.into(),
             page: val.page,
             page_end: val.page_end,
-            bbox: val.bbox.map(Into::into),
+            bbox: Default::default(),
             annotations: val.annotations.into_iter().map(Into::into).collect(),
             attributes: val.attributes.map(|m| m.into_iter().collect()),
         }
@@ -8890,52 +7540,16 @@ impl From<DocumentNode> for kreuzberg::DocumentNode {
 impl From<kreuzberg::DocumentNode> for DocumentNode {
     fn from(val: kreuzberg::DocumentNode) -> Self {
         Self {
-            id: NodeId {
-                inner: Arc::new(val.id),
-            },
+            id: format!("{:?}", val.id),
             content: val.content.into(),
             parent: val.parent.map(|v| v.0),
             children: val.children.iter().map(|v| v.0).collect::<Vec<_>>(),
             content_layer: val.content_layer.into(),
             page: val.page,
             page_end: val.page_end,
-            bbox: val.bbox.map(Into::into),
+            bbox: val.bbox.as_ref().map(|v| format!("{:?}", v)),
             annotations: val.annotations.into_iter().map(Into::into).collect(),
             attributes: val.attributes.map(|m| m.into_iter().collect()),
-        }
-    }
-}
-
-impl From<TableGrid> for kreuzberg::TableGrid {
-    fn from(val: TableGrid) -> Self {
-        Self {
-            rows: val.rows,
-            cols: val.cols,
-            cells: val.cells.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<kreuzberg::TableGrid> for TableGrid {
-    fn from(val: kreuzberg::TableGrid) -> Self {
-        Self {
-            rows: val.rows,
-            cols: val.cols,
-            cells: val.cells.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<GridCell> for kreuzberg::GridCell {
-    fn from(val: GridCell) -> Self {
-        Self {
-            content: val.content,
-            row: val.row,
-            col: val.col,
-            row_span: val.row_span,
-            col_span: val.col_span,
-            is_header: val.is_header,
-            bbox: val.bbox.map(Into::into),
         }
     }
 }
@@ -8949,7 +7563,7 @@ impl From<kreuzberg::GridCell> for GridCell {
             row_span: val.row_span,
             col_span: val.col_span,
             is_header: val.is_header,
-            bbox: val.bbox.map(Into::into),
+            bbox: val.bbox.as_ref().map(|v| format!("{:?}", v)),
         }
     }
 }
@@ -8981,7 +7595,7 @@ impl From<ExtractionResult> for kreuzberg::ExtractionResult {
             content: val.content,
             mime_type: Default::default(),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: Default::default(),
             detected_languages: val.detected_languages,
             chunks: val.chunks.map(|v| v.into_iter().map(Into::into).collect()),
             images: val.images.map(|v| v.into_iter().map(Into::into).collect()),
@@ -9014,7 +7628,7 @@ impl From<kreuzberg::ExtractionResult> for ExtractionResult {
             content: val.content,
             mime_type: format!("{:?}", val.mime_type),
             metadata: val.metadata.into(),
-            tables: val.tables.into_iter().map(Into::into).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             detected_languages: val.detected_languages,
             chunks: val.chunks.map(|v| v.into_iter().map(Into::into).collect()),
             images: val.images.map(|v| v.into_iter().map(Into::into).collect()),
@@ -9203,7 +7817,7 @@ impl From<ExtractedImage> for kreuzberg::ExtractedImage {
             is_mask: val.is_mask,
             description: val.description,
             ocr_result: val.ocr_result.map(Into::into).map(Box::new),
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: Default::default(),
             source_path: val.source_path,
         }
     }
@@ -9223,30 +7837,8 @@ impl From<kreuzberg::ExtractedImage> for ExtractedImage {
             is_mask: val.is_mask,
             description: val.description,
             ocr_result: val.ocr_result.map(|v| (*v).into()),
-            bounding_box: val.bounding_box.map(Into::into),
+            bounding_box: val.bounding_box.as_ref().map(|v| format!("{:?}", v)),
             source_path: val.source_path,
-        }
-    }
-}
-
-impl From<BoundingBox> for kreuzberg::BoundingBox {
-    fn from(val: BoundingBox) -> Self {
-        Self {
-            x0: val.x0,
-            y0: val.y0,
-            x1: val.x1,
-            y1: val.y1,
-        }
-    }
-}
-
-impl From<kreuzberg::BoundingBox> for BoundingBox {
-    fn from(val: kreuzberg::BoundingBox) -> Self {
-        Self {
-            x0: val.x0,
-            y0: val.y0,
-            x1: val.x1,
-            y1: val.y1,
         }
     }
 }
@@ -9256,7 +7848,7 @@ impl From<ElementMetadata> for kreuzberg::ElementMetadata {
         Self {
             page_number: val.page_number,
             filename: val.filename,
-            coordinates: val.coordinates.map(Into::into),
+            coordinates: Default::default(),
             element_index: val.element_index,
             additional: val.additional.into_iter().collect(),
         }
@@ -9268,7 +7860,7 @@ impl From<kreuzberg::ElementMetadata> for ElementMetadata {
         Self {
             page_number: val.page_number,
             filename: val.filename,
-            coordinates: val.coordinates.map(Into::into),
+            coordinates: val.coordinates.as_ref().map(|v| format!("{:?}", v)),
             element_index: val.element_index,
             additional: val.additional.into_iter().collect(),
         }
@@ -9278,7 +7870,7 @@ impl From<kreuzberg::ElementMetadata> for ElementMetadata {
 impl From<Element> for kreuzberg::Element {
     fn from(val: Element) -> Self {
         Self {
-            element_id: val.element_id.into(),
+            element_id: Default::default(),
             element_type: val.element_type.into(),
             text: val.text,
             metadata: val.metadata.into(),
@@ -9289,9 +7881,7 @@ impl From<Element> for kreuzberg::Element {
 impl From<kreuzberg::Element> for Element {
     fn from(val: kreuzberg::Element) -> Self {
         Self {
-            element_id: ElementId {
-                inner: Arc::new(val.element_id),
-            },
+            element_id: format!("{:?}", val.element_id),
             element_type: val.element_type.into(),
             text: val.text,
             metadata: val.metadata.into(),
@@ -9753,28 +8343,6 @@ impl From<kreuzberg::ArchiveMetadata> for ArchiveMetadata {
             file_list: val.file_list,
             total_size: val.total_size,
             compressed_size: val.compressed_size,
-        }
-    }
-}
-
-impl From<ImageMetadata> for kreuzberg::ImageMetadata {
-    fn from(val: ImageMetadata) -> Self {
-        Self {
-            width: val.width,
-            height: val.height,
-            format: val.format,
-            exif: val.exif.into_iter().collect(),
-        }
-    }
-}
-
-impl From<kreuzberg::ImageMetadata> for ImageMetadata {
-    fn from(val: kreuzberg::ImageMetadata) -> Self {
-        Self {
-            width: val.width,
-            height: val.height,
-            format: val.format,
-            exif: val.exif.into_iter().collect(),
         }
     }
 }
@@ -10300,7 +8868,7 @@ impl From<PageContent> for kreuzberg::PageContent {
         Self {
             page_number: val.page_number,
             content: val.content,
-            tables: val.tables.into_iter().map(|v| std::sync::Arc::new(v.into())).collect(),
+            tables: Default::default(),
             images: val.images.into_iter().map(|v| std::sync::Arc::new(v.into())).collect(),
             hierarchy: val.hierarchy.map(Into::into),
             is_blank: val.is_blank,
@@ -10313,7 +8881,7 @@ impl From<kreuzberg::PageContent> for PageContent {
         Self {
             page_number: val.page_number,
             content: val.content,
-            tables: val.tables.into_iter().map(|v| (*v).clone().into()).collect(),
+            tables: val.tables.iter().map(|i| format!("{:?}", i)).collect(),
             images: val.images.into_iter().map(|v| (*v).clone().into()).collect(),
             hierarchy: val.hierarchy.map(Into::into),
             is_blank: val.is_blank,
@@ -10361,39 +8929,6 @@ impl From<kreuzberg::HierarchicalBlock> for HierarchicalBlock {
     }
 }
 
-impl From<Table> for kreuzberg::Table {
-    fn from(val: Table) -> Self {
-        Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::Table> for Table {
-    fn from(val: kreuzberg::Table) -> Self {
-        Self {
-            cells: val.cells,
-            markdown: val.markdown,
-            page_number: val.page_number,
-            bounding_box: val.bounding_box.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::TableCell> for TableCell {
-    fn from(val: kreuzberg::TableCell) -> Self {
-        Self {
-            content: val.content,
-            row_span: val.row_span,
-            col_span: val.col_span,
-            is_header: val.is_header,
-        }
-    }
-}
-
 impl From<Uri> for kreuzberg::Uri {
     fn from(val: Uri) -> Self {
         Self {
@@ -10412,24 +8947,6 @@ impl From<kreuzberg::Uri> for Uri {
             label: val.label,
             page: val.page,
             kind: val.kind.into(),
-        }
-    }
-}
-
-impl From<ApiError> for kreuzberg::api::ApiError {
-    fn from(val: ApiError) -> Self {
-        Self {
-            status: Default::default(),
-            body: Default::default(),
-        }
-    }
-}
-
-impl From<kreuzberg::api::ApiError> for ApiError {
-    fn from(val: kreuzberg::api::ApiError) -> Self {
-        Self {
-            status: format!("{:?}", val.status),
-            body: format!("{:?}", val.body),
         }
     }
 }
@@ -10457,7 +8974,7 @@ impl From<kreuzberg::api::ApiState> for ApiState {
     fn from(val: kreuzberg::api::ApiState) -> Self {
         Self {
             default_config: (*val.default_config).clone().into(),
-            extraction_service: format!("{:?}", (*val.extraction_service).clone()),
+            extraction_service: format!("{:?}", val.extraction_service),
         }
     }
 }
@@ -11029,7 +9546,7 @@ impl From<HierarchyBlock> for kreuzberg::pdf::hierarchy::HierarchyBlock {
     fn from(val: HierarchyBlock) -> Self {
         Self {
             text: val.text,
-            bbox: val.bbox.into(),
+            bbox: Default::default(),
             font_size: val.font_size,
             hierarchy_level: Default::default(),
         }
@@ -11040,7 +9557,7 @@ impl From<kreuzberg::pdf::hierarchy::HierarchyBlock> for HierarchyBlock {
     fn from(val: kreuzberg::pdf::hierarchy::HierarchyBlock) -> Self {
         Self {
             text: val.text,
-            bbox: val.bbox.into(),
+            bbox: format!("{:?}", val.bbox),
             font_size: val.font_size,
             hierarchy_level: format!("{:?}", val.hierarchy_level),
         }
@@ -11079,21 +9596,11 @@ impl From<kreuzberg::pdf::PdfImage> for PdfImage {
     }
 }
 
-impl From<kreuzberg::pdf::layout_runner::PageLayoutRegion> for PageLayoutRegion {
-    fn from(val: kreuzberg::pdf::layout_runner::PageLayoutRegion) -> Self {
-        Self {
-            class: val.class.into(),
-            confidence: val.confidence,
-            bbox: format!("{:?}", val.bbox),
-        }
-    }
-}
-
 impl From<kreuzberg::pdf::layout_runner::PageLayoutResult> for PageLayoutResult {
     fn from(val: kreuzberg::pdf::layout_runner::PageLayoutResult) -> Self {
         Self {
             page_index: val.page_index,
-            regions: val.regions.into_iter().map(Into::into).collect(),
+            regions: val.regions.iter().map(|i| format!("{:?}", i)).collect(),
             page_width_pts: val.page_width_pts,
             page_height_pts: val.page_height_pts,
             render_width_px: val.render_width_px,
@@ -11111,38 +9618,6 @@ impl From<kreuzberg::pdf::layout_runner::PageTiming> for PageTiming {
             inference_ms: val.inference_ms,
             postprocess_ms: val.postprocess_ms,
             mapping_ms: val.mapping_ms,
-        }
-    }
-}
-
-impl From<PdfExtractionMetadata> for kreuzberg::pdf::metadata::PdfExtractionMetadata {
-    fn from(val: PdfExtractionMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            authors: val.authors,
-            keywords: val.keywords,
-            created_at: val.created_at,
-            modified_at: val.modified_at,
-            created_by: val.created_by,
-            pdf_specific: Default::default(),
-            page_structure: val.page_structure.map(Into::into),
-        }
-    }
-}
-
-impl From<kreuzberg::pdf::metadata::PdfExtractionMetadata> for PdfExtractionMetadata {
-    fn from(val: kreuzberg::pdf::metadata::PdfExtractionMetadata) -> Self {
-        Self {
-            title: val.title,
-            subject: val.subject,
-            authors: val.authors,
-            keywords: val.keywords,
-            created_at: val.created_at,
-            modified_at: val.modified_at,
-            created_by: val.created_by,
-            pdf_specific: format!("{:?}", val.pdf_specific),
-            page_structure: val.page_structure.map(Into::into),
         }
     }
 }
@@ -11385,21 +9860,6 @@ impl From<kreuzberg::CodeContentMode> for CodeContentMode {
     }
 }
 
-impl From<kreuzberg::extraction::hwp::error::HwpError> for HwpError {
-    fn from(val: kreuzberg::extraction::hwp::error::HwpError) -> Self {
-        match val {
-            kreuzberg::extraction::hwp::error::HwpError::InvalidFormat(..) => Self::InvalidFormat,
-            kreuzberg::extraction::hwp::error::HwpError::UnsupportedVersion(..) => Self::UnsupportedVersion,
-            kreuzberg::extraction::hwp::error::HwpError::Io(..) => Self::Io,
-            kreuzberg::extraction::hwp::error::HwpError::Cfb(..) => Self::Cfb,
-            kreuzberg::extraction::hwp::error::HwpError::CompressionError(..) => Self::CompressionError,
-            kreuzberg::extraction::hwp::error::HwpError::ParseError(..) => Self::ParseError,
-            kreuzberg::extraction::hwp::error::HwpError::EncodingError(..) => Self::EncodingError,
-            kreuzberg::extraction::hwp::error::HwpError::NotFound(..) => Self::NotFound,
-        }
-    }
-}
-
 impl From<kreuzberg::extraction::docx::math::FracType> for FracType {
     fn from(val: kreuzberg::extraction::docx::math::FracType) -> Self {
         match val {
@@ -11411,68 +9871,6 @@ impl From<kreuzberg::extraction::docx::math::FracType> for FracType {
     }
 }
 
-impl From<kreuzberg::extraction::docx::math::MathNode> for MathNode {
-    fn from(val: kreuzberg::extraction::docx::math::MathNode) -> Self {
-        match val {
-            kreuzberg::extraction::docx::math::MathNode::Run(..) => Self::Run,
-            kreuzberg::extraction::docx::math::MathNode::SSup { .. } => Self::SSup,
-            kreuzberg::extraction::docx::math::MathNode::SSub { .. } => Self::SSub,
-            kreuzberg::extraction::docx::math::MathNode::SSubSup { .. } => Self::SSubSup,
-            kreuzberg::extraction::docx::math::MathNode::Frac { .. } => Self::Frac,
-            kreuzberg::extraction::docx::math::MathNode::Rad { .. } => Self::Rad,
-            kreuzberg::extraction::docx::math::MathNode::Nary { .. } => Self::Nary,
-            kreuzberg::extraction::docx::math::MathNode::Delim { .. } => Self::Delim,
-            kreuzberg::extraction::docx::math::MathNode::Func { .. } => Self::Func,
-            kreuzberg::extraction::docx::math::MathNode::Acc { .. } => Self::Acc,
-            kreuzberg::extraction::docx::math::MathNode::EqArr { .. } => Self::EqArr,
-            kreuzberg::extraction::docx::math::MathNode::LimLow { .. } => Self::LimLow,
-            kreuzberg::extraction::docx::math::MathNode::LimUpp { .. } => Self::LimUpp,
-            kreuzberg::extraction::docx::math::MathNode::Bar { .. } => Self::Bar,
-            kreuzberg::extraction::docx::math::MathNode::BorderBox { .. } => Self::BorderBox,
-            kreuzberg::extraction::docx::math::MathNode::Matrix { .. } => Self::Matrix,
-            kreuzberg::extraction::docx::math::MathNode::Group { .. } => Self::Group,
-            kreuzberg::extraction::docx::math::MathNode::SPre { .. } => Self::SPre,
-        }
-    }
-}
-
-impl From<kreuzberg::extraction::docx::parser::DocumentElement> for DocumentElement {
-    fn from(val: kreuzberg::extraction::docx::parser::DocumentElement) -> Self {
-        match val {
-            kreuzberg::extraction::docx::parser::DocumentElement::Paragraph(..) => Self::Paragraph,
-            kreuzberg::extraction::docx::parser::DocumentElement::Table(..) => Self::Table,
-            kreuzberg::extraction::docx::parser::DocumentElement::Drawing(..) => Self::Drawing,
-        }
-    }
-}
-
-impl From<kreuzberg::extractors::security::SecurityError> for SecurityError {
-    fn from(val: kreuzberg::extractors::security::SecurityError) -> Self {
-        match val {
-            kreuzberg::extractors::security::SecurityError::ZipBombDetected { .. } => Self::ZipBombDetected,
-            kreuzberg::extractors::security::SecurityError::ArchiveTooLarge { .. } => Self::ArchiveTooLarge,
-            kreuzberg::extractors::security::SecurityError::TooManyFiles { .. } => Self::TooManyFiles,
-            kreuzberg::extractors::security::SecurityError::NestingTooDeep { .. } => Self::NestingTooDeep,
-            kreuzberg::extractors::security::SecurityError::ContentTooLarge { .. } => Self::ContentTooLarge,
-            kreuzberg::extractors::security::SecurityError::EntityTooLong { .. } => Self::EntityTooLong,
-            kreuzberg::extractors::security::SecurityError::TooManyIterations { .. } => Self::TooManyIterations,
-            kreuzberg::extractors::security::SecurityError::XmlDepthExceeded { .. } => Self::XmlDepthExceeded,
-            kreuzberg::extractors::security::SecurityError::TooManyCells { .. } => Self::TooManyCells,
-        }
-    }
-}
-
-impl From<OcrBackendType> for kreuzberg::plugins::OcrBackendType {
-    fn from(val: OcrBackendType) -> Self {
-        match val {
-            OcrBackendType::Tesseract => Self::Tesseract,
-            OcrBackendType::EasyOCR => Self::EasyOCR,
-            OcrBackendType::PaddleOCR => Self::PaddleOCR,
-            OcrBackendType::Custom => Self::Custom,
-        }
-    }
-}
-
 impl From<kreuzberg::plugins::OcrBackendType> for OcrBackendType {
     fn from(val: kreuzberg::plugins::OcrBackendType) -> Self {
         match val {
@@ -11480,6 +9878,18 @@ impl From<kreuzberg::plugins::OcrBackendType> for OcrBackendType {
             kreuzberg::plugins::OcrBackendType::EasyOCR => Self::EasyOCR,
             kreuzberg::plugins::OcrBackendType::PaddleOCR => Self::PaddleOCR,
             kreuzberg::plugins::OcrBackendType::Custom => Self::Custom,
+        }
+    }
+}
+
+impl From<ReductionLevel> for kreuzberg::text::ReductionLevel {
+    fn from(val: ReductionLevel) -> Self {
+        match val {
+            ReductionLevel::Off => Self::Off,
+            ReductionLevel::Light => Self::Light,
+            ReductionLevel::Moderate => Self::Moderate,
+            ReductionLevel::Aggressive => Self::Aggressive,
+            ReductionLevel::Maximum => Self::Maximum,
         }
     }
 }
@@ -11853,6 +10263,24 @@ impl From<kreuzberg::ChunkType> for ChunkType {
     }
 }
 
+impl From<ExtractionMode> for kreuzberg::ExtractionMode {
+    fn from(val: ExtractionMode) -> Self {
+        match val {
+            ExtractionMode::Unified => Self::Unified,
+            ExtractionMode::ElementBased => Self::ElementBased,
+        }
+    }
+}
+
+impl From<kreuzberg::ExtractionMode> for ExtractionMode {
+    fn from(val: kreuzberg::ExtractionMode) -> Self {
+        match val {
+            kreuzberg::ExtractionMode::Unified => Self::Unified,
+            kreuzberg::ExtractionMode::ElementBased => Self::ElementBased,
+        }
+    }
+}
+
 impl From<ElementType> for kreuzberg::ElementType {
     fn from(val: ElementType) -> Self {
         match val {
@@ -12150,21 +10578,6 @@ impl From<kreuzberg::KeywordAlgorithm> for KeywordAlgorithm {
     }
 }
 
-impl From<kreuzberg::ocr::OcrError> for OcrError {
-    fn from(val: kreuzberg::ocr::OcrError) -> Self {
-        match val {
-            kreuzberg::ocr::OcrError::TesseractInitializationFailed(..) => Self::TesseractInitializationFailed,
-            kreuzberg::ocr::OcrError::UnsupportedVersion(..) => Self::UnsupportedVersion,
-            kreuzberg::ocr::OcrError::InvalidConfiguration(..) => Self::InvalidConfiguration,
-            kreuzberg::ocr::OcrError::InvalidLanguageCode(..) => Self::InvalidLanguageCode,
-            kreuzberg::ocr::OcrError::ImageProcessingFailed(..) => Self::ImageProcessingFailed,
-            kreuzberg::ocr::OcrError::ProcessingFailed(..) => Self::ProcessingFailed,
-            kreuzberg::ocr::OcrError::CacheError(..) => Self::CacheError,
-            kreuzberg::ocr::OcrError::IOError(..) => Self::IOError,
-        }
-    }
-}
-
 impl From<kreuzberg::PSMMode> for PSMMode {
     fn from(val: kreuzberg::PSMMode) -> Self {
         match val {
@@ -12254,24 +10667,6 @@ impl From<kreuzberg::LayoutClass> for LayoutClass {
     }
 }
 
-impl From<kreuzberg::pdf::PdfError> for PdfError {
-    fn from(val: kreuzberg::pdf::PdfError) -> Self {
-        match val {
-            kreuzberg::pdf::PdfError::InvalidPdf(..) => Self::InvalidPdf,
-            kreuzberg::pdf::PdfError::PasswordRequired => Self::PasswordRequired,
-            kreuzberg::pdf::PdfError::InvalidPassword => Self::InvalidPassword,
-            kreuzberg::pdf::PdfError::EncryptionNotSupported(..) => Self::EncryptionNotSupported,
-            kreuzberg::pdf::PdfError::PageNotFound(..) => Self::PageNotFound,
-            kreuzberg::pdf::PdfError::TextExtractionFailed(..) => Self::TextExtractionFailed,
-            kreuzberg::pdf::PdfError::RenderingFailed(..) => Self::RenderingFailed,
-            kreuzberg::pdf::PdfError::MetadataExtractionFailed(..) => Self::MetadataExtractionFailed,
-            kreuzberg::pdf::PdfError::ExtractionFailed(..) => Self::ExtractionFailed,
-            kreuzberg::pdf::PdfError::FontLoadingFailed(..) => Self::FontLoadingFailed,
-            kreuzberg::pdf::PdfError::IOError(..) => Self::IOError,
-        }
-    }
-}
-
 /// Convert a `kreuzberg::error::KreuzbergError` error to a Rustler error string.
 #[allow(dead_code)]
 fn kreuzberg_error_to_rustler_err(e: kreuzberg::error::KreuzbergError) -> String {
@@ -12279,8 +10674,6 @@ fn kreuzberg_error_to_rustler_err(e: kreuzberg::error::KreuzbergError) -> String
 }
 
 fn on_load(env: rustler::Env, _info: rustler::Term) -> bool {
-    env.register::<FileBytes>()
-        .expect("Failed to register resource type FileBytes");
     env.register::<StreamReader>()
         .expect("Failed to register resource type StreamReader");
     env.register::<CustomProperties>()
@@ -12299,31 +10692,14 @@ fn on_load(env: rustler::Env, _info: rustler::Term) -> bool {
         .expect("Failed to register resource type EntityValidator");
     env.register::<TableValidator>()
         .expect("Failed to register resource type TableValidator");
-    env.register::<ModelCache>()
-        .expect("Failed to register resource type ModelCache");
-    env.register::<OcrBackend>()
-        .expect("Failed to register resource type OcrBackend");
-    env.register::<Renderer>()
-        .expect("Failed to register resource type Renderer");
-    env.register::<Plugin>()
-        .expect("Failed to register resource type Plugin");
-    env.register::<QualityProcessor>()
-        .expect("Failed to register resource type QualityProcessor");
-    env.register::<NodeId>()
-        .expect("Failed to register resource type NodeId");
-    env.register::<ElementId>()
-        .expect("Failed to register resource type ElementId");
     env.register::<Recyclable>()
         .expect("Failed to register resource type Recyclable");
     env.register::<StringBufferPool>()
         .expect("Failed to register resource type StringBufferPool");
     env.register::<ByteBufferPool>()
         .expect("Failed to register resource type ByteBufferPool");
-    env.register::<Pool>().expect("Failed to register resource type Pool");
     env.register::<PooledString>()
         .expect("Failed to register resource type PooledString");
-    env.register::<InternedString>()
-        .expect("Failed to register resource type InternedString");
     env.register::<TracingLayer>()
         .expect("Failed to register resource type TracingLayer");
     env.register::<MetricsLayer>()
@@ -12332,10 +10708,6 @@ fn on_load(env: rustler::Env, _info: rustler::Term) -> bool {
         .expect("Failed to register resource type ApiDoc");
     env.register::<ExtractResponse>()
         .expect("Failed to register resource type ExtractResponse");
-    env.register::<ChunkingProcessor>()
-        .expect("Failed to register resource type ChunkingProcessor");
-    env.register::<VlmOcrBackend>()
-        .expect("Failed to register resource type VlmOcrBackend");
     env.register::<TessdataManager>()
         .expect("Failed to register resource type TessdataManager");
     env.register::<PdfUnifiedExtractionResult>()

@@ -91,7 +91,7 @@ public sealed class ExtractedImage
     /// Only populated for PDF-extracted images when position data is available from pdfium.
     /// </summary>
     [JsonPropertyName("bounding_box")]
-    public BoundingBox? BoundingBox { get; set; } = null;
+    public string? BoundingBox { get; set; } = null;
 
     /// <summary>
     /// Original source path of the image within the document archive (e.g., "media/image1.png" in DOCX).

@@ -36,7 +36,7 @@ pub struct NodeIndex(pub u32);
 /// Generated from a hash of `node_type + text + page`. The same document
 /// always produces the same IDs, making them useful for diffing, caching,
 /// and external references.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 #[cfg_attr(feature = "api", schema(value_type = String))]
 pub struct NodeId(String);
@@ -424,10 +424,11 @@ pub struct TextAnnotation {
 }
 
 /// Types of inline text annotations.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 #[serde(tag = "annotation_type", rename_all = "snake_case")]
 pub enum AnnotationKind {
+    #[default]
     Bold,
     Italic,
     Underline,
@@ -473,6 +474,12 @@ impl From<(f32, f32, f32, f32)> for BoundingBox {
             x1: right as f64,
             y1: bottom as f64,
         }
+    }
+}
+
+impl Default for NodeContent {
+    fn default() -> Self {
+        NodeContent::Paragraph { text: String::new() }
     }
 }
 

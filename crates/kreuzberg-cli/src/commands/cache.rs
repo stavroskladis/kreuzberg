@@ -329,7 +329,7 @@ pub fn warm_command(
                 &kreuzberg::core::config::EmbeddingModelType::Preset {
                     name: preset.name.to_string(),
                 },
-                Some(embeddings_dir.clone()),
+                embeddings_dir.to_str(),
             )
             .map_err(|e| anyhow::anyhow!("Failed to download embedding model '{}': {}", preset.name, e))?;
             downloaded.push(label);

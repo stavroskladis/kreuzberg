@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record InlineElement(
     @JsonProperty("element_type") InlineType elementType,
     String content,
-    Optional<Attributes> attributes,
+    Optional<String> attributes,
     Optional<Map<String, String>> metadata
 ) {
 }

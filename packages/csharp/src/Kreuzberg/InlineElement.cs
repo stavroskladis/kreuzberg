@@ -29,7 +29,7 @@ public sealed class InlineElement
     /// Element attributes
     /// </summary>
     [JsonPropertyName("attributes")]
-    public Attributes? Attributes { get; set; } = null;
+    public string? Attributes { get; set; } = null;
 
     /// <summary>
     /// Additional metadata (e.g., href for links, src/alt for images)

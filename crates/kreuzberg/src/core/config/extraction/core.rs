@@ -12,7 +12,7 @@ use super::super::ocr::OcrConfig;
 use super::super::page::PageConfig;
 use super::super::processing::{ChunkingConfig, PostProcessorConfig};
 use super::file_config::FileExtractionConfig;
-use super::types::{ImageExtractionConfig, LanguageDetectionConfig, TokenReductionConfig};
+use super::types::{ImageExtractionConfig, LanguageDetectionConfig, TokenReductionOptions};
 
 /// Main extraction configuration.
 ///
@@ -94,7 +94,7 @@ pub struct ExtractionConfig {
 
     /// Token reduction configuration (None = no token reduction)
     #[serde(default)]
-    pub token_reduction: Option<TokenReductionConfig>,
+    pub token_reduction: Option<TokenReductionOptions>,
 
     /// Language detection configuration (None = no language detection)
     #[serde(default)]
@@ -154,7 +154,7 @@ pub struct ExtractionConfig {
     /// content in the `content` field, or element-based format with semantic
     /// elements (for Unstructured-compatible output).
     #[serde(default)]
-    pub result_format: crate::types::OutputFormat,
+    pub result_format: crate::types::ExtractionMode,
 
     /// Security limits for archive extraction.
     ///
@@ -292,7 +292,7 @@ impl Default for ExtractionConfig {
             security_limits: None,
             #[cfg(feature = "layout-detection")]
             layout: None,
-            result_format: crate::types::OutputFormat::Unified,
+            result_format: crate::types::ExtractionMode::Unified,
             output_format: OutputFormat::Plain,
             include_document_structure: false,
             acceleration: None,
@@ -456,7 +456,7 @@ impl ExtractionConfig {
         };
 
         let needs_pages_for_elements =
-            self.result_format == crate::types::OutputFormat::ElementBased && needs_pages(self);
+            self.result_format == crate::types::ExtractionMode::ElementBased && needs_pages(self);
         let needs_pages_for_chunking = self.chunking.is_some() && needs_pages(self);
 
         if needs_pages_for_elements || needs_pages_for_chunking {

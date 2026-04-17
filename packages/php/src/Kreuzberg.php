@@ -297,7 +297,7 @@ final class Kreuzberg
      * let mut base = ExtractionConfig::default();
      * base.use_cache = true;
      *
-     * let overrides = json!({"force_ocr": true});
+     * let overrides = r#"{"force_ocr": true}"#;
      * let merged = kreuzberg::core::config::merge::merge_config_json(&base, overrides).unwrap();
      * assert!(merged.use_cache);   // preserved from base
      * assert!(merged.force_ocr);   // applied from override
@@ -1029,290 +1029,6 @@ final class Kreuzberg
     }
 
     /**
-     * Synchronous wrapper for `extract_file`.
-     *
-     * This is a convenience function that blocks the current thread until extraction completes.
-     * For async code, use `extract_file` directly.
-     *
-     * Uses the global Tokio runtime for 100x+ performance improvement over creating
-     * a new runtime per call. Always uses the global runtime to avoid nested runtime issues.
-     *
-     * This function is only available with the `tokio-runtime` feature. For WASM targets,
-     * use a truly synchronous extraction approach instead.
-     *
-     * # Example
-     *
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::extract_file_sync;
-     * use kreuzberg::core::config::ExtractionConfig;
-     *
-     * let config = ExtractionConfig::default();
-     * let result = extract_file_sync("document.pdf", None, &config)?;
-     * println!("Content: {}", result.content);
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * ```
-     *
-     * @param string $path
-     * @param ?string $mime_type
-     * @param ExtractionConfig $config
-     * @return ExtractionResult
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractFileSync(string $path, ?string $mime_type = null, ExtractionConfig $config): ExtractionResult
-    {
-        return \Kreuzberg\KreuzbergApi::extractFileSync($path, $mime_type, $config); // delegate to native extension class
-    }
-
-    /**
-     * Synchronous wrapper for `extract_bytes`.
-     *
-     * Uses the global Tokio runtime for 100x+ performance improvement over creating
-     * a new runtime per call.
-     *
-     * With the `tokio-runtime` feature, this blocks the current thread using the global
-     * Tokio runtime. Without it (WASM), this calls a truly synchronous implementation.
-     *
-     * # Example
-     *
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::extract_bytes_sync;
-     * use kreuzberg::core::config::ExtractionConfig;
-     *
-     * let config = ExtractionConfig::default();
-     * let bytes = b"Hello, world!";
-     * let result = extract_bytes_sync(bytes, "text/plain", &config)?;
-     * println!("Content: {}", result.content);
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * ```
-     *
-     * @param string $content
-     * @param string $mime_type
-     * @param ExtractionConfig $config
-     * @return ExtractionResult
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractBytesSync(string $content, string $mime_type, ExtractionConfig $config): ExtractionResult
-    {
-        return \Kreuzberg\KreuzbergApi::extractBytesSync($content, $mime_type, $config); // delegate to native extension class
-    }
-
-    /**
-     * Synchronous wrapper for `batch_extract_file`.
-     *
-     * Uses the global Tokio runtime for optimal performance.
-     * Only available with `tokio-runtime` (WASM has no filesystem).
-     *
-     * # Example
-     *
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_file_sync;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use kreuzberg::FileExtractionConfig;
-     * use std::path::PathBuf;
-     *
-     * let config = ExtractionConfig::default();
-     * let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
-     *     ("doc1.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-     *     ("doc2.pdf".into(), None),
-     * ];
-     * let results = batch_extract_file_sync(items, &config)?;
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * ```
-     *
-     * @param array<string> $items
-     * @param ExtractionConfig $config
-     * @return array<ExtractionResult>
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function batchExtractFileSync(array $items, ExtractionConfig $config): array
-    {
-        return \Kreuzberg\KreuzbergApi::batchExtractFileSync($items, $config); // delegate to native extension class
-    }
-
-    /**
-     * Synchronous wrapper for `batch_extract_bytes`.
-     *
-     * Uses the global Tokio runtime for optimal performance.
-     * With the `tokio-runtime` feature, this blocks the current thread using the global
-     * Tokio runtime. Without it (WASM), this calls a truly synchronous implementation
-     * that iterates through items and calls `extract_bytes_sync()`.
-     *
-     * # Example
-     *
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_bytes_sync;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use kreuzberg::FileExtractionConfig;
-     *
-     * let config = ExtractionConfig::default();
-     * let items = vec![
-     *     (b"content".to_vec(), "text/plain".to_string(), None),
-     *     (b"other".to_vec(), "text/plain".to_string(),
-     *      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-     * ];
-     * let results = batch_extract_bytes_sync(items, &config)?;
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * ```
-     *
-     * @param array<string> $items
-     * @param ExtractionConfig $config
-     * @return array<ExtractionResult>
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function batchExtractBytesSync(array $items, ExtractionConfig $config): array
-    {
-        return \Kreuzberg\KreuzbergApi::batchExtractBytesSync($items, $config); // delegate to native extension class
-    }
-
-    /**
-     * Extract content from multiple files concurrently.
-     *
-     * This function processes multiple files in parallel, automatically managing
-     * concurrency to prevent resource exhaustion. The concurrency limit can be
-     * configured via `ExtractionConfig::max_concurrent_extractions` or defaults
-     * to `(num_cpus * 1.5).ceil()`.
-     *
-     * Each file can optionally specify a [`FileExtractionConfig`] that overrides specific
-     * fields from the batch-level `config`. Pass `None` for a file to use the batch defaults.
-     * Batch-level settings like `max_concurrent_extractions` and `use_cache` are always
-     * taken from the batch-level `config`.
-     *
-     * # Arguments
-     *
-     * * `items` - Vector of `(path, optional_file_config)` tuples. Pass `None` as the
-     *   config to use the batch-level defaults for that file.
-     * * `config` - Batch-level extraction configuration (provides defaults and batch settings)
-     *
-     * # Returns
-     *
-     * A vector of `ExtractionResult` in the same order as the input items.
-     *
-     * # Errors
-     *
-     * Individual file errors are captured in the result metadata. System errors
-     * (IO, RuntimeError equivalents) will bubble up and fail the entire batch.
-     *
-     * # Examples
-     *
-     * Simple usage with no per-file overrides:
-     *
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_file;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use std::path::PathBuf;
-     *
-     * # async fn example() -> kreuzberg::Result<()> {
-     * let config = ExtractionConfig::default();
-     * let items: Vec<(PathBuf, Option<kreuzberg::FileExtractionConfig>)> = vec![
-     *     ("doc1.pdf".into(), None),
-     *     ("doc2.pdf".into(), None),
-     * ];
-     * let results = batch_extract_file(items, &config).await?;
-     * println!("Processed {} files", results.len());
-     * # Ok(())
-     * # }
-     * ```
-     *
-     * Per-file configuration overrides:
-     *
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_file;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use kreuzberg::FileExtractionConfig;
-     * use std::path::PathBuf;
-     *
-     * # async fn example() -> kreuzberg::Result<()> {
-     * let config = ExtractionConfig::default();
-     * let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
-     *     ("scan.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-     *     ("notes.txt".into(), None),
-     * ];
-     * let results = batch_extract_file(items, &config).await?;
-     * # Ok(())
-     * # }
-     * ```
-     *
-     * @param array<string> $items
-     * @param ExtractionConfig $config
-     * @return array<ExtractionResult>
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function batchExtractFile(array $items, ExtractionConfig $config): array
-    {
-        return \Kreuzberg\KreuzbergApi::batchExtractFileAsync($items, $config); // delegate to native extension class
-    }
-
-    /**
-     * Extract content from multiple byte arrays concurrently.
-     *
-     * This function processes multiple byte arrays in parallel, automatically managing
-     * concurrency to prevent resource exhaustion. The concurrency limit can be
-     * configured via `ExtractionConfig::max_concurrent_extractions` or defaults
-     * to `(num_cpus * 1.5).ceil()`.
-     *
-     * Each item can optionally specify a [`FileExtractionConfig`] that overrides specific
-     * fields from the batch-level `config`. Pass `None` as the config to use
-     * the batch-level defaults for that item.
-     *
-     * # Arguments
-     *
-     * * `items` - Vector of `(bytes, mime_type, optional_file_config)` tuples
-     * * `config` - Batch-level extraction configuration
-     *
-     * # Returns
-     *
-     * A vector of `ExtractionResult` in the same order as the input items.
-     *
-     * # Examples
-     *
-     * Simple usage with no per-item overrides:
-     *
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_bytes;
-     * use kreuzberg::core::config::ExtractionConfig;
-     *
-     * # async fn example() -> kreuzberg::Result<()> {
-     * let config = ExtractionConfig::default();
-     * let items = vec![
-     *     (b"content 1".to_vec(), "text/plain".to_string(), None),
-     *     (b"content 2".to_vec(), "text/plain".to_string(), None),
-     * ];
-     * let results = batch_extract_bytes(items, &config).await?;
-     * println!("Processed {} items", results.len());
-     * # Ok(())
-     * # }
-     * ```
-     *
-     * Per-item configuration overrides:
-     *
-     * ```rust,no_run
-     * use kreuzberg::core::extractor::batch_extract_bytes;
-     * use kreuzberg::core::config::ExtractionConfig;
-     * use kreuzberg::FileExtractionConfig;
-     *
-     * # async fn example() -> kreuzberg::Result<()> {
-     * let config = ExtractionConfig::default();
-     * let items = vec![
-     *     (b"content".to_vec(), "text/plain".to_string(), None),
-     *     (b"<html>test</html>".to_vec(), "text/html".to_string(),
-     *      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
-     * ];
-     * let results = batch_extract_bytes(items, &config).await?;
-     * # Ok(())
-     * # }
-     * ```
-     *
-     * @param array<string> $items
-     * @param ExtractionConfig $config
-     * @return array<ExtractionResult>
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function batchExtractBytes(array $items, ExtractionConfig $config): array
-    {
-        return \Kreuzberg\KreuzbergApi::batchExtractBytesAsync($items, $config); // delegate to native extension class
-    }
-
-    /**
      * Validates whether a field name is in the known formats registry.
      *
      * This uses a pre-built hash set for O(1) lookups instead of linear search,
@@ -1359,36 +1075,12 @@ final class Kreuzberg
      * Returns `KreuzbergError::Io` for any I/O failure.
      *
      * @param string $path
-     * @return FileBytes
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function openFileBytes(string $path): FileBytes
-    {
-        return \Kreuzberg\KreuzbergApi::openFileBytes($path); // delegate to native extension class
-    }
-
-    /**
-     * Read a file asynchronously.
-     *
-     * # Arguments
-     *
-     * * `path` - Path to the file to read
-     *
-     * # Returns
-     *
-     * The file contents as bytes.
-     *
-     * # Errors
-     *
-     * Returns `KreuzbergError::Io` for I/O errors (these always bubble up).
-     *
-     * @param string $path
      * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function readFileAsync(string $path): string
+    public static function openFileBytes(string $path): string
     {
-        return \Kreuzberg\KreuzbergApi::readFileAsyncAsync($path); // delegate to native extension class
+        return \Kreuzberg\KreuzbergApi::openFileBytes($path); // delegate to native extension class
     }
 
     /**
@@ -1676,84 +1368,11 @@ final class Kreuzberg
      *
      * @param ExtractionResult $result
      * @param OutputFormat $output_format
-     * @return void
+     * @return ExtractionResult
      */
-    public static function applyOutputFormat(ExtractionResult $result, OutputFormat $output_format): void
+    public static function applyOutputFormat(ExtractionResult $result, OutputFormat $output_format): ExtractionResult
     {
         return \Kreuzberg\KreuzbergApi::applyOutputFormat($result, $output_format); // delegate to native extension class
-    }
-
-    /**
-     * Run the post-processing pipeline on an `InternalDocument`.
-     *
-     * Derives `ExtractionResult` from `InternalDocument` via the derivation pipeline,
-     * then executes post-processing in the following order:
-     * 1. Post-Processors - Execute by stage (Early, Middle, Late) to modify/enhance the result
-     * 2. Quality Processing - Text cleaning and quality scoring
-     * 3. Chunking - Text splitting if enabled
-     * 4. Validators - Run validation hooks on the processed result (can fail fast)
-     *
-     * # Arguments
-     *
-     * * `doc` - The internal document produced by the extractor
-     * * `config` - Extraction configuration
-     *
-     * # Returns
-     *
-     * The processed extraction result.
-     *
-     * # Errors
-     *
-     * - Validator errors bubble up immediately
-     * - Post-processor errors are caught and recorded in metadata
-     * - System errors (IO, RuntimeError equivalents) always bubble up
-     *
-     * @param string $doc
-     * @param ExtractionConfig $config
-     * @return ExtractionResult
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function runPipeline(string $doc, ExtractionConfig $config): ExtractionResult
-    {
-        return \Kreuzberg\KreuzbergApi::runPipelineAsync($doc, $config); // delegate to native extension class
-    }
-
-    /**
-     * Run the post-processing pipeline synchronously (WASM-compatible version).
-     *
-     * This is a synchronous implementation for WASM and non-async contexts.
-     * It performs a subset of the full async pipeline, excluding async post-processors
-     * and validators.
-     *
-     * # Arguments
-     *
-     * * `doc` - The internal document produced by the extractor
-     * * `config` - Extraction configuration
-     *
-     * # Returns
-     *
-     * The processed extraction result.
-     *
-     * # Notes
-     *
-     * This function is only available when the `tokio-runtime` feature is disabled.
-     * It handles:
-     * - Quality processing (if enabled)
-     * - Chunking (if enabled)
-     * - Language detection (if enabled)
-     *
-     * It does NOT handle:
-     * - Async post-processors
-     * - Async validators
-     *
-     * @param string $doc
-     * @param ExtractionConfig $config
-     * @return ExtractionResult
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function runPipelineSync(string $doc, ExtractionConfig $config): ExtractionResult
-    {
-        return \Kreuzberg\KreuzbergApi::runPipelineSync($doc, $config); // delegate to native extension class
     }
 
     /**
@@ -1791,52 +1410,6 @@ final class Kreuzberg
     public static function resolveRelationships(string $doc): void
     {
         return \Kreuzberg\KreuzbergApi::resolveRelationships($doc); // delegate to native extension class
-    }
-
-    /**
-     * Derive a hierarchical `DocumentStructure` from the flat internal document.
-     *
-     * Calls `resolve_relationships` first to resolve any key-based relationship targets,
-     * then builds the tree.
-     *
-     * # Algorithm
-     *
-     * 1. Walk elements in reading order, maintaining a stack of `(depth, NodeIndex)`.
-     * 2. Container start markers (`ListStart`, `QuoteStart`, `GroupStart`) push
-     *    onto the stack; their matching end markers pop.
-     * 3. Headings pop the stack to a shallower depth, then create a `Group` node
-     *    with a `Heading` child and push the group.
-     * 4. All other elements are parented under the current stack top.
-     * 5. Resolved relationships are mapped from element indices to node indices.
-     *
-     * @param string $doc
-     * @return DocumentStructure
-     */
-    public static function deriveDocumentStructure(string $doc): DocumentStructure
-    {
-        return \Kreuzberg\KreuzbergApi::deriveDocumentStructure($doc); // delegate to native extension class
-    }
-
-    /**
-     * Derive a complete `ExtractionResult` from an `InternalDocument`.
-     *
-     * This is the main entry point for the derivation pipeline. It:
-     * 1. Resolves relationships (needed by renderers for footnotes)
-     * 2. Renders plain-text content (for post-processors)
-     * 3. Pre-renders formatted content if output_format != Plain
-     * 4. Groups elements by page into `PageContent`
-     * 5. Extracts OCR elements for backward compatibility
-     * 6. Optionally derives `DocumentStructure` (assumes relationships resolved)
-     * 7. Assembles the final `ExtractionResult`
-     *
-     * @param string $doc
-     * @param bool $include_document_structure
-     * @param OutputFormat $output_format
-     * @return ExtractionResult
-     */
-    public static function deriveExtractionResult(string $doc, bool $include_document_structure, OutputFormat $output_format): ExtractionResult
-    {
-        return \Kreuzberg\KreuzbergApi::deriveExtractionResult($doc, $include_document_structure, $output_format); // delegate to native extension class
     }
 
     /**
@@ -1966,7 +1539,7 @@ final class Kreuzberg
      * A vector of ListItemMetadata structs describing detected list items
      *
      * @param string $text
-     * @return array<ListItemMetadata>
+     * @return array<string>
      */
     public static function detectListItems(string $text): array
     {
@@ -1993,9 +1566,9 @@ final class Kreuzberg
      * @param string $text
      * @param ElementType $element_type
      * @param ?int $page_number
-     * @return ElementId
+     * @return string
      */
-    public static function generateElementId(string $text, ElementType $element_type, ?int $page_number = null): ElementId
+    public static function generateElementId(string $text, ElementType $element_type, ?int $page_number = null): string
     {
         return \Kreuzberg\KreuzbergApi::generateElementId($text, $element_type, $page_number); // delegate to native extension class
     }
@@ -2040,7 +1613,7 @@ final class Kreuzberg
      *
      * @param string $data
      * @param bool $is_compressed
-     * @return array<Section>
+     * @return array<string>
      * @throws \Kreuzberg\KreuzbergException
      */
     public static function parseBodyText(string $data, bool $is_compressed): array
@@ -2081,23 +1654,6 @@ final class Kreuzberg
     }
 
     /**
-     * Load image bytes for OCR, with JPEG 2000 and JBIG2 fallback support.
-     *
-     * The standard `image` crate does not support JPEG 2000 or JBIG2 formats.
-     * This function detects these formats by magic bytes and uses `hayro-jpeg2000`
-     * / `hayro-jbig2` for decoding, falling back to the standard `image` crate
-     * for all other formats.
-     *
-     * @param string $image_bytes
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function loadImageForOcr(string $image_bytes): string
-    {
-        return \Kreuzberg\KreuzbergApi::loadImageForOcr($image_bytes); // delegate to native extension class
-    }
-
-    /**
      * Extract metadata from image bytes.
      *
      * Extracts dimensions, format, and EXIF data from the image.
@@ -2105,42 +1661,12 @@ final class Kreuzberg
      * pure Rust JP2 box parsing for JPEG 2000 formats if the standard decoder fails.
      *
      * @param string $bytes
-     * @return ImageMetadata
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function extractImageMetadata(string $bytes): ImageMetadata
+    public static function extractImageMetadata(string $bytes): string
     {
         return \Kreuzberg\KreuzbergApi::extractImageMetadata($bytes); // delegate to native extension class
-    }
-
-    /**
-     * Extract text from image bytes using OCR with optional page tracking for multi-frame TIFFs.
-     *
-     * This function:
-     * - Detects if the image is a multi-frame TIFF
-     * - For multi-frame TIFFs with PageConfig enabled, iterates frames and tracks boundaries
-     * - For single-frame images or when page tracking is disabled, runs OCR on the whole image
-     * - Returns (content, boundaries, page_contents) tuple
-     *
-     * # Arguments
-     * * `bytes` - Image file bytes
-     * * `mime_type` - MIME type (e.g., "image/tiff")
-     * * `ocr_result` - OCR backend result containing the text
-     * * `page_config` - Optional page configuration for boundary tracking
-     *
-     * # Returns
-     * ImageOcrResult with content and optional boundaries for pagination
-     *
-     * @param string $bytes
-     * @param string $mime_type
-     * @param string $ocr_result
-     * @param ?PageConfig $page_config
-     * @return ImageOcrResult
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractTextFromImageWithOcr(string $bytes, string $mime_type, string $ocr_result, ?PageConfig $page_config = null): ImageOcrResult
-    {
-        return \Kreuzberg\KreuzbergApi::extractTextFromImageWithOcr($bytes, $mime_type, $ocr_result, $page_config); // delegate to native extension class
     }
 
     /**
@@ -2679,34 +2205,6 @@ final class Kreuzberg
     }
 
     /**
-     * Extract all email messages from a PST file.
-     *
-     * Opens the PST file and traverses the full folder hierarchy, extracting
-     * every message including subject, sender, recipients, and body text.
-     *
-     * # Arguments
-     *
-     * * `pst_data` - Raw bytes of the PST file
-     *
-     * # Returns
-     *
-     * A vector of `EmailExtractionResult`, one per message found.
-     *
-     * # Errors
-     *
-     * Returns an error if the PST data cannot be written to a temporary file,
-     * or if the PST format is invalid.
-     *
-     * @param string $pst_data
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractPstMessages(string $pst_data): string
-    {
-        return \Kreuzberg\KreuzbergApi::extractPstMessages($pst_data); // delegate to native extension class
-    }
-
-    /**
      * readExcelFile.
      *
      * @param string $file_path
@@ -2874,26 +2372,12 @@ final class Kreuzberg
      * and extracts text from the piece table.
      *
      * @param string $content
-     * @return DocExtractionResult
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function extractDocText(string $content): DocExtractionResult
+    public static function extractDocText(string $content): string
     {
         return \Kreuzberg\KreuzbergApi::extractDocText($content); // delegate to native extension class
-    }
-
-    /**
-     * Parse a drawing object starting after the `<w:drawing>` Start event.
-     *
-     * This function reads events until it encounters the closing `</w:drawing>` tag,
-     * parsing the drawing type (inline or anchored), extent, properties, and image references.
-     *
-     * @param string $reader
-     * @return Drawing
-     */
-    public static function parseDrawing(string $reader): Drawing
-    {
-        return \Kreuzberg\KreuzbergApi::parseDrawing($reader); // delegate to native extension class
     }
 
     /**
@@ -2988,20 +2472,6 @@ final class Kreuzberg
     }
 
     /**
-     * Parse table-level properties from streaming XML reader.
-     *
-     * Expects the reader to be positioned just after the `<w:tblPr>` start tag.
-     * Reads all child elements until the matching `</w:tblPr>` end tag.
-     *
-     * @param string $reader
-     * @return TableProperties
-     */
-    public static function parseTableProperties(string $reader): TableProperties
-    {
-        return \Kreuzberg\KreuzbergApi::parseTableProperties($reader); // delegate to native extension class
-    }
-
-    /**
      * Parse row-level properties from streaming XML reader.
      *
      * Expects the reader to be positioned just after the `<w:trPr>` start tag.
@@ -3025,19 +2495,6 @@ final class Kreuzberg
     public static function parseCellProperties(string $reader): string
     {
         return \Kreuzberg\KreuzbergApi::parseCellProperties($reader); // delegate to native extension class
-    }
-
-    /**
-     * Parse table grid (column widths) from streaming XML reader.
-     *
-     * Expects the reader to be positioned just after the `<w:tblGrid>` start tag.
-     *
-     * @param string $reader
-     * @return TableGrid
-     */
-    public static function parseTableGrid(string $reader): TableGrid
-    {
-        return \Kreuzberg\KreuzbergApi::parseTableGrid($reader); // delegate to native extension class
     }
 
     /**
@@ -3190,37 +2647,6 @@ final class Kreuzberg
     }
 
     /**
-     * Process extracted images with OCR if configured.
-     *
-     * For each image, spawns a blocking OCR task and stores the result
-     * in `image.ocr_result`. If OCR is not configured or fails for an
-     * individual image, that image's `ocr_result` remains `None`.
-     *
-     * This function is the single shared implementation used by all
-     * document extractors (DOCX, PPTX, Jupyter, Markdown, etc.).
-     *
-     * # Recursion Safety
-     *
-     * The produced `ExtractionResult` for each image explicitly sets
-     * `images: None`, preventing further image extraction cycles when
-     * OCR results are consumed by archive or recursive extraction paths.
-     *
-     * # Concurrency
-     *
-     * Concurrency is bounded by the configured thread budget
-     * using a semaphore to prevent resource exhaustion.
-     *
-     * @param array<ExtractedImage> $images
-     * @param ExtractionConfig $config
-     * @return array<ExtractedImage>
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function processImagesWithOcr(array $images, ExtractionConfig $config): array
-    {
-        return \Kreuzberg\KreuzbergApi::processImagesWithOcrAsync($images, $config); // delegate to native extension class
-    }
-
-    /**
      * Extract text from PPT bytes.
      *
      * Parses the OLE/CFB compound document, reads the "PowerPoint Document" stream,
@@ -3230,10 +2656,10 @@ final class Kreuzberg
      * like "Click to edit Master title style") is included instead of being skipped.
      *
      * @param string $content
-     * @return PptExtractionResult
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function extractPptText(string $content): PptExtractionResult
+    public static function extractPptText(string $content): string
     {
         return \Kreuzberg\KreuzbergApi::extractPptText($content); // delegate to native extension class
     }
@@ -3246,10 +2672,10 @@ final class Kreuzberg
      *
      * @param string $content
      * @param bool $include_master_slides
-     * @return PptExtractionResult
+     * @return string
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function extractPptTextWithOptions(string $content, bool $include_master_slides): PptExtractionResult
+    public static function extractPptTextWithOptions(string $content, bool $include_master_slides): string
     {
         return \Kreuzberg\KreuzbergApi::extractPptTextWithOptions($content, $include_master_slides); // delegate to native extension class
     }
@@ -3404,10 +2830,10 @@ final class Kreuzberg
      * Converts jotdown's internal attribute representation to Kreuzberg's
      * standardized Attributes struct, handling IDs, classes, and key-value pairs.
      *
-     * @param Attributes $attrs
-     * @return Attributes
+     * @param string $attrs
+     * @return string
      */
-    public static function parseJotdownAttributes(Attributes $attrs): Attributes
+    public static function parseJotdownAttributes(string $attrs): string
     {
         return \Kreuzberg\KreuzbergApi::parseJotdownAttributes($attrs); // delegate to native extension class
     }
@@ -3418,10 +2844,10 @@ final class Kreuzberg
      * Converts Kreuzberg's Attributes struct back to djot attribute syntax:
      * {.class #id key="value"}
      *
-     * @param Attributes $attrs
+     * @param string $attrs
      * @return string
      */
-    public static function renderAttributes(Attributes $attrs): string
+    public static function renderAttributes(string $attrs): string
     {
         return \Kreuzberg\KreuzbergApi::renderAttributes($attrs); // delegate to native extension class
     }
@@ -3524,40 +2950,13 @@ final class Kreuzberg
     }
 
     /**
-     * Extract complete djot content with 100% feature extraction.
-     *
-     * Processes ALL djot events to build a rich DjotContent structure including:
-     * - Block structure (headings, lists, blockquotes, divs, sections, code blocks)
-     * - Inline formatting (strong, emphasis, highlight, subscript, superscript, insert, delete)
-     * - Attributes (classes, IDs, key-value pairs)
-     * - Links and images with full metadata (href, src, alt, title)
-     * - Math blocks (inline & display)
-     * - Definition lists (term/description pairs)
-     * - Task lists with checked state
-     * - Raw blocks (HTML/LaTeX)
-     * - Footnotes (references and definitions)
-     * - Captions
-     * - Smart punctuation
-     * - All other djot features
-     *
-     * @param array<string> $events
-     * @param Metadata $metadata
-     * @param array<Table> $tables
-     * @return DjotContent
-     */
-    public static function extractCompleteDjotContent(array $events, Metadata $metadata, array $tables): DjotContent
-    {
-        return \Kreuzberg\KreuzbergApi::extractCompleteDjotContent($events, $metadata, $tables); // delegate to native extension class
-    }
-
-    /**
      * Extract tables from Djot events.
      *
      * Parses table events and extracts table data as a Vec<Vec<String>>,
      * converting each table to markdown representation for storage.
      *
      * @param array<string> $events
-     * @return array<Table>
+     * @return array<string>
      */
     public static function extractTablesFromEvents(array $events): array
     {
@@ -3584,40 +2983,37 @@ final class Kreuzberg
     /**
      * Render a single block to djot markup.
      *
-     * @param string $output
      * @param FormattedBlock $block
      * @param int $indent_level
-     * @return void
+     * @return string
      */
-    public static function renderBlockToDjot(string $output, FormattedBlock $block, int $indent_level): void
+    public static function renderBlockToDjot(FormattedBlock $block, int $indent_level): string
     {
-        return \Kreuzberg\KreuzbergApi::renderBlockToDjot($output, $block, $indent_level); // delegate to native extension class
+        return \Kreuzberg\KreuzbergApi::renderBlockToDjot($block, $indent_level); // delegate to native extension class
     }
 
     /**
      * Render a list item with the given marker.
      *
-     * @param string $output
      * @param FormattedBlock $item
      * @param string $indent
      * @param string $marker
-     * @return void
+     * @return string
      */
-    public static function renderListItem(string $output, FormattedBlock $item, string $indent, string $marker): void
+    public static function renderListItem(FormattedBlock $item, string $indent, string $marker): string
     {
-        return \Kreuzberg\KreuzbergApi::renderListItem($output, $item, $indent, $marker); // delegate to native extension class
+        return \Kreuzberg\KreuzbergApi::renderListItem($item, $indent, $marker); // delegate to native extension class
     }
 
     /**
      * Render inline content to djot markup.
      *
-     * @param string $output
      * @param array<InlineElement> $elements
-     * @return void
+     * @return string
      */
-    public static function renderInlineContent(string $output, array $elements): void
+    public static function renderInlineContent(array $elements): string
     {
-        return \Kreuzberg\KreuzbergApi::renderInlineContent($output, $elements); // delegate to native extension class
+        return \Kreuzberg\KreuzbergApi::renderInlineContent($elements); // delegate to native extension class
     }
 
     /**
@@ -3646,38 +3042,6 @@ final class Kreuzberg
     public static function extractFrontmatter(string $content): string
     {
         return \Kreuzberg\KreuzbergApi::extractFrontmatter($content); // delegate to native extension class
-    }
-
-    /**
-     * Extract metadata from YAML frontmatter.
-     *
-     * Extracts the following YAML fields into Kreuzberg metadata:
-     * - **Standard fields**: title, author, date, description (as subject)
-     * - **Extended fields**: abstract, subject, category, tags, language, version
-     * - **Array fields** (keywords, tags): stored as `Vec<String>` in typed fields
-     *
-     * # Arguments
-     *
-     * * `yaml` - The parsed YAML value from frontmatter
-     *
-     * # Returns
-     *
-     * A `Metadata` struct populated with extracted fields
-     *
-     * # Examples
-     *
-     * ```rust,ignore
-     * let yaml = serde_yaml_ng::from_str("title: Test\nauthor: John").unwrap();
-     * let metadata = extract_metadata_from_yaml(&yaml);
-     * assert_eq!(metadata.title.as_deref(), Some("Test"));
-     * ```
-     *
-     * @param string $yaml
-     * @return Metadata
-     */
-    public static function extractMetadataFromYaml(string $yaml): Metadata
-    {
-        return \Kreuzberg\KreuzbergApi::extractMetadataFromYaml($yaml); // delegate to native extension class
     }
 
     /**
@@ -3825,57 +3189,28 @@ final class Kreuzberg
     }
 
     /**
-     * Evaluates native PDF text quality to determine if OCR fallback is needed.
-     *
-     * Uses the provided quality thresholds (or defaults) to make the decision.
-     *
-     * @param string $native_text
-     * @param ?int $page_count
-     * @param OcrQualityThresholds $thresholds
-     * @return OcrFallbackDecision
-     */
-    public static function evaluateNativeTextForOcr(string $native_text, ?int $page_count = null, OcrQualityThresholds $thresholds): OcrFallbackDecision
-    {
-        return \Kreuzberg\KreuzbergApi::evaluateNativeTextForOcr($native_text, $page_count, $thresholds); // delegate to native extension class
-    }
-
-    /**
-     * evaluatePerPageOcr.
-     *
-     * @param string $native_text
-     * @param ?array<PageBoundary> $boundaries
-     * @param ?int $page_count
-     * @param OcrQualityThresholds $thresholds
-     * @return OcrFallbackDecision
-     */
-    public static function evaluatePerPageOcr(string $native_text, ?array $boundaries = null, ?int $page_count = null, OcrQualityThresholds $thresholds): OcrFallbackDecision
-    {
-        return \Kreuzberg\KreuzbergApi::evaluatePerPageOcr($native_text, $boundaries, $page_count, $thresholds); // delegate to native extension class
-    }
-
-    /**
      * Convert a hex digit character to its numeric value.
      *
      * Returns None if the character is not a valid hex digit.
      *
-     * @param string $c
+     * @param int $c
      * @return ?int
      */
-    public static function hexDigitToU8(string $c): ?int
+    public static function hexDigitToU8(int $c): ?int
     {
         return \Kreuzberg\KreuzbergApi::hexDigitToU8($c); // delegate to native extension class
     }
 
     /**
-     * Parse a hex-encoded byte from two characters.
+     * Parse a hex-encoded byte from two bytes.
      *
-     * Returns the decoded byte if both characters are valid hex digits.
+     * Returns the decoded byte if both bytes are valid hex digits.
      *
-     * @param string $h1
-     * @param string $h2
+     * @param int $h1
+     * @param int $h2
      * @return ?int
      */
-    public static function parseHexByte(string $h1, string $h2): ?int
+    public static function parseHexByte(int $h1, int $h2): ?int
     {
         return \Kreuzberg\KreuzbergApi::parseHexByte($h1, $h2); // delegate to native extension class
     }
@@ -4221,75 +3556,6 @@ final class Kreuzberg
     }
 
     /**
-     * Register an OCR backend with the global registry.
-     *
-     * The OCR backend will be registered with its name from the `name()` method
-     * and can be used for OCR processing via the extraction pipeline.
-     *
-     * # Arguments
-     *
-     * * `backend` - The OCR backend implementation wrapped in Arc
-     *
-     * # Returns
-     *
-     * - `Ok(())` if registration succeeded
-     * - `Err(...)` if validation failed or initialization failed
-     *
-     * # Errors
-     *
-     * - `KreuzbergError::Validation` - Invalid backend name (empty or contains whitespace)
-     * - Any error from the backend's `initialize()` method
-     *
-     * # Example
-     *
-     * ```rust
-     * use kreuzberg::plugins::{Plugin, OcrBackend, register_ocr_backend, OcrBackendType};
-     * use kreuzberg::{Result, OcrConfig};
-     * use kreuzberg::types::{ExtractionResult, Metadata};
-     * use async_trait::async_trait;
-     * use std::borrow::Cow;
-     * use std::sync::Arc;
-     * use std::path::Path;
-     *
-     * struct CustomOcr;
-     *
-     * impl Plugin for CustomOcr {
-     *     fn name(&self) -> &str { "custom-ocr" }
-     *     fn version(&self) -> String { "1.0.0".to_string() }
-     *     fn initialize(&self) -> Result<()> { Ok(()) }
-     *     fn shutdown(&self) -> Result<()> { Ok(()) }
-     * }
-     *
-     * #[async_trait]
-     * impl OcrBackend for CustomOcr {
-     *     async fn process_image(&self, _: &[u8], _: &OcrConfig) -> Result<ExtractionResult> {
-     *         Ok(ExtractionResult {
-     *             content: "text".to_string(),
-     *             mime_type: Cow::Borrowed("text/plain"),
-     *             ..Default::default()
-     *         })
-     *     }
-     *     fn supports_language(&self, _: &str) -> bool { true }
-     *     fn backend_type(&self) -> OcrBackendType { OcrBackendType::Custom }
-     * }
-     *
-     * # tokio_test::block_on(async {
-     * let backend = Arc::new(CustomOcr);
-     * register_ocr_backend(backend)?;
-     * # Ok::<(), kreuzberg::KreuzbergError>(())
-     * # });
-     * ```
-     *
-     * @param OcrBackend $backend
-     * @return void
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function registerOcrBackend(OcrBackend $backend): void
-    {
-        return \Kreuzberg\KreuzbergApi::registerOcrBackend($backend); // delegate to native extension class
-    }
-
-    /**
      * Unregister an OCR backend by name.
      *
      * Removes the OCR backend from the global registry and calls its `shutdown()` method.
@@ -4464,46 +3730,6 @@ final class Kreuzberg
     public static function getRendererRegistry(): string
     {
         return \Kreuzberg\KreuzbergApi::getRendererRegistry(); // delegate to native extension class
-    }
-
-    /**
-     * Register a renderer with the global registry.
-     *
-     * # Arguments
-     *
-     * * `renderer` - The renderer implementation wrapped in Arc
-     *
-     * # Returns
-     *
-     * - `Ok(())` if registration succeeded
-     * - `Err(...)` if validation failed
-     *
-     * # Example
-     *
-     * ```rust
-     * use kreuzberg::plugins::{Renderer, register_renderer};
-     * use kreuzberg::types::internal::InternalDocument;
-     * use kreuzberg::Result;
-     * use std::sync::Arc;
-     *
-     * struct MyRenderer;
-     * impl Renderer for MyRenderer {
-     *     fn name(&self) -> &str { "my-format" }
-     *     fn render(&self, _doc: &InternalDocument) -> Result<String> {
-     *         Ok("rendered".to_string())
-     *     }
-     * }
-     *
-     * register_renderer(Arc::new(MyRenderer)).unwrap();
-     * ```
-     *
-     * @param Renderer $renderer
-     * @return void
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function registerRenderer(Renderer $renderer): void
-    {
-        return \Kreuzberg\KreuzbergApi::registerRenderer($renderer); // delegate to native extension class
     }
 
     /**
@@ -4846,9 +4072,9 @@ final class Kreuzberg
      *
      * Uses the global [`opentelemetry::global::meter`] to create instruments.
      *
-     * @return ExtractionMetrics
+     * @return string
      */
-    public static function getMetrics(): ExtractionMetrics
+    public static function getMetrics(): string
     {
         return \Kreuzberg\KreuzbergApi::getMetrics(); // delegate to native extension class
     }
@@ -5140,10 +4366,10 @@ final class Kreuzberg
      * ```rust
      * use kreuzberg::text::token_reduction::{batch_reduce_tokens, TokenReductionConfig, ReductionLevel};
      *
-     * let texts = vec![
-     *     "This is the first document with some text.",
-     *     "Here is another document with different content.",
-     *     "And finally, a third document to process.",
+     * let texts: Vec<String> = vec![
+     *     "This is the first document with some text.".to_string(),
+     *     "Here is another document with different content.".to_string(),
+     *     "And finally, a third document to process.".to_string(),
      * ];
      * let config = TokenReductionConfig::default();
      * let reduced = batch_reduce_tokens(&texts, &config, Some("eng"))?;
@@ -5570,9 +4796,9 @@ final class Kreuzberg
      * ```
      *
      * @param string $lang_code
-     * @return InternedString
+     * @return string
      */
-    public static function internLanguageCode(string $lang_code): InternedString
+    public static function internLanguageCode(string $lang_code): string
     {
         return \Kreuzberg\KreuzbergApi::internLanguageCode($lang_code); // delegate to native extension class
     }
@@ -5601,9 +4827,9 @@ final class Kreuzberg
      * ```
      *
      * @param string $mime_type
-     * @return InternedString
+     * @return string
      */
-    public static function internMimeType(string $mime_type): InternedString
+    public static function internMimeType(string $mime_type): string
     {
         return \Kreuzberg\KreuzbergApi::internMimeType($mime_type); // delegate to native extension class
     }
@@ -5733,11 +4959,10 @@ final class Kreuzberg
      *
      * ```no_run
      * use kreuzberg::api::load_server_config;
-     * use std::path::Path;
      *
      * # fn example() -> kreuzberg::Result<()> {
      * // Load from file with env overrides
-     * let config = load_server_config(Some(Path::new("server.toml")))?;
+     * let config = load_server_config(Some("server.toml"))?;
      *
      * // Or use defaults with env overrides
      * let config = load_server_config(None)?;
@@ -5752,27 +4977,6 @@ final class Kreuzberg
     public static function loadServerConfig(?string $config_path = null): ServerConfig
     {
         return \Kreuzberg\KreuzbergApi::loadServerConfig($config_path); // delegate to native extension class
-    }
-
-    /**
-     * Generate OpenAPI JSON schema.
-     *
-     * Returns the complete OpenAPI 3.1 specification as a JSON string.
-     *
-     * # Examples
-     *
-     * ```no_run
-     * use kreuzberg::api::openapi::openapi_json;
-     *
-     * let schema = openapi_json();
-     * println!("{}", schema);
-     * ```
-     *
-     * @return string
-     */
-    public static function openapiJson(): string
-    {
-        return \Kreuzberg\KreuzbergApi::openapiJson(); // delegate to native extension class
     }
 
     /**
@@ -5992,42 +5196,6 @@ final class Kreuzberg
     }
 
     /**
-     * Start the API server with explicit config and size limits.
-     *
-     * # Arguments
-     *
-     * * `host` - IP address to bind to (e.g., "127.0.0.1" or "0.0.0.0")
-     * * `port` - Port number to bind to (e.g., 8000)
-     * * `config` - Default extraction configuration for all requests
-     * * `limits` - Size limits for request bodies and multipart uploads
-     *
-     * # Examples
-     *
-     * ```no_run
-     * use kreuzberg::{ExtractionConfig, api::{serve_with_config_and_limits, ApiSizeLimits}};
-     *
-     * #[tokio::main]
-     * async fn main() -> kreuzberg::Result<()> {
-     *     let config = ExtractionConfig::from_toml_file("config/kreuzberg.toml")?;
-     *     let limits = ApiSizeLimits::from_mb(200, 200);
-     *     serve_with_config_and_limits("127.0.0.1", 8000, config, limits).await?;
-     *     Ok(())
-     * }
-     * ```
-     *
-     * @param string $host
-     * @param int $port
-     * @param ExtractionConfig $config
-     * @param string $limits
-     * @return void
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function serveWithConfigAndLimits(string $host, int $port, ExtractionConfig $config, string $limits): void
-    {
-        return \Kreuzberg\KreuzbergApi::serveWithConfigAndLimitsAsync($host, $port, $config, $limits); // delegate to native extension class
-    }
-
-    /**
      * Start the API server with explicit extraction config and server config.
      *
      * This function accepts a fully-configured ServerConfig, including CORS origins,
@@ -6150,75 +5318,6 @@ final class Kreuzberg
     }
 
     /**
-     * Start MCP server with HTTP Stream transport.
-     *
-     * Uses rmcp's built-in StreamableHttpService for HTTP/SSE support per MCP spec.
-     *
-     * # Arguments
-     *
-     * * `host` - Host to bind to (e.g., "127.0.0.1" or "0.0.0.0")
-     * * `port` - Port number (e.g., 8001)
-     *
-     * # Example
-     *
-     * ```no_run
-     * use kreuzberg::mcp::start_mcp_server_http;
-     *
-     * #[tokio::main]
-     * async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-     *     start_mcp_server_http("127.0.0.1", 8001).await?;
-     *     Ok(())
-     * }
-     * ```
-     *
-     * @param string $host
-     * @param int $port
-     * @return void
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function startMcpServerHttp(string $host, int $port): void
-    {
-        return \Kreuzberg\KreuzbergApi::startMcpServerHttpAsync($host, $port); // delegate to native extension class
-    }
-
-    /**
-     * Start MCP HTTP server with custom extraction config.
-     *
-     * This variant allows specifying a custom extraction configuration
-     * while using HTTP Stream transport.
-     *
-     * # Arguments
-     *
-     * * `host` - Host to bind to (e.g., "127.0.0.1" or "0.0.0.0")
-     * * `port` - Port number (e.g., 8001)
-     * * `config` - Custom extraction configuration
-     *
-     * # Example
-     *
-     * ```no_run
-     * use kreuzberg::mcp::start_mcp_server_http_with_config;
-     * use kreuzberg::ExtractionConfig;
-     *
-     * #[tokio::main]
-     * async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-     *     let config = ExtractionConfig::default();
-     *     start_mcp_server_http_with_config("127.0.0.1", 8001, config).await?;
-     *     Ok(())
-     * }
-     * ```
-     *
-     * @param string $host
-     * @param int $port
-     * @param ExtractionConfig $config
-     * @return void
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function startMcpServerHttpWithConfig(string $host, int $port, ExtractionConfig $config): void
-    {
-        return \Kreuzberg\KreuzbergApi::startMcpServerHttpWithConfigAsync($host, $port, $config); // delegate to native extension class
-    }
-
-    /**
      * Validates the consistency and correctness of page boundaries.
      *
      * # Validation Rules
@@ -6243,52 +5342,6 @@ final class Kreuzberg
     public static function validatePageBoundaries(array $boundaries): void
     {
         return \Kreuzberg\KreuzbergApi::validatePageBoundaries($boundaries); // delegate to native extension class
-    }
-
-    /**
-     * Calculate which pages a byte range spans.
-     *
-     * # Arguments
-     *
-     * * `byte_start` - Starting byte offset of the chunk
-     * * `byte_end` - Ending byte offset of the chunk
-     * * `boundaries` - Page boundary markers from the document
-     *
-     * # Returns
-     *
-     * A tuple of (first_page, last_page) where page numbers are 1-indexed.
-     * Returns (None, None) if boundaries are empty or chunk doesn't overlap any page.
-     *
-     * # Errors
-     *
-     * Returns `KreuzbergError::Validation` if boundaries are invalid.
-     *
-     * # Examples
-     *
-     * ```rust,ignore
-     * use kreuzberg::chunking::boundaries::calculate_page_range;
-     * use kreuzberg::types::PageBoundary;
-     *
-     * let boundaries = vec![
-     *     PageBoundary { byte_start: 0, byte_end: 100, page_number: 1 },
-     *     PageBoundary { byte_start: 100, byte_end: 200, page_number: 2 },
-     * ];
-     *
-     * let (first, last) = calculate_page_range(50, 150, &boundaries)?;
-     * assert_eq!(first, Some(1));
-     * assert_eq!(last, Some(2));
-     * # Ok::<(), kreuzberg::Result<()>>(())
-     * ```
-     *
-     * @param int $byte_start
-     * @param int $byte_end
-     * @param array<PageBoundary> $boundaries
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function calculatePageRange(int $byte_start, int $byte_end, array $boundaries): string
-    {
-        return \Kreuzberg\KreuzbergApi::calculatePageRange($byte_start, $byte_end, $boundaries); // delegate to native extension class
     }
 
     /**
@@ -6461,7 +5514,7 @@ final class Kreuzberg
      *
      * # fn example() -> kreuzberg::Result<()> {
      * let config = ChunkingConfig::default();
-     * let texts = vec!["First text", "Second text"];
+     * let texts: Vec<String> = vec!["First text".to_string(), "Second text".to_string()];
      * let results = chunk_texts_batch(&texts, &config)?;
      * assert_eq!(results.len(), 2);
      * # Ok(())
@@ -6789,32 +5842,6 @@ final class Kreuzberg
     }
 
     /**
-     * Normalize image DPI based on extraction configuration
-     *
-     * # Arguments
-     * * `rgb_data` - RGB image data as a flat `Vec<u8>` (height * width * 3 bytes, row-major)
-     * * `width` - Image width in pixels
-     * * `height` - Image height in pixels
-     * * `config` - Extraction configuration containing DPI settings
-     * * `current_dpi` - Optional current DPI of the image (defaults to 72 if None)
-     *
-     * # Returns
-     * * `NormalizeResult` containing processed image data and metadata
-     *
-     * @param string $rgb_data
-     * @param int $width
-     * @param int $height
-     * @param ExtractionConfig $config
-     * @param ?float $current_dpi
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function normalizeImageDpi(string $rgb_data, int $width, int $height, ExtractionConfig $config, ?float $current_dpi = null): string
-    {
-        return \Kreuzberg\KreuzbergApi::normalizeImageDpi($rgb_data, $width, $height, $config, $current_dpi); // delegate to native extension class
-    }
-
-    /**
      * Resize an image using fast_image_resize with appropriate algorithm based on scale factor
      *
      * @param string $image
@@ -7087,94 +6114,6 @@ final class Kreuzberg
     public static function extractKeywords(string $text, KeywordConfig $config): array
     {
         return \Kreuzberg\KreuzbergApi::extractKeywords($text, $config); // delegate to native extension class
-    }
-
-    /**
-     * Convert a PaddleOCR TextBlock to a unified OcrElement.
-     *
-     * Preserves all spatial information including:
-     * - 4-point quadrilateral bounding box
-     * - Detection and recognition confidence scores
-     * - Rotation angle and confidence
-     *
-     * # Arguments
-     *
-     * * `block` - PaddleOCR TextBlock containing OCR results
-     * * `page_number` - 1-indexed page number
-     *
-     * # Returns
-     *
-     * A fully populated `OcrElement` with all available metadata.
-     *
-     * # Errors
-     *
-     * Returns an error if:
-     * - `box_points` has fewer than 4 points (malformed detection)
-     * - `angle_index` is outside the valid range (0-3)
-     *
-     * Returns `Ok(None)` if the detection is filtered out due to low `box_score`.
-     *
-     * @param string $block
-     * @param int $page_number
-     * @return ?OcrElement
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function textBlockToElement(string $block, int $page_number): ?OcrElement
-    {
-        return \Kreuzberg\KreuzbergApi::textBlockToElement($block, $page_number); // delegate to native extension class
-    }
-
-    /**
-     * Convert a Tesseract TSV row to a unified OcrElement.
-     *
-     * Preserves:
-     * - Axis-aligned bounding box
-     * - Recognition confidence (Tesseract doesn't have separate detection confidence)
-     * - Hierarchical level information
-     *
-     * # Arguments
-     *
-     * * `row` - Parsed TSV row from Tesseract output
-     *
-     * # Returns
-     *
-     * An `OcrElement` with rectangle geometry and Tesseract metadata.
-     *
-     * @param string $row
-     * @return OcrElement
-     */
-    public static function tsvRowToElement(string $row): OcrElement
-    {
-        return \Kreuzberg\KreuzbergApi::tsvRowToElement($row); // delegate to native extension class
-    }
-
-    /**
-     * Convert a Tesseract iterator WordData to a unified OcrElement with rich metadata.
-     *
-     * Unlike `tsv_row_to_element` which only has text, bbox, and confidence,
-     * this populates font attributes (bold, italic, monospace, pointsize) and
-     * block/paragraph context from the Tesseract layout analysis.
-     *
-     * # Arguments
-     *
-     * * `word` - WordData from the Tesseract result iterator
-     * * `block_type` - Optional block type from Tesseract layout analysis
-     * * `para_info` - Optional paragraph metadata (justification, list item flag)
-     * * `page_number` - 1-indexed page number
-     *
-     * # Returns
-     *
-     * An `OcrElement` at `Word` level with all available font and layout metadata.
-     *
-     * @param string $word
-     * @param ?string $block_type
-     * @param ?string $para_info
-     * @param int $page_number
-     * @return OcrElement
-     */
-    public static function iteratorWordToElement(string $word, ?string $block_type = null, ?string $para_info = null, int $page_number): OcrElement
-    {
-        return \Kreuzberg\KreuzbergApi::iteratorWordToElement($word, $block_type, $para_info, $page_number); // delegate to native extension class
     }
 
     /**
@@ -7532,31 +6471,6 @@ final class Kreuzberg
     }
 
     /**
-     * Build an optimized ORT session from an ONNX model file.
-     *
-     * `thread_budget` controls the number of intra-op threads for this session.
-     * Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
-     * to respect the user's `ConcurrencyConfig`.
-     *
-     * When `accel` is `None` or `Auto`, uses platform defaults:
-     * - macOS: CoreML (Neural Engine / GPU)
-     * - Linux: CUDA (GPU)
-     * - Others: CPU only
-     *
-     * ORT silently falls back to CPU if the requested EP is unavailable.
-     *
-     * @param string $path
-     * @param ?AccelerationConfig $accel
-     * @param int $thread_budget
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function buildSession(string $path, ?AccelerationConfig $accel = null, int $thread_budget): string
-    {
-        return \Kreuzberg\KreuzbergApi::buildSession($path, $accel, $thread_budget); // delegate to native extension class
-    }
-
-    /**
      * Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
      *
      * @param LayoutDetectionConfig $layout_config
@@ -7565,47 +6479,6 @@ final class Kreuzberg
     public static function configFromExtraction(LayoutDetectionConfig $layout_config): string
     {
         return \Kreuzberg\KreuzbergApi::configFromExtraction($layout_config); // delegate to native extension class
-    }
-
-    /**
-     * Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
-     *
-     * Ensures ORT is available, then creates the engine with model download.
-     *
-     * @param LayoutDetectionConfig $layout_config
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function createEngine(LayoutDetectionConfig $layout_config): string
-    {
-        return \Kreuzberg\KreuzbergApi::createEngine($layout_config); // delegate to native extension class
-    }
-
-    /**
-     * Take the cached layout engine, or create a new one if the cache is empty.
-     *
-     * The caller owns the engine for the duration of its work and should
-     * return it via [`return_engine`] when done. This avoids holding the
-     * global mutex during inference.
-     *
-     * @param LayoutDetectionConfig $layout_config
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function takeOrCreateEngine(LayoutDetectionConfig $layout_config): string
-    {
-        return \Kreuzberg\KreuzbergApi::takeOrCreateEngine($layout_config); // delegate to native extension class
-    }
-
-    /**
-     * Return a layout engine to the global cache for reuse by future extractions.
-     *
-     * @param string $engine
-     * @return void
-     */
-    public static function returnEngine(string $engine): void
-    {
-        return \Kreuzberg\KreuzbergApi::returnEngine($engine); // delegate to native extension class
     }
 
     /**
@@ -7717,52 +6590,6 @@ final class Kreuzberg
     }
 
     /**
-     * Extract bundled PDFium library to temporary directory.
-     *
-     * # Behavior
-     *
-     * - Embeds PDFium library using `include_bytes!`
-     * - Extracts to `$TMPDIR/kreuzberg-pdfium/` (non-WASM only)
-     * - Reuses extracted library if size matches
-     * - Sets permissions to 0755 on Unix
-     * - Returns path to extracted library
-     * - **Thread-safe**: Synchronized with a global `Mutex` to prevent concurrent writes
-     *
-     * # Concurrency
-     *
-     * This function is fully thread-safe. When multiple threads call it simultaneously,
-     * only the first thread performs the actual extraction while others wait. This prevents
-     * the "file too short" error that occurs when one thread reads a partially-written file.
-     *
-     * # WASM Handling
-     *
-     * On WASM targets (wasm32-*), this function returns an error with a helpful
-     * message directing users to use WASM-specific initialization. WASM PDFium
-     * is initialized through the runtime, not via file extraction.
-     *
-     * # Errors
-     *
-     * Returns `std::io::Error` if:
-     * - Cannot create extraction directory
-     * - Cannot write library file
-     * - Cannot set file permissions (Unix only)
-     * - Target is WASM (filesystem access not available)
-     *
-     * # Platform-Specific Library Names
-     *
-     * - Linux: `libpdfium.so`
-     * - macOS: `libpdfium.dylib`
-     * - Windows: `pdfium.dll`
-     *
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractBundledPdfium(): string
-    {
-        return \Kreuzberg\KreuzbergApi::extractBundledPdfium(); // delegate to native extension class
-    }
-
-    /**
      * Extract embedded file descriptors from a PDF document loaded via lopdf.
      *
      * Walks the `/Names` → `/EmbeddedFiles` name tree in the catalog.
@@ -7851,21 +6678,6 @@ final class Kreuzberg
     public static function cachedFontCount(): int
     {
         return \Kreuzberg\KreuzbergApi::cachedFontCount(); // delegate to native extension class
-    }
-
-    /**
-     * Clear the font cache (for testing purposes).
-     *
-     * # Panics
-     *
-     * Panics if the cache lock is poisoned, which should only happen in test scenarios
-     * with deliberate panic injection.
-     *
-     * @return void
-     */
-    public static function clearFontCache(): void
-    {
-        return \Kreuzberg\KreuzbergApi::clearFontCache(); // delegate to native extension class
     }
 
     /**
@@ -8187,23 +6999,6 @@ final class Kreuzberg
     }
 
     /**
-     * Re-extract images that have unusable formats (`"raw"`, `"ccitt"`, `"jbig2"`) by
-     * rendering them through pdfium's bitmap pipeline, which handles all PDF filter
-     * chains internally.
-     *
-     * Returns the number of images successfully re-extracted.
-     *
-     * @param string $pdf_bytes
-     * @param array<PdfImage> $images
-     * @return int
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function reextractRawImagesViaPdfium(string $pdf_bytes, array $images): int
-    {
-        return \Kreuzberg\KreuzbergApi::reextractRawImagesViaPdfium($pdf_bytes, $images); // delegate to native extension class
-    }
-
-    /**
      * Run layout detection on all pages of a PDF document.
      *
      * Under the hood, this uses batched layout detection to prevent holding too many
@@ -8276,37 +7071,6 @@ final class Kreuzberg
     public static function extractMetadataWithPasswords(string $pdf_bytes, array $passwords): string
     {
         return \Kreuzberg\KreuzbergApi::extractMetadataWithPasswords($pdf_bytes, $passwords); // delegate to native extension class
-    }
-
-    /**
-     * Extract complete PDF metadata from a document.
-     *
-     * Extracts common fields (title, subject, authors, keywords, dates, creator),
-     * PDF-specific metadata, and optionally builds a PageStructure with boundaries.
-     *
-     * # Arguments
-     *
-     * * `document` - The PDF document to extract metadata from
-     * * `page_boundaries` - Optional vector of PageBoundary entries for building PageStructure.
-     *   If provided, a PageStructure will be built with these boundaries.
-     * * `content` - Optional extracted text content, used for blank page detection.
-     *   If provided, `PageInfo.is_blank` will be populated based on text content analysis.
-     *   If `None`, `is_blank` will be `None` for all pages.
-     *
-     * # Returns
-     *
-     * Returns a `PdfExtractionMetadata` struct containing all extracted metadata,
-     * including page structure if boundaries were provided.
-     *
-     * @param string $document
-     * @param ?array<PageBoundary> $page_boundaries
-     * @param ?string $content
-     * @return PdfExtractionMetadata
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractMetadataFromDocument(string $document, ?array $page_boundaries = null, ?string $content = null): PdfExtractionMetadata
-    {
-        return \Kreuzberg\KreuzbergApi::extractMetadataFromDocument($document, $page_boundaries, $content); // delegate to native extension class
     }
 
     /**
@@ -8553,80 +7317,6 @@ final class Kreuzberg
     public static function extractTextFromPdfWithPasswords(string $pdf_bytes, array $passwords): string
     {
         return \Kreuzberg\KreuzbergApi::extractTextFromPdfWithPasswords($pdf_bytes, $passwords); // delegate to native extension class
-    }
-
-    /**
-     * Extract text and metadata from PDF document in a single pass.
-     *
-     * This is an optimized function that extracts both text and metadata in one pass
-     * through the document, avoiding redundant document parsing. It combines the
-     * functionality of `extract_text_from_pdf_document` and
-     * `extract_metadata_from_document` into a single unified operation.
-     *
-     * # Arguments
-     *
-     * * `document` - The PDF document to extract from
-     * * `extraction_config` - Optional extraction configuration for hierarchy and page tracking
-     *
-     * # Returns
-     *
-     * A tuple containing:
-     * - The extracted text content (String)
-     * - Optional page boundaries when page tracking is enabled (Vec<PageBoundary>)
-     * - Optional per-page content when extract_pages is enabled (Vec<PageContent>)
-     * - Complete extraction metadata (PdfExtractionMetadata)
-     *
-     * # Performance
-     *
-     * This function is optimized for single-pass extraction. It performs all document
-     * scanning in one iteration, avoiding redundant pdfium operations compared to
-     * calling text and metadata extraction separately.
-     *
-     * @param string $document
-     * @param ?ExtractionConfig $extraction_config
-     * @return PdfUnifiedExtractionResult
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractTextAndMetadataFromPdfDocument(string $document, ?ExtractionConfig $extraction_config = null): PdfUnifiedExtractionResult
-    {
-        return \Kreuzberg\KreuzbergApi::extractTextAndMetadataFromPdfDocument($document, $extraction_config); // delegate to native extension class
-    }
-
-    /**
-     * Extract text from PDF document with optional page boundary tracking.
-     *
-     * # Arguments
-     *
-     * * `document` - The PDF document to extract text from
-     * * `page_config` - Optional page configuration for boundary tracking and page markers
-     * * `extraction_config` - Optional extraction configuration for hierarchy detection
-     *
-     * # Returns
-     *
-     * A tuple containing:
-     * - The extracted text content (String)
-     * - Optional page boundaries when page tracking is enabled (Vec<PageBoundary>)
-     * - Optional per-page content when extract_pages is enabled (Vec<PageContent>)
-     *
-     * # Implementation Details
-     *
-     * Uses lazy page-by-page iteration to reduce memory footprint. Pages are processed
-     * one at a time and released after extraction, rather than accumulating all pages
-     * in memory. This approach saves 40-50MB for large documents while improving
-     * performance by 15-25% through reduced upfront work.
-     *
-     * When page_config is None, uses fast path with minimal overhead.
-     * When page_config is Some, tracks byte offsets using .len() for O(1) performance (UTF-8 valid boundaries).
-     *
-     * @param string $document
-     * @param ?PageConfig $page_config
-     * @param ?ExtractionConfig $extraction_config
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractTextFromPdfDocument(string $document, ?PageConfig $page_config = null, ?ExtractionConfig $extraction_config = null): string
-    {
-        return \Kreuzberg\KreuzbergApi::extractTextFromPdfDocument($document, $page_config, $extraction_config); // delegate to native extension class
     }
 
     /**

@@ -33,6 +33,6 @@ public sealed class DjotImage
     /// Element attributes
     /// </summary>
     [JsonPropertyName("attributes")]
-    public Attributes? Attributes { get; set; } = null;
+    public string? Attributes { get; set; } = null;
 
 }

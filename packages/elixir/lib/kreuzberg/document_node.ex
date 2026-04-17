@@ -2,7 +2,7 @@
 defmodule Kreuzberg.DocumentNode do
   @moduledoc "A single node in the document tree."
 
-  defstruct id: nil,
+  defstruct id: "",
             content: :title,
             parent: nil,
             children: [],

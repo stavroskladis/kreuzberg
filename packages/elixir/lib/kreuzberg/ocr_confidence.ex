@@ -2,6 +2,6 @@
 defmodule Kreuzberg.OcrConfidence do
   @moduledoc "Confidence scores for an OCR element."
 
-  defstruct detection: nil,
+  defstruct detection: 0.0,
             recognition: 0.0
 end
