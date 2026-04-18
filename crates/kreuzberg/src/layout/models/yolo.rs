@@ -185,7 +185,7 @@ impl YoloModel {
                 detections.push(LayoutDetection::new(class, best_score, BBox::new(x1, y1, x2, y2)));
             }
             // Raw format needs NMS.
-            nms::greedy_nms(&mut detections, NMS_IOU_THRESHOLD);
+            detections = nms::greedy_nms(detections, NMS_IOU_THRESHOLD);
         }
 
         detections = LayoutDetection::sort_by_confidence_desc(detections);
@@ -313,7 +313,7 @@ impl YoloModel {
             detections.push(LayoutDetection::new(class, confidence, BBox::new(x1, y1, x2, y2)));
         }
 
-        nms::greedy_nms(&mut detections, NMS_IOU_THRESHOLD);
+        detections = nms::greedy_nms(detections, NMS_IOU_THRESHOLD);
 
         detections = LayoutDetection::sort_by_confidence_desc(detections);
 

@@ -6266,9 +6266,9 @@ class KreuzbergApi
     /**
      * @param array<\Kreuzberg\Chunk> $chunks
      * @param \Kreuzberg\EmbeddingConfig $config
-     * @return void
+     * @return array<\Kreuzberg\Chunk>
      */
-    public static function generateEmbeddingsForChunks(array $chunks, \Kreuzberg\EmbeddingConfig $config): void { }
+    public static function generateEmbeddingsForChunks(array $chunks, \Kreuzberg\EmbeddingConfig $config): array { }
     public static function calculateSmartDpi(float $page_width, float $page_height, int $target_dpi, int $max_dimension, float $max_memory_mb): int { }
     public static function calculateOptimalDpi(float $page_width, float $page_height, int $target_dpi, int $max_dimension, int $min_dpi, int $max_dpi): int { }
     public static function resizeImage(string $image, int $new_width, int $new_height, float $scale_factor): string { }
@@ -6320,9 +6320,9 @@ class KreuzbergApi
     /**
      * @param array<\Kreuzberg\LayoutDetection> $detections
      * @param float $iou_threshold
-     * @return void
+     * @return array<\Kreuzberg\LayoutDetection>
      */
-    public static function greedyNms(array $detections, float $iou_threshold): void { }
+    public static function greedyNms(array $detections, float $iou_threshold): array { }
     public static function preprocessImagenet(string $img, int $target_size): string { }
     public static function preprocessImagenetLetterbox(string $img, int $target_size): string { }
     public static function preprocessRescale(string $img, int $target_size): string { }

@@ -16050,24 +16050,24 @@ int32_t kreuzberg_download_model(const KREUZBERGEmbeddingModelType *model_type,
 /**
  * Generate embeddings for text chunks using the specified configuration.
  *
- * This function modifies chunks in-place, populating their `embedding` field
- * with generated embedding vectors. It uses batch processing for efficiency.
+ * This function populates the `embedding` field of each chunk with a generated
+ * embedding vector. It uses batch processing for efficiency.
  *
  * # Arguments
  *
- * * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+ * * `chunks` - Vector of chunks to generate embeddings for (takes ownership)
  * * `config` - Embedding configuration specifying model and parameters
  *
  * # Returns
  *
- * Returns `Ok(())` if embeddings were generated successfully, or an error if
+ * Returns the chunks with their `embedding` fields populated, or an error if
  * model initialization or embedding generation fails.
  * # Safety
  * Caller must ensure all pointer arguments are valid or null.
  * Returned pointers must be freed with the appropriate free function.
  */
-int32_t kreuzberg_generate_embeddings_for_chunks(const char *chunks,
-                                                 const KREUZBERGEmbeddingConfig *config);
+char *kreuzberg_generate_embeddings_for_chunks(const char *chunks,
+                                               const KREUZBERGEmbeddingConfig *config);
 
 /**
  * Calculate smart DPI based on page dimensions, memory constraints, and target DPI
@@ -16579,8 +16579,8 @@ char *kreuzberg_apply_heuristics(const char *detections,
  * Caller must ensure all pointer arguments are valid or null.
  * Returned pointers must be freed with the appropriate free function.
  */
-void kreuzberg_greedy_nms(const char *detections,
-                          float iou_threshold);
+char *kreuzberg_greedy_nms(const char *detections,
+                           float iou_threshold);
 
 /**
  * Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).

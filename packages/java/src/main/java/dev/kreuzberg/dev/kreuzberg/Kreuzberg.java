@@ -4807,23 +4807,23 @@ public final class Kreuzberg {
     /**
      * Generate embeddings for text chunks using the specified configuration.
      * 
-     * This function modifies chunks in-place, populating their `embedding` field
-     * with generated embedding vectors. It uses batch processing for efficiency.
+     * This function populates the `embedding` field of each chunk with a generated
+     * embedding vector. It uses batch processing for efficiency.
      * 
      * # Arguments
      * 
-     * * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+     * * `chunks` - Vector of chunks to generate embeddings for (takes ownership)
      * * `config` - Embedding configuration specifying model and parameters
      * 
      * # Returns
      * 
-     * Returns `Ok(())` if embeddings were generated successfully, or an error if
+     * Returns the chunks with their `embedding` fields populated, or an error if
      * model initialization or embedding generation fails.
      */
-    public static void generateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config) throws KreuzbergRsException {
+    public static List<Chunk> generateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(chunks, "chunks must not be null");
         java.util.Objects.requireNonNull(config, "config must not be null");
-        KreuzbergRs.generateEmbeddingsForChunks(chunks, config);
+        return KreuzbergRs.generateEmbeddingsForChunks(chunks, config);
     }
 
     /**
@@ -5335,10 +5335,10 @@ public final class Kreuzberg {
      * 
      * This is required for YOLO models. RT-DETR is NMS-free.
      */
-    public static void greedyNms(List<LayoutDetection> detections, float iouThreshold) throws KreuzbergRsException {
+    public static List<LayoutDetection> greedyNms(List<LayoutDetection> detections, float iouThreshold) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(detections, "detections must not be null");
         java.util.Objects.requireNonNull(iouThreshold, "iouThreshold must not be null");
-        KreuzbergRs.greedyNms(detections, iouThreshold);
+        return KreuzbergRs.greedyNms(detections, iouThreshold);
     }
 
     /**

@@ -5701,25 +5701,25 @@ final class Kreuzberg
     /**
      * Generate embeddings for text chunks using the specified configuration.
      *
-     * This function modifies chunks in-place, populating their `embedding` field
-     * with generated embedding vectors. It uses batch processing for efficiency.
+     * This function populates the `embedding` field of each chunk with a generated
+     * embedding vector. It uses batch processing for efficiency.
      *
      * # Arguments
      *
-     * * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+     * * `chunks` - Vector of chunks to generate embeddings for (takes ownership)
      * * `config` - Embedding configuration specifying model and parameters
      *
      * # Returns
      *
-     * Returns `Ok(())` if embeddings were generated successfully, or an error if
+     * Returns the chunks with their `embedding` fields populated, or an error if
      * model initialization or embedding generation fails.
      *
      * @param array<Chunk> $chunks
      * @param EmbeddingConfig $config
-     * @return void
+     * @return array<Chunk>
      * @throws \Kreuzberg\KreuzbergException
      */
-    public static function generateEmbeddingsForChunks(array $chunks, EmbeddingConfig $config): void
+    public static function generateEmbeddingsForChunks(array $chunks, EmbeddingConfig $config): array
     {
         return \Kreuzberg\KreuzbergApi::generateEmbeddingsForChunks($chunks, $config); // delegate to native extension class
     }
@@ -6304,9 +6304,9 @@ final class Kreuzberg
      *
      * @param array<LayoutDetection> $detections
      * @param float $iou_threshold
-     * @return void
+     * @return array<LayoutDetection>
      */
-    public static function greedyNms(array $detections, float $iou_threshold): void
+    public static function greedyNms(array $detections, float $iou_threshold): array
     {
         return \Kreuzberg\KreuzbergApi::greedyNms($detections, $iou_threshold); // delegate to native extension class
     }

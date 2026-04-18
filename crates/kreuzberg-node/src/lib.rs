@@ -5154,10 +5154,11 @@ pub fn download_model(model_type: JsEmbeddingModelType, cache_dir: Option<String
 
 #[allow(clippy::missing_errors_doc)]
 #[napi(js_name = "generateEmbeddingsForChunks")]
-pub fn generate_embeddings_for_chunks(chunks: Vec<JsChunk>, config: JsEmbeddingConfig) -> Result<()> {
+pub fn generate_embeddings_for_chunks(chunks: Vec<JsChunk>, config: JsEmbeddingConfig) -> Result<Vec<JsChunk>> {
     let chunks_core: Vec<_> = chunks.into_iter().map(Into::into).collect();
     let config_core: kreuzberg::EmbeddingConfig = config.into();
-    kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks_core, &config_core)
+    kreuzberg::embeddings::generate_embeddings_for_chunks(chunks_core, &config_core)
+        .map(|val| val.into_iter().map(Into::into).collect())
         .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
 }
 
@@ -5350,9 +5351,12 @@ pub fn apply_heuristics(
 }
 
 #[napi(js_name = "greedyNms")]
-pub fn greedy_nms(detections: Vec<JsLayoutDetection>, iou_threshold: f64) -> () {
+pub fn greedy_nms(detections: Vec<JsLayoutDetection>, iou_threshold: f64) -> Vec<JsLayoutDetection> {
     let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
-    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections_core, iou_threshold as f32)
+    kreuzberg::layout::postprocessing::nms::greedy_nms(detections_core, iou_threshold as f32)
+        .into_iter()
+        .map(Into::into)
+        .collect()
 }
 
 #[napi(js_name = "preprocessImagenet")]

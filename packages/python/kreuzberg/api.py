@@ -1879,7 +1879,7 @@ def download_model(model_type: EmbeddingModelType, cache_dir: str | None = None)
     return _rust.download_model(model_type, cache_dir)
 
 
-def generate_embeddings_for_chunks(chunks: list[Chunk], config: EmbeddingConfig) -> None:
+def generate_embeddings_for_chunks(chunks: list[Chunk], config: EmbeddingConfig) -> list[_rust.Chunk]:
     """Generate embeddings for text chunks using the specified configuration."""
     _rust_config = _to_rust_embedding_config(config)
     return _rust.generate_embeddings_for_chunks(chunks, _rust_config)
@@ -1996,7 +1996,7 @@ def apply_heuristics(detections: list[LayoutDetection], page_width: float, page_
     return _rust.apply_heuristics(detections, page_width, page_height)
 
 
-def greedy_nms(detections: list[LayoutDetection], iou_threshold: float) -> None:
+def greedy_nms(detections: list[LayoutDetection], iou_threshold: float) -> list[_rust.LayoutDetection]:
     """Standard greedy Non-Maximum Suppression."""
     return _rust.greedy_nms(detections, iou_threshold)
 

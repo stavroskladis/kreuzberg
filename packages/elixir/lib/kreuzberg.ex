@@ -1707,7 +1707,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Generate embeddings for text chunks using the specified configuration."
-  @spec generate_embeddings_for_chunks([map()], String.t() | nil) :: {:ok, nil} | {:error, String.t()}
+  @spec generate_embeddings_for_chunks([map()], String.t() | nil) :: {:ok, [map()]} | {:error, String.t()}
   def generate_embeddings_for_chunks(chunks, config) do
     Kreuzberg.Native.generate_embeddings_for_chunks(chunks, config)
   end
@@ -1851,7 +1851,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Standard greedy Non-Maximum Suppression."
-  @spec greedy_nms([map()], float()) :: nil
+  @spec greedy_nms([map()], float()) :: [map()]
   def greedy_nms(detections, iou_threshold) do
     Kreuzberg.Native.greedy_nms(detections, iou_threshold)
   end

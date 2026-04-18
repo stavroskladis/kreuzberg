@@ -149,14 +149,20 @@ pub(super) fn execute_chunking(result: &mut ExtractionResult, config: &Extractio
             let resolved_config = chunking_config.resolve_preset();
             #[cfg(feature = "embeddings")]
             if let Some(ref embedding_config) = resolved_config.embedding
-                && let Some(ref mut chunks) = result.chunks
-                && let Err(e) = crate::embeddings::generate_embeddings_for_chunks(chunks, embedding_config)
+                && let Some(chunks) = result.chunks.take()
             {
-                tracing::warn!("Embedding generation failed: {e}. Check that ONNX Runtime is installed.");
-                result.processing_warnings.push(ProcessingWarning {
-                    source: Cow::Borrowed("embedding"),
-                    message: Cow::Owned(e.to_string()),
-                });
+                match crate::embeddings::generate_embeddings_for_chunks(chunks, embedding_config) {
+                    Ok(chunks_with_embeddings) => result.chunks = Some(chunks_with_embeddings),
+                    Err(e) => {
+                        // Chunks were consumed; re-create without embeddings so downstream
+                        // callers still receive the text content.
+                        tracing::warn!("Embedding generation failed: {e}. Check that ONNX Runtime is installed.");
+                        result.processing_warnings.push(ProcessingWarning {
+                            source: Cow::Borrowed("embedding"),
+                            message: Cow::Owned(e.to_string()),
+                        });
+                    }
+                }
             }
 
             #[cfg(not(feature = "embeddings"))]
@@ -204,14 +210,18 @@ pub(super) fn execute_chunking(result: &mut ExtractionResult, config: &Extractio
 
                 #[cfg(feature = "embeddings")]
                 if let Some(ref embedding_config) = chunking_config.embedding
-                    && let Some(ref mut chunks) = result.chunks
-                    && let Err(e) = crate::embeddings::generate_embeddings_for_chunks(chunks, embedding_config)
+                    && let Some(chunks) = result.chunks.take()
                 {
-                    tracing::warn!("Embedding generation failed: {e}. Check that ONNX Runtime is installed.");
-                    result.processing_warnings.push(ProcessingWarning {
-                        source: Cow::Borrowed("embedding"),
-                        message: Cow::Owned(e.to_string()),
-                    });
+                    match crate::embeddings::generate_embeddings_for_chunks(chunks, embedding_config) {
+                        Ok(chunks_with_embeddings) => result.chunks = Some(chunks_with_embeddings),
+                        Err(e) => {
+                            tracing::warn!("Embedding generation failed: {e}. Check that ONNX Runtime is installed.");
+                            result.processing_warnings.push(ProcessingWarning {
+                                source: Cow::Borrowed("embedding"),
+                                message: Cow::Owned(e.to_string()),
+                            });
+                        }
+                    }
                 }
 
                 #[cfg(not(feature = "embeddings"))]

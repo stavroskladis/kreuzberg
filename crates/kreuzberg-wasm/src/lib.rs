@@ -2252,7 +2252,6 @@ pub struct WasmChunkingConfig {
     trim: bool,
     chunker_type: WasmChunkerType,
     preset: Option<String>,
-    sizing: WasmChunkSizing,
     prepend_heading_context: bool,
 }
 
@@ -2264,7 +2263,6 @@ impl WasmChunkingConfig {
         overlap: Option<usize>,
         trim: Option<bool>,
         chunker_type: Option<WasmChunkerType>,
-        sizing: Option<WasmChunkSizing>,
         prepend_heading_context: Option<bool>,
         preset: Option<String>,
     ) -> WasmChunkingConfig {
@@ -2274,7 +2272,6 @@ impl WasmChunkingConfig {
             trim: trim.unwrap_or(true),
             chunker_type: chunker_type.unwrap_or_default(),
             preset,
-            sizing: sizing.unwrap_or_default(),
             prepend_heading_context: prepend_heading_context.unwrap_or(false),
         }
     }
@@ -2329,16 +2326,6 @@ impl WasmChunkingConfig {
         self.preset = value;
     }
 
-    #[wasm_bindgen(getter)]
-    pub fn sizing(&self) -> WasmChunkSizing {
-        self.sizing
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_sizing(&mut self, value: WasmChunkSizing) {
-        self.sizing = value;
-    }
-
     #[wasm_bindgen(getter, js_name = "prependHeadingContext")]
     pub fn prepend_heading_context(&self) -> bool {
         self.prepend_heading_context
@@ -2354,14 +2341,6 @@ impl WasmChunkingConfig {
         let chunker_type_core: kreuzberg::ChunkerType = chunker_type.into();
         kreuzberg::ChunkingConfig::from(self.clone())
             .with_chunker_type(chunker_type_core)
-            .into()
-    }
-
-    #[wasm_bindgen(js_name = "withSizing")]
-    pub fn with_sizing(&self, sizing: WasmChunkSizing) -> WasmChunkingConfig {
-        let sizing_core: kreuzberg::ChunkSizing = sizing.into();
-        kreuzberg::ChunkingConfig::from(self.clone())
-            .with_sizing(sizing_core)
             .into()
     }
 
@@ -11886,86 +11865,6 @@ impl WasmExtractBytesParams {
 
 #[derive(Clone, Default)]
 #[wasm_bindgen]
-pub struct WasmBatchExtractFilesParams {
-    paths: Vec<String>,
-    config: Option<JsValue>,
-    pdf_password: Option<String>,
-    file_configs: Option<Vec<Option<JsValue>>>,
-    response_format: Option<String>,
-}
-
-#[wasm_bindgen]
-impl WasmBatchExtractFilesParams {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        paths: Vec<String>,
-        config: Option<JsValue>,
-        pdf_password: Option<String>,
-        file_configs: Option<Vec<Option<JsValue>>>,
-        response_format: Option<String>,
-    ) -> WasmBatchExtractFilesParams {
-        WasmBatchExtractFilesParams {
-            paths,
-            config,
-            pdf_password,
-            file_configs,
-            response_format,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn paths(&self) -> Vec<String> {
-        self.paths.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_paths(&mut self, value: Vec<String>) {
-        self.paths = value;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn config(&self) -> Option<JsValue> {
-        self.config.clone()
-    }
-
-    #[wasm_bindgen(setter)]
-    pub fn set_config(&mut self, value: Option<JsValue>) {
-        self.config = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "pdfPassword")]
-    pub fn pdf_password(&self) -> Option<String> {
-        self.pdf_password.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "pdfPassword")]
-    pub fn set_pdf_password(&mut self, value: Option<String>) {
-        self.pdf_password = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "fileConfigs")]
-    pub fn file_configs(&self) -> Option<Vec<Option<JsValue>>> {
-        self.file_configs.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "fileConfigs")]
-    pub fn set_file_configs(&mut self, value: Option<Vec<Option<JsValue>>>) {
-        self.file_configs = value;
-    }
-
-    #[wasm_bindgen(getter, js_name = "responseFormat")]
-    pub fn response_format(&self) -> Option<String> {
-        self.response_format.clone()
-    }
-
-    #[wasm_bindgen(setter, js_name = "responseFormat")]
-    pub fn set_response_format(&mut self, value: Option<String>) {
-        self.response_format = value;
-    }
-}
-
-#[derive(Clone, Default)]
-#[wasm_bindgen]
 pub struct WasmDetectMimeTypeParams {
     path: String,
     use_content: bool,
@@ -13222,20 +13121,6 @@ pub enum WasmChunkerType {
 impl Default for WasmChunkerType {
     fn default() -> Self {
         Self::Text
-    }
-}
-
-#[wasm_bindgen]
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub enum WasmChunkSizing {
-    Characters = 0,
-    Tokenizer = 1,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for WasmChunkSizing {
-    fn default() -> Self {
-        Self::Characters
     }
 }
 
@@ -14503,40 +14388,6 @@ pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String, JsValue> 
     Err(JsValue::from_str("Not implemented: extract_text_with_page_breaks"))
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "detectPageBreaksFromDocx")]
-pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<WasmPageBoundary>>, JsValue> {
-    let result = kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "detectTablePageNumbers")]
-pub fn detect_table_page_numbers(bytes: Vec<u8>) -> Result<Vec<usize>, JsValue> {
-    let result = kreuzberg::extraction::docx::detect_table_page_numbers(&bytes)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
-#[wasm_bindgen(js_name = "extractOoxmlEmbeddedObjects")]
-pub async fn extract_ooxml_embedded_objects(
-    zip_bytes: Vec<u8>,
-    embeddings_prefix: String,
-    source_label: String,
-    config: WasmExtractionConfig,
-) -> String {
-    let config_core: kreuzberg::ExtractionConfig = config.into();
-    let result = kreuzberg::extraction::ooxml_embedded::extract_ooxml_embedded_objects(
-        &zip_bytes,
-        &embeddings_prefix,
-        &source_label,
-        &config_core,
-    )
-    .await;
-    result
-}
-
 #[wasm_bindgen(js_name = "detectImageFormat")]
 pub fn detect_image_format(data: Vec<u8>) -> String {
     String::from("[unimplemented: detect_image_format]")
@@ -14580,21 +14431,6 @@ pub fn parse_xml(xml_bytes: Vec<u8>, preserve_whitespace: bool) -> Result<WasmXm
     let result = kreuzberg::extraction::parse_xml(&xml_bytes, preserve_whitespace)
         .map_err(|e| JsValue::from_str(&e.to_string()))?;
     Ok(result.into())
-}
-
-#[wasm_bindgen(js_name = "cellsToText")]
-pub fn cells_to_text(cells: JsValue) -> String {
-    kreuzberg::extraction::cells_to_text(&cells)
-}
-
-#[wasm_bindgen(js_name = "cellsToMarkdown")]
-pub fn cells_to_markdown(cells: JsValue) -> String {
-    kreuzberg::extraction::cells_to_markdown(&cells)
-}
-
-#[wasm_bindgen(js_name = "parseJotdownAttributes")]
-pub fn parse_jotdown_attributes(attrs: String) -> String {
-    String::from("[unimplemented: parse_jotdown_attributes]")
 }
 
 #[wasm_bindgen(js_name = "renderAttributes")]
@@ -14984,11 +14820,6 @@ pub fn is_valid_utf8(bytes: Vec<u8>) -> bool {
     kreuzberg::text::utf8_validation::is_valid_utf8(&bytes)
 }
 
-#[wasm_bindgen(js_name = "calculateQualityScore")]
-pub fn calculate_quality_score(text: String, metadata: Option<String>) -> f64 {
-    0
-}
-
 #[wasm_bindgen(js_name = "cleanExtractedText")]
 pub fn clean_extracted_text(text: String) -> String {
     kreuzberg::text::clean_extracted_text(&text)
@@ -15169,16 +15000,6 @@ pub fn detect_columns(words: Vec<String>, column_threshold: u32) -> Vec<u32> {
 #[wasm_bindgen(js_name = "detectRows")]
 pub fn detect_rows(words: Vec<String>, row_threshold_ratio: f64) -> Vec<u32> {
     Vec::new()
-}
-
-#[wasm_bindgen(js_name = "reconstructTable")]
-pub fn reconstruct_table(words: Vec<String>, column_threshold: u32, row_threshold_ratio: f64) -> JsValue {
-    Vec::new()
-}
-
-#[wasm_bindgen(js_name = "tableToMarkdown")]
-pub fn table_to_markdown(table: JsValue) -> String {
-    kreuzberg::table_core::table_to_markdown(&table)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -15378,16 +15199,6 @@ pub fn get_preset(name: String) -> Option<String> {
 }
 
 #[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "generateEmbeddingsForChunks")]
-pub fn generate_embeddings_for_chunks(chunks: Vec<WasmChunk>, config: WasmEmbeddingConfig) -> Result<(), JsValue> {
-    let chunks_core: Vec<_> = chunks.into_iter().map(Into::into).collect();
-    let config_core: kreuzberg::EmbeddingConfig = config.into();
-    let result = kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks_core, &config_core)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
-#[allow(clippy::missing_errors_doc)]
 #[wasm_bindgen(js_name = "resizeImage")]
 pub fn resize_image(image: String, new_width: u32, new_height: u32, scale_factor: f64) -> Result<String, JsValue> {
     Err(JsValue::from_str("Not implemented: resize_image"))
@@ -15447,30 +15258,6 @@ pub fn parse_hocr_to_internal_document(hocr_html: String) -> String {
 #[wasm_bindgen(js_name = "extractWordsFromTsv")]
 pub fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> Result<Vec<String>, JsValue> {
     Err(JsValue::from_str("Not implemented: extract_words_from_tsv"))
-}
-
-#[wasm_bindgen(js_name = "buildCellGrid")]
-pub fn build_cell_grid(result: String, table_bbox: Option<String>) -> JsValue {
-    Vec::new()
-}
-
-#[wasm_bindgen(js_name = "applyHeuristics")]
-pub fn apply_heuristics(
-    detections: Vec<WasmLayoutDetection>,
-    page_width: f32,
-    page_height: f32,
-) -> Vec<WasmLayoutDetection> {
-    let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
-    kreuzberg::layout::postprocessing::heuristics::apply_heuristics(detections_core, page_width, page_height)
-        .into_iter()
-        .map(Into::into)
-        .collect()
-}
-
-#[wasm_bindgen(js_name = "greedyNms")]
-pub fn greedy_nms(detections: Vec<WasmLayoutDetection>, iou_threshold: f32) -> () {
-    let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
-    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections_core, iou_threshold)
 }
 
 #[wasm_bindgen(js_name = "preprocessImagenet")]
@@ -15536,13 +15323,6 @@ pub fn extract_bookmarks(document: String) -> Vec<WasmUri> {
 #[wasm_bindgen(js_name = "extractEmbeddedFiles")]
 pub fn extract_embedded_files(document: String) -> Vec<WasmEmbeddedFile> {
     Vec::new()
-}
-
-#[wasm_bindgen(js_name = "extractAndProcessEmbeddedFiles")]
-pub async fn extract_and_process_embedded_files(pdf_bytes: Vec<u8>, config: WasmExtractionConfig) -> String {
-    let config_core: kreuzberg::ExtractionConfig = config.into();
-    let result = kreuzberg::pdf::embedded_files::extract_and_process_embedded_files(&pdf_bytes, &config_core).await;
-    result
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -15698,16 +15478,6 @@ pub fn split_segment_to_words(seg: String, page_height: f32) -> Vec<String> {
 #[wasm_bindgen(js_name = "segmentsToWords")]
 pub fn segments_to_words(segments: Vec<String>, page_height: f32) -> Vec<String> {
     Vec::new()
-}
-
-#[wasm_bindgen(js_name = "postProcessTable")]
-pub fn post_process_table(table: JsValue, layout_guided: bool, allow_single_column: bool) -> Option<JsValue> {
-    kreuzberg::pdf::table_reconstruct::post_process_table(table, layout_guided, allow_single_column)
-}
-
-#[wasm_bindgen(js_name = "isWellFormedTable")]
-pub fn is_well_formed_table(grid: JsValue) -> bool {
-    kreuzberg::pdf::table_reconstruct::is_well_formed_table(&grid)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -16326,7 +16096,7 @@ impl From<WasmChunkingConfig> for kreuzberg::ChunkingConfig {
             chunker_type: val.chunker_type.into(),
             embedding: Default::default(),
             preset: val.preset,
-            sizing: val.sizing.into(),
+            sizing: Default::default(),
             prepend_heading_context: val.prepend_heading_context,
         }
     }
@@ -16340,7 +16110,6 @@ impl From<kreuzberg::ChunkingConfig> for WasmChunkingConfig {
             trim: val.trim,
             chunker_type: val.chunker_type.into(),
             preset: val.preset,
-            sizing: val.sizing.into(),
             prepend_heading_context: val.prepend_heading_context,
         }
     }
@@ -18479,18 +18248,6 @@ impl From<kreuzberg::mcp::ExtractBytesParams> for WasmExtractBytesParams {
     }
 }
 
-impl From<kreuzberg::mcp::BatchExtractFilesParams> for WasmBatchExtractFilesParams {
-    fn from(val: kreuzberg::mcp::BatchExtractFilesParams) -> Self {
-        Self {
-            paths: val.paths,
-            config: val.config.as_ref().and_then(|v| serde_wasm_bindgen::to_value(v).ok()),
-            pdf_password: val.pdf_password,
-            file_configs: val.file_configs,
-            response_format: val.response_format,
-        }
-    }
-}
-
 impl From<kreuzberg::mcp::DetectMimeTypeParams> for WasmDetectMimeTypeParams {
     fn from(val: kreuzberg::mcp::DetectMimeTypeParams) -> Self {
         Self {
@@ -18914,27 +18671,6 @@ impl From<kreuzberg::ChunkerType> for WasmChunkerType {
             kreuzberg::ChunkerType::Text => Self::Text,
             kreuzberg::ChunkerType::Markdown => Self::Markdown,
             kreuzberg::ChunkerType::Yaml => Self::Yaml,
-        }
-    }
-}
-
-impl From<WasmChunkSizing> for kreuzberg::ChunkSizing {
-    fn from(val: WasmChunkSizing) -> Self {
-        match val {
-            WasmChunkSizing::Characters => Self::Characters,
-            WasmChunkSizing::Tokenizer => Self::Tokenizer {
-                model: Default::default(),
-                cache_dir: Default::default(),
-            },
-        }
-    }
-}
-
-impl From<kreuzberg::ChunkSizing> for WasmChunkSizing {
-    fn from(val: kreuzberg::ChunkSizing) -> Self {
-        match val {
-            kreuzberg::ChunkSizing::Characters => Self::Characters,
-            kreuzberg::ChunkSizing::Tokenizer { .. } => Self::Tokenizer,
         }
     }
 }

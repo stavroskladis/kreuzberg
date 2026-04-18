@@ -664,35 +664,34 @@ fn normalize_embeddings(embeddings: &mut [Vec<f32>]) {
 
 /// Generate embeddings for text chunks using the specified configuration.
 ///
-/// This function modifies chunks in-place, populating their `embedding` field
-/// with generated embedding vectors. It uses batch processing for efficiency.
+/// This function populates the `embedding` field of each chunk with a generated
+/// embedding vector. It uses batch processing for efficiency.
 ///
 /// # Arguments
 ///
-/// * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+/// * `chunks` - Vector of chunks to generate embeddings for (takes ownership)
 /// * `config` - Embedding configuration specifying model and parameters
 ///
 /// # Returns
 ///
-/// Returns `Ok(())` if embeddings were generated successfully, or an error if
+/// Returns the chunks with their `embedding` fields populated, or an error if
 /// model initialization or embedding generation fails.
 pub fn generate_embeddings_for_chunks(
-    chunks: &mut [crate::types::Chunk],
+    mut chunks: Vec<crate::types::Chunk>,
     config: &crate::core::config::EmbeddingConfig,
-) -> crate::Result<()> {
+) -> crate::Result<Vec<crate::types::Chunk>> {
     if chunks.is_empty() {
-        return Ok(());
+        return Ok(chunks);
     }
 
     let texts: Vec<&str> = chunks.iter().map(|c| c.content.as_str()).collect();
-    let embeddings_result = embed_texts(&texts, config)?;
+    let embeddings = embed_texts(&texts, config)?;
 
-    // Assign embeddings to chunks.
-    for (chunk, embedding) in chunks.iter_mut().zip(embeddings_result) {
+    for (chunk, embedding) in chunks.iter_mut().zip(embeddings) {
         chunk.embedding = Some(embedding);
     }
 
-    Ok(())
+    Ok(chunks)
 }
 
 /// Generate embeddings for a list of raw text strings (standalone, no chunking pipeline).

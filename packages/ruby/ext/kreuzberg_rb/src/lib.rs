@@ -15627,19 +15627,19 @@ fn download_model(model_type: String, cache_dir: Option<String>) -> Result<(), E
     Ok(result)
 }
 
-fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: String) -> Result<(), Error> {
+fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: String) -> Result<Vec<Chunk>, Error> {
     let config: EmbeddingConfig = {
         let core: kreuzberg::EmbeddingConfig = serde_json::from_str(&config)
             .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
         core.into()
     };
-    let result = kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks, config.into()).map_err(|e| {
+    let result = kreuzberg::embeddings::generate_embeddings_for_chunks(chunks, config.into()).map_err(|e| {
         magnus::Error::new(
             unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
             e.to_string(),
         )
     })?;
-    Ok(result)
+    Ok(result.into_iter().map(Into::into).collect())
 }
 
 fn calculate_smart_dpi(
@@ -15823,8 +15823,11 @@ fn apply_heuristics(detections: Vec<LayoutDetection>, page_width: f32, page_heig
         .collect()
 }
 
-fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f32) -> () {
-    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections, iou_threshold)
+fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f32) -> Vec<LayoutDetection> {
+    kreuzberg::layout::postprocessing::nms::greedy_nms(detections, iou_threshold)
+        .into_iter()
+        .map(Into::into)
+        .collect()
 }
 
 fn preprocess_imagenet(img: String, target_size: u32) -> String {

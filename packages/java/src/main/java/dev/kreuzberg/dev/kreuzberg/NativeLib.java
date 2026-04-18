@@ -1038,7 +1038,7 @@ final class NativeLib {
     );
     static final MethodHandle KREUZBERG_GENERATE_EMBEDDINGS_FOR_CHUNKS = LINKER.downcallHandle(
         LIB.find("kreuzberg_generate_embeddings_for_chunks").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
     static final MethodHandle KREUZBERG_CALCULATE_SMART_DPI = LINKER.downcallHandle(
         LIB.find("kreuzberg_calculate_smart_dpi").orElseThrow(),
@@ -1130,7 +1130,7 @@ final class NativeLib {
     );
     static final MethodHandle KREUZBERG_GREEDY_NMS = LINKER.downcallHandle(
         LIB.find("kreuzberg_greedy_nms").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS, ValueLayout.JAVA_FLOAT)
+        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_FLOAT)
     );
     static final MethodHandle KREUZBERG_PREPROCESS_IMAGENET = LINKER.downcallHandle(
         LIB.find("kreuzberg_preprocess_imagenet").orElseThrow(),

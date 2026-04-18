@@ -14577,37 +14577,46 @@ func DownloadModel(model_type EmbeddingModelType, cache_dir ...*string) error {
 
 // Generate embeddings for text chunks using the specified configuration.
 //
-// This function modifies chunks in-place, populating their `embedding` field
-// with generated embedding vectors. It uses batch processing for efficiency.
+// This function populates the `embedding` field of each chunk with a generated
+// embedding vector. It uses batch processing for efficiency.
 //
 // # Arguments
 //
-// * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+// * `chunks` - Vector of chunks to generate embeddings for (takes ownership)
 // * `config` - Embedding configuration specifying model and parameters
 //
 // # Returns
 //
-// Returns `Ok(())` if embeddings were generated successfully, or an error if
+// Returns the chunks with their `embedding` fields populated, or an error if
 // model initialization or embedding generation fails.
-func GenerateEmbeddingsForChunks(chunks []Chunk, config EmbeddingConfig) error {
+func GenerateEmbeddingsForChunks(chunks []Chunk, config EmbeddingConfig) (*[]Chunk, error) {
     jsonBytescChunks, err := json.Marshal(chunks)
     if err != nil {
-        return fmt.Errorf("failed to marshal: %w", err)
+        return nil, fmt.Errorf("failed to marshal: %w", err)
     }
     cChunks := C.CString(string(jsonBytescChunks))
     defer C.free(unsafe.Pointer(cChunks))
 
     jsonBytescConfig, err := json.Marshal(config)
     if err != nil {
-        return fmt.Errorf("failed to marshal: %w", err)
+        return nil, fmt.Errorf("failed to marshal: %w", err)
     }
     tmpStrcConfig := C.CString(string(jsonBytescConfig))
     cConfig := C.kreuzberg_embedding_config_from_json(tmpStrcConfig)
     C.free(unsafe.Pointer(tmpStrcConfig))
     defer C.kreuzberg_embedding_config_free(cConfig)
 
-    C.kreuzberg_generate_embeddings_for_chunks(cChunks, cConfig)
-    return lastError()
+    ptr := C.kreuzberg_generate_embeddings_for_chunks(cChunks, cConfig)
+    if err := lastError(); err != nil {
+        return nil, err
+    }
+    return func() *[]Chunk {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []Chunk
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}(), nil
 }
 
 
@@ -15262,7 +15271,7 @@ func ApplyHeuristics(detections []LayoutDetection, page_width float32, page_heig
 // detections that have IoU > `iou_threshold` with any higher-confidence detection.
 //
 // This is required for YOLO models. RT-DETR is NMS-free.
-func GreedyNms(detections []LayoutDetection, iou_threshold float32) {
+func GreedyNms(detections []LayoutDetection, iou_threshold float32) *[]LayoutDetection {
     jsonBytescDetections, err := json.Marshal(detections)
     if err != nil {
         panic(fmt.Sprintf("failed to marshal: %v", err))
@@ -15270,7 +15279,14 @@ func GreedyNms(detections []LayoutDetection, iou_threshold float32) {
     cDetections := C.CString(string(jsonBytescDetections))
     defer C.free(unsafe.Pointer(cDetections))
 
-    C.kreuzberg_greedy_nms(cDetections, cIouThreshold)
+    ptr := C.kreuzberg_greedy_nms(cDetections, cIouThreshold)
+    return func() *[]LayoutDetection {
+	if ptr == nil { return nil }
+	defer C.kreuzberg_free_string(ptr)
+	var result []LayoutDetection
+	if err := json.Unmarshal([]byte(C.GoString(ptr)), &result); err != nil { return nil }
+	return &result
+}()
 }
 
 

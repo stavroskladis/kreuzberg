@@ -7718,10 +7718,6 @@ impl LayoutDetection {
     pub fn fmt(&self, f: String) -> String {
         String::from("[unimplemented: fmt]")
     }
-
-    pub fn sort_by_confidence_desc(detections: &Vec<LayoutDetection>) -> Vec<LayoutDetection> {
-        Vec::new()
-    }
 }
 
 #[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
@@ -9200,11 +9196,6 @@ impl KreuzbergApi {
         kreuzberg::extractors::djot_format::rendering::render_list_item(&item_core, &indent, &marker)
     }
 
-    pub fn render_inline_content(elements: &Vec<InlineElement>) -> String {
-        let elements_core: Vec<kreuzberg::InlineElement> = elements.iter().map(|x| x.clone().into()).collect();
-        kreuzberg::extractors::djot_format::rendering::render_inline_content(&elements_core[..])
-    }
-
     pub fn extract_frontmatter(content: String) -> String {
         String::from("[unimplemented: extract_frontmatter]")
     }
@@ -9735,70 +9726,9 @@ impl KreuzbergApi {
         })
     }
 
-    pub fn validate_page_boundaries(boundaries: &Vec<PageBoundary>) -> PhpResult<()> {
-        let boundaries_core: Vec<kreuzberg::PageBoundary> = boundaries.iter().map(|x| x.clone().into()).collect();
-        let result = kreuzberg::chunking::validate_page_boundaries(&boundaries_core[..])
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
-    }
-
     pub fn classify_chunk(content: String, heading_context: Option<&HeadingContext>) -> String {
         let heading_context_core: Option<kreuzberg::HeadingContext> = heading_context.map(|v| v.clone().into());
         kreuzberg::chunking::classify_chunk(&content, heading_context_core.as_ref()).into()
-    }
-
-    pub fn chunk_text(
-        text: String,
-        config: &ChunkingConfig,
-        page_boundaries: Option<&Vec<PageBoundary>>,
-    ) -> PhpResult<ChunkingResult> {
-        let config_core: kreuzberg::ChunkingConfig = config.clone().into();
-        let page_boundaries_core: Option<Vec<kreuzberg::PageBoundary>> = page_boundaries
-            .as_ref()
-            .map(|v| v.iter().map(|x| x.clone().into()).collect());
-        let result =
-            kreuzberg::chunking::chunk_text(&text, &config_core, page_boundaries_core.as_ref().map(|v| &v[..]))
-                .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    pub fn chunk_text_with_heading_source(
-        text: String,
-        config: &ChunkingConfig,
-        page_boundaries: Option<&Vec<PageBoundary>>,
-        heading_source: Option<String>,
-    ) -> PhpResult<ChunkingResult> {
-        let config_core: kreuzberg::ChunkingConfig = config.clone().into();
-        let page_boundaries_core: Option<Vec<kreuzberg::PageBoundary>> = page_boundaries
-            .as_ref()
-            .map(|v| v.iter().map(|x| x.clone().into()).collect());
-        let result = kreuzberg::chunking::chunk_text_with_heading_source(
-            &text,
-            &config_core,
-            page_boundaries_core.as_ref().map(|v| &v[..]),
-            heading_source.as_deref(),
-        )
-        .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into())
-    }
-
-    pub fn chunk_text_with_type(
-        text: String,
-        max_characters: i64,
-        overlap: i64,
-        trim: bool,
-        chunker_type: String,
-    ) -> PhpResult<ChunkingResult> {
-        let chunker_type_core: kreuzberg::ChunkerType = chunker_type.clone().into();
-        let result = kreuzberg::chunking::chunk_text_with_type(
-            &text,
-            max_characters as usize,
-            overlap as usize,
-            trim,
-            chunker_type_core,
-        )
-        .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result.into())
     }
 
     pub fn chunk_texts_batch(texts: Vec<String>, config: &ChunkingConfig) -> PhpResult<Vec<ChunkingResult>> {
@@ -9810,13 +9740,6 @@ impl KreuzbergApi {
 
     pub fn precompute_utf8_boundaries(text: String) -> String {
         String::from("[unimplemented: precompute_utf8_boundaries]")
-    }
-
-    pub fn validate_utf8_boundaries(text: String, boundaries: &Vec<PageBoundary>) -> PhpResult<()> {
-        let boundaries_core: Vec<kreuzberg::PageBoundary> = boundaries.iter().map(|x| x.clone().into()).collect();
-        let result = kreuzberg::chunking::validate_utf8_boundaries(&text, &boundaries_core[..])
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
     }
 
     pub fn render_template(template: String, context: String) -> PhpResult<String> {
@@ -9835,28 +9758,6 @@ impl KreuzbergApi {
 
     pub fn list_presets() -> Vec<String> {
         kreuzberg::list_presets().into_iter().map(Into::into).collect()
-    }
-
-    pub fn warm_model(model_type: String, cache_dir: Option<String>) -> PhpResult<()> {
-        let model_type_core: kreuzberg::EmbeddingModelType = model_type.clone().into();
-        let result = kreuzberg::warm_model(&model_type_core, cache_dir.as_deref())
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
-    }
-
-    pub fn download_model(model_type: String, cache_dir: Option<String>) -> PhpResult<()> {
-        let model_type_core: kreuzberg::EmbeddingModelType = model_type.clone().into();
-        let result = kreuzberg::download_model(&model_type_core, cache_dir.as_deref())
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
-    }
-
-    pub fn generate_embeddings_for_chunks(chunks: &Vec<Chunk>, config: &EmbeddingConfig) -> PhpResult<()> {
-        let chunks_core: Vec<kreuzberg::Chunk> = chunks.iter().map(|x| x.clone().into()).collect();
-        let config_core: kreuzberg::EmbeddingConfig = config.clone().into();
-        let result = kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks_core[..], &config_core)
-            .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
     }
 
     pub fn calculate_smart_dpi(
@@ -9918,41 +9819,8 @@ impl KreuzbergApi {
         String::from("[unimplemented: element_to_hocr_word]")
     }
 
-    pub fn elements_to_hocr_words(elements: &Vec<OcrElement>, min_confidence: f64) -> Vec<String> {
-        Vec::new()
-    }
-
     pub fn parse_hocr_to_internal_document(hocr_html: String) -> String {
         String::from("[unimplemented: parse_hocr_to_internal_document]")
-    }
-
-    pub fn assemble_ocr_markdown(
-        elements: &Vec<OcrElement>,
-        detection: Option<&DetectionResult>,
-        img_width: u32,
-        img_height: u32,
-        recognized_tables: &Vec<RecognizedTable>,
-    ) -> String {
-        let elements_core: Vec<kreuzberg::OcrElement> = elements.iter().map(|x| x.clone().into()).collect();
-        let detection_core: Option<kreuzberg::DetectionResult> = detection.map(|v| v.clone().into());
-        let recognized_tables_core: Vec<kreuzberg::RecognizedTable> =
-            recognized_tables.iter().map(|x| x.clone().into()).collect();
-        kreuzberg::ocr::layout_assembly::assemble_ocr_markdown(
-            &elements_core[..],
-            detection_core.as_ref(),
-            img_width,
-            img_height,
-            &recognized_tables_core[..],
-        )
-    }
-
-    pub fn recognize_page_tables(
-        page_image: String,
-        detection: &DetectionResult,
-        elements: &Vec<OcrElement>,
-        tatr_model: String,
-    ) -> Vec<RecognizedTable> {
-        Vec::new()
     }
 
     pub fn extract_words_from_tsv(tsv_data: String, min_confidence: f64) -> PhpResult<Vec<String>> {
@@ -9989,23 +9857,6 @@ impl KreuzbergApi {
 
     pub fn build_cell_grid(result: String, table_bbox: Option<String>) -> Vec<Vec<String>> {
         Vec::new()
-    }
-
-    pub fn apply_heuristics(
-        detections: &Vec<LayoutDetection>,
-        page_width: f32,
-        page_height: f32,
-    ) -> Vec<LayoutDetection> {
-        let detections_core: Vec<kreuzberg::LayoutDetection> = detections.iter().map(|x| x.clone().into()).collect();
-        kreuzberg::layout::postprocessing::heuristics::apply_heuristics(detections_core, page_width, page_height)
-            .into_iter()
-            .map(Into::into)
-            .collect()
-    }
-
-    pub fn greedy_nms(detections: &Vec<LayoutDetection>, iou_threshold: f32) -> () {
-        let detections_core: Vec<kreuzberg::LayoutDetection> = detections.iter().map(|x| x.clone().into()).collect();
-        kreuzberg::layout::postprocessing::nms::greedy_nms(&detections_core[..], iou_threshold)
     }
 
     pub fn preprocess_imagenet(img: String, target_size: u32) -> String {
@@ -10090,19 +9941,7 @@ impl KreuzbergApi {
         ))
     }
 
-    pub fn assign_heading_levels_smart(
-        clusters: &Vec<FontSizeCluster>,
-        min_heading_ratio: f32,
-        min_heading_gap: f32,
-    ) -> Vec<String> {
-        Vec::new()
-    }
-
     pub fn assign_hierarchy_levels(blocks: Vec<String>, kmeans_result: String) -> Vec<HierarchyBlock> {
-        Vec::new()
-    }
-
-    pub fn assign_hierarchy_levels_from_clusters(blocks: Vec<String>, clusters: &Vec<FontSizeCluster>) -> Vec<String> {
         Vec::new()
     }
 
@@ -10116,10 +9955,6 @@ impl KreuzbergApi {
         Err(ext_php_rs::exception::PhpException::default(
             "Not implemented: extract_segments_from_page".to_string(),
         ))
-    }
-
-    pub fn merge_chars_into_blocks(chars: &Vec<CharData>) -> Vec<String> {
-        Vec::new()
     }
 
     pub fn should_trigger_ocr(page: String, blocks: Vec<String>, config: &ExtractionConfig) -> bool {
@@ -10141,12 +9976,6 @@ impl KreuzbergApi {
     pub fn detect_layout_for_document(pdf_bytes: Vec<u8>, engine: String) -> PhpResult<String> {
         Err(ext_php_rs::exception::PhpException::default(
             "Not implemented: detect_layout_for_document".to_string(),
-        ))
-    }
-
-    pub fn detect_layout_for_images(images: Vec<String>, engine: String) -> PhpResult<Vec<DetectionResult>> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: detect_layout_for_images".to_string(),
         ))
     }
 

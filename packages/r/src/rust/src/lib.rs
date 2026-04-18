@@ -10073,10 +10073,10 @@ pub fn download_model(model_type: EmbeddingModelType, cache_dir: Option<String>)
 
 #[allow(clippy::missing_errors_doc)]
 #[extendr]
-pub fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: EmbeddingConfig) -> Result<()> {
+pub fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: EmbeddingConfig) -> Result<Vec<Chunk>> {
     let chunks_core: Vec<_> = chunks.into_iter().map(Into::into).collect();
     let config_core: kreuzberg::EmbeddingConfig = config.into();
-    kreuzberg::embeddings::generate_embeddings_for_chunks(&chunks_core, &config_core).map_err(|e| e.to_string())
+    kreuzberg::embeddings::generate_embeddings_for_chunks(chunks_core, &config_core).map(|val| val.into_iter().map(Into::into).collect()).map_err(|e| e.to_string())
 }
 
 #[extendr]
@@ -10218,9 +10218,9 @@ pub fn apply_heuristics(detections: Vec<LayoutDetection>, page_width: f64, page_
 }
 
 #[extendr]
-pub fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f64) -> () {
+pub fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f64) -> Vec<LayoutDetection> {
     let detections_core: Vec<_> = detections.into_iter().map(Into::into).collect();
-    kreuzberg::layout::postprocessing::nms::greedy_nms(&detections_core, iou_threshold)
+    kreuzberg::layout::postprocessing::nms::greedy_nms(detections_core, iou_threshold).into_iter().map(Into::into).collect()
 }
 
 #[extendr]

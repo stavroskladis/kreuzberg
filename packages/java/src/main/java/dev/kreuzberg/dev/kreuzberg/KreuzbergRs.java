@@ -4177,7 +4177,7 @@ public final class KreuzbergRs {
         }
     }
 
-    public static void generateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config) throws KreuzbergRsException {
+    public static List<Chunk> generateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cchunksJson = createObjectMapper().writeValueAsString(chunks);
             var cchunks = arena.allocateFrom(cchunksJson);
@@ -4186,10 +4186,16 @@ public final class KreuzbergRs {
             var cconfig = cconfigJson != null
                 ? (MemorySegment) NativeLib.KREUZBERG_EMBEDDING_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
                 : MemorySegment.NULL;
-            NativeLib.KREUZBERG_GENERATE_EMBEDDINGS_FOR_CHUNKS.invoke(cchunks, cconfig);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_GENERATE_EMBEDDINGS_FOR_CHUNKS.invoke(cchunks, cconfig);
             if (!cconfig.equals(MemorySegment.NULL)) {
                 NativeLib.KREUZBERG_EMBEDDING_CONFIG_FREE.invoke(cconfig);
             }
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<Chunk>>() { });
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }
@@ -4540,11 +4546,17 @@ public final class KreuzbergRs {
         }
     }
 
-    public static void greedyNms(List<LayoutDetection> detections, float iouThreshold) throws KreuzbergRsException {
+    public static List<LayoutDetection> greedyNms(List<LayoutDetection> detections, float iouThreshold) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cdetectionsJson = createObjectMapper().writeValueAsString(detections);
             var cdetections = arena.allocateFrom(cdetectionsJson);
-            NativeLib.KREUZBERG_GREEDY_NMS.invoke(cdetections, iouThreshold);
+            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_GREEDY_NMS.invoke(cdetections, iouThreshold);
+            if (resultPtr.equals(MemorySegment.NULL)) {
+                return java.util.List.of();
+            }
+            String json = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
+            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
+            return createObjectMapper().readValue(json, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<LayoutDetection>>() { });
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }

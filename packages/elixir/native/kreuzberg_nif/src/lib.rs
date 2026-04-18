@@ -5286,14 +5286,14 @@ pub fn download_model(model_type: EmbeddingModelType, cache_dir: String) -> Resu
 }
 
 #[rustler::nif]
-pub fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: Option<String>) -> Result<(), String> {
+pub fn generate_embeddings_for_chunks(chunks: Vec<Chunk>, config: Option<String>) -> Result<Vec<Chunk>, String> {
     let config_core: Option<kreuzberg::EmbeddingConfig> = config
         .map(|s| serde_json::from_str::<kreuzberg::EmbeddingConfig>(&s))
         .transpose()
         .map_err(|e| e.to_string())?;
     let result = kreuzberg::embeddings::generate_embeddings_for_chunks(chunks, Some(config_core.unwrap_or_default()))
         .map_err(|e| e.to_string())?;
-    Ok(result)
+    Ok(result.into_iter().map(Into::into).collect())
 }
 
 #[rustler::nif]
@@ -5454,8 +5454,11 @@ pub fn apply_heuristics(detections: Vec<LayoutDetection>, page_width: f32, page_
 }
 
 #[rustler::nif]
-pub fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f32) -> () {
+pub fn greedy_nms(detections: Vec<LayoutDetection>, iou_threshold: f32) -> Vec<LayoutDetection> {
     kreuzberg::layout::postprocessing::nms::greedy_nms(detections, iou_threshold)
+        .into_iter()
+        .map(Into::into)
+        .collect()
 }
 
 #[rustler::nif]

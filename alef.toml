@@ -520,6 +520,37 @@ app_name = "kreuzberg"
 
 [php]
 extension_name = "kreuzberg"
+exclude_functions = [
+    # Functions taking Vec<NonOpaqueType> which ext-php-rs can't convert from PHP arrays
+    "validate_page_boundaries",
+    "validate_utf8_boundaries",
+    "greedy_nms",
+    "sort_by_confidence_desc",
+    "detect_layout_for_images",
+    "recognize_page_tables",
+    "render_inline_content",
+    "generate_embeddings_for_chunks",
+    "elements_to_hocr_words",
+    "assign_hierarchy_levels_from_clusters",
+    "merge_chars_into_blocks",
+    "chunk_text",
+    "chunk_text_with_heading_source",
+    "assemble_ocr_markdown",
+    "apply_heuristics",
+    "assign_heading_levels_smart",
+    # Enum conversion functions (take enums excluded from PHP)
+    "chunk_text_with_type",
+    "warm_model",
+    "download_model",
+]
+exclude_types = [
+    # Enum types that don't have From<String> implementation for PHP
+    "ChunkerType",
+    "OutputFormat",
+    "EmbeddingModelType",
+    "UriKind",
+    "ChunkType",
+]
 
 [r]
 package_name = "kreuzberg"
@@ -551,6 +582,10 @@ exclude_types = [
     "PageTiming",
     "ProcessingWarning",
     "RecognizedTable",
+    # Feature-gated types (not available in WASM feature set)
+    "ChunkSizing",
+    # MCP parameter types not compatible with wasm-bindgen (Option<JsValue> fields)
+    "BatchExtractFilesParams",
 ]
 exclude_functions = [
     # paddle-ocr / layout-detection / embeddings / auto-rotate
@@ -591,6 +626,28 @@ exclude_functions = [
     "detect_layout_for_images",
     # Uses excluded types WasmDetectionResult/WasmRecognizedTable
     "recognize_page_tables",
+    # Functions using excluded types/modules
+    "generate_embeddings_for_chunks",
+    "apply_heuristics",
+    "greedy_nms",
+    # docx extraction functions (internal, not public API)
+    "detect_page_breaks_from_docx",
+    "detect_table_page_numbers",
+    # ooxml embedded object extraction (internal, returns complex types)
+    "extract_ooxml_embedded_objects",
+    "extract_and_process_embedded_files",
+    # markdown utility functions (internal)
+    "cells_to_text",
+    "cells_to_markdown",
+    # Table processing stubs (internal, incomplete implementations)
+    "calculate_quality_score",
+    "reconstruct_table",
+    "table_to_markdown",
+    "build_cell_grid",
+    "post_process_table",
+    "is_well_formed_table",
+    "parse_jotdown_attributes",
+    "parse_jotdown_inline",
 ]
 # Everything except ort-dependent features (paddle-ocr, layout-detection, embeddings, auto-rotate)
 features = [

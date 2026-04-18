@@ -6966,34 +6966,39 @@ public static class KreuzbergLib
     /// <summary>
     /// Generate embeddings for text chunks using the specified configuration.
     ///
-    /// This function modifies chunks in-place, populating their `embedding` field
-    /// with generated embedding vectors. It uses batch processing for efficiency.
+    /// This function populates the `embedding` field of each chunk with a generated
+    /// embedding vector. It uses batch processing for efficiency.
     ///
     /// # Arguments
     ///
-    /// * `chunks` - Mutable reference to vector of chunks to generate embeddings for
+    /// * `chunks` - Vector of chunks to generate embeddings for (takes ownership)
     /// * `config` - Embedding configuration specifying model and parameters
     ///
     /// # Returns
     ///
-    /// Returns `Ok(())` if embeddings were generated successfully, or an error if
+    /// Returns the chunks with their `embedding` fields populated, or an error if
     /// model initialization or embedding generation fails.
     /// </summary>
     /// <param name="chunks"></param>
     /// <param name="config"></param>
-    public static void GenerateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config)
+    public static List<Chunk> GenerateEmbeddingsForChunks(List<Chunk> chunks, EmbeddingConfig config)
     {
         ArgumentNullException.ThrowIfNull(config);
         var chunksJson = JsonSerializer.Serialize(chunks, JsonOptions);
         var chunksHandle = Marshal.StringToHGlobalAnsi(chunksJson);
         var configJson = JsonSerializer.Serialize(config, JsonOptions);
         var configHandle = NativeMethods.EmbeddingConfigFromJson(configJson);
-        NativeMethods.GenerateEmbeddingsForChunks(
+        var result = NativeMethods.GenerateEmbeddingsForChunks(
             chunksHandle,
             configHandle
         );
+        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+        var json = Marshal.PtrToStringUTF8(result);
+        NativeMethods.FreeString(result);
+        var returnValue = JsonSerializer.Deserialize<List<Chunk>>(json ?? "null", JsonOptions)!;
         Marshal.FreeHGlobal(chunksHandle);
         NativeMethods.EmbeddingConfigFree(configHandle);
+        return returnValue;
     }
 
     /// <summary>
@@ -7721,15 +7726,20 @@ public static class KreuzbergLib
     /// </summary>
     /// <param name="detections"></param>
     /// <param name="iouThreshold"></param>
-    public static void GreedyNms(List<LayoutDetection> detections, float iouThreshold)
+    public static List<LayoutDetection> GreedyNms(List<LayoutDetection> detections, float iouThreshold)
     {
         var detectionsJson = JsonSerializer.Serialize(detections, JsonOptions);
         var detectionsHandle = Marshal.StringToHGlobalAnsi(detectionsJson);
-        NativeMethods.GreedyNms(
+        var result = NativeMethods.GreedyNms(
             detectionsHandle,
             iouThreshold
         );
+        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
+        var json = Marshal.PtrToStringUTF8(result);
+        NativeMethods.FreeString(result);
+        var returnValue = JsonSerializer.Deserialize<List<LayoutDetection>>(json ?? "null", JsonOptions)!;
         Marshal.FreeHGlobal(detectionsHandle);
+        return returnValue;
     }
 
     /// <summary>
