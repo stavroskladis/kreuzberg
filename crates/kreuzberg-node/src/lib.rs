@@ -8592,7 +8592,10 @@ impl From<kreuzberg::mcp::BatchExtractFilesParams> for JsBatchExtractFilesParams
             paths: val.paths,
             config: val.config.as_ref().map(ToString::to_string),
             pdf_password: val.pdf_password,
-            file_configs: val.file_configs,
+            file_configs: val
+                .file_configs
+                .as_ref()
+                .map(|v| v.iter().map(|i| i.as_ref().map(ToString::to_string)).collect()),
             response_format: val.response_format,
         }
     }
