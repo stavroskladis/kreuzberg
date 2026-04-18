@@ -5,7 +5,7 @@ defmodule Kreuzberg.TextMetadata do
   defstruct line_count: 0,
             word_count: 0,
             character_count: 0,
-            headers: nil,
-            links: nil,
-            code_blocks: nil
+            headers: [],
+            links: [],
+            code_blocks: []
 end

@@ -444,6 +444,13 @@ functions = [
     # Returns tuple (Value, Option<LlmUsage>) — can't map to String
     "vlm_ocr",
     "vlm_ocr_with_prompt",
+
+    # Returns opaque dependency types
+    "build_session",
+    "create_engine",
+    "take_or_create_engine",
+    "return_engine",
+    "extract_structured",
 ]
 methods = [
     "OcrElement.with_rotation_opt",

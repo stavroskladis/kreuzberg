@@ -971,7 +971,7 @@ impl WasmImageExtractionConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmTokenReductionOptions {
     mode: String,
@@ -1009,7 +1009,7 @@ impl WasmTokenReductionOptions {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmLanguageDetectionConfig {
     enabled: bool,
@@ -1251,7 +1251,7 @@ impl WasmLlmConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmStructuredExtractionConfig {
     schema: JsValue,
@@ -1574,7 +1574,7 @@ impl WasmOcrQualityThresholds {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmOcrPipelineStage {
     backend: String,
@@ -1654,7 +1654,7 @@ impl WasmOcrPipelineStage {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmOcrPipelineConfig {
     stages: Vec<WasmOcrPipelineStage>,
@@ -2604,7 +2604,7 @@ impl WasmTreeSitterProcessConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmSupportedFormat {
     extension: String,
@@ -2780,7 +2780,7 @@ impl WasmServerConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmStructuredDataResult {
     content: String,
@@ -2890,7 +2890,7 @@ impl WasmStreamReader {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmImageOcrResult {
     content: String,
@@ -2944,7 +2944,7 @@ impl WasmImageOcrResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmHtmlExtractionResult {
     markdown: String,
@@ -2998,7 +2998,7 @@ impl WasmHtmlExtractionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmExtractedInlineImage {
     data: Vec<u8>,
@@ -3305,7 +3305,7 @@ impl WasmHeaderFooter {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmNote {
     id: String,
@@ -3461,7 +3461,7 @@ impl WasmPageMarginsPoints {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmStyleDefinition {
     id: String,
@@ -4632,7 +4632,7 @@ impl WasmTokenReductionConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmPdfAnnotation {
     annotation_type: WasmPdfAnnotationType,
@@ -4699,7 +4699,7 @@ impl WasmPdfAnnotation {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDjotContent {
     plain_text: String,
@@ -4819,7 +4819,7 @@ impl WasmDjotContent {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmFormattedBlock {
     block_type: WasmBlockType,
@@ -4925,7 +4925,7 @@ impl WasmFormattedBlock {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmInlineElement {
     element_type: WasmInlineType,
@@ -4992,7 +4992,7 @@ impl WasmInlineElement {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDjotImage {
     src: String,
@@ -5054,7 +5054,7 @@ impl WasmDjotImage {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDjotLink {
     url: String,
@@ -5116,7 +5116,7 @@ impl WasmDjotLink {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmFootnote {
     label: String,
@@ -5262,7 +5262,7 @@ impl WasmDocumentStructure {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDocumentRelationship {
     source: u32,
@@ -5308,7 +5308,7 @@ impl WasmDocumentRelationship {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDocumentNode {
     id: String,
@@ -5454,7 +5454,7 @@ impl WasmDocumentNode {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmGridCell {
     content: String,
@@ -5560,7 +5560,7 @@ impl WasmGridCell {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmTextAnnotation {
     start: u32,
@@ -5895,7 +5895,7 @@ impl WasmExtractionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmArchiveEntry {
     path: String,
@@ -6051,7 +6051,7 @@ impl WasmLlmUsage {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmChunk {
     content: String,
@@ -6118,7 +6118,7 @@ impl WasmChunk {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmHeadingContext {
     headings: Vec<WasmHeadingLevel>,
@@ -6142,7 +6142,7 @@ impl WasmHeadingContext {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmHeadingLevel {
     level: u8,
@@ -6177,7 +6177,7 @@ impl WasmHeadingLevel {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmChunkMetadata {
     byte_start: usize,
@@ -6297,7 +6297,7 @@ impl WasmChunkMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmExtractedImage {
     data: Vec<u8>,
@@ -6482,7 +6482,7 @@ impl WasmExtractedImage {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmElementMetadata {
     page_number: Option<usize>,
@@ -6562,7 +6562,7 @@ impl WasmElementMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmElement {
     element_id: String,
@@ -6629,7 +6629,7 @@ impl WasmElement {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmExcelWorkbook {
     sheets: Vec<WasmExcelSheet>,
@@ -6664,7 +6664,7 @@ impl WasmExcelWorkbook {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmExcelSheet {
     name: String,
@@ -6757,7 +6757,7 @@ impl WasmExcelSheet {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmXmlExtractionResult {
     content: String,
@@ -6807,7 +6807,7 @@ impl WasmXmlExtractionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmTextExtractionResult {
     content: String,
@@ -6913,7 +6913,7 @@ impl WasmTextExtractionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmPptxExtractionResult {
     content: String,
@@ -7072,7 +7072,7 @@ impl WasmPptxExtractionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmEmailExtractionResult {
     subject: Option<String>,
@@ -7244,7 +7244,7 @@ impl WasmEmailExtractionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmEmailAttachment {
     name: Option<String>,
@@ -7337,7 +7337,7 @@ impl WasmEmailAttachment {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmOcrExtractionResult {
     content: String,
@@ -7430,7 +7430,7 @@ impl WasmOcrExtractionResult {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmOcrTable {
     cells: JsValue,
@@ -7497,7 +7497,7 @@ impl WasmOcrTable {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmOcrTableBoundingBox {
     left: u32,
@@ -7671,7 +7671,7 @@ impl WasmImagePreprocessingConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmImagePreprocessingMetadata {
     original_dimensions: String,
@@ -8132,7 +8132,7 @@ impl WasmMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmExcelMetadata {
     sheet_count: usize,
@@ -8142,10 +8142,10 @@ pub struct WasmExcelMetadata {
 #[wasm_bindgen]
 impl WasmExcelMetadata {
     #[wasm_bindgen(constructor)]
-    pub fn new(sheet_count: usize, sheet_names: Vec<String>) -> WasmExcelMetadata {
+    pub fn new(sheet_count: Option<usize>, sheet_names: Option<Vec<String>>) -> WasmExcelMetadata {
         WasmExcelMetadata {
-            sheet_count,
-            sheet_names,
+            sheet_count: sheet_count.unwrap_or_default(),
+            sheet_names: sheet_names.unwrap_or_default(),
         }
     }
 
@@ -8170,7 +8170,7 @@ impl WasmExcelMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmEmailMetadata {
     from_email: Option<String>,
@@ -8186,10 +8186,10 @@ pub struct WasmEmailMetadata {
 impl WasmEmailMetadata {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        to_emails: Vec<String>,
-        cc_emails: Vec<String>,
-        bcc_emails: Vec<String>,
-        attachments: Vec<String>,
+        to_emails: Option<Vec<String>>,
+        cc_emails: Option<Vec<String>>,
+        bcc_emails: Option<Vec<String>>,
+        attachments: Option<Vec<String>>,
         from_email: Option<String>,
         from_name: Option<String>,
         message_id: Option<String>,
@@ -8197,11 +8197,11 @@ impl WasmEmailMetadata {
         WasmEmailMetadata {
             from_email,
             from_name,
-            to_emails,
-            cc_emails,
-            bcc_emails,
+            to_emails: to_emails.unwrap_or_default(),
+            cc_emails: cc_emails.unwrap_or_default(),
+            bcc_emails: bcc_emails.unwrap_or_default(),
             message_id,
-            attachments,
+            attachments: attachments.unwrap_or_default(),
         }
     }
 
@@ -8276,7 +8276,7 @@ impl WasmEmailMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmArchiveMetadata {
     format: String,
@@ -8290,17 +8290,17 @@ pub struct WasmArchiveMetadata {
 impl WasmArchiveMetadata {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        format: String,
-        file_count: usize,
-        file_list: Vec<String>,
-        total_size: usize,
+        format: Option<String>,
+        file_count: Option<usize>,
+        file_list: Option<Vec<String>>,
+        total_size: Option<usize>,
         compressed_size: Option<usize>,
     ) -> WasmArchiveMetadata {
         WasmArchiveMetadata {
-            format,
-            file_count,
-            file_list,
-            total_size,
+            format: format.unwrap_or_default(),
+            file_count: file_count.unwrap_or_default(),
+            file_list: file_list.unwrap_or_default(),
+            total_size: total_size.unwrap_or_default(),
             compressed_size,
         }
     }
@@ -8394,7 +8394,7 @@ impl WasmXmlMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmTextMetadata {
     line_count: usize,
@@ -8409,17 +8409,17 @@ pub struct WasmTextMetadata {
 impl WasmTextMetadata {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        line_count: usize,
-        word_count: usize,
-        character_count: usize,
+        line_count: Option<usize>,
+        word_count: Option<usize>,
+        character_count: Option<usize>,
         headers: Option<Vec<String>>,
         links: Option<Vec<String>>,
         code_blocks: Option<Vec<String>>,
     ) -> WasmTextMetadata {
         WasmTextMetadata {
-            line_count,
-            word_count,
-            character_count,
+            line_count: line_count.unwrap_or_default(),
+            word_count: word_count.unwrap_or_default(),
+            character_count: character_count.unwrap_or_default(),
             headers,
             links,
             code_blocks,
@@ -8487,7 +8487,7 @@ impl WasmTextMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmHeaderMetadata {
     level: u8,
@@ -8561,7 +8561,7 @@ impl WasmHeaderMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmLinkMetadata {
     href: String,
@@ -8654,7 +8654,7 @@ impl WasmLinkMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmImageMetadataType {
     src: String,
@@ -8747,7 +8747,7 @@ impl WasmImageMetadataType {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmStructuredData {
     data_type: WasmStructuredDataType,
@@ -9020,7 +9020,7 @@ impl WasmHtmlMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmOcrMetadata {
     language: String,
@@ -9035,18 +9035,18 @@ pub struct WasmOcrMetadata {
 impl WasmOcrMetadata {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        language: String,
-        psm: i32,
-        output_format: String,
-        table_count: usize,
+        language: Option<String>,
+        psm: Option<i32>,
+        output_format: Option<String>,
+        table_count: Option<usize>,
         table_rows: Option<usize>,
         table_cols: Option<usize>,
     ) -> WasmOcrMetadata {
         WasmOcrMetadata {
-            language,
-            psm,
-            output_format,
-            table_count,
+            language: language.unwrap_or_default(),
+            psm: psm.unwrap_or_default(),
+            output_format: output_format.unwrap_or_default(),
+            table_count: table_count.unwrap_or_default(),
             table_rows,
             table_cols,
         }
@@ -9113,7 +9113,7 @@ impl WasmOcrMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmErrorMetadata {
     error_type: String,
@@ -9148,7 +9148,7 @@ impl WasmErrorMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmPptxMetadata {
     slide_count: usize,
@@ -9161,14 +9161,14 @@ pub struct WasmPptxMetadata {
 impl WasmPptxMetadata {
     #[wasm_bindgen(constructor)]
     pub fn new(
-        slide_count: usize,
-        slide_names: Vec<String>,
+        slide_count: Option<usize>,
+        slide_names: Option<Vec<String>>,
         image_count: Option<usize>,
         table_count: Option<usize>,
     ) -> WasmPptxMetadata {
         WasmPptxMetadata {
-            slide_count,
-            slide_names,
+            slide_count: slide_count.unwrap_or_default(),
+            slide_names: slide_names.unwrap_or_default(),
             image_count,
             table_count,
         }
@@ -9215,7 +9215,7 @@ impl WasmPptxMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDocxMetadata {
     core_properties: Option<String>,
@@ -9522,7 +9522,7 @@ impl WasmCitationMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmYearRange {
     min: Option<u32>,
@@ -9676,7 +9676,7 @@ impl WasmDbfMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDbfFieldInfo {
     name: String,
@@ -9778,7 +9778,7 @@ impl WasmJatsMetadata {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmContributorRole {
     name: String,
@@ -9980,7 +9980,7 @@ impl WasmOcrConfidence {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmOcrRotation {
     angle_degrees: f64,
@@ -10246,7 +10246,7 @@ impl WasmOcrElementConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmPageStructure {
     total_count: usize,
@@ -10313,7 +10313,7 @@ impl WasmPageStructure {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmPageBoundary {
     byte_start: usize,
@@ -10363,7 +10363,7 @@ impl WasmPageBoundary {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmPageInfo {
     number: usize,
@@ -10469,7 +10469,7 @@ impl WasmPageInfo {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmPageContent {
     page_number: usize,
@@ -10562,7 +10562,7 @@ impl WasmPageContent {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmPageHierarchy {
     block_count: usize,
@@ -10597,7 +10597,7 @@ impl WasmPageHierarchy {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmHierarchicalBlock {
     text: String,
@@ -10659,7 +10659,7 @@ impl WasmHierarchicalBlock {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmUri {
     url: String,
@@ -10832,7 +10832,7 @@ pub struct WasmApiDoc {
 #[wasm_bindgen]
 impl WasmApiDoc {}
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmHealthResponse {
     status: String,
@@ -10882,7 +10882,7 @@ impl WasmHealthResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmInfoResponse {
     version: String,
@@ -10926,7 +10926,7 @@ pub struct WasmExtractResponse {
 #[wasm_bindgen]
 impl WasmExtractResponse {}
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmApiState {
     default_config: WasmExtractionConfig,
@@ -10964,7 +10964,7 @@ impl WasmApiState {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmCacheStatsResponse {
     directory: String,
@@ -11057,7 +11057,7 @@ impl WasmCacheStatsResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmCacheClearResponse {
     directory: String,
@@ -11107,7 +11107,7 @@ impl WasmCacheClearResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmEmbedRequest {
     texts: Vec<String>,
@@ -11131,7 +11131,7 @@ impl WasmEmbedRequest {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmEmbedResponse {
     embeddings: JsValue,
@@ -11193,7 +11193,7 @@ impl WasmEmbedResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmChunkRequest {
     text: String,
@@ -11243,7 +11243,7 @@ impl WasmChunkRequest {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmChunkResponse {
     chunks: Vec<String>,
@@ -11323,7 +11323,7 @@ impl WasmChunkResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmVersionResponse {
     version: String,
@@ -11347,7 +11347,7 @@ impl WasmVersionResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDetectResponse {
     mime_type: String,
@@ -11382,7 +11382,7 @@ impl WasmDetectResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmManifestEntryResponse {
     relative_path: String,
@@ -11449,7 +11449,7 @@ impl WasmManifestEntryResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmManifestResponse {
     kreuzberg_version: String,
@@ -11554,7 +11554,7 @@ impl WasmWarmRequest {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmWarmResponse {
     cache_dir: String,
@@ -11604,7 +11604,7 @@ impl WasmWarmResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmStructuredExtractionResponse {
     structured_output: JsValue,
@@ -11654,7 +11654,7 @@ impl WasmStructuredExtractionResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmOpenWebDocumentResponse {
     page_content: String,
@@ -11689,7 +11689,7 @@ impl WasmOpenWebDocumentResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDoclingCompatResponse {
     document: String,
@@ -11724,7 +11724,7 @@ impl WasmDoclingCompatResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmExtractFileParams {
     path: String,
@@ -11804,7 +11804,7 @@ impl WasmExtractFileParams {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmExtractBytesParams {
     data: String,
@@ -11884,7 +11884,7 @@ impl WasmExtractBytesParams {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmBatchExtractFilesParams {
     paths: Vec<String>,
@@ -11964,7 +11964,7 @@ impl WasmBatchExtractFilesParams {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmDetectMimeTypeParams {
     path: String,
@@ -11999,7 +11999,7 @@ impl WasmDetectMimeTypeParams {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmCacheWarmParams {
     all_embeddings: bool,
@@ -12037,7 +12037,7 @@ impl WasmCacheWarmParams {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmEmbedTextParams {
     texts: Vec<String>,
@@ -12104,7 +12104,7 @@ impl WasmEmbedTextParams {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmExtractStructuredParams {
     path: String,
@@ -12224,7 +12224,7 @@ impl WasmExtractStructuredParams {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmChunkTextParams {
     text: String,
@@ -12291,7 +12291,7 @@ impl WasmChunkTextParams {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmChunkingResult {
     chunks: Vec<WasmChunk>,
@@ -12540,7 +12540,7 @@ impl WasmKeywordConfig {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmKeyword {
     text: String,
@@ -12618,7 +12618,7 @@ impl WasmKeyword {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmEmbeddedFile {
     name: String,
@@ -12664,7 +12664,7 @@ impl WasmEmbeddedFile {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmFontSizeCluster {
     centroid: f32,
@@ -12699,7 +12699,7 @@ impl WasmFontSizeCluster {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmCharData {
     text: String,
@@ -12832,7 +12832,7 @@ impl WasmCharData {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmHierarchyBlock {
     text: String,
@@ -12894,7 +12894,7 @@ impl WasmHierarchyBlock {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmPdfImage {
     page_number: usize,
@@ -13027,7 +13027,7 @@ impl WasmPdfImage {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 #[wasm_bindgen]
 pub struct WasmCommonPdfMetadata {
     title: Option<String>,
@@ -15372,16 +15372,6 @@ pub fn render_template(template: String, context: String) -> Result<String, JsVa
     Err(JsValue::from_str("Not implemented: render_template"))
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "extractStructured")]
-pub async fn extract_structured(content: String, config: WasmStructuredExtractionConfig) -> Result<String, JsValue> {
-    let config_core: kreuzberg::StructuredExtractionConfig = config.into();
-    let result = kreuzberg::llm::structured::extract_structured(&content, &config_core)
-        .await
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
-    Ok(result)
-}
-
 #[wasm_bindgen(js_name = "getPreset")]
 pub fn get_preset(name: String) -> Option<String> {
     None
@@ -15501,33 +15491,6 @@ pub fn preprocess_rescale(img: String, target_size: u32) -> String {
 #[wasm_bindgen(js_name = "preprocessLetterbox")]
 pub fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) -> String {
     String::from("[unimplemented: preprocess_letterbox]")
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "buildSession")]
-pub fn build_session(
-    path: String,
-    accel: Option<WasmAccelerationConfig>,
-    thread_budget: usize,
-) -> Result<String, JsValue> {
-    Err(JsValue::from_str("Not implemented: build_session"))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "createEngine")]
-pub fn create_engine(layout_config: WasmLayoutDetectionConfig) -> Result<String, JsValue> {
-    Err(JsValue::from_str("Not implemented: create_engine"))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[wasm_bindgen(js_name = "takeOrCreateEngine")]
-pub fn take_or_create_engine(layout_config: WasmLayoutDetectionConfig) -> Result<String, JsValue> {
-    Err(JsValue::from_str("Not implemented: take_or_create_engine"))
-}
-
-#[wasm_bindgen(js_name = "returnEngine")]
-pub fn return_engine(engine: String) -> () {
-    ()
 }
 
 #[wasm_bindgen(js_name = "takeOrCreateTatr")]

@@ -2,11 +2,11 @@
 defmodule Kreuzberg.EmailMetadata do
   @moduledoc "Email metadata extracted from .eml and .msg files."
 
-  defstruct from_email: nil,
-            from_name: nil,
+  defstruct from_email: "",
+            from_name: "",
             to_emails: [],
             cc_emails: [],
             bcc_emails: [],
-            message_id: nil,
+            message_id: "",
             attachments: []
 end

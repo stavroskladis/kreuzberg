@@ -5,7 +5,7 @@ use extendr_api::prelude::*;
 use std::ops::Deref;
 use std::ops::DerefMut;
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct AccelerationConfig {
     /// Execution provider to use for ONNX inference.
     pub provider: ExecutionProviderType,
@@ -33,7 +33,7 @@ pub fn new_accelerationconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ContentFilterConfig {
     /// Include running headers in extraction output.
     /// 
@@ -124,7 +124,7 @@ pub fn new_contentfilterconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct EmailConfig {
     /// Windows codepage number to use when an MSG file contains no codepage property.
     /// Defaults to `None`, which falls back to windows-1252.
@@ -173,7 +173,7 @@ pub fn new_emailconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExtractionConfig {
     /// Enable caching of extraction results
     pub use_cache: bool,
@@ -607,7 +607,7 @@ pub fn new_extractionconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct FileExtractionConfig {
     /// Override quality post-processing for this file.
     pub enable_quality_processing: Option<bool>,
@@ -742,7 +742,7 @@ pub fn new_fileextractionconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct ImageExtractionConfig {
     /// Extract images from documents
@@ -816,7 +816,7 @@ pub fn new_imageextractionconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TokenReductionOptions {
     /// Reduction mode: "off", "light", "moderate", "aggressive", "maximum"
     pub mode: String,
@@ -832,7 +832,7 @@ impl TokenReductionOptions {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct LanguageDetectionConfig {
     /// Enable language detection
     pub enabled: bool,
@@ -850,7 +850,7 @@ impl LanguageDetectionConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HtmlOutputConfig {
     /// Inline CSS string injected into the output after the theme stylesheet.
     /// Concatenated after `css_file` content when both are set.
@@ -910,7 +910,7 @@ pub fn new_htmloutputconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct LayoutDetectionConfig {
     /// Confidence threshold override (None = use model default).
     pub confidence_threshold: Option<f64>,
@@ -950,7 +950,7 @@ pub fn new_layoutdetectionconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct LlmConfig {
     /// Provider/model string using liter-llm routing format.
     /// 
@@ -1024,7 +1024,7 @@ pub fn new_llmconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct StructuredExtractionConfig {
     /// JSON Schema defining the desired output structure.
     pub schema: String,
@@ -1061,7 +1061,7 @@ impl StructuredExtractionConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrQualityThresholds {
     /// Minimum total non-whitespace characters to consider text substantive.
     pub min_total_non_whitespace: f64,
@@ -1193,7 +1193,7 @@ pub fn new_ocrqualitythresholds(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrPipelineStage {
     /// Backend name: "tesseract", "paddleocr", "easyocr", or a custom registered name.
     pub backend: String,
@@ -1224,7 +1224,7 @@ impl OcrPipelineStage {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrPipelineConfig {
     /// Ordered list of backends to try. Sorted by priority (descending) at runtime.
     pub stages: Vec<OcrPipelineStage>,
@@ -1240,7 +1240,7 @@ impl OcrPipelineConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrConfig {
     /// Whether OCR is enabled.
     /// 
@@ -1403,7 +1403,7 @@ pub fn new_ocrconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PageConfig {
     /// Extract pages as separate array (ExtractionResult.pages)
     pub extract_pages: bool,
@@ -1455,7 +1455,7 @@ pub fn new_pageconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PdfConfig {
     /// PDF extraction backend. Default: `Pdfium`.
     pub backend: PdfBackend,
@@ -1536,7 +1536,7 @@ pub fn new_pdfconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HierarchyConfig {
     /// Enable hierarchy extraction
     pub enabled: bool,
@@ -1600,7 +1600,7 @@ pub fn new_hierarchyconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PostProcessorConfig {
     /// Enable post-processors
     pub enabled: bool,
@@ -1674,7 +1674,7 @@ pub fn new_postprocessorconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ChunkingConfig {
     /// Maximum size per chunk (in units determined by `sizing`).
     /// 
@@ -1785,7 +1785,7 @@ pub fn new_chunkingconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct EmbeddingConfig {
     /// The embedding model to use (defaults to "balanced" preset if not specified)
     pub model: EmbeddingModelType,
@@ -1839,7 +1839,7 @@ pub fn new_embeddingconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TreeSitterConfig {
     /// Enable code intelligence processing (default: true).
     /// 
@@ -1907,7 +1907,7 @@ pub fn new_treesitterconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct TreeSitterProcessConfig {
     /// Extract structural items (functions, classes, structs, etc.). Default: true.
@@ -1980,7 +1980,7 @@ pub fn new_treesitterprocessconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct SupportedFormat {
     /// File extension (without leading dot), e.g., "pdf", "docx"
     pub extension: String,
@@ -1996,7 +1996,7 @@ impl SupportedFormat {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct ServerConfig {
     /// Server host address (e.g., "127.0.0.1", "0.0.0.0")
@@ -2156,7 +2156,7 @@ pub fn new_serverconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct StructuredDataResult {
     pub content: String,
     pub format: String,
@@ -2172,7 +2172,7 @@ impl StructuredDataResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct StreamReader {
 }
 
@@ -2222,7 +2222,7 @@ impl StreamReader {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ImageOcrResult {
     /// Extracted text content
     pub content: String,
@@ -2240,7 +2240,7 @@ impl ImageOcrResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HtmlExtractionResult {
     pub markdown: String,
     pub images: Vec<ExtractedInlineImage>,
@@ -2255,7 +2255,7 @@ impl HtmlExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExtractedInlineImage {
     /// Uses `bytes::Bytes` for cheap cloning of large buffers.
     pub data: Vec<u8>,
@@ -2281,7 +2281,7 @@ impl ExtractedInlineImage {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct Drawing {
     pub drawing_type: String,
     pub extent: Option<String>,
@@ -2329,7 +2329,7 @@ pub fn new_drawing(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct AnchorProperties {
     pub behind_doc: bool,
@@ -2388,7 +2388,7 @@ pub fn new_anchorproperties(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HeaderFooter {
     pub paragraphs: Vec<String>,
     pub tables: Vec<String>,
@@ -2427,7 +2427,7 @@ pub fn new_headerfooter(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct Note {
     pub id: String,
     pub note_type: String,
@@ -2442,7 +2442,7 @@ impl Note {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PageMarginsPoints {
     pub top: Option<f64>,
     pub right: Option<f64>,
@@ -2505,7 +2505,7 @@ pub fn new_pagemarginspoints(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct StyleDefinition {
     /// The style ID (`w:styleId` attribute).
     pub id: String,
@@ -2543,7 +2543,7 @@ impl StyleDefinition {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ResolvedStyle {
     pub paragraph_properties: String,
     pub run_properties: String,
@@ -2578,7 +2578,7 @@ pub fn new_resolvedstyle(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TableProperties {
     pub style_id: Option<String>,
     pub width: Option<String>,
@@ -2652,7 +2652,7 @@ pub fn new_tableproperties(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct XlsxAppProperties {
     /// Application name (e.g., "Microsoft Excel")
     pub application: Option<String>,
@@ -2735,7 +2735,7 @@ pub fn new_xlsxappproperties(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PptxAppProperties {
     /// Application name (e.g., "Microsoft Office PowerPoint")
     pub application: Option<String>,
@@ -2854,11 +2854,11 @@ pub fn new_pptxappproperties(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct CustomProperties {
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OdtProperties {
     /// Document title (dc:title)
     pub title: Option<String>,
@@ -2995,11 +2995,11 @@ pub fn new_odtproperties(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ZipBombValidator {
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct StringGrowthValidator {
 }
 
@@ -3019,7 +3019,7 @@ impl StringGrowthValidator {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct IterationValidator {
 }
 
@@ -3039,7 +3039,7 @@ impl IterationValidator {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DepthValidator {
 }
 
@@ -3065,7 +3065,7 @@ impl DepthValidator {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct EntityValidator {
 }
 
@@ -3079,7 +3079,7 @@ impl EntityValidator {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TableValidator {
 }
 
@@ -3099,7 +3099,7 @@ impl TableValidator {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrFallbackDecision {
     pub stats: String,
     pub avg_non_whitespace: f64,
@@ -3115,7 +3115,7 @@ impl OcrFallbackDecision {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TokenReductionConfig {
     pub level: ReductionLevel,
     pub language_hint: Option<String>,
@@ -3186,7 +3186,7 @@ pub fn new_tokenreductionconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PdfAnnotation {
     /// The type of annotation.
     pub annotation_type: PdfAnnotationType,
@@ -3211,7 +3211,7 @@ impl PdfAnnotation {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DjotContent {
     /// Plain text representation for backwards compatibility
     pub plain_text: String,
@@ -3249,7 +3249,7 @@ impl DjotContent {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct FormattedBlock {
     /// Type of block element
     pub block_type: BlockType,
@@ -3283,7 +3283,7 @@ impl FormattedBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct InlineElement {
     /// Type of inline element
     pub element_type: InlineType,
@@ -3308,7 +3308,7 @@ impl InlineElement {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DjotImage {
     /// Image source URL or path
     pub src: String,
@@ -3328,7 +3328,7 @@ impl DjotImage {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DjotLink {
     /// Link URL
     pub url: String,
@@ -3348,7 +3348,7 @@ impl DjotLink {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct Footnote {
     /// Footnote label
     pub label: String,
@@ -3364,7 +3364,7 @@ impl Footnote {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DocumentStructure {
     /// All nodes in document/reading order.
     pub nodes: Vec<DocumentNode>,
@@ -3475,7 +3475,7 @@ pub fn new_documentstructure(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DocumentRelationship {
     /// Source node index (the referencing node).
     pub source: i32,
@@ -3493,7 +3493,7 @@ impl DocumentRelationship {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DocumentNode {
     /// Deterministic identifier (hash of content + position).
     pub id: String,
@@ -3542,7 +3542,7 @@ impl DocumentNode {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct GridCell {
     /// Cell text content.
@@ -3577,7 +3577,7 @@ impl GridCell {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TextAnnotation {
     /// Start byte offset in the node's text content (inclusive).
     pub start: i32,
@@ -3595,7 +3595,7 @@ impl TextAnnotation {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExtractionResult {
     pub content: String,
     pub mime_type: String,
@@ -3813,7 +3813,7 @@ pub fn new_extractionresult(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ArchiveEntry {
     /// Archive-relative file path (e.g. "folder/document.pdf").
     pub path: String,
@@ -3831,7 +3831,7 @@ impl ArchiveEntry {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ProcessingWarning {
     /// The pipeline stage or feature that produced this warning
     /// (e.g., "embedding", "chunking", "language_detection", "output_format").
@@ -3848,7 +3848,7 @@ impl ProcessingWarning {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct LlmUsage {
     /// The LLM model identifier (e.g. "openai/gpt-4o", "anthropic/claude-sonnet-4-20250514").
     pub model: String,
@@ -3919,7 +3919,7 @@ pub fn new_llmusage(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct Chunk {
     /// The text content of this chunk.
     pub content: String,
@@ -3945,7 +3945,7 @@ impl Chunk {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HeadingContext {
     /// The heading hierarchy from document root to this chunk's section.
     /// Index 0 is the outermost (h1), last element is the most specific.
@@ -3960,7 +3960,7 @@ impl HeadingContext {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HeadingLevel {
     /// Heading depth (1 = h1, 2 = h2, etc.)
     pub level: i32,
@@ -3976,7 +3976,7 @@ impl HeadingLevel {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ChunkMetadata {
     /// Byte offset where this chunk starts in the original text (UTF-8 valid boundary).
     pub byte_start: f64,
@@ -4023,7 +4023,7 @@ impl ChunkMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExtractedImage {
     /// Raw image data (PNG, JPEG, WebP, etc. bytes).
     /// Uses `bytes::Bytes` for cheap cloning of large buffers.
@@ -4083,7 +4083,7 @@ impl ExtractedImage {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ElementMetadata {
     /// Page number (1-indexed)
     pub page_number: Option<f64>,
@@ -4111,7 +4111,7 @@ impl ElementMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct Element {
     /// Unique element identifier
     pub element_id: String,
@@ -4131,7 +4131,7 @@ impl Element {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExcelWorkbook {
     /// All sheets in the workbook
     pub sheets: Vec<ExcelSheet>,
@@ -4147,7 +4147,7 @@ impl ExcelWorkbook {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct ExcelSheet {
     /// Sheet name as it appears in Excel
@@ -4181,7 +4181,7 @@ impl ExcelSheet {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct XmlExtractionResult {
     /// Extracted text content (XML structure filtered out)
     pub content: String,
@@ -4199,7 +4199,7 @@ impl XmlExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TextExtractionResult {
     /// Extracted text content
     pub content: String,
@@ -4233,7 +4233,7 @@ impl TextExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PptxExtractionResult {
     /// Extracted text content from all slides
     pub content: String,
@@ -4283,7 +4283,7 @@ impl PptxExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct EmailExtractionResult {
     /// Email subject line
@@ -4334,7 +4334,7 @@ impl EmailExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct EmailAttachment {
     /// Attachment name (from Content-Disposition header)
     pub name: Option<String>,
@@ -4366,7 +4366,7 @@ impl EmailAttachment {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrExtractionResult {
     /// Recognized text content
     pub content: String,
@@ -4400,7 +4400,7 @@ impl OcrExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrTable {
     /// Table cells as a 2D vector (rows × columns)
     pub cells: Vec<Vec<String>>,
@@ -4425,7 +4425,7 @@ impl OcrTable {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrTableBoundingBox {
     /// Left x-coordinate (pixels)
     pub left: i32,
@@ -4445,7 +4445,7 @@ impl OcrTableBoundingBox {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ImagePreprocessingConfig {
     /// Target DPI for the image (300 is standard, 600 for small text).
     pub target_dpi: i32,
@@ -4520,7 +4520,7 @@ pub fn new_imagepreprocessingconfig(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct TesseractConfig {
     /// Language code (e.g., "eng", "deu", "fra")
@@ -4696,7 +4696,7 @@ pub fn new_tesseractconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ImagePreprocessingMetadata {
     /// Original image dimensions (width, height) in pixels
     pub original_dimensions: String,
@@ -4746,7 +4746,7 @@ impl ImagePreprocessingMetadata {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct Metadata {
     /// Document title
@@ -4892,7 +4892,7 @@ pub fn new_metadata(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExcelMetadata {
     /// Total number of sheets in the workbook
     pub sheet_count: f64,
@@ -4900,15 +4900,36 @@ pub struct ExcelMetadata {
     pub sheet_names: Vec<String>,
 }
 
-impl ExcelMetadata {
-    #[must_use]
-    
-    pub fn new(sheet_count: f64, sheet_names: Vec<String>) -> Self {
-        Self { sheet_count, sheet_names }
+impl Default for ExcelMetadata {
+    fn default() -> Self {
+        Self {
+            sheet_count: Default::default(),
+            sheet_names: Default::default(),
+        }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+impl ExcelMetadata {
+    #[must_use]
+    
+    pub fn new(sheet_count: Option<f64>, sheet_names: Option<Vec<String>>) -> Self {
+        Self { sheet_count: sheet_count.unwrap_or_default(), sheet_names: sheet_names.unwrap_or_default() }
+    }
+}
+
+#[extendr]
+pub fn new_excelmetadata(
+    sheet_count: f64 = 0,
+    sheet_names: Vec<String> = c()
+) -> ExcelMetadata {
+    ExcelMetadata {
+        sheet_count,
+        sheet_names,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct EmailMetadata {
     /// Sender's email address
@@ -4927,23 +4948,59 @@ pub struct EmailMetadata {
     pub attachments: Vec<String>,
 }
 
+impl Default for EmailMetadata {
+    fn default() -> Self {
+        Self {
+            from_email: Default::default(),
+            from_name: Default::default(),
+            to_emails: Default::default(),
+            cc_emails: Default::default(),
+            bcc_emails: Default::default(),
+            message_id: Default::default(),
+            attachments: Default::default(),
+        }
+    }
+}
+
 impl EmailMetadata {
     #[must_use]
     
     pub fn new(
-        to_emails: Vec<String>,
-        cc_emails: Vec<String>,
-        bcc_emails: Vec<String>,
-        attachments: Vec<String>,
+        to_emails: Option<Vec<String>>,
+        cc_emails: Option<Vec<String>>,
+        bcc_emails: Option<Vec<String>>,
+        attachments: Option<Vec<String>>,
         from_email: Option<String>,
         from_name: Option<String>,
         message_id: Option<String>,
     ) -> Self {
-        Self { from_email, from_name, to_emails, cc_emails, bcc_emails, message_id, attachments }
+        Self { from_email: from_email, from_name: from_name, to_emails: to_emails.unwrap_or_default(), cc_emails: cc_emails.unwrap_or_default(), bcc_emails: bcc_emails.unwrap_or_default(), message_id: message_id, attachments: attachments.unwrap_or_default() }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[extendr]
+pub fn new_emailmetadata(
+    from_email: String = "",
+    from_name: String = "",
+    to_emails: Vec<String> = c(),
+    cc_emails: Vec<String> = c(),
+    bcc_emails: Vec<String> = c(),
+    message_id: String = "",
+    attachments: Vec<String> = c()
+) -> EmailMetadata {
+    EmailMetadata {
+        from_email,
+        from_name,
+        to_emails,
+        cc_emails,
+        bcc_emails,
+        message_id,
+        attachments,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ArchiveMetadata {
     /// Archive format ("ZIP", "TAR", "7Z", etc.)
     pub format: String,
@@ -4957,21 +5014,51 @@ pub struct ArchiveMetadata {
     pub compressed_size: Option<f64>,
 }
 
+impl Default for ArchiveMetadata {
+    fn default() -> Self {
+        Self {
+            format: Default::default(),
+            file_count: Default::default(),
+            file_list: Default::default(),
+            total_size: Default::default(),
+            compressed_size: Default::default(),
+        }
+    }
+}
+
 impl ArchiveMetadata {
     #[must_use]
     
     pub fn new(
-        format: String,
-        file_count: f64,
-        file_list: Vec<String>,
-        total_size: f64,
+        format: Option<String>,
+        file_count: Option<f64>,
+        file_list: Option<Vec<String>>,
+        total_size: Option<f64>,
         compressed_size: Option<f64>,
     ) -> Self {
-        Self { format, file_count, file_list, total_size, compressed_size }
+        Self { format: format.unwrap_or_default(), file_count: file_count.unwrap_or_default(), file_list: file_list.unwrap_or_default(), total_size: total_size.unwrap_or_default(), compressed_size: compressed_size }
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[extendr]
+pub fn new_archivemetadata(
+    format: String = "",
+    file_count: f64 = 0,
+    file_list: Vec<String> = c(),
+    total_size: f64 = 0,
+    compressed_size: f64 = 0
+) -> ArchiveMetadata {
+    ArchiveMetadata {
+        format,
+        file_count,
+        file_list,
+        total_size,
+        compressed_size,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct XmlMetadata {
     /// Total number of XML elements processed
     pub element_count: f64,
@@ -5008,7 +5095,7 @@ pub fn new_xmlmetadata(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TextMetadata {
     /// Number of lines in the document
     pub line_count: f64,
@@ -5024,22 +5111,55 @@ pub struct TextMetadata {
     pub code_blocks: Option<Vec<String>>,
 }
 
+impl Default for TextMetadata {
+    fn default() -> Self {
+        Self {
+            line_count: Default::default(),
+            word_count: Default::default(),
+            character_count: Default::default(),
+            headers: Default::default(),
+            links: Default::default(),
+            code_blocks: Default::default(),
+        }
+    }
+}
+
 impl TextMetadata {
     #[must_use]
     
     pub fn new(
-        line_count: f64,
-        word_count: f64,
-        character_count: f64,
+        line_count: Option<f64>,
+        word_count: Option<f64>,
+        character_count: Option<f64>,
         headers: Option<Vec<String>>,
         links: Option<Vec<String>>,
         code_blocks: Option<Vec<String>>,
     ) -> Self {
-        Self { line_count, word_count, character_count, headers, links, code_blocks }
+        Self { line_count: line_count.unwrap_or_default(), word_count: word_count.unwrap_or_default(), character_count: character_count.unwrap_or_default(), headers: headers, links: links, code_blocks: code_blocks }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[extendr]
+pub fn new_textmetadata(
+    line_count: f64 = 0,
+    word_count: f64 = 0,
+    character_count: f64 = 0,
+    headers: Vec<String> = c(),
+    links: Vec<String> = c(),
+    code_blocks: Vec<String> = c()
+) -> TextMetadata {
+    TextMetadata {
+        line_count,
+        word_count,
+        character_count,
+        headers,
+        links,
+        code_blocks,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HeaderMetadata {
     /// Header level: 1 (h1) through 6 (h6)
     pub level: i32,
@@ -5061,7 +5181,7 @@ impl HeaderMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct LinkMetadata {
     /// The href URL value
     pub href: String,
@@ -5092,7 +5212,7 @@ impl LinkMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ImageMetadataType {
     /// Image source (URL, data URI, or SVG content)
     pub src: String,
@@ -5123,7 +5243,7 @@ impl ImageMetadataType {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct StructuredData {
     /// Type of structured data
     pub data_type: StructuredDataType,
@@ -5141,7 +5261,7 @@ impl StructuredData {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HtmlMetadata {
     /// Document title from `<title>` tag
     pub title: Option<String>,
@@ -5268,7 +5388,7 @@ pub fn new_htmlmetadata(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct OcrMetadata {
     /// OCR language code(s) used
@@ -5283,22 +5403,55 @@ pub struct OcrMetadata {
     pub table_cols: Option<f64>,
 }
 
+impl Default for OcrMetadata {
+    fn default() -> Self {
+        Self {
+            language: Default::default(),
+            psm: Default::default(),
+            output_format: Default::default(),
+            table_count: Default::default(),
+            table_rows: Default::default(),
+            table_cols: Default::default(),
+        }
+    }
+}
+
 impl OcrMetadata {
     #[must_use]
     
     pub fn new(
-        language: String,
-        psm: i32,
-        output_format: String,
-        table_count: f64,
+        language: Option<String>,
+        psm: Option<i32>,
+        output_format: Option<String>,
+        table_count: Option<f64>,
         table_rows: Option<f64>,
         table_cols: Option<f64>,
     ) -> Self {
-        Self { language, psm, output_format, table_count, table_rows, table_cols }
+        Self { language: language.unwrap_or_default(), psm: psm.unwrap_or_default(), output_format: output_format.unwrap_or_default(), table_count: table_count.unwrap_or_default(), table_rows: table_rows, table_cols: table_cols }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[extendr]
+pub fn new_ocrmetadata(
+    language: String = "",
+    psm: i32 = 0,
+    output_format: String = "",
+    table_count: f64 = 0,
+    table_rows: f64 = 0,
+    table_cols: f64 = 0
+) -> OcrMetadata {
+    OcrMetadata {
+        language,
+        psm,
+        output_format,
+        table_count,
+        table_rows,
+        table_cols,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ErrorMetadata {
     pub error_type: String,
     pub message: String,
@@ -5312,7 +5465,7 @@ impl ErrorMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PptxMetadata {
     /// Total number of slides in the presentation
     pub slide_count: f64,
@@ -5324,15 +5477,47 @@ pub struct PptxMetadata {
     pub table_count: Option<f64>,
 }
 
-impl PptxMetadata {
-    #[must_use]
-    
-    pub fn new(slide_count: f64, slide_names: Vec<String>, image_count: Option<f64>, table_count: Option<f64>) -> Self {
-        Self { slide_count, slide_names, image_count, table_count }
+impl Default for PptxMetadata {
+    fn default() -> Self {
+        Self {
+            slide_count: Default::default(),
+            slide_names: Default::default(),
+            image_count: Default::default(),
+            table_count: Default::default(),
+        }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+impl PptxMetadata {
+    #[must_use]
+    
+    pub fn new(
+        slide_count: Option<f64>,
+        slide_names: Option<Vec<String>>,
+        image_count: Option<f64>,
+        table_count: Option<f64>,
+    ) -> Self {
+        Self { slide_count: slide_count.unwrap_or_default(), slide_names: slide_names.unwrap_or_default(), image_count: image_count, table_count: table_count }
+    }
+}
+
+#[extendr]
+pub fn new_pptxmetadata(
+    slide_count: f64 = 0,
+    slide_names: Vec<String> = c(),
+    image_count: f64 = 0,
+    table_count: f64 = 0
+) -> PptxMetadata {
+    PptxMetadata {
+        slide_count,
+        slide_names,
+        image_count,
+        table_count,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DocxMetadata {
     /// Core properties from docProps/core.xml (Dublin Core metadata)
     /// 
@@ -5351,6 +5536,16 @@ pub struct DocxMetadata {
     pub custom_properties: Option<HashMap<String, String>>,
 }
 
+impl Default for DocxMetadata {
+    fn default() -> Self {
+        Self {
+            core_properties: Default::default(),
+            app_properties: Default::default(),
+            custom_properties: Default::default(),
+        }
+    }
+}
+
 impl DocxMetadata {
     #[must_use]
     
@@ -5359,11 +5554,25 @@ impl DocxMetadata {
         app_properties: Option<String>,
         custom_properties: Option<HashMap<String, String>>,
     ) -> Self {
-        Self { core_properties, app_properties, custom_properties }
+        Self { core_properties: core_properties, app_properties: app_properties, custom_properties: custom_properties }
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[extendr]
+pub fn new_docxmetadata(
+    core_properties: String = "",
+    app_properties: String = "",
+    custom_properties: HashMap<String, String> = null
+) -> DocxMetadata {
+    DocxMetadata {
+        core_properties,
+        app_properties,
+        custom_properties,
+    }
+}
+
+
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct CsvMetadata {
     pub row_count: f64,
     pub column_count: f64,
@@ -5416,7 +5625,7 @@ pub fn new_csvmetadata(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct BibtexMetadata {
     pub entry_count: f64,
     pub citation_keys: Vec<String>,
@@ -5457,7 +5666,7 @@ pub fn new_bibtexmetadata(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct CitationMetadata {
     pub citation_count: f64,
     pub format: Option<String>,
@@ -5502,7 +5711,7 @@ pub fn new_citationmetadata(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct YearRange {
     pub min: Option<i32>,
@@ -5518,7 +5727,7 @@ impl YearRange {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct FictionBookMetadata {
     pub genres: Vec<String>,
     pub sequences: Vec<String>,
@@ -5557,7 +5766,7 @@ pub fn new_fictionbookmetadata(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DbfMetadata {
     pub record_count: f64,
     pub field_count: f64,
@@ -5586,7 +5795,7 @@ pub fn new_dbfmetadata(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DbfFieldInfo {
     pub name: String,
     pub field_type: String,
@@ -5600,7 +5809,7 @@ impl DbfFieldInfo {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct JatsMetadata {
     pub copyright: Option<String>,
     pub license: Option<String>,
@@ -5637,7 +5846,7 @@ pub fn new_jatsmetadata(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ContributorRole {
     pub name: String,
     pub role: Option<String>,
@@ -5651,7 +5860,7 @@ impl ContributorRole {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct EpubMetadata {
     pub coverage: Option<String>,
     pub dc_format: Option<String>,
@@ -5709,7 +5918,7 @@ pub fn new_epubmetadata(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PstMetadata {
     pub message_count: f64,
 }
@@ -5740,7 +5949,7 @@ pub fn new_pstmetadata(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrConfidence {
     /// Detection confidence: how confident the OCR engine is that text exists here.
     /// 
@@ -5790,7 +5999,7 @@ pub fn new_ocrconfidence(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrRotation {
     /// Rotation angle in degrees (0, 90, 180, 270 for PaddleOCR).
     pub angle_degrees: f64,
@@ -5811,7 +6020,7 @@ impl OcrRotation {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrElement {
     /// The recognized text content.
     pub text: String,
@@ -5918,7 +6127,7 @@ pub fn new_ocrelement(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrElementConfig {
     /// Whether to include OCR elements in the extraction result.
     /// 
@@ -5968,7 +6177,7 @@ pub fn new_ocrelementconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PageStructure {
     /// Total number of pages/slides/sheets
     pub total_count: f64,
@@ -5996,7 +6205,7 @@ impl PageStructure {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PageBoundary {
     /// Byte offset where this page starts in the content string (UTF-8 valid boundary, inclusive)
     pub byte_start: f64,
@@ -6014,7 +6223,7 @@ impl PageBoundary {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PageInfo {
     /// Page number (1-indexed)
     pub number: f64,
@@ -6052,7 +6261,7 @@ impl PageInfo {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PageContent {
     /// Page number (1-indexed)
     pub page_number: f64,
@@ -6095,7 +6304,7 @@ impl PageContent {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PageHierarchy {
     /// Number of hierarchy blocks on this page
     pub block_count: f64,
@@ -6111,7 +6320,7 @@ impl PageHierarchy {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HierarchicalBlock {
     /// The text content of this block
     pub text: String,
@@ -6142,7 +6351,7 @@ impl HierarchicalBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct Uri {
     /// The URL or path string.
     pub url: String,
@@ -6196,15 +6405,15 @@ impl Uri {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct StringBufferPool {
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ByteBufferPool {
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PooledString {
 }
 
@@ -6242,7 +6451,7 @@ impl PooledString {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TracingLayer {
 }
 
@@ -6260,11 +6469,11 @@ impl TracingLayer {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ApiDoc {
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HealthResponse {
     /// Health status
     pub status: String,
@@ -6282,7 +6491,7 @@ impl HealthResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct InfoResponse {
     /// API version
     pub version: String,
@@ -6298,11 +6507,11 @@ impl InfoResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExtractResponse {
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ApiState {
     /// Default extraction configuration
     pub default_config: ExtractionConfig,
@@ -6322,7 +6531,7 @@ impl ApiState {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct CacheStatsResponse {
     /// Cache directory path
     pub directory: String,
@@ -6353,7 +6562,7 @@ impl CacheStatsResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct CacheClearResponse {
     /// Cache directory path
     pub directory: String,
@@ -6371,7 +6580,7 @@ impl CacheClearResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct EmbedRequest {
     /// Text strings to generate embeddings for (at least one non-empty string required)
     pub texts: Vec<String>,
@@ -6387,7 +6596,7 @@ impl EmbedRequest {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct EmbedResponse {
     /// Generated embeddings (one per input text)
     pub embeddings: Vec<Vec<f64>>,
@@ -6407,7 +6616,7 @@ impl EmbedResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ChunkRequest {
     /// Text to chunk (must not be empty)
     pub text: String,
@@ -6425,7 +6634,7 @@ impl ChunkRequest {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ChunkResponse {
     /// List of chunks
     pub chunks: Vec<String>,
@@ -6447,7 +6656,7 @@ impl ChunkResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct VersionResponse {
     /// Kreuzberg version string
     pub version: String,
@@ -6461,7 +6670,7 @@ impl VersionResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DetectResponse {
     /// Detected MIME type
     pub mime_type: String,
@@ -6477,7 +6686,7 @@ impl DetectResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ManifestEntryResponse {
     /// Relative path within the cache directory
     pub relative_path: String,
@@ -6497,7 +6706,7 @@ impl ManifestEntryResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ManifestResponse {
     /// Kreuzberg version
     pub kreuzberg_version: String,
@@ -6522,7 +6731,7 @@ impl ManifestResponse {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct WarmRequest {
     /// Download all embedding model presets
     pub all_embeddings: bool,
@@ -6559,7 +6768,7 @@ pub fn new_warmrequest(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct WarmResponse {
     /// Cache directory used
     pub cache_dir: String,
@@ -6577,7 +6786,7 @@ impl WarmResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct StructuredExtractionResponse {
     /// Structured data conforming to the provided JSON schema
     pub structured_output: String,
@@ -6595,7 +6804,7 @@ impl StructuredExtractionResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OpenWebDocumentResponse {
     /// Extracted text content
     pub page_content: String,
@@ -6611,7 +6820,7 @@ impl OpenWebDocumentResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DoclingCompatResponse {
     /// Converted document content
     pub document: String,
@@ -6627,7 +6836,7 @@ impl DoclingCompatResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExtractFileParams {
     /// Path to the file to extract
     pub path: String,
@@ -6655,7 +6864,7 @@ impl ExtractFileParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExtractBytesParams {
     /// Base64-encoded file content
     pub data: String,
@@ -6683,7 +6892,7 @@ impl ExtractBytesParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct BatchExtractFilesParams {
     /// Paths to files to extract
     pub paths: Vec<String>,
@@ -6712,7 +6921,7 @@ impl BatchExtractFilesParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DetectMimeTypeParams {
     /// Path to the file
     pub path: String,
@@ -6728,7 +6937,7 @@ impl DetectMimeTypeParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct CacheWarmParams {
     /// Download all embedding model presets
     pub all_embeddings: bool,
@@ -6744,7 +6953,7 @@ impl CacheWarmParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct EmbedTextParams {
     /// List of text strings to generate embeddings for
     pub texts: Vec<String>,
@@ -6765,7 +6974,7 @@ impl EmbedTextParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ExtractStructuredParams {
     /// File path to extract from
     pub path: String,
@@ -6803,7 +7012,7 @@ impl ExtractStructuredParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ChunkTextParams {
     /// Text content to split into chunks
     pub text: String,
@@ -6823,7 +7032,7 @@ impl ChunkTextParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct ChunkingResult {
     /// List of text chunks
     pub chunks: Vec<Chunk>,
@@ -6839,7 +7048,7 @@ impl ChunkingResult {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct YakeParams {
     /// Window size for co-occurrence analysis (default: 2).
     /// 
@@ -6878,7 +7087,7 @@ pub fn new_yakeparams(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct RakeParams {
     /// Minimum word length to consider (default: 1).
     pub min_word_length: f64,
@@ -6920,7 +7129,7 @@ pub fn new_rakeparams(
 }
 
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct KeywordConfig {
     /// Algorithm to use for extraction.
@@ -7047,7 +7256,7 @@ pub fn new_keywordconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct Keyword {
     /// The keyword text.
     pub text: String,
@@ -7072,7 +7281,7 @@ impl Keyword {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OcrCacheStats {
     pub total_files: f64,
     pub total_size_mb: f64,
@@ -7107,7 +7316,7 @@ pub fn new_ocrcachestats(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct RecognizedTable {
     /// Detection bbox that this table corresponds to (for matching).
     pub detection_bbox: BBox,
@@ -7125,7 +7334,7 @@ impl RecognizedTable {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct TessdataManager {
 }
 
@@ -7143,7 +7352,7 @@ impl TessdataManager {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PaddleOcrConfig {
     /// Language code (e.g., "en", "ch", "jpn", "kor", "deu", "fra")
     pub language: String,
@@ -7459,7 +7668,7 @@ pub fn new_paddleocrconfig(
 }
 
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct ModelPaths {
     /// Path to the detection model directory.
@@ -7480,7 +7689,7 @@ impl ModelPaths {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct OrientationResult {
     /// Detected orientation in degrees (0, 90, 180, or 270).
     pub degrees: i32,
@@ -7496,7 +7705,7 @@ impl OrientationResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct BBox {
     pub x1: f64,
@@ -7580,7 +7789,7 @@ impl BBox {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct LayoutDetection {
     pub class: LayoutClass,
     pub confidence: f64,
@@ -7605,7 +7814,7 @@ impl LayoutDetection {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct DetectionResult {
     pub page_width: i32,
     pub page_height: i32,
@@ -7620,7 +7829,7 @@ impl DetectionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct EmbeddedFile {
     /// The filename as stored in the PDF name tree.
     pub name: String,
@@ -7638,7 +7847,7 @@ impl EmbeddedFile {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct FontSizeCluster {
     /// The centroid (mean) font size of this cluster
     pub centroid: f64,
@@ -7654,7 +7863,7 @@ impl FontSizeCluster {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct CharData {
     /// The character text content
@@ -7696,7 +7905,7 @@ impl CharData {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct HierarchyBlock {
     /// The text content
     pub text: String,
@@ -7716,7 +7925,7 @@ impl HierarchyBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PdfImage {
     pub page_number: f64,
     pub image_index: f64,
@@ -7751,7 +7960,7 @@ impl PdfImage {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PageLayoutResult {
     pub page_index: f64,
     pub regions: Vec<String>,
@@ -7778,7 +7987,7 @@ impl PageLayoutResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PageTiming {
     /// Time to render the PDF page to a raster image (amortized from batch render).
     pub render_ms: f64,
@@ -7809,7 +8018,7 @@ impl PageTiming {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[allow(clippy::similar_names)]
 pub struct CommonPdfMetadata {
     pub title: Option<String>,
@@ -7837,12 +8046,13 @@ impl CommonPdfMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct PdfUnifiedExtractionResult {
 }
 
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum ExecutionProviderType {
+    #[default]
     Auto = 0,
     Cpu = 1,
     CoreMl = 2,
@@ -7850,14 +8060,10 @@ pub enum ExecutionProviderType {
     TensorRt = 4,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ExecutionProviderType {
-    fn default() -> Self { Self::Auto }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum OutputFormat {
+    #[default]
     Plain = 0,
     Markdown = 1,
     Djot = 2,
@@ -7867,14 +8073,10 @@ pub enum OutputFormat {
     Custom = 6,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for OutputFormat {
-    fn default() -> Self { Self::Plain }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum HtmlTheme {
+    #[default]
     Default = 0,
     GitHub = 1,
     Dark = 2,
@@ -7882,14 +8084,10 @@ pub enum HtmlTheme {
     Unstyled = 4,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for HtmlTheme {
-    fn default() -> Self { Self::Default }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum TableModel {
+    #[default]
     Tatr = 0,
     SlanetWired = 1,
     SlanetWireless = 2,
@@ -7898,106 +8096,74 @@ pub enum TableModel {
     Disabled = 5,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for TableModel {
-    fn default() -> Self { Self::Tatr }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum PdfBackend {
+    #[default]
     Pdfium = 0,
     PdfOxide = 1,
     Auto = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PdfBackend {
-    fn default() -> Self { Self::Pdfium }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum ChunkerType {
+    #[default]
     Text = 0,
     Markdown = 1,
     Yaml = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ChunkerType {
-    fn default() -> Self { Self::Text }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum ChunkSizing {
+    #[default]
     Characters = 0,
     Tokenizer = 1,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ChunkSizing {
-    fn default() -> Self { Self::Characters }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum EmbeddingModelType {
+    #[default]
     Preset = 0,
     Custom = 1,
     Llm = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for EmbeddingModelType {
-    fn default() -> Self { Self::Preset }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum CodeContentMode {
+    #[default]
     Chunks = 0,
     Raw = 1,
     Structure = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for CodeContentMode {
-    fn default() -> Self { Self::Chunks }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum FracType {
+    #[default]
     Bar = 0,
     NoBar = 1,
     Linear = 2,
     Skewed = 3,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for FracType {
-    fn default() -> Self { Self::Bar }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum OcrBackendType {
+    #[default]
     Tesseract = 0,
     EasyOCR = 1,
     PaddleOCR = 2,
     Custom = 3,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for OcrBackendType {
-    fn default() -> Self { Self::Tesseract }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum ReductionLevel {
+    #[default]
     Off = 0,
     Light = 1,
     Moderate = 2,
@@ -8005,14 +8171,10 @@ pub enum ReductionLevel {
     Maximum = 4,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ReductionLevel {
-    fn default() -> Self { Self::Off }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum PdfAnnotationType {
+    #[default]
     Text = 0,
     Highlight = 1,
     Link = 2,
@@ -8022,14 +8184,10 @@ pub enum PdfAnnotationType {
     Other = 6,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PdfAnnotationType {
-    fn default() -> Self { Self::Text }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum BlockType {
+    #[default]
     Paragraph = 0,
     Heading = 1,
     Blockquote = 2,
@@ -8048,14 +8206,10 @@ pub enum BlockType {
     MathDisplay = 15,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for BlockType {
-    fn default() -> Self { Self::Paragraph }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum InlineType {
+    #[default]
     Text = 0,
     Strong = 1,
     Emphasis = 2,
@@ -8074,14 +8228,10 @@ pub enum InlineType {
     Symbol = 15,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for InlineType {
-    fn default() -> Self { Self::Text }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum RelationshipKind {
+    #[default]
     FootnoteReference = 0,
     CitationReference = 1,
     InternalLink = 2,
@@ -8091,28 +8241,20 @@ pub enum RelationshipKind {
     CrossReference = 6,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for RelationshipKind {
-    fn default() -> Self { Self::FootnoteReference }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum ContentLayer {
+    #[default]
     Body = 0,
     Header = 1,
     Footer = 2,
     Footnote = 3,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ContentLayer {
-    fn default() -> Self { Self::Body }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum NodeContent {
+    #[default]
     Title = 0,
     Heading = 1,
     Paragraph = 2,
@@ -8135,14 +8277,10 @@ pub enum NodeContent {
     MetadataBlock = 19,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for NodeContent {
-    fn default() -> Self { Self::Title }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum AnnotationKind {
+    #[default]
     Bold = 0,
     Italic = 1,
     Underline = 2,
@@ -8157,14 +8295,10 @@ pub enum AnnotationKind {
     Custom = 11,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for AnnotationKind {
-    fn default() -> Self { Self::Bold }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum ChunkType {
+    #[default]
     Heading = 0,
     PartyList = 1,
     Definitions = 2,
@@ -8180,26 +8314,18 @@ pub enum ChunkType {
     Unknown = 12,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ChunkType {
-    fn default() -> Self { Self::Heading }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum ExtractionMode {
+    #[default]
     Unified = 0,
     ElementBased = 1,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ExtractionMode {
-    fn default() -> Self { Self::Unified }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum ElementType {
+    #[default]
     Title = 0,
     NarrativeText = 1,
     Heading = 2,
@@ -8213,14 +8339,10 @@ pub enum ElementType {
     Header = 10,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ElementType {
-    fn default() -> Self { Self::Title }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum FormatMetadata {
+    #[default]
     Pdf = 0,
     Docx = 1,
     Excel = 2,
@@ -8243,27 +8365,19 @@ pub enum FormatMetadata {
     Code = 19,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for FormatMetadata {
-    fn default() -> Self { Self::Pdf }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum TextDirection {
+    #[default]
     LeftToRight = 0,
     RightToLeft = 1,
     Auto = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for TextDirection {
-    fn default() -> Self { Self::LeftToRight }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum LinkType {
+    #[default]
     Anchor = 0,
     Internal = 1,
     External = 2,
@@ -8272,80 +8386,56 @@ pub enum LinkType {
     Other = 5,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for LinkType {
-    fn default() -> Self { Self::Anchor }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum ImageType {
+    #[default]
     DataUri = 0,
     InlineSvg = 1,
     External = 2,
     Relative = 3,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ImageType {
-    fn default() -> Self { Self::DataUri }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum StructuredDataType {
+    #[default]
     JsonLd = 0,
     Microdata = 1,
     RDFa = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for StructuredDataType {
-    fn default() -> Self { Self::JsonLd }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum OcrBoundingGeometry {
+    #[default]
     Rectangle = 0,
     Quadrilateral = 1,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for OcrBoundingGeometry {
-    fn default() -> Self { Self::Rectangle }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum OcrElementLevel {
+    #[default]
     Word = 0,
     Line = 1,
     Block = 2,
     Page = 3,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for OcrElementLevel {
-    fn default() -> Self { Self::Word }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum PageUnitType {
+    #[default]
     Page = 0,
     Slide = 1,
     Sheet = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PageUnitType {
-    fn default() -> Self { Self::Page }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum UriKind {
+    #[default]
     Hyperlink = 0,
     Image = 1,
     Anchor = 2,
@@ -8354,37 +8444,25 @@ pub enum UriKind {
     Email = 5,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for UriKind {
-    fn default() -> Self { Self::Hyperlink }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum PoolError {
+    #[default]
     LockPoisoned = 0,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PoolError {
-    fn default() -> Self { Self::LockPoisoned }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum KeywordAlgorithm {
+    #[default]
     Yake = 0,
     Rake = 1,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for KeywordAlgorithm {
-    fn default() -> Self { Self::Yake }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum PSMMode {
+    #[default]
     OsdOnly = 0,
     AutoOsd = 1,
     AutoOnly = 2,
@@ -8398,14 +8476,10 @@ pub enum PSMMode {
     SingleChar = 10,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PSMMode {
-    fn default() -> Self { Self::OsdOnly }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum PaddleLanguage {
+    #[default]
     English = 0,
     Chinese = 1,
     Japanese = 2,
@@ -8424,14 +8498,10 @@ pub enum PaddleLanguage {
     Telugu = 15,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PaddleLanguage {
-    fn default() -> Self { Self::English }
-}
 
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 pub enum LayoutClass {
+    #[default]
     Caption = 0,
     Footnote = 1,
     Formula = 2,
@@ -8449,11 +8519,6 @@ pub enum LayoutClass {
     CheckboxUnselected = 14,
     Form = 15,
     KeyValueRegion = 16,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for LayoutClass {
-    fn default() -> Self { Self::Caption }
 }
 
 
@@ -9976,14 +10041,6 @@ pub fn render_template(template: String, context: String) -> Result<String> {
         Err("Not implemented: render_template".to_string())
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[extendr]
-pub async fn extract_structured(content: String, config: StructuredExtractionConfig) -> Result<String> {
-    let config_json = serde_json::to_string(&config).map_err(|e| e.to_string())?;
-    let config_core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config_json).map_err(|e| e.to_string())?;
-    todo!("async not supported by backend")
-}
-
 #[extendr]
 pub fn normalize(v: Vec<f64>) -> Vec<f64> {
     kreuzberg::embeddings::engine::normalize(&v)
@@ -10190,42 +10247,10 @@ pub fn preprocess_letterbox(img: String, target_width: i32, target_height: i32) 
         String::from("[unimplemented: preprocess_letterbox]")
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[extendr]
-pub fn build_session(path: String, accel: Option<AccelerationConfig>, thread_budget: Option<f64>) -> Result<String> {
-    let accel_core: Option<kreuzberg::AccelerationConfig> = accel.map(|v| {
-        let json = serde_json::to_string(&v).map_err(|e| e.to_string())?;
-        serde_json::from_str(&json).map_err(|e| e.to_string())
-    }).transpose()?;
-    kreuzberg::layout::session::build_session(&path, accel_core, thread_budget.expect("'thread_budget' is required")).map(|val| val.into()).map_err(|e| e.to_string())
-}
-
 #[extendr]
 pub fn config_from_extraction(layout_config: LayoutDetectionConfig) -> String {
     let _ = layout_config;
         String::from("[unimplemented: config_from_extraction]")
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[extendr]
-pub fn create_engine(layout_config: LayoutDetectionConfig) -> Result<String> {
-    let layout_config_json = serde_json::to_string(&layout_config).map_err(|e| e.to_string())?;
-    let layout_config_core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config_json).map_err(|e| e.to_string())?;
-    kreuzberg::layout::create_engine(&layout_config_core).map(|val| val.into()).map_err(|e| e.to_string())
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[extendr]
-pub fn take_or_create_engine(layout_config: LayoutDetectionConfig) -> Result<String> {
-    let layout_config_json = serde_json::to_string(&layout_config).map_err(|e| e.to_string())?;
-    let layout_config_core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config_json).map_err(|e| e.to_string())?;
-    kreuzberg::layout::take_or_create_engine(&layout_config_core).map(|val| val.into()).map_err(|e| e.to_string())
-}
-
-#[extendr]
-pub fn return_engine(engine: String) -> () {
-    let _ = engine;
-        ()
 }
 
 #[extendr]
@@ -10921,7 +10946,6 @@ extendr_module! {
     fn precompute_utf8_boundaries;
     fn validate_utf8_boundaries;
     fn render_template;
-    fn extract_structured;
     fn normalize;
     fn get_preset;
     fn list_presets;
@@ -10955,11 +10979,7 @@ extendr_module! {
     fn preprocess_imagenet_letterbox;
     fn preprocess_rescale;
     fn preprocess_letterbox;
-    fn build_session;
     fn config_from_extraction;
-    fn create_engine;
-    fn take_or_create_engine;
-    fn return_engine;
     fn take_or_create_tatr;
     fn return_tatr;
     fn take_or_create_slanet;

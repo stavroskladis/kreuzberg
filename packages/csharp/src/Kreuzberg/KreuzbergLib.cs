@@ -6866,50 +6866,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Extract structured data from document content using an LLM with JSON schema.
-    ///
-    /// Sends the document content to the configured LLM with a JSON schema constraint,
-    /// returning structured data that conforms to the schema.
-    ///
-    /// # Arguments
-    ///
-    /// * `content` - The extracted document text to send to the LLM.
-    /// * `config` - Structured extraction configuration including schema and LLM settings.
-    ///
-    /// # Returns
-    ///
-    /// A `serde_json::Value` conforming to the provided JSON schema.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if:
-    /// - The LLM client cannot be created (invalid provider/credentials).
-    /// - The LLM request fails (network, rate-limit, etc.).
-    /// - The LLM response cannot be parsed as valid JSON.
-    /// </summary>
-    /// <param name="content"></param>
-    /// <param name="config"></param>
-    public static async Task<string> ExtractStructured(string content, StructuredExtractionConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(content);
-        ArgumentNullException.ThrowIfNull(config);
-        var configJson = JsonSerializer.Serialize(config, JsonOptions);
-        var configHandle = NativeMethods.StructuredExtractionConfigFromJson(configJson);
-        return await Task.Run(() =>
-        {
-            var result = NativeMethods.ExtractStructured(
-                content,
-                configHandle
-            );
-            if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-            var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-            NativeMethods.FreeString(result);
-            NativeMethods.StructuredExtractionConfigFree(configHandle);
-            return returnValue;
-        });
-    }
-
-    /// <summary>
     /// L2-normalize a vector.
     /// </summary>
     /// <param name="v"></param>
@@ -7875,40 +7831,6 @@ public static class KreuzbergLib
     }
 
     /// <summary>
-    /// Build an optimized ORT session from an ONNX model file.
-    ///
-    /// `thread_budget` controls the number of intra-op threads for this session.
-    /// Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
-    /// to respect the user's `ConcurrencyConfig`.
-    ///
-    /// When `accel` is `None` or `Auto`, uses platform defaults:
-    /// - macOS: CoreML (Neural Engine / GPU)
-    /// - Linux: CUDA (GPU)
-    /// - Others: CPU only
-    ///
-    /// ORT silently falls back to CPU if the requested EP is unavailable.
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="accel">Optional.</param>
-    /// <param name="threadBudget"></param>
-    public static string BuildSession(string path, AccelerationConfig? accel, ulong threadBudget)
-    {
-        ArgumentNullException.ThrowIfNull(path);
-        var accelJson = accel != null ? JsonSerializer.Serialize(accel, JsonOptions) : "null";
-        var accelHandle = NativeMethods.AccelerationConfigFromJson(accelJson);
-        var result = NativeMethods.BuildSession(
-            path,
-            accelHandle,
-            threadBudget
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        NativeMethods.AccelerationConfigFree(accelHandle);
-        return returnValue;
-    }
-
-    /// <summary>
     /// Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
     /// </summary>
     /// <param name="layoutConfig"></param>
@@ -7925,62 +7847,6 @@ public static class KreuzbergLib
         NativeMethods.FreeString(result);
         NativeMethods.LayoutDetectionConfigFree(layoutConfigHandle);
         return returnValue;
-    }
-
-    /// <summary>
-    /// Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
-    ///
-    /// Ensures ORT is available, then creates the engine with model download.
-    /// </summary>
-    /// <param name="layoutConfig"></param>
-    public static string CreateEngine(LayoutDetectionConfig layoutConfig)
-    {
-        ArgumentNullException.ThrowIfNull(layoutConfig);
-        var layoutConfigJson = JsonSerializer.Serialize(layoutConfig, JsonOptions);
-        var layoutConfigHandle = NativeMethods.LayoutDetectionConfigFromJson(layoutConfigJson);
-        var result = NativeMethods.CreateEngine(
-            layoutConfigHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        NativeMethods.LayoutDetectionConfigFree(layoutConfigHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Take the cached layout engine, or create a new one if the cache is empty.
-    ///
-    /// The caller owns the engine for the duration of its work and should
-    /// return it via [`return_engine`] when done. This avoids holding the
-    /// global mutex during inference.
-    /// </summary>
-    /// <param name="layoutConfig"></param>
-    public static string TakeOrCreateEngine(LayoutDetectionConfig layoutConfig)
-    {
-        ArgumentNullException.ThrowIfNull(layoutConfig);
-        var layoutConfigJson = JsonSerializer.Serialize(layoutConfig, JsonOptions);
-        var layoutConfigHandle = NativeMethods.LayoutDetectionConfigFromJson(layoutConfigJson);
-        var result = NativeMethods.TakeOrCreateEngine(
-            layoutConfigHandle
-        );
-        if (result == IntPtr.Zero) { var err = GetLastError(); if (err.Code != 0) throw err; }
-        var returnValue = Marshal.PtrToStringUTF8(result) ?? string.Empty;
-        NativeMethods.FreeString(result);
-        NativeMethods.LayoutDetectionConfigFree(layoutConfigHandle);
-        return returnValue;
-    }
-
-    /// <summary>
-    /// Return a layout engine to the global cache for reuse by future extractions.
-    /// </summary>
-    /// <param name="engine"></param>
-    public static void ReturnEngine(string engine)
-    {
-        ArgumentNullException.ThrowIfNull(engine);
-        NativeMethods.ReturnEngine(
-            engine
-        );
     }
 
     /// <summary>

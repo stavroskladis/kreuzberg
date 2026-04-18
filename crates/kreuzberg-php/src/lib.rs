@@ -811,7 +811,7 @@ impl ImageExtractionConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\TokenReductionOptions")]
 pub struct TokenReductionOptions {
@@ -833,7 +833,7 @@ impl TokenReductionOptions {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\LanguageDetectionConfig")]
 pub struct LanguageDetectionConfig {
@@ -985,7 +985,7 @@ impl LlmConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\StructuredExtractionConfig")]
 pub struct StructuredExtractionConfig {
@@ -1132,7 +1132,7 @@ impl OcrQualityThresholds {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrPipelineStage")]
 pub struct OcrPipelineStage {
@@ -1175,7 +1175,7 @@ impl OcrPipelineStage {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrPipelineConfig")]
 pub struct OcrPipelineConfig {
@@ -1805,7 +1805,7 @@ impl TreeSitterProcessConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\SupportedFormat")]
 pub struct SupportedFormat {
@@ -1959,7 +1959,7 @@ impl ServerConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\StructuredDataResult")]
 pub struct StructuredDataResult {
@@ -2036,7 +2036,7 @@ impl StreamReader {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ImageOcrResult")]
 pub struct ImageOcrResult {
@@ -2066,7 +2066,7 @@ impl ImageOcrResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\HtmlExtractionResult")]
 pub struct HtmlExtractionResult {
@@ -2089,7 +2089,7 @@ impl HtmlExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ExtractedInlineImage")]
 pub struct ExtractedInlineImage {
@@ -2231,7 +2231,7 @@ impl HeaderFooter {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\Note")]
 pub struct Note {
@@ -2297,7 +2297,7 @@ impl PageMarginsPoints {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\StyleDefinition")]
 pub struct StyleDefinition {
@@ -2799,7 +2799,7 @@ impl TableValidator {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrFallbackDecision")]
 pub struct OcrFallbackDecision {
@@ -2869,7 +2869,7 @@ impl TokenReductionConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PdfAnnotation")]
 pub struct PdfAnnotation {
@@ -2894,7 +2894,7 @@ impl PdfAnnotation {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DjotContent")]
 pub struct DjotContent {
@@ -2951,7 +2951,7 @@ impl DjotContent {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\FormattedBlock")]
 pub struct FormattedBlock {
@@ -2993,7 +2993,7 @@ impl FormattedBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\InlineElement")]
 pub struct InlineElement {
@@ -3022,7 +3022,7 @@ impl InlineElement {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DjotImage")]
 pub struct DjotImage {
@@ -3052,7 +3052,7 @@ impl DjotImage {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DjotLink")]
 pub struct DjotLink {
@@ -3082,7 +3082,7 @@ impl DjotLink {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\Footnote")]
 pub struct Footnote {
@@ -3205,7 +3205,7 @@ impl DocumentStructure {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DocumentRelationship")]
 pub struct DocumentRelationship {
@@ -3227,7 +3227,7 @@ impl DocumentRelationship {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DocumentNode")]
 pub struct DocumentNode {
@@ -3283,7 +3283,7 @@ impl DocumentNode {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\GridCell")]
 #[allow(clippy::similar_names)]
@@ -3334,7 +3334,7 @@ impl GridCell {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\TextAnnotation")]
 pub struct TextAnnotation {
@@ -3577,7 +3577,7 @@ impl ExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ArchiveEntry")]
 pub struct ArchiveEntry {
@@ -3603,7 +3603,7 @@ impl ArchiveEntry {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ProcessingWarning")]
 pub struct ProcessingWarning {
@@ -3674,7 +3674,7 @@ impl LlmUsage {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\Chunk")]
 pub struct Chunk {
@@ -3709,7 +3709,7 @@ impl Chunk {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\HeadingContext")]
 pub struct HeadingContext {
@@ -3730,7 +3730,7 @@ impl HeadingContext {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\HeadingLevel")]
 pub struct HeadingLevel {
@@ -3749,7 +3749,7 @@ impl HeadingLevel {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ChunkMetadata")]
 pub struct ChunkMetadata {
@@ -3799,7 +3799,7 @@ impl ChunkMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ExtractedImage")]
 pub struct ExtractedImage {
@@ -3866,7 +3866,7 @@ impl ExtractedImage {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ElementMetadata")]
 pub struct ElementMetadata {
@@ -3910,7 +3910,7 @@ impl ElementMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\Element")]
 pub struct Element {
@@ -3939,7 +3939,7 @@ impl Element {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ExcelWorkbook")]
 pub struct ExcelWorkbook {
@@ -3966,7 +3966,7 @@ impl ExcelWorkbook {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ExcelSheet")]
 #[allow(clippy::similar_names)]
@@ -4018,7 +4018,7 @@ impl ExcelSheet {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\XmlExtractionResult")]
 pub struct XmlExtractionResult {
@@ -4044,7 +4044,7 @@ impl XmlExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\TextExtractionResult")]
 pub struct TextExtractionResult {
@@ -4094,7 +4094,7 @@ impl TextExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PptxExtractionResult")]
 pub struct PptxExtractionResult {
@@ -4167,7 +4167,7 @@ impl PptxExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\EmailExtractionResult")]
 #[allow(clippy::similar_names)]
@@ -4225,7 +4225,7 @@ impl EmailExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\EmailAttachment")]
 pub struct EmailAttachment {
@@ -4275,7 +4275,7 @@ impl EmailAttachment {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrExtractionResult")]
 pub struct OcrExtractionResult {
@@ -4321,7 +4321,7 @@ impl OcrExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrTable")]
 pub struct OcrTable {
@@ -4354,7 +4354,7 @@ impl OcrTable {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrTableBoundingBox")]
 pub struct OcrTableBoundingBox {
@@ -4540,7 +4540,7 @@ impl TesseractConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ImagePreprocessingMetadata")]
 pub struct ImagePreprocessingMetadata {
@@ -4726,7 +4726,7 @@ impl Metadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ExcelMetadata")]
 pub struct ExcelMetadata {
@@ -4740,15 +4740,15 @@ pub struct ExcelMetadata {
 
 #[php_impl]
 impl ExcelMetadata {
-    pub fn __construct(sheet_count: i64, sheet_names: Vec<String>) -> Self {
+    pub fn __construct(sheet_count: Option<i64>, sheet_names: Option<Vec<String>>) -> Self {
         Self {
-            sheet_count,
-            sheet_names,
+            sheet_count: sheet_count.unwrap_or_default(),
+            sheet_names: sheet_names.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\EmailMetadata")]
 #[allow(clippy::similar_names)]
@@ -4779,27 +4779,27 @@ pub struct EmailMetadata {
 #[php_impl]
 impl EmailMetadata {
     pub fn __construct(
-        to_emails: Vec<String>,
-        cc_emails: Vec<String>,
-        bcc_emails: Vec<String>,
-        attachments: Vec<String>,
         from_email: Option<String>,
         from_name: Option<String>,
+        to_emails: Option<Vec<String>>,
+        cc_emails: Option<Vec<String>>,
+        bcc_emails: Option<Vec<String>>,
         message_id: Option<String>,
+        attachments: Option<Vec<String>>,
     ) -> Self {
         Self {
             from_email,
             from_name,
-            to_emails,
-            cc_emails,
-            bcc_emails,
+            to_emails: to_emails.unwrap_or_default(),
+            cc_emails: cc_emails.unwrap_or_default(),
+            bcc_emails: bcc_emails.unwrap_or_default(),
             message_id,
-            attachments,
+            attachments: attachments.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ArchiveMetadata")]
 pub struct ArchiveMetadata {
@@ -4823,17 +4823,17 @@ pub struct ArchiveMetadata {
 #[php_impl]
 impl ArchiveMetadata {
     pub fn __construct(
-        format: String,
-        file_count: i64,
-        file_list: Vec<String>,
-        total_size: i64,
+        format: Option<String>,
+        file_count: Option<i64>,
+        file_list: Option<Vec<String>>,
+        total_size: Option<i64>,
         compressed_size: Option<i64>,
     ) -> Self {
         Self {
-            format,
-            file_count,
-            file_list,
-            total_size,
+            format: format.unwrap_or_default(),
+            file_count: file_count.unwrap_or_default(),
+            file_list: file_list.unwrap_or_default(),
+            total_size: total_size.unwrap_or_default(),
             compressed_size,
         }
     }
@@ -4861,7 +4861,7 @@ impl XmlMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\TextMetadata")]
 pub struct TextMetadata {
@@ -4888,17 +4888,17 @@ pub struct TextMetadata {
 #[php_impl]
 impl TextMetadata {
     pub fn __construct(
-        line_count: i64,
-        word_count: i64,
-        character_count: i64,
+        line_count: Option<i64>,
+        word_count: Option<i64>,
+        character_count: Option<i64>,
         headers: Option<Vec<String>>,
         links: Option<Vec<String>>,
         code_blocks: Option<Vec<String>>,
     ) -> Self {
         Self {
-            line_count,
-            word_count,
-            character_count,
+            line_count: line_count.unwrap_or_default(),
+            word_count: word_count.unwrap_or_default(),
+            character_count: character_count.unwrap_or_default(),
             headers,
             links,
             code_blocks,
@@ -4906,7 +4906,7 @@ impl TextMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\HeaderMetadata")]
 pub struct HeaderMetadata {
@@ -4940,7 +4940,7 @@ impl HeaderMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\LinkMetadata")]
 pub struct LinkMetadata {
@@ -4971,7 +4971,7 @@ impl LinkMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ImageMetadataType")]
 pub struct ImageMetadataType {
@@ -5002,7 +5002,7 @@ impl ImageMetadataType {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\StructuredData")]
 pub struct StructuredData {
@@ -5144,7 +5144,7 @@ impl HtmlMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrMetadata")]
 #[allow(clippy::similar_names)]
@@ -5170,25 +5170,25 @@ pub struct OcrMetadata {
 #[php_impl]
 impl OcrMetadata {
     pub fn __construct(
-        language: String,
-        psm: i32,
-        output_format: String,
-        table_count: i64,
+        language: Option<String>,
+        psm: Option<i32>,
+        output_format: Option<String>,
+        table_count: Option<i64>,
         table_rows: Option<i64>,
         table_cols: Option<i64>,
     ) -> Self {
         Self {
-            language,
-            psm,
-            output_format,
-            table_count,
+            language: language.unwrap_or_default(),
+            psm: psm.unwrap_or_default(),
+            output_format: output_format.unwrap_or_default(),
+            table_count: table_count.unwrap_or_default(),
             table_rows,
             table_cols,
         }
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ErrorMetadata")]
 pub struct ErrorMetadata {
@@ -5205,7 +5205,7 @@ impl ErrorMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PptxMetadata")]
 pub struct PptxMetadata {
@@ -5226,21 +5226,21 @@ pub struct PptxMetadata {
 #[php_impl]
 impl PptxMetadata {
     pub fn __construct(
-        slide_count: i64,
-        slide_names: Vec<String>,
+        slide_count: Option<i64>,
+        slide_names: Option<Vec<String>>,
         image_count: Option<i64>,
         table_count: Option<i64>,
     ) -> Self {
         Self {
-            slide_count,
-            slide_names,
+            slide_count: slide_count.unwrap_or_default(),
+            slide_names: slide_names.unwrap_or_default(),
             image_count,
             table_count,
         }
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DocxMetadata")]
 pub struct DocxMetadata {
@@ -5378,7 +5378,7 @@ impl CitationMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\YearRange")]
 #[allow(clippy::similar_names)]
@@ -5448,7 +5448,7 @@ impl DbfMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DbfFieldInfo")]
 pub struct DbfFieldInfo {
@@ -5494,7 +5494,7 @@ impl JatsMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ContributorRole")]
 pub struct ContributorRole {
@@ -5602,7 +5602,7 @@ impl OcrConfidence {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OcrRotation")]
 pub struct OcrRotation {
@@ -5799,7 +5799,7 @@ impl OcrElementConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PageStructure")]
 pub struct PageStructure {
@@ -5835,7 +5835,7 @@ impl PageStructure {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PageBoundary")]
 pub struct PageBoundary {
@@ -5861,7 +5861,7 @@ impl PageBoundary {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PageInfo")]
 pub struct PageInfo {
@@ -5915,7 +5915,7 @@ impl PageInfo {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PageContent")]
 pub struct PageContent {
@@ -5966,7 +5966,7 @@ impl PageContent {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PageHierarchy")]
 pub struct PageHierarchy {
@@ -5989,7 +5989,7 @@ impl PageHierarchy {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\HierarchicalBlock")]
 pub struct HierarchicalBlock {
@@ -6030,7 +6030,7 @@ impl HierarchicalBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\Uri")]
 pub struct Uri {
@@ -6176,7 +6176,7 @@ pub struct ApiDoc {
 #[php_impl]
 impl ApiDoc {}
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\HealthResponse")]
 pub struct HealthResponse {
@@ -6202,7 +6202,7 @@ impl HealthResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\InfoResponse")]
 pub struct InfoResponse {
@@ -6231,7 +6231,7 @@ pub struct ExtractResponse {
 #[php_impl]
 impl ExtractResponse {}
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ApiState")]
 pub struct ApiState {
@@ -6258,7 +6258,7 @@ impl ApiState {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\CacheStatsResponse")]
 pub struct CacheStatsResponse {
@@ -6303,7 +6303,7 @@ impl CacheStatsResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\CacheClearResponse")]
 pub struct CacheClearResponse {
@@ -6329,7 +6329,7 @@ impl CacheClearResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\EmbedRequest")]
 pub struct EmbedRequest {
@@ -6352,7 +6352,7 @@ impl EmbedRequest {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\EmbedResponse")]
 pub struct EmbedResponse {
@@ -6386,7 +6386,7 @@ impl EmbedResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ChunkRequest")]
 pub struct ChunkRequest {
@@ -6412,7 +6412,7 @@ impl ChunkRequest {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ChunkResponse")]
 pub struct ChunkResponse {
@@ -6452,7 +6452,7 @@ impl ChunkResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\VersionResponse")]
 pub struct VersionResponse {
@@ -6468,7 +6468,7 @@ impl VersionResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DetectResponse")]
 pub struct DetectResponse {
@@ -6487,7 +6487,7 @@ impl DetectResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ManifestEntryResponse")]
 pub struct ManifestEntryResponse {
@@ -6517,7 +6517,7 @@ impl ManifestEntryResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ManifestResponse")]
 pub struct ManifestResponse {
@@ -6568,7 +6568,7 @@ impl WarmRequest {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\WarmResponse")]
 pub struct WarmResponse {
@@ -6594,7 +6594,7 @@ impl WarmResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\StructuredExtractionResponse")]
 pub struct StructuredExtractionResponse {
@@ -6624,7 +6624,7 @@ impl StructuredExtractionResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OpenWebDocumentResponse")]
 pub struct OpenWebDocumentResponse {
@@ -6643,7 +6643,7 @@ impl OpenWebDocumentResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DoclingCompatResponse")]
 pub struct DoclingCompatResponse {
@@ -6662,7 +6662,7 @@ impl DoclingCompatResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ExtractFileParams")]
 pub struct ExtractFileParams {
@@ -6706,7 +6706,7 @@ impl ExtractFileParams {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ExtractBytesParams")]
 pub struct ExtractBytesParams {
@@ -6750,7 +6750,7 @@ impl ExtractBytesParams {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\BatchExtractFilesParams")]
 pub struct BatchExtractFilesParams {
@@ -6799,7 +6799,7 @@ impl BatchExtractFilesParams {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DetectMimeTypeParams")]
 pub struct DetectMimeTypeParams {
@@ -6818,7 +6818,7 @@ impl DetectMimeTypeParams {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\CacheWarmParams")]
 pub struct CacheWarmParams {
@@ -6840,7 +6840,7 @@ impl CacheWarmParams {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\EmbedTextParams")]
 pub struct EmbedTextParams {
@@ -6876,7 +6876,7 @@ impl EmbedTextParams {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ExtractStructuredParams")]
 pub struct ExtractStructuredParams {
@@ -6935,7 +6935,7 @@ impl ExtractStructuredParams {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ChunkTextParams")]
 pub struct ChunkTextParams {
@@ -6970,7 +6970,7 @@ impl ChunkTextParams {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ChunkingResult")]
 pub struct ChunkingResult {
@@ -7174,7 +7174,7 @@ impl KeywordConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\Keyword")]
 pub struct Keyword {
@@ -7223,7 +7223,7 @@ impl OcrCacheStats {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\RecognizedTable")]
 pub struct RecognizedTable {
@@ -7561,7 +7561,7 @@ impl PaddleOcrConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\ModelPaths")]
 #[allow(clippy::similar_names)]
@@ -7592,7 +7592,7 @@ impl ModelPaths {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\OrientationResult")]
 pub struct OrientationResult {
@@ -7611,7 +7611,7 @@ impl OrientationResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\BBox")]
 #[allow(clippy::similar_names)]
@@ -7693,7 +7693,7 @@ impl BBox {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\LayoutDetection")]
 pub struct LayoutDetection {
@@ -7724,7 +7724,7 @@ impl LayoutDetection {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\DetectionResult")]
 pub struct DetectionResult {
@@ -7747,7 +7747,7 @@ impl DetectionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\EmbeddedFile")]
 pub struct EmbeddedFile {
@@ -7773,7 +7773,7 @@ impl EmbeddedFile {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\FontSizeCluster")]
 pub struct FontSizeCluster {
@@ -7792,7 +7792,7 @@ impl FontSizeCluster {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\CharData")]
 #[allow(clippy::similar_names)]
@@ -7853,7 +7853,7 @@ impl CharData {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\HierarchyBlock")]
 pub struct HierarchyBlock {
@@ -7883,7 +7883,7 @@ impl HierarchyBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PdfImage")]
 pub struct PdfImage {
@@ -7941,7 +7941,7 @@ impl PdfImage {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PageLayoutResult")]
 pub struct PageLayoutResult {
@@ -7982,7 +7982,7 @@ impl PageLayoutResult {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\PageTiming")]
 pub struct PageTiming {
@@ -8027,7 +8027,7 @@ impl PageTiming {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
 #[php_class]
 #[php(name = "Kreuzberg\\CommonPdfMetadata")]
 #[allow(clippy::similar_names)]
@@ -9825,12 +9825,6 @@ impl KreuzbergApi {
         ))
     }
 
-    pub fn extract_structured_async(content: String, config: &StructuredExtractionConfig) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: extract_structured_async".to_string(),
-        ))
-    }
-
     pub fn normalize(v: Vec<f32>) -> Vec<f32> {
         kreuzberg::embeddings::engine::normalize(&v[..])
     }
@@ -10030,30 +10024,8 @@ impl KreuzbergApi {
         String::from("[unimplemented: preprocess_letterbox]")
     }
 
-    pub fn build_session(path: String, accel: Option<&AccelerationConfig>, thread_budget: i64) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: build_session".to_string(),
-        ))
-    }
-
     pub fn config_from_extraction(layout_config: &LayoutDetectionConfig) -> String {
         String::from("[unimplemented: config_from_extraction]")
-    }
-
-    pub fn create_engine(layout_config: &LayoutDetectionConfig) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: create_engine".to_string(),
-        ))
-    }
-
-    pub fn take_or_create_engine(layout_config: &LayoutDetectionConfig) -> PhpResult<String> {
-        Err(ext_php_rs::exception::PhpException::default(
-            "Not implemented: take_or_create_engine".to_string(),
-        ))
-    }
-
-    pub fn return_engine(engine: String) -> () {
-        ()
     }
 
     pub fn take_or_create_tatr() -> Option<String> {
@@ -13092,7 +13064,7 @@ impl From<kreuzberg::ocr::OcrCacheStats> for OcrCacheStats {
     }
 }
 
-impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable {
+impl From<RecognizedTable> for kreuzberg::RecognizedTable {
     fn from(val: RecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
@@ -13102,8 +13074,8 @@ impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable 
     }
 }
 
-impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for RecognizedTable {
-    fn from(val: kreuzberg::ocr::layout_assembly::RecognizedTable) -> Self {
+impl From<kreuzberg::RecognizedTable> for RecognizedTable {
+    fn from(val: kreuzberg::RecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
             cells: val.cells,

@@ -8,4 +8,7 @@ public record ExcelMetadata(
     @JsonProperty("sheet_count") long sheetCount,
     @JsonProperty("sheet_names") List<String> sheetNames
 ) {
+    public static ExcelMetadataBuilder builder() {
+        return new ExcelMetadataBuilder();
+    }
 }

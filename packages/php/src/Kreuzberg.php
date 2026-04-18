@@ -5626,38 +5626,6 @@ final class Kreuzberg
     }
 
     /**
-     * Extract structured data from document content using an LLM with JSON schema.
-     *
-     * Sends the document content to the configured LLM with a JSON schema constraint,
-     * returning structured data that conforms to the schema.
-     *
-     * # Arguments
-     *
-     * * `content` - The extracted document text to send to the LLM.
-     * * `config` - Structured extraction configuration including schema and LLM settings.
-     *
-     * # Returns
-     *
-     * A `serde_json::Value` conforming to the provided JSON schema.
-     *
-     * # Errors
-     *
-     * Returns an error if:
-     * - The LLM client cannot be created (invalid provider/credentials).
-     * - The LLM request fails (network, rate-limit, etc.).
-     * - The LLM response cannot be parsed as valid JSON.
-     *
-     * @param string $content
-     * @param StructuredExtractionConfig $config
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function extractStructured(string $content, StructuredExtractionConfig $config): string
-    {
-        return \Kreuzberg\KreuzbergApi::extractStructuredAsync($content, $config); // delegate to native extension class
-    }
-
-    /**
      * L2-normalize a vector.
      *
      * @param array<float> $v
@@ -6417,31 +6385,6 @@ final class Kreuzberg
     }
 
     /**
-     * Build an optimized ORT session from an ONNX model file.
-     *
-     * `thread_budget` controls the number of intra-op threads for this session.
-     * Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
-     * to respect the user's `ConcurrencyConfig`.
-     *
-     * When `accel` is `None` or `Auto`, uses platform defaults:
-     * - macOS: CoreML (Neural Engine / GPU)
-     * - Linux: CUDA (GPU)
-     * - Others: CPU only
-     *
-     * ORT silently falls back to CPU if the requested EP is unavailable.
-     *
-     * @param string $path
-     * @param ?AccelerationConfig $accel
-     * @param int $thread_budget
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function buildSession(string $path, ?AccelerationConfig $accel = null, int $thread_budget): string
-    {
-        return \Kreuzberg\KreuzbergApi::buildSession($path, $accel, $thread_budget); // delegate to native extension class
-    }
-
-    /**
      * Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
      *
      * @param LayoutDetectionConfig $layout_config
@@ -6450,47 +6393,6 @@ final class Kreuzberg
     public static function configFromExtraction(LayoutDetectionConfig $layout_config): string
     {
         return \Kreuzberg\KreuzbergApi::configFromExtraction($layout_config); // delegate to native extension class
-    }
-
-    /**
-     * Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
-     *
-     * Ensures ORT is available, then creates the engine with model download.
-     *
-     * @param LayoutDetectionConfig $layout_config
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function createEngine(LayoutDetectionConfig $layout_config): string
-    {
-        return \Kreuzberg\KreuzbergApi::createEngine($layout_config); // delegate to native extension class
-    }
-
-    /**
-     * Take the cached layout engine, or create a new one if the cache is empty.
-     *
-     * The caller owns the engine for the duration of its work and should
-     * return it via [`return_engine`] when done. This avoids holding the
-     * global mutex during inference.
-     *
-     * @param LayoutDetectionConfig $layout_config
-     * @return string
-     * @throws \Kreuzberg\KreuzbergException
-     */
-    public static function takeOrCreateEngine(LayoutDetectionConfig $layout_config): string
-    {
-        return \Kreuzberg\KreuzbergApi::takeOrCreateEngine($layout_config); // delegate to native extension class
-    }
-
-    /**
-     * Return a layout engine to the global cache for reuse by future extractions.
-     *
-     * @param string $engine
-     * @return void
-     */
-    public static function returnEngine(string $engine): void
-    {
-        return \Kreuzberg\KreuzbergApi::returnEngine($engine); // delegate to native extension class
     }
 
     /**

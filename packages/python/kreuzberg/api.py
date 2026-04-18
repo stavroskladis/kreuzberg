@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 import kreuzberg._kreuzberg as _rust
 
 if TYPE_CHECKING:
-    from .options import AccelerationConfig, CharData, Chunk, ChunkerType, ChunkingConfig, ContentFilterConfig, DetectionResult, DjotContent, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractionConfig, ExtractionResult, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, KeywordConfig, LanguageDetectionConfig, LayoutDetection, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfidence, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PdfConfig, PostProcessorConfig, RakeParams, RecognizedTable, ServerConfig, StructuredExtractionConfig, TesseractConfig, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, YakeParams
+    from .options import AccelerationConfig, CharData, Chunk, ChunkerType, ChunkingConfig, ContentFilterConfig, DetectionResult, DjotContent, DocumentStructure, ElementType, EmailConfig, EmailExtractionResult, EmbeddingConfig, EmbeddingModelType, ExcelWorkbook, ExtractionConfig, ExtractionResult, FontSizeCluster, FormattedBlock, HeadingContext, HierarchyConfig, HtmlOutputConfig, ImageExtractionConfig, ImagePreprocessingConfig, InlineElement, KeywordConfig, LanguageDetectionConfig, LayoutDetection, LayoutDetectionConfig, LlmConfig, Metadata, OcrConfidence, OcrConfig, OcrElement, OcrElementConfig, OcrQualityThresholds, OutputFormat, PageBoundary, PageConfig, PdfConfig, PostProcessorConfig, RakeParams, RecognizedTable, ServerConfig, TesseractConfig, TokenReductionConfig, TreeSitterConfig, TreeSitterProcessConfig, YakeParams
 
 
 _TO_RUST_CHUNKERTYPE_MAP = {
@@ -1854,11 +1854,6 @@ def render_template(template: str, context: str) -> str:
     return _rust.render_template(template, context)
 
 
-def extract_structured(content: str, config: StructuredExtractionConfig) -> str:
-    """Extract structured data from document content using an LLM with JSON schema."""
-    return _rust.extract_structured(content, config)
-
-
 def normalize(v: list[float]) -> list[float]:
     """L2-normalize a vector."""
     return _rust.normalize(v)
@@ -2026,33 +2021,10 @@ def preprocess_letterbox(img: str, target_width: int, target_height: int) -> str
     return _rust.preprocess_letterbox(img, target_width, target_height)
 
 
-def build_session(path: str, accel: AccelerationConfig | None = None, thread_budget: int) -> str:
-    """Build an optimized ORT session from an ONNX model file."""
-    _rust_accel = _to_rust_acceleration_config(accel)
-    return _rust.build_session(path, _rust_accel, thread_budget)
-
-
 def config_from_extraction(layout_config: LayoutDetectionConfig) -> str:
     """Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`]."""
     _rust_layout_config = _to_rust_layout_detection_config(layout_config)
     return _rust.config_from_extraction(_rust_layout_config)
-
-
-def create_engine(layout_config: LayoutDetectionConfig) -> str:
-    """Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`]."""
-    _rust_layout_config = _to_rust_layout_detection_config(layout_config)
-    return _rust.create_engine(_rust_layout_config)
-
-
-def take_or_create_engine(layout_config: LayoutDetectionConfig) -> str:
-    """Take the cached layout engine, or create a new one if the cache is empty."""
-    _rust_layout_config = _to_rust_layout_detection_config(layout_config)
-    return _rust.take_or_create_engine(_rust_layout_config)
-
-
-def return_engine(engine: str) -> None:
-    """Return a layout engine to the global cache for reuse by future extractions."""
-    return _rust.return_engine(engine)
 
 
 def take_or_create_tatr() -> str | None:

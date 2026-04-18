@@ -6254,7 +6254,6 @@ class KreuzbergApi
      */
     public static function validateUtf8Boundaries(string $text, array $boundaries): void { }
     public static function renderTemplate(string $template, string $context): string { }
-    public static function extractStructuredAsync(string $content, \Kreuzberg\StructuredExtractionConfig $config): string { }
     /**
      * @param array<float> $v
      * @return array<float>
@@ -6328,11 +6327,7 @@ class KreuzbergApi
     public static function preprocessImagenetLetterbox(string $img, int $target_size): string { }
     public static function preprocessRescale(string $img, int $target_size): string { }
     public static function preprocessLetterbox(string $img, int $target_width, int $target_height): string { }
-    public static function buildSession(string $path, ?\Kreuzberg\AccelerationConfig $accel = null, int $thread_budget): string { }
     public static function configFromExtraction(\Kreuzberg\LayoutDetectionConfig $layout_config): string { }
-    public static function createEngine(\Kreuzberg\LayoutDetectionConfig $layout_config): string { }
-    public static function takeOrCreateEngine(\Kreuzberg\LayoutDetectionConfig $layout_config): string { }
-    public static function returnEngine(string $engine): void { }
     public static function takeOrCreateTatr(): ?string { }
     public static function returnTatr(string $model): void { }
     public static function takeOrCreateSlanet(string $variant): ?string { }

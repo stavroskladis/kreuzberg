@@ -8,7 +8,7 @@ use std::ops::Deref;
 use std::ops::DerefMut;
 use std::sync::Arc;
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct AccelerationConfig {
     pub provider: ExecutionProviderType,
     pub device_id: u32,
@@ -23,7 +23,7 @@ impl AccelerationConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ContentFilterConfig {
     pub include_headers: bool,
     pub include_footers: bool,
@@ -54,7 +54,7 @@ impl ContentFilterConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct EmailConfig {
     pub msg_fallback_codepage: Option<u32>,
 }
@@ -67,7 +67,7 @@ impl EmailConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ExtractionConfig {
     pub use_cache: bool,
     pub enable_quality_processing: bool,
@@ -155,7 +155,7 @@ impl ExtractionConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct FileExtractionConfig {
     pub enable_quality_processing: Option<bool>,
     pub ocr: Option<OcrConfig>,
@@ -208,7 +208,7 @@ impl FileExtractionConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ImageExtractionConfig {
     pub extract_images: bool,
     pub target_dpi: i32,
@@ -245,14 +245,14 @@ impl ImageExtractionConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.TokenReductionOptions"]
 pub struct TokenReductionOptions {
     pub mode: String,
     pub preserve_important_words: bool,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.LanguageDetectionConfig"]
 pub struct LanguageDetectionConfig {
     pub enabled: bool,
@@ -260,7 +260,7 @@ pub struct LanguageDetectionConfig {
     pub detect_multiple: bool,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct HtmlOutputConfig {
     pub css: Option<String>,
     pub css_file: Option<String>,
@@ -287,7 +287,7 @@ impl HtmlOutputConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct LayoutDetectionConfig {
     pub confidence_threshold: Option<f32>,
     pub apply_heuristics: bool,
@@ -310,7 +310,7 @@ impl LayoutDetectionConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct LlmConfig {
     pub model: String,
     pub api_key: Option<String>,
@@ -335,7 +335,7 @@ impl LlmConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.StructuredExtractionConfig"]
 pub struct StructuredExtractionConfig {
     pub schema: String,
@@ -346,7 +346,7 @@ pub struct StructuredExtractionConfig {
     pub llm: LlmConfig,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct OcrQualityThresholds {
     pub min_total_non_whitespace: usize,
     pub min_non_whitespace_per_page: f64,
@@ -431,7 +431,7 @@ impl OcrQualityThresholds {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.OcrPipelineStage"]
 pub struct OcrPipelineStage {
     pub backend: String,
@@ -442,14 +442,14 @@ pub struct OcrPipelineStage {
     pub vlm_config: Option<LlmConfig>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.OcrPipelineConfig"]
 pub struct OcrPipelineConfig {
     pub stages: Vec<OcrPipelineStage>,
     pub quality_thresholds: OcrQualityThresholds,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct OcrConfig {
     pub enabled: bool,
     pub backend: String,
@@ -484,7 +484,7 @@ impl OcrConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct PageConfig {
     pub extract_pages: bool,
     pub insert_page_markers: bool,
@@ -511,7 +511,7 @@ impl PageConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct PdfConfig {
     pub backend: PdfBackend,
     pub extract_images: bool,
@@ -552,7 +552,7 @@ impl PdfConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct HierarchyConfig {
     pub enabled: bool,
     pub k_clusters: usize,
@@ -571,7 +571,7 @@ impl HierarchyConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct PostProcessorConfig {
     pub enabled: bool,
     pub enabled_processors: Option<Vec<String>>,
@@ -592,7 +592,7 @@ impl PostProcessorConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ChunkingConfig {
     pub max_characters: usize,
     pub overlap: usize,
@@ -625,7 +625,7 @@ impl ChunkingConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct EmbeddingConfig {
     pub model: EmbeddingModelType,
     pub normalize: bool,
@@ -649,7 +649,7 @@ impl EmbeddingConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct TreeSitterConfig {
     pub enabled: bool,
     pub cache_dir: Option<String>,
@@ -670,7 +670,7 @@ impl TreeSitterConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct TreeSitterProcessConfig {
     pub structure: bool,
     pub imports: bool,
@@ -702,14 +702,14 @@ impl TreeSitterProcessConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.SupportedFormat"]
 pub struct SupportedFormat {
     pub extension: String,
     pub mime_type: String,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ServerConfig {
     pub host: String,
     pub port: u16,
@@ -739,7 +739,7 @@ impl ServerConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.StructuredDataResult"]
 pub struct StructuredDataResult {
     pub content: String,
@@ -758,7 +758,7 @@ impl std::panic::RefUnwindSafe for StreamReader {}
 
 impl rustler::Resource for StreamReader {}
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ImageOcrResult"]
 pub struct ImageOcrResult {
     pub content: String,
@@ -766,7 +766,7 @@ pub struct ImageOcrResult {
     pub page_contents: Option<Vec<PageContent>>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.HtmlExtractionResult"]
 pub struct HtmlExtractionResult {
     pub markdown: String,
@@ -774,7 +774,7 @@ pub struct HtmlExtractionResult {
     pub warnings: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ExtractedInlineImage"]
 pub struct ExtractedInlineImage {
     pub data: Vec<u8>,
@@ -785,7 +785,7 @@ pub struct ExtractedInlineImage {
     pub attributes: Vec<String>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct Drawing {
     pub drawing_type: String,
     pub extent: Option<String>,
@@ -807,7 +807,7 @@ impl Drawing {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct AnchorProperties {
     pub behind_doc: bool,
     pub layout_in_cell: bool,
@@ -833,7 +833,7 @@ impl AnchorProperties {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct HeaderFooter {
     pub paragraphs: Vec<String>,
     pub tables: Vec<String>,
@@ -853,7 +853,7 @@ impl HeaderFooter {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.Note"]
 pub struct Note {
     pub id: String,
@@ -861,7 +861,7 @@ pub struct Note {
     pub paragraphs: Vec<String>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct PageMarginsPoints {
     pub top: Option<f64>,
     pub right: Option<f64>,
@@ -886,7 +886,7 @@ impl PageMarginsPoints {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.StyleDefinition"]
 pub struct StyleDefinition {
     pub id: String,
@@ -899,7 +899,7 @@ pub struct StyleDefinition {
     pub run_properties: String,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ResolvedStyle {
     pub paragraph_properties: String,
     pub run_properties: String,
@@ -920,7 +920,7 @@ impl ResolvedStyle {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct TableProperties {
     pub style_id: Option<String>,
     pub width: Option<String>,
@@ -949,7 +949,7 @@ impl TableProperties {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct XlsxAppProperties {
     pub application: Option<String>,
     pub app_version: Option<String>,
@@ -981,7 +981,7 @@ impl XlsxAppProperties {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct PptxAppProperties {
     pub application: Option<String>,
     pub app_version: Option<String>,
@@ -1035,7 +1035,7 @@ impl std::panic::RefUnwindSafe for CustomProperties {}
 
 impl rustler::Resource for CustomProperties {}
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct OdtProperties {
     pub title: Option<String>,
     pub subject: Option<String>,
@@ -1142,7 +1142,7 @@ impl std::panic::RefUnwindSafe for TableValidator {}
 
 impl rustler::Resource for TableValidator {}
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.OcrFallbackDecision"]
 pub struct OcrFallbackDecision {
     pub stats: String,
@@ -1151,7 +1151,7 @@ pub struct OcrFallbackDecision {
     pub fallback: bool,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct TokenReductionConfig {
     pub level: ReductionLevel,
     pub language_hint: Option<String>,
@@ -1202,7 +1202,7 @@ impl TokenReductionConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PdfAnnotation"]
 pub struct PdfAnnotation {
     pub annotation_type: PdfAnnotationType,
@@ -1211,7 +1211,7 @@ pub struct PdfAnnotation {
     pub bounding_box: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DjotContent"]
 pub struct DjotContent {
     pub plain_text: String,
@@ -1224,7 +1224,7 @@ pub struct DjotContent {
     pub attributes: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.FormattedBlock"]
 pub struct FormattedBlock {
     pub block_type: BlockType,
@@ -1236,7 +1236,7 @@ pub struct FormattedBlock {
     pub children: Vec<FormattedBlock>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.InlineElement"]
 pub struct InlineElement {
     pub element_type: InlineType,
@@ -1245,7 +1245,7 @@ pub struct InlineElement {
     pub metadata: Option<HashMap<String, String>>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DjotImage"]
 pub struct DjotImage {
     pub src: String,
@@ -1254,7 +1254,7 @@ pub struct DjotImage {
     pub attributes: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DjotLink"]
 pub struct DjotLink {
     pub url: String,
@@ -1263,14 +1263,14 @@ pub struct DjotLink {
     pub attributes: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.Footnote"]
 pub struct Footnote {
     pub label: String,
     pub content: Vec<FormattedBlock>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct DocumentStructure {
     pub nodes: Vec<DocumentNode>,
     pub source_format: Option<String>,
@@ -1290,7 +1290,7 @@ impl DocumentStructure {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DocumentRelationship"]
 pub struct DocumentRelationship {
     pub source: u32,
@@ -1298,7 +1298,7 @@ pub struct DocumentRelationship {
     pub kind: RelationshipKind,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DocumentNode"]
 pub struct DocumentNode {
     pub id: String,
@@ -1313,7 +1313,7 @@ pub struct DocumentNode {
     pub attributes: Option<HashMap<String, String>>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.GridCell"]
 pub struct GridCell {
     pub content: String,
@@ -1325,7 +1325,7 @@ pub struct GridCell {
     pub bbox: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.TextAnnotation"]
 pub struct TextAnnotation {
     pub start: u32,
@@ -1333,7 +1333,7 @@ pub struct TextAnnotation {
     pub kind: AnnotationKind,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ExtractionResult {
     pub content: String,
     pub mime_type: String,
@@ -1391,7 +1391,7 @@ impl ExtractionResult {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ArchiveEntry"]
 pub struct ArchiveEntry {
     pub path: String,
@@ -1399,14 +1399,14 @@ pub struct ArchiveEntry {
     pub result: ExtractionResult,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ProcessingWarning"]
 pub struct ProcessingWarning {
     pub source: String,
     pub message: String,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct LlmUsage {
     pub model: String,
     pub source: String,
@@ -1431,7 +1431,7 @@ impl LlmUsage {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.Chunk"]
 pub struct Chunk {
     pub content: String,
@@ -1440,20 +1440,20 @@ pub struct Chunk {
     pub metadata: ChunkMetadata,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.HeadingContext"]
 pub struct HeadingContext {
     pub headings: Vec<HeadingLevel>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.HeadingLevel"]
 pub struct HeadingLevel {
     pub level: u8,
     pub text: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ChunkMetadata"]
 pub struct ChunkMetadata {
     pub byte_start: usize,
@@ -1466,7 +1466,7 @@ pub struct ChunkMetadata {
     pub heading_context: Option<HeadingContext>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ExtractedImage"]
 pub struct ExtractedImage {
     pub data: Vec<u8>,
@@ -1484,7 +1484,7 @@ pub struct ExtractedImage {
     pub source_path: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ElementMetadata"]
 pub struct ElementMetadata {
     pub page_number: Option<usize>,
@@ -1494,7 +1494,7 @@ pub struct ElementMetadata {
     pub additional: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.Element"]
 pub struct Element {
     pub element_id: String,
@@ -1503,14 +1503,14 @@ pub struct Element {
     pub metadata: ElementMetadata,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ExcelWorkbook"]
 pub struct ExcelWorkbook {
     pub sheets: Vec<ExcelSheet>,
     pub metadata: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ExcelSheet"]
 pub struct ExcelSheet {
     pub name: String,
@@ -1521,7 +1521,7 @@ pub struct ExcelSheet {
     pub table_cells: Option<Vec<Vec<String>>>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.XmlExtractionResult"]
 pub struct XmlExtractionResult {
     pub content: String,
@@ -1529,7 +1529,7 @@ pub struct XmlExtractionResult {
     pub unique_elements: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.TextExtractionResult"]
 pub struct TextExtractionResult {
     pub content: String,
@@ -1541,7 +1541,7 @@ pub struct TextExtractionResult {
     pub code_blocks: Option<Vec<String>>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PptxExtractionResult"]
 pub struct PptxExtractionResult {
     pub content: String,
@@ -1557,7 +1557,7 @@ pub struct PptxExtractionResult {
     pub office_metadata: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.EmailExtractionResult"]
 pub struct EmailExtractionResult {
     pub subject: Option<String>,
@@ -1574,7 +1574,7 @@ pub struct EmailExtractionResult {
     pub metadata: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.EmailAttachment"]
 pub struct EmailAttachment {
     pub name: Option<String>,
@@ -1585,7 +1585,7 @@ pub struct EmailAttachment {
     pub data: Option<Vec<u8>>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.OcrExtractionResult"]
 pub struct OcrExtractionResult {
     pub content: String,
@@ -1596,7 +1596,7 @@ pub struct OcrExtractionResult {
     pub internal_document: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.OcrTable"]
 pub struct OcrTable {
     pub cells: Vec<Vec<String>>,
@@ -1605,7 +1605,7 @@ pub struct OcrTable {
     pub bounding_box: Option<OcrTableBoundingBox>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.OcrTableBoundingBox"]
 pub struct OcrTableBoundingBox {
     pub left: u32,
@@ -1614,7 +1614,7 @@ pub struct OcrTableBoundingBox {
     pub bottom: u32,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ImagePreprocessingConfig {
     pub target_dpi: i32,
     pub auto_rotate: bool,
@@ -1645,7 +1645,7 @@ impl ImagePreprocessingConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct TesseractConfig {
     pub language: String,
     pub psm: i32,
@@ -1746,7 +1746,7 @@ impl TesseractConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ImagePreprocessingMetadata"]
 pub struct ImagePreprocessingMetadata {
     pub original_dimensions: String,
@@ -1763,7 +1763,7 @@ pub struct ImagePreprocessingMetadata {
     pub resize_error: Option<String>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct Metadata {
     pub title: Option<String>,
     pub subject: Option<String>,
@@ -1816,15 +1816,28 @@ impl Metadata {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ExcelMetadata"]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ExcelMetadata {
     pub sheet_count: usize,
     pub sheet_names: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.EmailMetadata"]
+impl ExcelMetadata {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            sheet_count: opts
+                .get("sheet_count")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            sheet_names: opts
+                .get("sheet_names")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct EmailMetadata {
     pub from_email: Option<String>,
     pub from_name: Option<String>,
@@ -1835,8 +1848,24 @@ pub struct EmailMetadata {
     pub attachments: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.ArchiveMetadata"]
+impl EmailMetadata {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            from_email: opts.get("from_email").and_then(|t| t.decode().ok()),
+            from_name: opts.get("from_name").and_then(|t| t.decode().ok()),
+            to_emails: opts.get("to_emails").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            cc_emails: opts.get("cc_emails").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            bcc_emails: opts.get("bcc_emails").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            message_id: opts.get("message_id").and_then(|t| t.decode().ok()),
+            attachments: opts
+                .get("attachments")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct ArchiveMetadata {
     pub format: String,
     pub file_count: usize,
@@ -1845,7 +1874,19 @@ pub struct ArchiveMetadata {
     pub compressed_size: Option<usize>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+impl ArchiveMetadata {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            format: opts.get("format").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            file_count: opts.get("file_count").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            file_list: opts.get("file_list").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            total_size: opts.get("total_size").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            compressed_size: opts.get("compressed_size").and_then(|t| t.decode().ok()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct XmlMetadata {
     pub element_count: usize,
     pub unique_elements: Vec<String>,
@@ -1866,8 +1907,7 @@ impl XmlMetadata {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.TextMetadata"]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct TextMetadata {
     pub line_count: usize,
     pub word_count: usize,
@@ -1877,7 +1917,23 @@ pub struct TextMetadata {
     pub code_blocks: Option<Vec<String>>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+impl TextMetadata {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            line_count: opts.get("line_count").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            word_count: opts.get("word_count").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            character_count: opts
+                .get("character_count")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            headers: opts.get("headers").and_then(|t| t.decode().ok()),
+            links: opts.get("links").and_then(|t| t.decode().ok()),
+            code_blocks: opts.get("code_blocks").and_then(|t| t.decode().ok()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.HeaderMetadata"]
 pub struct HeaderMetadata {
     pub level: u8,
@@ -1887,7 +1943,7 @@ pub struct HeaderMetadata {
     pub html_offset: usize,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.LinkMetadata"]
 pub struct LinkMetadata {
     pub href: String,
@@ -1898,7 +1954,7 @@ pub struct LinkMetadata {
     pub attributes: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ImageMetadataType"]
 pub struct ImageMetadataType {
     pub src: String,
@@ -1909,7 +1965,7 @@ pub struct ImageMetadataType {
     pub attributes: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.StructuredData"]
 pub struct StructuredData {
     pub data_type: StructuredDataType,
@@ -1917,7 +1973,7 @@ pub struct StructuredData {
     pub schema_type: Option<String>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct HtmlMetadata {
     pub title: Option<String>,
     pub description: Option<String>,
@@ -1964,8 +2020,7 @@ impl HtmlMetadata {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.OcrMetadata"]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct OcrMetadata {
     pub language: String,
     pub psm: i32,
@@ -1975,15 +2030,33 @@ pub struct OcrMetadata {
     pub table_cols: Option<usize>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+impl OcrMetadata {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            language: opts.get("language").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            psm: opts.get("psm").and_then(|t| t.decode().ok()).unwrap_or_default(),
+            output_format: opts
+                .get("output_format")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            table_count: opts
+                .get("table_count")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            table_rows: opts.get("table_rows").and_then(|t| t.decode().ok()),
+            table_cols: opts.get("table_cols").and_then(|t| t.decode().ok()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ErrorMetadata"]
 pub struct ErrorMetadata {
     pub error_type: String,
     pub message: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.PptxMetadata"]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct PptxMetadata {
     pub slide_count: usize,
     pub slide_names: Vec<String>,
@@ -1991,15 +2064,41 @@ pub struct PptxMetadata {
     pub table_count: Option<usize>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
-#[module = "Kreuzberg.DocxMetadata"]
+impl PptxMetadata {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            slide_count: opts
+                .get("slide_count")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            slide_names: opts
+                .get("slide_names")
+                .and_then(|t| t.decode().ok())
+                .unwrap_or_default(),
+            image_count: opts.get("image_count").and_then(|t| t.decode().ok()),
+            table_count: opts.get("table_count").and_then(|t| t.decode().ok()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct DocxMetadata {
     pub core_properties: Option<String>,
     pub app_properties: Option<String>,
     pub custom_properties: Option<HashMap<String, String>>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+impl DocxMetadata {
+    pub fn new(opts: std::collections::HashMap<String, rustler::Term>) -> Self {
+        Self {
+            core_properties: opts.get("core_properties").and_then(|t| t.decode().ok()),
+            app_properties: opts.get("app_properties").and_then(|t| t.decode().ok()),
+            custom_properties: opts.get("custom_properties").and_then(|t| t.decode().ok()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct CsvMetadata {
     pub row_count: usize,
     pub column_count: usize,
@@ -2023,7 +2122,7 @@ impl CsvMetadata {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct BibtexMetadata {
     pub entry_count: usize,
     pub citation_keys: Vec<String>,
@@ -2050,7 +2149,7 @@ impl BibtexMetadata {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct CitationMetadata {
     pub citation_count: usize,
     pub format: Option<String>,
@@ -2076,7 +2175,7 @@ impl CitationMetadata {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.YearRange"]
 pub struct YearRange {
     pub min: Option<u32>,
@@ -2084,7 +2183,7 @@ pub struct YearRange {
     pub years: Vec<u32>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct FictionBookMetadata {
     pub genres: Vec<String>,
     pub sequences: Vec<String>,
@@ -2101,7 +2200,7 @@ impl FictionBookMetadata {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct DbfMetadata {
     pub record_count: usize,
     pub field_count: usize,
@@ -2124,14 +2223,14 @@ impl DbfMetadata {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DbfFieldInfo"]
 pub struct DbfFieldInfo {
     pub name: String,
     pub field_type: String,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct JatsMetadata {
     pub copyright: Option<String>,
     pub license: Option<String>,
@@ -2156,14 +2255,14 @@ impl JatsMetadata {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ContributorRole"]
 pub struct ContributorRole {
     pub name: String,
     pub role: Option<String>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct EpubMetadata {
     pub coverage: Option<String>,
     pub dc_format: Option<String>,
@@ -2186,7 +2285,7 @@ impl EpubMetadata {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct PstMetadata {
     pub message_count: usize,
 }
@@ -2202,7 +2301,7 @@ impl PstMetadata {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct OcrConfidence {
     pub detection: Option<f64>,
     pub recognition: f64,
@@ -2220,14 +2319,14 @@ impl OcrConfidence {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.OcrRotation"]
 pub struct OcrRotation {
     pub angle_degrees: f64,
     pub confidence: Option<f64>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct OcrElement {
     pub text: String,
     pub geometry: OcrBoundingGeometry,
@@ -2260,7 +2359,7 @@ impl OcrElement {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct OcrElementConfig {
     pub include_elements: bool,
     pub min_level: OcrElementLevel,
@@ -2288,7 +2387,7 @@ impl OcrElementConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PageStructure"]
 pub struct PageStructure {
     pub total_count: usize,
@@ -2297,7 +2396,7 @@ pub struct PageStructure {
     pub pages: Option<Vec<PageInfo>>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PageBoundary"]
 pub struct PageBoundary {
     pub byte_start: usize,
@@ -2305,7 +2404,7 @@ pub struct PageBoundary {
     pub page_number: usize,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PageInfo"]
 pub struct PageInfo {
     pub number: usize,
@@ -2317,7 +2416,7 @@ pub struct PageInfo {
     pub is_blank: Option<bool>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PageContent"]
 pub struct PageContent {
     pub page_number: usize,
@@ -2328,14 +2427,14 @@ pub struct PageContent {
     pub is_blank: Option<bool>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PageHierarchy"]
 pub struct PageHierarchy {
     pub block_count: usize,
     pub blocks: Vec<HierarchicalBlock>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.HierarchicalBlock"]
 pub struct HierarchicalBlock {
     pub text: String,
@@ -2344,7 +2443,7 @@ pub struct HierarchicalBlock {
     pub bbox: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.Uri"]
 pub struct Uri {
     pub url: String,
@@ -2403,7 +2502,7 @@ impl std::panic::RefUnwindSafe for ApiDoc {}
 
 impl rustler::Resource for ApiDoc {}
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.HealthResponse"]
 pub struct HealthResponse {
     pub status: String,
@@ -2411,7 +2510,7 @@ pub struct HealthResponse {
     pub plugins: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.InfoResponse"]
 pub struct InfoResponse {
     pub version: String,
@@ -2428,14 +2527,14 @@ impl std::panic::RefUnwindSafe for ExtractResponse {}
 
 impl rustler::Resource for ExtractResponse {}
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ApiState"]
 pub struct ApiState {
     pub default_config: ExtractionConfig,
     pub extraction_service: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.CacheStatsResponse"]
 pub struct CacheStatsResponse {
     pub directory: String,
@@ -2446,7 +2545,7 @@ pub struct CacheStatsResponse {
     pub newest_file_age_days: f64,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.CacheClearResponse"]
 pub struct CacheClearResponse {
     pub directory: String,
@@ -2454,14 +2553,14 @@ pub struct CacheClearResponse {
     pub freed_mb: f64,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.EmbedRequest"]
 pub struct EmbedRequest {
     pub texts: Vec<String>,
     pub config: Option<EmbeddingConfig>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.EmbedResponse"]
 pub struct EmbedResponse {
     pub embeddings: Vec<Vec<f32>>,
@@ -2470,7 +2569,7 @@ pub struct EmbedResponse {
     pub count: usize,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ChunkRequest"]
 pub struct ChunkRequest {
     pub text: String,
@@ -2478,7 +2577,7 @@ pub struct ChunkRequest {
     pub chunker_type: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ChunkResponse"]
 pub struct ChunkResponse {
     pub chunks: Vec<String>,
@@ -2488,20 +2587,20 @@ pub struct ChunkResponse {
     pub chunker_type: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.VersionResponse"]
 pub struct VersionResponse {
     pub version: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DetectResponse"]
 pub struct DetectResponse {
     pub mime_type: String,
     pub filename: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ManifestEntryResponse"]
 pub struct ManifestEntryResponse {
     pub relative_path: String,
@@ -2510,7 +2609,7 @@ pub struct ManifestEntryResponse {
     pub source_url: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ManifestResponse"]
 pub struct ManifestResponse {
     pub kreuzberg_version: String,
@@ -2519,7 +2618,7 @@ pub struct ManifestResponse {
     pub models: Vec<ManifestEntryResponse>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct WarmRequest {
     pub all_embeddings: bool,
     pub embedding_model: Option<String>,
@@ -2537,7 +2636,7 @@ impl WarmRequest {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.WarmResponse"]
 pub struct WarmResponse {
     pub cache_dir: String,
@@ -2545,7 +2644,7 @@ pub struct WarmResponse {
     pub already_cached: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.StructuredExtractionResponse"]
 pub struct StructuredExtractionResponse {
     pub structured_output: String,
@@ -2553,21 +2652,21 @@ pub struct StructuredExtractionResponse {
     pub mime_type: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.OpenWebDocumentResponse"]
 pub struct OpenWebDocumentResponse {
     pub page_content: String,
     pub metadata: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DoclingCompatResponse"]
 pub struct DoclingCompatResponse {
     pub document: String,
     pub status: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ExtractFileParams"]
 pub struct ExtractFileParams {
     pub path: String,
@@ -2577,7 +2676,7 @@ pub struct ExtractFileParams {
     pub response_format: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ExtractBytesParams"]
 pub struct ExtractBytesParams {
     pub data: String,
@@ -2587,7 +2686,7 @@ pub struct ExtractBytesParams {
     pub response_format: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.BatchExtractFilesParams"]
 pub struct BatchExtractFilesParams {
     pub paths: Vec<String>,
@@ -2597,21 +2696,21 @@ pub struct BatchExtractFilesParams {
     pub response_format: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DetectMimeTypeParams"]
 pub struct DetectMimeTypeParams {
     pub path: String,
     pub use_content: bool,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.CacheWarmParams"]
 pub struct CacheWarmParams {
     pub all_embeddings: bool,
     pub embedding_model: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.EmbedTextParams"]
 pub struct EmbedTextParams {
     pub texts: Vec<String>,
@@ -2620,7 +2719,7 @@ pub struct EmbedTextParams {
     pub api_key: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ExtractStructuredParams"]
 pub struct ExtractStructuredParams {
     pub path: String,
@@ -2633,7 +2732,7 @@ pub struct ExtractStructuredParams {
     pub strict: bool,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ChunkTextParams"]
 pub struct ChunkTextParams {
     pub text: String,
@@ -2642,14 +2741,14 @@ pub struct ChunkTextParams {
     pub chunker_type: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ChunkingResult"]
 pub struct ChunkingResult {
     pub chunks: Vec<Chunk>,
     pub chunk_count: usize,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct YakeParams {
     pub window_size: usize,
 }
@@ -2662,7 +2761,7 @@ impl YakeParams {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct RakeParams {
     pub min_word_length: usize,
     pub max_words_per_phrase: usize,
@@ -2680,7 +2779,7 @@ impl RakeParams {
     }
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct KeywordConfig {
     pub algorithm: KeywordAlgorithm,
     pub max_keywords: usize,
@@ -2708,7 +2807,7 @@ impl KeywordConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.Keyword"]
 pub struct Keyword {
     pub text: String,
@@ -2717,7 +2816,7 @@ pub struct Keyword {
     pub positions: Option<Vec<usize>>,
 }
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct OcrCacheStats {
     pub total_files: usize,
     pub total_size_mb: f64,
@@ -2738,7 +2837,7 @@ impl OcrCacheStats {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.RecognizedTable"]
 pub struct RecognizedTable {
     pub detection_bbox: BBox,
@@ -2756,7 +2855,7 @@ impl std::panic::RefUnwindSafe for TessdataManager {}
 
 impl rustler::Resource for TessdataManager {}
 
-#[derive(Debug, Clone, Default, rustler::NifMap)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifMap)]
 pub struct PaddleOcrConfig {
     pub language: String,
     pub cache_dir: Option<String>,
@@ -2812,7 +2911,7 @@ impl PaddleOcrConfig {
     }
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.ModelPaths"]
 pub struct ModelPaths {
     pub det_model: String,
@@ -2821,14 +2920,14 @@ pub struct ModelPaths {
     pub dict_file: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.OrientationResult"]
 pub struct OrientationResult {
     pub degrees: u32,
     pub confidence: f32,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.BBox"]
 pub struct BBox {
     pub x1: f32,
@@ -2837,7 +2936,7 @@ pub struct BBox {
     pub y2: f32,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.LayoutDetection"]
 pub struct LayoutDetection {
     pub class: LayoutClass,
@@ -2845,7 +2944,7 @@ pub struct LayoutDetection {
     pub bbox: BBox,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.DetectionResult"]
 pub struct DetectionResult {
     pub page_width: u32,
@@ -2853,7 +2952,7 @@ pub struct DetectionResult {
     pub detections: Vec<LayoutDetection>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.EmbeddedFile"]
 pub struct EmbeddedFile {
     pub name: String,
@@ -2861,14 +2960,14 @@ pub struct EmbeddedFile {
     pub mime_type: Option<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.FontSizeCluster"]
 pub struct FontSizeCluster {
     pub centroid: f32,
     pub members: Vec<String>,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.CharData"]
 pub struct CharData {
     pub text: String,
@@ -2882,7 +2981,7 @@ pub struct CharData {
     pub baseline_y: f32,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.HierarchyBlock"]
 pub struct HierarchyBlock {
     pub text: String,
@@ -2891,7 +2990,7 @@ pub struct HierarchyBlock {
     pub hierarchy_level: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PdfImage"]
 pub struct PdfImage {
     pub page_number: usize,
@@ -2905,7 +3004,7 @@ pub struct PdfImage {
     pub decoded_format: String,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PageLayoutResult"]
 pub struct PageLayoutResult {
     pub page_index: usize,
@@ -2916,7 +3015,7 @@ pub struct PageLayoutResult {
     pub render_height_px: u32,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.PageTiming"]
 pub struct PageTiming {
     pub render_ms: f64,
@@ -2927,7 +3026,7 @@ pub struct PageTiming {
     pub mapping_ms: f64,
 }
 
-#[derive(Debug, Clone, rustler::NifStruct)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize, rustler::NifStruct)]
 #[module = "Kreuzberg.CommonPdfMetadata"]
 pub struct CommonPdfMetadata {
     pub title: Option<String>,
@@ -5159,11 +5258,6 @@ pub fn render_template(template: String, context: String) -> Result<String, Stri
     Err(String::from("Not implemented: render_template"))
 }
 
-#[rustler::nif(schedule = "DirtyCpu")]
-pub fn extract_structured_async(content: String, config: StructuredExtractionConfig) -> Result<String, String> {
-    Err(String::from("Not implemented: extract_structured_async"))
-}
-
 #[rustler::nif]
 pub fn normalize(v: Vec<f32>) -> Vec<f32> {
     kreuzberg::embeddings::engine::normalize(v)
@@ -5385,50 +5479,12 @@ pub fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) 
 }
 
 #[rustler::nif]
-pub fn build_session(path: String, accel: Option<String>, thread_budget: usize) -> Result<String, String> {
-    let accel_core: Option<kreuzberg::AccelerationConfig> = accel
-        .map(|s| serde_json::from_str::<kreuzberg::AccelerationConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::layout::session::build_session(&path, Some(accel_core.unwrap_or_default()), thread_budget)
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
 pub fn config_from_extraction(layout_config: Option<String>) -> String {
     let layout_config_core: Option<kreuzberg::LayoutDetectionConfig> = layout_config
         .map(|s| serde_json::from_str::<kreuzberg::LayoutDetectionConfig>(&s))
         .transpose()
         .map_err(|e| e.to_string())?;
     kreuzberg::layout::config_from_extraction(Some(layout_config_core.unwrap_or_default())).into()
-}
-
-#[rustler::nif]
-pub fn create_engine(layout_config: Option<String>) -> Result<String, String> {
-    let layout_config_core: Option<kreuzberg::LayoutDetectionConfig> = layout_config
-        .map(|s| serde_json::from_str::<kreuzberg::LayoutDetectionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result =
-        kreuzberg::layout::create_engine(Some(layout_config_core.unwrap_or_default())).map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn take_or_create_engine(layout_config: Option<String>) -> Result<String, String> {
-    let layout_config_core: Option<kreuzberg::LayoutDetectionConfig> = layout_config
-        .map(|s| serde_json::from_str::<kreuzberg::LayoutDetectionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::layout::take_or_create_engine(Some(layout_config_core.unwrap_or_default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into())
-}
-
-#[rustler::nif]
-pub fn return_engine(engine: String) -> () {
-    ()
 }
 
 #[rustler::nif]
@@ -9374,7 +9430,7 @@ impl From<kreuzberg::ocr::OcrCacheStats> for OcrCacheStats {
     }
 }
 
-impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable {
+impl From<RecognizedTable> for kreuzberg::RecognizedTable {
     fn from(val: RecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
@@ -9384,8 +9440,8 @@ impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable 
     }
 }
 
-impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for RecognizedTable {
-    fn from(val: kreuzberg::ocr::layout_assembly::RecognizedTable) -> Self {
+impl From<kreuzberg::RecognizedTable> for RecognizedTable {
+    fn from(val: kreuzberg::RecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
             cells: val.cells,

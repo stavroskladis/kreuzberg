@@ -2,7 +2,7 @@
 defmodule Kreuzberg.DocxMetadata do
   @moduledoc "Word document metadata."
 
-  defstruct core_properties: nil,
-            app_properties: nil,
-            custom_properties: nil
+  defstruct core_properties: "",
+            app_properties: "",
+            custom_properties: %{}
 end

@@ -16,7 +16,7 @@ use std::ops::Deref;
 use std::ops::DerefMut;
 use std::sync::Arc;
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct AccelerationConfig {
     /// Execution provider to use for ONNX inference.
@@ -40,7 +40,7 @@ impl AccelerationConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ContentFilterConfig {
     /// Include running headers in extraction output.
@@ -118,7 +118,7 @@ impl ContentFilterConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct EmailConfig {
     /// Windows codepage number to use when an MSG file contains no codepage property.
@@ -153,7 +153,7 @@ impl EmailConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractionConfig {
     /// Enable caching of extraction results
@@ -592,7 +592,7 @@ impl ExtractionConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct FileExtractionConfig {
     /// Override quality post-processing for this file.
@@ -723,7 +723,7 @@ impl FileExtractionConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct ImageExtractionConfig {
@@ -779,7 +779,7 @@ impl ImageExtractionConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct TokenReductionOptions {
     /// Reduction mode: "off", "light", "moderate", "aggressive", "maximum"
@@ -803,7 +803,7 @@ impl TokenReductionOptions {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct LanguageDetectionConfig {
     /// Enable language detection
@@ -831,7 +831,7 @@ impl LanguageDetectionConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HtmlOutputConfig {
     /// Inline CSS string injected into the output after the theme stylesheet.
@@ -889,7 +889,7 @@ impl HtmlOutputConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct LayoutDetectionConfig {
     /// Confidence threshold override (None = use model default).
@@ -931,7 +931,7 @@ impl LayoutDetectionConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct LlmConfig {
     /// Provider/model string using liter-llm routing format.
@@ -987,7 +987,7 @@ impl LlmConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct StructuredExtractionConfig {
     /// JSON Schema defining the desired output structure.
@@ -1040,7 +1040,7 @@ impl StructuredExtractionConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrQualityThresholds {
     /// Minimum total non-whitespace characters to consider text substantive.
@@ -1147,7 +1147,7 @@ impl OcrQualityThresholds {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrPipelineStage {
     /// Backend name: "tesseract", "paddleocr", "easyocr", or a custom registered name.
@@ -1194,7 +1194,7 @@ impl OcrPipelineStage {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrPipelineConfig {
     /// Ordered list of backends to try. Sorted by priority (descending) at runtime.
@@ -1218,7 +1218,7 @@ impl OcrPipelineConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrConfig {
     /// Whether OCR is enabled.
@@ -1393,7 +1393,7 @@ impl OcrConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageConfig {
     /// Extract pages as separate array (ExtractionResult.pages)
@@ -1429,7 +1429,7 @@ impl PageConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PdfConfig {
     /// PDF extraction backend. Default: `Pdfium`.
@@ -1508,7 +1508,7 @@ impl PdfConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HierarchyConfig {
     /// Enable hierarchy extraction
@@ -1559,7 +1559,7 @@ impl HierarchyConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PostProcessorConfig {
     /// Enable post-processors
@@ -1620,7 +1620,7 @@ impl PostProcessorConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ChunkingConfig {
     /// Maximum size per chunk (in units determined by `sizing`).
@@ -1732,7 +1732,7 @@ impl ChunkingConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct EmbeddingConfig {
     /// The embedding model to use (defaults to "balanced" preset if not specified)
@@ -1784,7 +1784,7 @@ impl EmbeddingConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct TreeSitterConfig {
     /// Enable code intelligence processing (default: true).
@@ -1838,7 +1838,7 @@ impl TreeSitterConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct TreeSitterProcessConfig {
@@ -1909,7 +1909,7 @@ impl TreeSitterProcessConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct SupportedFormat {
     /// File extension (without leading dot), e.g., "pdf", "docx"
@@ -1930,7 +1930,7 @@ impl SupportedFormat {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct ServerConfig {
@@ -2100,7 +2100,7 @@ impl ServerConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct StructuredDataResult {
     #[pyo3(get)]
@@ -2180,7 +2180,7 @@ impl StreamReader {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ImageOcrResult {
     /// Extracted text content
@@ -2212,7 +2212,7 @@ impl ImageOcrResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HtmlExtractionResult {
     #[pyo3(get)]
@@ -2237,7 +2237,7 @@ impl HtmlExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractedInlineImage {
     /// Uses `bytes::Bytes` for cheap cloning of large buffers.
@@ -2279,7 +2279,7 @@ impl ExtractedInlineImage {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct Drawing {
     #[pyo3(get)]
@@ -2312,7 +2312,7 @@ impl Drawing {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct AnchorProperties {
@@ -2354,7 +2354,7 @@ impl AnchorProperties {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HeaderFooter {
     #[pyo3(get)]
@@ -2379,7 +2379,7 @@ impl HeaderFooter {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct Note {
     #[pyo3(get)]
@@ -2404,7 +2404,7 @@ impl Note {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageMarginsPoints {
     #[pyo3(get)]
@@ -2449,7 +2449,7 @@ impl PageMarginsPoints {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct StyleDefinition {
     /// The style ID (`w:styleId` attribute).
@@ -2507,7 +2507,7 @@ impl StyleDefinition {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ResolvedStyle {
     #[pyo3(get)]
@@ -2529,7 +2529,7 @@ impl ResolvedStyle {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct TableProperties {
     #[pyo3(get)]
@@ -2583,7 +2583,7 @@ impl TableProperties {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct XlsxAppProperties {
     /// Application name (e.g., "Microsoft Excel")
@@ -2646,7 +2646,7 @@ impl XlsxAppProperties {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PptxAppProperties {
     /// Application name (e.g., "Microsoft Office PowerPoint")
@@ -2745,7 +2745,7 @@ pub struct CustomProperties {
     inner: Arc<kreuzberg::extraction::CustomProperties>,
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OdtProperties {
     /// Document title (dc:title)
@@ -2972,7 +2972,7 @@ impl TableValidator {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrFallbackDecision {
     #[pyo3(get)]
@@ -3000,7 +3000,7 @@ impl OcrFallbackDecision {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct TokenReductionConfig {
     #[pyo3(get)]
@@ -3069,7 +3069,7 @@ impl TokenReductionConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PdfAnnotation {
     /// The type of annotation.
@@ -3106,7 +3106,7 @@ impl PdfAnnotation {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DjotContent {
     /// Plain text representation for backwards compatibility
@@ -3164,7 +3164,7 @@ impl DjotContent {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct FormattedBlock {
     /// Type of block element
@@ -3216,7 +3216,7 @@ impl FormattedBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct InlineElement {
     /// Type of inline element
@@ -3253,7 +3253,7 @@ impl InlineElement {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DjotImage {
     /// Image source URL or path
@@ -3285,7 +3285,7 @@ impl DjotImage {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DjotLink {
     /// Link URL
@@ -3317,7 +3317,7 @@ impl DjotLink {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct Footnote {
     /// Footnote label
@@ -3338,7 +3338,7 @@ impl Footnote {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DocumentStructure {
     /// All nodes in document/reading order.
@@ -3459,7 +3459,7 @@ impl DocumentStructure {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DocumentRelationship {
     /// Source node index (the referencing node).
@@ -3483,7 +3483,7 @@ impl DocumentRelationship {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DocumentNode {
     /// Deterministic identifier (hash of content + position).
@@ -3556,7 +3556,7 @@ impl DocumentNode {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct GridCell {
@@ -3609,7 +3609,7 @@ impl GridCell {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct TextAnnotation {
     /// Start byte offset in the node's text content (inclusive).
@@ -3633,7 +3633,7 @@ impl TextAnnotation {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractionResult {
     #[pyo3(get)]
@@ -3847,7 +3847,7 @@ impl ExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ArchiveEntry {
     /// Archive-relative file path (e.g. "folder/document.pdf").
@@ -3875,7 +3875,7 @@ impl ArchiveEntry {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ProcessingWarning {
     /// The pipeline stage or feature that produced this warning
@@ -3897,7 +3897,7 @@ impl ProcessingWarning {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct LlmUsage {
     /// The LLM model identifier (e.g. "openai/gpt-4o", "anthropic/claude-sonnet-4-20250514").
@@ -3950,7 +3950,7 @@ impl LlmUsage {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct Chunk {
     /// The text content of this chunk.
@@ -3988,7 +3988,7 @@ impl Chunk {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HeadingContext {
     /// The heading hierarchy from document root to this chunk's section.
@@ -4007,7 +4007,7 @@ impl HeadingContext {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HeadingLevel {
     /// Heading depth (1 = h1, 2 = h2, etc.)
@@ -4028,7 +4028,7 @@ impl HeadingLevel {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ChunkMetadata {
     /// Byte offset where this chunk starts in the original text (UTF-8 valid boundary).
@@ -4095,7 +4095,7 @@ impl ChunkMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractedImage {
     /// Raw image data (PNG, JPEG, WebP, etc. bytes).
@@ -4185,7 +4185,7 @@ impl ExtractedImage {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ElementMetadata {
     /// Page number (1-indexed)
@@ -4227,7 +4227,7 @@ impl ElementMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct Element {
     /// Unique element identifier
@@ -4259,7 +4259,7 @@ impl Element {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExcelWorkbook {
     /// All sheets in the workbook
@@ -4280,7 +4280,7 @@ impl ExcelWorkbook {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct ExcelSheet {
@@ -4330,7 +4330,7 @@ impl ExcelSheet {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct XmlExtractionResult {
     /// Extracted text content (XML structure filtered out)
@@ -4358,7 +4358,7 @@ impl XmlExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct TextExtractionResult {
     /// Extracted text content
@@ -4410,7 +4410,7 @@ impl TextExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PptxExtractionResult {
     /// Extracted text content from all slides
@@ -4486,7 +4486,7 @@ impl PptxExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct EmailExtractionResult {
@@ -4565,7 +4565,7 @@ impl EmailExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct EmailAttachment {
     /// Attachment name (from Content-Disposition header)
@@ -4613,7 +4613,7 @@ impl EmailAttachment {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrExtractionResult {
     /// Recognized text content
@@ -4663,7 +4663,7 @@ impl OcrExtractionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrTable {
     /// Table cells as a 2D vector (rows × columns)
@@ -4700,7 +4700,7 @@ impl OcrTable {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrTableBoundingBox {
     /// Left x-coordinate (pixels)
@@ -4732,7 +4732,7 @@ impl OcrTableBoundingBox {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ImagePreprocessingConfig {
     /// Target DPI for the image (300 is standard, 600 for small text).
@@ -4791,7 +4791,7 @@ impl ImagePreprocessingConfig {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct TesseractConfig {
@@ -4937,7 +4937,7 @@ impl TesseractConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ImagePreprocessingMetadata {
     /// Original image dimensions (width, height) in pixels
@@ -5015,7 +5015,7 @@ impl ImagePreprocessingMetadata {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct Metadata {
@@ -5157,7 +5157,7 @@ impl Metadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExcelMetadata {
     /// Total number of sheets in the workbook
@@ -5171,17 +5171,17 @@ pub struct ExcelMetadata {
 #[pymethods]
 impl ExcelMetadata {
     #[must_use]
-    #[pyo3(signature = (sheet_count, sheet_names))]
+    #[pyo3(signature = (sheet_count=None, sheet_names=None))]
     #[new]
-    pub fn new(sheet_count: usize, sheet_names: Vec<String>) -> Self {
+    pub fn new(sheet_count: Option<usize>, sheet_names: Option<Vec<String>>) -> Self {
         Self {
-            sheet_count,
-            sheet_names,
+            sheet_count: sheet_count.unwrap_or_default(),
+            sheet_names: sheet_names.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct EmailMetadata {
@@ -5211,13 +5211,13 @@ pub struct EmailMetadata {
 #[pymethods]
 impl EmailMetadata {
     #[must_use]
-    #[pyo3(signature = (to_emails, cc_emails, bcc_emails, attachments, from_email=None, from_name=None, message_id=None))]
+    #[pyo3(signature = (to_emails=None, cc_emails=None, bcc_emails=None, attachments=None, from_email=None, from_name=None, message_id=None))]
     #[new]
     pub fn new(
-        to_emails: Vec<String>,
-        cc_emails: Vec<String>,
-        bcc_emails: Vec<String>,
-        attachments: Vec<String>,
+        to_emails: Option<Vec<String>>,
+        cc_emails: Option<Vec<String>>,
+        bcc_emails: Option<Vec<String>>,
+        attachments: Option<Vec<String>>,
         from_email: Option<String>,
         from_name: Option<String>,
         message_id: Option<String>,
@@ -5225,16 +5225,16 @@ impl EmailMetadata {
         Self {
             from_email,
             from_name,
-            to_emails,
-            cc_emails,
-            bcc_emails,
+            to_emails: to_emails.unwrap_or_default(),
+            cc_emails: cc_emails.unwrap_or_default(),
+            bcc_emails: bcc_emails.unwrap_or_default(),
             message_id,
-            attachments,
+            attachments: attachments.unwrap_or_default(),
         }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ArchiveMetadata {
     /// Archive format ("ZIP", "TAR", "7Z", etc.)
@@ -5257,26 +5257,26 @@ pub struct ArchiveMetadata {
 #[pymethods]
 impl ArchiveMetadata {
     #[must_use]
-    #[pyo3(signature = (format, file_count, file_list, total_size, compressed_size=None))]
+    #[pyo3(signature = (format=None, file_count=None, file_list=None, total_size=None, compressed_size=None))]
     #[new]
     pub fn new(
-        format: String,
-        file_count: usize,
-        file_list: Vec<String>,
-        total_size: usize,
+        format: Option<String>,
+        file_count: Option<usize>,
+        file_list: Option<Vec<String>>,
+        total_size: Option<usize>,
         compressed_size: Option<usize>,
     ) -> Self {
         Self {
-            format,
-            file_count,
-            file_list,
-            total_size,
+            format: format.unwrap_or_default(),
+            file_count: file_count.unwrap_or_default(),
+            file_list: file_list.unwrap_or_default(),
+            total_size: total_size.unwrap_or_default(),
             compressed_size,
         }
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct XmlMetadata {
     /// Total number of XML elements processed
@@ -5300,7 +5300,7 @@ impl XmlMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct TextMetadata {
     /// Number of lines in the document
@@ -5326,20 +5326,20 @@ pub struct TextMetadata {
 #[pymethods]
 impl TextMetadata {
     #[must_use]
-    #[pyo3(signature = (line_count, word_count, character_count, headers=None, links=None, code_blocks=None))]
+    #[pyo3(signature = (line_count=None, word_count=None, character_count=None, headers=None, links=None, code_blocks=None))]
     #[new]
     pub fn new(
-        line_count: usize,
-        word_count: usize,
-        character_count: usize,
+        line_count: Option<usize>,
+        word_count: Option<usize>,
+        character_count: Option<usize>,
         headers: Option<Vec<String>>,
         links: Option<Vec<String>>,
         code_blocks: Option<Vec<String>>,
     ) -> Self {
         Self {
-            line_count,
-            word_count,
-            character_count,
+            line_count: line_count.unwrap_or_default(),
+            word_count: word_count.unwrap_or_default(),
+            character_count: character_count.unwrap_or_default(),
             headers,
             links,
             code_blocks,
@@ -5347,7 +5347,7 @@ impl TextMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HeaderMetadata {
     /// Header level: 1 (h1) through 6 (h6)
@@ -5383,7 +5383,7 @@ impl HeaderMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct LinkMetadata {
     /// The href URL value
@@ -5430,7 +5430,7 @@ impl LinkMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ImageMetadataType {
     /// Image source (URL, data URI, or SVG content)
@@ -5477,7 +5477,7 @@ impl ImageMetadataType {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct StructuredData {
     /// Type of structured data
@@ -5505,7 +5505,7 @@ impl StructuredData {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HtmlMetadata {
     /// Document title from `<title>` tag
@@ -5631,7 +5631,7 @@ impl HtmlMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct OcrMetadata {
@@ -5656,28 +5656,28 @@ pub struct OcrMetadata {
 #[pymethods]
 impl OcrMetadata {
     #[must_use]
-    #[pyo3(signature = (language, psm, output_format, table_count, table_rows=None, table_cols=None))]
+    #[pyo3(signature = (language=None, psm=None, output_format=None, table_count=None, table_rows=None, table_cols=None))]
     #[new]
     pub fn new(
-        language: String,
-        psm: i32,
-        output_format: String,
-        table_count: usize,
+        language: Option<String>,
+        psm: Option<i32>,
+        output_format: Option<String>,
+        table_count: Option<usize>,
         table_rows: Option<usize>,
         table_cols: Option<usize>,
     ) -> Self {
         Self {
-            language,
-            psm,
-            output_format,
-            table_count,
+            language: language.unwrap_or_default(),
+            psm: psm.unwrap_or_default(),
+            output_format: output_format.unwrap_or_default(),
+            table_count: table_count.unwrap_or_default(),
             table_rows,
             table_cols,
         }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ErrorMetadata {
     #[pyo3(get)]
@@ -5696,7 +5696,7 @@ impl ErrorMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PptxMetadata {
     /// Total number of slides in the presentation
@@ -5716,24 +5716,24 @@ pub struct PptxMetadata {
 #[pymethods]
 impl PptxMetadata {
     #[must_use]
-    #[pyo3(signature = (slide_count, slide_names, image_count=None, table_count=None))]
+    #[pyo3(signature = (slide_count=None, slide_names=None, image_count=None, table_count=None))]
     #[new]
     pub fn new(
-        slide_count: usize,
-        slide_names: Vec<String>,
+        slide_count: Option<usize>,
+        slide_names: Option<Vec<String>>,
         image_count: Option<usize>,
         table_count: Option<usize>,
     ) -> Self {
         Self {
-            slide_count,
-            slide_names,
+            slide_count: slide_count.unwrap_or_default(),
+            slide_names: slide_names.unwrap_or_default(),
             image_count,
             table_count,
         }
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DocxMetadata {
     /// Core properties from docProps/core.xml (Dublin Core metadata)
@@ -5774,7 +5774,7 @@ impl DocxMetadata {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CsvMetadata {
     #[pyo3(get)]
@@ -5811,7 +5811,7 @@ impl CsvMetadata {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct BibtexMetadata {
     #[pyo3(get)]
@@ -5848,7 +5848,7 @@ impl BibtexMetadata {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CitationMetadata {
     #[pyo3(get)]
@@ -5889,7 +5889,7 @@ impl CitationMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct YearRange {
@@ -5911,7 +5911,7 @@ impl YearRange {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct FictionBookMetadata {
     #[pyo3(get)]
@@ -5936,7 +5936,7 @@ impl FictionBookMetadata {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DbfMetadata {
     #[pyo3(get)]
@@ -5961,7 +5961,7 @@ impl DbfMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DbfFieldInfo {
     #[pyo3(get)]
@@ -5980,7 +5980,7 @@ impl DbfFieldInfo {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct JatsMetadata {
     #[pyo3(get)]
@@ -6013,7 +6013,7 @@ impl JatsMetadata {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ContributorRole {
     #[pyo3(get)]
@@ -6032,7 +6032,7 @@ impl ContributorRole {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct EpubMetadata {
     #[pyo3(get)]
@@ -6073,7 +6073,7 @@ impl EpubMetadata {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PstMetadata {
     #[pyo3(get)]
@@ -6092,7 +6092,7 @@ impl PstMetadata {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrConfidence {
     /// Detection confidence: how confident the OCR engine is that text exists here.
@@ -6133,7 +6133,7 @@ impl OcrConfidence {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrRotation {
     /// Rotation angle in degrees (0, 90, 180, 270 for PaddleOCR).
@@ -6166,7 +6166,7 @@ impl OcrRotation {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrElement {
     /// The recognized text content.
@@ -6284,7 +6284,7 @@ impl OcrElement {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrElementConfig {
     /// Whether to include OCR elements in the extraction result.
@@ -6330,7 +6330,7 @@ impl OcrElementConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageStructure {
     /// Total number of pages/slides/sheets
@@ -6370,7 +6370,7 @@ impl PageStructure {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageBoundary {
     /// Byte offset where this page starts in the content string (UTF-8 valid boundary, inclusive)
@@ -6398,7 +6398,7 @@ impl PageBoundary {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageInfo {
     /// Page number (1-indexed)
@@ -6454,7 +6454,7 @@ impl PageInfo {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageContent {
     /// Page number (1-indexed)
@@ -6513,7 +6513,7 @@ impl PageContent {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageHierarchy {
     /// Number of hierarchy blocks on this page
@@ -6534,7 +6534,7 @@ impl PageHierarchy {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HierarchicalBlock {
     /// The text content of this block
@@ -6577,7 +6577,7 @@ impl HierarchicalBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct Uri {
     /// The URL or path string.
@@ -6725,7 +6725,7 @@ pub struct ApiDoc {
     inner: Arc<kreuzberg::api::openapi::ApiDoc>,
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HealthResponse {
     /// Health status
@@ -6753,7 +6753,7 @@ impl HealthResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct InfoResponse {
     /// API version
@@ -6780,7 +6780,7 @@ pub struct ExtractResponse {
     inner: Arc<kreuzberg::api::ExtractResponse>,
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ApiState {
     /// Default extraction configuration
@@ -6808,7 +6808,7 @@ impl ApiState {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CacheStatsResponse {
     /// Cache directory path
@@ -6855,7 +6855,7 @@ impl CacheStatsResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CacheClearResponse {
     /// Cache directory path
@@ -6883,7 +6883,7 @@ impl CacheClearResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct EmbedRequest {
     /// Text strings to generate embeddings for (at least one non-empty string required)
@@ -6904,7 +6904,7 @@ impl EmbedRequest {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct EmbedResponse {
     /// Generated embeddings (one per input text)
@@ -6936,7 +6936,7 @@ impl EmbedResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ChunkRequest {
     /// Text to chunk (must not be empty)
@@ -6964,7 +6964,7 @@ impl ChunkRequest {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ChunkResponse {
     /// List of chunks
@@ -7006,7 +7006,7 @@ impl ChunkResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct VersionResponse {
     /// Kreuzberg version string
@@ -7024,7 +7024,7 @@ impl VersionResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DetectResponse {
     /// Detected MIME type
@@ -7045,7 +7045,7 @@ impl DetectResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ManifestEntryResponse {
     /// Relative path within the cache directory
@@ -7077,7 +7077,7 @@ impl ManifestEntryResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ManifestResponse {
     /// Kreuzberg version
@@ -7114,7 +7114,7 @@ impl ManifestResponse {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct WarmRequest {
     /// Download all embedding model presets
@@ -7138,7 +7138,7 @@ impl WarmRequest {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct WarmResponse {
     /// Cache directory used
@@ -7166,7 +7166,7 @@ impl WarmResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct StructuredExtractionResponse {
     /// Structured data conforming to the provided JSON schema
@@ -7194,7 +7194,7 @@ impl StructuredExtractionResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OpenWebDocumentResponse {
     /// Extracted text content
@@ -7215,7 +7215,7 @@ impl OpenWebDocumentResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DoclingCompatResponse {
     /// Converted document content
@@ -7236,7 +7236,7 @@ impl DoclingCompatResponse {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractFileParams {
     /// Path to the file to extract
@@ -7278,7 +7278,7 @@ impl ExtractFileParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractBytesParams {
     /// Base64-encoded file content
@@ -7320,7 +7320,7 @@ impl ExtractBytesParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct BatchExtractFilesParams {
     /// Paths to files to extract
@@ -7363,7 +7363,7 @@ impl BatchExtractFilesParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DetectMimeTypeParams {
     /// Path to the file
@@ -7384,7 +7384,7 @@ impl DetectMimeTypeParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct CacheWarmParams {
     /// Download all embedding model presets
@@ -7408,7 +7408,7 @@ impl CacheWarmParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct EmbedTextParams {
     /// List of text strings to generate embeddings for
@@ -7441,7 +7441,7 @@ impl EmbedTextParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ExtractStructuredParams {
     /// File path to extract from
@@ -7499,7 +7499,7 @@ impl ExtractStructuredParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ChunkTextParams {
     /// Text content to split into chunks
@@ -7536,7 +7536,7 @@ impl ChunkTextParams {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct ChunkingResult {
     /// List of text chunks
@@ -7557,7 +7557,7 @@ impl ChunkingResult {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct YakeParams {
     /// Window size for co-occurrence analysis (default: 2).
@@ -7586,7 +7586,7 @@ impl YakeParams {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct RakeParams {
     /// Minimum word length to consider (default: 1).
@@ -7617,7 +7617,7 @@ impl RakeParams {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct KeywordConfig {
@@ -7746,7 +7746,7 @@ impl KeywordConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct Keyword {
     /// The keyword text.
@@ -7785,7 +7785,7 @@ impl Keyword {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OcrCacheStats {
     #[pyo3(get)]
@@ -7807,7 +7807,7 @@ impl OcrCacheStats {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct RecognizedTable {
     /// Detection bbox that this table corresponds to (for matching).
@@ -7854,7 +7854,7 @@ impl TessdataManager {
     }
 }
 
-#[derive(Clone, Default, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PaddleOcrConfig {
     /// Language code (e.g., "en", "ch", "jpn", "kor", "deu", "fra")
@@ -8160,7 +8160,7 @@ impl PaddleOcrConfig {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct ModelPaths {
@@ -8193,7 +8193,7 @@ impl ModelPaths {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct OrientationResult {
     /// Detected orientation in degrees (0, 90, 180, or 270).
@@ -8214,7 +8214,7 @@ impl OrientationResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct BBox {
@@ -8314,7 +8314,7 @@ impl BBox {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct LayoutDetection {
     #[pyo3(get)]
@@ -8355,7 +8355,7 @@ impl LayoutDetection {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct DetectionResult {
     #[pyo3(get)]
@@ -8380,7 +8380,7 @@ impl DetectionResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct EmbeddedFile {
     /// The filename as stored in the PDF name tree.
@@ -8404,7 +8404,7 @@ impl EmbeddedFile {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct FontSizeCluster {
     /// The centroid (mean) font size of this cluster
@@ -8425,7 +8425,7 @@ impl FontSizeCluster {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct CharData {
@@ -8489,7 +8489,7 @@ impl CharData {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct HierarchyBlock {
     /// The text content
@@ -8521,7 +8521,7 @@ impl HierarchyBlock {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PdfImage {
     #[pyo3(get)]
@@ -8578,7 +8578,7 @@ impl PdfImage {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageLayoutResult {
     #[pyo3(get)]
@@ -8621,7 +8621,7 @@ impl PageLayoutResult {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 pub struct PageTiming {
     /// Time to render the PDF page to a raster image (amortized from batch render).
@@ -8668,7 +8668,7 @@ impl PageTiming {
     }
 }
 
-#[derive(Clone, serde::Serialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(frozen, from_py_object)]
 #[allow(clippy::similar_names)]
 pub struct CommonPdfMetadata {
@@ -8720,21 +8720,15 @@ pub struct PdfUnifiedExtractionResult {
     inner: Arc<kreuzberg::pdf::text::PdfUnifiedExtractionResult>,
 }
 
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ExecutionProviderType {
+    #[default]
     Auto = 0,
     Cpu = 1,
     CoreMl = 2,
     Cuda = 3,
     TensorRt = 4,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for ExecutionProviderType {
-    fn default() -> Self {
-        Self::Auto
-    }
 }
 
 #[derive(Clone)]
@@ -8781,9 +8775,17 @@ impl Default for OutputFormat {
     }
 }
 
-#[derive(Clone, PartialEq, serde::Serialize)]
+impl<'de> serde::Deserialize<'de> for OutputFormat {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let inner = kreuzberg::OutputFormat::deserialize(deserializer)?;
+        Ok(Self { inner })
+    }
+}
+
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum HtmlTheme {
+    #[default]
     Default = 0,
     GitHub = 1,
     Dark = 2,
@@ -8791,16 +8793,10 @@ pub enum HtmlTheme {
     Unstyled = 4,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for HtmlTheme {
-    fn default() -> Self {
-        Self::Default
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum TableModel {
+    #[default]
     Tatr = 0,
     SlanetWired = 1,
     SlanetWireless = 2,
@@ -8809,41 +8805,22 @@ pub enum TableModel {
     Disabled = 5,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for TableModel {
-    fn default() -> Self {
-        Self::Tatr
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum PdfBackend {
+    #[default]
     Pdfium = 0,
     PdfOxide = 1,
     Auto = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PdfBackend {
-    fn default() -> Self {
-        Self::Pdfium
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ChunkerType {
+    #[default]
     Text = 0,
     Markdown = 1,
     Yaml = 2,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for ChunkerType {
-    fn default() -> Self {
-        Self::Text
-    }
 }
 
 #[derive(Clone)]
@@ -8887,6 +8864,13 @@ impl Default for ChunkSizing {
         Self {
             inner: Default::default(),
         }
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for ChunkSizing {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let inner = kreuzberg::ChunkSizing::deserialize(deserializer)?;
+        Ok(Self { inner })
     }
 }
 
@@ -8934,56 +8918,46 @@ impl Default for EmbeddingModelType {
     }
 }
 
-#[derive(Clone, PartialEq, serde::Serialize)]
+impl<'de> serde::Deserialize<'de> for EmbeddingModelType {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let inner = kreuzberg::EmbeddingModelType::deserialize(deserializer)?;
+        Ok(Self { inner })
+    }
+}
+
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum CodeContentMode {
+    #[default]
     Chunks = 0,
     Raw = 1,
     Structure = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for CodeContentMode {
-    fn default() -> Self {
-        Self::Chunks
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum FracType {
+    #[default]
     Bar = 0,
     NoBar = 1,
     Linear = 2,
     Skewed = 3,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for FracType {
-    fn default() -> Self {
-        Self::Bar
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum OcrBackendType {
+    #[default]
     Tesseract = 0,
     EasyOCR = 1,
     PaddleOCR = 2,
     Custom = 3,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for OcrBackendType {
-    fn default() -> Self {
-        Self::Tesseract
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ReductionLevel {
+    #[default]
     Off = 0,
     Light = 1,
     Moderate = 2,
@@ -8991,16 +8965,10 @@ pub enum ReductionLevel {
     Maximum = 4,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ReductionLevel {
-    fn default() -> Self {
-        Self::Off
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum PdfAnnotationType {
+    #[default]
     Text = 0,
     Highlight = 1,
     Link = 2,
@@ -9010,16 +8978,10 @@ pub enum PdfAnnotationType {
     Other = 6,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PdfAnnotationType {
-    fn default() -> Self {
-        Self::Text
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum BlockType {
+    #[default]
     Paragraph = 0,
     Heading = 1,
     Blockquote = 2,
@@ -9038,16 +9000,10 @@ pub enum BlockType {
     MathDisplay = 15,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for BlockType {
-    fn default() -> Self {
-        Self::Paragraph
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum InlineType {
+    #[default]
     Text = 0,
     Strong = 1,
     Emphasis = 2,
@@ -9066,16 +9022,10 @@ pub enum InlineType {
     Symbol = 15,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for InlineType {
-    fn default() -> Self {
-        Self::Text
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum RelationshipKind {
+    #[default]
     FootnoteReference = 0,
     CitationReference = 1,
     InternalLink = 2,
@@ -9085,27 +9035,14 @@ pub enum RelationshipKind {
     CrossReference = 6,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for RelationshipKind {
-    fn default() -> Self {
-        Self::FootnoteReference
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ContentLayer {
+    #[default]
     Body = 0,
     Header = 1,
     Footer = 2,
     Footnote = 3,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for ContentLayer {
-    fn default() -> Self {
-        Self::Body
-    }
 }
 
 #[derive(Clone)]
@@ -9149,6 +9086,13 @@ impl Default for NodeContent {
         Self {
             inner: Default::default(),
         }
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for NodeContent {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let inner = kreuzberg::NodeContent::deserialize(deserializer)?;
+        Ok(Self { inner })
     }
 }
 
@@ -9196,9 +9140,17 @@ impl Default for AnnotationKind {
     }
 }
 
-#[derive(Clone, PartialEq, serde::Serialize)]
+impl<'de> serde::Deserialize<'de> for AnnotationKind {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let inner = kreuzberg::AnnotationKind::deserialize(deserializer)?;
+        Ok(Self { inner })
+    }
+}
+
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ChunkType {
+    #[default]
     Heading = 0,
     PartyList = 1,
     Definitions = 2,
@@ -9214,30 +9166,18 @@ pub enum ChunkType {
     Unknown = 12,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ChunkType {
-    fn default() -> Self {
-        Self::Heading
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ExtractionMode {
+    #[default]
     Unified = 0,
     ElementBased = 1,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ExtractionMode {
-    fn default() -> Self {
-        Self::Unified
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ElementType {
+    #[default]
     Title = 0,
     NarrativeText = 1,
     Heading = 2,
@@ -9249,13 +9189,6 @@ pub enum ElementType {
     BlockQuote = 8,
     Footer = 9,
     Header = 10,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for ElementType {
-    fn default() -> Self {
-        Self::Title
-    }
 }
 
 #[derive(Clone)]
@@ -9302,24 +9235,26 @@ impl Default for FormatMetadata {
     }
 }
 
-#[derive(Clone, PartialEq, serde::Serialize)]
+impl<'de> serde::Deserialize<'de> for FormatMetadata {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let inner = kreuzberg::FormatMetadata::deserialize(deserializer)?;
+        Ok(Self { inner })
+    }
+}
+
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum TextDirection {
+    #[default]
     LeftToRight = 0,
     RightToLeft = 1,
     Auto = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for TextDirection {
-    fn default() -> Self {
-        Self::LeftToRight
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum LinkType {
+    #[default]
     Anchor = 0,
     Internal = 1,
     External = 2,
@@ -9328,42 +9263,23 @@ pub enum LinkType {
     Other = 5,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for LinkType {
-    fn default() -> Self {
-        Self::Anchor
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum ImageType {
+    #[default]
     DataUri = 0,
     InlineSvg = 1,
     External = 2,
     Relative = 3,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for ImageType {
-    fn default() -> Self {
-        Self::DataUri
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum StructuredDataType {
+    #[default]
     JsonLd = 0,
     Microdata = 1,
     RDFa = 2,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for StructuredDataType {
-    fn default() -> Self {
-        Self::JsonLd
-    }
 }
 
 #[derive(Clone)]
@@ -9410,40 +9326,36 @@ impl Default for OcrBoundingGeometry {
     }
 }
 
-#[derive(Clone, PartialEq, serde::Serialize)]
+impl<'de> serde::Deserialize<'de> for OcrBoundingGeometry {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let inner = kreuzberg::OcrBoundingGeometry::deserialize(deserializer)?;
+        Ok(Self { inner })
+    }
+}
+
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum OcrElementLevel {
+    #[default]
     Word = 0,
     Line = 1,
     Block = 2,
     Page = 3,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for OcrElementLevel {
-    fn default() -> Self {
-        Self::Word
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum PageUnitType {
+    #[default]
     Page = 0,
     Slide = 1,
     Sheet = 2,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PageUnitType {
-    fn default() -> Self {
-        Self::Page
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum UriKind {
+    #[default]
     Hyperlink = 0,
     Image = 1,
     Anchor = 2,
@@ -9452,43 +9364,25 @@ pub enum UriKind {
     Email = 5,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for UriKind {
-    fn default() -> Self {
-        Self::Hyperlink
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum PoolError {
+    #[default]
     LockPoisoned = 0,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PoolError {
-    fn default() -> Self {
-        Self::LockPoisoned
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum KeywordAlgorithm {
+    #[default]
     Yake = 0,
     Rake = 1,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for KeywordAlgorithm {
-    fn default() -> Self {
-        Self::Yake
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum PSMMode {
+    #[default]
     OsdOnly = 0,
     AutoOsd = 1,
     AutoOnly = 2,
@@ -9502,16 +9396,10 @@ pub enum PSMMode {
     SingleChar = 10,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PSMMode {
-    fn default() -> Self {
-        Self::OsdOnly
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum PaddleLanguage {
+    #[default]
     English = 0,
     Chinese = 1,
     Japanese = 2,
@@ -9530,16 +9418,10 @@ pub enum PaddleLanguage {
     Telugu = 15,
 }
 
-#[allow(clippy::derivable_impls)]
-impl Default for PaddleLanguage {
-    fn default() -> Self {
-        Self::English
-    }
-}
-
-#[derive(Clone, PartialEq, serde::Serialize)]
+#[derive(Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
 #[pyclass(eq, eq_int, from_py_object)]
 pub enum LayoutClass {
+    #[default]
     Caption = 0,
     Footnote = 1,
     Formula = 2,
@@ -9557,13 +9439,6 @@ pub enum LayoutClass {
     CheckboxUnselected = 14,
     Form = 15,
     KeyValueRegion = 16,
-}
-
-#[allow(clippy::derivable_impls)]
-impl Default for LayoutClass {
-    fn default() -> Self {
-        Self::Caption
-    }
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -11676,27 +11551,6 @@ pub fn render_template(template: String, context: String) -> PyResult<String> {
     ))
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[pyfunction]
-#[pyo3(signature = (content, config))]
-pub fn extract_structured<'py>(
-    py: Python<'py>,
-    content: String,
-    config: StructuredExtractionConfig,
-) -> PyResult<Bound<'py, PyAny>> {
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let config_json =
-            serde_json::to_string(&config).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        let config_core: kreuzberg::StructuredExtractionConfig =
-            serde_json::from_str(&config_json).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-        let result = kreuzberg::llm::structured::extract_structured(&content, &config_core)
-            .await
-            .map_err(|e| PyErr::new::<PyRuntimeError, _>(e.to_string()))?;
-        let wrapped_result: String = result.into();
-        Ok(wrapped_result)
-    })
-}
-
 #[pyfunction]
 #[pyo3(signature = (v))]
 pub fn normalize(v: Vec<f32>) -> Vec<f32> {
@@ -11980,64 +11834,11 @@ pub fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) 
     String::from("[unimplemented: preprocess_letterbox]")
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[pyfunction]
-#[pyo3(signature = (path, accel=None, thread_budget=None))]
-pub fn build_session(
-    path: String,
-    accel: Option<AccelerationConfig>,
-    thread_budget: Option<usize>,
-) -> PyResult<String> {
-    let accel_core: Option<kreuzberg::AccelerationConfig> = accel
-        .map(|v| {
-            let json =
-                serde_json::to_string(&v).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-            serde_json::from_str(&json).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-        })
-        .transpose()?;
-    kreuzberg::layout::session::build_session(&path, accel_core, thread_budget.expect("'thread_budget' is required"))
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-}
-
 #[pyfunction]
 #[pyo3(signature = (layout_config))]
 pub fn config_from_extraction(layout_config: LayoutDetectionConfig) -> String {
     let _ = layout_config;
     String::from("[unimplemented: config_from_extraction]")
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[pyfunction]
-#[pyo3(signature = (layout_config))]
-pub fn create_engine(layout_config: LayoutDetectionConfig) -> PyResult<String> {
-    let layout_config_json =
-        serde_json::to_string(&layout_config).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-    let layout_config_core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config_json)
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-    kreuzberg::layout::create_engine(&layout_config_core)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[pyfunction]
-#[pyo3(signature = (layout_config))]
-pub fn take_or_create_engine(layout_config: LayoutDetectionConfig) -> PyResult<String> {
-    let layout_config_json =
-        serde_json::to_string(&layout_config).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-    let layout_config_core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config_json)
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))?;
-    kreuzberg::layout::take_or_create_engine(&layout_config_core)
-        .map(|val| val.into())
-        .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
-}
-
-#[pyfunction]
-#[pyo3(signature = (engine))]
-pub fn return_engine(engine: String) -> () {
-    let _ = engine;
-    ()
 }
 
 #[pyfunction]
@@ -15458,7 +15259,7 @@ impl From<kreuzberg::ocr::OcrCacheStats> for OcrCacheStats {
     }
 }
 
-impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable {
+impl From<RecognizedTable> for kreuzberg::RecognizedTable {
     fn from(val: RecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
@@ -15468,8 +15269,8 @@ impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable 
     }
 }
 
-impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for RecognizedTable {
-    fn from(val: kreuzberg::ocr::layout_assembly::RecognizedTable) -> Self {
+impl From<kreuzberg::RecognizedTable> for RecognizedTable {
+    fn from(val: kreuzberg::RecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
             cells: val.cells,
@@ -16965,7 +16766,6 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(precompute_utf8_boundaries, m)?)?;
     m.add_function(wrap_pyfunction!(validate_utf8_boundaries, m)?)?;
     m.add_function(wrap_pyfunction!(render_template, m)?)?;
-    m.add_function(wrap_pyfunction!(extract_structured, m)?)?;
     m.add_function(wrap_pyfunction!(normalize, m)?)?;
     m.add_function(wrap_pyfunction!(get_preset, m)?)?;
     m.add_function(wrap_pyfunction!(list_presets, m)?)?;
@@ -16999,11 +16799,7 @@ pub fn _kreuzberg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(preprocess_imagenet_letterbox, m)?)?;
     m.add_function(wrap_pyfunction!(preprocess_rescale, m)?)?;
     m.add_function(wrap_pyfunction!(preprocess_letterbox, m)?)?;
-    m.add_function(wrap_pyfunction!(build_session, m)?)?;
     m.add_function(wrap_pyfunction!(config_from_extraction, m)?)?;
-    m.add_function(wrap_pyfunction!(create_engine, m)?)?;
-    m.add_function(wrap_pyfunction!(take_or_create_engine, m)?)?;
-    m.add_function(wrap_pyfunction!(return_engine, m)?)?;
     m.add_function(wrap_pyfunction!(take_or_create_tatr, m)?)?;
     m.add_function(wrap_pyfunction!(return_tatr, m)?)?;
     m.add_function(wrap_pyfunction!(take_or_create_slanet, m)?)?;

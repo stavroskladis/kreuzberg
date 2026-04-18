@@ -320,7 +320,6 @@ defmodule Kreuzberg.Native do
   def precompute_utf8_boundaries(_text), do: :erlang.nif_error(:nif_not_loaded)
   def validate_utf8_boundaries(_text, _boundaries), do: :erlang.nif_error(:nif_not_loaded)
   def render_template(_template, _context), do: :erlang.nif_error(:nif_not_loaded)
-  def extract_structured_async(_content, _config), do: :erlang.nif_error(:nif_not_loaded)
   def normalize(_v), do: :erlang.nif_error(:nif_not_loaded)
   def get_preset(_name), do: :erlang.nif_error(:nif_not_loaded)
   def list_presets, do: :erlang.nif_error(:nif_not_loaded)
@@ -372,11 +371,7 @@ defmodule Kreuzberg.Native do
   def preprocess_letterbox(_img, _target_width, _target_height),
     do: :erlang.nif_error(:nif_not_loaded)
 
-  def build_session(_path, _accel, _thread_budget), do: :erlang.nif_error(:nif_not_loaded)
   def config_from_extraction(_layout_config), do: :erlang.nif_error(:nif_not_loaded)
-  def create_engine(_layout_config), do: :erlang.nif_error(:nif_not_loaded)
-  def take_or_create_engine(_layout_config), do: :erlang.nif_error(:nif_not_loaded)
-  def return_engine(_engine), do: :erlang.nif_error(:nif_not_loaded)
   def take_or_create_tatr, do: :erlang.nif_error(:nif_not_loaded)
   def return_tatr(_model), do: :erlang.nif_error(:nif_not_loaded)
   def take_or_create_slanet(_variant), do: :erlang.nif_error(:nif_not_loaded)

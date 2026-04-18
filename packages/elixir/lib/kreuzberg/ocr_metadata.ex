@@ -6,6 +6,6 @@ defmodule Kreuzberg.OcrMetadata do
             psm: 0,
             output_format: "",
             table_count: 0,
-            table_rows: nil,
-            table_cols: nil
+            table_rows: 0,
+            table_cols: 0
 end

@@ -6,5 +6,5 @@ defmodule Kreuzberg.ArchiveMetadata do
             file_count: 0,
             file_list: [],
             total_size: 0,
-            compressed_size: nil
+            compressed_size: 0
 end

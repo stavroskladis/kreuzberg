@@ -5451,6 +5451,32 @@ type ExcelMetadata struct {
 }
 
 
+// ExcelMetadata option function
+type ExcelMetadataOption func(*ExcelMetadata)
+
+// WithExcelMetadataSheetCount sets the sheet_count field.
+func WithExcelMetadataSheetCount(v uint) ExcelMetadataOption {
+    return func(c *ExcelMetadata) { c.SheetCount = v }
+}
+
+// WithExcelMetadataSheetNames sets the sheet_names field.
+func WithExcelMetadataSheetNames(v []string) ExcelMetadataOption {
+    return func(c *ExcelMetadata) { c.SheetNames = v }
+}
+
+// NewExcelMetadata creates a ExcelMetadata with optional parameters.
+func NewExcelMetadata(opts ...ExcelMetadataOption) *ExcelMetadata {
+    c := &ExcelMetadata {
+        SheetCount: 0,
+        SheetNames: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Email metadata extracted from .eml and .msg files.
 //
 // Includes sender/recipient information, message ID, and attachment list.
@@ -5472,6 +5498,62 @@ type EmailMetadata struct {
 }
 
 
+// EmailMetadata option function
+type EmailMetadataOption func(*EmailMetadata)
+
+// WithEmailMetadataFromEmail sets the from_email field.
+func WithEmailMetadataFromEmail(v string) EmailMetadataOption {
+    return func(c *EmailMetadata) { c.FromEmail = &v }
+}
+
+// WithEmailMetadataFromName sets the from_name field.
+func WithEmailMetadataFromName(v string) EmailMetadataOption {
+    return func(c *EmailMetadata) { c.FromName = &v }
+}
+
+// WithEmailMetadataToEmails sets the to_emails field.
+func WithEmailMetadataToEmails(v []string) EmailMetadataOption {
+    return func(c *EmailMetadata) { c.ToEmails = v }
+}
+
+// WithEmailMetadataCcEmails sets the cc_emails field.
+func WithEmailMetadataCcEmails(v []string) EmailMetadataOption {
+    return func(c *EmailMetadata) { c.CcEmails = v }
+}
+
+// WithEmailMetadataBccEmails sets the bcc_emails field.
+func WithEmailMetadataBccEmails(v []string) EmailMetadataOption {
+    return func(c *EmailMetadata) { c.BccEmails = v }
+}
+
+// WithEmailMetadataMessageId sets the message_id field.
+func WithEmailMetadataMessageId(v string) EmailMetadataOption {
+    return func(c *EmailMetadata) { c.MessageId = &v }
+}
+
+// WithEmailMetadataAttachments sets the attachments field.
+func WithEmailMetadataAttachments(v []string) EmailMetadataOption {
+    return func(c *EmailMetadata) { c.Attachments = v }
+}
+
+// NewEmailMetadata creates a EmailMetadata with optional parameters.
+func NewEmailMetadata(opts ...EmailMetadataOption) *EmailMetadata {
+    c := &EmailMetadata {
+        FromEmail: nil,
+        FromName: nil,
+        ToEmails: nil,
+        CcEmails: nil,
+        BccEmails: nil,
+        MessageId: nil,
+        Attachments: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Archive (ZIP/TAR/7Z) metadata.
 //
 // Extracted from compressed archive files containing file lists and size information.
@@ -5486,6 +5568,50 @@ type ArchiveMetadata struct {
     TotalSize uint `json:"total_size"`
     // Compressed size in bytes (if available)
     CompressedSize *uint `json:"compressed_size,omitempty"`
+}
+
+
+// ArchiveMetadata option function
+type ArchiveMetadataOption func(*ArchiveMetadata)
+
+// WithArchiveMetadataFormat sets the format field.
+func WithArchiveMetadataFormat(v string) ArchiveMetadataOption {
+    return func(c *ArchiveMetadata) { c.Format = v }
+}
+
+// WithArchiveMetadataFileCount sets the file_count field.
+func WithArchiveMetadataFileCount(v uint) ArchiveMetadataOption {
+    return func(c *ArchiveMetadata) { c.FileCount = v }
+}
+
+// WithArchiveMetadataFileList sets the file_list field.
+func WithArchiveMetadataFileList(v []string) ArchiveMetadataOption {
+    return func(c *ArchiveMetadata) { c.FileList = v }
+}
+
+// WithArchiveMetadataTotalSize sets the total_size field.
+func WithArchiveMetadataTotalSize(v uint) ArchiveMetadataOption {
+    return func(c *ArchiveMetadata) { c.TotalSize = v }
+}
+
+// WithArchiveMetadataCompressedSize sets the compressed_size field.
+func WithArchiveMetadataCompressedSize(v uint) ArchiveMetadataOption {
+    return func(c *ArchiveMetadata) { c.CompressedSize = &v }
+}
+
+// NewArchiveMetadata creates a ArchiveMetadata with optional parameters.
+func NewArchiveMetadata(opts ...ArchiveMetadataOption) *ArchiveMetadata {
+    c := &ArchiveMetadata {
+        Format: "",
+        FileCount: 0,
+        FileList: nil,
+        TotalSize: 0,
+        CompressedSize: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
 }
 
 
@@ -5543,6 +5669,56 @@ type TextMetadata struct {
     Links *[]string `json:"links,omitempty"`
     // Code blocks as (language, code) tuples (for Markdown files)
     CodeBlocks *[]string `json:"code_blocks,omitempty"`
+}
+
+
+// TextMetadata option function
+type TextMetadataOption func(*TextMetadata)
+
+// WithTextMetadataLineCount sets the line_count field.
+func WithTextMetadataLineCount(v uint) TextMetadataOption {
+    return func(c *TextMetadata) { c.LineCount = v }
+}
+
+// WithTextMetadataWordCount sets the word_count field.
+func WithTextMetadataWordCount(v uint) TextMetadataOption {
+    return func(c *TextMetadata) { c.WordCount = v }
+}
+
+// WithTextMetadataCharacterCount sets the character_count field.
+func WithTextMetadataCharacterCount(v uint) TextMetadataOption {
+    return func(c *TextMetadata) { c.CharacterCount = v }
+}
+
+// WithTextMetadataHeaders sets the headers field.
+func WithTextMetadataHeaders(v []string) TextMetadataOption {
+    return func(c *TextMetadata) { c.Headers = &v }
+}
+
+// WithTextMetadataLinks sets the links field.
+func WithTextMetadataLinks(v []string) TextMetadataOption {
+    return func(c *TextMetadata) { c.Links = &v }
+}
+
+// WithTextMetadataCodeBlocks sets the code_blocks field.
+func WithTextMetadataCodeBlocks(v []string) TextMetadataOption {
+    return func(c *TextMetadata) { c.CodeBlocks = &v }
+}
+
+// NewTextMetadata creates a TextMetadata with optional parameters.
+func NewTextMetadata(opts ...TextMetadataOption) *TextMetadata {
+    c := &TextMetadata {
+        LineCount: 0,
+        WordCount: 0,
+        CharacterCount: 0,
+        Headers: nil,
+        Links: nil,
+        CodeBlocks: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
 }
 
 
@@ -5768,6 +5944,56 @@ type OcrMetadata struct {
 }
 
 
+// OcrMetadata option function
+type OcrMetadataOption func(*OcrMetadata)
+
+// WithOcrMetadataLanguage sets the language field.
+func WithOcrMetadataLanguage(v string) OcrMetadataOption {
+    return func(c *OcrMetadata) { c.Language = v }
+}
+
+// WithOcrMetadataPsm sets the psm field.
+func WithOcrMetadataPsm(v int32) OcrMetadataOption {
+    return func(c *OcrMetadata) { c.Psm = v }
+}
+
+// WithOcrMetadataOutputFormat sets the output_format field.
+func WithOcrMetadataOutputFormat(v string) OcrMetadataOption {
+    return func(c *OcrMetadata) { c.OutputFormat = v }
+}
+
+// WithOcrMetadataTableCount sets the table_count field.
+func WithOcrMetadataTableCount(v uint) OcrMetadataOption {
+    return func(c *OcrMetadata) { c.TableCount = v }
+}
+
+// WithOcrMetadataTableRows sets the table_rows field.
+func WithOcrMetadataTableRows(v uint) OcrMetadataOption {
+    return func(c *OcrMetadata) { c.TableRows = &v }
+}
+
+// WithOcrMetadataTableCols sets the table_cols field.
+func WithOcrMetadataTableCols(v uint) OcrMetadataOption {
+    return func(c *OcrMetadata) { c.TableCols = &v }
+}
+
+// NewOcrMetadata creates a OcrMetadata with optional parameters.
+func NewOcrMetadata(opts ...OcrMetadataOption) *OcrMetadata {
+    c := &OcrMetadata {
+        Language: "",
+        Psm: 0,
+        OutputFormat: "",
+        TableCount: 0,
+        TableRows: nil,
+        TableCols: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
+}
+
+
 // Error metadata (for batch operations).
 type ErrorMetadata struct {
     ErrorType string `json:"error_type"`
@@ -5787,6 +6013,44 @@ type PptxMetadata struct {
     ImageCount *uint `json:"image_count,omitempty"`
     // Number of tables
     TableCount *uint `json:"table_count,omitempty"`
+}
+
+
+// PptxMetadata option function
+type PptxMetadataOption func(*PptxMetadata)
+
+// WithPptxMetadataSlideCount sets the slide_count field.
+func WithPptxMetadataSlideCount(v uint) PptxMetadataOption {
+    return func(c *PptxMetadata) { c.SlideCount = v }
+}
+
+// WithPptxMetadataSlideNames sets the slide_names field.
+func WithPptxMetadataSlideNames(v []string) PptxMetadataOption {
+    return func(c *PptxMetadata) { c.SlideNames = v }
+}
+
+// WithPptxMetadataImageCount sets the image_count field.
+func WithPptxMetadataImageCount(v uint) PptxMetadataOption {
+    return func(c *PptxMetadata) { c.ImageCount = &v }
+}
+
+// WithPptxMetadataTableCount sets the table_count field.
+func WithPptxMetadataTableCount(v uint) PptxMetadataOption {
+    return func(c *PptxMetadata) { c.TableCount = &v }
+}
+
+// NewPptxMetadata creates a PptxMetadata with optional parameters.
+func NewPptxMetadata(opts ...PptxMetadataOption) *PptxMetadata {
+    c := &PptxMetadata {
+        SlideCount: 0,
+        SlideNames: nil,
+        ImageCount: nil,
+        TableCount: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
 }
 
 
@@ -5810,6 +6074,38 @@ type DocxMetadata struct {
     // Contains key-value pairs defined by users or applications.
     // Values can be strings, numbers, booleans, or dates.
     CustomProperties *map[string]map[string]interface{} `json:"custom_properties,omitempty"`
+}
+
+
+// DocxMetadata option function
+type DocxMetadataOption func(*DocxMetadata)
+
+// WithDocxMetadataCoreProperties sets the core_properties field.
+func WithDocxMetadataCoreProperties(v string) DocxMetadataOption {
+    return func(c *DocxMetadata) { c.CoreProperties = &v }
+}
+
+// WithDocxMetadataAppProperties sets the app_properties field.
+func WithDocxMetadataAppProperties(v string) DocxMetadataOption {
+    return func(c *DocxMetadata) { c.AppProperties = &v }
+}
+
+// WithDocxMetadataCustomProperties sets the custom_properties field.
+func WithDocxMetadataCustomProperties(v map[string]map[string]interface{}) DocxMetadataOption {
+    return func(c *DocxMetadata) { c.CustomProperties = &v }
+}
+
+// NewDocxMetadata creates a DocxMetadata with optional parameters.
+func NewDocxMetadata(opts ...DocxMetadataOption) *DocxMetadata {
+    c := &DocxMetadata {
+        CoreProperties: nil,
+        AppProperties: nil,
+        CustomProperties: nil,
+    }
+    for _, opt := range opts {
+        opt(c)
+    }
+    return c
 }
 
 
@@ -14175,51 +14471,6 @@ func RenderTemplate(template string, context string) (*string, error) {
 }
 
 
-// Extract structured data from document content using an LLM with JSON schema.
-//
-// Sends the document content to the configured LLM with a JSON schema constraint,
-// returning structured data that conforms to the schema.
-//
-// # Arguments
-//
-// * `content` - The extracted document text to send to the LLM.
-// * `config` - Structured extraction configuration including schema and LLM settings.
-//
-// # Returns
-//
-// A `serde_json::Value` conforming to the provided JSON schema.
-//
-// # Errors
-//
-// Returns an error if:
-// - The LLM client cannot be created (invalid provider/credentials).
-// - The LLM request fails (network, rate-limit, etc.).
-// - The LLM response cannot be parsed as valid JSON.
-func ExtractStructured(content string, config StructuredExtractionConfig) (*string, error) {
-    cContent := C.CString(content)
-    defer C.free(unsafe.Pointer(cContent))
-
-    jsonBytescConfig, err := json.Marshal(config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcConfig := C.CString(string(jsonBytescConfig))
-    cConfig := C.kreuzberg_structured_extraction_config_from_json(tmpStrcConfig)
-    C.free(unsafe.Pointer(tmpStrcConfig))
-    defer C.kreuzberg_structured_extraction_config_free(cConfig)
-
-    ptr := C.kreuzberg_extract_structured(cContent, cConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
 // L2-normalize a vector.
 func Normalize(v []float32) *[]float32 {
     jsonBytescV, err := json.Marshal(v)
@@ -15091,43 +15342,6 @@ func PreprocessLetterbox(img string, target_width uint32, target_height uint32) 
 }
 
 
-// Build an optimized ORT session from an ONNX model file.
-//
-// `thread_budget` controls the number of intra-op threads for this session.
-// Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
-// to respect the user's `ConcurrencyConfig`.
-//
-// When `accel` is `None` or `Auto`, uses platform defaults:
-// - macOS: CoreML (Neural Engine / GPU)
-// - Linux: CUDA (GPU)
-// - Others: CPU only
-//
-// ORT silently falls back to CPU if the requested EP is unavailable.
-func BuildSession(path string, accel *AccelerationConfig, thread_budget uint) (*string, error) {
-    cPath := C.CString(path)
-    defer C.free(unsafe.Pointer(cPath))
-
-    jsonBytescAccel, err := json.Marshal(accel)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcAccel := C.CString(string(jsonBytescAccel))
-    cAccel := C.kreuzberg_acceleration_config_from_json(tmpStrcAccel)
-    C.free(unsafe.Pointer(tmpStrcAccel))
-    defer C.kreuzberg_acceleration_config_free(cAccel)
-
-    ptr := C.kreuzberg_build_session(cPath, cAccel, cThreadBudget)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
 // Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
 func ConfigFromExtraction(layout_config LayoutDetectionConfig) *string {
     jsonBytescLayoutConfig, err := json.Marshal(layout_config)
@@ -15142,67 +15356,6 @@ func ConfigFromExtraction(layout_config LayoutDetectionConfig) *string {
     ptr := C.kreuzberg_config_from_extraction(cLayoutConfig)
     defer C.kreuzberg_free_string(ptr)
     return func() *string { v := C.GoString(ptr); return &v }()
-}
-
-
-// Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
-//
-// Ensures ORT is available, then creates the engine with model download.
-func CreateEngine(layout_config LayoutDetectionConfig) (*string, error) {
-    jsonBytescLayoutConfig, err := json.Marshal(layout_config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcLayoutConfig := C.CString(string(jsonBytescLayoutConfig))
-    cLayoutConfig := C.kreuzberg_layout_detection_config_from_json(tmpStrcLayoutConfig)
-    C.free(unsafe.Pointer(tmpStrcLayoutConfig))
-    defer C.kreuzberg_layout_detection_config_free(cLayoutConfig)
-
-    ptr := C.kreuzberg_create_engine(cLayoutConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Take the cached layout engine, or create a new one if the cache is empty.
-//
-// The caller owns the engine for the duration of its work and should
-// return it via [`return_engine`] when done. This avoids holding the
-// global mutex during inference.
-func TakeOrCreateEngine(layout_config LayoutDetectionConfig) (*string, error) {
-    jsonBytescLayoutConfig, err := json.Marshal(layout_config)
-    if err != nil {
-        return nil, fmt.Errorf("failed to marshal: %w", err)
-    }
-    tmpStrcLayoutConfig := C.CString(string(jsonBytescLayoutConfig))
-    cLayoutConfig := C.kreuzberg_layout_detection_config_from_json(tmpStrcLayoutConfig)
-    C.free(unsafe.Pointer(tmpStrcLayoutConfig))
-    defer C.kreuzberg_layout_detection_config_free(cLayoutConfig)
-
-    ptr := C.kreuzberg_take_or_create_engine(cLayoutConfig)
-    if err := lastError(); err != nil {
-        if ptr != nil {
-            C.kreuzberg_free_string(ptr)
-        }
-        return nil, err
-    }
-    defer C.kreuzberg_free_string(ptr)
-    return func() *string { v := C.GoString(ptr); return &v }(), nil
-}
-
-
-// Return a layout engine to the global cache for reuse by future extractions.
-func ReturnEngine(engine string) {
-    cEngine := C.CString(engine)
-    defer C.free(unsafe.Pointer(cEngine))
-
-    C.kreuzberg_return_engine(cEngine)
 }
 
 

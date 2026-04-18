@@ -4097,40 +4097,6 @@ public final class KreuzbergRs {
         }
     }
 
-    public static String extractStructured(String content, StructuredExtractionConfig config) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var ccontent = arena.allocateFrom(content);
-            var cconfigJson = config != null ? createObjectMapper().writeValueAsString(config) : null;
-            var cconfigJsonSeg = cconfigJson != null ? arena.allocateFrom(cconfigJson) : MemorySegment.NULL;
-            var cconfig = cconfigJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FROM_JSON.invoke(cconfigJsonSeg)
-                : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_EXTRACT_STRUCTURED.invoke(ccontent, cconfig);
-            if (!cconfig.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FREE.invoke(cconfig);
-            }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static CompletableFuture<String> extractStructuredAsync(String content, StructuredExtractionConfig config) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return extractStructured(content, config);
-            } catch (Throwable e) {
-                throw new CompletionException(e);
-            }
-        });
-    }
-
     public static List<Float> normalize(List<Float> v) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var cvJson = createObjectMapper().writeValueAsString(v);
@@ -4648,30 +4614,6 @@ public final class KreuzbergRs {
         }
     }
 
-    public static String buildSession(String path, AccelerationConfig accel, long threadBudget) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cpath = arena.allocateFrom(path);
-            var caccelJson = accel != null ? createObjectMapper().writeValueAsString(accel) : null;
-            var caccelJsonSeg = caccelJson != null ? arena.allocateFrom(caccelJson) : MemorySegment.NULL;
-            var caccel = caccelJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_ACCELERATION_CONFIG_FROM_JSON.invoke(caccelJsonSeg)
-                : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_BUILD_SESSION.invoke(cpath, caccel, threadBudget);
-            if (!caccel.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_ACCELERATION_CONFIG_FREE.invoke(caccel);
-            }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
     public static String configFromExtraction(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
         try (var arena = Arena.ofConfined()) {
             var clayoutConfigJson = layoutConfig != null ? createObjectMapper().writeValueAsString(layoutConfig) : null;
@@ -4690,61 +4632,6 @@ public final class KreuzbergRs {
             String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
             NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
             return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static String createEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var clayoutConfigJson = layoutConfig != null ? createObjectMapper().writeValueAsString(layoutConfig) : null;
-            var clayoutConfigJsonSeg = clayoutConfigJson != null ? arena.allocateFrom(clayoutConfigJson) : MemorySegment.NULL;
-            var clayoutConfig = clayoutConfigJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_LAYOUT_DETECTION_CONFIG_FROM_JSON.invoke(clayoutConfigJsonSeg)
-                : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_CREATE_ENGINE.invoke(clayoutConfig);
-            if (!clayoutConfig.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_LAYOUT_DETECTION_CONFIG_FREE.invoke(clayoutConfig);
-            }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static String takeOrCreateEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var clayoutConfigJson = layoutConfig != null ? createObjectMapper().writeValueAsString(layoutConfig) : null;
-            var clayoutConfigJsonSeg = clayoutConfigJson != null ? arena.allocateFrom(clayoutConfigJson) : MemorySegment.NULL;
-            var clayoutConfig = clayoutConfigJson != null
-                ? (MemorySegment) NativeLib.KREUZBERG_LAYOUT_DETECTION_CONFIG_FROM_JSON.invoke(clayoutConfigJsonSeg)
-                : MemorySegment.NULL;
-            var resultPtr = (MemorySegment) NativeLib.KREUZBERG_TAKE_OR_CREATE_ENGINE.invoke(clayoutConfig);
-            if (!clayoutConfig.equals(MemorySegment.NULL)) {
-                NativeLib.KREUZBERG_LAYOUT_DETECTION_CONFIG_FREE.invoke(clayoutConfig);
-            }
-            if (resultPtr.equals(MemorySegment.NULL)) {
-                checkLastError();
-                return null;
-            }
-            String result = resultPtr.reinterpret(Long.MAX_VALUE).getString(0);
-            NativeLib.KREUZBERG_FREE_STRING.invoke(resultPtr);
-            return result;
-        } catch (Throwable e) {
-            throw new KreuzbergRsException("FFI call failed", e);
-        }
-    }
-
-    public static void returnEngine(String engine) throws KreuzbergRsException {
-        try (var arena = Arena.ofConfined()) {
-            var cengine = arena.allocateFrom(engine);
-            NativeLib.KREUZBERG_RETURN_ENGINE.invoke(cengine);
         } catch (Throwable e) {
             throw new KreuzbergRsException("FFI call failed", e);
         }

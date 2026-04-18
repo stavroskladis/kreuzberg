@@ -1503,12 +1503,6 @@ render_template <- function(template, context) {
   .Call("kreuzberg_render_template", template, context)
 }
 
-#' Extract structured data from document content using an LLM with JSON schema.
-#' @export
-extract_structured <- function(content, config) {
-  .Call("kreuzberg_extract_structured", content, config)
-}
-
 #' L2-normalize a vector.
 #' @export
 normalize <- function(v) {
@@ -1707,34 +1701,10 @@ preprocess_letterbox <- function(img, target_width, target_height) {
   .Call("kreuzberg_preprocess_letterbox", img, target_width, target_height)
 }
 
-#' Build an optimized ORT session from an ONNX model file.
-#' @export
-build_session <- function(path, accel = NULL, thread_budget) {
-  .Call("kreuzberg_build_session", path, accel, thread_budget)
-}
-
 #' Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
 #' @export
 config_from_extraction <- function(layout_config) {
   .Call("kreuzberg_config_from_extraction", layout_config)
-}
-
-#' Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
-#' @export
-create_engine <- function(layout_config) {
-  .Call("kreuzberg_create_engine", layout_config)
-}
-
-#' Take the cached layout engine, or create a new one if the cache is empty.
-#' @export
-take_or_create_engine <- function(layout_config) {
-  .Call("kreuzberg_take_or_create_engine", layout_config)
-}
-
-#' Return a layout engine to the global cache for reuse by future extractions.
-#' @export
-return_engine <- function(engine) {
-  .Call("kreuzberg_return_engine", engine)
 }
 
 #' Take the cached TATR model, or create a new one if the cache is empty.

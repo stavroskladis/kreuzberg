@@ -42,7 +42,7 @@ fn json_to_ruby(handle: &Ruby, val: serde_json::Value) -> magnus::Value {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::AccelerationConfig")]
 #[serde(default)]
 pub struct AccelerationConfig {
@@ -77,7 +77,7 @@ impl AccelerationConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ContentFilterConfig")]
 #[serde(default)]
 pub struct ContentFilterConfig {
@@ -140,7 +140,7 @@ impl ContentFilterConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EmailConfig")]
 #[serde(default)]
 pub struct EmailConfig {
@@ -175,7 +175,7 @@ impl EmailConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExtractionConfig")]
 #[serde(default)]
 pub struct ExtractionConfig {
@@ -617,7 +617,7 @@ impl ExtractionConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::FileExtractionConfig")]
 #[serde(default)]
 pub struct FileExtractionConfig {
@@ -809,7 +809,7 @@ impl FileExtractionConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ImageExtractionConfig")]
 #[serde(default)]
 pub struct ImageExtractionConfig {
@@ -896,7 +896,7 @@ impl ImageExtractionConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TokenReductionOptions")]
 pub struct TokenReductionOptions {
     pub mode: String,
@@ -930,7 +930,7 @@ impl TokenReductionOptions {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::LanguageDetectionConfig")]
 pub struct LanguageDetectionConfig {
     pub enabled: bool,
@@ -970,7 +970,7 @@ impl LanguageDetectionConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HtmlOutputConfig")]
 #[serde(default)]
 pub struct HtmlOutputConfig {
@@ -1029,7 +1029,7 @@ impl HtmlOutputConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::LayoutDetectionConfig")]
 #[serde(default)]
 pub struct LayoutDetectionConfig {
@@ -1070,7 +1070,7 @@ impl LayoutDetectionConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::LlmConfig")]
 #[serde(default)]
 pub struct LlmConfig {
@@ -1157,7 +1157,7 @@ impl LlmConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::StructuredExtractionConfig")]
 pub struct StructuredExtractionConfig {
     pub schema: String,
@@ -1222,7 +1222,7 @@ impl StructuredExtractionConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrQualityThresholds")]
 #[serde(default)]
 pub struct OcrQualityThresholds {
@@ -1413,7 +1413,7 @@ impl OcrQualityThresholds {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrPipelineStage")]
 pub struct OcrPipelineStage {
     pub backend: String,
@@ -1478,7 +1478,7 @@ impl OcrPipelineStage {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrPipelineConfig")]
 pub struct OcrPipelineConfig {
     pub stages: Vec<OcrPipelineStage>,
@@ -1512,7 +1512,7 @@ impl OcrPipelineConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrConfig")]
 #[serde(default)]
 pub struct OcrConfig {
@@ -1689,7 +1689,7 @@ impl OcrConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageConfig")]
 #[serde(default)]
 pub struct PageConfig {
@@ -1747,7 +1747,7 @@ impl PageConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PdfConfig")]
 #[serde(default)]
 pub struct PdfConfig {
@@ -1834,7 +1834,7 @@ impl PdfConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HierarchyConfig")]
 #[serde(default)]
 pub struct HierarchyConfig {
@@ -1897,7 +1897,7 @@ impl HierarchyConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PostProcessorConfig")]
 #[serde(default)]
 pub struct PostProcessorConfig {
@@ -1979,7 +1979,7 @@ impl PostProcessorConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ChunkingConfig")]
 #[serde(default)]
 pub struct ChunkingConfig {
@@ -2081,7 +2081,7 @@ impl ChunkingConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EmbeddingConfig")]
 #[serde(default)]
 pub struct EmbeddingConfig {
@@ -2140,7 +2140,7 @@ impl EmbeddingConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TreeSitterConfig")]
 #[serde(default)]
 pub struct TreeSitterConfig {
@@ -2211,7 +2211,7 @@ impl TreeSitterConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TreeSitterProcessConfig")]
 #[serde(default)]
 pub struct TreeSitterProcessConfig {
@@ -2298,7 +2298,7 @@ impl TreeSitterProcessConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::SupportedFormat")]
 pub struct SupportedFormat {
     pub extension: String,
@@ -2329,7 +2329,7 @@ impl SupportedFormat {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ServerConfig")]
 #[serde(default)]
 pub struct ServerConfig {
@@ -2472,7 +2472,7 @@ impl ServerConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::StructuredDataResult")]
 pub struct StructuredDataResult {
     pub content: String,
@@ -2572,7 +2572,7 @@ impl StreamReader {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ImageOcrResult")]
 pub struct ImageOcrResult {
     pub content: String,
@@ -2612,7 +2612,7 @@ impl ImageOcrResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HtmlExtractionResult")]
 pub struct HtmlExtractionResult {
     pub markdown: String,
@@ -2652,7 +2652,7 @@ impl HtmlExtractionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExtractedInlineImage")]
 pub struct ExtractedInlineImage {
     pub data: Vec<u8>,
@@ -2717,7 +2717,7 @@ impl ExtractedInlineImage {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Drawing")]
 #[serde(default)]
 pub struct Drawing {
@@ -2780,7 +2780,7 @@ impl Drawing {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::AnchorProperties")]
 #[serde(default)]
 pub struct AnchorProperties {
@@ -2859,8 +2859,9 @@ impl AnchorProperties {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HeaderFooter")]
+#[serde(default)]
 pub struct HeaderFooter {
     pub paragraphs: Vec<String>,
     pub tables: Vec<String>,
@@ -2909,7 +2910,7 @@ impl HeaderFooter {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Note")]
 pub struct Note {
     pub id: String,
@@ -2949,8 +2950,9 @@ impl Note {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageMarginsPoints")]
+#[serde(default)]
 pub struct PageMarginsPoints {
     pub top: Option<f64>,
     pub right: Option<f64>,
@@ -3035,7 +3037,7 @@ impl PageMarginsPoints {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::StyleDefinition")]
 pub struct StyleDefinition {
     pub id: String,
@@ -3114,8 +3116,9 @@ impl StyleDefinition {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ResolvedStyle")]
+#[serde(default)]
 pub struct ResolvedStyle {
     pub paragraph_properties: String,
     pub run_properties: String,
@@ -3157,7 +3160,7 @@ impl ResolvedStyle {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TableProperties")]
 #[serde(default)]
 pub struct TableProperties {
@@ -3260,8 +3263,9 @@ impl TableProperties {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::XlsxAppProperties")]
+#[serde(default)]
 pub struct XlsxAppProperties {
     pub application: Option<String>,
     pub app_version: Option<String>,
@@ -3362,8 +3366,9 @@ impl XlsxAppProperties {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PptxAppProperties")]
+#[serde(default)]
 pub struct PptxAppProperties {
     pub application: Option<String>,
     pub app_version: Option<String>,
@@ -3530,8 +3535,9 @@ unsafe impl TryConvertOwned for CustomProperties {}
 
 impl CustomProperties {}
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OdtProperties")]
+#[serde(default)]
 pub struct OdtProperties {
     pub title: Option<String>,
     pub subject: Option<String>,
@@ -3888,7 +3894,7 @@ impl TableValidator {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrFallbackDecision")]
 pub struct OcrFallbackDecision {
     pub stats: String,
@@ -3934,7 +3940,7 @@ impl OcrFallbackDecision {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TokenReductionConfig")]
 #[serde(default)]
 pub struct TokenReductionConfig {
@@ -4035,7 +4041,7 @@ impl TokenReductionConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PdfAnnotation")]
 pub struct PdfAnnotation {
     pub annotation_type: PdfAnnotationType,
@@ -4086,7 +4092,7 @@ impl PdfAnnotation {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DjotContent")]
 pub struct DjotContent {
     pub plain_text: String,
@@ -4165,7 +4171,7 @@ impl DjotContent {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::FormattedBlock")]
 pub struct FormattedBlock {
     pub block_type: BlockType,
@@ -4237,7 +4243,7 @@ impl FormattedBlock {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::InlineElement")]
 pub struct InlineElement {
     pub element_type: InlineType,
@@ -4288,7 +4294,7 @@ impl InlineElement {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DjotImage")]
 pub struct DjotImage {
     pub src: String,
@@ -4334,7 +4340,7 @@ impl DjotImage {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DjotLink")]
 pub struct DjotLink {
     pub url: String,
@@ -4380,7 +4386,7 @@ impl DjotLink {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Footnote")]
 pub struct Footnote {
     pub label: String,
@@ -4411,7 +4417,7 @@ impl Footnote {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DocumentStructure")]
 #[serde(default)]
 pub struct DocumentStructure {
@@ -4519,7 +4525,7 @@ impl DocumentStructure {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DocumentRelationship")]
 pub struct DocumentRelationship {
     pub source: u32,
@@ -4555,7 +4561,7 @@ impl DocumentRelationship {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DocumentNode")]
 pub struct DocumentNode {
     pub id: String,
@@ -4648,7 +4654,7 @@ impl DocumentNode {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::GridCell")]
 pub struct GridCell {
     pub content: String,
@@ -4720,7 +4726,7 @@ impl GridCell {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TextAnnotation")]
 pub struct TextAnnotation {
     pub start: u32,
@@ -4756,7 +4762,7 @@ impl TextAnnotation {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExtractionResult")]
 #[serde(default)]
 pub struct ExtractionResult {
@@ -4961,7 +4967,7 @@ impl ExtractionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ArchiveEntry")]
 pub struct ArchiveEntry {
     pub path: String,
@@ -5001,7 +5007,7 @@ impl ArchiveEntry {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ProcessingWarning")]
 pub struct ProcessingWarning {
     pub source: String,
@@ -5032,7 +5038,7 @@ impl ProcessingWarning {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::LlmUsage")]
 #[serde(default)]
 pub struct LlmUsage {
@@ -5119,7 +5125,7 @@ impl LlmUsage {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Chunk")]
 pub struct Chunk {
     pub content: String,
@@ -5165,7 +5171,7 @@ impl Chunk {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HeadingContext")]
 pub struct HeadingContext {
     pub headings: Vec<HeadingLevel>,
@@ -5191,7 +5197,7 @@ impl HeadingContext {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HeadingLevel")]
 pub struct HeadingLevel {
     pub level: u8,
@@ -5222,7 +5228,7 @@ impl HeadingLevel {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ChunkMetadata")]
 pub struct ChunkMetadata {
     pub byte_start: usize,
@@ -5301,7 +5307,7 @@ impl ChunkMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExtractedImage")]
 pub struct ExtractedImage {
     pub data: Vec<u8>,
@@ -5415,7 +5421,7 @@ impl ExtractedImage {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ElementMetadata")]
 pub struct ElementMetadata {
     pub page_number: Option<usize>,
@@ -5473,7 +5479,7 @@ impl ElementMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Element")]
 pub struct Element {
     pub element_id: String,
@@ -5519,7 +5525,7 @@ impl Element {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExcelWorkbook")]
 pub struct ExcelWorkbook {
     pub sheets: Vec<ExcelSheet>,
@@ -5550,7 +5556,7 @@ impl ExcelWorkbook {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExcelSheet")]
 pub struct ExcelSheet {
     pub name: String,
@@ -5615,7 +5621,7 @@ impl ExcelSheet {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::XmlExtractionResult")]
 pub struct XmlExtractionResult {
     pub content: String,
@@ -5655,7 +5661,7 @@ impl XmlExtractionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TextExtractionResult")]
 pub struct TextExtractionResult {
     pub content: String,
@@ -5727,7 +5733,7 @@ impl TextExtractionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PptxExtractionResult")]
 pub struct PptxExtractionResult {
     pub content: String,
@@ -5827,7 +5833,7 @@ impl PptxExtractionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EmailExtractionResult")]
 pub struct EmailExtractionResult {
     pub subject: Option<String>,
@@ -5934,7 +5940,7 @@ impl EmailExtractionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EmailAttachment")]
 pub struct EmailAttachment {
     pub name: Option<String>,
@@ -5999,7 +6005,7 @@ impl EmailAttachment {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrExtractionResult")]
 pub struct OcrExtractionResult {
     pub content: String,
@@ -6064,7 +6070,7 @@ impl OcrExtractionResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrTable")]
 pub struct OcrTable {
     pub cells: Vec<Vec<String>>,
@@ -6115,7 +6121,7 @@ impl OcrTable {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrTableBoundingBox")]
 pub struct OcrTableBoundingBox {
     pub left: u32,
@@ -6161,7 +6167,7 @@ impl OcrTableBoundingBox {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ImagePreprocessingConfig")]
 #[serde(default)]
 pub struct ImagePreprocessingConfig {
@@ -6248,7 +6254,7 @@ impl ImagePreprocessingConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TesseractConfig")]
 #[serde(default)]
 pub struct TesseractConfig {
@@ -6488,7 +6494,7 @@ impl TesseractConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ImagePreprocessingMetadata")]
 pub struct ImagePreprocessingMetadata {
     pub original_dimensions: String,
@@ -6595,7 +6601,7 @@ impl ImagePreprocessingMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Metadata")]
 #[serde(default)]
 pub struct Metadata {
@@ -6788,8 +6794,9 @@ impl Metadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExcelMetadata")]
+#[serde(default)]
 pub struct ExcelMetadata {
     pub sheet_count: usize,
     pub sheet_names: Vec<String>,
@@ -6805,11 +6812,20 @@ impl magnus::TryConvert for ExcelMetadata {
 }
 unsafe impl TryConvertOwned for ExcelMetadata {}
 
-impl ExcelMetadata {
-    fn new(sheet_count: usize, sheet_names: Vec<String>) -> Self {
+impl Default for ExcelMetadata {
+    fn default() -> Self {
         Self {
-            sheet_count,
-            sheet_names,
+            sheet_count: Default::default(),
+            sheet_names: Default::default(),
+        }
+    }
+}
+
+impl ExcelMetadata {
+    fn new(sheet_count: Option<usize>, sheet_names: Option<Vec<String>>) -> Self {
+        Self {
+            sheet_count: sheet_count.unwrap_or_default(),
+            sheet_names: sheet_names.unwrap_or_default(),
         }
     }
 
@@ -6822,8 +6838,9 @@ impl ExcelMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EmailMetadata")]
+#[serde(default)]
 pub struct EmailMetadata {
     pub from_email: Option<String>,
     pub from_name: Option<String>,
@@ -6844,24 +6861,38 @@ impl magnus::TryConvert for EmailMetadata {
 }
 unsafe impl TryConvertOwned for EmailMetadata {}
 
+impl Default for EmailMetadata {
+    fn default() -> Self {
+        Self {
+            from_email: Default::default(),
+            from_name: Default::default(),
+            to_emails: Default::default(),
+            cc_emails: Default::default(),
+            bcc_emails: Default::default(),
+            message_id: Default::default(),
+            attachments: Default::default(),
+        }
+    }
+}
+
 impl EmailMetadata {
     fn new(
-        to_emails: Vec<String>,
-        cc_emails: Vec<String>,
-        bcc_emails: Vec<String>,
-        attachments: Vec<String>,
         from_email: Option<String>,
         from_name: Option<String>,
+        to_emails: Option<Vec<String>>,
+        cc_emails: Option<Vec<String>>,
+        bcc_emails: Option<Vec<String>>,
         message_id: Option<String>,
+        attachments: Option<Vec<String>>,
     ) -> Self {
         Self {
             from_email,
             from_name,
-            to_emails,
-            cc_emails,
-            bcc_emails,
+            to_emails: to_emails.unwrap_or_default(),
+            cc_emails: cc_emails.unwrap_or_default(),
+            bcc_emails: bcc_emails.unwrap_or_default(),
             message_id,
-            attachments,
+            attachments: attachments.unwrap_or_default(),
         }
     }
 
@@ -6894,8 +6925,9 @@ impl EmailMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ArchiveMetadata")]
+#[serde(default)]
 pub struct ArchiveMetadata {
     pub format: String,
     pub file_count: usize,
@@ -6914,19 +6946,31 @@ impl magnus::TryConvert for ArchiveMetadata {
 }
 unsafe impl TryConvertOwned for ArchiveMetadata {}
 
+impl Default for ArchiveMetadata {
+    fn default() -> Self {
+        Self {
+            format: Default::default(),
+            file_count: Default::default(),
+            file_list: Default::default(),
+            total_size: Default::default(),
+            compressed_size: Default::default(),
+        }
+    }
+}
+
 impl ArchiveMetadata {
     fn new(
-        format: String,
-        file_count: usize,
-        file_list: Vec<String>,
-        total_size: usize,
+        format: Option<String>,
+        file_count: Option<usize>,
+        file_list: Option<Vec<String>>,
+        total_size: Option<usize>,
         compressed_size: Option<usize>,
     ) -> Self {
         Self {
-            format,
-            file_count,
-            file_list,
-            total_size,
+            format: format.unwrap_or_default(),
+            file_count: file_count.unwrap_or_default(),
+            file_list: file_list.unwrap_or_default(),
+            total_size: total_size.unwrap_or_default(),
             compressed_size,
         }
     }
@@ -6952,7 +6996,7 @@ impl ArchiveMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::XmlMetadata")]
 #[serde(default)]
 pub struct XmlMetadata {
@@ -6996,8 +7040,9 @@ impl XmlMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::TextMetadata")]
+#[serde(default)]
 pub struct TextMetadata {
     pub line_count: usize,
     pub word_count: usize,
@@ -7017,19 +7062,32 @@ impl magnus::TryConvert for TextMetadata {
 }
 unsafe impl TryConvertOwned for TextMetadata {}
 
+impl Default for TextMetadata {
+    fn default() -> Self {
+        Self {
+            line_count: Default::default(),
+            word_count: Default::default(),
+            character_count: Default::default(),
+            headers: Default::default(),
+            links: Default::default(),
+            code_blocks: Default::default(),
+        }
+    }
+}
+
 impl TextMetadata {
     fn new(
-        line_count: usize,
-        word_count: usize,
-        character_count: usize,
+        line_count: Option<usize>,
+        word_count: Option<usize>,
+        character_count: Option<usize>,
         headers: Option<Vec<String>>,
         links: Option<Vec<String>>,
         code_blocks: Option<Vec<String>>,
     ) -> Self {
         Self {
-            line_count,
-            word_count,
-            character_count,
+            line_count: line_count.unwrap_or_default(),
+            word_count: word_count.unwrap_or_default(),
+            character_count: character_count.unwrap_or_default(),
             headers,
             links,
             code_blocks,
@@ -7061,7 +7119,7 @@ impl TextMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HeaderMetadata")]
 pub struct HeaderMetadata {
     pub level: u8,
@@ -7113,7 +7171,7 @@ impl HeaderMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::LinkMetadata")]
 pub struct LinkMetadata {
     pub href: String,
@@ -7178,7 +7236,7 @@ impl LinkMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ImageMetadataType")]
 pub struct ImageMetadataType {
     pub src: String,
@@ -7243,7 +7301,7 @@ impl ImageMetadataType {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::StructuredData")]
 pub struct StructuredData {
     pub data_type: StructuredDataType,
@@ -7283,7 +7341,7 @@ impl StructuredData {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HtmlMetadata")]
 #[serde(default)]
 pub struct HtmlMetadata {
@@ -7433,8 +7491,9 @@ impl HtmlMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrMetadata")]
+#[serde(default)]
 pub struct OcrMetadata {
     pub language: String,
     pub psm: i32,
@@ -7454,20 +7513,33 @@ impl magnus::TryConvert for OcrMetadata {
 }
 unsafe impl TryConvertOwned for OcrMetadata {}
 
+impl Default for OcrMetadata {
+    fn default() -> Self {
+        Self {
+            language: Default::default(),
+            psm: Default::default(),
+            output_format: Default::default(),
+            table_count: Default::default(),
+            table_rows: Default::default(),
+            table_cols: Default::default(),
+        }
+    }
+}
+
 impl OcrMetadata {
     fn new(
-        language: String,
-        psm: i32,
-        output_format: String,
-        table_count: usize,
+        language: Option<String>,
+        psm: Option<i32>,
+        output_format: Option<String>,
+        table_count: Option<usize>,
         table_rows: Option<usize>,
         table_cols: Option<usize>,
     ) -> Self {
         Self {
-            language,
-            psm,
-            output_format,
-            table_count,
+            language: language.unwrap_or_default(),
+            psm: psm.unwrap_or_default(),
+            output_format: output_format.unwrap_or_default(),
+            table_count: table_count.unwrap_or_default(),
             table_rows,
             table_cols,
         }
@@ -7498,7 +7570,7 @@ impl OcrMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ErrorMetadata")]
 pub struct ErrorMetadata {
     pub error_type: String,
@@ -7529,8 +7601,9 @@ impl ErrorMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PptxMetadata")]
+#[serde(default)]
 pub struct PptxMetadata {
     pub slide_count: usize,
     pub slide_names: Vec<String>,
@@ -7548,16 +7621,27 @@ impl magnus::TryConvert for PptxMetadata {
 }
 unsafe impl TryConvertOwned for PptxMetadata {}
 
+impl Default for PptxMetadata {
+    fn default() -> Self {
+        Self {
+            slide_count: Default::default(),
+            slide_names: Default::default(),
+            image_count: Default::default(),
+            table_count: Default::default(),
+        }
+    }
+}
+
 impl PptxMetadata {
     fn new(
-        slide_count: usize,
-        slide_names: Vec<String>,
+        slide_count: Option<usize>,
+        slide_names: Option<Vec<String>>,
         image_count: Option<usize>,
         table_count: Option<usize>,
     ) -> Self {
         Self {
-            slide_count,
-            slide_names,
+            slide_count: slide_count.unwrap_or_default(),
+            slide_names: slide_names.unwrap_or_default(),
             image_count,
             table_count,
         }
@@ -7580,8 +7664,9 @@ impl PptxMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DocxMetadata")]
+#[serde(default)]
 pub struct DocxMetadata {
     pub core_properties: Option<String>,
     pub app_properties: Option<String>,
@@ -7597,6 +7682,16 @@ impl magnus::TryConvert for DocxMetadata {
     }
 }
 unsafe impl TryConvertOwned for DocxMetadata {}
+
+impl Default for DocxMetadata {
+    fn default() -> Self {
+        Self {
+            core_properties: Default::default(),
+            app_properties: Default::default(),
+            custom_properties: Default::default(),
+        }
+    }
+}
 
 impl DocxMetadata {
     fn new(
@@ -7624,7 +7719,7 @@ impl DocxMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::CsvMetadata")]
 #[serde(default)]
 pub struct CsvMetadata {
@@ -7695,7 +7790,7 @@ impl CsvMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::BibtexMetadata")]
 #[serde(default)]
 pub struct BibtexMetadata {
@@ -7754,7 +7849,7 @@ impl BibtexMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::CitationMetadata")]
 #[serde(default)]
 pub struct CitationMetadata {
@@ -7820,7 +7915,7 @@ impl CitationMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::YearRange")]
 pub struct YearRange {
     pub min: Option<u32>,
@@ -7856,7 +7951,7 @@ impl YearRange {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::FictionBookMetadata")]
 #[serde(default)]
 pub struct FictionBookMetadata {
@@ -7907,7 +8002,7 @@ impl FictionBookMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DbfMetadata")]
 #[serde(default)]
 pub struct DbfMetadata {
@@ -7948,7 +8043,7 @@ impl DbfMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DbfFieldInfo")]
 pub struct DbfFieldInfo {
     pub name: String,
@@ -7979,7 +8074,7 @@ impl DbfFieldInfo {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::JatsMetadata")]
 #[serde(default)]
 pub struct JatsMetadata {
@@ -8031,7 +8126,7 @@ impl JatsMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ContributorRole")]
 pub struct ContributorRole {
     pub name: String,
@@ -8062,7 +8157,7 @@ impl ContributorRole {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EpubMetadata")]
 #[serde(default)]
 pub struct EpubMetadata {
@@ -8141,7 +8236,7 @@ impl EpubMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PstMetadata")]
 #[serde(default)]
 pub struct PstMetadata {
@@ -8178,7 +8273,7 @@ impl PstMetadata {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrConfidence")]
 #[serde(default)]
 pub struct OcrConfidence {
@@ -8222,7 +8317,7 @@ impl OcrConfidence {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrRotation")]
 pub struct OcrRotation {
     pub angle_degrees: f64,
@@ -8256,7 +8351,7 @@ impl OcrRotation {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrElement")]
 #[serde(default)]
 pub struct OcrElement {
@@ -8386,7 +8481,7 @@ impl OcrElement {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrElementConfig")]
 #[serde(default)]
 pub struct OcrElementConfig {
@@ -8438,7 +8533,7 @@ impl OcrElementConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageStructure")]
 pub struct PageStructure {
     pub total_count: usize,
@@ -8489,7 +8584,7 @@ impl PageStructure {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageBoundary")]
 pub struct PageBoundary {
     pub byte_start: usize,
@@ -8529,7 +8624,7 @@ impl PageBoundary {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageInfo")]
 pub struct PageInfo {
     pub number: usize,
@@ -8601,7 +8696,7 @@ impl PageInfo {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageContent")]
 pub struct PageContent {
     pub page_number: usize,
@@ -8666,7 +8761,7 @@ impl PageContent {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageHierarchy")]
 pub struct PageHierarchy {
     pub block_count: usize,
@@ -8697,7 +8792,7 @@ impl PageHierarchy {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HierarchicalBlock")]
 pub struct HierarchicalBlock {
     pub text: String,
@@ -8743,7 +8838,7 @@ impl HierarchicalBlock {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Uri")]
 pub struct Uri {
     pub url: String,
@@ -8913,7 +9008,7 @@ unsafe impl TryConvertOwned for ApiDoc {}
 
 impl ApiDoc {}
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HealthResponse")]
 pub struct HealthResponse {
     pub status: String,
@@ -8953,7 +9048,7 @@ impl HealthResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::InfoResponse")]
 pub struct InfoResponse {
     pub version: String,
@@ -9002,7 +9097,7 @@ unsafe impl TryConvertOwned for ExtractResponse {}
 
 impl ExtractResponse {}
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ApiState")]
 pub struct ApiState {
     pub default_config: ExtractionConfig,
@@ -9036,7 +9131,7 @@ impl ApiState {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::CacheStatsResponse")]
 pub struct CacheStatsResponse {
     pub directory: String,
@@ -9101,7 +9196,7 @@ impl CacheStatsResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::CacheClearResponse")]
 pub struct CacheClearResponse {
     pub directory: String,
@@ -9141,7 +9236,7 @@ impl CacheClearResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EmbedRequest")]
 pub struct EmbedRequest {
     pub texts: Vec<String>,
@@ -9172,7 +9267,7 @@ impl EmbedRequest {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EmbedResponse")]
 pub struct EmbedResponse {
     pub embeddings: Vec<Vec<f32>>,
@@ -9218,7 +9313,7 @@ impl EmbedResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ChunkRequest")]
 pub struct ChunkRequest {
     pub text: String,
@@ -9258,7 +9353,7 @@ impl ChunkRequest {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ChunkResponse")]
 pub struct ChunkResponse {
     pub chunks: Vec<String>,
@@ -9316,7 +9411,7 @@ impl ChunkResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::VersionResponse")]
 pub struct VersionResponse {
     pub version: String,
@@ -9342,7 +9437,7 @@ impl VersionResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DetectResponse")]
 pub struct DetectResponse {
     pub mime_type: String,
@@ -9373,7 +9468,7 @@ impl DetectResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ManifestEntryResponse")]
 pub struct ManifestEntryResponse {
     pub relative_path: String,
@@ -9419,7 +9514,7 @@ impl ManifestEntryResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ManifestResponse")]
 pub struct ManifestResponse {
     pub kreuzberg_version: String,
@@ -9470,7 +9565,7 @@ impl ManifestResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::WarmRequest")]
 #[serde(default)]
 pub struct WarmRequest {
@@ -9514,7 +9609,7 @@ impl WarmRequest {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::WarmResponse")]
 pub struct WarmResponse {
     pub cache_dir: String,
@@ -9554,7 +9649,7 @@ impl WarmResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::StructuredExtractionResponse")]
 pub struct StructuredExtractionResponse {
     pub structured_output: String,
@@ -9594,7 +9689,7 @@ impl StructuredExtractionResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OpenWebDocumentResponse")]
 pub struct OpenWebDocumentResponse {
     pub page_content: String,
@@ -9625,7 +9720,7 @@ impl OpenWebDocumentResponse {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DoclingCompatResponse")]
 pub struct DoclingCompatResponse {
     pub document: String,
@@ -9656,7 +9751,7 @@ impl DoclingCompatResponse {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExtractFileParams")]
 pub struct ExtractFileParams {
     pub path: String,
@@ -9714,7 +9809,7 @@ impl ExtractFileParams {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExtractBytesParams")]
 pub struct ExtractBytesParams {
     pub data: String,
@@ -9772,7 +9867,7 @@ impl ExtractBytesParams {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::BatchExtractFilesParams")]
 pub struct BatchExtractFilesParams {
     pub paths: Vec<String>,
@@ -9830,7 +9925,7 @@ impl BatchExtractFilesParams {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DetectMimeTypeParams")]
 pub struct DetectMimeTypeParams {
     pub path: String,
@@ -9861,7 +9956,7 @@ impl DetectMimeTypeParams {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::CacheWarmParams")]
 pub struct CacheWarmParams {
     pub all_embeddings: bool,
@@ -9895,7 +9990,7 @@ impl CacheWarmParams {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EmbedTextParams")]
 pub struct EmbedTextParams {
     pub texts: Vec<String>,
@@ -9941,7 +10036,7 @@ impl EmbedTextParams {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ExtractStructuredParams")]
 pub struct ExtractStructuredParams {
     pub path: String,
@@ -10020,7 +10115,7 @@ impl ExtractStructuredParams {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ChunkTextParams")]
 pub struct ChunkTextParams {
     pub text: String,
@@ -10066,7 +10161,7 @@ impl ChunkTextParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ChunkingResult")]
 pub struct ChunkingResult {
     pub chunks: Vec<Chunk>,
@@ -10097,7 +10192,7 @@ impl ChunkingResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::YakeParams")]
 #[serde(default)]
 pub struct YakeParams {
@@ -10134,7 +10229,7 @@ impl YakeParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::RakeParams")]
 #[serde(default)]
 pub struct RakeParams {
@@ -10178,7 +10273,7 @@ impl RakeParams {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::KeywordConfig")]
 #[serde(default)]
 pub struct KeywordConfig {
@@ -10307,7 +10402,7 @@ impl KeywordConfig {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::Keyword")]
 pub struct Keyword {
     pub text: String,
@@ -10353,8 +10448,9 @@ impl Keyword {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OcrCacheStats")]
+#[serde(default)]
 pub struct OcrCacheStats {
     pub total_files: usize,
     pub total_size_mb: f64,
@@ -10396,7 +10492,7 @@ impl OcrCacheStats {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::RecognizedTable")]
 pub struct RecognizedTable {
     pub detection_bbox: BBox,
@@ -10462,7 +10558,7 @@ impl TessdataManager {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PaddleOcrConfig")]
 #[serde(default)]
 pub struct PaddleOcrConfig {
@@ -10787,7 +10883,7 @@ impl PaddleOcrConfig {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::ModelPaths")]
 pub struct ModelPaths {
     pub det_model: String,
@@ -10833,7 +10929,7 @@ impl ModelPaths {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::OrientationResult")]
 pub struct OrientationResult {
     pub degrees: u32,
@@ -10864,7 +10960,7 @@ impl OrientationResult {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::BBox")]
 pub struct BBox {
     pub x1: f32,
@@ -10965,7 +11061,7 @@ impl BBox {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::LayoutDetection")]
 pub struct LayoutDetection {
     pub class: LayoutClass,
@@ -11009,7 +11105,7 @@ impl LayoutDetection {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::DetectionResult")]
 pub struct DetectionResult {
     pub page_width: u32,
@@ -11049,7 +11145,7 @@ impl DetectionResult {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::EmbeddedFile")]
 pub struct EmbeddedFile {
     pub name: String,
@@ -11085,7 +11181,7 @@ impl EmbeddedFile {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::FontSizeCluster")]
 pub struct FontSizeCluster {
     pub centroid: f32,
@@ -11116,7 +11212,7 @@ impl FontSizeCluster {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::CharData")]
 pub struct CharData {
     pub text: String,
@@ -11202,7 +11298,7 @@ impl CharData {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::HierarchyBlock")]
 pub struct HierarchyBlock {
     pub text: String,
@@ -11248,7 +11344,7 @@ impl HierarchyBlock {
     }
 }
 
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PdfImage")]
 pub struct PdfImage {
     pub page_number: usize,
@@ -11334,7 +11430,7 @@ impl PdfImage {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageLayoutResult")]
 pub struct PageLayoutResult {
     pub page_index: usize,
@@ -11399,7 +11495,7 @@ impl PageLayoutResult {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::PageTiming")]
 pub struct PageTiming {
     pub render_ms: f64,
@@ -11464,7 +11560,7 @@ impl PageTiming {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default, serde::Serialize, serde::Deserialize)]
 #[magnus::wrap(class = "Kreuzberg::CommonPdfMetadata")]
 pub struct CommonPdfMetadata {
     pub title: Option<String>,
@@ -15489,30 +15585,6 @@ fn render_template(template: String, context: String) -> Result<String, Error> {
     ))
 }
 
-fn extract_structured(content: String, config: String) -> Result<String, Error> {
-    let config: StructuredExtractionConfig = {
-        let core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: extract_structured",
-    ))
-}
-
-fn extract_structured_async(content: String, config: String) -> Result<String, Error> {
-    let config: StructuredExtractionConfig = {
-        let core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: extract_structured_async",
-    ))
-}
-
 fn normalize(v: Vec<f32>) -> Vec<f32> {
     kreuzberg::embeddings::engine::normalize(&v)
 }
@@ -15771,23 +15843,6 @@ fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) -> S
     String::from("[unimplemented: preprocess_letterbox]")
 }
 
-fn build_session(path: String, accel: Option<String>, thread_budget: Option<usize>) -> Result<String, Error> {
-    let accel: Option<AccelerationConfig> = accel
-        .as_deref()
-        .filter(|s| *s != "nil")
-        .map(|s| {
-            let core: kreuzberg::AccelerationConfig = serde_json::from_str(s).map_err(|e| {
-                magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string())
-            })?;
-            Ok::<_, magnus::Error>(core.into())
-        })
-        .transpose()?;
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: build_session",
-    ))
-}
-
 fn config_from_extraction(layout_config: String) -> String {
     let layout_config: LayoutDetectionConfig = {
         let core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config)
@@ -15795,34 +15850,6 @@ fn config_from_extraction(layout_config: String) -> String {
         core.into()
     };
     String::from("[unimplemented: config_from_extraction]")
-}
-
-fn create_engine(layout_config: String) -> Result<String, Error> {
-    let layout_config: LayoutDetectionConfig = {
-        let core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: create_engine",
-    ))
-}
-
-fn take_or_create_engine(layout_config: String) -> Result<String, Error> {
-    let layout_config: LayoutDetectionConfig = {
-        let core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config)
-            .map_err(|e| magnus::Error::new(unsafe { Ruby::get_unchecked() }.exception_type_error(), e.to_string()))?;
-        core.into()
-    };
-    Err(magnus::Error::new(
-        unsafe { Ruby::get_unchecked() }.exception_runtime_error(),
-        "Not implemented: take_or_create_engine",
-    ))
-}
-
-fn return_engine(engine: String) -> () {
-    ()
 }
 
 fn take_or_create_tatr() -> Option<String> {
@@ -19145,7 +19172,7 @@ impl From<kreuzberg::ocr::OcrCacheStats> for OcrCacheStats {
     }
 }
 
-impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable {
+impl From<RecognizedTable> for kreuzberg::RecognizedTable {
     fn from(val: RecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
@@ -19155,8 +19182,8 @@ impl From<RecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable 
     }
 }
 
-impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for RecognizedTable {
-    fn from(val: kreuzberg::ocr::layout_assembly::RecognizedTable) -> Self {
+impl From<kreuzberg::RecognizedTable> for RecognizedTable {
+    fn from(val: kreuzberg::RecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
             cells: val.cells,
@@ -22606,8 +22633,6 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     module.define_module_function("precompute_utf8_boundaries", function!(precompute_utf8_boundaries, 1))?;
     module.define_module_function("validate_utf8_boundaries", function!(validate_utf8_boundaries, 2))?;
     module.define_module_function("render_template", function!(render_template, 2))?;
-    module.define_module_function("extract_structured", function!(extract_structured, 2))?;
-    module.define_module_function("extract_structured_async", function!(extract_structured_async, 2))?;
     module.define_module_function("normalize", function!(normalize, 1))?;
     module.define_module_function("get_preset", function!(get_preset, 1))?;
     module.define_module_function("list_presets", function!(list_presets, 0))?;
@@ -22653,11 +22678,7 @@ fn init(ruby: &Ruby) -> Result<(), Error> {
     )?;
     module.define_module_function("preprocess_rescale", function!(preprocess_rescale, 2))?;
     module.define_module_function("preprocess_letterbox", function!(preprocess_letterbox, 3))?;
-    module.define_module_function("build_session", function!(build_session, 3))?;
     module.define_module_function("config_from_extraction", function!(config_from_extraction, 1))?;
-    module.define_module_function("create_engine", function!(create_engine, 1))?;
-    module.define_module_function("take_or_create_engine", function!(take_or_create_engine, 1))?;
-    module.define_module_function("return_engine", function!(return_engine, 1))?;
     module.define_module_function("take_or_create_tatr", function!(take_or_create_tatr, 0))?;
     module.define_module_function("return_tatr", function!(return_tatr, 1))?;
     module.define_module_function("take_or_create_slanet", function!(take_or_create_slanet, 1))?;

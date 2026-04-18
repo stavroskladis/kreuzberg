@@ -102,20 +102,28 @@ class KeywordAlgorithm(str, Enum):
     RAKE = "rake"
 
 
-class OcrRotation:
-    """Placeholder for OcrRotation type."""
+class DjotContent:
+    """Placeholder for DjotContent type."""
 
 
 class TokenReductionOptions:
     """Placeholder for TokenReductionOptions type."""
 
 
-class YearRange:
-    """Placeholder for YearRange type."""
+class LanguageDetectionConfig:
+    """Placeholder for LanguageDetectionConfig type."""
 
 
 class OcrPipelineConfig:
     """Placeholder for OcrPipelineConfig type."""
+
+
+class YearRange:
+    """Placeholder for YearRange type."""
+
+
+class PageStructure:
+    """Placeholder for PageStructure type."""
 
 
 class ErrorMetadata:
@@ -126,16 +134,8 @@ class StructuredExtractionConfig:
     """Placeholder for StructuredExtractionConfig type."""
 
 
-class LanguageDetectionConfig:
-    """Placeholder for LanguageDetectionConfig type."""
-
-
-class DjotContent:
-    """Placeholder for DjotContent type."""
-
-
-class PageStructure:
-    """Placeholder for PageStructure type."""
+class OcrRotation:
+    """Placeholder for OcrRotation type."""
 
 
 class ImagePreprocessingMetadata:
@@ -1203,6 +1203,62 @@ class Metadata(TypedDict, total=False):
 
 
 @dataclass
+class ExcelMetadata:
+    """Excel/spreadsheet metadata."""
+
+    sheet_count: int = 0
+    """Total number of sheets in the workbook"""
+
+    sheet_names: list[str] = field(default_factory=list)
+    """Names of all sheets in order"""
+
+
+@dataclass
+class EmailMetadata:
+    """Email metadata extracted from .eml and .msg files."""
+
+    from_email: str | None = None
+    """Sender's email address"""
+
+    from_name: str | None = None
+    """Sender's display name"""
+
+    to_emails: list[str] = field(default_factory=list)
+    """Primary recipients"""
+
+    cc_emails: list[str] = field(default_factory=list)
+    """CC recipients"""
+
+    bcc_emails: list[str] = field(default_factory=list)
+    """BCC recipients"""
+
+    message_id: str | None = None
+    """Message-ID header value"""
+
+    attachments: list[str] = field(default_factory=list)
+    """List of attachment filenames"""
+
+
+class ArchiveMetadata(TypedDict, total=False):
+    """Archive (ZIP/TAR/7Z) metadata."""
+
+    format: str
+    """Archive format ("ZIP", "TAR", "7Z", etc.)"""
+
+    file_count: int
+    """Total number of files in the archive"""
+
+    file_list: list[str]
+    """List of file paths within the archive"""
+
+    total_size: int
+    """Total uncompressed size in bytes"""
+
+    compressed_size: int | None
+    """Compressed size in bytes (if available)"""
+
+
+@dataclass
 class XmlMetadata:
     """XML metadata extracted during XML parsing."""
 
@@ -1211,6 +1267,29 @@ class XmlMetadata:
 
     unique_elements: list[str] = field(default_factory=list)
     """List of unique element tag names (sorted)"""
+
+
+@dataclass
+class TextMetadata:
+    """Text/Markdown metadata."""
+
+    line_count: int = 0
+    """Number of lines in the document"""
+
+    word_count: int = 0
+    """Number of words"""
+
+    character_count: int = 0
+    """Number of characters"""
+
+    headers: list[str] | None = None
+    """Markdown headers (headings text only, for Markdown files)"""
+
+    links: list[str] | None = None
+    """Markdown links as (text, url) tuples (for Markdown files)"""
+
+    code_blocks: list[str] | None = None
+    """Code blocks as (language, code) tuples (for Markdown files)"""
 
 
 @dataclass
@@ -1261,6 +1340,56 @@ class HtmlMetadata:
 
     structured_data: list[Any] = field(default_factory=list)
     """Extracted structured data blocks"""
+
+
+@dataclass
+class OcrMetadata:
+    """OCR processing metadata."""
+
+    language: str = ""
+    """OCR language code(s) used"""
+
+    psm: int = 0
+    """Tesseract Page Segmentation Mode (PSM)"""
+
+    output_format: str = ""
+    """Output format (e.g., "text", "hocr")"""
+
+    table_count: int = 0
+    """Number of tables detected"""
+
+    table_rows: int | None = None
+    table_cols: int | None = None
+
+@dataclass
+class PptxMetadata:
+    """PowerPoint presentation metadata."""
+
+    slide_count: int = 0
+    """Total number of slides in the presentation"""
+
+    slide_names: list[str] = field(default_factory=list)
+    """Names of slides (if available)"""
+
+    image_count: int | None = None
+    """Number of embedded images"""
+
+    table_count: int | None = None
+    """Number of tables"""
+
+
+@dataclass
+class DocxMetadata:
+    """Word document metadata."""
+
+    core_properties: str | None = None
+    """Core properties from docProps/core.xml (Dublin Core metadata)"""
+
+    app_properties: str | None = None
+    """Application properties from docProps/app.xml (Word-specific statistics)"""
+
+    custom_properties: dict[str, str] | None = None
+    """Custom properties from docProps/custom.xml (user-defined properties)"""
 
 
 @dataclass

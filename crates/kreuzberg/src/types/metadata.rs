@@ -217,7 +217,7 @@ pub struct Metadata {
 ///
 /// Contains information about sheets in Excel, OpenDocument Calc, and other
 /// spreadsheet formats (.xlsx, .xls, .ods, etc.).
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 pub struct ExcelMetadata {
     /// Total number of sheets in the workbook
@@ -229,7 +229,7 @@ pub struct ExcelMetadata {
 /// Email metadata extracted from .eml and .msg files.
 ///
 /// Includes sender/recipient information, message ID, and attachment list.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 pub struct EmailMetadata {
     /// Sender's email address
@@ -258,7 +258,7 @@ pub struct EmailMetadata {
 /// Archive (ZIP/TAR/7Z) metadata.
 ///
 /// Extracted from compressed archive files containing file lists and size information.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 pub struct ArchiveMetadata {
     /// Archive format ("ZIP", "TAR", "7Z", etc.)
@@ -279,7 +279,7 @@ pub struct ArchiveMetadata {
 /// Image metadata extracted from image files.
 ///
 /// Includes dimensions, format, and EXIF data.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 pub struct ImageMetadata {
     /// Image width in pixels
@@ -308,7 +308,7 @@ pub struct XmlMetadata {
 ///
 /// Extracted from plain text and Markdown files. Includes word counts and,
 /// for Markdown, structural elements like headers and links.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 pub struct TextMetadata {
     /// Number of lines in the document
@@ -647,7 +647,7 @@ impl From<html_to_markdown_rs::HtmlMetadata> for HtmlMetadata {
 /// OCR processing metadata.
 ///
 /// Captures information about OCR processing configuration and results.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 pub struct OcrMetadata {
     /// OCR language code(s) used
@@ -677,7 +677,7 @@ pub struct ErrorMetadata {
 /// PowerPoint presentation metadata.
 ///
 /// Extracted from PPTX files containing slide counts and presentation details.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 pub struct PptxMetadata {
     /// Total number of slides in the presentation
@@ -697,7 +697,7 @@ pub struct PptxMetadata {
 /// Extracted from DOCX files using shared Office Open XML metadata extraction.
 /// Integrates with `office_metadata` module for core/app/custom properties.
 #[cfg(feature = "office")]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[cfg_attr(feature = "api", derive(utoipa::ToSchema))]
 pub struct DocxMetadata {
     /// Core properties from docProps/core.xml (Dublin Core metadata)

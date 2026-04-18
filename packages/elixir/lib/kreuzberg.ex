@@ -507,7 +507,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Extract metadata from a gzip-compressed file."
-  @spec extract_gzip_metadata(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  @spec extract_gzip_metadata(binary(), String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
   def extract_gzip_metadata(bytes, limits) do
     Kreuzberg.Native.extract_gzip_metadata(bytes, limits)
   end
@@ -525,7 +525,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Extract metadata from a 7z archive."
-  @spec extract_7z_metadata(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  @spec extract_7z_metadata(binary(), String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
   def extract_7z_metadata(bytes, limits) do
     Kreuzberg.Native.extract_7z_metadata(bytes, limits)
   end
@@ -543,7 +543,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Extract metadata from a TAR archive."
-  @spec extract_tar_metadata(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  @spec extract_tar_metadata(binary(), String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
   def extract_tar_metadata(bytes, limits) do
     Kreuzberg.Native.extract_tar_metadata(bytes, limits)
   end
@@ -561,7 +561,7 @@ defmodule Kreuzberg do
   end
 
   @doc "Extract metadata from a ZIP archive."
-  @spec extract_zip_metadata(binary(), String.t()) :: {:ok, map()} | {:error, String.t()}
+  @spec extract_zip_metadata(binary(), String.t()) :: {:ok, String.t() | nil} | {:error, String.t()}
   def extract_zip_metadata(bytes, limits) do
     Kreuzberg.Native.extract_zip_metadata(bytes, limits)
   end
@@ -1664,12 +1664,6 @@ defmodule Kreuzberg do
     Kreuzberg.Native.render_template(template, context)
   end
 
-  @doc "Extract structured data from document content using an LLM with JSON schema."
-  @spec extract_structured_async(String.t(), map()) :: {:ok, String.t()} | {:error, String.t()}
-  def extract_structured_async(content, config) do
-    Kreuzberg.Native.extract_structured_async(content, config)
-  end
-
   @doc "L2-normalize a vector."
   @spec normalize([float()]) :: [float()]
   def normalize(v) do
@@ -1886,34 +1880,10 @@ defmodule Kreuzberg do
     Kreuzberg.Native.preprocess_letterbox(img, target_width, target_height)
   end
 
-  @doc "Build an optimized ORT session from an ONNX model file."
-  @spec build_session(String.t(), String.t() | nil | nil, non_neg_integer()) :: {:ok, String.t()} | {:error, String.t()}
-  def build_session(path, accel, thread_budget) do
-    Kreuzberg.Native.build_session(path, accel, thread_budget)
-  end
-
   @doc "Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`]."
   @spec config_from_extraction(String.t() | nil) :: String.t()
   def config_from_extraction(layout_config) do
     Kreuzberg.Native.config_from_extraction(layout_config)
-  end
-
-  @doc "Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`]."
-  @spec create_engine(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
-  def create_engine(layout_config) do
-    Kreuzberg.Native.create_engine(layout_config)
-  end
-
-  @doc "Take the cached layout engine, or create a new one if the cache is empty."
-  @spec take_or_create_engine(String.t() | nil) :: {:ok, String.t()} | {:error, String.t()}
-  def take_or_create_engine(layout_config) do
-    Kreuzberg.Native.take_or_create_engine(layout_config)
-  end
-
-  @doc "Return a layout engine to the global cache for reuse by future extractions."
-  @spec return_engine(String.t()) :: nil
-  def return_engine(engine) do
-    Kreuzberg.Native.return_engine(engine)
   end
 
   @doc "Take the cached TATR model, or create a new one if the cache is empty."

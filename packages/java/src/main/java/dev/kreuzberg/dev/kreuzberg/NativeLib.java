@@ -1016,10 +1016,6 @@ final class NativeLib {
         LIB.find("kreuzberg_render_template").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
     );
-    static final MethodHandle KREUZBERG_EXTRACT_STRUCTURED = LINKER.downcallHandle(
-        LIB.find("kreuzberg_extract_structured").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
     static final MethodHandle KREUZBERG_NORMALIZE = LINKER.downcallHandle(
         LIB.find("kreuzberg_normalize").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
@@ -1152,25 +1148,9 @@ final class NativeLib {
         LIB.find("kreuzberg_preprocess_letterbox").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT)
     );
-    static final MethodHandle KREUZBERG_BUILD_SESSION = LINKER.downcallHandle(
-        LIB.find("kreuzberg_build_session").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_LONG)
-    );
     static final MethodHandle KREUZBERG_CONFIG_FROM_EXTRACTION = LINKER.downcallHandle(
         LIB.find("kreuzberg_config_from_extraction").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-    static final MethodHandle KREUZBERG_CREATE_ENGINE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_create_engine").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-    static final MethodHandle KREUZBERG_TAKE_OR_CREATE_ENGINE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_take_or_create_engine").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-    static final MethodHandle KREUZBERG_RETURN_ENGINE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_return_engine").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
     static final MethodHandle KREUZBERG_TAKE_OR_CREATE_TATR = LINKER.downcallHandle(
         LIB.find("kreuzberg_take_or_create_tatr").orElseThrow(),
@@ -1784,16 +1764,6 @@ final class NativeLib {
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 
-    static final MethodHandle KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FROM_JSON = LINKER.downcallHandle(
-        LIB.find("kreuzberg_structured_extraction_config_from_json").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_STRUCTURED_EXTRACTION_CONFIG_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_structured_extraction_config_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
     static final MethodHandle KREUZBERG_EMBEDDING_MODEL_TYPE_FROM_JSON = LINKER.downcallHandle(
         LIB.find("kreuzberg_embedding_model_type_from_json").orElseThrow(),
         FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
@@ -1851,16 +1821,6 @@ final class NativeLib {
 
     static final MethodHandle KREUZBERG_DETECTION_RESULT_FREE = LINKER.downcallHandle(
         LIB.find("kreuzberg_detection_result_free").orElseThrow(),
-        FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_ACCELERATION_CONFIG_FROM_JSON = LINKER.downcallHandle(
-        LIB.find("kreuzberg_acceleration_config_from_json").orElseThrow(),
-        FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS)
-    );
-
-    static final MethodHandle KREUZBERG_ACCELERATION_CONFIG_FREE = LINKER.downcallHandle(
-        LIB.find("kreuzberg_acceleration_config_free").orElseThrow(),
         FunctionDescriptor.ofVoid(ValueLayout.ADDRESS)
     );
 

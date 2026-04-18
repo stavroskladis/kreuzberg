@@ -14,4 +14,7 @@ public record EmailMetadata(
     @JsonProperty("message_id") Optional<String> messageId,
     List<String> attachments
 ) {
+    public static EmailMetadataBuilder builder() {
+        return new EmailMetadataBuilder();
+    }
 }

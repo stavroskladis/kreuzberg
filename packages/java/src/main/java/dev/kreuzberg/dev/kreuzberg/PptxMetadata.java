@@ -11,4 +11,7 @@ public record PptxMetadata(
     @JsonProperty("image_count") Optional<Long> imageCount,
     @JsonProperty("table_count") Optional<Long> tableCount
 ) {
+    public static PptxMetadataBuilder builder() {
+        return new PptxMetadataBuilder();
+    }
 }

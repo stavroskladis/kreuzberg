@@ -12,4 +12,7 @@ public record OcrMetadata(
     @JsonProperty("table_rows") Optional<Long> tableRows,
     @JsonProperty("table_cols") Optional<Long> tableCols
 ) {
+    public static OcrMetadataBuilder builder() {
+        return new OcrMetadataBuilder();
+    }
 }

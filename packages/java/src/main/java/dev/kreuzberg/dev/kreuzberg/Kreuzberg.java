@@ -4743,34 +4743,6 @@ public final class Kreuzberg {
     }
 
     /**
-     * Extract structured data from document content using an LLM with JSON schema.
-     * 
-     * Sends the document content to the configured LLM with a JSON schema constraint,
-     * returning structured data that conforms to the schema.
-     * 
-     * # Arguments
-     * 
-     * * `content` - The extracted document text to send to the LLM.
-     * * `config` - Structured extraction configuration including schema and LLM settings.
-     * 
-     * # Returns
-     * 
-     * A `serde_json::Value` conforming to the provided JSON schema.
-     * 
-     * # Errors
-     * 
-     * Returns an error if:
-     * - The LLM client cannot be created (invalid provider/credentials).
-     * - The LLM request fails (network, rate-limit, etc.).
-     * - The LLM response cannot be parsed as valid JSON.
-     */
-    public static String extractStructured(String content, StructuredExtractionConfig config) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(content, "content must not be null");
-        java.util.Objects.requireNonNull(config, "config must not be null");
-        return KreuzbergRs.extractStructured(content, config);
-    }
-
-    /**
      * L2-normalize a vector.
      */
     public static List<Float> normalize(List<Float> v) throws KreuzbergRsException {
@@ -5431,65 +5403,11 @@ public final class Kreuzberg {
     }
 
     /**
-     * Build an optimized ORT session from an ONNX model file.
-     * 
-     * `thread_budget` controls the number of intra-op threads for this session.
-     * Pass the result of [`crate::core::config::concurrency::resolve_thread_budget`]
-     * to respect the user's `ConcurrencyConfig`.
-     * 
-     * When `accel` is `None` or `Auto`, uses platform defaults:
-     * - macOS: CoreML (Neural Engine / GPU)
-     * - Linux: CUDA (GPU)
-     * - Others: CPU only
-     * 
-     * ORT silently falls back to CPU if the requested EP is unavailable.
-     */
-    public static String buildSession(String path, AccelerationConfig accel, long threadBudget) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(path, "path must not be null");
-        java.util.Objects.requireNonNull(threadBudget, "threadBudget must not be null");
-        return KreuzbergRs.buildSession(path, accel, threadBudget);
-    }
-
-    public static String buildSession(String path, long threadBudget) throws KreuzbergRsException {
-        return buildSession(path, null, threadBudget);
-    }
-
-    /**
      * Convert a [`LayoutDetectionConfig`] into a [`LayoutEngineConfig`].
      */
     public static String configFromExtraction(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
         java.util.Objects.requireNonNull(layoutConfig, "layoutConfig must not be null");
         return KreuzbergRs.configFromExtraction(layoutConfig);
-    }
-
-    /**
-     * Create a [`LayoutEngine`] from a [`LayoutDetectionConfig`].
-     * 
-     * Ensures ORT is available, then creates the engine with model download.
-     */
-    public static String createEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(layoutConfig, "layoutConfig must not be null");
-        return KreuzbergRs.createEngine(layoutConfig);
-    }
-
-    /**
-     * Take the cached layout engine, or create a new one if the cache is empty.
-     * 
-     * The caller owns the engine for the duration of its work and should
-     * return it via [`return_engine`] when done. This avoids holding the
-     * global mutex during inference.
-     */
-    public static String takeOrCreateEngine(LayoutDetectionConfig layoutConfig) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(layoutConfig, "layoutConfig must not be null");
-        return KreuzbergRs.takeOrCreateEngine(layoutConfig);
-    }
-
-    /**
-     * Return a layout engine to the global cache for reuse by future extractions.
-     */
-    public static void returnEngine(String engine) throws KreuzbergRsException {
-        java.util.Objects.requireNonNull(engine, "engine must not be null");
-        KreuzbergRs.returnEngine(engine);
     }
 
     /**

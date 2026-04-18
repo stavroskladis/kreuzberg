@@ -13,4 +13,7 @@ public record TextMetadata(
     Optional<List<String>> links,
     @JsonProperty("code_blocks") Optional<List<String>> codeBlocks
 ) {
+    public static TextMetadataBuilder builder() {
+        return new TextMetadataBuilder();
+    }
 }

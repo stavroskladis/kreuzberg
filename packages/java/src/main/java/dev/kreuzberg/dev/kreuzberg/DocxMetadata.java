@@ -10,4 +10,7 @@ public record DocxMetadata(
     @JsonProperty("app_properties") Optional<String> appProperties,
     @JsonProperty("custom_properties") Optional<Map<String, Object>> customProperties
 ) {
+    public static DocxMetadataBuilder builder() {
+        return new DocxMetadataBuilder();
+    }
 }

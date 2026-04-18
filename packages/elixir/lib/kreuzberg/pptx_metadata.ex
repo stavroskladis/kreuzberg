@@ -4,6 +4,6 @@ defmodule Kreuzberg.PptxMetadata do
 
   defstruct slide_count: 0,
             slide_names: [],
-            image_count: nil,
-            table_count: nil
+            image_count: 0,
+            table_count: 0
 end

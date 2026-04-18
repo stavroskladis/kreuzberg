@@ -12,4 +12,7 @@ public record ArchiveMetadata(
     @JsonProperty("total_size") long totalSize,
     @JsonProperty("compressed_size") Optional<Long> compressedSize
 ) {
+    public static ArchiveMetadataBuilder builder() {
+        return new ArchiveMetadataBuilder();
+    }
 }

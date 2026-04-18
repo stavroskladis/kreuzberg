@@ -16,7 +16,7 @@ static WORKER_POOL: std::sync::LazyLock<tokio::runtime::Runtime> = std::sync::La
         .expect("Failed to create Tokio runtime")
 });
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsAccelerationConfig {
     pub provider: Option<JsExecutionProviderType>,
@@ -24,7 +24,7 @@ pub struct JsAccelerationConfig {
     pub device_id: Option<u32>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsContentFilterConfig {
     #[napi(js_name = "includeHeaders")]
@@ -37,14 +37,14 @@ pub struct JsContentFilterConfig {
     pub include_watermarks: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEmailConfig {
     #[napi(js_name = "msgFallbackCodepage")]
     pub msg_fallback_codepage: Option<u32>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExtractionConfig {
     #[napi(js_name = "useCache")]
@@ -102,7 +102,7 @@ pub struct JsExtractionConfig {
     pub structured_extraction: Option<JsStructuredExtractionConfig>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsFileExtractionConfig {
     #[napi(js_name = "enableQualityProcessing")]
@@ -143,7 +143,7 @@ pub struct JsFileExtractionConfig {
     pub structured_extraction: Option<JsStructuredExtractionConfig>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsImageExtractionConfig {
     #[napi(js_name = "extractImages")]
@@ -162,7 +162,7 @@ pub struct JsImageExtractionConfig {
     pub max_dpi: Option<i32>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsTokenReductionOptions {
     pub mode: String,
@@ -170,7 +170,7 @@ pub struct JsTokenReductionOptions {
     pub preserve_important_words: bool,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsLanguageDetectionConfig {
     pub enabled: bool,
@@ -180,7 +180,7 @@ pub struct JsLanguageDetectionConfig {
     pub detect_multiple: bool,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHtmlOutputConfig {
     pub css: Option<String>,
@@ -193,7 +193,7 @@ pub struct JsHtmlOutputConfig {
     pub embed_css: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsLayoutDetectionConfig {
     #[napi(js_name = "confidenceThreshold")]
@@ -204,7 +204,7 @@ pub struct JsLayoutDetectionConfig {
     pub table_model: Option<JsTableModel>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsLlmConfig {
     pub model: Option<String>,
@@ -221,7 +221,7 @@ pub struct JsLlmConfig {
     pub max_tokens: Option<i64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsStructuredExtractionConfig {
     pub schema: String,
@@ -234,7 +234,7 @@ pub struct JsStructuredExtractionConfig {
     pub llm: JsLlmConfig,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrQualityThresholds {
     #[napi(js_name = "minTotalNonWhitespace")]
@@ -271,7 +271,7 @@ pub struct JsOcrQualityThresholds {
     pub pipeline_min_quality: Option<f64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrPipelineStage {
     pub backend: String,
@@ -285,7 +285,7 @@ pub struct JsOcrPipelineStage {
     pub vlm_config: Option<JsLlmConfig>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrPipelineConfig {
     pub stages: Vec<JsOcrPipelineStage>,
@@ -293,7 +293,7 @@ pub struct JsOcrPipelineConfig {
     pub quality_thresholds: JsOcrQualityThresholds,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrConfig {
     pub enabled: Option<bool>,
@@ -318,7 +318,7 @@ pub struct JsOcrConfig {
     pub vlm_prompt: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageConfig {
     #[napi(js_name = "extractPages")]
@@ -329,7 +329,7 @@ pub struct JsPageConfig {
     pub marker_format: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPdfConfig {
     pub backend: Option<JsPdfBackend>,
@@ -349,7 +349,7 @@ pub struct JsPdfConfig {
     pub allow_single_column_tables: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHierarchyConfig {
     pub enabled: Option<bool>,
@@ -361,7 +361,7 @@ pub struct JsHierarchyConfig {
     pub ocr_coverage_threshold: Option<f64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPostProcessorConfig {
     pub enabled: Option<bool>,
@@ -375,7 +375,7 @@ pub struct JsPostProcessorConfig {
     pub disabled_set: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsChunkingConfig {
     #[napi(js_name = "maxCharacters")]
@@ -391,7 +391,7 @@ pub struct JsChunkingConfig {
     pub prepend_heading_context: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEmbeddingConfig {
     pub model: Option<JsEmbeddingModelType>,
@@ -404,7 +404,7 @@ pub struct JsEmbeddingConfig {
     pub cache_dir: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsTreeSitterConfig {
     pub enabled: Option<bool>,
@@ -415,7 +415,7 @@ pub struct JsTreeSitterConfig {
     pub process: Option<JsTreeSitterProcessConfig>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsTreeSitterProcessConfig {
     pub structure: Option<bool>,
@@ -431,7 +431,7 @@ pub struct JsTreeSitterProcessConfig {
     pub content_mode: Option<JsCodeContentMode>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsSupportedFormat {
     pub extension: String,
@@ -439,7 +439,7 @@ pub struct JsSupportedFormat {
     pub mime_type: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsServerConfig {
     pub host: Option<String>,
@@ -452,7 +452,7 @@ pub struct JsServerConfig {
     pub max_multipart_field_bytes: Option<i64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsStructuredDataResult {
     pub content: String,
@@ -518,7 +518,7 @@ impl JsStreamReader {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsImageOcrResult {
     pub content: String,
@@ -527,7 +527,7 @@ pub struct JsImageOcrResult {
     pub page_contents: Option<Vec<JsPageContent>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHtmlExtractionResult {
     pub markdown: String,
@@ -535,7 +535,7 @@ pub struct JsHtmlExtractionResult {
     pub warnings: Vec<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExtractedInlineImage {
     pub data: Vec<u8>,
@@ -546,7 +546,7 @@ pub struct JsExtractedInlineImage {
     pub attributes: Vec<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDrawing {
     #[napi(js_name = "drawingType")]
@@ -558,7 +558,7 @@ pub struct JsDrawing {
     pub image_ref: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsAnchorProperties {
     #[napi(js_name = "behindDoc")]
@@ -575,7 +575,7 @@ pub struct JsAnchorProperties {
     pub wrap_type: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHeaderFooter {
     pub paragraphs: Option<Vec<String>>,
@@ -584,7 +584,7 @@ pub struct JsHeaderFooter {
     pub header_type: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsNote {
     pub id: String,
@@ -593,7 +593,7 @@ pub struct JsNote {
     pub paragraphs: Vec<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageMarginsPoints {
     pub top: Option<f64>,
@@ -605,7 +605,7 @@ pub struct JsPageMarginsPoints {
     pub gutter: Option<f64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsStyleDefinition {
     pub id: String,
@@ -624,7 +624,7 @@ pub struct JsStyleDefinition {
     pub run_properties: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsResolvedStyle {
     #[napi(js_name = "paragraphProperties")]
@@ -633,7 +633,7 @@ pub struct JsResolvedStyle {
     pub run_properties: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsTableProperties {
     #[napi(js_name = "styleId")]
@@ -649,7 +649,7 @@ pub struct JsTableProperties {
     pub caption: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsXlsxAppProperties {
     pub application: Option<String>,
@@ -670,7 +670,7 @@ pub struct JsXlsxAppProperties {
     pub worksheet_names: Option<Vec<String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPptxAppProperties {
     pub application: Option<String>,
@@ -710,7 +710,7 @@ pub struct JsCustomProperties {
 #[napi]
 impl JsCustomProperties {}
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOdtProperties {
     pub title: Option<String>,
@@ -869,7 +869,7 @@ impl JsTableValidator {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrFallbackDecision {
     pub stats: String,
@@ -880,7 +880,7 @@ pub struct JsOcrFallbackDecision {
     pub fallback: bool,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsTokenReductionConfig {
     pub level: Option<JsReductionLevel>,
@@ -906,7 +906,7 @@ pub struct JsTokenReductionConfig {
     pub enable_semantic_clustering: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPdfAnnotation {
     #[napi(js_name = "annotationType")]
@@ -918,7 +918,7 @@ pub struct JsPdfAnnotation {
     pub bounding_box: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDjotContent {
     #[napi(js_name = "plainText")]
@@ -932,7 +932,7 @@ pub struct JsDjotContent {
     pub attributes: Vec<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsFormattedBlock {
     #[napi(js_name = "blockType")]
@@ -946,7 +946,7 @@ pub struct JsFormattedBlock {
     pub children: Vec<JsFormattedBlock>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsInlineElement {
     #[napi(js_name = "elementType")]
@@ -956,7 +956,7 @@ pub struct JsInlineElement {
     pub metadata: Option<HashMap<String, String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDjotImage {
     pub src: String,
@@ -965,7 +965,7 @@ pub struct JsDjotImage {
     pub attributes: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDjotLink {
     pub url: String,
@@ -974,14 +974,14 @@ pub struct JsDjotLink {
     pub attributes: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsFootnote {
     pub label: String,
     pub content: Vec<JsFormattedBlock>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDocumentStructure {
     pub nodes: Option<Vec<JsDocumentNode>>,
@@ -990,7 +990,7 @@ pub struct JsDocumentStructure {
     pub relationships: Option<Vec<JsDocumentRelationship>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDocumentRelationship {
     pub source: u32,
@@ -998,7 +998,7 @@ pub struct JsDocumentRelationship {
     pub kind: JsRelationshipKind,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDocumentNode {
     pub id: String,
@@ -1015,7 +1015,7 @@ pub struct JsDocumentNode {
     pub attributes: Option<HashMap<String, String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsGridCell {
     pub content: String,
@@ -1030,7 +1030,7 @@ pub struct JsGridCell {
     pub bbox: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsTextAnnotation {
     pub start: u32,
@@ -1038,7 +1038,7 @@ pub struct JsTextAnnotation {
     pub kind: JsAnnotationKind,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExtractionResult {
     pub content: Option<String>,
@@ -1076,7 +1076,7 @@ pub struct JsExtractionResult {
     pub ocr_internal_document: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsArchiveEntry {
     pub path: String,
@@ -1085,14 +1085,14 @@ pub struct JsArchiveEntry {
     pub result: JsExtractionResult,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsProcessingWarning {
     pub source: String,
     pub message: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsLlmUsage {
     pub model: Option<String>,
@@ -1109,7 +1109,7 @@ pub struct JsLlmUsage {
     pub finish_reason: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsChunk {
     pub content: String,
@@ -1119,20 +1119,20 @@ pub struct JsChunk {
     pub metadata: JsChunkMetadata,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHeadingContext {
     pub headings: Vec<JsHeadingLevel>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHeadingLevel {
     pub level: u8,
     pub text: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsChunkMetadata {
     #[napi(js_name = "byteStart")]
@@ -1153,7 +1153,7 @@ pub struct JsChunkMetadata {
     pub heading_context: Option<JsHeadingContext>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExtractedImage {
     pub data: Vec<u8>,
@@ -1178,7 +1178,7 @@ pub struct JsExtractedImage {
     pub source_path: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsElementMetadata {
     #[napi(js_name = "pageNumber")]
@@ -1190,7 +1190,7 @@ pub struct JsElementMetadata {
     pub additional: HashMap<String, String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsElement {
     #[napi(js_name = "elementId")]
@@ -1201,14 +1201,14 @@ pub struct JsElement {
     pub metadata: JsElementMetadata,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExcelWorkbook {
     pub sheets: Vec<JsExcelSheet>,
     pub metadata: HashMap<String, String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExcelSheet {
     pub name: String,
@@ -1223,7 +1223,7 @@ pub struct JsExcelSheet {
     pub table_cells: Option<Vec<Vec<String>>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsXmlExtractionResult {
     pub content: String,
@@ -1233,7 +1233,7 @@ pub struct JsXmlExtractionResult {
     pub unique_elements: Vec<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsTextExtractionResult {
     pub content: String,
@@ -1249,7 +1249,7 @@ pub struct JsTextExtractionResult {
     pub code_blocks: Option<Vec<String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPptxExtractionResult {
     pub content: String,
@@ -1271,7 +1271,7 @@ pub struct JsPptxExtractionResult {
     pub office_metadata: HashMap<String, String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEmailExtractionResult {
     pub subject: Option<String>,
@@ -1296,7 +1296,7 @@ pub struct JsEmailExtractionResult {
     pub metadata: HashMap<String, String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEmailAttachment {
     pub name: Option<String>,
@@ -1309,7 +1309,7 @@ pub struct JsEmailAttachment {
     pub data: Option<Vec<u8>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrExtractionResult {
     pub content: String,
@@ -1323,7 +1323,7 @@ pub struct JsOcrExtractionResult {
     pub internal_document: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrTable {
     pub cells: Vec<Vec<String>>,
@@ -1334,7 +1334,7 @@ pub struct JsOcrTable {
     pub bounding_box: Option<JsOcrTableBoundingBox>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrTableBoundingBox {
     pub left: u32,
@@ -1343,7 +1343,7 @@ pub struct JsOcrTableBoundingBox {
     pub bottom: u32,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsImagePreprocessingConfig {
     #[napi(js_name = "targetDpi")]
@@ -1360,7 +1360,7 @@ pub struct JsImagePreprocessingConfig {
     pub invert_colors: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsTesseractConfig {
     pub language: Option<String>,
@@ -1403,7 +1403,7 @@ pub struct JsTesseractConfig {
     pub thresholding_method: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsImagePreprocessingMetadata {
     #[napi(js_name = "originalDimensions")]
@@ -1432,7 +1432,7 @@ pub struct JsImagePreprocessingMetadata {
     pub resize_error: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsMetadata {
     pub title: Option<String>,
@@ -1468,16 +1468,16 @@ pub struct JsMetadata {
     pub additional: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExcelMetadata {
     #[napi(js_name = "sheetCount")]
-    pub sheet_count: i64,
+    pub sheet_count: Option<i64>,
     #[napi(js_name = "sheetNames")]
-    pub sheet_names: Vec<String>,
+    pub sheet_names: Option<Vec<String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEmailMetadata {
     #[napi(js_name = "fromEmail")]
@@ -1485,31 +1485,31 @@ pub struct JsEmailMetadata {
     #[napi(js_name = "fromName")]
     pub from_name: Option<String>,
     #[napi(js_name = "toEmails")]
-    pub to_emails: Vec<String>,
+    pub to_emails: Option<Vec<String>>,
     #[napi(js_name = "ccEmails")]
-    pub cc_emails: Vec<String>,
+    pub cc_emails: Option<Vec<String>>,
     #[napi(js_name = "bccEmails")]
-    pub bcc_emails: Vec<String>,
+    pub bcc_emails: Option<Vec<String>>,
     #[napi(js_name = "messageId")]
     pub message_id: Option<String>,
-    pub attachments: Vec<String>,
+    pub attachments: Option<Vec<String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsArchiveMetadata {
-    pub format: String,
+    pub format: Option<String>,
     #[napi(js_name = "fileCount")]
-    pub file_count: i64,
+    pub file_count: Option<i64>,
     #[napi(js_name = "fileList")]
-    pub file_list: Vec<String>,
+    pub file_list: Option<Vec<String>>,
     #[napi(js_name = "totalSize")]
-    pub total_size: i64,
+    pub total_size: Option<i64>,
     #[napi(js_name = "compressedSize")]
     pub compressed_size: Option<i64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsXmlMetadata {
     #[napi(js_name = "elementCount")]
@@ -1518,22 +1518,22 @@ pub struct JsXmlMetadata {
     pub unique_elements: Option<Vec<String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsTextMetadata {
     #[napi(js_name = "lineCount")]
-    pub line_count: i64,
+    pub line_count: Option<i64>,
     #[napi(js_name = "wordCount")]
-    pub word_count: i64,
+    pub word_count: Option<i64>,
     #[napi(js_name = "characterCount")]
-    pub character_count: i64,
+    pub character_count: Option<i64>,
     pub headers: Option<Vec<String>>,
     pub links: Option<Vec<String>>,
     #[napi(js_name = "codeBlocks")]
     pub code_blocks: Option<Vec<String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHeaderMetadata {
     pub level: u8,
@@ -1544,7 +1544,7 @@ pub struct JsHeaderMetadata {
     pub html_offset: i64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsLinkMetadata {
     pub href: String,
@@ -1556,7 +1556,7 @@ pub struct JsLinkMetadata {
     pub attributes: Vec<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsImageMetadataType {
     pub src: String,
@@ -1568,7 +1568,7 @@ pub struct JsImageMetadataType {
     pub attributes: Vec<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsStructuredData {
     #[napi(js_name = "dataType")]
@@ -1579,7 +1579,7 @@ pub struct JsStructuredData {
     pub schema_type: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHtmlMetadata {
     pub title: Option<String>,
@@ -1606,22 +1606,22 @@ pub struct JsHtmlMetadata {
     pub structured_data: Option<Vec<JsStructuredData>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrMetadata {
-    pub language: String,
-    pub psm: i32,
+    pub language: Option<String>,
+    pub psm: Option<i32>,
     #[napi(js_name = "outputFormat")]
-    pub output_format: String,
+    pub output_format: Option<String>,
     #[napi(js_name = "tableCount")]
-    pub table_count: i64,
+    pub table_count: Option<i64>,
     #[napi(js_name = "tableRows")]
     pub table_rows: Option<i64>,
     #[napi(js_name = "tableCols")]
     pub table_cols: Option<i64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsErrorMetadata {
     #[napi(js_name = "errorType")]
@@ -1629,20 +1629,20 @@ pub struct JsErrorMetadata {
     pub message: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPptxMetadata {
     #[napi(js_name = "slideCount")]
-    pub slide_count: i64,
+    pub slide_count: Option<i64>,
     #[napi(js_name = "slideNames")]
-    pub slide_names: Vec<String>,
+    pub slide_names: Option<Vec<String>>,
     #[napi(js_name = "imageCount")]
     pub image_count: Option<i64>,
     #[napi(js_name = "tableCount")]
     pub table_count: Option<i64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDocxMetadata {
     #[napi(js_name = "coreProperties")]
@@ -1653,7 +1653,7 @@ pub struct JsDocxMetadata {
     pub custom_properties: Option<HashMap<String, String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCsvMetadata {
     #[napi(js_name = "rowCount")]
@@ -1667,7 +1667,7 @@ pub struct JsCsvMetadata {
     pub column_types: Option<Vec<String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsBibtexMetadata {
     #[napi(js_name = "entryCount")]
@@ -1681,7 +1681,7 @@ pub struct JsBibtexMetadata {
     pub entry_types: Option<HashMap<String, i64>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCitationMetadata {
     #[napi(js_name = "citationCount")]
@@ -1694,7 +1694,7 @@ pub struct JsCitationMetadata {
     pub keywords: Option<Vec<String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsYearRange {
     pub min: Option<u32>,
@@ -1702,7 +1702,7 @@ pub struct JsYearRange {
     pub years: Vec<u32>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsFictionBookMetadata {
     pub genres: Option<Vec<String>>,
@@ -1710,7 +1710,7 @@ pub struct JsFictionBookMetadata {
     pub annotation: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDbfMetadata {
     #[napi(js_name = "recordCount")]
@@ -1720,7 +1720,7 @@ pub struct JsDbfMetadata {
     pub fields: Option<Vec<JsDbfFieldInfo>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDbfFieldInfo {
     pub name: String,
@@ -1728,7 +1728,7 @@ pub struct JsDbfFieldInfo {
     pub field_type: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsJatsMetadata {
     pub copyright: Option<String>,
@@ -1739,14 +1739,14 @@ pub struct JsJatsMetadata {
     pub contributor_roles: Option<Vec<JsContributorRole>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsContributorRole {
     pub name: String,
     pub role: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEpubMetadata {
     pub coverage: Option<String>,
@@ -1760,21 +1760,21 @@ pub struct JsEpubMetadata {
     pub cover_image: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPstMetadata {
     #[napi(js_name = "messageCount")]
     pub message_count: Option<i64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrConfidence {
     pub detection: Option<f64>,
     pub recognition: Option<f64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrRotation {
     #[napi(js_name = "angleDegrees")]
@@ -1782,7 +1782,7 @@ pub struct JsOcrRotation {
     pub confidence: Option<f64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrElement {
     pub text: Option<String>,
@@ -1798,7 +1798,7 @@ pub struct JsOcrElement {
     pub backend_metadata: Option<HashMap<String, String>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrElementConfig {
     #[napi(js_name = "includeElements")]
@@ -1811,7 +1811,7 @@ pub struct JsOcrElementConfig {
     pub build_hierarchy: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageStructure {
     #[napi(js_name = "totalCount")]
@@ -1822,7 +1822,7 @@ pub struct JsPageStructure {
     pub pages: Option<Vec<JsPageInfo>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageBoundary {
     #[napi(js_name = "byteStart")]
@@ -1833,7 +1833,7 @@ pub struct JsPageBoundary {
     pub page_number: i64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageInfo {
     pub number: i64,
@@ -1848,7 +1848,7 @@ pub struct JsPageInfo {
     pub is_blank: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageContent {
     #[napi(js_name = "pageNumber")]
@@ -1861,7 +1861,7 @@ pub struct JsPageContent {
     pub is_blank: Option<bool>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageHierarchy {
     #[napi(js_name = "blockCount")]
@@ -1869,7 +1869,7 @@ pub struct JsPageHierarchy {
     pub blocks: Vec<JsHierarchicalBlock>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHierarchicalBlock {
     pub text: String,
@@ -1879,7 +1879,7 @@ pub struct JsHierarchicalBlock {
     pub bbox: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsUri {
     pub url: String,
@@ -1971,7 +1971,7 @@ pub struct JsApiDoc {
 #[napi]
 impl JsApiDoc {}
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHealthResponse {
     pub status: String,
@@ -1979,7 +1979,7 @@ pub struct JsHealthResponse {
     pub plugins: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsInfoResponse {
     pub version: String,
@@ -1996,7 +1996,7 @@ pub struct JsExtractResponse {
 #[napi]
 impl JsExtractResponse {}
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsApiState {
     #[napi(js_name = "defaultConfig")]
@@ -2005,7 +2005,7 @@ pub struct JsApiState {
     pub extraction_service: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCacheStatsResponse {
     pub directory: String,
@@ -2021,7 +2021,7 @@ pub struct JsCacheStatsResponse {
     pub newest_file_age_days: f64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCacheClearResponse {
     pub directory: String,
@@ -2031,14 +2031,14 @@ pub struct JsCacheClearResponse {
     pub freed_mb: f64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEmbedRequest {
     pub texts: Vec<String>,
     pub config: Option<JsEmbeddingConfig>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEmbedResponse {
     pub embeddings: Vec<Vec<f64>>,
@@ -2047,7 +2047,7 @@ pub struct JsEmbedResponse {
     pub count: i64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsChunkRequest {
     pub text: String,
@@ -2056,7 +2056,7 @@ pub struct JsChunkRequest {
     pub chunker_type: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsChunkResponse {
     pub chunks: Vec<String>,
@@ -2069,13 +2069,13 @@ pub struct JsChunkResponse {
     pub chunker_type: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsVersionResponse {
     pub version: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDetectResponse {
     #[napi(js_name = "mimeType")]
@@ -2083,7 +2083,7 @@ pub struct JsDetectResponse {
     pub filename: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsManifestEntryResponse {
     #[napi(js_name = "relativePath")]
@@ -2095,7 +2095,7 @@ pub struct JsManifestEntryResponse {
     pub source_url: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsManifestResponse {
     #[napi(js_name = "kreuzbergVersion")]
@@ -2107,7 +2107,7 @@ pub struct JsManifestResponse {
     pub models: Vec<JsManifestEntryResponse>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsWarmRequest {
     #[napi(js_name = "allEmbeddings")]
@@ -2116,7 +2116,7 @@ pub struct JsWarmRequest {
     pub embedding_model: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsWarmResponse {
     #[napi(js_name = "cacheDir")]
@@ -2126,7 +2126,7 @@ pub struct JsWarmResponse {
     pub already_cached: Vec<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsStructuredExtractionResponse {
     #[napi(js_name = "structuredOutput")]
@@ -2136,7 +2136,7 @@ pub struct JsStructuredExtractionResponse {
     pub mime_type: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOpenWebDocumentResponse {
     #[napi(js_name = "pageContent")]
@@ -2144,14 +2144,14 @@ pub struct JsOpenWebDocumentResponse {
     pub metadata: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDoclingCompatResponse {
     pub document: String,
     pub status: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExtractFileParams {
     pub path: String,
@@ -2164,7 +2164,7 @@ pub struct JsExtractFileParams {
     pub response_format: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExtractBytesParams {
     pub data: String,
@@ -2177,7 +2177,7 @@ pub struct JsExtractBytesParams {
     pub response_format: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsBatchExtractFilesParams {
     pub paths: Vec<String>,
@@ -2190,7 +2190,7 @@ pub struct JsBatchExtractFilesParams {
     pub response_format: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDetectMimeTypeParams {
     pub path: String,
@@ -2198,7 +2198,7 @@ pub struct JsDetectMimeTypeParams {
     pub use_content: bool,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCacheWarmParams {
     #[napi(js_name = "allEmbeddings")]
@@ -2207,7 +2207,7 @@ pub struct JsCacheWarmParams {
     pub embedding_model: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEmbedTextParams {
     pub texts: Vec<String>,
@@ -2217,7 +2217,7 @@ pub struct JsEmbedTextParams {
     pub api_key: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsExtractStructuredParams {
     pub path: String,
@@ -2233,7 +2233,7 @@ pub struct JsExtractStructuredParams {
     pub strict: bool,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsChunkTextParams {
     pub text: String,
@@ -2244,7 +2244,7 @@ pub struct JsChunkTextParams {
     pub chunker_type: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsChunkingResult {
     pub chunks: Vec<JsChunk>,
@@ -2252,14 +2252,14 @@ pub struct JsChunkingResult {
     pub chunk_count: i64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsYakeParams {
     #[napi(js_name = "windowSize")]
     pub window_size: Option<i64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsRakeParams {
     #[napi(js_name = "minWordLength")]
@@ -2268,7 +2268,7 @@ pub struct JsRakeParams {
     pub max_words_per_phrase: Option<i64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsKeywordConfig {
     pub algorithm: Option<JsKeywordAlgorithm>,
@@ -2285,7 +2285,7 @@ pub struct JsKeywordConfig {
     pub rake_params: Option<JsRakeParams>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsKeyword {
     pub text: String,
@@ -2294,7 +2294,7 @@ pub struct JsKeyword {
     pub positions: Option<Vec<i64>>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOcrCacheStats {
     #[napi(js_name = "totalFiles")]
@@ -2303,7 +2303,7 @@ pub struct JsOcrCacheStats {
     pub total_size_mb: Option<f64>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsRecognizedTable {
     #[napi(js_name = "detectionBbox")]
@@ -2331,7 +2331,7 @@ impl JsTessdataManager {
     }
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize, Default)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPaddleOcrConfig {
     pub language: Option<String>,
@@ -2358,7 +2358,7 @@ pub struct JsPaddleOcrConfig {
     pub model_tier: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsModelPaths {
     #[napi(js_name = "detModel")]
@@ -2371,14 +2371,14 @@ pub struct JsModelPaths {
     pub dict_file: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsOrientationResult {
     pub degrees: u32,
     pub confidence: f64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsBBox {
     pub x1: f64,
@@ -2387,7 +2387,7 @@ pub struct JsBBox {
     pub y2: f64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsLayoutDetection {
     pub class: JsLayoutClass,
@@ -2395,7 +2395,7 @@ pub struct JsLayoutDetection {
     pub bbox: JsBBox,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsDetectionResult {
     #[napi(js_name = "pageWidth")]
@@ -2405,7 +2405,7 @@ pub struct JsDetectionResult {
     pub detections: Vec<JsLayoutDetection>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsEmbeddedFile {
     pub name: String,
@@ -2414,14 +2414,14 @@ pub struct JsEmbeddedFile {
     pub mime_type: Option<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsFontSizeCluster {
     pub centroid: f64,
     pub members: Vec<String>,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCharData {
     pub text: String,
@@ -2439,7 +2439,7 @@ pub struct JsCharData {
     pub baseline_y: f64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsHierarchyBlock {
     pub text: String,
@@ -2450,7 +2450,7 @@ pub struct JsHierarchyBlock {
     pub hierarchy_level: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPdfImage {
     #[napi(js_name = "pageNumber")]
@@ -2469,7 +2469,7 @@ pub struct JsPdfImage {
     pub decoded_format: String,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageLayoutResult {
     #[napi(js_name = "pageIndex")]
@@ -2485,7 +2485,7 @@ pub struct JsPageLayoutResult {
     pub render_height_px: u32,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsPageTiming {
     #[napi(js_name = "renderMs")]
@@ -2502,7 +2502,7 @@ pub struct JsPageTiming {
     pub mapping_ms: f64,
 }
 
-#[derive(Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
 #[napi(object)]
 pub struct JsCommonPdfMetadata {
     pub title: Option<String>,
@@ -5116,18 +5116,6 @@ pub fn render_template(template: String, context: String) -> Result<String> {
     ))
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "extractStructured")]
-pub async fn extract_structured(content: String, config: JsStructuredExtractionConfig) -> Result<String> {
-    let config_json =
-        serde_json::to_string(&config).map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-    let config_core: kreuzberg::StructuredExtractionConfig = serde_json::from_str(&config_json)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-    kreuzberg::llm::structured::extract_structured(&content, &config_core)
-        .await
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
 #[napi]
 pub fn normalize(v: Vec<f64>) -> Vec<f64> {
     let v_f32: Vec<f32> = v.iter().map(|&x| x as f32).collect();
@@ -5391,56 +5379,10 @@ pub fn preprocess_letterbox(img: String, target_width: u32, target_height: u32) 
     String::from("[unimplemented: preprocess_letterbox]")
 }
 
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "buildSession")]
-pub fn build_session(path: String, accel: Option<JsAccelerationConfig>, thread_budget: Option<i64>) -> Result<String> {
-    let accel_core: Option<kreuzberg::AccelerationConfig> = accel
-        .map(|v| {
-            let json =
-                serde_json::to_string(&v).map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-            serde_json::from_str(&json).map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-        })
-        .transpose()?;
-    kreuzberg::layout::session::build_session(
-        &path,
-        accel_core,
-        thread_budget.expect("'thread_budget' is required") as usize,
-    )
-    .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
 #[napi(js_name = "configFromExtraction")]
 pub fn config_from_extraction(layout_config: JsLayoutDetectionConfig) -> String {
     let _ = layout_config;
     String::from("[unimplemented: config_from_extraction]")
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "createEngine")]
-pub fn create_engine(layout_config: JsLayoutDetectionConfig) -> Result<String> {
-    let layout_config_json = serde_json::to_string(&layout_config)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-    let layout_config_core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config_json)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-    kreuzberg::layout::create_engine(&layout_config_core)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[allow(clippy::missing_errors_doc)]
-#[napi(js_name = "takeOrCreateEngine")]
-pub fn take_or_create_engine(layout_config: JsLayoutDetectionConfig) -> Result<String> {
-    let layout_config_json = serde_json::to_string(&layout_config)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-    let layout_config_core: kreuzberg::LayoutDetectionConfig = serde_json::from_str(&layout_config_json)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))?;
-    kreuzberg::layout::take_or_create_engine(&layout_config_core)
-        .map_err(|e| napi::Error::new(napi::Status::GenericFailure, e.to_string()))
-}
-
-#[napi(js_name = "returnEngine")]
-pub fn return_engine(engine: String) -> () {
-    let _ = engine;
-    ()
 }
 
 #[napi(js_name = "takeOrCreateTatr")]
@@ -7770,8 +7712,8 @@ impl From<kreuzberg::Metadata> for JsMetadata {
 impl From<kreuzberg::ExcelMetadata> for JsExcelMetadata {
     fn from(val: kreuzberg::ExcelMetadata) -> Self {
         Self {
-            sheet_count: val.sheet_count as i64,
-            sheet_names: val.sheet_names,
+            sheet_count: Some(val.sheet_count as i64),
+            sheet_names: Some(val.sheet_names),
         }
     }
 }
@@ -7781,11 +7723,11 @@ impl From<kreuzberg::EmailMetadata> for JsEmailMetadata {
         Self {
             from_email: val.from_email,
             from_name: val.from_name,
-            to_emails: val.to_emails,
-            cc_emails: val.cc_emails,
-            bcc_emails: val.bcc_emails,
+            to_emails: Some(val.to_emails),
+            cc_emails: Some(val.cc_emails),
+            bcc_emails: Some(val.bcc_emails),
             message_id: val.message_id,
-            attachments: val.attachments,
+            attachments: Some(val.attachments),
         }
     }
 }
@@ -7794,9 +7736,9 @@ impl From<JsArchiveMetadata> for kreuzberg::ArchiveMetadata {
     fn from(val: JsArchiveMetadata) -> Self {
         Self {
             format: Default::default(),
-            file_count: val.file_count as usize,
-            file_list: val.file_list,
-            total_size: val.total_size as usize,
+            file_count: val.file_count.map(|v| v as usize).unwrap_or_default(),
+            file_list: val.file_list.unwrap_or_default(),
+            total_size: val.total_size.map(|v| v as usize).unwrap_or_default(),
             compressed_size: val.compressed_size.map(|v| v as usize),
         }
     }
@@ -7805,10 +7747,10 @@ impl From<JsArchiveMetadata> for kreuzberg::ArchiveMetadata {
 impl From<kreuzberg::ArchiveMetadata> for JsArchiveMetadata {
     fn from(val: kreuzberg::ArchiveMetadata) -> Self {
         Self {
-            format: format!("{:?}", val.format),
-            file_count: val.file_count as i64,
-            file_list: val.file_list,
-            total_size: val.total_size as i64,
+            format: Some(format!("{:?}", val.format)),
+            file_count: Some(val.file_count as i64),
+            file_list: Some(val.file_list),
+            total_size: Some(val.total_size as i64),
             compressed_size: val.compressed_size.map(|v| v as i64),
         }
     }
@@ -7826,9 +7768,9 @@ impl From<kreuzberg::XmlMetadata> for JsXmlMetadata {
 impl From<kreuzberg::TextMetadata> for JsTextMetadata {
     fn from(val: kreuzberg::TextMetadata) -> Self {
         Self {
-            line_count: val.line_count as i64,
-            word_count: val.word_count as i64,
-            character_count: val.character_count as i64,
+            line_count: Some(val.line_count as i64),
+            word_count: Some(val.word_count as i64),
+            character_count: Some(val.character_count as i64),
             headers: val.headers,
             links: val
                 .links
@@ -7997,10 +7939,10 @@ impl From<kreuzberg::HtmlMetadata> for JsHtmlMetadata {
 impl From<kreuzberg::OcrMetadata> for JsOcrMetadata {
     fn from(val: kreuzberg::OcrMetadata) -> Self {
         Self {
-            language: val.language,
-            psm: val.psm,
-            output_format: val.output_format,
-            table_count: val.table_count as i64,
+            language: Some(val.language),
+            psm: Some(val.psm),
+            output_format: Some(val.output_format),
+            table_count: Some(val.table_count as i64),
             table_rows: val.table_rows.map(|v| v as i64),
             table_cols: val.table_cols.map(|v| v as i64),
         }
@@ -8028,8 +7970,8 @@ impl From<kreuzberg::ErrorMetadata> for JsErrorMetadata {
 impl From<JsPptxMetadata> for kreuzberg::PptxMetadata {
     fn from(val: JsPptxMetadata) -> Self {
         Self {
-            slide_count: val.slide_count as usize,
-            slide_names: val.slide_names,
+            slide_count: val.slide_count.map(|v| v as usize).unwrap_or_default(),
+            slide_names: val.slide_names.unwrap_or_default(),
             image_count: val.image_count.map(|v| v as usize),
             table_count: val.table_count.map(|v| v as usize),
         }
@@ -8039,8 +7981,8 @@ impl From<JsPptxMetadata> for kreuzberg::PptxMetadata {
 impl From<kreuzberg::PptxMetadata> for JsPptxMetadata {
     fn from(val: kreuzberg::PptxMetadata) -> Self {
         Self {
-            slide_count: val.slide_count as i64,
-            slide_names: val.slide_names,
+            slide_count: Some(val.slide_count as i64),
+            slide_names: Some(val.slide_names),
             image_count: val.image_count.map(|v| v as i64),
             table_count: val.table_count.map(|v| v as i64),
         }
@@ -8820,7 +8762,7 @@ impl From<kreuzberg::ocr::OcrCacheStats> for JsOcrCacheStats {
     }
 }
 
-impl From<JsRecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTable {
+impl From<JsRecognizedTable> for kreuzberg::RecognizedTable {
     fn from(val: JsRecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
@@ -8830,8 +8772,8 @@ impl From<JsRecognizedTable> for kreuzberg::ocr::layout_assembly::RecognizedTabl
     }
 }
 
-impl From<kreuzberg::ocr::layout_assembly::RecognizedTable> for JsRecognizedTable {
-    fn from(val: kreuzberg::ocr::layout_assembly::RecognizedTable) -> Self {
+impl From<kreuzberg::RecognizedTable> for JsRecognizedTable {
+    fn from(val: kreuzberg::RecognizedTable) -> Self {
         Self {
             detection_bbox: val.detection_bbox.into(),
             cells: val.cells,
@@ -9321,7 +9263,11 @@ impl From<JsEmbeddingModelType> for kreuzberg::EmbeddingModelType {
                 dimensions: val.dimensions.map(|v| v as usize).unwrap_or_default(),
             },
             "llm" => Self::Llm {
-                llm: val.llm.unwrap_or_default().into(),
+                llm: val
+                    .llm
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
             },
             _ => Self::Preset {
                 name: Default::default(),
@@ -9350,7 +9296,7 @@ impl From<kreuzberg::EmbeddingModelType> for JsEmbeddingModelType {
             kreuzberg::EmbeddingModelType::Llm { llm } => Self {
                 type_tag: "llm".to_string(),
                 dimensions: None,
-                llm: Some(llm.into()),
+                llm: serde_json::to_string(&llm).ok(),
                 model_id: None,
                 name: None,
             },
@@ -10363,24 +10309,109 @@ impl From<JsFormatMetadata> for kreuzberg::FormatMetadata {
     fn from(val: JsFormatMetadata) -> Self {
         match val.format_type_tag.as_str() {
             "pdf" => Self::Pdf(Default::default()),
-            "docx" => Self::Docx(val._0.unwrap_or_default().into()),
-            "excel" => Self::Excel(val._0.unwrap_or_default().into()),
-            "email" => Self::Email(val._0.unwrap_or_default().into()),
-            "pptx" => Self::Pptx(val._0.unwrap_or_default().into()),
-            "archive" => Self::Archive(val._0.unwrap_or_default().into()),
+            "docx" => Self::Docx(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "excel" => Self::Excel(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "email" => Self::Email(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "pptx" => Self::Pptx(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "archive" => Self::Archive(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
             "image" => Self::Image(Default::default()),
-            "xml" => Self::Xml(val._0.unwrap_or_default().into()),
-            "text" => Self::Text(val._0.unwrap_or_default().into()),
-            "html" => Self::Html(val._0.unwrap_or_default().into()),
-            "ocr" => Self::Ocr(val._0.unwrap_or_default().into()),
-            "csv" => Self::Csv(val._0.unwrap_or_default().into()),
-            "bibtex" => Self::Bibtex(val._0.unwrap_or_default().into()),
-            "citation" => Self::Citation(val._0.unwrap_or_default().into()),
-            "fictionbook" => Self::FictionBook(val._0.unwrap_or_default().into()),
-            "dbf" => Self::Dbf(val._0.unwrap_or_default().into()),
-            "jats" => Self::Jats(val._0.unwrap_or_default().into()),
-            "epub" => Self::Epub(val._0.unwrap_or_default().into()),
-            "pst" => Self::Pst(val._0.unwrap_or_default().into()),
+            "xml" => Self::Xml(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "text" => Self::Text(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "html" => Self::Html(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "ocr" => Self::Ocr(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "csv" => Self::Csv(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "bibtex" => Self::Bibtex(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "citation" => Self::Citation(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "fictionbook" => Self::FictionBook(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "dbf" => Self::Dbf(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "jats" => Self::Jats(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "epub" => Self::Epub(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
+            "pst" => Self::Pst(
+                val._0
+                    .as_ref()
+                    .and_then(|s| serde_json::from_str(s).ok())
+                    .unwrap_or_default(),
+            ),
             "code" => Self::Code(Default::default()),
             _ => Self::Pdf(Default::default()),
         }
@@ -10396,23 +10427,23 @@ impl From<kreuzberg::FormatMetadata> for JsFormatMetadata {
             },
             kreuzberg::FormatMetadata::Docx(_0) => Self {
                 format_type_tag: "docx".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Excel(_0) => Self {
                 format_type_tag: "excel".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Email(_0) => Self {
                 format_type_tag: "email".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Pptx(_0) => Self {
                 format_type_tag: "pptx".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Archive(_0) => Self {
                 format_type_tag: "archive".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Image(__0) => Self {
                 format_type_tag: "image".to_string(),
@@ -10420,51 +10451,51 @@ impl From<kreuzberg::FormatMetadata> for JsFormatMetadata {
             },
             kreuzberg::FormatMetadata::Xml(_0) => Self {
                 format_type_tag: "xml".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Text(_0) => Self {
                 format_type_tag: "text".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Html(_0) => Self {
                 format_type_tag: "html".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Ocr(_0) => Self {
                 format_type_tag: "ocr".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Csv(_0) => Self {
                 format_type_tag: "csv".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Bibtex(_0) => Self {
                 format_type_tag: "bibtex".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Citation(_0) => Self {
                 format_type_tag: "citation".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::FictionBook(_0) => Self {
                 format_type_tag: "fictionbook".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Dbf(_0) => Self {
                 format_type_tag: "dbf".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Jats(_0) => Self {
                 format_type_tag: "jats".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Epub(_0) => Self {
                 format_type_tag: "epub".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Pst(_0) => Self {
                 format_type_tag: "pst".to_string(),
-                _0: Some(_0.into()),
+                _0: serde_json::to_string(&_0).ok(),
             },
             kreuzberg::FormatMetadata::Code(__0) => Self {
                 format_type_tag: "code".to_string(),
