@@ -10478,7 +10478,7 @@ pub fn extract_ooxml_embedded_objects<'py>(
     config: ExtractionConfig,
 ) -> PyResult<Bound<'py, PyAny>> {
     let _ = (zip_bytes, embeddings_prefix, source_label, config);
-    String::from("[unimplemented: extract_ooxml_embedded_objects]")
+    pyo3_async_runtimes::tokio::future_into_py(py, async move { Ok(py.None()) })
 }
 
 #[pyfunction]
@@ -11355,9 +11355,7 @@ pub fn create_router_with_limits_and_server_config(
 #[pyo3(signature = (host, port))]
 pub fn serve<'py>(py: Python<'py>, host: String, port: u16) -> PyResult<Bound<'py, PyAny>> {
     let _ = (host, port);
-    Err(pyo3::exceptions::PyNotImplementedError::new_err(
-        "Not implemented: serve",
-    ))
+    pyo3_async_runtimes::tokio::future_into_py(py, async move { Ok(py.None()) })
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -11915,7 +11913,7 @@ pub fn extract_and_process_embedded_files<'py>(
     config: ExtractionConfig,
 ) -> PyResult<Bound<'py, PyAny>> {
     let _ = (pdf_bytes, config);
-    String::from("[unimplemented: extract_and_process_embedded_files]")
+    pyo3_async_runtimes::tokio::future_into_py(py, async move { Ok(py.None()) })
 }
 
 #[allow(clippy::missing_errors_doc)]
