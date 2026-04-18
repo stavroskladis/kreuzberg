@@ -9233,7 +9233,7 @@ pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> Result<String> {
 #[allow(clippy::missing_errors_doc)]
 #[extendr]
 pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> Result<Option<Vec<PageBoundary>>> {
-    kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes).map_err(|e| e.to_string())
+    kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes).map(|val| val.map(|v| v.into_iter().map(Into::into).collect())).map_err(|e| e.to_string())
 }
 
 #[allow(clippy::missing_errors_doc)]

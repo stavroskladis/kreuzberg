@@ -10456,6 +10456,7 @@ pub fn extract_text_with_page_breaks(bytes: Vec<u8>) -> PyResult<String> {
 #[pyo3(signature = (bytes))]
 pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> PyResult<Option<Vec<PageBoundary>>> {
     kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes)
+        .map(|val| val.map(|v| v.into_iter().map(Into::into).collect()))
         .map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(e.to_string()))
 }
 

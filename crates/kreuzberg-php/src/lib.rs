@@ -9086,7 +9086,7 @@ impl KreuzbergApi {
     pub fn detect_page_breaks_from_docx(bytes: Vec<u8>) -> PhpResult<Option<Vec<PageBoundary>>> {
         let result = kreuzberg::extraction::docx::detect_page_breaks_from_docx(&bytes)
             .map_err(|e| ext_php_rs::exception::PhpException::default(e.to_string()))?;
-        Ok(result)
+        Ok(result.map(|v| v.into_iter().map(Into::into).collect()))
     }
 
     pub fn detect_table_page_numbers(bytes: Vec<u8>) -> PhpResult<Vec<i64>> {
