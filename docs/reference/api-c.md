@@ -506,7 +506,7 @@ int32_t kreuzberg_last_error_code(void);
 
 **Returns:**
 
-- Numeric error code (0-7), or -1 if no error occurred
+- Numeric error code (0-9), or -1 if no error occurred
 
 ---
 
@@ -585,19 +585,23 @@ void kreuzberg_free_error_details(CErrorDetails *details);
 | 5    | `plugin`             | Plugin registration or execution     |
 | 6    | `unsupported_format` | MIME type not supported              |
 | 7    | `internal`           | Internal/unexpected error            |
+| 8    | `embedding`          | Embedding generation error           |
+| 9    | `cancelled`          | Extraction cancelled                 |
 
 ### Error Code Functions
 
 ```c
-uint32_t kreuzberg_error_code_count(void);             /* returns 8 */
-uint32_t kreuzberg_error_code_internal(void);          /* returns 7 */
-uint32_t kreuzberg_error_code_io(void);                /* returns 4 */
-uint32_t kreuzberg_error_code_missing_dependency(void); /* returns 3 */
-uint32_t kreuzberg_error_code_ocr(void);               /* returns 2 */
+uint32_t kreuzberg_error_code_count(void);             /* returns 10 */
+uint32_t kreuzberg_error_code_validation(void);       /* returns 0 */
 uint32_t kreuzberg_error_code_parsing(void);           /* returns 1 */
+uint32_t kreuzberg_error_code_ocr(void);               /* returns 2 */
+uint32_t kreuzberg_error_code_missing_dependency(void); /* returns 3 */
+uint32_t kreuzberg_error_code_io(void);                /* returns 4 */
 uint32_t kreuzberg_error_code_plugin(void);            /* returns 5 */
 uint32_t kreuzberg_error_code_unsupported_format(void); /* returns 6 */
-uint32_t kreuzberg_error_code_validation(void);       /* returns 0 */
+uint32_t kreuzberg_error_code_internal(void);          /* returns 7 */
+uint32_t kreuzberg_error_code_embedding(void);         /* returns 8 */
+uint32_t kreuzberg_error_code_cancelled(void);         /* returns 9 */
 ```
 
 ### Error Introspection
@@ -610,7 +614,7 @@ const char *kreuzberg_error_code_name(uint32_t code);
 
 - `kreuzberg_error_code_name`: Returns a static string like `"validation"`, `"ocr"`. Do NOT free.
 - `kreuzberg_error_code_description`: Returns a static description. Do NOT free.
-- `kreuzberg_classify_error`: Classifies an arbitrary error message string into one of the error codes (0-7).
+- `kreuzberg_classify_error`: Classifies an arbitrary error message string into one of the error codes (0-9).
 
 **Example:**
 
@@ -1130,7 +1134,7 @@ Structured error information.
 ```c
 typedef struct CErrorDetails {
     char *context_info;      /* Additional context (may be NULL; free if non-NULL) */
-    uint32_t error_code;     /* Numeric error code (0-7) */
+    uint32_t error_code;     /* Numeric error code (0-9) */
     char *error_type;        /* Human-readable type name (free with kreuzberg_free_string) */
     char *message;           /* Error message (free with kreuzberg_free_string) */
     char *source_file;       /* Source file (may be NULL; free if non-NULL) */

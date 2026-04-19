@@ -19,7 +19,7 @@ describe("standalone embed fixtures", () => {
 				return;
 			}
 			const config: EmbeddingConfig = {
-				model: { type: "preset", name: "balanced" },
+				model: { modelType: "preset", value: "balanced" },
 				normalize: true,
 			};
 
@@ -37,7 +37,7 @@ describe("standalone embed fixtures", () => {
 				return;
 			}
 			const config: EmbeddingConfig = {
-				model: { type: "preset", name: "fast" },
+				model: { modelType: "preset", value: "fast" },
 				normalize: true,
 				batchSize: 32,
 			};
@@ -56,7 +56,7 @@ describe("standalone embed fixtures", () => {
 				return;
 			}
 			const config: EmbeddingConfig = {
-				model: { type: "preset", name: "balanced" },
+				model: { modelType: "preset", value: "balanced" },
 				normalize: false,
 			};
 
@@ -74,7 +74,7 @@ describe("standalone embed fixtures", () => {
 				return;
 			}
 			const config: EmbeddingConfig = {
-				model: { type: "preset", name: "multilingual" },
+				model: { modelType: "preset", value: "multilingual" },
 				normalize: true,
 			};
 
@@ -92,7 +92,7 @@ describe("standalone embed fixtures", () => {
 				return;
 			}
 			const config: EmbeddingConfig = {
-				model: { type: "preset", name: "balanced" },
+				model: { modelType: "preset", value: "balanced" },
 				normalize: true,
 			};
 

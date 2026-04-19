@@ -92,8 +92,8 @@ func TestLoadExtractionConfigFromFileValidation(t *testing.T) {
 
 func TestErrorCodeCount(t *testing.T) {
 	count := ErrorCodeCount()
-	if count != 9 {
-		t.Fatalf("expected 9 error codes, got %d", count)
+	if count != 10 {
+		t.Fatalf("expected 10 error codes, got %d", count)
 	}
 }
 
@@ -111,6 +111,7 @@ func TestErrorCodeName(t *testing.T) {
 		{6, "unsupported_format"},
 		{7, "internal"},
 		{8, "embedding"},
+		{9, "cancelled"}, //nolint:misspell // matches FFI return value
 		{99, "unknown"},
 	}
 	for _, tt := range tests {

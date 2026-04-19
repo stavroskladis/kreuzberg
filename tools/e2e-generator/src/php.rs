@@ -2485,7 +2485,6 @@ fn render_embed_category_php(fixtures: &[&Fixture]) -> Result<String> {
     writeln!(buffer, "namespace E2EPhp\\Tests;")?;
     writeln!(buffer)?;
     writeln!(buffer, "use E2EPhp\\Helpers;")?;
-    writeln!(buffer, "use Kreuzberg\\Kreuzberg;")?;
     writeln!(buffer, "use PHPUnit\\Framework\\TestCase;")?;
     writeln!(buffer)?;
     writeln!(buffer, "class EmbedStandaloneTest extends TestCase")?;
@@ -2529,12 +2528,12 @@ fn render_embed_test_php(fixture: &Fixture) -> Result<String> {
         "null".to_string()
     };
 
-    let func = if embed.async_variant { "embedAsync" } else { "embed" };
+    let func = if embed.async_variant { "embed_async" } else { "embed" };
 
     writeln!(code, "        try {{")?;
     writeln!(
         code,
-        "            $results = Kreuzberg::{func}({texts_arr}, {config_expr});"
+        "            $results = \\Kreuzberg\\{func}({texts_arr}, {config_expr});"
     )?;
     writeln!(code, "        }} catch (\\Exception $e) {{")?;
     writeln!(

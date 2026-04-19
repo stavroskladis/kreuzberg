@@ -227,17 +227,15 @@ export interface OcrConfig {
 /**
  * Embedding model type selector.
  *
- * Use `type: "preset"` with a named preset (recommended), or `type: "custom"` with
+ * Use `modelType: "preset"` with a named preset (recommended), or `modelType: "custom"` with
  * a HuggingFace model ID and the expected vector dimensions.
  */
 export interface EmbeddingModelType {
-	/** Selector: `"preset"` or `"custom"` */
-	type: "preset" | "custom";
-	/** Preset name (e.g., "fast", "balanced", "quality", "multilingual") — for `type: "preset"` */
-	name?: string;
-	/** HuggingFace model ID — for `type: "custom"` */
-	modelId?: string;
-	/** Expected embedding dimensions — required for `type: "custom"` */
+	/** Selector: `"preset"`, `"custom"`, or `"llm"` */
+	modelType: "preset" | "custom" | "llm";
+	/** For preset: preset name (e.g., "fast", "balanced", "quality", "multilingual"); for custom: HuggingFace model ID; for llm: model identifier */
+	value: string;
+	/** Expected embedding dimensions — required for `modelType: "custom"` */
 	dimensions?: number;
 }
 

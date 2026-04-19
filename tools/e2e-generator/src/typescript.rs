@@ -17,6 +17,7 @@ import type {
     ChunkingConfig,
     ExtractionConfig,
     ExtractionResult,
+    HtmlOutputConfig,
     ImageExtractionConfig,
     KeywordConfig,
     LanguageDetectionConfig,
@@ -244,6 +245,16 @@ function mapHtmlOptions(raw: PlainRecord): PlainRecord {
     return config;
 }
 
+function mapHtmlOutputConfig(raw: PlainRecord): HtmlOutputConfig {
+    const config: HtmlOutputConfig = {};
+    if (typeof raw.css === "string") { config.css = raw.css; }
+    if (typeof raw.css_file === "string") { config.cssFile = raw.css_file; }
+    if (typeof raw.theme === "string") { config.theme = raw.theme as HtmlOutputConfig["theme"]; }
+    if (typeof raw.class_prefix === "string") { config.classPrefix = raw.class_prefix; }
+    assignBooleanField(config as PlainRecord, raw, "embed_css", "embedCss");
+    return config;
+}
+
 function mapKeywordConfig(raw: PlainRecord): KeywordConfig {
     const config: KeywordConfig = {};
     const target = config as PlainRecord;
@@ -369,6 +380,10 @@ export function buildConfig(raw: unknown): ExtractionConfig {
 
     if (isPlainRecord(source.html_options)) {
         target.htmlOptions = mapHtmlOptions(source.html_options as PlainRecord);
+    }
+
+    if (isPlainRecord(source.html_output)) {
+        result.htmlOutput = mapHtmlOutputConfig(source.html_output as PlainRecord);
     }
 
     if (isPlainRecord(source.acceleration)) {
@@ -2598,7 +2613,7 @@ fn render_embed_test_ts(fixture: &Fixture) -> Result<String> {
     writeln!(code, "        const config: EmbeddingConfig = {{")?;
     writeln!(
         code,
-        "            model: {{ type: \"preset\", name: \"{model_name}\" }},"
+        "            model: {{ modelType: \"preset\", value: \"{model_name}\" }},"
     )?;
     writeln!(
         code,

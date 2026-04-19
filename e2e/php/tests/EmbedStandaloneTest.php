@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace E2EPhp\Tests;
 
 use E2EPhp\Helpers;
-use Kreuzberg\Kreuzberg;
 use PHPUnit\Framework\TestCase;
 
 class EmbedStandaloneTest extends TestCase
@@ -21,7 +20,7 @@ class EmbedStandaloneTest extends TestCase
             $this->markTestSkipped('Skip embeddings on Windows X64 until ONNX is implemented');
         }
         try {
-            $results = Kreuzberg::embedAsync(['Async embedding test'], ['model' => 'balanced', 'normalize' => true]);
+            $results = \Kreuzberg\embed_async(['Async embedding test'], ['model' => 'balanced', 'normalize' => true]);
         } catch (\Exception $e) {
             $this->markTestSkipped('Embeddings not supported or requirements missing: ' . $e->getMessage());
             return;
@@ -35,7 +34,7 @@ class EmbedStandaloneTest extends TestCase
             $this->markTestSkipped('Skip embeddings on Windows X64 until ONNX is implemented');
         }
         try {
-            $results = Kreuzberg::embed(['Text one', 'Text two', 'Text three'], ['model' => 'fast', 'normalize' => true, 'batch_size' => 32]);
+            $results = \Kreuzberg\embed(['Text one', 'Text two', 'Text three'], ['model' => 'fast', 'normalize' => true, 'batch_size' => 32]);
         } catch (\Exception $e) {
             $this->markTestSkipped('Embeddings not supported or requirements missing: ' . $e->getMessage());
             return;
@@ -49,7 +48,7 @@ class EmbedStandaloneTest extends TestCase
             $this->markTestSkipped('Skip embeddings on Windows X64 until ONNX is implemented');
         }
         try {
-            $results = Kreuzberg::embed([], ['model' => 'balanced']);
+            $results = \Kreuzberg\embed([], ['model' => 'balanced']);
         } catch (\Exception $e) {
             $this->markTestSkipped('Embeddings not supported or requirements missing: ' . $e->getMessage());
             return;
@@ -63,7 +62,7 @@ class EmbedStandaloneTest extends TestCase
             $this->markTestSkipped('Skip embeddings on Windows X64 until ONNX is implemented');
         }
         try {
-            $results = Kreuzberg::embed(['Bonjour le monde', 'Hallo Welt', '¡Hola Mundo!'], ['model' => 'multilingual', 'normalize' => true]);
+            $results = \Kreuzberg\embed(['Bonjour le monde', 'Hallo Welt', '¡Hola Mundo!'], ['model' => 'multilingual', 'normalize' => true]);
         } catch (\Exception $e) {
             $this->markTestSkipped('Embeddings not supported or requirements missing: ' . $e->getMessage());
             return;
@@ -77,7 +76,7 @@ class EmbedStandaloneTest extends TestCase
             $this->markTestSkipped('Skip embeddings on Windows X64 until ONNX is implemented');
         }
         try {
-            $results = Kreuzberg::embed(['Hello, Kreuzberg!'], ['model' => 'balanced', 'normalize' => true]);
+            $results = \Kreuzberg\embed(['Hello, Kreuzberg!'], ['model' => 'balanced', 'normalize' => true]);
         } catch (\Exception $e) {
             $this->markTestSkipped('Embeddings not supported or requirements missing: ' . $e->getMessage());
             return;

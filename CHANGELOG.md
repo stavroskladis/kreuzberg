@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.9.2] - 2026-04-19
+
+### Fixed
+
+- Fix cancellation token not checked in WASM (non-tokio) path for Excel, DOC, PPT, Pages, Keynote, and Numbers extractors — cancellation was silently ignored in WASM builds
+- Propagate `Cancelled` error code (9) to all bindings — Go, C FFI, Python, TypeScript, and C API docs now include the new code
+- Fix PHP e2e embed tests calling instance methods statically — use procedural `\Kreuzberg\embed()` functions
+- Fix TypeScript e2e embed tests using wrong field names (`type`/`name` → `modelType`/`value`) for embedding model config
+- Fix Elixir e2e embed tests calling non-existent `embed_async/2` — use sync `embed/2`
+- Fix TypeScript e2e generator missing `html_output` config mapping for styled HTML tests
+- Fix `ORT_DYLIB_PATH` on Windows CI pointing to `lib/` instead of the actual DLL location
+- Fix C# CI build conditional to require successful FFI build
+- Add `libuv1-dev` to Linux CI system dependencies for R package builds
+
+---
+
 ## [4.9.1] - 2026-04-19
 
 ### Fixed

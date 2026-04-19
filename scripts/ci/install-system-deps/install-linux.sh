@@ -26,6 +26,7 @@ packages=(
   build-essential
   cmake
   libmagic-dev
+  libuv1-dev
   php-cli
   php-dev
 )

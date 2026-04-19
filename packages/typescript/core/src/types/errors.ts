@@ -74,6 +74,10 @@ export enum ErrorCode {
 	 * Error during embedding generation
 	 */
 	Embedding = 8,
+	/**
+	 * Extraction was cancelled
+	 */
+	Cancelled = 9,
 }
 
 /**

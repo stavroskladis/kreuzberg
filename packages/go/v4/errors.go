@@ -48,6 +48,7 @@ const (
 	ErrorCodeUnsupportedFormat ErrorCode = 6
 	ErrorCodeInternal          ErrorCode = 7
 	ErrorCodeEmbedding         ErrorCode = 8
+	ErrorCodeCancelled         ErrorCode = 9
 )
 
 // String returns the string representation of an ErrorCode.

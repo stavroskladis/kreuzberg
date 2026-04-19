@@ -1769,6 +1769,8 @@ jobs:
     needs: [rust-tests, build-ffi, changes, validate, validate-rust]
     name: "Build: C# (${{ matrix.os }})"
     if: |
+      always() && !cancelled() &&
+      needs.build-ffi.result == 'success' &&
       github.repository == 'kreuzberg-dev/kreuzberg' && github.actor != 'dependabot[bot]' &&
       (github.event_name == 'workflow_dispatch' || needs.changes.outputs.core == 'true' || needs.changes.outputs.csharp == 'true' || needs.changes.outputs.ffi == 'true')
     timeout-minutes: 240
@@ -2722,7 +2724,10 @@ jobs:
 
   test-csharp:
     name: "Test: C# (${{ matrix.os }})"
-    if: github.repository == 'kreuzberg-dev/kreuzberg' && github.actor != 'dependabot[bot]'
+    if: |
+      always() && !cancelled() &&
+      needs.build-csharp.result == 'success' &&
+      github.repository == 'kreuzberg-dev/kreuzberg' && github.actor != 'dependabot[bot]'
     needs: [build-csharp]
     timeout-minutes: 240
     strategy:
