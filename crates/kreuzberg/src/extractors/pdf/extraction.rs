@@ -460,6 +460,11 @@ pub(crate) fn extract_all_from_oxide_document(
         OutputFormat::Markdown | OutputFormat::Djot | OutputFormat::Html
     );
 
+    let allow_single_column = config
+        .pdf_options
+        .as_ref()
+        .is_some_and(|o| o.allow_single_column_tables);
+
     let pre_rendered_doc =
         if needs_structured && !config.force_ocr {
             let k = config
@@ -503,6 +508,7 @@ pub(crate) fn extract_all_from_oxide_document(
                     used_structure_tree,
                     image_positions: &image_positions,
                     layout_hints,
+                    allow_single_column,
                 },
             ) {
                 Ok(structured_doc) if !structured_doc.elements.is_empty() => {

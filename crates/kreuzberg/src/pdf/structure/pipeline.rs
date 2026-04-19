@@ -1392,6 +1392,7 @@ pub(crate) struct SegmentStructureConfig<'a> {
     pub used_structure_tree: bool,
     pub image_positions: &'a [(usize, usize)],
     pub layout_hints: Option<&'a [Vec<LayoutHint>]>,
+    pub allow_single_column: bool,
 }
 
 #[cfg(feature = "pdf-oxide")]
@@ -1408,6 +1409,7 @@ pub(crate) fn extract_document_structure_from_segments(
         used_structure_tree,
         image_positions,
         layout_hints,
+        allow_single_column,
     } = config;
     let page_count = all_page_segments.len();
     tracing::debug!(
@@ -1445,24 +1447,83 @@ pub(crate) fn extract_document_structure_from_segments(
         (heading_map, doc_body_font_size)
     };
 
-    // Build per-page table bbox suppression map.
-    let extracted_table_bboxes_by_page: ahash::AHashMap<usize, Vec<crate::types::BoundingBox>> = {
-        let mut map: ahash::AHashMap<usize, Vec<crate::types::BoundingBox>> = ahash::AHashMap::new();
-        for table in tables {
-            if let Some(ref bb) = table.bounding_box {
-                map.entry(table.page_number.saturating_sub(1)).or_default().push(*bb);
-            }
-        }
-        map
-    };
-
-    // Approximate page heights from segment positions (used for repeating-text detection).
+    // Approximate page heights from segment positions (used for repeating-text detection
+    // and coordinate conversion in table extraction below).
     let page_heights: Vec<f32> = all_page_segments
         .iter()
         .map(|segs| {
             segs.iter().map(|s| s.y + s.height).fold(0.0_f32, f32::max).max(792.0) // Letter-size fallback
         })
         .collect();
+
+    // Extract tables from layout-detected Table regions using oxide segments.
+    //
+    // Mirrors the pdfium path in `extract_document_structure`, but uses
+    // `segments_to_words` to convert oxide `SegmentData` into `HocrWord`s
+    // instead of pdfium's character-level API. Oxide segments already carry
+    // x/y/width/height in PDF coordinates (y=0 at bottom), and `segments_to_words`
+    // converts them to image coordinates (y=0 at top) as `HocrWord` requires.
+    let layout_tables: Vec<crate::types::Table> = if let Some(hints_pages) = layout_hints {
+        let mut result: Vec<crate::types::Table> = Vec::new();
+        for page_idx in 0..page_count {
+            let Some(hints) = hints_pages.get(page_idx) else {
+                continue;
+            };
+            if !hints.iter().any(|h| h.class == super::types::LayoutHintClass::Table) {
+                continue;
+            }
+            let page_height = page_heights[page_idx];
+            let words = crate::pdf::table_reconstruct::segments_to_words(&all_page_segments[page_idx], page_height);
+            if words.is_empty() {
+                tracing::trace!(
+                    page = page_idx,
+                    "oxide layout table extraction: no words from segments, skipping"
+                );
+                continue;
+            }
+            tracing::trace!(
+                page = page_idx,
+                word_count = words.len(),
+                page_height,
+                "oxide layout table extraction: page prepared"
+            );
+            let page_tables = super::regions::extract_tables_from_layout_hints(
+                &words,
+                hints,
+                page_idx,
+                page_height,
+                0.5,
+                allow_single_column,
+            );
+            result.extend(page_tables);
+        }
+        tracing::debug!(
+            layout_tables_found = result.len(),
+            "oxide layout table extraction complete"
+        );
+        result
+    } else {
+        Vec::new()
+    };
+
+    // Build per-page table bbox suppression map.
+    // Include both input tables (native oxide detection) and layout-detected tables
+    // so that segments covered by either are suppressed in the pipeline.
+    let extracted_table_bboxes_by_page: ahash::AHashMap<usize, Vec<crate::types::BoundingBox>> = {
+        let mut map: ahash::AHashMap<usize, Vec<crate::types::BoundingBox>> = ahash::AHashMap::new();
+        for table in tables.iter().chain(layout_tables.iter()) {
+            if let Some(ref bb) = table.bounding_box {
+                map.entry(table.page_number.saturating_sub(1)).or_default().push(*bb);
+            }
+        }
+        tracing::debug!(
+            native_tables = tables.len(),
+            layout_tables = layout_tables.len(),
+            pages_with_bboxes = map.len(),
+            "oxide table bbox suppression map built"
+        );
+        map
+    };
 
     // Stage 3: Per-page structured extraction.
     // Always pass layout hints regardless of structure tree status. Layout hints
@@ -1521,7 +1582,11 @@ pub(crate) fn extract_document_structure_from_segments(
     );
 
     // Stage 4: Assemble InternalDocument.
-    let mut doc = assemble_internal_document(all_page_paragraphs, tables, image_positions);
+    // Combine native oxide tables with layout-detected tables, then deduplicate
+    // overlapping tables on the same page (same pattern as the pdfium path).
+    let mut combined_tables: Vec<crate::types::Table> = tables.iter().cloned().chain(layout_tables).collect();
+    deduplicate_overlapping_tables(&mut combined_tables);
+    let mut doc = assemble_internal_document(all_page_paragraphs, &combined_tables, image_positions);
 
     // Stage 5: Element-level text normalization.
     for elem in &mut doc.elements {
