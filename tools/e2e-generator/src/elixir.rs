@@ -1037,7 +1037,8 @@ fn render_embed_test_elixir(fixture: &Fixture) -> Result<String> {
         "nil".to_string()
     };
 
-    let func = if embed.async_variant { "embed_async" } else { "embed" };
+    // Elixir binding only has sync embed/2, no async variant
+    let func = "embed";
 
     writeln!(code, "    results =")?;
     writeln!(code, "      try do")?;

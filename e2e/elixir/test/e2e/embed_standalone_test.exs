@@ -13,7 +13,7 @@ defmodule E2E.EmbedStandaloneTest do
 
     results =
       try do
-        case Kreuzberg.embed_async(["Async embedding test"], %{model: "balanced", normalize: true}) do
+        case Kreuzberg.embed(["Async embedding test"], %{model: "balanced", normalize: true}) do
           {:ok, res} -> res
           _ -> flunk("Embedding failed")
         end
