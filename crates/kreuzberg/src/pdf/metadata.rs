@@ -320,12 +320,12 @@ pub fn extract_common_metadata_from_document(document: &PdfDocument<'_>) -> Resu
     let authors = metadata_cache[2]
         .as_ref()
         .map(|author_str| parse_authors(author_str))
-        .and_then(|parsed| if !parsed.is_empty() { Some(parsed) } else { None });
+        .filter(|parsed| !parsed.is_empty());
 
     let keywords = metadata_cache[3]
         .as_ref()
         .map(|keywords_str| parse_keywords(keywords_str))
-        .and_then(|parsed| if !parsed.is_empty() { Some(parsed) } else { None });
+        .filter(|parsed| !parsed.is_empty());
 
     let created_at = metadata_cache[4].as_ref().map(|date_str| parse_pdf_date(date_str));
 

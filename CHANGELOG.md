@@ -7,12 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [4.9.1] - Unreleased
+## [4.9.1] - 2026-04-19
 
 ### Fixed
 
 - **#754**: Preserve `_internal_bindings.pyi` type stub during wheel artifact cleanup — published wheels now include inline type information for the core binding module
 - Add missing `Default` impl for `PyCancellationToken` to satisfy clippy `new_without_default` lint
+- Improve download resilience for `eng.traineddata` in build script — increase retries from 3 to 5, add fallback URL via `raw.githubusercontent.com`, and increase timeout to 300s
+- Increase Task installer retry resilience in CI — 5 attempts with `--retry-all-errors` curl flag
 
 ---
 

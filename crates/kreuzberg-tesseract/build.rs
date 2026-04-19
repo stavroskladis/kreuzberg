@@ -613,8 +613,11 @@ mod build_tesseract {
         let eng_traineddata = bundled_tessdata_dir.join("eng.traineddata");
         if !eng_traineddata.exists() {
             fs::create_dir_all(&bundled_tessdata_dir).expect("Failed to create tessdata directory");
-            download_file(
-                "https://github.com/tesseract-ocr/tessdata_fast/raw/main/eng.traineddata",
+            download_file_with_fallback(
+                &[
+                    "https://github.com/tesseract-ocr/tessdata_fast/raw/main/eng.traineddata",
+                    "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/main/eng.traineddata",
+                ],
                 &eng_traineddata,
                 "eng.traineddata",
             );
@@ -911,49 +914,66 @@ mod build_tesseract {
     }
 
     /// Download a single file to a destination path with retries.
-    fn download_file(url: &str, dest: &Path, label: &str) {
+    /// Download a single file, trying each URL in order. Each URL gets up to
+    /// `max_attempts` retries with exponential backoff before falling through
+    /// to the next URL.
+    fn download_file_with_fallback(urls: &[&str], dest: &Path, label: &str) {
         let client = reqwest::blocking::Client::builder()
-            .timeout(std::time::Duration::from_secs(120))
+            .timeout(std::time::Duration::from_secs(300))
             .http1_only()
             .build()
             .expect("Failed to create HTTP client");
 
-        eprintln!("Downloading {} from {}", label, url);
-        let max_attempts = 3;
+        let max_attempts: u32 = 5;
+        let mut last_err = String::new();
 
-        for attempt in 1..=max_attempts {
-            let err_msg = match client.get(url).send() {
-                Ok(resp) => {
-                    if resp.status().is_success() {
-                        match resp.bytes() {
-                            Ok(bytes) => {
-                                fs::write(dest, &bytes).expect("Failed to write downloaded file");
-                                eprintln!("Downloaded {} ({} bytes)", label, bytes.len());
-                                return;
+        for url in urls {
+            eprintln!("Downloading {} from {}", label, url);
+
+            for attempt in 1..=max_attempts {
+                let err_msg = match client.get(*url).send() {
+                    Ok(resp) => {
+                        if resp.status().is_success() {
+                            match resp.bytes() {
+                                Ok(bytes) => {
+                                    fs::write(dest, &bytes).expect("Failed to write downloaded file");
+                                    eprintln!("Downloaded {} ({} bytes)", label, bytes.len());
+                                    return;
+                                }
+                                Err(err) => format!("Failed to read response: {}", err),
                             }
-                            Err(err) => format!("Failed to read response: {}", err),
+                        } else {
+                            format!("HTTP {}", resp.status().as_u16())
                         }
-                    } else {
-                        format!("HTTP {}", resp.status().as_u16())
                     }
+                    Err(err) => err.to_string(),
+                };
+
+                last_err = err_msg.clone();
+
+                if attempt == max_attempts {
+                    println!(
+                        "cargo:warning=All {} attempts for {} exhausted on URL {}",
+                        max_attempts, label, url
+                    );
+                    break;
                 }
-                Err(err) => err.to_string(),
-            };
 
-            if attempt == max_attempts {
-                panic!(
-                    "Failed to download {} after {} attempts: {}",
-                    label, max_attempts, err_msg
+                let backoff = 2u64.pow((attempt - 1).min(4));
+                println!(
+                    "cargo:warning=Download attempt {}/{} for {} failed ({}). Retrying in {}s...",
+                    attempt, max_attempts, label, err_msg, backoff
                 );
+                std::thread::sleep(std::time::Duration::from_secs(backoff));
             }
-
-            let backoff = 2u64.pow((attempt - 1).min(3));
-            println!(
-                "cargo:warning=Download attempt {}/{} for {} failed ({}). Retrying in {}s...",
-                attempt, max_attempts, label, err_msg, backoff
-            );
-            std::thread::sleep(std::time::Duration::from_secs(backoff));
         }
+
+        panic!(
+            "Failed to download {} after trying {} URL(s): {}",
+            label,
+            urls.len(),
+            last_err
+        );
     }
 
     fn normalize_cmake_path(path: &Path) -> String {

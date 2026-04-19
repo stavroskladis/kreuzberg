@@ -1465,9 +1465,11 @@ pub(crate) fn extract_document_structure_from_segments(
         .collect();
 
     // Stage 3: Per-page structured extraction.
-    // When the structure tree provides heading roles, skip layout-model heading
-    // overrides — they can demote correctly-tagged headings. The tree is authoritative.
-    let effective_layout_hints = if used_structure_tree { None } else { layout_hints };
+    // Always pass layout hints regardless of structure tree status. Layout hints
+    // provide multi-purpose classification (furniture/header/footer marking, table
+    // regions, list items) beyond just heading overrides. The structure tree's
+    // heading roles are still respected via assigned_role on segments.
+    let effective_layout_hints = layout_hints;
     let page_inputs: Vec<PageInput> = (0..page_count)
         .map(|i| PageInput {
             page_index: i,

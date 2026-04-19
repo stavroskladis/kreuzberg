@@ -474,7 +474,7 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
 
 [[package]]
 name = "benchmark-harness"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "ahash",
  "async-trait",
@@ -1836,7 +1836,7 @@ checksum = "d0881ea181b1df73ff77ffaaf9c7544ecc11e82fba9b5f27b262a3c73a332555"
 
 [[package]]
 name = "e2e-rust"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "kreuzberg",
  "serde_json",
@@ -3435,9 +3435,9 @@ dependencies = [
 
 [[package]]
 name = "jsonschema"
-version = "0.46.0"
+version = "0.46.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "84695c6689b01384700a3d93acecbd07231ee6fff1bf22ae980b4c307e6ddfd5"
+checksum = "2d87ef9a314ee37b69ef9ab130d3159f04287dda52151b064752842065e0db2e"
 dependencies = [
  "ahash",
  "bytecount",
@@ -3473,7 +3473,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "ahash",
  "anyhow",
@@ -3580,7 +3580,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-cli"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "anstyle",
  "anyhow",
@@ -3600,7 +3600,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-e2e-generator"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -3617,7 +3617,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-ffi"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "ahash",
  "async-trait",
@@ -3637,7 +3637,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-node"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "ahash",
  "async-trait",
@@ -3660,7 +3660,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-paddle-ocr"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "geo-clipper",
  "geo-types",
@@ -3674,7 +3674,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-pdfium-render"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "bindgen",
  "bitflags 2.11.1",
@@ -3698,7 +3698,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-php"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "ahash",
  "ctor",
@@ -3714,7 +3714,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-py"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "ahash",
  "async-trait",
@@ -3731,7 +3731,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-tesseract"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "cc",
  "cmake",
@@ -3770,7 +3770,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg_rustler"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "kreuzberg",
  "rustler",
@@ -4856,9 +4856,9 @@ dependencies = [
 
 [[package]]
 name = "pdf_oxide"
-version = "0.3.33"
+version = "0.3.34"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "822c4279fa3121c379a8b62bdb317fb016420a1adcba273fee4749b65f10e614"
+checksum = "a14383ecfbcbcfc2bead3b58c7165318006bd9e799af90578b4cebb7e017147d"
 dependencies = [
  "aes 0.9.0",
  "base64 0.22.1",
@@ -5625,9 +5625,9 @@ dependencies = [
 
 [[package]]
 name = "referencing"
-version = "0.46.0"
+version = "0.46.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a2d5554bf79f4acf770dc3193b44b2d63b348f5f7b7448a0ea1191b37b620728"
+checksum = "aee6970bf1974cd719a1f4e8bc5a8051a33740194b7246430441cff79faff66d"
 dependencies = [
  "ahash",
  "fluent-uri",
@@ -6415,7 +6415,7 @@ checksum = "1b6b67fb9a61334225b5b790716f609cd58395f895b3fe8b328786812a40bc3b"
 
 [[package]]
 name = "snippet-runner"
-version = "4.9.0"
+version = "4.9.1"
 dependencies = [
  "clap",
  "rayon",
@@ -7303,9 +7303,9 @@ checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
 
 [[package]]
 name = "typenum"
-version = "1.19.0"
+version = "1.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "562d481066bde0658276a35467c4af00bdc6ee726305698a55b86e61d7ad82bb"
+checksum = "40ce102ab67701b8526c123c1bab5cbe42d7040ccfd0f64af1a385808d2f43de"
 
 [[package]]
 name = "unicase"
@@ -7848,9 +7848,9 @@ dependencies = [
 
 [[package]]
 name = "web_atoms"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57a9779e9f04d2ac1ce317aee707aa2f6b773afba7b931222bff6983843b1576"
+checksum = "d7cff6eef815df1834fd250e3a2ff436044d82a9f1bc1980ca1dbdf07effc538"
 dependencies = [
  "phf",
  "phf_codegen",
