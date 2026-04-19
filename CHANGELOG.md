@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **#754**: Preserve `_internal_bindings.pyi` type stub during wheel artifact cleanup — published wheels now include inline type information for the core binding module
 - Add missing `Default` impl for `PyCancellationToken` to satisfy clippy `new_without_default` lint
 
 ---
