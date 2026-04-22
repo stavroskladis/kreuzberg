@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **#783**: PaddleOCR backend not utilizing GPU (CUDA) despite `AccelerationConfig` — `AccelerationConfig` from `ExtractionConfig` was never reaching PaddleOCR ONNX sessions, silently falling back to CPU. Acceleration is now propagated through `OcrConfig` to all OCR call sites (image extractor, PDF OCR).
+- **#779**: Expose `PaddleOcrConfig` in Python bindings and update `OcrConfig` for backward compatibility.
+
+### Added
+
+- GPU CI workflow (`ci-gpu.yaml`) targeting self-hosted `runner-gpu-t4-spot` runners with NVIDIA T4 GPUs.
+- Comprehensive GPU integration tests covering all ORT-accelerated paths: PaddleOCR (det/cls/rec), layout detection (RT-DETR), embeddings, document orientation detection, and end-to-end extraction. Tests use tracing log capture to verify CUDA EP is actually invoked.
+
+---
+
 ## [4.9.2] - 2026-04-19
 
 ### Fixed
