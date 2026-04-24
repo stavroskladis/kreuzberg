@@ -187,7 +187,9 @@ pub use extractor::DocumentExtractor;
 pub use ocr::{
     OcrBackend, OcrBackendType, clear_ocr_backends, list_ocr_backends, register_ocr_backend, unregister_ocr_backend,
 };
-pub use processor::{PostProcessor, ProcessingStage, list_post_processors, register_post_processor, unregister_post_processor};
+pub use processor::{
+    PostProcessor, ProcessingStage, list_post_processors, register_post_processor, unregister_post_processor,
+};
 pub(crate) use renderer::Renderer;
 pub use traits::Plugin;
 pub use validator::{Validator, register_validator, unregister_validator};

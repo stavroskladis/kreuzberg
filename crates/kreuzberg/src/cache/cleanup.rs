@@ -241,4 +241,3 @@ pub fn clear_cache_directory(cache_dir: &str) -> Result<(usize, f64)> {
 
     Ok((removed_count, removed_size))
 }
-

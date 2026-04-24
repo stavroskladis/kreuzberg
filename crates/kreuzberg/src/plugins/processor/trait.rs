@@ -12,7 +12,7 @@ use async_trait::async_trait;
 ///
 /// Post-processors are executed in stage order (Early → Middle → Late).
 /// Use stages to control the order of post-processing operations.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default, serde::Serialize, serde::Deserialize)]
 pub enum ProcessingStage {
     /// Early stage - foundational processing.
     ///
@@ -21,6 +21,7 @@ pub enum ProcessingStage {
     /// - Character encoding normalization
     /// - Entity extraction (NER)
     /// - Text quality scoring
+    #[default]
     Early,
 
     /// Middle stage - content transformation.

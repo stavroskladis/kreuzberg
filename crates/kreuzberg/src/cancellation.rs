@@ -40,14 +40,6 @@ pub struct CancellationToken {
 }
 
 impl CancellationToken {
-    /// Create a new, un-cancelled token.
-    #[inline]
-    pub(crate) fn new() -> Self {
-        Self {
-            cancelled: Arc::new(AtomicBool::new(false)),
-        }
-    }
-
     /// Signal cancellation.
     ///
     /// All clones of this token will observe [`is_cancelled`] returning `true`

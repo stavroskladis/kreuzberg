@@ -909,7 +909,6 @@ pub(crate) async fn start_mcp_server() -> Result<(), Box<dyn std::error::Error +
 ///
 /// This variant allows specifying a custom extraction configuration
 /// (e.g., loaded from a file) instead of using defaults.
-#[cfg(feature = "cli")]
 pub async fn start_mcp_server_with_config(
     config: ExtractionConfig,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -992,7 +991,7 @@ pub(crate) async fn start_mcp_server_http(
 ///     Ok(())
 /// }
 /// ```
-#[cfg(all(feature = "mcp-http", feature = "cli"))]
+#[cfg(feature = "mcp-http")]
 pub async fn start_mcp_server_http_with_config(
     host: impl AsRef<str>,
     port: u16,

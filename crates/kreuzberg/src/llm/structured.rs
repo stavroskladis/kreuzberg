@@ -92,7 +92,8 @@ pub(crate) async fn extract_structured(
     let sanitized_schema = sanitize_schema_for_provider(&config.schema, &config.llm.model);
 
     // Build chat request with JSON schema response format.
-    // Use field assignment because `stream` is pub(crate) in liter-llm.
+    // Field assignment needed: `stream` is pub(crate) in liter-llm, preventing struct literal.
+    #[allow(clippy::field_reassign_with_default)]
     let mut request = liter_llm::ChatCompletionRequest::default();
     request.model = config.llm.model.clone();
     request.messages = vec![liter_llm::Message::User(liter_llm::UserMessage {

@@ -212,7 +212,6 @@ pub(crate) async fn serve_with_config_and_limits(
 ///     Ok(())
 /// }
 /// ```
-#[cfg(feature = "cli")]
 pub async fn serve_with_server_config(extraction_config: ExtractionConfig, server_config: ServerConfig) -> Result<()> {
     let ip: IpAddr = server_config
         .host

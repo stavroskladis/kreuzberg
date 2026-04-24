@@ -136,7 +136,8 @@ pub(crate) async fn vlm_ocr(
         name: None,
     });
 
-    // Use mutable default because `stream` is pub(crate) in liter-llm.
+    // Field assignment needed: `stream` is pub(crate) in liter-llm, preventing struct literal.
+    #[allow(clippy::field_reassign_with_default)]
     let mut request = ChatCompletionRequest::default();
     request.model = config.model.clone();
     request.messages = vec![message];

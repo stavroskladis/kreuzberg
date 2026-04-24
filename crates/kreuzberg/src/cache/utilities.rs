@@ -135,4 +135,3 @@ pub fn fast_hash(data: &[u8]) -> u64 {
 pub fn validate_cache_key(key: &str) -> bool {
     key.len() == 32 && key.chars().all(|c| c.is_ascii_hexdigit())
 }
-

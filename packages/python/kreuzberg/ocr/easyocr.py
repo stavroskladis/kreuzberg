@@ -13,20 +13,89 @@ from kreuzberg.exceptions import OcrError, ValidationError
 logger = logging.getLogger(__name__)
 
 SUPPORTED_LANGUAGES = {
-    "abq", "ady", "af", "ang", "ar", "as", "ava", "az",
-    "be", "bg", "bh", "bho", "bn", "bs",
-    "ch_sim", "ch_tra", "che", "cs", "cy",
-    "da", "dar", "de", "en", "es", "et",
-    "fa", "fr", "ga", "gom",
-    "hi", "hr", "hu", "id", "inh", "is", "it", "ja",
-    "kbd", "kn", "ko", "ku",
-    "la", "lbe", "lez", "lt", "lv",
-    "mah", "mai", "mi", "mn", "mr", "ms", "mt",
-    "ne", "new", "nl", "no", "oc",
-    "pi", "pl", "pt", "ro", "ru", "rs_cyrillic", "rs_latin",
-    "sck", "sk", "sl", "sq", "sv", "sw",
-    "ta", "tab", "te", "th", "tjk", "tl", "tr",
-    "ug", "uk", "ur", "uz", "vi",
+    "abq",
+    "ady",
+    "af",
+    "ang",
+    "ar",
+    "as",
+    "ava",
+    "az",
+    "be",
+    "bg",
+    "bh",
+    "bho",
+    "bn",
+    "bs",
+    "ch_sim",
+    "ch_tra",
+    "che",
+    "cs",
+    "cy",
+    "da",
+    "dar",
+    "de",
+    "en",
+    "es",
+    "et",
+    "fa",
+    "fr",
+    "ga",
+    "gom",
+    "hi",
+    "hr",
+    "hu",
+    "id",
+    "inh",
+    "is",
+    "it",
+    "ja",
+    "kbd",
+    "kn",
+    "ko",
+    "ku",
+    "la",
+    "lbe",
+    "lez",
+    "lt",
+    "lv",
+    "mah",
+    "mai",
+    "mi",
+    "mn",
+    "mr",
+    "ms",
+    "mt",
+    "ne",
+    "new",
+    "nl",
+    "no",
+    "oc",
+    "pi",
+    "pl",
+    "pt",
+    "ro",
+    "ru",
+    "rs_cyrillic",
+    "rs_latin",
+    "sck",
+    "sk",
+    "sl",
+    "sq",
+    "sv",
+    "sw",
+    "ta",
+    "tab",
+    "te",
+    "th",
+    "tjk",
+    "tl",
+    "tr",
+    "ug",
+    "uk",
+    "ur",
+    "uz",
+    "vi",
 }
 
 
@@ -78,7 +147,9 @@ class EasyOCRBackend:
             return
         try:
             self._reader = self._easyocr_module.Reader(
-                self.languages, gpu=self.use_gpu, verbose=False,
+                self.languages,
+                gpu=self.use_gpu,
+                verbose=False,
                 model_storage_directory=self.model_storage_directory,
             )
         except Exception as e:
@@ -116,6 +187,7 @@ class EasyOCRBackend:
 
     def process_image_file(self, path: str, language: str) -> dict[str, Any]:
         from pathlib import Path  # noqa: PLC0415
+
         return self.process_image(Path(path).read_bytes(), language)
 
     @staticmethod
@@ -163,6 +235,7 @@ class EasyOCRBackend:
     def _is_cuda_available() -> bool:
         try:
             import torch  # noqa: PLC0415
+
             return bool(torch.cuda.is_available())
         except ImportError:
             return False

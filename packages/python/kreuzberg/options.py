@@ -744,6 +744,7 @@ class Drawing:
     doc_properties: str | None = None
     image_ref: str | None = None
 
+
 @dataclass
 class AnchorProperties:
     """Properties for anchored drawings."""
@@ -755,6 +756,7 @@ class AnchorProperties:
     position_v: str | None = None
     wrap_type: str = ""
 
+
 @dataclass
 class HeaderFooter:
     """Header footer."""
@@ -762,6 +764,7 @@ class HeaderFooter:
     paragraphs: list[str] = field(default_factory=list)
     tables: list[str] = field(default_factory=list)
     header_type: str = ""
+
 
 @dataclass
 class PageMarginsPoints:
@@ -775,12 +778,14 @@ class PageMarginsPoints:
     footer: float | None = None
     gutter: float | None = None
 
+
 @dataclass
 class ResolvedStyle:
     """Fully resolved (flattened) style after walking the inheritance chain."""
 
     paragraph_properties: str = ""
     run_properties: str = ""
+
 
 @dataclass
 class TableProperties:
@@ -795,6 +800,7 @@ class TableProperties:
     cell_margins: str | None = None
     indent: str | None = None
     caption: str | None = None
+
 
 @dataclass
 class XlsxAppProperties:
@@ -952,6 +958,7 @@ class TokenReductionConfig:
     preserve_patterns: list[str] = field(default_factory=list)
     target_reduction: float | None = None
     enable_semantic_clustering: bool = False
+
 
 @dataclass
 class DocumentStructure:
@@ -1375,6 +1382,7 @@ class OcrMetadata:
     table_rows: int | None = None
     table_cols: int | None = None
 
+
 @dataclass
 class PptxMetadata:
     """PowerPoint presentation metadata."""
@@ -1416,6 +1424,7 @@ class CsvMetadata:
     has_header: bool = False
     column_types: list[str] | None = None
 
+
 @dataclass
 class BibtexMetadata:
     """BibTeX bibliography metadata."""
@@ -1428,6 +1437,7 @@ class BibtexMetadata:
     year_range: YearRange | None = None
     entry_types: dict[str, int] | None = None
 
+
 @dataclass
 class CitationMetadata:
     """Citation file metadata (RIS, PubMed, EndNote)."""
@@ -1439,6 +1449,7 @@ class CitationMetadata:
     dois: list[str] = field(default_factory=list)
     keywords: list[str] = field(default_factory=list)
 
+
 @dataclass
 class FictionBookMetadata:
     """FictionBook (FB2) metadata."""
@@ -1446,6 +1457,7 @@ class FictionBookMetadata:
     genres: list[str] = field(default_factory=list)
     sequences: list[str] = field(default_factory=list)
     annotation: str | None = None
+
 
 @dataclass
 class DbfMetadata:
@@ -1455,6 +1467,7 @@ class DbfMetadata:
     field_count: int = 0
     fields: list[DbfFieldInfo] = field(default_factory=list)
 
+
 @dataclass
 class JatsMetadata:
     """JATS (Journal Article Tag Suite) metadata."""
@@ -1463,6 +1476,7 @@ class JatsMetadata:
     license: str | None = None
     history_dates: dict[str, str] = field(default_factory=dict)
     contributor_roles: list[ContributorRole] = field(default_factory=list)
+
 
 @dataclass
 class EpubMetadata:
@@ -1475,11 +1489,13 @@ class EpubMetadata:
     dc_type: str | None = None
     cover_image: str | None = None
 
+
 @dataclass
 class PstMetadata:
     """Outlook PST archive metadata."""
 
     message_count: int = 0
+
 
 @dataclass
 class OcrConfidence:
@@ -1618,6 +1634,7 @@ class OcrCacheStats:
     total_files: int = 0
     total_size_mb: float = 0.0
 
+
 @dataclass
 class PaddleOcrConfig:
     """Configuration for PaddleOCR backend."""
@@ -1670,24 +1687,24 @@ AnnotationKind = str | str | None
 
 # Format-specific metadata (discriminated union).
 FormatMetadata = (
-    str |
-    DocxMetadata |
-    ExcelMetadata |
-    EmailMetadata |
-    PptxMetadata |
-    ArchiveMetadata |
-    XmlMetadata |
-    TextMetadata |
-    HtmlMetadata |
-    OcrMetadata |
-    CsvMetadata |
-    BibtexMetadata |
-    CitationMetadata |
-    FictionBookMetadata |
-    DbfMetadata |
-    JatsMetadata |
-    EpubMetadata |
-    PstMetadata
+    str
+    | DocxMetadata
+    | ExcelMetadata
+    | EmailMetadata
+    | PptxMetadata
+    | ArchiveMetadata
+    | XmlMetadata
+    | TextMetadata
+    | HtmlMetadata
+    | OcrMetadata
+    | CsvMetadata
+    | BibtexMetadata
+    | CitationMetadata
+    | FictionBookMetadata
+    | DbfMetadata
+    | JatsMetadata
+    | EpubMetadata
+    | PstMetadata
 )
 
 # Bounding geometry for an OCR element.
