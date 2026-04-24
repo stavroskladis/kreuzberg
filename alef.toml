@@ -392,7 +392,7 @@ functions = [
     "register_chunking_processor",
     "extract_bundled_pdfium",      # PDF binary extraction — internal utility, not user-facing
 
-    # Plugin registration — requires trait objects that can't be bound
+    # Plugin registration — handled by trait bridge codegen, not regular function bindings
     "register_ocr_backend",
     "register_renderer",
 
@@ -722,6 +722,9 @@ exclude_functions = [
     "extract_metadata_with_passwords",
     "extract_text_from_pdf_with_passwords",
     "process_images_with_ocr",
+    # Vec<&str> generated but Rust API expects &[String] — type mismatch
+    "batch_reduce_tokens",
+    "chunk_texts_batch",
 ]
 exclude_types = [
     # Arc<Mutex<T>> opaque types — codegen doesn't generate .lock() for methods
@@ -753,6 +756,9 @@ exclude_functions = [
     "detect_layout_for_images",
     "extract_metadata_with_passwords",
     "extract_text_from_pdf_with_passwords",
+    # Vec<&str> vs &[String] type mismatch in codegen
+    "batch_reduce_tokens",
+    "chunk_texts_batch",
 ]
 exclude_types = [
     # Opaque Arc<Mutex<T>> types — codegen doesn't generate .lock() calls for methods
@@ -784,6 +790,17 @@ exclude_functions = [
     # Option<&LlmConfig> ref mismatch / complex param type mismatches
     "validate_vlm_backend_config",
     "extract_text_from_image_with_ocr",
+    # PageBoundary params — Vec<PageBoundary> can't be converted across FFI (type not in public API)
+    "chunk_text",
+    "chunk_text_with_heading_source",
+    "chunk_semantic",
+    # Mismatched types: codegen emits &Vec<&str> but API expects &[String]
+    "batch_reduce_tokens",
+    "chunk_texts_batch",
+    # OcrBackend trait bridge: codegen emits KreuzbergOcrBackendBridge with *const c_void which is
+    # not Send, causing tokio::task::spawn_blocking to reject it. Requires alef source fixes.
+    "register_ocr_backend",
+    "unregister_ocr_backend",
 ]
 
 [go]
@@ -802,6 +819,12 @@ gem_name = "kreuzberg"
 exclude_functions = [
     # Functions that depend on OutputFormat type collision workaround
     "apply_output_format",
+    # Uses ? operator in a Vec<Element> return context (non-Result function)
+    "transform_extraction_result_to_elements",
+    # config param is Option<String> but codegen passes &config as &Option<String> to serde_json::from_str
+    "extract_file",
+    "extract_file_async",
+    "extract_file_sync",
 ]
 
 [elixir]
@@ -872,6 +895,27 @@ exclude_functions = [
     "evaluate_per_page_ocr",
     "apply_execution_providers",
     "reextract_raw_images_via_pdfium",
+    # OcrBackend trait bridge: codegen captures *const ErlNifEnv which is neither Send nor Sync,
+    # and the generated impl pulls in async_trait which conflicts with Rustler's NIF ABI.
+    # Requires alef source fixes to resolve.
+    "register_ocr_backend",
+    "unregister_ocr_backend",
+    # batch_extract_* take Vec<(PathBuf, Option<FileExtractionConfig>)> or
+    # Vec<(Vec<u8>, String, Option<...>)> which codegen maps to Vec<String> —
+    # type mismatch; no safe tuple-marshalling across NIF boundary
+    "batch_extract_file_sync",
+    "batch_extract_bytes_sync",
+    "batch_extract_file",
+    "batch_extract_bytes",
+    # chunk_text / chunk_semantic take Option<&[PageBoundary]> but codegen emits
+    # &Option<Vec<PageBoundary>> — wrong type; PageBoundary not representable across NIF
+    "chunk_text",
+    "chunk_text_with_heading_source",
+    "chunk_semantic",
+    # warm_model / download_model take Option<PathBuf> but codegen emits PathBuf::from(Option<String>)
+    # which has no From impl; exclude until alef path-option codegen is fixed
+    "warm_model",
+    "download_model",
 ]
 exclude_types = [
     # Trait types cannot be FFI-bound
@@ -909,6 +953,9 @@ exclude_functions = [
     "chunk_semantic",
     # Non-Result return type with stub body
     "get_preset",
+    # Vec<&str> vs &[String] type mismatch in codegen
+    "batch_reduce_tokens",
+    "chunk_texts_batch",
 ]
 exclude_types = [
     # Enum types that don't have From<String> implementation for PHP
@@ -1025,6 +1072,9 @@ exclude_functions = [
     "start_mcp_server_http_with_config",
     # Vec<&mut PdfImage> mutability mismatch
     "reextract_raw_images_via_pdfium",
+    # Vec<&str> vs &[String] / texts_refs scope — codegen type mismatch
+    "batch_reduce_tokens",
+    "chunk_texts_batch",
 ]
 # Everything except ort-dependent features (paddle-ocr, layout-detection, embeddings, auto-rotate)
 features = [
@@ -1047,6 +1097,32 @@ features = [
     "liter-llm",
     "stopwords",
 ]
+
+# ---------------------------------------------------------------------------
+# Trait bridges — generate FFI bridge code for plugin traits
+# ---------------------------------------------------------------------------
+
+[[trait_bridges]]
+trait_name = "OcrBackend"
+super_trait = "kreuzberg::plugins::Plugin"
+registry_getter = "kreuzberg::plugins::registry::get_ocr_backend_registry"
+register_fn = "register_ocr_backend"
+exclude_languages = ["elixir"]
+
+[[trait_bridges]]
+trait_name = "PostProcessor"
+super_trait = "kreuzberg::plugins::Plugin"
+registry_getter = "kreuzberg::plugins::registry::get_post_processor_registry"
+register_fn = "register_post_processor"
+register_extra_args = "50"
+exclude_languages = ["elixir"]
+
+[[trait_bridges]]
+trait_name = "Validator"
+super_trait = "kreuzberg::plugins::Plugin"
+registry_getter = "kreuzberg::plugins::registry::get_validator_registry"
+register_fn = "register_validator"
+exclude_languages = ["elixir"]
 
 # ---------------------------------------------------------------------------
 # DTO styles
@@ -1080,11 +1156,16 @@ keywords = ["document", "extraction", "pdf", "ocr", "text"]
 # Trait bridges — generate FFI bridge code for plugin traits
 # ---------------------------------------------------------------------------
 
-[[trait_bridges]]
-trait_name = "OcrBackend"
-super_trait = "kreuzberg::plugins::Plugin"
-registry_getter = "kreuzberg::plugins::registry::get_ocr_backend_registry"
-register_fn = "register_ocr_backend"
+# [[trait_bridges]]
+# trait_name = "OcrBackend"
+# super_trait = "kreuzberg::plugins::Plugin"
+# registry_getter = "kreuzberg::plugins::registry::get_ocr_backend_registry"
+# register_fn = "register_ocr_backend"
+# NOTE: disabled — bridge codegen emits broken code:
+#   KreuzbergError::Plugin treated as tuple variant (it's struct),
+#   Vec<u8>: From<&Path> not satisfied, mismatched types in vtable calls,
+#   OcrBackendRegistry::unregister method not found.
+#   Re-enable once alef bridge codegen is fixed upstream.
 
 # TODO: add PostProcessor and Validator bridges once OcrBackend is proven
 # [[trait_bridges]]

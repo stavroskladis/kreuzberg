@@ -195,28 +195,6 @@ pub(crate) fn smart_cleanup_cache(
     cleanup_cache(cache_dir, max_age_days, max_size_mb, target_ratio)
 }
 
-pub(crate) fn is_cache_valid(cache_path: &str, max_age_days: f64) -> bool {
-    let path = Path::new(cache_path);
-
-    if !path.exists() {
-        return false;
-    }
-
-    match fs::metadata(path) {
-        Ok(metadata) => match metadata.modified() {
-            Ok(modified) => match SystemTime::now().duration_since(modified) {
-                Ok(elapsed) => {
-                    let age_days = elapsed.as_secs() as f64 / (24.0 * 3600.0);
-                    age_days <= max_age_days
-                }
-                Err(_) => false,
-            },
-            Err(_) => false,
-        },
-        Err(_) => false,
-    }
-}
-
 pub fn clear_cache_directory(cache_dir: &str) -> Result<(usize, f64)> {
     let dir_path = Path::new(cache_dir);
 
@@ -264,14 +242,3 @@ pub fn clear_cache_directory(cache_dir: &str) -> Result<(usize, f64)> {
     Ok((removed_count, removed_size))
 }
 
-pub(crate) fn batch_cleanup_caches(
-    cache_dirs: &[&str],
-    max_age_days: f64,
-    max_size_mb: f64,
-    min_free_space_mb: f64,
-) -> Result<Vec<(usize, f64)>> {
-    cache_dirs
-        .iter()
-        .map(|dir| smart_cleanup_cache(dir, max_age_days, max_size_mb, min_free_space_mb))
-        .collect()
-}

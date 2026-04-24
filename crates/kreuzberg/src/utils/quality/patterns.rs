@@ -86,18 +86,6 @@ pub(crate) static PAGINATION_PATTERN: Lazy<Regex> = Lazy::new(|| {
 });
 
 // ============================================================================
-// Text Structure Patterns
-// ============================================================================
-
-/// Detects sentence boundaries
-pub(crate) static SENTENCE_DETECT: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"[.!?]\s+[A-Z]").expect("Sentence detection regex pattern is valid and should compile"));
-
-/// Detects punctuation marks
-pub(crate) static PUNCTUATION_DETECT: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"[.!?]").expect("Punctuation detection regex pattern is valid and should compile"));
-
-// ============================================================================
 // Whitespace Normalization Patterns
 // ============================================================================
 
@@ -111,7 +99,3 @@ pub(crate) static WHITESPACE_NORMALIZE: Lazy<Regex> = Lazy::new(|| {
 pub(crate) static NEWLINE_NORMALIZE: Lazy<Regex> = Lazy::new(|| {
     Regex::new(r"\n\s*\n\s*\n+").expect("Newline normalization regex pattern is valid and should compile")
 });
-
-/// Cleans up newline sequences
-pub(crate) static NEWLINE_CLEANUP: Lazy<Regex> =
-    Lazy::new(|| Regex::new(r"\n+").expect("Newline cleanup regex pattern is valid and should compile"));

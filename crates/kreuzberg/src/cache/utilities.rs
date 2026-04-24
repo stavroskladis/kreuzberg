@@ -136,39 +136,3 @@ pub fn validate_cache_key(key: &str) -> bool {
     key.len() == 32 && key.chars().all(|c| c.is_ascii_hexdigit())
 }
 
-pub(crate) fn filter_old_cache_entries(cache_times: &[f64], current_time: f64, max_age_seconds: f64) -> Vec<usize> {
-    cache_times
-        .iter()
-        .enumerate()
-        .filter_map(|(idx, &time)| {
-            if current_time - time > max_age_seconds {
-                Some(idx)
-            } else {
-                None
-            }
-        })
-        .collect()
-}
-
-pub(crate) fn sort_cache_by_access_time(mut entries: Vec<(String, f64)>) -> Vec<String> {
-    entries.sort_by(|a, b| a.1.total_cmp(&b.1));
-    entries.into_iter().map(|(key, _)| key).collect()
-}
-
-/// Validate and sanitize a cache namespace string.
-///
-/// Namespace must be alphanumeric, hyphens, or underscores only, max 64 chars.
-/// Returns `None` if the input is invalid.
-pub(crate) fn sanitize_namespace(namespace: &str) -> Option<String> {
-    if namespace.is_empty() || namespace.len() > 64 {
-        return None;
-    }
-    if namespace
-        .chars()
-        .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
-    {
-        Some(namespace.to_string())
-    } else {
-        None
-    }
-}

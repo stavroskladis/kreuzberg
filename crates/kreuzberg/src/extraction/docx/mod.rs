@@ -14,9 +14,13 @@ pub mod styles;
 pub mod table;
 pub mod theme;
 
+#[cfg(test)]
 use crate::error::{KreuzbergError, Result};
+#[cfg(test)]
 use crate::extraction::capacity;
+#[cfg(test)]
 use crate::types::PageBoundary;
+#[cfg(test)]
 use std::io::Cursor;
 
 // --- DOCX Constants ---
@@ -35,6 +39,7 @@ pub const EMUS_PER_INCH: i64 = 914_400;
 pub const EMUS_PER_PIXEL_96DPI: i64 = 9_525;
 
 /// Extract text from DOCX bytes.
+#[cfg(test)]
 pub(crate) fn extract_text(bytes: &[u8]) -> Result<String> {
     parser::extract_text_from_bytes(bytes)
 }
@@ -44,22 +49,7 @@ pub(crate) fn extract_text(bytes: &[u8]) -> Result<String> {
 /// Detects explicit page breaks (`<w:br w:type="page"/>`) in the document XML and maps them to
 /// character offsets in the extracted text. This is a best-effort approach that only detects
 /// explicit page breaks, not automatic pagination.
-///
-/// # Arguments
-/// * `bytes` - The DOCX file contents as bytes
-///
-/// # Returns
-/// * `Ok((String, Option<Vec<PageBoundary>>))` - Extracted text and optional page boundaries
-/// * `Err(KreuzbergError)` - If extraction fails
-///
-/// # Limitations
-/// - Only detects explicit page breaks, not reflowed content
-/// - Page numbers are estimates, not guaranteed accurate
-/// - Word's pagination may differ from detected breaks
-/// - No page dimensions available (would require layout engine)
-///
-/// # Performance
-/// Performs two passes: one with docx-lite for text extraction and one for page break detection.
+#[cfg(test)]
 pub(crate) fn extract_text_with_page_breaks(bytes: &[u8]) -> Result<(String, Option<Vec<PageBoundary>>)> {
     let text = extract_text(bytes)?;
 
@@ -74,31 +64,6 @@ pub(crate) fn extract_text_with_page_breaks(bytes: &[u8]) -> Result<(String, Opt
     Ok((text, Some(boundaries)))
 }
 
-/// Detect explicit page break positions in document.xml and extract full text with page boundaries.
-///
-/// This is a convenience function for the extractor that combines text extraction with page
-/// break detection. It returns the extracted text along with page boundaries.
-///
-/// # Arguments
-/// * `bytes` - The DOCX file contents (ZIP archive)
-///
-/// # Returns
-/// * `Ok(Option<Vec<PageBoundary>>)` - Optional page boundaries
-/// * `Err(KreuzbergError)` - If extraction fails
-///
-/// # Limitations
-/// - Only detects explicit page breaks, not reflowed content
-/// - Page numbers are estimates based on detected breaks
-pub(crate) fn detect_page_breaks_from_docx(bytes: &[u8]) -> Result<Option<Vec<PageBoundary>>> {
-    match extract_text_with_page_breaks(bytes) {
-        Ok((_, boundaries)) => Ok(boundaries),
-        Err(e) => {
-            tracing::debug!("Page break detection failed: {}", e);
-            Ok(None)
-        }
-    }
-}
-
 /// Compute the 1-based page number for each top-level table in the document.
 ///
 /// Scans `word/document.xml` for page-break markers (`<w:br w:type="page"/>`) and
@@ -111,6 +76,7 @@ pub(crate) fn detect_page_breaks_from_docx(bytes: &[u8]) -> Result<Option<Vec<Pa
 ///
 /// # Limitations
 /// - Only detects explicit page breaks, not reflowed/automatic pagination.
+#[cfg(test)]
 pub(crate) fn detect_table_page_numbers(bytes: &[u8]) -> Result<Vec<usize>> {
     use zip::ZipArchive;
 
@@ -194,6 +160,7 @@ pub(crate) fn detect_table_page_numbers(bytes: &[u8]) -> Result<Vec<usize>> {
 /// # Returns
 /// * `Ok(Vec<usize>)` - Vector of detected page break byte offsets (empty if none found)
 /// * `Err(KreuzbergError)` - If ZIP/XML parsing fails
+#[cfg(test)]
 fn detect_page_breaks(bytes: &[u8]) -> Result<Vec<usize>> {
     use zip::ZipArchive;
 
@@ -241,6 +208,7 @@ fn detect_page_breaks(bytes: &[u8]) -> Result<Vec<usize>> {
 ///
 /// # Returns
 /// * `Ok(Vec<PageBoundary>)` - Byte boundaries for each page
+#[cfg(test)]
 fn map_page_breaks_to_boundaries(text: &str, page_breaks: Vec<usize>) -> Result<Vec<PageBoundary>> {
     if page_breaks.is_empty() {
         return Ok(Vec::new());

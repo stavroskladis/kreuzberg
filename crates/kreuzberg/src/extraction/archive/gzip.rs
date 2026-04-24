@@ -42,6 +42,7 @@ fn decompress_gzip_limited(bytes: &[u8], max_size: u64) -> Result<Vec<u8>> {
 }
 
 /// Decompress gzip bytes, returning the raw decompressed data.
+#[cfg(test)]
 pub(crate) fn decompress_gzip(bytes: &[u8], limits: &SecurityLimits) -> Result<Vec<u8>> {
     decompress_gzip_limited(bytes, limits.max_archive_size as u64)
 }
@@ -104,6 +105,7 @@ pub(crate) fn extract_gzip(
 /// with the original filename (from gzip header) and decompressed size.
 ///
 /// If the decompressed data is a TAR archive, delegates to TAR extraction.
+#[cfg(test)]
 pub(crate) fn extract_gzip_metadata(bytes: &[u8], limits: &SecurityLimits) -> Result<ArchiveMetadata> {
     let decompressed = decompress_gzip_limited(bytes, limits.max_archive_size as u64)?;
 
@@ -143,6 +145,7 @@ pub(crate) fn extract_gzip_metadata(bytes: &[u8], limits: &SecurityLimits) -> Re
 /// Decompresses and attempts to read the result as UTF-8 text.
 ///
 /// If the decompressed data is a TAR archive, delegates to TAR extraction.
+#[cfg(test)]
 pub(crate) fn extract_gzip_text_content(bytes: &[u8], limits: &SecurityLimits) -> Result<AHashMap<String, String>> {
     let decompressed = decompress_gzip_limited(bytes, limits.max_archive_size as u64)?;
 

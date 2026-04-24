@@ -10,6 +10,28 @@ pub use r#trait::Validator;
 
 // Re-export registry functions for backward compatibility
 
+use std::sync::Arc;
+
+/// Register a validator plugin with the global registry.
+pub fn register_validator(validator: Arc<dyn Validator>) -> crate::Result<()> {
+    use crate::plugins::registry::get_validator_registry;
+
+    let registry = get_validator_registry();
+    let mut registry = registry.write();
+
+    registry.register(validator)
+}
+
+/// Unregister a validator by name.
+pub fn unregister_validator(name: &str) -> crate::Result<()> {
+    use crate::plugins::registry::get_validator_registry;
+
+    let registry = get_validator_registry();
+    let mut registry = registry.write();
+
+    registry.remove(name)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

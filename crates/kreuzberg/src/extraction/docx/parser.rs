@@ -293,6 +293,7 @@ impl Document {
         heading_level_from_style_name(style_id)
     }
 
+    #[cfg(test)]
     pub(crate) fn extract_text(&self) -> String {
         let mut text = String::new();
 
@@ -766,6 +767,7 @@ impl Paragraph {
 }
 
 impl Run {
+    #[cfg(test)]
     pub(crate) fn new(text: String) -> Self {
         Self {
             text,
@@ -1997,6 +1999,7 @@ pub(crate) fn parse_document(bytes: &[u8]) -> crate::error::Result<Document> {
 }
 
 /// Extract text from DOCX bytes.
+#[cfg(test)]
 pub(crate) fn extract_text_from_bytes(bytes: &[u8]) -> crate::error::Result<String> {
     let doc = parse_document(bytes)?;
     Ok(doc.extract_text())

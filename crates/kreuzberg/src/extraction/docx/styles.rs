@@ -444,6 +444,7 @@ impl StyleCatalog {
     /// `Some(false)` explicitly disables the property.
     ///
     /// The chain depth is limited to 20 to prevent infinite loops from circular references.
+    #[cfg(test)]
     pub(crate) fn resolve_style(&self, style_id: &str) -> ResolvedStyle {
         // Start with document defaults
         let mut resolved = ResolvedStyle {
@@ -466,6 +467,7 @@ impl StyleCatalog {
     /// Collect the basedOn chain for a style, ordered from root ancestor to the style itself.
     ///
     /// Limited to 20 levels to prevent cycles.
+    #[cfg(test)]
     fn collect_chain(&self, style_id: &str) -> Vec<&StyleDefinition> {
         const MAX_DEPTH: usize = 20;
 
@@ -500,6 +502,7 @@ impl StyleCatalog {
 // --- Merge helpers ---
 
 /// Merge child run properties onto parent, where `Some` in child overrides parent.
+#[cfg(test)]
 fn merge_run_properties(base: &mut RunProperties, overlay: &RunProperties) {
     if overlay.bold.is_some() {
         base.bold = overlay.bold;
@@ -584,6 +587,7 @@ fn merge_run_properties(base: &mut RunProperties, overlay: &RunProperties) {
 }
 
 /// Merge child paragraph properties onto parent, where `Some` in child overrides parent.
+#[cfg(test)]
 fn merge_paragraph_properties(base: &mut ParagraphProperties, overlay: &ParagraphProperties) {
     if overlay.alignment.is_some() {
         base.alignment.clone_from(&overlay.alignment);

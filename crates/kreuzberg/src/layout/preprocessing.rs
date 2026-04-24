@@ -5,37 +5,6 @@ use ndarray::Array4;
 const IMAGENET_MEAN: [f32; 3] = [0.485, 0.456, 0.406];
 const IMAGENET_STD: [f32; 3] = [0.229, 0.224, 0.225];
 
-/// Preprocess an image for models using ImageNet normalization (e.g., RT-DETR).
-///
-/// Pipeline: resize to target_size x target_size (bilinear) -> rescale /255 -> ImageNet normalize -> NCHW f32.
-///
-/// Uses a single vectorized pass over contiguous pixel data for maximum throughput.
-pub(crate) fn preprocess_imagenet(img: &RgbImage, target_size: u32) -> Array4<f32> {
-    let resized = image::imageops::resize(img, target_size, target_size, image::imageops::FilterType::Triangle);
-    let pixels = resized.as_raw();
-    let hw = (target_size * target_size) as usize;
-
-    // Pre-compute reciprocals to avoid repeated division.
-    let inv_std_r = 1.0 / IMAGENET_STD[0];
-    let inv_std_g = 1.0 / IMAGENET_STD[1];
-    let inv_std_b = 1.0 / IMAGENET_STD[2];
-
-    // Allocate contiguous NCHW buffer: [R plane | G plane | B plane].
-    let mut data = vec![0.0f32; 3 * hw];
-
-    for i in 0..hw {
-        let r = pixels[i * 3] as f32 * (1.0 / 255.0);
-        let g = pixels[i * 3 + 1] as f32 * (1.0 / 255.0);
-        let b = pixels[i * 3 + 2] as f32 * (1.0 / 255.0);
-        data[i] = (r - IMAGENET_MEAN[0]) * inv_std_r;
-        data[hw + i] = (g - IMAGENET_MEAN[1]) * inv_std_g;
-        data[2 * hw + i] = (b - IMAGENET_MEAN[2]) * inv_std_b;
-    }
-
-    Array4::from_shape_vec((1, 3, target_size as usize, target_size as usize), data)
-        .expect("shape mismatch in preprocess_imagenet")
-}
-
 /// Preprocess with aspect-preserving letterbox and ImageNet normalization.
 ///
 /// Pipeline: letterbox-resize to target_size × target_size (Lanczos3, aspect-preserving)

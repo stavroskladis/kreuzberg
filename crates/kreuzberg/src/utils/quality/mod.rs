@@ -4,12 +4,7 @@
 //! for extracted text, including OCR artifact detection, script removal,
 //! and whitespace normalization.
 
-mod heuristics;
 mod patterns;
-mod scoring;
-
-// Re-export public API
-pub(crate) use scoring::calculate_quality_score;
 
 use crate::text::utf8_validation;
 use memchr::{memchr, memchr3};
@@ -43,50 +38,6 @@ pub fn clean_extracted_text(text: &str) -> String {
     working_text = normalize_whitespace_cow(working_text);
 
     working_text.trim().to_string()
-}
-
-/// Collapse redundant whitespace while preserving paragraph boundaries.
-pub(crate) fn normalize_spaces(text: &str) -> String {
-    if text.is_empty() || text.trim().is_empty() {
-        return String::new();
-    }
-
-    let mut result = String::with_capacity(text.len());
-
-    let mut first = true;
-    for paragraph in text.split("\n\n") {
-        let trimmed = paragraph.trim();
-        if trimmed.is_empty() {
-            continue;
-        }
-
-        if !first {
-            result.push_str("\n\n");
-        }
-        first = false;
-
-        let collapsed = if let Some(fast) = normalize_whitespace_ascii(paragraph) {
-            Cow::Owned(fast)
-        } else {
-            Cow::Owned(WHITESPACE_NORMALIZE.replace_all(paragraph, " ").into_owned())
-        };
-
-        let cleaned = NEWLINE_CLEANUP.replace_all(&collapsed, "\n");
-
-        let mut first_line = true;
-        for line in cleaned.split('\n') {
-            let line = line.trim();
-            if !line.is_empty() {
-                if !first_line {
-                    result.push('\n');
-                }
-                result.push_str(line);
-                first_line = false;
-            }
-        }
-    }
-
-    result
 }
 
 // ============================================================================
@@ -421,30 +372,6 @@ where
 #[cfg(all(test, feature = "quality"))]
 mod tests {
     use super::*;
-    use ahash::AHashMap;
-
-    #[test]
-    fn test_calculate_quality_score_empty_text() {
-        assert_eq!(calculate_quality_score("", None), 0.0);
-        assert_eq!(calculate_quality_score("   ", None), 0.0);
-        assert_eq!(calculate_quality_score("\n\n\n", None), 0.0);
-    }
-
-    #[test]
-    fn test_calculate_quality_score_short_text() {
-        let text = "Hello";
-        let score = calculate_quality_score(text, None);
-        assert_eq!(score, 0.1);
-    }
-
-    #[test]
-    fn test_calculate_quality_score_normal_text() {
-        let text =
-            "This is a normal sentence with proper punctuation. It has multiple sentences. And proper structure.";
-        let score = calculate_quality_score(text, None);
-        assert!(score > 0.5);
-        assert!(score <= 1.0);
-    }
 
     #[test]
     fn test_clean_extracted_text_empty() {
@@ -459,31 +386,6 @@ mod tests {
         assert!(!cleaned.contains("<script"));
         assert!(cleaned.contains("Before"));
         assert!(cleaned.contains("After"));
-    }
-
-    #[test]
-    fn test_normalize_spaces_empty() {
-        assert_eq!(normalize_spaces(""), "");
-        assert_eq!(normalize_spaces("   "), "");
-    }
-
-    #[test]
-    fn test_normalize_spaces_single_paragraph() {
-        let text = "This  is   a   test";
-        let normalized = normalize_spaces(text);
-        assert_eq!(normalized, "This is a test");
-    }
-
-    #[test]
-    fn test_calculate_quality_score_with_metadata() {
-        let text = "This is a normal text with proper structure.";
-        let mut metadata = AHashMap::new();
-        metadata.insert("title".to_string(), "Test Title".to_string());
-        metadata.insert("author".to_string(), "Test Author".to_string());
-
-        let score = calculate_quality_score(text, Some(&metadata));
-        assert!(score > 0.0);
-        assert!(score <= 1.0);
     }
 
     #[test]
@@ -523,20 +425,6 @@ mod tests {
     }
 
     #[test]
-    fn test_normalize_spaces_multiple_paragraphs() {
-        let text = "First paragraph.\n\nSecond paragraph.";
-        let normalized = normalize_spaces(text);
-        assert!(normalized.contains("\n\n"));
-    }
-
-    #[test]
-    fn test_normalize_spaces_preserves_paragraphs() {
-        let text = "Para 1\n\n\n\nPara 2";
-        let normalized = normalize_spaces(text);
-        assert_eq!(normalized, "Para 1\n\nPara 2");
-    }
-
-    #[test]
     fn test_clean_dashes_preserve_tables_simple() {
         let text = Cow::Borrowed("| Col1 |\n|------|\n| Data |");
         let result = clean_dashes_preserve_tables(text);
@@ -549,22 +437,6 @@ mod tests {
         let result = clean_dashes_preserve_tables(text);
         assert!(result.contains("..."));
         assert!(!result.contains("---"));
-    }
-
-    #[test]
-    fn test_quality_score_large_text_with_ocr_issues() {
-        let text = "a".repeat(2000) + "   " + &"b".repeat(2000);
-        let score = calculate_quality_score(&text, None);
-        assert!(score >= 0.0);
-        assert!(score <= 1.0);
-    }
-
-    #[test]
-    fn test_quality_score_clamped_to_range() {
-        let perfect_text = "This is perfect text. ".repeat(100);
-        let score = calculate_quality_score(&perfect_text, None);
-        assert!(score >= 0.0);
-        assert!(score <= 1.0);
     }
 
     #[test]
@@ -609,13 +481,6 @@ mod tests {
     #[test]
     fn test_normalize_whitespace_ascii_non_ascii() {
         assert!(normalize_whitespace_ascii("שלום שלום").is_none());
-    }
-
-    #[test]
-    fn test_normalize_spaces_ascii_fast_path() {
-        let input = "Hello   world\n\nSecond   line";
-        let normalized = normalize_spaces(input);
-        assert_eq!(normalized, "Hello world\n\nSecond line");
     }
 
     #[test]

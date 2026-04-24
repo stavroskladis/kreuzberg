@@ -3,6 +3,7 @@
 //! Parses page size, margins, orientation, columns, and other
 //! section-level properties from OOXML documents.
 
+#[cfg(test)]
 use crate::extraction::ooxml_constants::WORDPROCESSINGML_NAMESPACE;
 use quick_xml::Reader;
 use quick_xml::events::{BytesStart, Event};
@@ -138,6 +139,7 @@ fn get_w_attr_string(element: &BytesStart, local_name: &str) -> Option<String> {
 }
 
 /// Check if an attribute has a specific value (for roxmltree).
+#[cfg(test)]
 fn roxmltree_get_attr(node: &roxmltree::Node, local_name: &str) -> Option<String> {
     node.attribute((WORDPROCESSINGML_NAMESPACE, local_name))
         .or_else(|| node.attribute(local_name))
@@ -145,6 +147,7 @@ fn roxmltree_get_attr(node: &roxmltree::Node, local_name: &str) -> Option<String
 }
 
 /// Get a namespaced integer attribute (for roxmltree).
+#[cfg(test)]
 fn roxmltree_get_i32_attr(node: &roxmltree::Node, local_name: &str) -> Option<i32> {
     node.attribute((WORDPROCESSINGML_NAMESPACE, local_name))
         .or_else(|| node.attribute(local_name))
@@ -154,6 +157,7 @@ fn roxmltree_get_i32_attr(node: &roxmltree::Node, local_name: &str) -> Option<i3
 // --- Parsing with roxmltree ---
 
 /// Parse a `w:sectPr` XML element (roxmltree node) into `SectionProperties`.
+#[cfg(test)]
 pub(crate) fn parse_section_properties(node: &roxmltree::Node) -> SectionProperties {
     let mut props = SectionProperties::default();
 

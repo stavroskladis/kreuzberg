@@ -340,7 +340,7 @@ pub trait OcrBackend: Plugin {
 /// # Ok::<(), kreuzberg::KreuzbergError>(())
 /// # });
 /// ```
-pub(crate) fn register_ocr_backend(backend: Arc<dyn OcrBackend>) -> crate::Result<()> {
+pub fn register_ocr_backend(backend: Arc<dyn OcrBackend>) -> crate::Result<()> {
     use crate::plugins::registry::get_ocr_backend_registry;
 
     let registry = get_ocr_backend_registry();

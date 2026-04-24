@@ -37,9 +37,10 @@ mod server;
 
 // Re-export public API for backward compatibility
 
-#[cfg(all(feature = "cli", feature = "mcp-http"))]
+#[cfg(feature = "mcp-http")]
+#[allow(unused_imports)]
 pub use server::start_mcp_server_http_with_config;
-#[cfg(feature = "cli")]
+#[allow(unused_imports)]
 pub use server::start_mcp_server_with_config;
 
 pub use params::{

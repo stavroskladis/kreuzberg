@@ -11,6 +11,33 @@ pub use r#trait::{PostProcessor, ProcessingStage};
 // Re-export registry functions for backward compatibility
 pub use registry::list_post_processors;
 
+use std::sync::Arc;
+
+/// Register a post-processor plugin with the global registry.
+///
+/// # Arguments
+///
+/// * `processor` - The post-processor to register
+/// * `priority` - Execution priority (higher = runs first within stage)
+pub fn register_post_processor(processor: Arc<dyn PostProcessor>, priority: i32) -> crate::Result<()> {
+    use crate::plugins::registry::get_post_processor_registry;
+
+    let registry = get_post_processor_registry();
+    let mut registry = registry.write();
+
+    registry.register(processor, priority)
+}
+
+/// Unregister a post-processor by name.
+pub fn unregister_post_processor(name: &str) -> crate::Result<()> {
+    use crate::plugins::registry::get_post_processor_registry;
+
+    let registry = get_post_processor_registry();
+    let mut registry = registry.write();
+
+    registry.remove(name)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

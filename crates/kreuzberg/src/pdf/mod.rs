@@ -48,8 +48,6 @@ pub mod embedded_files;
 #[cfg(feature = "pdf")]
 pub mod error;
 #[cfg(feature = "pdf")]
-pub mod fonts;
-#[cfg(feature = "pdf")]
 pub mod hierarchy;
 #[cfg(feature = "pdf")]
 pub mod images;

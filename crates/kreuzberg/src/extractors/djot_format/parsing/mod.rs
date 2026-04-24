@@ -1,14 +1,7 @@
 //! Djot event parsing and content extraction.
 //!
-//! Handles parsing of jotdown events into plain text, tables, and full DjotContent structures.
+//! Handles parsing of jotdown events into tables.
 
-mod block_handlers;
-mod content_extraction;
-mod event_handlers;
-mod inline_handlers;
-mod state;
 mod table_extraction;
-mod text_extraction;
 
-// Re-export public API for backward compatibility
 pub(crate) use table_extraction::extract_tables_from_events;

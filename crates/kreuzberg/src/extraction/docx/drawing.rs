@@ -34,11 +34,13 @@ pub struct Extent {
 
 impl Extent {
     /// Convert width to inches.
+    #[cfg(test)]
     pub(crate) fn width_inches(&self) -> f64 {
         self.cx as f64 / super::EMUS_PER_INCH as f64
     }
 
     /// Convert height to inches.
+    #[cfg(test)]
     pub(crate) fn height_inches(&self) -> f64 {
         self.cy as f64 / super::EMUS_PER_INCH as f64
     }

@@ -123,6 +123,7 @@ pub(crate) async fn read_file_async(path: impl AsRef<Path>) -> Result<Vec<u8>> {
 /// # Errors
 ///
 /// Returns `KreuzbergError::Io` for I/O errors (these always bubble up).
+#[cfg(test)]
 pub(crate) fn read_file_sync(path: impl AsRef<Path>) -> Result<Vec<u8>> {
     std::fs::read(path.as_ref()).map_err(KreuzbergError::Io)
 }
@@ -174,6 +175,7 @@ pub(crate) fn validate_file_exists(path: impl AsRef<Path>) -> Result<()> {
 /// # Errors
 ///
 /// Returns `KreuzbergError::Io` for I/O errors.
+#[cfg(test)]
 pub(crate) fn traverse_directory<F>(
     dir: impl AsRef<Path>,
     recursive: bool,
@@ -196,6 +198,7 @@ where
     Ok(files)
 }
 
+#[cfg(test)]
 fn traverse_directory_impl<F>(
     dir: &Path,
     recursive: bool,
@@ -243,6 +246,7 @@ where
 /// # Errors
 ///
 /// Returns `KreuzbergError::Io` for I/O errors.
+#[cfg(test)]
 pub(crate) fn find_files_by_extension(
     dir: impl AsRef<Path>,
     extension: &str,

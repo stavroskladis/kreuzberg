@@ -302,6 +302,7 @@ fn parse_font_family(elem: roxmltree::Node, scheme: &mut FontScheme, is_major: b
 /// # Returns
 /// * `Some(&str)` - The RGB hex color (without '#')
 /// * `None` - If the color reference is not found
+#[cfg(test)]
 pub(crate) fn resolve_theme_color<'a>(theme: &'a Theme, color_ref: &str) -> Option<&'a str> {
     if let Some(color_scheme) = &theme.color_scheme {
         let color = match color_ref {

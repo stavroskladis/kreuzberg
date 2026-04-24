@@ -15,10 +15,9 @@ pub use utilities::{blake3_hash_bytes, blake3_hash_file, fast_hash, generate_cac
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cleanup::{cleanup_cache, is_cache_valid};
+    use cleanup::cleanup_cache;
     use std::fs::File;
     use tempfile::tempdir;
-    use utilities::{filter_old_cache_entries, sort_cache_by_access_time};
 
     #[test]
     fn test_generate_cache_key_empty() {
@@ -54,40 +53,6 @@ mod tests {
     }
 
     #[test]
-    fn test_filter_old_cache_entries() {
-        let cache_times = vec![100.0, 200.0, 300.0, 400.0];
-        let current_time = 500.0;
-        let max_age = 200.0;
-
-        let old_indices = filter_old_cache_entries(&cache_times, current_time, max_age);
-        assert_eq!(old_indices, vec![0, 1]);
-    }
-
-    #[test]
-    fn test_sort_cache_by_access_time() {
-        let entries = vec![
-            ("key3".to_string(), 300.0),
-            ("key1".to_string(), 100.0),
-            ("key2".to_string(), 200.0),
-        ];
-
-        let sorted = sort_cache_by_access_time(entries);
-        assert_eq!(sorted, vec!["key1", "key2", "key3"]);
-    }
-
-    #[test]
-    fn test_sort_cache_with_nan() {
-        let entries = vec![
-            ("key1".to_string(), 100.0),
-            ("key2".to_string(), f64::NAN),
-            ("key3".to_string(), 200.0),
-        ];
-
-        let sorted = sort_cache_by_access_time(entries);
-        assert_eq!(sorted.len(), 3);
-    }
-
-    #[test]
     fn test_cache_metadata() {
         let temp_dir = tempdir().unwrap();
         let cache_dir = temp_dir.path().to_str().unwrap();
@@ -117,19 +82,6 @@ mod tests {
         let (removed_count, _) = cleanup_cache(cache_dir, 1000.0, 0.000001, 0.8).unwrap();
         assert_eq!(removed_count, 1);
         assert!(!file1.exists());
-    }
-
-    #[test]
-    fn test_is_cache_valid() {
-        let temp_dir = tempdir().unwrap();
-        let file_path = temp_dir.path().join("test.msgpack");
-        File::create(&file_path).unwrap();
-
-        let path_str = file_path.to_str().unwrap();
-
-        assert!(is_cache_valid(path_str, 1.0));
-
-        assert!(!is_cache_valid("/nonexistent/path", 1.0));
     }
 
     #[test]

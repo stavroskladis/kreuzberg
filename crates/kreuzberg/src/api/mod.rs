@@ -102,8 +102,7 @@ mod startup;
 mod types;
 
 pub use error::ApiError;
-#[cfg(feature = "cli")]
-#[cfg(feature = "cli")]
+#[allow(unused_imports)]
 pub use startup::serve_with_server_config;
 pub use types::{
     ApiSizeLimits, ApiState, CacheClearResponse, CacheStatsResponse, ChunkRequest, ChunkResponse, DetectResponse,

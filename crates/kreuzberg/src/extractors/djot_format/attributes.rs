@@ -2,43 +2,6 @@
 //!
 //! Handles parsing of Djot attributes from jotdown events and string syntax.
 
-/// Parse jotdown attributes into our Attributes representation.
-///
-/// Converts jotdown's internal attribute representation to Kreuzberg's
-/// standardized Attributes struct, handling IDs, classes, and key-value pairs.
-pub(crate) fn parse_jotdown_attributes(attrs: &jotdown::Attributes) -> crate::types::Attributes {
-    use crate::types::Attributes;
-    use jotdown::AttributeKind;
-
-    let mut id = None;
-    let mut classes = Vec::new();
-    let mut key_values = Vec::new();
-
-    for (kind, value) in attrs.iter() {
-        match kind {
-            AttributeKind::Id => {
-                // Last ID wins if multiple are specified
-                id = Some(value.to_string());
-            }
-            AttributeKind::Class => {
-                classes.push(value.to_string());
-            }
-            AttributeKind::Pair { key } => {
-                key_values.push((key.to_string(), value.to_string()));
-            }
-            AttributeKind::Comment => {
-                // Comments are ignored in our representation
-            }
-        }
-    }
-
-    Attributes {
-        id,
-        classes,
-        key_values,
-    }
-}
-
 /// Render attributes to djot attribute syntax.
 ///
 /// Converts Kreuzberg's Attributes struct back to djot attribute syntax:
