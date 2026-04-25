@@ -12,7 +12,7 @@
 use std::fmt::Write as FmtWrite;
 use std::sync::Arc;
 
-use v_htmlescape::escape;
+use v_htmlescape::escape_string;
 
 use crate::KreuzbergError;
 use crate::Result;
@@ -261,7 +261,9 @@ impl Renderer for StyledHtmlRenderer {
 // ============================================================================
 
 fn esc(text: &str) -> String {
-    escape(text).to_string()
+    let mut out = String::with_capacity(text.len());
+    escape_string(text, &mut out);
+    out
 }
 
 fn render_elements(doc: &InternalDocument, p: &str, buf: &mut String) {

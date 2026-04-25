@@ -5,9 +5,10 @@
 //! It re-exports core types from `table_core` and adds PDF-specific
 //! conversion helpers.
 
-use super::hierarchy::SegmentData;
-
 pub(crate) use crate::table_core::{HocrWord, reconstruct_table, table_to_markdown};
+
+#[cfg(feature = "pdf-oxide")]
+use super::hierarchy::SegmentData;
 
 /// Convert a PDF `SegmentData` to an `HocrWord` for table reconstruction.
 ///
