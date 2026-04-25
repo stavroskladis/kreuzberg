@@ -30798,7 +30798,7 @@ impl kreuzberg::plugins::PostProcessor for KreuzbergPostProcessorBridge {
         let _result_ptr = __result_cs.as_ptr();
         // SAFETY: fp is a valid non-null function pointer; all temporaries outlive this call;
         // user_data validity is the caller's responsibility (documented in the vtable API).
-        
+
         unsafe { fp(self.user_data, _result_ptr) }
     }
 }
@@ -31352,7 +31352,7 @@ impl kreuzberg::plugins::Validator for KreuzbergValidatorBridge {
         };
         // SAFETY: fp is a valid non-null function pointer; all temporaries outlive this call;
         // user_data validity is the caller's responsibility (documented in the vtable API).
-        
+
         unsafe { fp(self.user_data) }
     }
 }

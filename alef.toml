@@ -1502,6 +1502,11 @@ precondition = "command -v dotnet >/dev/null 2>&1"
 format = "dotnet format packages/csharp"
 check = "dotnet format packages/csharp --verify-no-changes"
 
+[lint.wasm]
+precondition = "test -d crates/kreuzberg-wasm/typescript"
+format = "npx oxfmt crates/kreuzberg-wasm/typescript"
+check = "npx oxlint crates/kreuzberg-wasm/typescript"
+
 [lint.ffi]
 precondition = "test -d e2e/c"
 format = "find e2e/c -name '*.c' -o -name '*.h' | xargs clang-format -i"
