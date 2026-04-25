@@ -1,0 +1,8953 @@
+<?php
+
+declare(strict_types=1);
+
+// odsl-/Users/naamanhirschfeld/workspace/kreuzberg-dev/kreuzberg/packages/php/src/Kreuzberg.php-PHPStan\BetterReflection\Reflection\ReflectionClass-Kreuzberg\Kreuzberg
+return \PHPStan\Cache\CacheItem::__set_state([
+    'variableKey' => 'v2-6.70.0.0-8.4.20-9e360ee2ee0b9543ff2df7909bef31da79437d470d71659a5b83a6fa7d5de090',
+    'data'
+    => [
+        'locatedSource'
+         => [
+             'class' => 'PHPStan\\BetterReflection\\SourceLocator\\Located\\LocatedSource',
+             'data'
+              => [
+                  'name' => 'Kreuzberg\\Kreuzberg',
+                  'filename' => '/Users/naamanhirschfeld/workspace/kreuzberg-dev/kreuzberg/packages/php/src/Kreuzberg.php',
+              ],
+         ],
+        'namespace' => 'Kreuzberg',
+        'name' => 'Kreuzberg\\Kreuzberg',
+        'shortName' => 'Kreuzberg',
+        'isInterface' => false,
+        'isTrait' => false,
+        'isEnum' => false,
+        'isBackedEnum' => false,
+        'modifiers' => 32,
+        'docComment' => null,
+        'attributes'
+         => [
+         ],
+        'startLine' => 12,
+        'endLine' => 2276,
+        'startColumn' => 1,
+        'endColumn' => 1,
+        'parentClassName' => null,
+        'implementsClassNames'
+         => [
+         ],
+        'traitClassNames'
+         => [
+         ],
+        'immediateConstants'
+         => [
+         ],
+        'immediateProperties'
+         => [
+         ],
+        'immediateMethods'
+         => [
+             'blake3HashBytes'
+              => [
+                  'name' => 'blake3HashBytes',
+                  'parameters'
+                   => [
+                       'data'
+                        => [
+                            'name' => 'data',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 20,
+                            'endLine' => 20,
+                            'startColumn' => 44,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Hash arbitrary bytes with blake3, returning a 32-char hex string.
+ *
+ * @param string $data
+ * @return string
+ */',
+                  'startLine' => 20,
+                  'endLine' => 23,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'blake3HashFile'
+              => [
+                  'name' => 'blake3HashFile',
+                  'parameters'
+                   => [
+                       'path'
+                        => [
+                            'name' => 'path',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 34,
+                            'endLine' => 34,
+                            'startColumn' => 43,
+                            'endColumn' => 54,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Hash a file\'s content with blake3 using streaming 64 KiB reads.
+ *
+ * Returns a 32-char hex string (128 bits of blake3 output).
+ *
+ * @param string $path
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 34,
+                  'endLine' => 37,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'fastHash'
+              => [
+                  'name' => 'fastHash',
+                  'parameters'
+                   => [
+                       'data'
+                        => [
+                            'name' => 'data',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 45,
+                            'endLine' => 45,
+                            'startColumn' => 37,
+                            'endColumn' => 48,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'int',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * fastHash.
+ *
+ * @param string $data
+ * @return int
+ */',
+                  'startLine' => 45,
+                  'endLine' => 48,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateCacheKey'
+              => [
+                  'name' => 'validateCacheKey',
+                  'parameters'
+                   => [
+                       'key'
+                        => [
+                            'name' => 'key',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 56,
+                            'endLine' => 56,
+                            'startColumn' => 45,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'bool',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * validateCacheKey.
+ *
+ * @param string $key
+ * @return bool
+ */',
+                  'startLine' => 56,
+                  'endLine' => 59,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validatePort'
+              => [
+                  'name' => 'validatePort',
+                  'parameters'
+                   => [
+                       'port'
+                        => [
+                            'name' => 'port',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 91,
+                            'endLine' => 91,
+                            'startColumn' => 41,
+                            'endColumn' => 49,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a port number for server configuration.
+ *
+ * Port must be in the range 1-65535. While ports 1-1023 are privileged and may require
+ * special permissions on some systems, they are still valid port numbers.
+ *
+ * # Arguments
+ *
+ * * `port` - The port number to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the port is valid, or a `ValidationError` with details about valid ranges.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_port;
+ *
+ * assert!(validate_port(8000).is_ok());
+ * assert!(validate_port(80).is_ok());
+ * assert!(validate_port(1).is_ok());
+ * assert!(validate_port(65535).is_ok());
+ * assert!(validate_port(0).is_err());
+ * ```
+ *
+ * @param int $port
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 91,
+                  'endLine' => 94,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateHost'
+              => [
+                  'name' => 'validateHost',
+                  'parameters'
+                   => [
+                       'host'
+                        => [
+                            'name' => 'host',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 128,
+                            'endLine' => 128,
+                            'startColumn' => 41,
+                            'endColumn' => 52,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a host/IP address string for server configuration.
+ *
+ * Accepts valid IPv4 addresses (e.g., "127.0.0.1", "0.0.0.0"), valid IPv6 addresses
+ * (e.g., "::1", "::"), and hostnames (e.g., "localhost", "example.com").
+ *
+ * # Arguments
+ *
+ * * `host` - The host/IP address string to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the host is valid, or a `ValidationError` with details about valid formats.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_host;
+ *
+ * assert!(validate_host("127.0.0.1").is_ok());
+ * assert!(validate_host("0.0.0.0").is_ok());
+ * assert!(validate_host("::1").is_ok());
+ * assert!(validate_host("::").is_ok());
+ * assert!(validate_host("localhost").is_ok());
+ * assert!(validate_host("example.com").is_ok());
+ * assert!(validate_host("").is_err());
+ * ```
+ *
+ * @param string $host
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 128,
+                  'endLine' => 131,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateCorsOrigin'
+              => [
+                  'name' => 'validateCorsOrigin',
+                  'parameters'
+                   => [
+                       'origin'
+                        => [
+                            'name' => 'origin',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 163,
+                            'endLine' => 163,
+                            'startColumn' => 47,
+                            'endColumn' => 60,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a CORS (Cross-Origin Resource Sharing) origin URL.
+ *
+ * Accepts valid HTTP/HTTPS URLs (e.g., "https://example.com") or the wildcard "*"
+ * to allow all origins. URLs must start with "http://" or "https://", or be exactly "*".
+ *
+ * # Arguments
+ *
+ * * `origin` - The CORS origin URL to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the origin is valid, or a `ValidationError` with details about valid formats.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_cors_origin;
+ *
+ * assert!(validate_cors_origin("https://example.com").is_ok());
+ * assert!(validate_cors_origin("http://localhost:3000").is_ok());
+ * assert!(validate_cors_origin("*").is_ok());
+ * assert!(validate_cors_origin("not-a-url").is_err());
+ * assert!(validate_cors_origin("ftp://example.com").is_err());
+ * ```
+ *
+ * @param string $origin
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 163,
+                  'endLine' => 166,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateUploadSize'
+              => [
+                  'name' => 'validateUploadSize',
+                  'parameters'
+                   => [
+                       'size'
+                        => [
+                            'name' => 'size',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 195,
+                            'endLine' => 195,
+                            'startColumn' => 47,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate an upload size limit for server configuration.
+ *
+ * Upload size must be greater than 0 (measured in bytes).
+ *
+ * # Arguments
+ *
+ * * `size` - The maximum upload size in bytes to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the size is valid, or a `ValidationError` with details about constraints.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_upload_size;
+ *
+ * assert!(validate_upload_size(1024).is_ok());
+ * assert!(validate_upload_size(1_000_000).is_ok());
+ * assert!(validate_upload_size(0).is_err());
+ * ```
+ *
+ * @param int $size
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 195,
+                  'endLine' => 198,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateBinarizationMethod'
+              => [
+                  'name' => 'validateBinarizationMethod',
+                  'parameters'
+                   => [
+                       'method'
+                        => [
+                            'name' => 'method',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 225,
+                            'endLine' => 225,
+                            'startColumn' => 55,
+                            'endColumn' => 68,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a binarization method string.
+ *
+ * # Arguments
+ *
+ * * `method` - The binarization method to validate (e.g., "otsu", "adaptive", "sauvola")
+ *
+ * # Returns
+ *
+ * `Ok(())` if the method is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_binarization_method;
+ *
+ * assert!(validate_binarization_method("otsu").is_ok());
+ * assert!(validate_binarization_method("adaptive").is_ok());
+ * assert!(validate_binarization_method("invalid").is_err());
+ * ```
+ *
+ * @param string $method
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 225,
+                  'endLine' => 228,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateTokenReductionLevel'
+              => [
+                  'name' => 'validateTokenReductionLevel',
+                  'parameters'
+                   => [
+                       'level'
+                        => [
+                            'name' => 'level',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 255,
+                            'endLine' => 255,
+                            'startColumn' => 56,
+                            'endColumn' => 68,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a token reduction level string.
+ *
+ * # Arguments
+ *
+ * * `level` - The token reduction level to validate (e.g., "off", "light", "moderate")
+ *
+ * # Returns
+ *
+ * `Ok(())` if the level is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_token_reduction_level;
+ *
+ * assert!(validate_token_reduction_level("off").is_ok());
+ * assert!(validate_token_reduction_level("moderate").is_ok());
+ * assert!(validate_token_reduction_level("extreme").is_err());
+ * ```
+ *
+ * @param string $level
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 255,
+                  'endLine' => 258,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateOcrBackend'
+              => [
+                  'name' => 'validateOcrBackend',
+                  'parameters'
+                   => [
+                       'backend'
+                        => [
+                            'name' => 'backend',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 285,
+                            'endLine' => 285,
+                            'startColumn' => 47,
+                            'endColumn' => 61,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate an OCR backend string.
+ *
+ * # Arguments
+ *
+ * * `backend` - The OCR backend to validate (e.g., "tesseract", "easyocr", "paddleocr")
+ *
+ * # Returns
+ *
+ * `Ok(())` if the backend is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_ocr_backend;
+ *
+ * assert!(validate_ocr_backend("tesseract").is_ok());
+ * assert!(validate_ocr_backend("easyocr").is_ok());
+ * assert!(validate_ocr_backend("invalid").is_err());
+ * ```
+ *
+ * @param string $backend
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 285,
+                  'endLine' => 288,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateLanguageCode'
+              => [
+                  'name' => 'validateLanguageCode',
+                  'parameters'
+                   => [
+                       'code'
+                        => [
+                            'name' => 'code',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 320,
+                            'endLine' => 320,
+                            'startColumn' => 49,
+                            'endColumn' => 60,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a language code (ISO 639-1 or 639-3 format).
+ *
+ * Accepts both 2-letter ISO 639-1 codes (e.g., "en", "de") and
+ * 3-letter ISO 639-3 codes (e.g., "eng", "deu") for broader compatibility.
+ *
+ * # Arguments
+ *
+ * * `code` - The language code to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the code is valid, or a `ValidationError` indicating an invalid language code.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_language_code;
+ *
+ * assert!(validate_language_code("en").is_ok());
+ * assert!(validate_language_code("eng").is_ok());
+ * assert!(validate_language_code("de").is_ok());
+ * assert!(validate_language_code("deu").is_ok());
+ * assert!(validate_language_code("invalid").is_err());
+ * ```
+ *
+ * @param string $code
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 320,
+                  'endLine' => 323,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateTesseractPsm'
+              => [
+                  'name' => 'validateTesseractPsm',
+                  'parameters'
+                   => [
+                       'psm'
+                        => [
+                            'name' => 'psm',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 350,
+                            'endLine' => 350,
+                            'startColumn' => 49,
+                            'endColumn' => 56,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a tesseract Page Segmentation Mode (PSM).
+ *
+ * # Arguments
+ *
+ * * `psm` - The PSM value to validate (0-13)
+ *
+ * # Returns
+ *
+ * `Ok(())` if the PSM is valid, or a `ValidationError` with details about valid ranges.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_tesseract_psm;
+ *
+ * assert!(validate_tesseract_psm(3).is_ok());  // Fully automatic
+ * assert!(validate_tesseract_psm(6).is_ok());  // Single block of text
+ * assert!(validate_tesseract_psm(14).is_err()); // Out of range
+ * ```
+ *
+ * @param int $psm
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 350,
+                  'endLine' => 353,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateTesseractOem'
+              => [
+                  'name' => 'validateTesseractOem',
+                  'parameters'
+                   => [
+                       'oem'
+                        => [
+                            'name' => 'oem',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 380,
+                            'endLine' => 380,
+                            'startColumn' => 49,
+                            'endColumn' => 56,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a tesseract OCR Engine Mode (OEM).
+ *
+ * # Arguments
+ *
+ * * `oem` - The OEM value to validate (0-3)
+ *
+ * # Returns
+ *
+ * `Ok(())` if the OEM is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_tesseract_oem;
+ *
+ * assert!(validate_tesseract_oem(1).is_ok());  // Neural nets (LSTM)
+ * assert!(validate_tesseract_oem(2).is_ok());  // Legacy + LSTM
+ * assert!(validate_tesseract_oem(4).is_err()); // Out of range
+ * ```
+ *
+ * @param int $oem
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 380,
+                  'endLine' => 383,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateOutputFormat'
+              => [
+                  'name' => 'validateOutputFormat',
+                  'parameters'
+                   => [
+                       'format'
+                        => [
+                            'name' => 'format',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 420,
+                            'endLine' => 420,
+                            'startColumn' => 49,
+                            'endColumn' => 62,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a document extraction output format.
+ *
+ * Accepts the following formats and aliases:
+ * - "plain" or "text" for plain text output
+ * - "markdown" or "md" for Markdown output
+ * - "djot" for Djot markup format
+ * - "html" for HTML output
+ *
+ * # Arguments
+ *
+ * * `format` - The output format to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the format is valid, or a `ValidationError` with details about valid options.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_output_format;
+ *
+ * assert!(validate_output_format("text").is_ok());
+ * assert!(validate_output_format("plain").is_ok());
+ * assert!(validate_output_format("markdown").is_ok());
+ * assert!(validate_output_format("md").is_ok());
+ * assert!(validate_output_format("djot").is_ok());
+ * assert!(validate_output_format("html").is_ok());
+ * assert!(validate_output_format("json").is_ok());
+ * ```
+ *
+ * @param string $format
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 420,
+                  'endLine' => 423,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateConfidence'
+              => [
+                  'name' => 'validateConfidence',
+                  'parameters'
+                   => [
+                       'confidence'
+                        => [
+                            'name' => 'confidence',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'float',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 454,
+                            'endLine' => 454,
+                            'startColumn' => 47,
+                            'endColumn' => 63,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a confidence threshold value.
+ *
+ * Confidence thresholds should be between 0.0 and 1.0 inclusive.
+ *
+ * # Arguments
+ *
+ * * `confidence` - The confidence threshold to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the confidence is valid, or a `ValidationError` with details about valid ranges.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_confidence;
+ *
+ * assert!(validate_confidence(0.5).is_ok());
+ * assert!(validate_confidence(0.0).is_ok());
+ * assert!(validate_confidence(1.0).is_ok());
+ * assert!(validate_confidence(1.5).is_err());
+ * assert!(validate_confidence(-0.1).is_err());
+ * ```
+ *
+ * @param float $confidence
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 454,
+                  'endLine' => 457,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateDpi'
+              => [
+                  'name' => 'validateDpi',
+                  'parameters'
+                   => [
+                       'dpi'
+                        => [
+                            'name' => 'dpi',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 487,
+                            'endLine' => 487,
+                            'startColumn' => 40,
+                            'endColumn' => 47,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate a DPI (dots per inch) value.
+ *
+ * DPI should be a positive integer, typically 72-600.
+ *
+ * # Arguments
+ *
+ * * `dpi` - The DPI value to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the DPI is valid, or a `ValidationError` with details about valid ranges.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_dpi;
+ *
+ * assert!(validate_dpi(96).is_ok());
+ * assert!(validate_dpi(300).is_ok());
+ * assert!(validate_dpi(0).is_err());
+ * assert!(validate_dpi(-1).is_err());
+ * ```
+ *
+ * @param int $dpi
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 487,
+                  'endLine' => 490,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateChunkingParams'
+              => [
+                  'name' => 'validateChunkingParams',
+                  'parameters'
+                   => [
+                       'max_chars'
+                        => [
+                            'name' => 'max_chars',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 522,
+                            'endLine' => 522,
+                            'startColumn' => 51,
+                            'endColumn' => 64,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'max_overlap'
+                        => [
+                            'name' => 'max_overlap',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 522,
+                            'endLine' => 522,
+                            'startColumn' => 67,
+                            'endColumn' => 82,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate chunk size parameters.
+ *
+ * Checks that max_chars > 0 and max_overlap < max_chars.
+ *
+ * # Arguments
+ *
+ * * `max_chars` - The maximum characters per chunk
+ * * `max_overlap` - The maximum overlap between chunks
+ *
+ * # Returns
+ *
+ * `Ok(())` if the parameters are valid, or a `ValidationError` with details about constraints.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_chunking_params;
+ *
+ * assert!(validate_chunking_params(1000, 200).is_ok());
+ * assert!(validate_chunking_params(500, 50).is_ok());
+ * assert!(validate_chunking_params(0, 100).is_err()); // max_chars must be > 0
+ * assert!(validate_chunking_params(100, 150).is_err()); // overlap >= max_chars
+ * ```
+ *
+ * @param int $max_chars
+ * @param int $max_overlap
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 522,
+                  'endLine' => 525,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateLlmConfigModel'
+              => [
+                  'name' => 'validateLlmConfigModel',
+                  'parameters'
+                   => [
+                       'model'
+                        => [
+                            'name' => 'model',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 551,
+                            'endLine' => 551,
+                            'startColumn' => 51,
+                            'endColumn' => 63,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate that an [`LlmConfig`](crate::core::config::LlmConfig) has a non-empty model string.
+ *
+ * # Arguments
+ *
+ * * `model` - The model string to validate
+ *
+ * # Returns
+ *
+ * `Ok(())` if the model is non-empty, or a `ValidationError` otherwise.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::core::config_validation::validate_llm_config_model;
+ *
+ * assert!(validate_llm_config_model("openai/gpt-4o").is_ok());
+ * assert!(validate_llm_config_model("").is_err());
+ * ```
+ *
+ * @param string $model
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 551,
+                  'endLine' => 554,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'extractBytes'
+              => [
+                  'name' => 'extractBytes',
+                  'parameters'
+                   => [
+                       'content'
+                        => [
+                            'name' => 'content',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 602,
+                            'endLine' => 602,
+                            'startColumn' => 41,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'mime_type'
+                        => [
+                            'name' => 'mime_type',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 602,
+                            'endLine' => 602,
+                            'startColumn' => 58,
+                            'endColumn' => 74,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 602,
+                            'endLine' => 602,
+                            'startColumn' => 77,
+                            'endColumn' => 100,
+                            'parameterIndex' => 2,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\ExtractionResult',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Extract content from a byte array.
+ *
+ * This is the main entry point for in-memory extraction. It performs the following steps:
+ * 1. Validate MIME type
+ * 2. Handle legacy format conversion if needed
+ * 3. Select appropriate extractor from registry
+ * 4. Extract content
+ * 5. Run post-processing pipeline
+ *
+ * # Arguments
+ *
+ * * `content` - The byte array to extract
+ * * `mime_type` - MIME type of the content
+ * * `config` - Extraction configuration
+ *
+ * # Returns
+ *
+ * An `ExtractionResult` containing the extracted content and metadata.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Validation` if MIME type is invalid.
+ * Returns `KreuzbergError::UnsupportedFormat` if MIME type is not supported.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::extract_bytes;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let bytes = b"Hello, world!";
+ * let result = extract_bytes(bytes, "text/plain", &config).await?;
+ * println!("Content: {}", result.content);
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * @param string $content
+ * @param string $mime_type
+ * @param ExtractionConfig $config
+ * @return ExtractionResult
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 602,
+                  'endLine' => 605,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'extractFile'
+              => [
+                  'name' => 'extractFile',
+                  'parameters'
+                   => [
+                       'path'
+                        => [
+                            'name' => 'path',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 653,
+                            'endLine' => 653,
+                            'startColumn' => 40,
+                            'endColumn' => 51,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'mime_type'
+                        => [
+                            'name' => 'mime_type',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 653,
+                                      'endLine' => 653,
+                                      'startTokenPos' => 729,
+                                      'startFilePos' => 20449,
+                                      'endTokenPos' => 729,
+                                      'endFilePos' => 20452,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 653,
+                            'endLine' => 653,
+                            'startColumn' => 54,
+                            'endColumn' => 78,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 653,
+                            'endLine' => 653,
+                            'startColumn' => 81,
+                            'endColumn' => 104,
+                            'parameterIndex' => 2,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\ExtractionResult',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Extract content from a file.
+ *
+ * This is the main entry point for file-based extraction. It performs the following steps:
+ * 1. Check cache for existing result (if caching enabled)
+ * 2. Detect or validate MIME type
+ * 3. Select appropriate extractor from registry
+ * 4. Extract content
+ * 5. Run post-processing pipeline
+ * 6. Store result in cache (if caching enabled)
+ *
+ * # Arguments
+ *
+ * * `path` - Path to the file to extract
+ * * `mime_type` - Optional MIME type override. If None, will be auto-detected
+ * * `config` - Extraction configuration
+ *
+ * # Returns
+ *
+ * An `ExtractionResult` containing the extracted content and metadata.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::Io` if the file doesn\'t exist (NotFound) or for other file I/O errors.
+ * Returns `KreuzbergError::UnsupportedFormat` if MIME type is not supported.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::extract_file;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let result = extract_file("document.pdf", None, &config).await?;
+ * println!("Content: {}", result.content);
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * @param string $path
+ * @param ?string $mime_type
+ * @param ExtractionConfig $config
+ * @return ExtractionResult
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 653,
+                  'endLine' => 656,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'extractFileSync'
+              => [
+                  'name' => 'extractFileSync',
+                  'parameters'
+                   => [
+                       'path'
+                        => [
+                            'name' => 'path',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 688,
+                            'endLine' => 688,
+                            'startColumn' => 44,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'mime_type'
+                        => [
+                            'name' => 'mime_type',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 688,
+                                      'endLine' => 688,
+                                      'startTokenPos' => 784,
+                                      'startFilePos' => 21860,
+                                      'endTokenPos' => 784,
+                                      'endFilePos' => 21863,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 688,
+                            'endLine' => 688,
+                            'startColumn' => 58,
+                            'endColumn' => 82,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 688,
+                            'endLine' => 688,
+                            'startColumn' => 85,
+                            'endColumn' => 108,
+                            'parameterIndex' => 2,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\ExtractionResult',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Synchronous wrapper for `extract_file`.
+ *
+ * This is a convenience function that blocks the current thread until extraction completes.
+ * For async code, use `extract_file` directly.
+ *
+ * Uses the global Tokio runtime for 100x+ performance improvement over creating
+ * a new runtime per call. Always uses the global runtime to avoid nested runtime issues.
+ *
+ * This function is only available with the `tokio-runtime` feature. For WASM targets,
+ * use a truly synchronous extraction approach instead.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::extract_file_sync;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * let config = ExtractionConfig::default();
+ * let result = extract_file_sync("document.pdf", None, &config)?;
+ * println!("Content: {}", result.content);
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ *
+ * @param string $path
+ * @param ?string $mime_type
+ * @param ExtractionConfig $config
+ * @return ExtractionResult
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 688,
+                  'endLine' => 691,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'extractBytesSync'
+              => [
+                  'name' => 'extractBytesSync',
+                  'parameters'
+                   => [
+                       'content'
+                        => [
+                            'name' => 'content',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 721,
+                            'endLine' => 721,
+                            'startColumn' => 45,
+                            'endColumn' => 59,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'mime_type'
+                        => [
+                            'name' => 'mime_type',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 721,
+                            'endLine' => 721,
+                            'startColumn' => 62,
+                            'endColumn' => 78,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 721,
+                            'endLine' => 721,
+                            'startColumn' => 81,
+                            'endColumn' => 104,
+                            'parameterIndex' => 2,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\ExtractionResult',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Synchronous wrapper for `extract_bytes`.
+ *
+ * Uses the global Tokio runtime for 100x+ performance improvement over creating
+ * a new runtime per call.
+ *
+ * With the `tokio-runtime` feature, this blocks the current thread using the global
+ * Tokio runtime. Without it (WASM), this calls a truly synchronous implementation.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::extract_bytes_sync;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * let config = ExtractionConfig::default();
+ * let bytes = b"Hello, world!";
+ * let result = extract_bytes_sync(bytes, "text/plain", &config)?;
+ * println!("Content: {}", result.content);
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ *
+ * @param string $content
+ * @param string $mime_type
+ * @param ExtractionConfig $config
+ * @return ExtractionResult
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 721,
+                  'endLine' => 724,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'batchExtractFileSync'
+              => [
+                  'name' => 'batchExtractFileSync',
+                  'parameters'
+                   => [
+                       'items'
+                        => [
+                            'name' => 'items',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 754,
+                            'endLine' => 754,
+                            'startColumn' => 49,
+                            'endColumn' => 60,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 754,
+                            'endLine' => 754,
+                            'startColumn' => 63,
+                            'endColumn' => 86,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Synchronous wrapper for `batch_extract_file`.
+ *
+ * Uses the global Tokio runtime for optimal performance.
+ * Only available with `tokio-runtime` (WASM has no filesystem).
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_file_sync;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use kreuzberg::FileExtractionConfig;
+ * use std::path::PathBuf;
+ *
+ * let config = ExtractionConfig::default();
+ * let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
+ *     ("doc1.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
+ *     ("doc2.pdf".into(), None),
+ * ];
+ * let results = batch_extract_file_sync(items, &config)?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ *
+ * @param array<string> $items
+ * @param ExtractionConfig $config
+ * @return array<ExtractionResult>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 754,
+                  'endLine' => 757,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'batchExtractBytesSync'
+              => [
+                  'name' => 'batchExtractBytesSync',
+                  'parameters'
+                   => [
+                       'items'
+                        => [
+                            'name' => 'items',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 789,
+                            'endLine' => 789,
+                            'startColumn' => 50,
+                            'endColumn' => 61,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 789,
+                            'endLine' => 789,
+                            'startColumn' => 64,
+                            'endColumn' => 87,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Synchronous wrapper for `batch_extract_bytes`.
+ *
+ * Uses the global Tokio runtime for optimal performance.
+ * With the `tokio-runtime` feature, this blocks the current thread using the global
+ * Tokio runtime. Without it (WASM), this calls a truly synchronous implementation
+ * that iterates through items and calls `extract_bytes_sync()`.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_bytes_sync;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use kreuzberg::FileExtractionConfig;
+ *
+ * let config = ExtractionConfig::default();
+ * let items = vec![
+ *     (b"content".to_vec(), "text/plain".to_string(), None),
+ *     (b"other".to_vec(), "text/plain".to_string(),
+ *      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
+ * ];
+ * let results = batch_extract_bytes_sync(items, &config)?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ *
+ * @param array<string> $items
+ * @param ExtractionConfig $config
+ * @return array<ExtractionResult>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 789,
+                  'endLine' => 792,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'batchExtractFile'
+              => [
+                  'name' => 'batchExtractFile',
+                  'parameters'
+                   => [
+                       'items'
+                        => [
+                            'name' => 'items',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 867,
+                            'endLine' => 867,
+                            'startColumn' => 45,
+                            'endColumn' => 56,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 867,
+                            'endLine' => 867,
+                            'startColumn' => 59,
+                            'endColumn' => 82,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Extract content from multiple files concurrently.
+ *
+ * This function processes multiple files in parallel, automatically managing
+ * concurrency to prevent resource exhaustion. The concurrency limit can be
+ * configured via `ExtractionConfig::max_concurrent_extractions` or defaults
+ * to `(num_cpus * 1.5).ceil()`.
+ *
+ * Each file can optionally specify a [`FileExtractionConfig`] that overrides specific
+ * fields from the batch-level `config`. Pass `None` for a file to use the batch defaults.
+ * Batch-level settings like `max_concurrent_extractions` and `use_cache` are always
+ * taken from the batch-level `config`.
+ *
+ * # Arguments
+ *
+ * * `items` - Vector of `(path, optional_file_config)` tuples. Pass `None` as the
+ *   config to use the batch-level defaults for that file.
+ * * `config` - Batch-level extraction configuration (provides defaults and batch settings)
+ *
+ * # Returns
+ *
+ * A vector of `ExtractionResult` in the same order as the input items.
+ *
+ * # Errors
+ *
+ * Individual file errors are captured in the result metadata. System errors
+ * (IO, RuntimeError equivalents) will bubble up and fail the entire batch.
+ *
+ * # Examples
+ *
+ * Simple usage with no per-file overrides:
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_file;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use std::path::PathBuf;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let items: Vec<(PathBuf, Option<kreuzberg::FileExtractionConfig>)> = vec![
+ *     ("doc1.pdf".into(), None),
+ *     ("doc2.pdf".into(), None),
+ * ];
+ * let results = batch_extract_file(items, &config).await?;
+ * println!("Processed {} files", results.len());
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * Per-file configuration overrides:
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_file;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use kreuzberg::FileExtractionConfig;
+ * use std::path::PathBuf;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let items: Vec<(PathBuf, Option<FileExtractionConfig>)> = vec![
+ *     ("scan.pdf".into(), Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
+ *     ("notes.txt".into(), None),
+ * ];
+ * let results = batch_extract_file(items, &config).await?;
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * @param array<string> $items
+ * @param ExtractionConfig $config
+ * @return array<ExtractionResult>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 867,
+                  'endLine' => 870,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'batchExtractBytes'
+              => [
+                  'name' => 'batchExtractBytes',
+                  'parameters'
+                   => [
+                       'items'
+                        => [
+                            'name' => 'items',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 937,
+                            'endLine' => 937,
+                            'startColumn' => 46,
+                            'endColumn' => 57,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 937,
+                            'endLine' => 937,
+                            'startColumn' => 60,
+                            'endColumn' => 83,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Extract content from multiple byte arrays concurrently.
+ *
+ * This function processes multiple byte arrays in parallel, automatically managing
+ * concurrency to prevent resource exhaustion. The concurrency limit can be
+ * configured via `ExtractionConfig::max_concurrent_extractions` or defaults
+ * to `(num_cpus * 1.5).ceil()`.
+ *
+ * Each item can optionally specify a [`FileExtractionConfig`] that overrides specific
+ * fields from the batch-level `config`. Pass `None` as the config to use
+ * the batch-level defaults for that item.
+ *
+ * # Arguments
+ *
+ * * `items` - Vector of `(bytes, mime_type, optional_file_config)` tuples
+ * * `config` - Batch-level extraction configuration
+ *
+ * # Returns
+ *
+ * A vector of `ExtractionResult` in the same order as the input items.
+ *
+ * # Examples
+ *
+ * Simple usage with no per-item overrides:
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_bytes;
+ * use kreuzberg::core::config::ExtractionConfig;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let items = vec![
+ *     (b"content 1".to_vec(), "text/plain".to_string(), None),
+ *     (b"content 2".to_vec(), "text/plain".to_string(), None),
+ * ];
+ * let results = batch_extract_bytes(items, &config).await?;
+ * println!("Processed {} items", results.len());
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * Per-item configuration overrides:
+ *
+ * ```rust,no_run
+ * use kreuzberg::core::extractor::batch_extract_bytes;
+ * use kreuzberg::core::config::ExtractionConfig;
+ * use kreuzberg::FileExtractionConfig;
+ *
+ * # async fn example() -> kreuzberg::Result<()> {
+ * let config = ExtractionConfig::default();
+ * let items = vec![
+ *     (b"content".to_vec(), "text/plain".to_string(), None),
+ *     (b"<html>test</html>".to_vec(), "text/html".to_string(),
+ *      Some(FileExtractionConfig { force_ocr: Some(true), ..Default::default() })),
+ * ];
+ * let results = batch_extract_bytes(items, &config).await?;
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * @param array<string> $items
+ * @param ExtractionConfig $config
+ * @return array<ExtractionResult>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 937,
+                  'endLine' => 940,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'isValidFormatField'
+              => [
+                  'name' => 'isValidFormatField',
+                  'parameters'
+                   => [
+                       'field'
+                        => [
+                            'name' => 'field',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 969,
+                            'endLine' => 969,
+                            'startColumn' => 47,
+                            'endColumn' => 59,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'bool',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validates whether a field name is in the known formats registry.
+ *
+ * This uses a pre-built hash set for O(1) lookups instead of linear search,
+ * providing significant performance improvements for repeated validations.
+ *
+ * # Arguments
+ *
+ * * `field` - The field name to validate
+ *
+ * # Returns
+ *
+ * `true` if the field is in KNOWN_FORMATS, `false` otherwise.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::core::formats::is_valid_format_field;
+ *
+ * assert!(is_valid_format_field("title"));
+ * assert!(is_valid_format_field("creation_date"));
+ * assert!(!is_valid_format_field("invalid_field"));
+ * ```
+ *
+ * @param string $field
+ * @return bool
+ */',
+                  'startLine' => 969,
+                  'endLine' => 972,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'validateMimeType'
+              => [
+                  'name' => 'validateMimeType',
+                  'parameters'
+                   => [
+                       'mime_type'
+                        => [
+                            'name' => 'mime_type',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 993,
+                            'endLine' => 993,
+                            'startColumn' => 45,
+                            'endColumn' => 61,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validate that a MIME type is supported.
+ *
+ * # Arguments
+ *
+ * * `mime_type` - The MIME type to validate
+ *
+ * # Returns
+ *
+ * The validated MIME type (may be normalized).
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::UnsupportedFormat` if not supported.
+ *
+ * @param string $mime_type
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 993,
+                  'endLine' => 996,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'detectOrValidate'
+              => [
+                  'name' => 'detectOrValidate',
+                  'parameters'
+                   => [
+                       'path'
+                        => [
+                            'name' => 'path',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1017,
+                                      'endLine' => 1017,
+                                      'startTokenPos' => 1120,
+                                      'startFilePos' => 33788,
+                                      'endTokenPos' => 1120,
+                                      'endFilePos' => 33791,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1017,
+                            'endLine' => 1017,
+                            'startColumn' => 45,
+                            'endColumn' => 64,
+                            'parameterIndex' => 0,
+                            'isOptional' => true,
+                        ],
+                       'mime_type'
+                        => [
+                            'name' => 'mime_type',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1017,
+                                      'endLine' => 1017,
+                                      'startTokenPos' => 1130,
+                                      'startFilePos' => 33815,
+                                      'endTokenPos' => 1130,
+                                      'endFilePos' => 33818,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1017,
+                            'endLine' => 1017,
+                            'startColumn' => 67,
+                            'endColumn' => 91,
+                            'parameterIndex' => 1,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Detect or validate MIME type.
+ *
+ * If `mime_type` is provided, validates it. Otherwise, detects from `path`.
+ *
+ * # Arguments
+ *
+ * * `path` - Optional path to detect MIME type from
+ * * `mime_type` - Optional explicit MIME type to validate
+ *
+ * # Returns
+ *
+ * The validated MIME type string.
+ *
+ * @param ?string $path
+ * @param ?string $mime_type
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1017,
+                  'endLine' => 1020,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'detectMimeTypeFromBytes'
+              => [
+                  'name' => 'detectMimeTypeFromBytes',
+                  'parameters'
+                   => [
+                       'content'
+                        => [
+                            'name' => 'content',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1047,
+                            'endLine' => 1047,
+                            'startColumn' => 52,
+                            'endColumn' => 66,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Detect MIME type from raw file bytes.
+ *
+ * Uses magic byte signatures to detect file type from content.
+ * Falls back to `infer` crate for comprehensive detection.
+ *
+ * For ZIP-based files, inspects contents to distinguish Office Open XML
+ * formats (DOCX, XLSX, PPTX) from plain ZIP archives.
+ *
+ * # Arguments
+ *
+ * * `content` - Raw file bytes
+ *
+ * # Returns
+ *
+ * The detected MIME type string.
+ *
+ * # Errors
+ *
+ * Returns `KreuzbergError::UnsupportedFormat` if MIME type cannot be determined.
+ *
+ * @param string $content
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1047,
+                  'endLine' => 1050,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'getExtensionsForMime'
+              => [
+                  'name' => 'getExtensionsForMime',
+                  'parameters'
+                   => [
+                       'mime_type'
+                        => [
+                            'name' => 'mime_type',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1081,
+                            'endLine' => 1081,
+                            'startColumn' => 49,
+                            'endColumn' => 65,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Get file extensions for a given MIME type.
+ *
+ * Returns all known file extensions that map to the specified MIME type.
+ *
+ * # Arguments
+ *
+ * * `mime_type` - The MIME type to look up
+ *
+ * # Returns
+ *
+ * A vector of file extensions (without leading dot) for the MIME type.
+ *
+ * # Example
+ *
+ * ```
+ * use kreuzberg::core::mime::get_extensions_for_mime;
+ *
+ * let extensions = get_extensions_for_mime("application/pdf").unwrap();
+ * assert_eq!(extensions, vec!["pdf"]);
+ *
+ * let doc_extensions = get_extensions_for_mime("application/vnd.openxmlformats-officedocument.wordprocessingml.document").unwrap();
+ * assert!(doc_extensions.contains(&"docx".to_string()));
+ * ```
+ *
+ * @param string $mime_type
+ * @return array<string>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1081,
+                  'endLine' => 1084,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'listSupportedFormats'
+              => [
+                  'name' => 'listSupportedFormats',
+                  'parameters'
+                   => [
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * List all supported document formats.
+ *
+ * Returns a list of all file extensions and their corresponding MIME types
+ * that Kreuzberg can process. Derived from the centralized [`FORMATS`] registry.
+ *
+ * The list is sorted alphabetically by file extension.
+ *
+ * # Example
+ *
+ * ```
+ * use kreuzberg::core::mime::list_supported_formats;
+ *
+ * let formats = list_supported_formats();
+ * assert!(!formats.is_empty());
+ * assert!(formats.iter().any(|f| f.extension == "pdf"));
+ * ```
+ *
+ * @return array<SupportedFormat>
+ */',
+                  'startLine' => 1106,
+                  'endLine' => 1109,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'clearProcessorCache'
+              => [
+                  'name' => 'clearProcessorCache',
+                  'parameters'
+                   => [
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Clear the processor cache (primarily for testing when registry changes).
+ *
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1117,
+                  'endLine' => 1120,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'transformExtractionResultToElements'
+              => [
+                  'name' => 'transformExtractionResultToElements',
+                  'parameters'
+                   => [
+                       'result'
+                        => [
+                            'name' => 'result',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionResult',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1149,
+                            'endLine' => 1149,
+                            'startColumn' => 64,
+                            'endColumn' => 87,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Transform an extraction result into semantic elements.
+ *
+ * This function takes a reference to an ExtractionResult and generates
+ * a vector of Element structs representing semantic blocks in the document.
+ * It detects content sections, list items, page breaks, and other structural
+ * elements to create an Unstructured-compatible element-based output.
+ *
+ * Handles:
+ * - PDF hierarchy → Title/Heading elements
+ * - Multi-page documents with correct page numbers
+ * - Table and Image extraction
+ * - PageBreak interleaving
+ * - Bounding box coordinates
+ * - Paragraph detection for NarrativeText
+ *
+ * # Arguments
+ *
+ * * `result` - Reference to the ExtractionResult to transform
+ *
+ * # Returns
+ *
+ * A vector of Elements with proper semantic types and metadata.
+ *
+ * @param ExtractionResult $result
+ * @return array<Element>
+ */',
+                  'startLine' => 1149,
+                  'endLine' => 1152,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'extractEmailContent'
+              => [
+                  'name' => 'extractEmailContent',
+                  'parameters'
+                   => [
+                       'data'
+                        => [
+                            'name' => 'data',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1163,
+                            'endLine' => 1163,
+                            'startColumn' => 48,
+                            'endColumn' => 59,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'mime_type'
+                        => [
+                            'name' => 'mime_type',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1163,
+                            'endLine' => 1163,
+                            'startColumn' => 62,
+                            'endColumn' => 78,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'fallback_codepage'
+                        => [
+                            'name' => 'fallback_codepage',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1163,
+                                      'endLine' => 1163,
+                                      'startTokenPos' => 1342,
+                                      'startFilePos' => 38623,
+                                      'endTokenPos' => 1342,
+                                      'endFilePos' => 38626,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'int',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1163,
+                            'endLine' => 1163,
+                            'startColumn' => 81,
+                            'endColumn' => 110,
+                            'parameterIndex' => 2,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\EmailExtractionResult',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Extract email content from either .eml or .msg format
+ *
+ * @param string $data
+ * @param string $mime_type
+ * @param ?int $fallback_codepage
+ * @return EmailExtractionResult
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1163,
+                  'endLine' => 1166,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'cellsToText'
+              => [
+                  'name' => 'cellsToText',
+                  'parameters'
+                   => [
+                       'cells'
+                        => [
+                            'name' => 'cells',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1222,
+                            'endLine' => 1222,
+                            'startColumn' => 40,
+                            'endColumn' => 51,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Converts a 2D vector of cell strings into a GitHub-Flavored Markdown table.
+ *
+ * # Behavior
+ *
+ * - The first row is treated as the header row
+ * - A separator row is inserted after the header
+ * - Pipe characters (`|`) in cell content are automatically escaped with backslash
+ * - Irregular tables (rows with varying column counts) are padded with empty cells to match the header
+ * - Returns an empty string for empty input
+ *
+ * # Arguments
+ *
+ * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+ *
+ * # Returns
+ *
+ * A `String` containing the GFM markdown table representation
+ *
+ * # Examples
+ *
+ * ```
+ * # use kreuzberg::extraction::cells_to_markdown;
+ * let cells = vec![
+ *     vec!["Name".to_string(), "Age".to_string()],
+ *     vec!["Alice".to_string(), "30".to_string()],
+ *     vec!["Bob".to_string(), "25".to_string()],
+ * ];
+ *
+ * let markdown = cells_to_markdown(&cells);
+ * assert!(markdown.contains("| Name | Age |"));
+ * assert!(markdown.contains("|------|------|"));
+ * ```
+ *
+ * Converts a 2D vector of cell strings into plain text with tab-separated columns.
+ *
+ * # Behavior
+ *
+ * - Rows are separated by newlines
+ * - Cells within a row are separated by tab characters
+ * - No pipe delimiters or separator rows (unlike markdown tables)
+ * - Returns an empty string for empty input
+ *
+ * # Arguments
+ *
+ * * `cells` - A slice of vectors representing table rows, where each inner vector contains cell values
+ *
+ * # Returns
+ *
+ * A `String` containing the plain text table representation
+ *
+ * @param array<array<string>> $cells
+ * @return string
+ */',
+                  'startLine' => 1222,
+                  'endLine' => 1225,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'cellsToMarkdown'
+              => [
+                  'name' => 'cellsToMarkdown',
+                  'parameters'
+                   => [
+                       'cells'
+                        => [
+                            'name' => 'cells',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1233,
+                            'endLine' => 1233,
+                            'startColumn' => 44,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * cellsToMarkdown.
+ *
+ * @param array<array<string>> $cells
+ * @return string
+ */',
+                  'startLine' => 1233,
+                  'endLine' => 1236,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'djotToHtml'
+              => [
+                  'name' => 'djotToHtml',
+                  'parameters'
+                   => [
+                       'djot_source'
+                        => [
+                            'name' => 'djot_source',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1266,
+                            'endLine' => 1266,
+                            'startColumn' => 39,
+                            'endColumn' => 57,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Render djot content to HTML.
+ *
+ * This function takes djot source text and renders it to HTML using jotdown\'s
+ * built-in HTML renderer.
+ *
+ * # Arguments
+ *
+ * * `djot_source` - The djot markup text to render
+ *
+ * # Returns
+ *
+ * A `Result` containing the rendered HTML string
+ *
+ * # Example
+ *
+ * ```ignore
+ * let djot = "# Hello\\n\\nThis is *bold* and _italic_.";
+ * let html = djot_to_html(djot)?;
+ * assert!(html.contains("<h1>"));
+ * assert!(html.contains("<strong>"));
+ * assert!(html.contains("<em>"));
+ * ```
+ *
+ * @param string $djot_source
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1266,
+                  'endLine' => 1269,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'dedupText'
+              => [
+                  'name' => 'dedupText',
+                  'parameters'
+                   => [
+                       'texts'
+                        => [
+                            'name' => 'texts',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1278,
+                            'endLine' => 1278,
+                            'startColumn' => 38,
+                            'endColumn' => 49,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Deduplicate a list of text strings while preserving order.
+ * Adjacent duplicates and near-duplicates are removed.
+ *
+ * @param array<string> $texts
+ * @return array<string>
+ */',
+                  'startLine' => 1278,
+                  'endLine' => 1281,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'normalizeWhitespace'
+              => [
+                  'name' => 'normalizeWhitespace',
+                  'parameters'
+                   => [
+                       's'
+                        => [
+                            'name' => 's',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1295,
+                            'endLine' => 1295,
+                            'startColumn' => 48,
+                            'endColumn' => 56,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Normalize whitespace in a string.
+ *
+ * - Collapses multiple consecutive spaces/tabs into a single space
+ * - Preserves single newlines (paragraph breaks from \\par)
+ * - Collapses multiple consecutive newlines into a double newline
+ * - Trims leading/trailing whitespace from each line
+ * - Trims leading/trailing blank lines
+ *
+ * @param string $s
+ * @return string
+ */',
+                  'startLine' => 1295,
+                  'endLine' => 1298,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'registerDefaultExtractors'
+              => [
+                  'name' => 'registerDefaultExtractors',
+                  'parameters'
+                   => [
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Register all built-in extractors with the global registry.
+ *
+ * This function should be called once at application startup to register
+ * the default extractors (PlainText, Markdown, XML, etc.).
+ *
+ * **Note:** This is called automatically on first extraction operation.
+ * Explicit calling is optional.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::extractors::register_default_extractors;
+ *
+ * # fn main() -> kreuzberg::Result<()> {
+ * register_default_extractors()?;
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1323,
+                  'endLine' => 1326,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'unregisterOcrBackend'
+              => [
+                  'name' => 'unregisterOcrBackend',
+                  'parameters'
+                   => [
+                       'name'
+                        => [
+                            'name' => 'name',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1357,
+                            'endLine' => 1357,
+                            'startColumn' => 49,
+                            'endColumn' => 60,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Unregister an OCR backend by name.
+ *
+ * Removes the OCR backend from the global registry and calls its `shutdown()` method.
+ *
+ * # Arguments
+ *
+ * * `name` - Name of the OCR backend to unregister
+ *
+ * # Returns
+ *
+ * - `Ok(())` if the backend was unregistered or didn\'t exist
+ * - `Err(...)` if the shutdown method failed
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::unregister_ocr_backend;
+ *
+ * # tokio_test::block_on(async {
+ * unregister_ocr_backend("custom-ocr")?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ *
+ * @param string $name
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1357,
+                  'endLine' => 1360,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'listOcrBackends'
+              => [
+                  'name' => 'listOcrBackends',
+                  'parameters'
+                   => [
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * List all registered OCR backends.
+ *
+ * Returns the names of all OCR backends currently registered in the global registry.
+ *
+ * # Returns
+ *
+ * A vector of OCR backend names.
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::list_ocr_backends;
+ *
+ * # tokio_test::block_on(async {
+ * let backends = list_ocr_backends()?;
+ * for name in backends {
+ *     println!("Registered OCR backend: {}", name);
+ * }
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ *
+ * @return array<string>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1388,
+                  'endLine' => 1391,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'clearOcrBackends'
+              => [
+                  'name' => 'clearOcrBackends',
+                  'parameters'
+                   => [
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Clear all OCR backends from the global registry.
+ *
+ * Removes all OCR backends and calls their `shutdown()` methods.
+ *
+ * # Returns
+ *
+ * - `Ok(())` if all backends were cleared successfully
+ * - `Err(...)` if any shutdown method failed
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::clear_ocr_backends;
+ *
+ * # tokio_test::block_on(async {
+ * clear_ocr_backends()?;
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ *
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1417,
+                  'endLine' => 1420,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'listPostProcessors'
+              => [
+                  'name' => 'listPostProcessors',
+                  'parameters'
+                   => [
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * List all registered post-processor names.
+ *
+ * Returns a vector of all post-processor names currently registered in the
+ * global registry.
+ *
+ * # Returns
+ *
+ * - `Ok(Vec<String>)` - Vector of post-processor names
+ * - `Err(...)` if the registry lock is poisoned
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::plugins::list_post_processors;
+ *
+ * # tokio_test::block_on(async {
+ * let processors = list_post_processors()?;
+ * for name in processors {
+ *     println!("Registered post-processor: {}", name);
+ * }
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * # });
+ * ```
+ *
+ * @return array<string>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1450,
+                  'endLine' => 1453,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'sanitizeFilename'
+              => [
+                  'name' => 'sanitizeFilename',
+                  'parameters'
+                   => [
+                       'path'
+                        => [
+                            'name' => 'path',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1463,
+                            'endLine' => 1463,
+                            'startColumn' => 45,
+                            'endColumn' => 56,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Sanitize a file path to return only the filename (no directory).
+ *
+ * Prevents PII from appearing in traces.
+ *
+ * @param string $path
+ * @return string
+ */',
+                  'startLine' => 1463,
+                  'endLine' => 1466,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'sanitizePath'
+              => [
+                  'name' => 'sanitizePath',
+                  'parameters'
+                   => [
+                       'path'
+                        => [
+                            'name' => 'path',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1477,
+                            'endLine' => 1477,
+                            'startColumn' => 41,
+                            'endColumn' => 52,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Sanitize a file path to return only the filename.
+ *
+ * Prevents PII (personally identifiable information) from appearing in
+ * traces by only recording filenames instead of full paths.
+ *
+ * @param string $path
+ * @return string
+ */',
+                  'startLine' => 1477,
+                  'endLine' => 1480,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'isValidUtf8'
+              => [
+                  'name' => 'isValidUtf8',
+                  'parameters'
+                   => [
+                       'bytes'
+                        => [
+                            'name' => 'bytes',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1503,
+                            'endLine' => 1503,
+                            'startColumn' => 40,
+                            'endColumn' => 52,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'bool',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Validates bytes as UTF-8 without conversion to string slice.
+ *
+ * Returns `true` if the bytes represent valid UTF-8, `false` otherwise.
+ * This is useful when you only need to check validity without constructing a string.
+ *
+ * # Arguments
+ *
+ * * `bytes` - The byte slice to validate
+ *
+ * # Returns
+ *
+ * `true` if valid UTF-8, `false` otherwise.
+ *
+ * # Performance
+ *
+ * This function is optimized for early exit on invalid sequences.
+ *
+ * @param string $bytes
+ * @return bool
+ */',
+                  'startLine' => 1503,
+                  'endLine' => 1506,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'cleanExtractedText'
+              => [
+                  'name' => 'cleanExtractedText',
+                  'parameters'
+                   => [
+                       'text'
+                        => [
+                            'name' => 'text',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1514,
+                            'endLine' => 1514,
+                            'startColumn' => 47,
+                            'endColumn' => 58,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * cleanExtractedText.
+ *
+ * @param string $text
+ * @return string
+ */',
+                  'startLine' => 1514,
+                  'endLine' => 1517,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'reduceTokens'
+              => [
+                  'name' => 'reduceTokens',
+                  'parameters'
+                   => [
+                       'text'
+                        => [
+                            'name' => 'text',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1558,
+                            'endLine' => 1558,
+                            'startColumn' => 41,
+                            'endColumn' => 52,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\TokenReductionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1558,
+                            'endLine' => 1558,
+                            'startColumn' => 55,
+                            'endColumn' => 82,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'language_hint'
+                        => [
+                            'name' => 'language_hint',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1558,
+                                      'endLine' => 1558,
+                                      'startTokenPos' => 1851,
+                                      'startFilePos' => 50712,
+                                      'endTokenPos' => 1851,
+                                      'endFilePos' => 50715,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1558,
+                            'endLine' => 1558,
+                            'startColumn' => 85,
+                            'endColumn' => 113,
+                            'parameterIndex' => 2,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Reduces token count in text while preserving meaning and structure.
+ *
+ * This function removes stopwords, redundancy, and applies compression techniques
+ * based on the specified reduction level. Supports 64 languages with automatic
+ * stopword removal and optional semantic clustering.
+ *
+ * # Arguments
+ *
+ * * `text` - The input text to reduce
+ * * `config` - Configuration specifying reduction level and options
+ * * `language_hint` - Optional ISO 639-3 language code (e.g., "eng", "spa")
+ *
+ * # Returns
+ *
+ * Returns the reduced text with preserved structure (markdown, code blocks).
+ *
+ * # Errors
+ *
+ * Returns an error if the language hint is invalid or stopwords cannot be loaded.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::text::token_reduction::{reduce_tokens, TokenReductionConfig, ReductionLevel};
+ *
+ * let text = "This is a simple example text with some stopwords.";
+ * let config = TokenReductionConfig::default();
+ * let reduced = reduce_tokens(text, &config, Some("eng"))?;
+ * println!("Reduced: {}", reduced);
+ * # Ok::<(), kreuzberg::error::KreuzbergError>(())
+ * ```
+ *
+ * @param string $text
+ * @param TokenReductionConfig $config
+ * @param ?string $language_hint
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1558,
+                  'endLine' => 1561,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'batchReduceTokens'
+              => [
+                  'name' => 'batchReduceTokens',
+                  'parameters'
+                   => [
+                       'texts'
+                        => [
+                            'name' => 'texts',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1606,
+                            'endLine' => 1606,
+                            'startColumn' => 46,
+                            'endColumn' => 57,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\TokenReductionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1606,
+                            'endLine' => 1606,
+                            'startColumn' => 60,
+                            'endColumn' => 87,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'language_hint'
+                        => [
+                            'name' => 'language_hint',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1606,
+                                      'endLine' => 1606,
+                                      'startTokenPos' => 1906,
+                                      'startFilePos' => 52619,
+                                      'endTokenPos' => 1906,
+                                      'endFilePos' => 52622,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1606,
+                            'endLine' => 1606,
+                            'startColumn' => 90,
+                            'endColumn' => 118,
+                            'parameterIndex' => 2,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Reduces token count for multiple texts efficiently using parallel processing.
+ *
+ * This function processes multiple texts in parallel using Rayon, providing
+ * significant performance improvements for batch operations. All texts use the
+ * same configuration and language hint for consistency.
+ *
+ * # Arguments
+ *
+ * * `texts` - Slice of text references to reduce
+ * * `config` - Configuration specifying reduction level and options
+ * * `language_hint` - Optional ISO 639-3 language code (e.g., "eng", "spa")
+ *
+ * # Returns
+ *
+ * Returns a vector of reduced texts in the same order as the input.
+ *
+ * # Errors
+ *
+ * Returns an error if the language hint is invalid or stopwords cannot be loaded.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::text::token_reduction::{batch_reduce_tokens, TokenReductionConfig, ReductionLevel};
+ *
+ * let texts: Vec<String> = vec![
+ *     "This is the first document with some text.".to_string(),
+ *     "Here is another document with different content.".to_string(),
+ *     "And finally, a third document to process.".to_string(),
+ * ];
+ * let config = TokenReductionConfig::default();
+ * let reduced = batch_reduce_tokens(&texts, &config, Some("eng"))?;
+ * assert_eq!(reduced.len(), 3);
+ * # Ok::<(), kreuzberg::error::KreuzbergError>(())
+ * ```
+ *
+ * @param array<string> $texts
+ * @param TokenReductionConfig $config
+ * @param ?string $language_hint
+ * @return array<string>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1606,
+                  'endLine' => 1609,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'bold'
+              => [
+                  'name' => 'bold',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1618,
+                            'endLine' => 1618,
+                            'startColumn' => 33,
+                            'endColumn' => 42,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1618,
+                            'endLine' => 1618,
+                            'startColumn' => 45,
+                            'endColumn' => 52,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a bold annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1618,
+                  'endLine' => 1621,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'italic'
+              => [
+                  'name' => 'italic',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1630,
+                            'endLine' => 1630,
+                            'startColumn' => 35,
+                            'endColumn' => 44,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1630,
+                            'endLine' => 1630,
+                            'startColumn' => 47,
+                            'endColumn' => 54,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create an italic annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1630,
+                  'endLine' => 1633,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'underline'
+              => [
+                  'name' => 'underline',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1642,
+                            'endLine' => 1642,
+                            'startColumn' => 38,
+                            'endColumn' => 47,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1642,
+                            'endLine' => 1642,
+                            'startColumn' => 50,
+                            'endColumn' => 57,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create an underline annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1642,
+                  'endLine' => 1645,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'link'
+              => [
+                  'name' => 'link',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1656,
+                            'endLine' => 1656,
+                            'startColumn' => 33,
+                            'endColumn' => 42,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1656,
+                            'endLine' => 1656,
+                            'startColumn' => 45,
+                            'endColumn' => 52,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'url'
+                        => [
+                            'name' => 'url',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1656,
+                            'endLine' => 1656,
+                            'startColumn' => 55,
+                            'endColumn' => 65,
+                            'parameterIndex' => 2,
+                            'isOptional' => false,
+                        ],
+                       'title'
+                        => [
+                            'name' => 'title',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1656,
+                                      'endLine' => 1656,
+                                      'startTokenPos' => 2092,
+                                      'startFilePos' => 54116,
+                                      'endTokenPos' => 2092,
+                                      'endFilePos' => 54119,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1656,
+                            'endLine' => 1656,
+                            'startColumn' => 68,
+                            'endColumn' => 88,
+                            'parameterIndex' => 3,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a link annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @param string $url
+ * @param ?string $title
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1656,
+                  'endLine' => 1659,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'code'
+              => [
+                  'name' => 'code',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1668,
+                            'endLine' => 1668,
+                            'startColumn' => 33,
+                            'endColumn' => 42,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1668,
+                            'endLine' => 1668,
+                            'startColumn' => 45,
+                            'endColumn' => 52,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a code (inline) annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1668,
+                  'endLine' => 1671,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'strikethrough'
+              => [
+                  'name' => 'strikethrough',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1680,
+                            'endLine' => 1680,
+                            'startColumn' => 42,
+                            'endColumn' => 51,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1680,
+                            'endLine' => 1680,
+                            'startColumn' => 54,
+                            'endColumn' => 61,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a strikethrough annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1680,
+                  'endLine' => 1683,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'subscript'
+              => [
+                  'name' => 'subscript',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1692,
+                            'endLine' => 1692,
+                            'startColumn' => 38,
+                            'endColumn' => 47,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1692,
+                            'endLine' => 1692,
+                            'startColumn' => 50,
+                            'endColumn' => 57,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a subscript annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1692,
+                  'endLine' => 1695,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'superscript'
+              => [
+                  'name' => 'superscript',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1704,
+                            'endLine' => 1704,
+                            'startColumn' => 40,
+                            'endColumn' => 49,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1704,
+                            'endLine' => 1704,
+                            'startColumn' => 52,
+                            'endColumn' => 59,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a superscript annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1704,
+                  'endLine' => 1707,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'fontSize'
+              => [
+                  'name' => 'fontSize',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1717,
+                            'endLine' => 1717,
+                            'startColumn' => 37,
+                            'endColumn' => 46,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1717,
+                            'endLine' => 1717,
+                            'startColumn' => 49,
+                            'endColumn' => 56,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'value'
+                        => [
+                            'name' => 'value',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1717,
+                            'endLine' => 1717,
+                            'startColumn' => 59,
+                            'endColumn' => 71,
+                            'parameterIndex' => 2,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a font size annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @param string $value
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1717,
+                  'endLine' => 1720,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'color'
+              => [
+                  'name' => 'color',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1730,
+                            'endLine' => 1730,
+                            'startColumn' => 34,
+                            'endColumn' => 43,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1730,
+                            'endLine' => 1730,
+                            'startColumn' => 46,
+                            'endColumn' => 53,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'value'
+                        => [
+                            'name' => 'value',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1730,
+                            'endLine' => 1730,
+                            'startColumn' => 56,
+                            'endColumn' => 68,
+                            'parameterIndex' => 2,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a color annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @param string $value
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1730,
+                  'endLine' => 1733,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'highlight'
+              => [
+                  'name' => 'highlight',
+                  'parameters'
+                   => [
+                       'start'
+                        => [
+                            'name' => 'start',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1742,
+                            'endLine' => 1742,
+                            'startColumn' => 38,
+                            'endColumn' => 47,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'end'
+                        => [
+                            'name' => 'end',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1742,
+                            'endLine' => 1742,
+                            'startColumn' => 50,
+                            'endColumn' => 57,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\TextAnnotation',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a highlight annotation for the given byte range.
+ *
+ * @param int $start
+ * @param int $end
+ * @return TextAnnotation
+ */',
+                  'startLine' => 1742,
+                  'endLine' => 1745,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'classifyUri'
+              => [
+                  'name' => 'classifyUri',
+                  'parameters'
+                   => [
+                       'url'
+                        => [
+                            'name' => 'url',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1757,
+                            'endLine' => 1757,
+                            'startColumn' => 40,
+                            'endColumn' => 50,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\UriKind',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Classify a URL string into the appropriate `UriKind`.
+ *
+ * - `mailto:` → `Email`
+ * - `#` prefix → `Anchor`
+ * - everything else → `Hyperlink`
+ *
+ * @param string $url
+ * @return UriKind
+ */',
+                  'startLine' => 1757,
+                  'endLine' => 1760,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'safeDecode'
+              => [
+                  'name' => 'safeDecode',
+                  'parameters'
+                   => [
+                       'byte_data'
+                        => [
+                            'name' => 'byte_data',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1773,
+                            'endLine' => 1773,
+                            'startColumn' => 39,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'encoding'
+                        => [
+                            'name' => 'encoding',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1773,
+                                      'endLine' => 1773,
+                                      'startTokenPos' => 2489,
+                                      'startFilePos' => 57759,
+                                      'endTokenPos' => 2489,
+                                      'endFilePos' => 57762,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1773,
+                            'endLine' => 1773,
+                            'startColumn' => 58,
+                            'endColumn' => 81,
+                            'parameterIndex' => 1,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Decode raw bytes into UTF-8, using heuristics and fallback encodings when necessary.
+ *
+ * The function prefers an explicit `encoding`, falls back to the cached guess, probes
+ * an encoding detector, and finally tries a small curated list before returning a
+ * mojibake-cleaned string.
+ *
+ * @param string $byte_data
+ * @param ?string $encoding
+ * @return string
+ */',
+                  'startLine' => 1773,
+                  'endLine' => 1776,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'calculateTextConfidence'
+              => [
+                  'name' => 'calculateTextConfidence',
+                  'parameters'
+                   => [
+                       'text'
+                        => [
+                            'name' => 'text',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1787,
+                            'endLine' => 1787,
+                            'startColumn' => 52,
+                            'endColumn' => 63,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'float',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Estimate how trustworthy a decoded string is on a 0.0–1.0 scale.
+ *
+ * Scores close to 1.0 indicate mostly printable characters, whereas lower scores
+ * point to mojibake, control characters, or suspicious character mixes.
+ *
+ * @param string $text
+ * @return float
+ */',
+                  'startLine' => 1787,
+                  'endLine' => 1790,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'createStringBufferPool'
+              => [
+                  'name' => 'createStringBufferPool',
+                  'parameters'
+                   => [
+                       'pool_size'
+                        => [
+                            'name' => 'pool_size',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1818,
+                            'endLine' => 1818,
+                            'startColumn' => 51,
+                            'endColumn' => 64,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'buffer_capacity'
+                        => [
+                            'name' => 'buffer_capacity',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1818,
+                            'endLine' => 1818,
+                            'startColumn' => 67,
+                            'endColumn' => 86,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\StringBufferPool',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a pre-configured string buffer pool for batch processing.
+ *
+ * # Arguments
+ *
+ * * `pool_size` - Maximum number of buffers to keep in the pool
+ * * `buffer_capacity` - Initial capacity for each buffer in bytes
+ *
+ * # Returns
+ *
+ * A pool configured for text accumulation with reasonable defaults.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::utils::pool::create_string_buffer_pool;
+ *
+ * let pool = create_string_buffer_pool(10, 8192);
+ * let mut buffer = pool.acquire().unwrap();
+ * buffer.push_str("content");
+ * ```
+ *
+ * @param int $pool_size
+ * @param int $buffer_capacity
+ * @return StringBufferPool
+ */',
+                  'startLine' => 1818,
+                  'endLine' => 1821,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'createByteBufferPool'
+              => [
+                  'name' => 'createByteBufferPool',
+                  'parameters'
+                   => [
+                       'pool_size'
+                        => [
+                            'name' => 'pool_size',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1849,
+                            'endLine' => 1849,
+                            'startColumn' => 49,
+                            'endColumn' => 62,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'buffer_capacity'
+                        => [
+                            'name' => 'buffer_capacity',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1849,
+                            'endLine' => 1849,
+                            'startColumn' => 65,
+                            'endColumn' => 84,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\ByteBufferPool',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Create a pre-configured byte buffer pool for batch processing.
+ *
+ * # Arguments
+ *
+ * * `pool_size` - Maximum number of buffers to keep in the pool
+ * * `buffer_capacity` - Initial capacity for each buffer in bytes
+ *
+ * # Returns
+ *
+ * A pool configured for binary data handling with reasonable defaults.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::utils::pool::create_byte_buffer_pool;
+ *
+ * let pool = create_byte_buffer_pool(10, 65536);
+ * let mut buffer = pool.acquire().unwrap();
+ * buffer.extend_from_slice(b"binary data");
+ * ```
+ *
+ * @param int $pool_size
+ * @param int $buffer_capacity
+ * @return ByteBufferPool
+ */',
+                  'startLine' => 1849,
+                  'endLine' => 1852,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'openapiJson'
+              => [
+                  'name' => 'openapiJson',
+                  'parameters'
+                   => [
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Generate OpenAPI JSON schema.
+ *
+ * Returns the complete OpenAPI 3.1 specification as a JSON string.
+ *
+ * # Examples
+ *
+ * ```no_run
+ * use kreuzberg::api::openapi::openapi_json;
+ *
+ * let schema = openapi_json();
+ * println!("{}", schema);
+ * ```
+ *
+ * @return string
+ */',
+                  'startLine' => 1870,
+                  'endLine' => 1873,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'serveDefault'
+              => [
+                  'name' => 'serveDefault',
+                  'parameters'
+                   => [
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Start the API server with default host and port.
+ *
+ * Defaults: host = "127.0.0.1", port = 8000
+ *
+ * Uses config file discovery (searches current/parent directories for kreuzberg.toml/yaml/json).
+ * Validates plugins at startup to help diagnose configuration issues.
+ *
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1886,
+                  'endLine' => 1889,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'chunkText'
+              => [
+                  'name' => 'chunkText',
+                  'parameters'
+                   => [
+                       'text'
+                        => [
+                            'name' => 'text',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1932,
+                            'endLine' => 1932,
+                            'startColumn' => 38,
+                            'endColumn' => 49,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ChunkingConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1932,
+                            'endLine' => 1932,
+                            'startColumn' => 52,
+                            'endColumn' => 73,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'page_boundaries'
+                        => [
+                            'name' => 'page_boundaries',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1932,
+                                      'endLine' => 1932,
+                                      'startTokenPos' => 2717,
+                                      'startFilePos' => 62855,
+                                      'endTokenPos' => 2717,
+                                      'endFilePos' => 62858,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'array',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1932,
+                            'endLine' => 1932,
+                            'startColumn' => 76,
+                            'endColumn' => 105,
+                            'parameterIndex' => 2,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\ChunkingResult',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Split text into chunks with optional page boundary tracking.
+ *
+ * This is the primary API function for chunking text. It supports both plain text
+ * and Markdown with configurable chunk size, overlap, and page boundary mapping.
+ *
+ * # Arguments
+ *
+ * * `text` - The text to split into chunks
+ * * `config` - Chunking configuration (max size, overlap, type)
+ * * `page_boundaries` - Optional page boundary markers for mapping chunks to pages
+ *
+ * # Returns
+ *
+ * A ChunkingResult containing all chunks and their metadata.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::chunking::{chunk_text, ChunkingConfig, ChunkerType};
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * let config = ChunkingConfig {
+ *     max_characters: 500,
+ *     overlap: 50,
+ *     trim: true,
+ *     chunker_type: ChunkerType::Text,
+ *     ..Default::default()
+ * };
+ * let result = chunk_text("Long text...", &config, None)?;
+ * assert!(!result.chunks.is_empty());
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * @param string $text
+ * @param ChunkingConfig $config
+ * @param ?array<PageBoundary> $page_boundaries
+ * @return ChunkingResult
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1932,
+                  'endLine' => 1935,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'chunkTextWithHeadingSource'
+              => [
+                  'name' => 'chunkTextWithHeadingSource',
+                  'parameters'
+                   => [
+                       'text'
+                        => [
+                            'name' => 'text',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1951,
+                            'endLine' => 1951,
+                            'startColumn' => 55,
+                            'endColumn' => 66,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ChunkingConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1951,
+                            'endLine' => 1951,
+                            'startColumn' => 69,
+                            'endColumn' => 90,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'page_boundaries'
+                        => [
+                            'name' => 'page_boundaries',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1951,
+                                      'endLine' => 1951,
+                                      'startTokenPos' => 2772,
+                                      'startFilePos' => 63737,
+                                      'endTokenPos' => 2772,
+                                      'endFilePos' => 63740,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'array',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1951,
+                            'endLine' => 1951,
+                            'startColumn' => 93,
+                            'endColumn' => 122,
+                            'parameterIndex' => 2,
+                            'isOptional' => true,
+                        ],
+                       'heading_source'
+                        => [
+                            'name' => 'heading_source',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 1951,
+                                      'endLine' => 1951,
+                                      'startTokenPos' => 2782,
+                                      'startFilePos' => 63769,
+                                      'endTokenPos' => 2782,
+                                      'endFilePos' => 63772,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1951,
+                            'endLine' => 1951,
+                            'startColumn' => 125,
+                            'endColumn' => 154,
+                            'parameterIndex' => 3,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\ChunkingResult',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Chunk text with an optional separate markdown source for heading context resolution.
+ *
+ * When `heading_source` is provided, it is used instead of `text` for building the
+ * heading map. This is needed when `text` is plain text (no markdown headings) but
+ * the original document had headings that were stripped during rendering.
+ *
+ * @param string $text
+ * @param ChunkingConfig $config
+ * @param ?array<PageBoundary> $page_boundaries
+ * @param ?string $heading_source
+ * @return ChunkingResult
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1951,
+                  'endLine' => 1954,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'chunkTextsBatch'
+              => [
+                  'name' => 'chunkTextsBatch',
+                  'parameters'
+                   => [
+                       'texts'
+                        => [
+                            'name' => 'texts',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1994,
+                            'endLine' => 1994,
+                            'startColumn' => 44,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ChunkingConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 1994,
+                            'endLine' => 1994,
+                            'startColumn' => 58,
+                            'endColumn' => 79,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Batch process multiple texts with the same configuration.
+ *
+ * This convenience function applies the same chunking configuration to multiple
+ * texts in sequence.
+ *
+ * # Arguments
+ *
+ * * `texts` - Slice of text strings to chunk
+ * * `config` - Chunking configuration to apply to all texts
+ *
+ * # Returns
+ *
+ * A vector of ChunkingResult objects, one per input text.
+ *
+ * # Errors
+ *
+ * Returns an error if chunking any individual text fails.
+ *
+ * # Examples
+ *
+ * ```rust
+ * use kreuzberg::chunking::{chunk_texts_batch, ChunkingConfig};
+ *
+ * # fn example() -> kreuzberg::Result<()> {
+ * let config = ChunkingConfig::default();
+ * let texts: Vec<String> = vec!["First text".to_string(), "Second text".to_string()];
+ * let results = chunk_texts_batch(&texts, &config)?;
+ * assert_eq!(results.len(), 2);
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * @param array<string> $texts
+ * @param ChunkingConfig $config
+ * @return array<ChunkingResult>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 1994,
+                  'endLine' => 1997,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'chunkSemantic'
+              => [
+                  'name' => 'chunkSemantic',
+                  'parameters'
+                   => [
+                       'text'
+                        => [
+                            'name' => 'text',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2012,
+                            'endLine' => 2012,
+                            'startColumn' => 42,
+                            'endColumn' => 53,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ChunkingConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2012,
+                            'endLine' => 2012,
+                            'startColumn' => 56,
+                            'endColumn' => 77,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'page_boundaries'
+                        => [
+                            'name' => 'page_boundaries',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 2012,
+                                      'endLine' => 2012,
+                                      'startTokenPos' => 2882,
+                                      'startFilePos' => 65917,
+                                      'endTokenPos' => 2882,
+                                      'endFilePos' => 65920,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'array',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2012,
+                            'endLine' => 2012,
+                            'startColumn' => 80,
+                            'endColumn' => 109,
+                            'parameterIndex' => 2,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'Kreuzberg\\ChunkingResult',
+                            'isIdentifier' => false,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Split text into semantically coherent chunks.
+ *
+ * Splits text into fine-grained segments, detects structural (and optionally
+ * embedding-based) topic boundaries, then merges segments into chunks that
+ * respect those boundaries and the configured size budget.
+ *
+ * @param string $text
+ * @param ChunkingConfig $config
+ * @param ?array<PageBoundary> $page_boundaries
+ * @return ChunkingResult
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 2012,
+                  'endLine' => 2015,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'normalize'
+              => [
+                  'name' => 'normalize',
+                  'parameters'
+                   => [
+                       'v'
+                        => [
+                            'name' => 'v',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'array',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2023,
+                            'endLine' => 2023,
+                            'startColumn' => 38,
+                            'endColumn' => 45,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * L2-normalize a vector.
+ *
+ * @param array<float> $v
+ * @return array<float>
+ */',
+                  'startLine' => 2023,
+                  'endLine' => 2026,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'getPreset'
+              => [
+                  'name' => 'getPreset',
+                  'parameters'
+                   => [
+                       'name'
+                        => [
+                            'name' => 'name',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2034,
+                            'endLine' => 2034,
+                            'startColumn' => 38,
+                            'endColumn' => 49,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                       'data'
+                        => [
+                            'types'
+                             => [
+                                 0
+                                  => [
+                                      'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                      'data'
+                                       => [
+                                           'name' => 'string',
+                                           'isIdentifier' => true,
+                                       ],
+                                  ],
+                                 1
+                                  => [
+                                      'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                      'data'
+                                       => [
+                                           'name' => 'null',
+                                           'isIdentifier' => true,
+                                       ],
+                                  ],
+                             ],
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Get a preset by name.
+ *
+ * @param string $name
+ * @return ?string
+ */',
+                  'startLine' => 2034,
+                  'endLine' => 2037,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'listPresets'
+              => [
+                  'name' => 'listPresets',
+                  'parameters'
+                   => [
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * List all available preset names.
+ *
+ * @return array<string>
+ */',
+                  'startLine' => 2044,
+                  'endLine' => 2047,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'warmModel'
+              => [
+                  'name' => 'warmModel',
+                  'parameters'
+                   => [
+                       'model_type'
+                        => [
+                            'name' => 'model_type',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\EmbeddingModelType',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2065,
+                            'endLine' => 2065,
+                            'startColumn' => 38,
+                            'endColumn' => 67,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'cache_dir'
+                        => [
+                            'name' => 'cache_dir',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 2065,
+                                      'endLine' => 2065,
+                                      'startTokenPos' => 3031,
+                                      'startFilePos' => 67677,
+                                      'endTokenPos' => 3031,
+                                      'endFilePos' => 67680,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2065,
+                            'endLine' => 2065,
+                            'startColumn' => 70,
+                            'endColumn' => 94,
+                            'parameterIndex' => 1,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Eagerly download and cache an embedding model without returning the handle.
+ *
+ * This triggers the same download and initialization as `get_or_init_engine`
+ * but discards the result, making it suitable for cache-warming scenarios
+ * where the caller doesn\'t need to use the model immediately.
+ *
+ * **Note**: This function downloads AND initializes the ONNX model, which
+ * requires ONNX Runtime and uses significant memory. For download-only
+ * scenarios (e.g., init containers), use [`download_model`] instead.
+ *
+ * @param EmbeddingModelType $model_type
+ * @param ?string $cache_dir
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 2065,
+                  'endLine' => 2068,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'downloadModel'
+              => [
+                  'name' => 'downloadModel',
+                  'parameters'
+                   => [
+                       'model_type'
+                        => [
+                            'name' => 'model_type',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\EmbeddingModelType',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2085,
+                            'endLine' => 2085,
+                            'startColumn' => 42,
+                            'endColumn' => 71,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'cache_dir'
+                        => [
+                            'name' => 'cache_dir',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 2085,
+                                      'endLine' => 2085,
+                                      'startTokenPos' => 3076,
+                                      'startFilePos' => 68537,
+                                      'endTokenPos' => 3076,
+                                      'endFilePos' => 68540,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2085,
+                            'endLine' => 2085,
+                            'startColumn' => 74,
+                            'endColumn' => 98,
+                            'parameterIndex' => 1,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'void',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Download an embedding model\'s files without initializing ONNX Runtime.
+ *
+ * Downloads the model files (ONNX model, tokenizer, config) from HuggingFace
+ * to the cache directory. Subsequent calls to `warm_model` or
+ * `get_or_init_engine` will find the files cached and skip the download step.
+ *
+ * This is ideal for init containers or CI environments where you want to
+ * pre-populate the cache without loading models into memory.
+ *
+ * @param EmbeddingModelType $model_type
+ * @param ?string $cache_dir
+ * @return void
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 2085,
+                  'endLine' => 2088,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'calculateOptimalDpi'
+              => [
+                  'name' => 'calculateOptimalDpi',
+                  'parameters'
+                   => [
+                       'page_width'
+                        => [
+                            'name' => 'page_width',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'float',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2101,
+                            'endLine' => 2101,
+                            'startColumn' => 48,
+                            'endColumn' => 64,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'page_height'
+                        => [
+                            'name' => 'page_height',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'float',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2101,
+                            'endLine' => 2101,
+                            'startColumn' => 67,
+                            'endColumn' => 84,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'target_dpi'
+                        => [
+                            'name' => 'target_dpi',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2101,
+                            'endLine' => 2101,
+                            'startColumn' => 87,
+                            'endColumn' => 101,
+                            'parameterIndex' => 2,
+                            'isOptional' => false,
+                        ],
+                       'max_dimension'
+                        => [
+                            'name' => 'max_dimension',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2101,
+                            'endLine' => 2101,
+                            'startColumn' => 104,
+                            'endColumn' => 121,
+                            'parameterIndex' => 3,
+                            'isOptional' => false,
+                        ],
+                       'min_dpi'
+                        => [
+                            'name' => 'min_dpi',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2101,
+                            'endLine' => 2101,
+                            'startColumn' => 124,
+                            'endColumn' => 135,
+                            'parameterIndex' => 4,
+                            'isOptional' => false,
+                        ],
+                       'max_dpi'
+                        => [
+                            'name' => 'max_dpi',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2101,
+                            'endLine' => 2101,
+                            'startColumn' => 138,
+                            'endColumn' => 149,
+                            'parameterIndex' => 5,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'int',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Calculate optimal DPI with min/max constraints
+ *
+ * @param float $page_width
+ * @param float $page_height
+ * @param int $target_dpi
+ * @param int $max_dimension
+ * @param int $min_dpi
+ * @param int $max_dpi
+ * @return int
+ */',
+                  'startLine' => 2101,
+                  'endLine' => 2104,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'detectLanguages'
+              => [
+                  'name' => 'detectLanguages',
+                  'parameters'
+                   => [
+                       'text'
+                        => [
+                            'name' => 'text',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2138,
+                            'endLine' => 2138,
+                            'startColumn' => 44,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\LanguageDetectionConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2138,
+                            'endLine' => 2138,
+                            'startColumn' => 58,
+                            'endColumn' => 88,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                       'data'
+                        => [
+                            'types'
+                             => [
+                                 0
+                                  => [
+                                      'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                      'data'
+                                       => [
+                                           'name' => 'array',
+                                           'isIdentifier' => true,
+                                       ],
+                                  ],
+                                 1
+                                  => [
+                                      'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                      'data'
+                                       => [
+                                           'name' => 'null',
+                                           'isIdentifier' => true,
+                                       ],
+                                  ],
+                             ],
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Detect languages in text using whatlang.
+ *
+ * Returns a list of detected language codes (ISO 639-3 format).
+ * Returns `None` if no languages could be detected with sufficient confidence.
+ *
+ * # Arguments
+ *
+ * * `text` - The text to analyze for language detection
+ * * `config` - Optional configuration for language detection
+ *
+ * # Example
+ *
+ * ```rust
+ * use kreuzberg::language_detection::detect_languages;
+ * use kreuzberg::core::config::LanguageDetectionConfig;
+ *
+ * let text = "Hello world! This is English text.";
+ * let config = LanguageDetectionConfig {
+ *     enabled: true,
+ *     min_confidence: 0.8,
+ *     detect_multiple: false,
+ * };
+ * let languages = detect_languages(text, &config).expect("language detection succeeded");
+ * println!("Detected languages: {:?}", languages);
+ * ```
+ *
+ * @param string $text
+ * @param LanguageDetectionConfig $config
+ * @return ?array<string>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 2138,
+                  'endLine' => 2141,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'extractKeywords'
+              => [
+                  'name' => 'extractKeywords',
+                  'parameters'
+                   => [
+                       'text'
+                        => [
+                            'name' => 'text',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2186,
+                            'endLine' => 2186,
+                            'startColumn' => 44,
+                            'endColumn' => 55,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'config'
+                        => [
+                            'name' => 'config',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\KeywordConfig',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2186,
+                            'endLine' => 2186,
+                            'startColumn' => 58,
+                            'endColumn' => 78,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'array',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Extract keywords from text using the specified algorithm.
+ *
+ * This is the unified entry point for keyword extraction. The algorithm
+ * used is determined by `config.algorithm`.
+ *
+ * # Arguments
+ *
+ * * `text` - The text to extract keywords from
+ * * `config` - Keyword extraction configuration
+ *
+ * # Returns
+ *
+ * A vector of keywords sorted by relevance (highest score first).
+ *
+ * # Errors
+ *
+ * Returns an error if:
+ * - The specified algorithm feature is not enabled
+ * - Keyword extraction fails
+ *
+ * # Examples
+ *
+ * ```rust,no_run
+ * # use kreuzberg::keywords::{extract_keywords, KeywordConfig};
+ * let text = "Document intelligence with Rust provides memory safety.";
+ * let config = KeywordConfig::default()
+ *     .with_max_keywords(10)
+ *     .with_language("en");
+ *
+ * let keywords = extract_keywords(text, &config)?;
+ *
+ * for keyword in keywords {
+ *     println!("{}: {:.3}", keyword.text, keyword.score);
+ * }
+ * # Ok::<(), kreuzberg::KreuzbergError>(())
+ * ```
+ *
+ * @param string $text
+ * @param KeywordConfig $config
+ * @return array<Keyword>
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 2186,
+                  'endLine' => 2189,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'computeHash'
+              => [
+                  'name' => 'computeHash',
+                  'parameters'
+                   => [
+                       'data'
+                        => [
+                            'name' => 'data',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2199,
+                            'endLine' => 2199,
+                            'startColumn' => 40,
+                            'endColumn' => 51,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Compute a blake3 hash string from input data.
+ *
+ * Returns a 32-character hex string (128 bits of blake3 output).
+ *
+ * @param string $data
+ * @return string
+ */',
+                  'startLine' => 2199,
+                  'endLine' => 2202,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'renderPdfPageToPng'
+              => [
+                  'name' => 'renderPdfPageToPng',
+                  'parameters'
+                   => [
+                       'pdf_bytes'
+                        => [
+                            'name' => 'pdf_bytes',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2232,
+                            'endLine' => 2232,
+                            'startColumn' => 47,
+                            'endColumn' => 63,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                       'page_index'
+                        => [
+                            'name' => 'page_index',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'int',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2232,
+                            'endLine' => 2232,
+                            'startColumn' => 66,
+                            'endColumn' => 80,
+                            'parameterIndex' => 1,
+                            'isOptional' => false,
+                        ],
+                       'dpi'
+                        => [
+                            'name' => 'dpi',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 2232,
+                                      'endLine' => 2232,
+                                      'startTokenPos' => 3319,
+                                      'startFilePos' => 73371,
+                                      'endTokenPos' => 3319,
+                                      'endFilePos' => 73374,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'int',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2232,
+                            'endLine' => 2232,
+                            'startColumn' => 83,
+                            'endColumn' => 98,
+                            'parameterIndex' => 2,
+                            'isOptional' => true,
+                        ],
+                       'password'
+                        => [
+                            'name' => 'password',
+                            'default'
+                             => [
+                                 'code' => 'null',
+                                 'attributes'
+                                  => [
+                                      'startLine' => 2232,
+                                      'endLine' => 2232,
+                                      'startTokenPos' => 3329,
+                                      'startFilePos' => 73397,
+                                      'endTokenPos' => 3329,
+                                      'endFilePos' => 73400,
+                                  ],
+                             ],
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionUnionType',
+                                 'data'
+                                  => [
+                                      'types'
+                                       => [
+                                           0
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'string',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                           1
+                                            => [
+                                                'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                                'data'
+                                                 => [
+                                                     'name' => 'null',
+                                                     'isIdentifier' => true,
+                                                 ],
+                                            ],
+                                       ],
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2232,
+                            'endLine' => 2232,
+                            'startColumn' => 101,
+                            'endColumn' => 124,
+                            'parameterIndex' => 3,
+                            'isOptional' => true,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Render a single PDF page to a PNG-encoded byte buffer.
+ *
+ * # Errors
+ *
+ * Returns an error if the PDF is invalid, the page index is out of bounds,
+ * or if the page fails to render.
+ *
+ * # Example
+ *
+ * ```rust,no_run
+ * use kreuzberg::pdf::render_pdf_page_to_png;
+ *
+ * # fn example() -> kreuzberg::pdf::error::Result<()> {
+ * let pdf_bytes = std::fs::read("document.pdf")?;
+ * let png = render_pdf_page_to_png(&pdf_bytes, 0, Some(150), None)?;
+ * std::fs::write("page_0.png", png)?;
+ * # Ok(())
+ * # }
+ * ```
+ *
+ * @param string $pdf_bytes
+ * @param int $page_index
+ * @param ?int $dpi
+ * @param ?string $password
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 2232,
+                  'endLine' => 2235,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'extractTextFromPdf'
+              => [
+                  'name' => 'extractTextFromPdf',
+                  'parameters'
+                   => [
+                       'pdf_bytes'
+                        => [
+                            'name' => 'pdf_bytes',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'string',
+                                      'isIdentifier' => true,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2244,
+                            'endLine' => 2244,
+                            'startColumn' => 47,
+                            'endColumn' => 63,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * extractTextFromPdf.
+ *
+ * @param string $pdf_bytes
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 2244,
+                  'endLine' => 2247,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'serializeToToon'
+              => [
+                  'name' => 'serializeToToon',
+                  'parameters'
+                   => [
+                       'result'
+                        => [
+                            'name' => 'result',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionResult',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2259,
+                            'endLine' => 2259,
+                            'startColumn' => 44,
+                            'endColumn' => 67,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Serialize an [`ExtractionResult`] to TOON (Token-Oriented Object Notation).
+ *
+ * TOON is a token-efficient alternative to JSON for LLM prompts.
+ * Losslessly convertible to/from JSON but uses fewer tokens.
+ *
+ * @param ExtractionResult $result
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 2259,
+                  'endLine' => 2262,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+             'serializeToJson'
+              => [
+                  'name' => 'serializeToJson',
+                  'parameters'
+                   => [
+                       'result'
+                        => [
+                            'name' => 'result',
+                            'default' => null,
+                            'type'
+                             => [
+                                 'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                                 'data'
+                                  => [
+                                      'name' => 'Kreuzberg\\ExtractionResult',
+                                      'isIdentifier' => false,
+                                  ],
+                             ],
+                            'isVariadic' => false,
+                            'byRef' => false,
+                            'isPromoted' => false,
+                            'attributes'
+                             => [
+                             ],
+                            'startLine' => 2271,
+                            'endLine' => 2271,
+                            'startColumn' => 44,
+                            'endColumn' => 67,
+                            'parameterIndex' => 0,
+                            'isOptional' => false,
+                        ],
+                   ],
+                  'returnsReference' => false,
+                  'returnType'
+                   => [
+                       'class' => 'PHPStan\\BetterReflection\\Reflection\\ReflectionNamedType',
+                       'data'
+                        => [
+                            'name' => 'string',
+                            'isIdentifier' => true,
+                        ],
+                   ],
+                  'attributes'
+                   => [
+                   ],
+                  'docComment' => '/**
+ * Serialize an [`ExtractionResult`] to pretty-printed JSON.
+ *
+ * @param ExtractionResult $result
+ * @return string
+ * @throws \\Kreuzberg\\KreuzbergException
+ */',
+                  'startLine' => 2271,
+                  'endLine' => 2274,
+                  'startColumn' => 5,
+                  'endColumn' => 5,
+                  'couldThrow' => false,
+                  'isClosure' => false,
+                  'isGenerator' => false,
+                  'isVariadic' => false,
+                  'modifiers' => 17,
+                  'namespace' => 'Kreuzberg',
+                  'declaringClassName' => 'Kreuzberg\\Kreuzberg',
+                  'implementingClassName' => 'Kreuzberg\\Kreuzberg',
+                  'currentClassName' => 'Kreuzberg\\Kreuzberg',
+                  'aliasName' => null,
+              ],
+         ],
+        'traitsData'
+         => [
+             'aliases'
+              => [
+              ],
+             'modifiers'
+              => [
+              ],
+             'precedences'
+              => [
+              ],
+             'hashes'
+              => [
+              ],
+         ],
+    ],
+]);
