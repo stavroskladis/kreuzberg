@@ -33,9 +33,6 @@ else
   force_republish_input="false"
   ref_input=""
   targets_input=""
-  if [[ "$tag" == *-pre* || "$tag" == *-rc* ]]; then
-    dry_run_input="true"
-  fi
 fi
 
 if [[ -z "$tag" ]]; then
@@ -268,6 +265,11 @@ determine_npm_tag() {
   fi
 }
 
+is_prerelease="false"
+if [[ "$version" == *-rc* ]] || [[ "$version" == *-alpha* ]] || [[ "$version" == *-beta* ]] || [[ "$version" == *-pre* ]]; then
+  is_prerelease="true"
+fi
+
 npm_tag=$(determine_npm_tag "$version")
 
 cat <<JSON
@@ -282,6 +284,7 @@ cat <<JSON
   "dry_run": ${dry_run_input:-false},
   "force_republish": ${force_republish_input:-false},
   "is_tag": $is_tag,
+  "is_prerelease": $is_prerelease,
   "release_targets": "$release_targets_summary",
   "release_any": $release_any,
   "release_python": $release_python,

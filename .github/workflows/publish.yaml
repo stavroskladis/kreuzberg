@@ -53,7 +53,6 @@ permissions:
 jobs:
   prepare:
     name: Prepare metadata
-    if: ${{ github.event_name != 'release' || !github.event.release.prerelease }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -68,6 +67,7 @@ jobs:
       target_sha: ${{ steps.meta.outputs.target_sha }}
       matrix_ref: ${{ steps.meta.outputs.matrix_ref }}
       is_tag: ${{ steps.meta.outputs.is_tag }}
+      is_prerelease: ${{ steps.meta.outputs.is_prerelease }}
       release_targets: ${{ steps.meta.outputs.release_targets }}
       release_any: ${{ steps.meta.outputs.release_any }}
       release_python: ${{ steps.meta.outputs.release_python }}
@@ -3780,6 +3780,7 @@ jobs:
       always() &&
       needs.prepare.outputs.dry_run != 'true' &&
       needs.prepare.outputs.is_tag == 'true' &&
+      needs.prepare.outputs.is_prerelease != 'true' &&
       needs.prepare.outputs.release_homebrew == 'true' &&
       needs.check-homebrew.outputs.exists != 'true' &&
       needs.upload-cli-release.result == 'success' &&

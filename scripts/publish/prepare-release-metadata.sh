@@ -16,6 +16,7 @@ echo "$metadata" >release-metadata.json
   echo "target_sha=$(echo "$metadata" | jq -r '.target_sha')"
   echo "matrix_ref=$(echo "$metadata" | jq -r '.matrix_ref')"
   echo "is_tag=$(echo "$metadata" | jq -r '.is_tag')"
+  echo "is_prerelease=$(echo "$metadata" | jq -r '.is_prerelease')"
   echo "release_targets=$(echo "$metadata" | jq -r '.release_targets')"
   echo "release_any=$(echo "$metadata" | jq -r '.release_any')"
   echo "release_python=$(echo "$metadata" | jq -r '.release_python')"

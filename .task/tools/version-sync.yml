@@ -42,6 +42,14 @@ tasks:
       - "{{.ALEF}} sync-versions --bump patch"
       - task: sync
 
+  set:
+    desc: "Set explicit version and sync (usage: task version:set -- 4.10.0-rc.1)"
+    requires:
+      vars: [CLI_ARGS]
+    cmds:
+      - "{{.ALEF}} sync-versions --set {{.CLI_ARGS}}"
+      - task: sync
+
   show:
     desc: "Show current version from Cargo.toml"
     cmds:
