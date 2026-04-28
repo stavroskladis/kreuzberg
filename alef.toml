@@ -960,6 +960,9 @@ exclude_functions = [
     "chunk_text",
     "chunk_text_with_heading_source",
     "chunk_semantic",
+    # &Vec<&str> vs &[String] type mismatch in rustler codegen
+    "batch_reduce_tokens",
+    "chunk_texts_batch",
     # warm_model / download_model take Option<PathBuf> but codegen emits PathBuf::from(Option<String>)
     # which has no From impl; exclude until alef path-option codegen is fixed
     "warm_model",

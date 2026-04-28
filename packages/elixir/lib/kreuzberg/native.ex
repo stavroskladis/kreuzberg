@@ -67,7 +67,6 @@ defmodule Kreuzberg.Native do
   def is_valid_utf8(_bytes), do: :erlang.nif_error(:nif_not_loaded)
   def clean_extracted_text(_text), do: :erlang.nif_error(:nif_not_loaded)
   def reduce_tokens(_text, _config, _language_hint), do: :erlang.nif_error(:nif_not_loaded)
-  def batch_reduce_tokens(_texts, _config, _language_hint), do: :erlang.nif_error(:nif_not_loaded)
   def bold(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
   def italic(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
   def underline(_start, _end), do: :erlang.nif_error(:nif_not_loaded)
@@ -86,7 +85,6 @@ defmodule Kreuzberg.Native do
   def create_byte_buffer_pool(_pool_size, _buffer_capacity), do: :erlang.nif_error(:nif_not_loaded)
   def openapi_json, do: :erlang.nif_error(:nif_not_loaded)
   def serve_default_async, do: :erlang.nif_error(:nif_not_loaded)
-  def chunk_texts_batch(_texts, _config), do: :erlang.nif_error(:nif_not_loaded)
   def normalize(_v), do: :erlang.nif_error(:nif_not_loaded)
   def get_preset(_name), do: :erlang.nif_error(:nif_not_loaded)
 

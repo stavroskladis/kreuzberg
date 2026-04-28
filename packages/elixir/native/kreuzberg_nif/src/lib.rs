@@ -4873,61 +4873,6 @@ pub fn reduce_tokens(text: String, config: Option<String>, language_hint: Option
     Ok(result)
 }
 
-/// Reduces token count for multiple texts efficiently using parallel processing.
-///
-/// This function processes multiple texts in parallel using Rayon, providing
-/// significant performance improvements for batch operations. All texts use the
-/// same configuration and language hint for consistency.
-///
-/// # Arguments
-///
-/// * `texts` - Slice of text references to reduce
-/// * `config` - Configuration specifying reduction level and options
-/// * `language_hint` - Optional ISO 639-3 language code (e.g., "eng", "spa")
-///
-/// # Returns
-///
-/// Returns a vector of reduced texts in the same order as the input.
-///
-/// # Errors
-///
-/// Returns an error if the language hint is invalid or stopwords cannot be loaded.
-///
-/// # Examples
-///
-/// ```rust
-/// use kreuzberg::text::token_reduction::{batch_reduce_tokens, TokenReductionConfig, ReductionLevel};
-///
-/// let texts: Vec<String> = vec![
-///     "This is the first document with some text.".to_string(),
-///     "Here is another document with different content.".to_string(),
-///     "And finally, a third document to process.".to_string(),
-/// ];
-/// let config = TokenReductionConfig::default();
-/// let reduced = batch_reduce_tokens(&texts, &config, Some("eng"))?;
-/// assert_eq!(reduced.len(), 3);
-/// # Ok::<(), kreuzberg::error::KreuzbergError>(())
-/// ```
-#[rustler::nif]
-pub fn batch_reduce_tokens(
-    texts: Vec<String>,
-    config: Option<String>,
-    language_hint: Option<String>,
-) -> Result<Vec<String>, String> {
-    let texts_refs: Vec<&str> = texts.iter().map(|s| s.as_str()).collect();
-    let config_core: Option<kreuzberg::TokenReductionConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::TokenReductionConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::text::batch_reduce_tokens(
-        &texts_refs,
-        config_core.as_ref().unwrap_or(&Default::default()),
-        language_hint.as_deref(),
-    )
-    .map_err(|e| e.to_string())?;
-    Ok(result)
-}
-
 /// Create a bold annotation for the given byte range.
 #[rustler::nif]
 pub fn bold(start: u32, end: u32) -> TextAnnotation {
@@ -5113,49 +5058,6 @@ pub fn serve_default_async() -> Result<(), String> {
         .block_on(async { kreuzberg::api::serve_default().await })
         .map_err(|e| e.to_string())?;
     Ok(result)
-}
-
-/// Batch process multiple texts with the same configuration.
-///
-/// This convenience function applies the same chunking configuration to multiple
-/// texts in sequence.
-///
-/// # Arguments
-///
-/// * `texts` - Slice of text strings to chunk
-/// * `config` - Chunking configuration to apply to all texts
-///
-/// # Returns
-///
-/// A vector of ChunkingResult objects, one per input text.
-///
-/// # Errors
-///
-/// Returns an error if chunking any individual text fails.
-///
-/// # Examples
-///
-/// ```rust
-/// use kreuzberg::chunking::{chunk_texts_batch, ChunkingConfig};
-///
-/// # fn example() -> kreuzberg::Result<()> {
-/// let config = ChunkingConfig::default();
-/// let texts: Vec<String> = vec!["First text".to_string(), "Second text".to_string()];
-/// let results = chunk_texts_batch(&texts, &config)?;
-/// assert_eq!(results.len(), 2);
-/// # Ok(())
-/// # }
-/// ```
-#[rustler::nif]
-pub fn chunk_texts_batch(texts: Vec<String>, config: Option<String>) -> Result<Vec<ChunkingResult>, String> {
-    let texts_refs: Vec<&str> = texts.iter().map(|s| s.as_str()).collect();
-    let config_core: Option<kreuzberg::ChunkingConfig> = config
-        .map(|s| serde_json::from_str::<kreuzberg::ChunkingConfig>(&s))
-        .transpose()
-        .map_err(|e| e.to_string())?;
-    let result = kreuzberg::chunk_texts_batch(&texts_refs, config_core.as_ref().unwrap_or(&Default::default()))
-        .map_err(|e| e.to_string())?;
-    Ok(result.into_iter().map(Into::into).collect())
 }
 
 /// L2-normalize a vector.
