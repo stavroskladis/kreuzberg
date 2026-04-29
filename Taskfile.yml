@@ -280,6 +280,37 @@ tasks:
       - phpstan analyse --memory-limit=2G
     dir: packages/php
 
+  python:build:sdist:publish:
+    desc: "Build the Python sdist using maturin"
+    dir: packages/python
+    env:
+      DIST_DIR: '{{.DIST_DIR | default "../../dist"}}'
+    cmds:
+      - mkdir -p "$DIST_DIR"
+      - maturin sdist --out "$DIST_DIR"
+
+  wasm:build:all:
+    desc: "Alias for rust:wasm:build:all (build all WASM targets + TS wrapper)"
+    deps: [rust:wasm:build:all]
+
+  java:build:release:
+    desc: "Build the Java binding via Maven (mvn package)"
+    dir: packages/java
+    cmds:
+      - mvn -B -DskipTests package
+
+  csharp:build:release:
+    desc: "Build the C# binding in Release configuration"
+    dir: packages/csharp
+    cmds:
+      - dotnet build --configuration Release
+
+  csharp:package:
+    desc: "Pack the C# binding into a NuGet package (forwards extra args)"
+    dir: packages/csharp
+    cmds:
+      - dotnet pack --configuration Release {{.CLI_ARGS}}
+
   csharp:format:
     desc: "Format C# binding with dotnet format"
     cmds:

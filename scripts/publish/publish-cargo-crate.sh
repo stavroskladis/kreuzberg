@@ -17,7 +17,10 @@ fi
 
 publish_log=$(mktemp)
 set +e
-cargo publish -p "$crate" --token "$CARGO_REGISTRY_TOKEN" 2>&1 | tee "$publish_log"
+# cargo publish runs an internal verification build; with default features only, the
+# workspace's `-D warnings` RUSTFLAGS escalates dead-code warnings (unreachable on the
+# minimal feature set) into errors. Drop -D warnings just for the verify build.
+RUSTFLAGS="" cargo publish -p "$crate" --token "$CARGO_REGISTRY_TOKEN" 2>&1 | tee "$publish_log"
 status=${PIPESTATUS[0]}
 set -e
 

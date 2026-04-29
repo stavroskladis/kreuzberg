@@ -934,6 +934,12 @@ jobs:
         if: runner.os == 'Linux'
         uses: kreuzberg-dev/actions/free-disk-space-linux@v1
 
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          check-latest: true
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:
@@ -965,12 +971,6 @@ jobs:
         with:
           tool: cargo-zigbuild
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          check-latest: true
-
       - name: Prepare ONNX Runtime (macOS)
         if: startsWith(matrix.settings.target, 'aarch64-apple-darwin') || startsWith(matrix.settings.target, 'x86_64-apple-darwin')
         uses: ./.github/actions/setup-prebuilt-onnx
@@ -991,7 +991,7 @@ jobs:
         run: Remove-Item -Recurse -Force crates/kreuzberg-node\npm -ErrorAction SilentlyContinue
 
       - name: Create npm package structure
-        run: pnpm --filter ./crates/kreuzberg-node exec napi create-npm-dirs
+        run: pnpm --filter "{./crates/kreuzberg-node}" exec napi create-npm-dirs
 
       - name: Build native module
         if: runner.os != 'Windows'
@@ -3365,6 +3365,12 @@ jobs:
         with:
           ref: ${{ needs.prepare.outputs.ref }}
 
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org/
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:
@@ -3382,12 +3388,6 @@ jobs:
         with:
           name: node-typescript-defs
           path: typescript-defs
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          registry-url: https://registry.npmjs.org/
 
       - name: Update NPM
         run: corepack enable && corepack prepare npm@latest --activate
@@ -3490,7 +3490,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22.6.0
+          node-version: '24'
           registry-url: https://registry.npmjs.org/
 
       - name: Install pnpm
