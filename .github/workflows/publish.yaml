@@ -2801,23 +2801,20 @@ jobs:
 
       - name: Debug - List build output
         shell: bash
+        working-directory: packages/elixir/native/kreuzberg_nif
         run: |
           TARGET="${{ matrix.settings.target }}"
           echo "=== Build target: ${TARGET} ==="
           echo "=== Runner OS: ${{ runner.os }} ==="
           echo ""
-          echo "=== All library files in workspace target ==="
+          echo "=== All library files in NIF crate target ==="
           find target -type f \( -name "*.so" -o -name "*.dylib" -o -name "*.dll" -o -name "libkreuzberg*" -o -name "kreuzberg_nif*" \) 2>/dev/null | head -30 || echo "No libraries found"
           echo ""
           echo "=== Expected location: target/${TARGET}/release/ ==="
-          for f in target/"${TARGET}"/release/*kreuzberg*; do
-            [ -e "$f" ] && ls -la "$f" || true
-          done 2>/dev/null || echo "Directory or files do not exist"
+          find "target/${TARGET}/release" -maxdepth 1 -type f 2>/dev/null | head -30 || echo "Directory does not exist"
           echo ""
           echo "=== Fallback location: target/release/ ==="
-          for f in target/release/*kreuzberg*; do
-            [ -e "$f" ] && ls -la "$f" || true
-          done 2>/dev/null || echo "No fallback dir"
+          find "target/release" -maxdepth 1 -type f 2>/dev/null | head -30 || echo "No fallback dir"
 
       - name: Package native libraries (NIF 2.16)
         shell: bash
