@@ -41,6 +41,7 @@ pub mod core;
 pub mod error;
 pub mod extraction;
 pub mod extractors;
+#[cfg(feature = "layout-detection")]
 pub mod model_cache;
 pub mod plugins;
 pub mod rendering;
@@ -49,6 +50,7 @@ pub mod text;
 pub mod types;
 pub mod utils;
 
+#[cfg(any(feature = "ocr", feature = "pdf", feature = "paddle-ocr"))]
 pub mod table_core;
 
 #[cfg(feature = "tower-service")]
@@ -63,7 +65,7 @@ pub mod mcp;
 #[cfg(feature = "chunking")]
 pub mod chunking;
 
-#[cfg(all(feature = "liter-llm", not(target_os = "windows")))]
+#[cfg(all(feature = "liter-llm", not(target_os = "windows"), not(target_arch = "wasm32")))]
 pub mod llm;
 
 #[cfg(feature = "embeddings")]
@@ -238,8 +240,11 @@ pub use core::config_validation::{
     validate_token_reduction_level,
 };
 
-// Text annotation builder helpers
-pub use types::builder::{bold, code, italic, link, strikethrough, underline};
+// Text annotation builder helpers (always available — used by djot/markdown extractors)
+pub use types::builder::{bold, code, italic, link, strikethrough};
+// Extended annotation helpers (only used by office/html/xml extractors)
+#[cfg(any(feature = "office", feature = "html", feature = "xml"))]
+pub use types::builder::underline;
 
 // Extraction markdown utilities
 #[cfg(any(feature = "office", feature = "html", feature = "xml"))]

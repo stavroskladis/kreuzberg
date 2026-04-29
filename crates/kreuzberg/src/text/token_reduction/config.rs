@@ -11,19 +11,6 @@ pub enum ReductionLevel {
     Maximum = 4,
 }
 
-impl ReductionLevel {
-    #[cfg(test)]
-    pub(crate) fn as_str(&self) -> &'static str {
-        match self {
-            ReductionLevel::Off => "off",
-            ReductionLevel::Light => "light",
-            ReductionLevel::Moderate => "moderate",
-            ReductionLevel::Aggressive => "aggressive",
-            ReductionLevel::Maximum => "maximum",
-        }
-    }
-}
-
 impl From<&str> for ReductionLevel {
     fn from(s: &str) -> Self {
         match s.to_lowercase().as_str() {
@@ -66,38 +53,6 @@ impl Default for TokenReductionConfig {
             preserve_patterns: vec![],
             target_reduction: None,
             enable_semantic_clustering: false,
-        }
-    }
-}
-
-impl TokenReductionConfig {
-    #[cfg(test)]
-    #[allow(clippy::too_many_arguments)]
-    pub(crate) fn new(
-        level: ReductionLevel,
-        language_hint: Option<String>,
-        preserve_markdown: bool,
-        preserve_code: bool,
-        semantic_threshold: f32,
-        enable_parallel: bool,
-        use_simd: bool,
-        custom_stopwords: Option<HashMap<String, Vec<String>>>,
-        preserve_patterns: Option<Vec<String>>,
-        target_reduction: Option<f32>,
-        enable_semantic_clustering: bool,
-    ) -> Self {
-        Self {
-            level,
-            language_hint,
-            preserve_markdown,
-            preserve_code,
-            semantic_threshold: semantic_threshold.clamp(0.0, 1.0),
-            enable_parallel,
-            use_simd,
-            custom_stopwords,
-            preserve_patterns: preserve_patterns.unwrap_or_default(),
-            target_reduction: target_reduction.map(|t| t.clamp(0.0, 1.0)),
-            enable_semantic_clustering,
         }
     }
 }

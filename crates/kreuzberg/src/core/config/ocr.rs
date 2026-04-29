@@ -327,6 +327,7 @@ impl OcrConfig {
     }
 
     /// Returns the effective quality thresholds, using configured values or defaults.
+    #[cfg(feature = "ocr")]
     pub(crate) fn effective_thresholds(&self) -> OcrQualityThresholds {
         self.quality_thresholds.clone().unwrap_or_default()
     }
@@ -340,6 +341,7 @@ impl OcrConfig {
     ///
     /// Explicit non-default backend selections are honored as-is — a silent
     /// paddleocr fallback would mask errors from the chosen backend.
+    #[cfg(feature = "ocr")]
     pub(crate) fn effective_pipeline(&self) -> Option<OcrPipelineConfig> {
         if self.pipeline.is_some() {
             return self.pipeline.clone();

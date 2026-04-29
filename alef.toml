@@ -1,4 +1,4 @@
-version = "0.11.8"
+version = "0.11.18"
 languages = [
     "python",
     "node",
@@ -736,7 +736,7 @@ node = "crates/kreuzberg-node/src/"
 ruby = "packages/ruby/ext/kreuzberg_rb/src/"
 php = "crates/kreuzberg-php/src/"
 ffi = "crates/kreuzberg-ffi/src/"
-go = "packages/go/"
+go = "packages/go/v4/"
 elixir = "packages/elixir/native/kreuzberg_nif/src/"
 wasm = "crates/kreuzberg-wasm/src/"
 java = "packages/java/src/main/java/"
@@ -1219,9 +1219,12 @@ features = [
     "mdx",
     "ocr-wasm",
     "tree-sitter-wasm",
-    "liter-llm",
     "stopwords",
+    "liter-llm",
 ]
+
+[wasm.extra_dependencies]
+async-trait = "0.1"
 
 # ---------------------------------------------------------------------------
 # Trait bridges — generate FFI bridge code for plugin traits
@@ -1379,7 +1382,7 @@ snippets = { basic_extraction = "getting-started/basic_usage.md", async_extracti
 template = "go.md"
 output_path = "packages/go/v4/README.md"
 name = "Go"
-package_name = "github.com/kreuzberg-dev/kreuzberg/packages/go/v4"
+package_name = "github.com/kreuzberg-dev/kreuzberg/v4"
 badge_url = "https://img.shields.io/github/v/tag/kreuzberg-dev/kreuzberg?label=Go&color=007ec6"
 docs_url = "https://kreuzberg.dev/"
 description = "Extract text, tables, images, and metadata from 91+ file formats and 248 programming languages including PDF, Office documents, and images. Go bindings with context-aware async support, idiomatic Go API, and CGO-based native performance."
@@ -1572,7 +1575,7 @@ extra_paths = [
     "packages/ruby/lib/kreuzberg/version.rb",
     "crates/kreuzberg-node/package.json",
     "crates/kreuzberg-node/npm/*/package.json",
-    "packages/go/go.mod",
+    "packages/go/v4/go.mod",
 ]
 
 # ---------------------------------------------------------------------------

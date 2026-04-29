@@ -17,6 +17,7 @@ pub(crate) fn is_jp2(bytes: &[u8]) -> bool {
 }
 
 /// Check if bytes start with J2K codestream magic (SOC marker).
+#[cfg(feature = "ocr")]
 pub(crate) fn is_j2k(bytes: &[u8]) -> bool {
     bytes.len() >= 4 && bytes[0] == 0xFF && bytes[1] == 0x4F && bytes[2] == 0xFF && bytes[3] == 0x51
 }
@@ -206,7 +207,7 @@ fn parse_j2k_siz(bytes: &[u8]) -> Result<ImageMetadata> {
 /// Decode JPEG 2000 image bytes to an RGB image using hayro-jpeg2000.
 ///
 /// Pure Rust, memory-safe decoder. No temp files needed.
-#[cfg(any(feature = "ocr", feature = "ocr-wasm"))]
+#[cfg(feature = "ocr")]
 pub(crate) fn decode_jp2_to_rgb(bytes: &[u8]) -> Result<image::RgbImage> {
     use hayro_jpeg2000::{DecodeSettings, Image as Jp2Image};
 
@@ -281,9 +282,11 @@ pub(crate) fn decode_jp2_to_rgb(bytes: &[u8]) -> Result<image::RgbImage> {
 }
 
 /// JBIG2 file signature: 0x97 0x4A 0x42 0x32 0x0D 0x0A 0x1A 0x0A
+#[cfg(feature = "ocr")]
 const JBIG2_MAGIC: &[u8] = &[0x97, 0x4A, 0x42, 0x32, 0x0D, 0x0A, 0x1A, 0x0A];
 
 /// Check if bytes start with JBIG2 magic bytes.
+#[cfg(feature = "ocr")]
 pub(crate) fn is_jbig2(bytes: &[u8]) -> bool {
     bytes.len() >= JBIG2_MAGIC.len() && bytes[..JBIG2_MAGIC.len()] == *JBIG2_MAGIC
 }
@@ -292,7 +295,7 @@ pub(crate) fn is_jbig2(bytes: &[u8]) -> bool {
 ///
 /// JBIG2 is a bi-level (1-bit) image compression format commonly used in scanned PDFs.
 /// The decoder converts black/white pixels to grayscale (0/255) for OCR processing.
-#[cfg(any(feature = "ocr", feature = "ocr-wasm"))]
+#[cfg(feature = "ocr")]
 pub(crate) fn decode_jbig2_to_gray(bytes: &[u8]) -> Result<image::GrayImage> {
     use hayro_jbig2::{Decoder, Image};
 
@@ -335,7 +338,7 @@ pub(crate) fn decode_jbig2_to_gray(bytes: &[u8]) -> Result<image::GrayImage> {
 /// This function detects these formats by magic bytes and uses `hayro-jpeg2000`
 /// / `hayro-jbig2` for decoding, falling back to the standard `image` crate
 /// for all other formats.
-#[cfg(any(feature = "ocr", feature = "ocr-wasm"))]
+#[cfg(feature = "ocr")]
 pub(crate) fn load_image_for_ocr(image_bytes: &[u8]) -> Result<image::DynamicImage> {
     if is_jp2(image_bytes) || is_j2k(image_bytes) {
         decode_jp2_to_rgb(image_bytes).map(image::DynamicImage::ImageRgb8)

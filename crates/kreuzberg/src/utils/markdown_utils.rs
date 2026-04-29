@@ -4,13 +4,17 @@
 //! `quality` features to detect markdown structure without pulling in
 //! heavy dependencies.
 
+#[cfg(any(feature = "chunking", feature = "quality"))]
 use once_cell::sync::Lazy;
+#[cfg(any(feature = "chunking", feature = "quality"))]
 use regex::Regex;
 
 /// ATX heading pattern: 1-6 `#` characters followed by whitespace.
+#[cfg(any(feature = "chunking", feature = "quality"))]
 static MARKDOWN_HEADER_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"^#{1,6}\s+").expect("markdown header regex"));
 
 /// Check whether a line is a markdown ATX header (`# ...` through `###### ...`).
+#[cfg(any(feature = "chunking", feature = "quality"))]
 #[inline]
 pub(crate) fn is_markdown_header(line: &str) -> bool {
     MARKDOWN_HEADER_RE.is_match(line)

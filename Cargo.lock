@@ -493,7 +493,7 @@ checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
 
 [[package]]
 name = "benchmark-harness"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "ahash",
  "async-trait",
@@ -2589,6 +2589,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
 
 [[package]]
+name = "gloo-timers"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "482ce8a491a501da4cd806bd190275363d674f2845005c6ddbd5d3e1dd54495d"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "js-sys",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "grid"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3514,7 +3526,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "ahash",
  "anyhow",
@@ -3621,7 +3633,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-cli"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "anstyle",
  "anyhow",
@@ -3641,7 +3653,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-dart"
-version = "0.11.7"
+version = "4.10.0-rc.10"
 dependencies = [
  "async-trait",
  "flutter_rust_bridge",
@@ -3651,7 +3663,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-ffi"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "async-trait",
  "cbindgen",
@@ -3662,7 +3674,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-node"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "async-trait",
  "kreuzberg",
@@ -3675,7 +3687,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-paddle-ocr"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "geo-clipper",
  "geo-types",
@@ -3689,7 +3701,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-pdfium-render"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "bindgen",
  "bitflags 2.11.1",
@@ -3713,7 +3725,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-php"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "async-trait",
  "ext-php-rs",
@@ -3725,7 +3737,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-py"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "async-trait",
  "kreuzberg",
@@ -3738,7 +3750,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-swift"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "kreuzberg",
  "serde_json",
@@ -3749,7 +3761,7 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-tesseract"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "cc",
  "cmake",
@@ -3761,9 +3773,11 @@ dependencies = [
 
 [[package]]
 name = "kreuzberg-wasm"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
+ "async-trait",
  "futures-util",
+ "getrandom 0.3.4",
  "js-sys",
  "kreuzberg",
  "serde-wasm-bindgen",
@@ -3875,13 +3889,12 @@ checksum = "92daf443525c4cce67b150400bc2316076100ce0b3686209eb8cf3c31612e6f0"
 
 [[package]]
 name = "liter-llm"
-version = "1.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d5aae9dbae0fea95f9375a0248e328f928c89a1af7ad4442dd758f503cd88f2"
+version = "1.4.0-rc.12"
 dependencies = [
  "base64 0.22.1",
  "bytes",
  "futures-core",
+ "gloo-timers",
  "memchr",
  "pin-project-lite",
  "reqwest",
@@ -6351,7 +6364,7 @@ checksum = "1b6b67fb9a61334225b5b790716f609cd58395f895b3fe8b328786812a40bc3b"
 
 [[package]]
 name = "snippet-runner"
-version = "4.10.0-rc.8"
+version = "4.10.0-rc.10"
 dependencies = [
  "clap",
  "rayon",

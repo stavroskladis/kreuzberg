@@ -2708,38 +2708,39 @@ fn extract_image_from_pdfium_obj(
         PdfPageObject::Image(image_obj) => {
             let global_idx = first_idx_on_page + *current_image;
             if indices_set.contains(&global_idx)
-                && let Ok(dynamic_image) = image_obj.get_processed_image(document) {
-                    let w = dynamic_image.width();
-                    let h = dynamic_image.height();
-                    if w >= 32 || h >= 32 {
-                        let rgba = dynamic_image.to_rgba8();
-                        let mut png_buf: Vec<u8> = Vec::new();
-                        if image::codecs::png::PngEncoder::new(&mut png_buf)
-                            .write_image(rgba.as_raw(), w, h, image::ExtendedColorType::Rgba8)
-                            .is_ok()
-                        {
-                            *extracted_count += 1;
-                            extracted_on_page.insert(
-                                global_idx,
-                                crate::types::ExtractedImage {
-                                    data: bytes::Bytes::from(png_buf),
-                                    format: std::borrow::Cow::Borrowed("png"),
-                                    image_index: global_idx,
-                                    page_number: Some(page_num),
-                                    width: Some(w),
-                                    height: Some(h),
-                                    colorspace: Some("RGBA".to_string()),
-                                    bits_per_component: Some(8),
-                                    is_mask: false,
-                                    description: None,
-                                    ocr_result: None,
-                                    bounding_box: None,
-                                    source_path: None,
-                                },
-                            );
-                        }
+                && let Ok(dynamic_image) = image_obj.get_processed_image(document)
+            {
+                let w = dynamic_image.width();
+                let h = dynamic_image.height();
+                if w >= 32 || h >= 32 {
+                    let rgba = dynamic_image.to_rgba8();
+                    let mut png_buf: Vec<u8> = Vec::new();
+                    if image::codecs::png::PngEncoder::new(&mut png_buf)
+                        .write_image(rgba.as_raw(), w, h, image::ExtendedColorType::Rgba8)
+                        .is_ok()
+                    {
+                        *extracted_count += 1;
+                        extracted_on_page.insert(
+                            global_idx,
+                            crate::types::ExtractedImage {
+                                data: bytes::Bytes::from(png_buf),
+                                format: std::borrow::Cow::Borrowed("png"),
+                                image_index: global_idx,
+                                page_number: Some(page_num),
+                                width: Some(w),
+                                height: Some(h),
+                                colorspace: Some("RGBA".to_string()),
+                                bits_per_component: Some(8),
+                                is_mask: false,
+                                description: None,
+                                ocr_result: None,
+                                bounding_box: None,
+                                source_path: None,
+                            },
+                        );
                     }
                 }
+            }
             *current_image += 1;
         }
         PdfPageObject::XObjectForm(form_obj) => {

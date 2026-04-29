@@ -52,33 +52,6 @@ pub struct PoolSizeHint {
     pub byte_buffer_capacity: usize,
 }
 
-#[cfg(test)]
-impl PoolSizeHint {
-    /// Calculate the estimated string pool memory in bytes.
-    ///
-    /// This is the total estimated memory for all string buffers.
-    #[inline]
-    pub(crate) fn estimated_string_pool_memory(&self) -> usize {
-        self.string_buffer_count * self.string_buffer_capacity
-    }
-
-    /// Calculate the estimated byte pool memory in bytes.
-    ///
-    /// This is the total estimated memory for all byte buffers.
-    #[inline]
-    pub(crate) fn estimated_byte_pool_memory(&self) -> usize {
-        self.byte_buffer_count * self.byte_buffer_capacity
-    }
-
-    /// Calculate the total estimated pool memory in bytes.
-    ///
-    /// This includes both string and byte buffer pools.
-    #[inline]
-    pub(crate) fn total_pool_memory(&self) -> usize {
-        self.estimated_string_pool_memory() + self.estimated_byte_pool_memory()
-    }
-}
-
 /// Get the format-specific extraction ratio.
 ///
 /// This ratio represents the approximate size of extracted content

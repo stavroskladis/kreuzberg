@@ -332,12 +332,20 @@ impl InternalElement {
     }
 
     /// Set the page number.
+    #[cfg(any(
+        feature = "ocr",
+        feature = "pdf",
+        feature = "paddle-ocr",
+        feature = "xml",
+        feature = "office"
+    ))]
     pub(crate) fn with_page(mut self, page: u32) -> Self {
         self.page = Some(page);
         self
     }
 
     /// Set the bounding box.
+    #[cfg(any(feature = "office", feature = "pdf"))]
     pub(crate) fn with_bbox(mut self, bbox: BoundingBox) -> Self {
         self.bbox = Some(bbox);
         self
@@ -357,20 +365,15 @@ impl InternalElement {
         self
     }
 
-    /// Set annotations.
-    #[cfg(test)]
-    pub(crate) fn with_annotations(mut self, annotations: Vec<TextAnnotation>) -> Self {
-        self.annotations = annotations;
-        self
-    }
-
     /// Set attributes.
+    #[cfg(any(feature = "xml", feature = "office"))]
     pub(crate) fn with_attributes(mut self, attributes: AHashMap<String, String>) -> Self {
         self.attributes = Some(attributes);
         self
     }
 
     /// Regenerate the ID with the correct index (call after pushing to the document).
+    #[cfg(any(feature = "ocr", feature = "xml", feature = "office"))]
     pub(crate) fn with_index(mut self, index: u32) -> Self {
         self.id = InternalElementId::generate(self.kind.discriminant(), &self.text, self.page, index);
         self

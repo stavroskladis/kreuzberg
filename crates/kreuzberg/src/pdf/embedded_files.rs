@@ -4,8 +4,11 @@
 //! in the document catalog. This module extracts those files, detects their MIME
 //! type, and returns them as `ArchiveEntry` values for recursive processing.
 
+#[cfg(feature = "tokio-runtime")]
 use crate::types::{ArchiveEntry, ProcessingWarning};
+#[cfg(feature = "tokio-runtime")]
 use lopdf::{Document, Object};
+#[cfg(feature = "tokio-runtime")]
 use std::borrow::Cow;
 
 /// Embedded file descriptor extracted from the PDF name tree.
@@ -22,6 +25,7 @@ pub struct EmbeddedFile {
 ///
 /// Walks the `/Names` → `/EmbeddedFiles` name tree in the catalog.
 /// Returns an empty `Vec` if the document has no embedded files.
+#[cfg(feature = "tokio-runtime")]
 pub(crate) fn extract_embedded_files(document: &Document) -> Vec<EmbeddedFile> {
     let mut files = Vec::new();
 
@@ -59,6 +63,7 @@ pub(crate) fn extract_embedded_files(document: &Document) -> Vec<EmbeddedFile> {
 }
 
 /// Recursively collect embedded files from a PDF name tree node.
+#[cfg(feature = "tokio-runtime")]
 fn collect_from_name_tree(document: &Document, dict: &lopdf::Dictionary, files: &mut Vec<EmbeddedFile>) {
     // Leaf node: /Names array with alternating [name filespec name filespec ...].
     if let Ok(Object::Array(names_arr)) = dict.get(b"Names") {
@@ -100,6 +105,7 @@ fn collect_from_name_tree(document: &Document, dict: &lopdf::Dictionary, files: 
 /// - `/UF` or `/F`: display filename
 /// - `/EF` → `/F`: reference to the embedded file stream
 /// - `/AFRelationship`: optional relationship type
+#[cfg(feature = "tokio-runtime")]
 fn extract_file_from_filespec(
     document: &Document,
     tree_name: &str,
@@ -159,6 +165,7 @@ fn extract_file_from_filespec(
 }
 
 /// Resolve a PDF object through references.
+#[cfg(feature = "tokio-runtime")]
 fn resolve_object<'a>(document: &'a Document, obj: &'a Object) -> Option<Object> {
     match obj {
         Object::Reference(id) => document.get_object(*id).ok().cloned(),
@@ -170,6 +177,7 @@ fn resolve_object<'a>(document: &'a Document, obj: &'a Object) -> Option<Object>
 ///
 /// Returns `(children, warnings)`. The children are `ArchiveEntry` values
 /// suitable for attaching to `InternalDocument.children`.
+#[cfg(feature = "tokio-runtime")]
 pub(crate) async fn extract_and_process_embedded_files(
     pdf_bytes: &[u8],
     config: &crate::core::config::ExtractionConfig,
@@ -230,7 +238,7 @@ pub(crate) async fn extract_and_process_embedded_files(
     (children, warnings)
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "tokio-runtime"))]
 mod tests {
     use super::*;
 

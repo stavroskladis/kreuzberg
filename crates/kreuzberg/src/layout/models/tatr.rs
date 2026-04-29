@@ -112,19 +112,6 @@ impl TatrClass {
             _ => None, // 6 = NoObject, anything else = invalid
         }
     }
-
-    /// Human-readable label.
-    #[cfg(test)]
-    pub(crate) fn name(&self) -> &'static str {
-        match self {
-            Self::Table => "table",
-            Self::Column => "column",
-            Self::Row => "row",
-            Self::ColumnHeader => "column_header",
-            Self::ProjectedRowHeader => "projected_row_header",
-            Self::SpanningCell => "spanning_cell",
-        }
-    }
 }
 
 /// A single TATR detection result.

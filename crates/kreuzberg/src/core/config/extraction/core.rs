@@ -485,25 +485,6 @@ impl ExtractionConfig {
     /// Validate the configuration, returning an error if any settings are invalid.
     ///
     /// Checks:
-    /// - OCR backend name is supported (catches typos early)
-    /// - VLM backend config is present when backend is "vlm"
-    /// - Pipeline stage backends and VLM configs are valid
-    /// - Structured extraction schema and LLM model are non-empty
-    #[cfg(test)]
-    pub(crate) fn validate(&self) -> Result<(), crate::error::KreuzbergError> {
-        // Validate OCR config if present
-        if let Some(ref ocr) = self.ocr {
-            ocr.validate()?;
-        }
-
-        // Validate structured extraction config if present
-        if let Some(ref se) = self.structured_extraction {
-            crate::core::config_validation::validate_structured_extraction_schema(&se.schema, &se.llm.model)?;
-        }
-
-        Ok(())
-    }
-
     /// Returns the effective disable-OCR value, accounting for both the top-level
     /// `disable_ocr` flag and the `ocr.enabled` shorthand on [`OcrConfig`].
     ///

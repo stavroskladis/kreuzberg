@@ -18,12 +18,16 @@
 //! assert!(doc.validate().is_ok());
 //! ```
 
+use super::document_structure::{AnnotationKind, TextAnnotation};
+
+#[cfg(any(feature = "office", feature = "email", feature = "xml"))]
 use ahash::AHashMap;
 
+#[cfg(any(feature = "office", feature = "email", feature = "xml"))]
 use super::document_structure::{
-    AnnotationKind, ContentLayer, DocumentNode, DocumentStructure, GridCell, NodeContent, NodeId, NodeIndex, TableGrid,
-    TextAnnotation,
+    ContentLayer, DocumentNode, DocumentStructure, GridCell, NodeContent, NodeId, NodeIndex, TableGrid,
 };
+#[cfg(any(feature = "office", feature = "email", feature = "xml"))]
 use super::extraction::BoundingBox;
 
 /// Builder for constructing `DocumentStructure` trees with automatic
@@ -32,6 +36,7 @@ use super::extraction::BoundingBox;
 /// The builder maintains an internal section stack: when you push a heading,
 /// it automatically creates a `Group` container and nests subsequent content
 /// under it. Higher-level headings pop deeper sections off the stack.
+#[cfg(any(feature = "office", feature = "email", feature = "xml"))]
 pub struct DocumentStructureBuilder {
     doc: DocumentStructure,
     section_stack: Vec<(u8, NodeIndex)>,
@@ -42,6 +47,7 @@ pub struct DocumentStructureBuilder {
     node_count: u32,
 }
 
+#[cfg(any(feature = "office", feature = "email", feature = "xml"))]
 impl DocumentStructureBuilder {
     /// Create a new empty builder.
     pub(crate) fn new() -> Self {
@@ -365,12 +371,6 @@ impl DocumentStructureBuilder {
         }
     }
 
-    /// Add a child node to an existing parent (for container nodes like Quote, Slide, Admonition).
-    #[cfg(test)]
-    pub(crate) fn add_child(&mut self, parent: NodeIndex, child: NodeIndex) {
-        self.doc.add_child(parent, child);
-    }
-
     /// Push a raw `NodeContent` with full control over content layer and annotations.
     /// Nests under current section unless the content type is a root-level type.
     pub(crate) fn push_raw(
@@ -397,12 +397,6 @@ impl DocumentStructureBuilder {
             }
             _ => self.push_node_raw(content, page, bbox, layer, annotations),
         }
-    }
-
-    /// Reset the section stack (e.g. when starting a new page).
-    #[cfg(test)]
-    pub(crate) fn clear_sections(&mut self) {
-        self.section_stack.clear();
     }
 
     /// Manually push a node onto the container stack.
@@ -476,6 +470,7 @@ impl DocumentStructureBuilder {
     }
 }
 
+#[cfg(any(feature = "office", feature = "email", feature = "xml"))]
 impl Default for DocumentStructureBuilder {
     fn default() -> Self {
         Self::new()
@@ -483,6 +478,7 @@ impl Default for DocumentStructureBuilder {
 }
 
 /// Convert a simple cell grid to a `TableGrid`.
+#[cfg(any(feature = "office", feature = "email", feature = "xml"))]
 fn cells_to_grid(cells: &[Vec<String>]) -> TableGrid {
     let rows = cells.len() as u32;
     let cols = cells.iter().map(|r| r.len()).max().unwrap_or(0) as u32;
@@ -510,6 +506,7 @@ fn cells_to_grid(cells: &[Vec<String>]) -> TableGrid {
 }
 
 /// Check if a content type should always be root-level (not nested under sections).
+#[cfg(any(feature = "office", feature = "email", feature = "xml"))]
 fn is_always_root(content: &NodeContent) -> bool {
     matches!(content, NodeContent::PageBreak)
 }
@@ -537,6 +534,7 @@ pub fn italic(start: u32, end: u32) -> TextAnnotation {
 }
 
 /// Create an underline annotation for the given byte range.
+#[cfg(any(feature = "office", feature = "html", feature = "xml"))]
 pub fn underline(start: u32, end: u32) -> TextAnnotation {
     TextAnnotation {
         start,
@@ -576,6 +574,7 @@ pub fn strikethrough(start: u32, end: u32) -> TextAnnotation {
 }
 
 /// Create a subscript annotation for the given byte range.
+#[cfg(any(feature = "office", feature = "html", feature = "xml"))]
 pub fn subscript(start: u32, end: u32) -> TextAnnotation {
     TextAnnotation {
         start,
@@ -585,6 +584,7 @@ pub fn subscript(start: u32, end: u32) -> TextAnnotation {
 }
 
 /// Create a superscript annotation for the given byte range.
+#[cfg(any(feature = "office", feature = "html", feature = "xml"))]
 pub fn superscript(start: u32, end: u32) -> TextAnnotation {
     TextAnnotation {
         start,
@@ -594,6 +594,7 @@ pub fn superscript(start: u32, end: u32) -> TextAnnotation {
 }
 
 /// Create a font size annotation for the given byte range.
+#[cfg(any(feature = "office", feature = "html", feature = "xml"))]
 pub fn font_size(start: u32, end: u32, value: &str) -> TextAnnotation {
     TextAnnotation {
         start,
@@ -605,6 +606,7 @@ pub fn font_size(start: u32, end: u32, value: &str) -> TextAnnotation {
 }
 
 /// Create a color annotation for the given byte range.
+#[cfg(any(feature = "office", feature = "html", feature = "xml"))]
 pub fn color(start: u32, end: u32, value: &str) -> TextAnnotation {
     TextAnnotation {
         start,
@@ -616,6 +618,7 @@ pub fn color(start: u32, end: u32, value: &str) -> TextAnnotation {
 }
 
 /// Create a highlight annotation for the given byte range.
+#[cfg(any(feature = "office", feature = "html", feature = "xml"))]
 pub fn highlight(start: u32, end: u32) -> TextAnnotation {
     TextAnnotation {
         start,
@@ -628,7 +631,7 @@ pub fn highlight(start: u32, end: u32) -> TextAnnotation {
 // Tests
 // ============================================================================
 
-#[cfg(test)]
+#[cfg(all(test, any(feature = "office", feature = "html", feature = "xml")))]
 mod tests {
     use super::*;
 

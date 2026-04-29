@@ -105,6 +105,7 @@ pub fn convert_html_to_markdown(
 /// # Returns
 ///
 /// A tuple of (markdown/djot content, optional metadata), or an error if conversion fails
+#[cfg(any(feature = "office", test))]
 pub(crate) fn convert_html_to_markdown_with_metadata(
     html: &str,
     options: Option<ConversionOptions>,

@@ -247,7 +247,7 @@ tasks:
     desc: "Lint Go binding with golangci-lint"
     cmds:
       - golangci-lint run ./...
-    dir: packages/go
+    dir: packages/go/v4
 
   ruby:format:
     desc: "Format Ruby binding with rubocop"

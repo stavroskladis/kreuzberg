@@ -110,54 +110,6 @@ pub(crate) fn extract_metadata_with_password(pdf_bytes: &[u8], password: Option<
     extract_pdf_specific_metadata(&document)
 }
 
-#[cfg(test)]
-pub(crate) fn extract_metadata_with_passwords(pdf_bytes: &[u8], passwords: &[&str]) -> Result<PdfMetadata> {
-    let mut last_error = None;
-
-    for password in passwords {
-        match extract_metadata_with_password(pdf_bytes, Some(password)) {
-            Ok(metadata) => return Ok(metadata),
-            Err(err) => {
-                last_error = Some(err);
-                continue;
-            }
-        }
-    }
-
-    if let Some(err) = last_error {
-        return Err(err);
-    }
-
-    extract_metadata(pdf_bytes)
-}
-
-/// Extract complete PDF metadata from a document.
-///
-/// Extracts common fields (title, subject, authors, keywords, dates, creator),
-/// PDF-specific metadata, and optionally builds a PageStructure with boundaries.
-///
-/// # Arguments
-///
-/// * `document` - The PDF document to extract metadata from
-/// * `page_boundaries` - Optional vector of PageBoundary entries for building PageStructure.
-///   If provided, a PageStructure will be built with these boundaries.
-/// * `content` - Optional extracted text content, used for blank page detection.
-///   If provided, `PageInfo.is_blank` will be populated based on text content analysis.
-///   If `None`, `is_blank` will be `None` for all pages.
-///
-/// # Returns
-///
-/// Returns a `PdfExtractionMetadata` struct containing all extracted metadata,
-/// including page structure if boundaries were provided.
-#[cfg(test)]
-pub(crate) fn extract_metadata_from_document(
-    document: &PdfDocument<'_>,
-    page_boundaries: Option<&[PageBoundary]>,
-    content: Option<&str>,
-) -> Result<PdfExtractionMetadata> {
-    extract_metadata_from_document_impl(document, page_boundaries, content.unwrap_or(""))
-}
-
 /// Internal implementation of metadata extraction that can be reused by unified extraction.
 pub(crate) fn extract_metadata_from_document_impl(
     document: &PdfDocument<'_>,

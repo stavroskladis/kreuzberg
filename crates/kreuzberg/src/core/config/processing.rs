@@ -189,45 +189,6 @@ pub struct ChunkingConfig {
 }
 
 impl ChunkingConfig {
-    /// Create a new `ChunkingConfig` with the given max characters, overlap, and trim settings.
-    ///
-    /// Other fields are set to their defaults. Use the setter methods to customize further.
-    #[cfg(test)]
-    pub(crate) fn new(max_characters: usize, overlap: usize, trim: bool) -> Self {
-        Self {
-            max_characters,
-            overlap,
-            trim,
-            chunker_type: ChunkerType::Text,
-            embedding: None,
-            preset: None,
-            sizing: ChunkSizing::default(),
-            prepend_heading_context: false,
-            topic_threshold: None,
-        }
-    }
-
-    /// Set the chunker type.
-    #[cfg(test)]
-    pub(crate) fn with_chunker_type(mut self, chunker_type: ChunkerType) -> Self {
-        self.chunker_type = chunker_type;
-        self
-    }
-
-    /// Set the sizing strategy.
-    #[cfg(test)]
-    pub(crate) fn with_sizing(mut self, sizing: ChunkSizing) -> Self {
-        self.sizing = sizing;
-        self
-    }
-
-    /// Enable or disable prepending heading context to chunk content.
-    #[cfg(test)]
-    pub(crate) fn with_prepend_heading_context(mut self, prepend: bool) -> Self {
-        self.prepend_heading_context = prepend;
-        self
-    }
-
     /// Set the cosine similarity threshold for semantic topic boundary detection.
     ///
     /// # Panics
@@ -298,7 +259,7 @@ impl ChunkingConfig {
     }
 
     /// Resolve a preset name (no-op without the `embeddings` feature).
-    #[cfg(not(feature = "embeddings"))]
+    #[cfg(all(feature = "chunking", not(feature = "embeddings")))]
     pub(crate) fn resolve_preset(&self) -> Self {
         if self.preset.is_some() {
             tracing::warn!("Chunking presets require the 'embeddings' feature");

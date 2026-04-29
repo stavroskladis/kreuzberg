@@ -4,7 +4,9 @@
 //! at server startup, helping operators diagnose issues in containerized
 //! environments like Kubernetes.
 
+#[cfg(feature = "api")]
 use crate::Result;
+#[cfg(feature = "api")]
 use crate::plugins::registry::{
     get_document_extractor_registry, get_ocr_backend_registry, get_post_processor_registry, get_validator_registry,
 };
@@ -53,6 +55,7 @@ impl PluginHealthStatus {
     ///     println!("OCR backends: {:?}", status.ocr_backends);
     /// }
     /// ```
+    #[cfg(feature = "api")]
     pub(crate) fn check() -> Self {
         let ocr_registry = get_ocr_backend_registry();
         let ocr_backends = ocr_registry.read().list();
@@ -114,6 +117,7 @@ impl PluginHealthStatus {
 ///     Ok(())
 /// }
 /// ```
+#[cfg(feature = "api")]
 pub(crate) fn validate_plugins_at_startup() -> Result<PluginHealthStatus> {
     let status = PluginHealthStatus::check();
 
@@ -169,6 +173,7 @@ pub(crate) fn validate_plugins_at_startup() -> Result<PluginHealthStatus> {
 /// Logs diagnostics about environment variables that affect plugin behavior,
 /// particularly useful for Kubernetes deployments where configuration
 /// is often done via environment variables.
+#[cfg(feature = "api")]
 fn check_environment_variables() {
     // Check TESSDATA_PREFIX for OCR
     match std::env::var("TESSDATA_PREFIX") {

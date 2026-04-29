@@ -42,19 +42,6 @@ impl TesseractBackend {
         })
     }
 
-    /// Create a new Tesseract backend with custom cache directory.
-    #[cfg(test)]
-    pub(crate) fn with_cache_dir(cache_dir: std::path::PathBuf) -> Result<Self> {
-        let processor = OcrProcessor::new(Some(cache_dir)).map_err(|e| crate::KreuzbergError::Ocr {
-            message: format!("Failed to create Tesseract processor: {}", e),
-            source: Some(Box::new(e)),
-        })?;
-        Ok(Self {
-            processor: Arc::new(processor),
-            available_languages: OnceLock::new(),
-        })
-    }
-
     /// Convert public API TesseractConfig to internal TesseractConfig.
     ///
     /// The public API types (crate::types) use i32 for compatibility with PyO3,

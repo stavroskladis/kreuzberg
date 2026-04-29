@@ -40,6 +40,7 @@ impl PdfRenderer<'static> {
 
 impl PdfRenderer<'_> {
     /// Return the number of pages in the given PDF without rendering.
+    #[cfg(feature = "ocr")]
     pub(crate) fn page_count(&self, pdf_bytes: &[u8]) -> Result<usize> {
         let document = self
             .pdfium
@@ -48,6 +49,7 @@ impl PdfRenderer<'_> {
         Ok(document.pages().len() as usize)
     }
 
+    #[cfg(feature = "ocr")]
     pub(crate) fn render_page_to_image(
         &self,
         pdf_bytes: &[u8],

@@ -545,6 +545,7 @@ pub struct HtmlMetadata {
 
 impl HtmlMetadata {
     /// Check if metadata is empty (no meaningful content extracted).
+    #[cfg(feature = "html")]
     pub(crate) fn is_empty(&self) -> bool {
         self.title.is_none()
             && self.description.is_none()

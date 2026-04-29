@@ -23,6 +23,7 @@ pub mod xml_utils;
 pub use string_utils::{calculate_text_confidence, fix_mojibake, safe_decode};
 
 pub use json_utils::{camel_to_snake, snake_to_camel};
+#[cfg(any(feature = "xml", feature = "office"))]
 pub(crate) use xml_utils::xml_tag_name;
 
 use std::borrow::Cow;

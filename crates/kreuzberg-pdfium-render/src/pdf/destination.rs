@@ -143,7 +143,14 @@ impl PdfDestinationViewSettings {
             p_params.as_mut_ptr(),
         );
 
-        match view as u32 {
+        let view_mode = {
+            #[cfg(target_arch = "wasm32")]
+            let v: u32 = view;
+            #[cfg(not(target_arch = "wasm32"))]
+            let v: u32 = view as u32;
+            v
+        };
+        match view_mode {
             PDFDEST_VIEW_UNKNOWN_MODE => Ok(PdfDestinationViewSettings::Unknown),
             PDFDEST_VIEW_XYZ => {
                 if p_num_params == 3 {

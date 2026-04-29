@@ -797,6 +797,7 @@ impl PdfExtractor {
             }
         }
 
+        #[cfg(feature = "tokio-runtime")]
         let (images, image_fallback_warning) = if config.images.as_ref().map(|c| c.extract_images).unwrap_or(false) {
             let content_owned = content.to_vec();
             let max_images_per_page = config.images.as_ref().and_then(|i| i.max_images_per_page);
@@ -858,6 +859,12 @@ impl PdfExtractor {
         } else {
             (None, None)
         };
+        // Image extraction requires spawn_blocking (tokio-runtime); not available on WASM.
+        #[cfg(not(feature = "tokio-runtime"))]
+        let (images, image_fallback_warning): (
+            Option<Vec<crate::types::ExtractedImage>>,
+            Option<crate::types::ProcessingWarning>,
+        ) = (None, None);
 
         // Finalize: apply pre-rendered structured document if available.
         // Quality gate: if pre-rendered doc has >2x the words of native text,
@@ -1082,6 +1089,7 @@ impl PdfExtractor {
                 doc.processing_warnings.push(warning);
             }
             doc.annotations = pdf_annotations;
+            #[cfg(feature = "ocr")]
             if !ocr_elements.is_empty() {
                 doc.prebuilt_ocr_elements = Some(ocr_elements);
             }
@@ -1248,7 +1256,6 @@ impl PdfExtractor {
         #[cfg(feature = "ocr")]
         let mut ocr_tables: Vec<crate::types::Table> = Vec::new();
         #[cfg(feature = "ocr")]
-        #[allow(unused_assignments)]
         let mut ocr_elements: Vec<crate::types::OcrElement> = Vec::new();
         #[cfg(feature = "ocr")]
         let mut ocr_internal_doc: Option<InternalDocument> = None;
@@ -1504,6 +1511,12 @@ impl PdfExtractor {
         }
 
         doc.prebuilt_pages = final_pages;
+
+        // Attach OCR elements so downstream pipeline can use per-word bounding boxes.
+        #[cfg(feature = "ocr")]
+        if !ocr_elements.is_empty() {
+            doc.prebuilt_ocr_elements = Some(ocr_elements);
+        }
 
         // Attach LLM usage accumulated during OCR so derive_extraction_result can transfer it.
         #[cfg(feature = "ocr")]

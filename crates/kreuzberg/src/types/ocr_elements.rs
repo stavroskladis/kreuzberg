@@ -62,6 +62,7 @@ impl OcrBoundingGeometry {
     /// # Returns
     ///
     /// Tuple of `(left, top, width, height)` in pixels.
+    #[cfg(feature = "ocr")]
     pub(crate) fn to_aabb(&self) -> (u32, u32, u32, u32) {
         match self {
             Self::Rectangle {
@@ -81,6 +82,7 @@ impl OcrBoundingGeometry {
     }
 
     /// Get the center point of the bounding geometry.
+    #[cfg(feature = "ocr")]
     pub(crate) fn center(&self) -> (f64, f64) {
         let (left, top, width, height) = self.to_aabb();
         (left as f64 + width as f64 / 2.0, top as f64 + height as f64 / 2.0)
@@ -125,6 +127,7 @@ impl OcrConfidence {
     /// Create confidence from Tesseract's single confidence value.
     ///
     /// Tesseract provides confidence as 0-100, which we normalize to 0.0-1.0.
+    #[cfg(feature = "ocr")]
     pub(crate) fn from_tesseract(confidence: f64) -> Self {
         Self {
             detection: None,
@@ -137,6 +140,7 @@ impl OcrConfidence {
     /// Both scores should be in 0.0-1.0 range, but PaddleOCR may occasionally return
     /// values slightly above 1.0 due to model calibration. This method clamps both
     /// values to ensure they stay within the valid 0.0-1.0 range.
+    #[cfg(any(feature = "ocr", feature = "paddle-ocr"))]
     pub(crate) fn from_paddle(box_score: f32, text_score: f32) -> Self {
         Self {
             detection: Some((box_score as f64).clamp(0.0, 1.0)),
@@ -170,6 +174,7 @@ impl OcrRotation {
     /// # Errors
     ///
     /// Returns an error if `angle_index` is not in the valid range (0-3).
+    #[cfg(any(feature = "ocr", feature = "paddle-ocr"))]
     pub(crate) fn from_paddle(angle_index: i32, angle_score: f32) -> std::result::Result<Self, String> {
         if !(0..=3).contains(&angle_index) {
             return Err(format!(
@@ -214,6 +219,7 @@ impl OcrElementLevel {
     /// Convert from Tesseract's numeric level (1-5).
     ///
     /// Tesseract levels: 1=Page, 2=Block, 3=Paragraph, 4=Line, 5=Word
+    #[cfg(feature = "ocr")]
     pub(crate) fn from_tesseract_level(level: i32) -> Self {
         match level {
             1 => Self::Page,
@@ -269,6 +275,7 @@ fn default_page_number() -> usize {
     1
 }
 
+#[cfg(feature = "ocr")]
 impl OcrElement {
     /// Create a new OCR element with minimal required fields.
     pub(crate) fn new(text: impl Into<String>, geometry: OcrBoundingGeometry, confidence: OcrConfidence) -> Self {

@@ -50,6 +50,7 @@ impl CancellationToken {
     ///
     /// All clones of this token will observe [`is_cancelled`] returning `true`
     /// on their next check. This operation is idempotent.
+    #[cfg(any(feature = "tokio-runtime", test))]
     #[inline]
     pub(crate) fn cancel(&self) {
         self.cancelled.store(true, Ordering::Relaxed);

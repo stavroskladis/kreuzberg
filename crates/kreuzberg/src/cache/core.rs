@@ -489,17 +489,7 @@ impl GenericCache {
         Ok((removed_count, removed_size))
     }
 
-    /// Delete all cache entries under a namespace.
-    ///
-    /// Removes the namespace subdirectory and all its contents.
-    /// Returns (files_removed, mb_freed).
-    #[cfg(test)]
-    pub(crate) fn delete_namespace(&self, namespace: &str) -> Result<(usize, f64)> {
-        let ns_dir = self.cache_dir.join(namespace);
-        self.delete_namespace_inner(&ns_dir)
-    }
-
-    /// Inner implementation: remove a directory and count its contents.
+    /// Remove a directory and count its contents (used by `clear_all` to handle namespace dirs).
     #[cfg(test)]
     fn delete_namespace_inner(&self, dir: &Path) -> Result<(usize, f64)> {
         if !dir.exists() {

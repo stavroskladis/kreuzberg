@@ -72,26 +72,6 @@ impl PoolMetrics {
         }
         (self.total_cache_hits.load(Ordering::Relaxed) as f64 / acquires as f64) * 100.0
     }
-
-    /// Get all metrics as a struct for reporting.
-    #[cfg(test)]
-    pub(crate) fn snapshot(&self) -> PoolMetricsSnapshot {
-        PoolMetricsSnapshot {
-            total_acquires: self.total_acquires.load(Ordering::Relaxed),
-            total_cache_hits: self.total_cache_hits.load(Ordering::Relaxed),
-            peak_items_stored: self.peak_items_stored.load(Ordering::Relaxed),
-            total_creations: self.total_creations.load(Ordering::Relaxed),
-        }
-    }
-
-    /// Reset all metrics to zero.
-    #[cfg(test)]
-    pub(crate) fn reset(&self) {
-        self.total_acquires.store(0, Ordering::Relaxed);
-        self.total_cache_hits.store(0, Ordering::Relaxed);
-        self.peak_items_stored.store(0, Ordering::Relaxed);
-        self.total_creations.store(0, Ordering::Relaxed);
-    }
 }
 
 #[cfg(feature = "pool-metrics")]
@@ -99,15 +79,6 @@ impl Default for PoolMetrics {
     fn default() -> Self {
         Self::new()
     }
-}
-
-#[cfg(feature = "pool-metrics")]
-#[derive(Debug, Clone, Copy)]
-pub struct PoolMetricsSnapshot {
-    pub total_acquires: usize,
-    pub total_cache_hits: usize,
-    pub peak_items_stored: usize,
-    pub total_creations: usize,
 }
 
 /// A thread-safe object pool that reuses instances to reduce allocations.
@@ -214,6 +185,7 @@ impl<T: Recyclable> Pool<T> {
     }
 
     /// Clear the pool, discarding all pooled objects.
+    #[cfg(any(feature = "tokio-runtime", test))]
     pub(crate) fn clear(&self) -> Result<(), PoolError> {
         self.objects.lock().clear();
         Ok(())

@@ -120,7 +120,7 @@ jobs:
             test-cmd: 'pip install maturin && cd packages/python && maturin develop --release && python3 -m pytest tests/ -q && cd ../../e2e/python && python3 -m pytest tests/ -q'
           - lang: node
             node-version: '24'
-            test-cmd: 'cd e2e/node && npx vitest run'
+            test-cmd: 'cd crates/kreuzberg-node && npm run build && cd ../../e2e/node && npx vitest run'
           - lang: go
             go-version: '1.26'
             test-cmd: 'cd e2e/go && go test ./... -count=1 -v'

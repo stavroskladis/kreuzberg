@@ -657,18 +657,13 @@ impl DocumentStructure {
         })
     }
 
-    /// Get a node by index.
-    #[cfg(test)]
-    pub(crate) fn get(&self, index: NodeIndex) -> Option<&DocumentNode> {
-        self.nodes.get(index.0 as usize)
-    }
-
     /// Get the total number of nodes.
     pub(crate) fn len(&self) -> usize {
         self.nodes.len()
     }
 
     /// Check if the document structure is empty.
+    #[cfg(any(feature = "office", feature = "email", feature = "xml", test))]
     pub(crate) fn is_empty(&self) -> bool {
         self.nodes.is_empty()
     }

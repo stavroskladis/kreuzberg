@@ -381,6 +381,7 @@ impl EntityValidator {
     /// value (attribute names are normally short) but the name is included in
     /// the call signature so callers can wire `quick_xml::Reader` attribute
     /// iteration directly.
+    #[cfg(any(feature = "xml", feature = "office"))]
     pub(crate) fn check_attr(&self, _name: &str, value: &str) -> Result<(), SecurityError> {
         self.validate(value)
     }
@@ -467,6 +468,7 @@ impl SecurityBudget {
     }
 
     /// Build with explicit defaults (no config available, e.g. internal call sites).
+    #[cfg(any(feature = "xml", feature = "office"))]
     pub(crate) fn with_defaults() -> Self {
         Self::from_limits(&SecurityLimits::default())
     }
@@ -494,6 +496,7 @@ impl SecurityBudget {
     }
 
     /// Validate an XML / HTML attribute value against `max_entity_length`.
+    #[cfg(any(feature = "xml", feature = "office"))]
     pub(crate) fn check_attr(&self, name: &str, value: &str) -> Result<(), SecurityError> {
         self.entity.check_attr(name, value)
     }

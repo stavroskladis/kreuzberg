@@ -11,16 +11,17 @@
 /// On `wasm32` targets it is a zero-cost no-op to avoid the `unreachable` trap.
 #[derive(Debug, Clone, Copy)]
 pub struct Instant {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(all(not(target_arch = "wasm32"), feature = "pdf"))]
     inner: std::time::Instant,
 }
 
+#[cfg(feature = "pdf")]
 impl Instant {
     /// Capture the current instant.
     #[inline]
     pub(crate) fn now() -> Self {
         Self {
-            #[cfg(not(target_arch = "wasm32"))]
+            #[cfg(all(not(target_arch = "wasm32"), feature = "pdf"))]
             inner: std::time::Instant::now(),
         }
     }

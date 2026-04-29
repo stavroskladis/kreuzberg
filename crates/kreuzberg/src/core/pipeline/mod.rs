@@ -54,8 +54,10 @@ use initialization::{get_processors_from_cache, initialize_features, initialize_
         content.element_count = doc.elements.len(),
     )
 ))]
-pub async fn run_pipeline(mut doc: InternalDocument, config: &ExtractionConfig) -> Result<ExtractionResult> {
+pub async fn run_pipeline(doc: InternalDocument, config: &ExtractionConfig) -> Result<ExtractionResult> {
     // 1. Process extracted images with OCR if configured
+    #[cfg(all(feature = "ocr", feature = "tokio-runtime"))]
+    let mut doc = doc;
     #[cfg(all(feature = "ocr", feature = "tokio-runtime"))]
     if config.ocr.is_some() && !doc.images.is_empty() {
         let images_to_process = std::mem::take(&mut doc.images);
@@ -183,7 +185,7 @@ pub async fn run_pipeline(mut doc: InternalDocument, config: &ExtractionConfig) 
 
     // Run LLM-based structured extraction BEFORE output formatting
     // so extraction sees plain text, not markdown/HTML
-    #[cfg(all(feature = "liter-llm", not(target_os = "windows")))]
+    #[cfg(all(feature = "liter-llm", not(target_os = "windows"), not(target_arch = "wasm32")))]
     if let Some(ref structured_config) = config.structured_extraction {
         match crate::llm::structured::extract_structured(&result.content, structured_config).await {
             Ok((output, usage)) => {
@@ -200,7 +202,7 @@ pub async fn run_pipeline(mut doc: InternalDocument, config: &ExtractionConfig) 
         }
     }
 
-    #[cfg(any(not(feature = "liter-llm"), target_os = "windows"))]
+    #[cfg(any(not(feature = "liter-llm"), target_os = "windows", target_arch = "wasm32"))]
     if config.structured_extraction.is_some() {
         result.processing_warnings.push(crate::types::ProcessingWarning {
             source: std::borrow::Cow::Borrowed("structured_extraction"),

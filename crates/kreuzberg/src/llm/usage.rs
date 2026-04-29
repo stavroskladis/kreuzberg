@@ -20,6 +20,7 @@ pub(crate) fn extract_usage_from_chat(response: &liter_llm::ChatCompletionRespon
 }
 
 /// Extract usage metadata from an embedding response.
+#[cfg(feature = "embeddings")]
 pub(crate) fn extract_usage_from_embedding(response: &liter_llm::EmbeddingResponse, source: &str) -> Option<LlmUsage> {
     Some(LlmUsage {
         model: response.model.clone(),

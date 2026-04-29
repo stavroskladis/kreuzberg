@@ -61,6 +61,7 @@ pub fn classify_uri(url: &str) -> UriKind {
 
 impl Uri {
     /// Create a new hyperlink URI, auto-classifying `mailto:` as Email and `#` as Anchor.
+    #[cfg(any(feature = "pdf", feature = "xml", feature = "office"))]
     pub(crate) fn hyperlink(url: impl Into<String>, label: Option<String>) -> Self {
         let url = url.into();
         let kind = classify_uri(&url);
@@ -83,6 +84,7 @@ impl Uri {
     }
 
     /// Create a new citation URI (for DOIs, academic references).
+    #[cfg(any(feature = "xml", feature = "office"))]
     pub(crate) fn citation(url: impl Into<String>, label: Option<String>) -> Self {
         Self {
             url: url.into(),
@@ -93,34 +95,13 @@ impl Uri {
     }
 
     /// Create a new anchor/cross-reference URI.
+    #[cfg(any(feature = "pdf", feature = "xml", feature = "office"))]
     pub(crate) fn anchor(url: impl Into<String>, label: Option<String>) -> Self {
         Self {
             url: url.into(),
             label,
             page: None,
             kind: UriKind::Anchor,
-        }
-    }
-
-    /// Create a new email URI.
-    #[cfg(test)]
-    pub(crate) fn email(url: impl Into<String>, label: Option<String>) -> Self {
-        Self {
-            url: url.into(),
-            label,
-            page: None,
-            kind: UriKind::Email,
-        }
-    }
-
-    /// Create a new reference URI.
-    #[cfg(test)]
-    pub(crate) fn reference(url: impl Into<String>, label: Option<String>) -> Self {
-        Self {
-            url: url.into(),
-            label,
-            page: None,
-            kind: UriKind::Reference,
         }
     }
 

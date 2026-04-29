@@ -1,7 +1,9 @@
 //! OCR backend registry.
 
+#[cfg(any(feature = "ocr", feature = "ocr-wasm"))]
+use crate::KreuzbergError;
+use crate::Result;
 use crate::plugins::OcrBackend;
-use crate::{KreuzbergError, Result};
 use ahash::AHashMap;
 use std::sync::Arc;
 
@@ -40,7 +42,7 @@ impl OcrBackendRegistry {
         #[cfg(any(
             feature = "ocr",
             feature = "paddle-ocr",
-            all(feature = "liter-llm", not(target_os = "windows"))
+            all(feature = "liter-llm", not(target_os = "windows"), not(target_arch = "wasm32"))
         ))]
         let mut registry = Self {
             backends: AHashMap::new(),
@@ -49,7 +51,7 @@ impl OcrBackendRegistry {
         #[cfg(not(any(
             feature = "ocr",
             feature = "paddle-ocr",
-            all(feature = "liter-llm", not(target_os = "windows"))
+            all(feature = "liter-llm", not(target_os = "windows"), not(target_arch = "wasm32"))
         )))]
         let registry = Self {
             backends: AHashMap::new(),
@@ -95,7 +97,7 @@ impl OcrBackendRegistry {
             }
         }
 
-        #[cfg(all(feature = "liter-llm", not(target_os = "windows")))]
+        #[cfg(all(feature = "liter-llm", not(target_os = "windows"), not(target_arch = "wasm32")))]
         {
             use crate::llm::vlm_ocr::VlmOcrBackend;
             tracing::info!("Registering VLM OCR backend");
@@ -160,6 +162,7 @@ impl OcrBackendRegistry {
     /// # Returns
     ///
     /// The backend if found, or an error if not registered.
+    #[cfg(any(feature = "ocr", feature = "ocr-wasm"))]
     #[tracing::instrument(skip(self), fields(registered_backends = ?self.backends.keys().collect::<Vec<_>>()))]
     pub(crate) fn get(&self, name: &str) -> Result<Arc<dyn OcrBackend>> {
         // Normalize common aliases: "paddleocr" → "paddle-ocr"
@@ -227,17 +230,6 @@ impl OcrBackendRegistry {
         let names: Vec<_> = self.backends.keys().cloned().collect();
         for name in names {
             self.remove(&name)?;
-        }
-        Ok(())
-    }
-
-    /// Shutdown all backends and re-register the built-in defaults.
-    #[cfg(test)]
-    pub(crate) fn reset_to_defaults(&mut self) -> Result<()> {
-        self.shutdown_all()?;
-        let fresh = Self::new();
-        for (_name, backend) in fresh.backends {
-            let _ = self.register(backend);
         }
         Ok(())
     }

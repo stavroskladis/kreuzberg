@@ -4,8 +4,6 @@
 
 use crate::plugins::DocumentExtractor;
 use crate::types::{ErrorMetadata, ExtractionResult, Metadata};
-#[cfg(test)]
-use crate::utils::pool_sizing::{PoolSizeHint, estimate_pool_size};
 use crate::{KreuzbergError, Result};
 use std::borrow::Cow;
 use std::sync::Arc;
@@ -84,10 +82,4 @@ pub(crate) fn error_extraction_result(e: &KreuzbergError, elapsed_ms: Option<u64
         metadata,
         ..Default::default()
     }
-}
-
-#[cfg(test)]
-#[inline]
-pub(crate) fn get_pool_sizing_hint(file_size: u64, mime_type: &str) -> PoolSizeHint {
-    estimate_pool_size(file_size, mime_type)
 }

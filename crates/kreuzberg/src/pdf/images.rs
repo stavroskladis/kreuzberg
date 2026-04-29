@@ -1,5 +1,7 @@
+#[cfg(feature = "tokio-runtime")]
 use super::error::{PdfError, Result};
 use bytes::Bytes;
+#[cfg(feature = "tokio-runtime")]
 use lopdf::Document;
 use serde::{Deserialize, Serialize};
 
@@ -19,6 +21,7 @@ pub struct PdfImage {
     pub decoded_format: String,
 }
 
+#[cfg(feature = "tokio-runtime")]
 #[derive(Debug)]
 pub struct PdfImageExtractor {
     pub(crate) document: Document,
@@ -37,7 +40,7 @@ pub struct PdfImageExtractor {
 /// | `CCITTFaxDecode`| Pass through (bilevel fax — no full decode)                 | `"ccitt"`   |
 /// | JBIG2Decode    | Pass through                                                 | `"jbig2"`   |
 /// | unknown / none | Attempt format detection via magic bytes, else pass through  | detected or `"raw"` |
-#[cfg(feature = "pdf")]
+#[cfg(all(feature = "pdf", feature = "tokio-runtime"))]
 #[allow(clippy::too_many_arguments)]
 fn decode_image_data(
     raw: &[u8],
@@ -99,6 +102,7 @@ fn decode_image_data(
 }
 
 /// Attempt to detect image format from magic bytes.
+#[cfg(feature = "tokio-runtime")]
 fn detect_image_format(data: &[u8]) -> String {
     if data.starts_with(b"\xff\xd8\xff") {
         "jpeg".to_string()
@@ -124,7 +128,7 @@ fn detect_image_format(data: &[u8]) -> String {
 /// For Indexed (palette-based) color spaces, each pixel byte is a palette index.
 /// If `palette` is provided, indices are expanded to RGB (or the base color space)
 /// before PNG encoding. Otherwise, indices are treated as grayscale values.
-#[cfg(feature = "pdf")]
+#[cfg(all(feature = "pdf", feature = "tokio-runtime"))]
 fn decode_flate_to_png(
     raw: &[u8],
     color_space: Option<&str>,
@@ -293,7 +297,7 @@ fn decode_flate_to_png(
 /// index, and `lookup` is the palette data (inline string or stream reference).
 ///
 /// Returns `(palette_bytes, base_channels)` if extraction succeeds.
-#[cfg(feature = "pdf")]
+#[cfg(all(feature = "pdf", feature = "tokio-runtime"))]
 fn extract_indexed_palette(dict: &lopdf::Dictionary, document: &Document) -> Option<(Vec<u8>, u32)> {
     use lopdf::Object;
 
@@ -360,7 +364,7 @@ fn extract_indexed_palette(dict: &lopdf::Dictionary, document: &Document) -> Opt
 
 /// Extract raw palette bytes from the lookup element of an Indexed color space.
 /// The lookup can be an inline string/hex-string or a reference to a stream object.
-#[cfg(feature = "pdf")]
+#[cfg(all(feature = "pdf", feature = "tokio-runtime"))]
 fn extract_palette_data(lookup: &lopdf::Object, document: &Document) -> Option<Vec<u8>> {
     use lopdf::Object;
 
@@ -381,6 +385,16 @@ fn extract_palette_data(lookup: &lopdf::Object, document: &Document) -> Option<V
     }
 }
 
+/// Mutable accumulator passed through the recursive Form XObject traversal.
+#[cfg(feature = "tokio-runtime")]
+struct ImageCollectState<'a> {
+    img_index: usize,
+    out: &'a mut Vec<PdfImage>,
+    visited: std::collections::HashSet<lopdf::ObjectId>,
+    page_image_count: u32,
+}
+
+#[cfg(feature = "tokio-runtime")]
 impl PdfImageExtractor {
     pub(crate) fn new(pdf_bytes: &[u8]) -> Result<Self> {
         Self::new_with_password(pdf_bytes, None)
@@ -417,18 +431,13 @@ impl PdfImageExtractor {
                 Ok(r) => r,
                 Err(_) => continue,
             };
-            let mut img_index = 0usize;
-            let mut visited = std::collections::HashSet::new();
-            let mut page_image_count = 0u32;
-            self.collect_images_from_resources(
-                resources,
-                *page_num as usize,
-                &mut img_index,
-                &mut all_images,
-                0,
-                &mut visited,
-                &mut page_image_count,
-            );
+            let mut state = ImageCollectState {
+                img_index: 0,
+                out: &mut all_images,
+                visited: std::collections::HashSet::new(),
+                page_image_count: 0,
+            };
+            self.collect_images_from_resources(resources, *page_num as usize, &mut state, 0);
         }
 
         Ok(all_images)
@@ -450,11 +459,8 @@ impl PdfImageExtractor {
         &self,
         resources: &lopdf::Dictionary,
         page_number: usize,
-        img_index: &mut usize,
-        out: &mut Vec<PdfImage>,
+        state: &mut ImageCollectState,
         depth: usize,
-        visited: &mut std::collections::HashSet<lopdf::ObjectId>,
-        page_image_count: &mut u32,
     ) {
         // Guard against pathological or cyclic Form XObject chains.
         const MAX_FORM_DEPTH: usize = 8;
@@ -473,7 +479,10 @@ impl PdfImageExtractor {
         };
 
         for (_, xvalue) in xobject_dict.iter() {
-            if self.max_images_per_page.is_some_and(|cap| *page_image_count >= cap) {
+            if self
+                .max_images_per_page
+                .is_some_and(|cap| state.page_image_count >= cap)
+            {
                 tracing::warn!(
                     page_number,
                     cap = self.max_images_per_page.unwrap(),
@@ -490,14 +499,10 @@ impl PdfImageExtractor {
             // Skip XObjects already processed on this page — the same object can be
             // referenced from multiple Form parents (DAG), and processing it more than
             // once would corrupt the sequential image_index.
-            if !visited.insert(id) {
+            if !state.visited.insert(id) {
                 continue;
             }
-            let stream = match self
-                .document
-                .get_object(id)
-                .and_then(|o| o.as_stream().cloned())
-            {
+            let stream = match self.document.get_object(id).and_then(|o| o.as_stream().cloned()) {
                 Ok(s) => s,
                 Err(_) => continue,
             };
@@ -564,11 +569,11 @@ impl PdfImageExtractor {
                 #[cfg(not(feature = "pdf"))]
                 let (data, decoded_format) = (Bytes::from(stream.content.clone()), "raw".to_string());
 
-                *page_image_count += 1;
-                *img_index += 1;
-                out.push(PdfImage {
+                state.page_image_count += 1;
+                state.img_index += 1;
+                state.out.push(PdfImage {
                     page_number,
-                    image_index: *img_index,
+                    image_index: state.img_index,
                     width,
                     height,
                     color_space,
@@ -580,69 +585,16 @@ impl PdfImageExtractor {
             } else if subtype == b"Form" {
                 // Recurse into the Form XObject's own resource dictionary.
                 if let Ok(form_resources) = dict.get(b"Resources").and_then(|r| r.as_dict()) {
-                    self.collect_images_from_resources(
-                        form_resources,
-                        page_number,
-                        img_index,
-                        out,
-                        depth + 1,
-                        visited,
-                        page_image_count,
-                    );
+                    self.collect_images_from_resources(form_resources, page_number, state, depth + 1);
                 }
             }
         }
     }
-
-    pub(crate) fn extract_images_from_page(&self, page_number: u32) -> Result<Vec<PdfImage>> {
-        let pages = self.document.get_pages();
-        let page_id = pages
-            .get(&page_number)
-            .ok_or(PdfError::PageNotFound(page_number as usize))?;
-
-        let page_dict = match self.document.get_dictionary(*page_id) {
-            Ok(d) => d,
-            Err(_) => return Ok(vec![]),
-        };
-        let resources = match self.document.get_dict_in_dict(page_dict, b"Resources") {
-            Ok(r) => r,
-            Err(_) => return Ok(vec![]),
-        };
-
-        let mut page_images = Vec::new();
-        let mut img_index = 0usize;
-        let mut visited = std::collections::HashSet::new();
-        let mut page_image_count = 0u32;
-        self.collect_images_from_resources(
-            resources,
-            page_number as usize,
-            &mut img_index,
-            &mut page_images,
-            0,
-            &mut visited,
-            &mut page_image_count,
-        );
-        Ok(page_images)
-    }
-
-    pub(crate) fn get_image_count(&self) -> Result<usize> {
-        let images = self.extract_images()?;
-        Ok(images.len())
-    }
 }
 
+#[cfg(feature = "tokio-runtime")]
 pub(crate) fn extract_images_from_pdf(pdf_bytes: &[u8], max_images_per_page: Option<u32>) -> Result<Vec<PdfImage>> {
     let mut extractor = PdfImageExtractor::new(pdf_bytes)?;
-    extractor.max_images_per_page = max_images_per_page;
-    extractor.extract_images()
-}
-
-pub(crate) fn extract_images_from_pdf_with_password(
-    pdf_bytes: &[u8],
-    password: &str,
-    max_images_per_page: Option<u32>,
-) -> Result<Vec<PdfImage>> {
-    let mut extractor = PdfImageExtractor::new_with_password(pdf_bytes, Some(password))?;
     extractor.max_images_per_page = max_images_per_page;
     extractor.extract_images()
 }
@@ -652,7 +604,7 @@ pub(crate) fn extract_images_from_pdf_with_password(
 /// chains internally.
 ///
 /// Returns the number of images successfully re-extracted.
-#[cfg(feature = "pdf")]
+#[cfg(all(feature = "pdf", feature = "tokio-runtime"))]
 pub(crate) fn reextract_raw_images_via_pdfium(pdf_bytes: &[u8], images: &mut [PdfImage]) -> Result<u32> {
     use pdfium_render::prelude::*;
 
@@ -722,7 +674,7 @@ pub(crate) fn reextract_raw_images_via_pdfium(pdf_bytes: &[u8], images: &mut [Pd
 /// image at `target_index` (1-based global counter across the page).
 ///
 /// Returns `true` if the target image was found and processed.
-#[cfg(feature = "pdf")]
+#[cfg(all(feature = "pdf", feature = "tokio-runtime"))]
 fn collect_image_from_pdfium_obj(
     obj: &pdfium_render::prelude::PdfPageObject<'_>,
     document: &pdfium_render::prelude::PdfDocument<'_>,
@@ -782,7 +734,7 @@ fn collect_image_from_pdfium_obj(
     false
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "tokio-runtime"))]
 mod tests {
     use super::*;
 

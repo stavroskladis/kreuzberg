@@ -6,8 +6,10 @@
 //! and is useful when a provider-hosted model is preferred or when ONNX
 //! Runtime is not available.
 
+#[cfg(feature = "embeddings")]
 use liter_llm::{EmbeddingInput, EmbeddingRequest, LlmClient};
 
+#[cfg(feature = "embeddings")]
 use crate::core::config::LlmConfig;
 
 /// Generate embeddings using a provider-hosted model via liter-llm.
@@ -29,6 +31,7 @@ use crate::core::config::LlmConfig;
 ///
 /// - `KreuzbergError::Embedding` if the API call fails or returns unexpected data
 /// - `KreuzbergError::MissingDependency` if the liter-llm client cannot be created
+#[cfg(feature = "embeddings")]
 pub(crate) async fn embed_via_llm<T: AsRef<str>>(
     texts: &[T],
     config: &LlmConfig,
@@ -82,6 +85,7 @@ pub(crate) async fn embed_via_llm<T: AsRef<str>>(
 }
 
 /// L2-normalize an embedding vector in-place.
+#[cfg(any(feature = "embeddings", test))]
 fn normalize_l2(embedding: &mut [f32]) {
     let magnitude: f32 = embedding.iter().map(|x| x * x).sum::<f32>().sqrt();
     if magnitude > f32::EPSILON {

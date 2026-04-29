@@ -71,6 +71,7 @@ pub(crate) fn from_utf8(bytes: &[u8]) -> Result<&str, std::str::Utf8Error> {
 ///
 /// When enabled, SIMD validation significantly reduces the time spent on validation,
 /// especially for large text documents.
+#[cfg(feature = "quality")]
 #[inline]
 pub(crate) fn string_from_utf8(bytes: Vec<u8>) -> Result<String, std::string::FromUtf8Error> {
     #[cfg(feature = "simd-utf8")]

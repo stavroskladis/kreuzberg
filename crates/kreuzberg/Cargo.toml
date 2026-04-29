@@ -71,7 +71,7 @@ xml = ["dep:quick-xml", "dep:roxmltree"]
 archives = ["dep:zip", "dep:tar", "dep:sevenz-rust2", "dep:flate2"]
 mdx = []
 
-liter-llm = ["dep:liter-llm", "dep:minijinja", "tokio-runtime"]
+liter-llm = ["dep:liter-llm", "dep:minijinja"]
 
 tree-sitter = ["dep:tree-sitter-language-pack"]
 tree-sitter-wasm = ["tree-sitter"]
@@ -359,7 +359,7 @@ kreuzberg-paddle-ocr = { path = "../kreuzberg-paddle-ocr", version = "4.10.0-rc.
 # liter-llm pulls reqwest/rustls -> aws-lc-rs -> aws-lc-sys. aws-lc-sys 0.40 fails to build on
 # Windows MSVC (stdalign feature detection treats `-WX` warnings as errors). Until upstream ships
 # a fix, restrict liter-llm to non-Windows targets so Windows FFI/CLI builds don't pull aws-lc-sys.
-liter-llm = { workspace = true, optional = true }
+liter-llm = { workspace = true, optional = true, features = ["native-http"] }
 pprof = { version = "0.15.0", features = ["flamegraph"], optional = true }
 # Force ureq (transitive dep via hf-hub) to use rustls on non-Windows
 ureq = { version = "3.3", default-features = false, features = ["rustls", "json"], optional = true }
@@ -384,6 +384,7 @@ optional = true
 # Override getrandom to enable js feature for WASM targets
 # This is needed because ring/rustls (via ureq) depend on getrandom without js feature
 getrandom = { workspace = true }
+liter-llm = { workspace = true, optional = true, features = ["wasm-http"] }
 tree-sitter-language-pack = { workspace = true, default-features = false, features = ["serde"], optional = true }
 wasm-bindgen-rayon = { version = "1.3", optional = true }
 

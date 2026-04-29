@@ -27,11 +27,6 @@ impl BBox {
         self.width() * self.height()
     }
 
-    #[cfg(test)]
-    pub(crate) fn center(&self) -> (f32, f32) {
-        ((self.x1 + self.x2) / 2.0, (self.y1 + self.y2) / 2.0)
-    }
-
     /// Area of intersection with another bounding box.
     pub(crate) fn intersection_area(&self, other: &BBox) -> f32 {
         let x1 = self.x1.max(other.x1);
@@ -166,21 +161,6 @@ impl LayoutClass {
         }
     }
 
-    /// Map from PubLayNet class ID (0-4) to LayoutClass.
-    ///
-    /// PubLayNet classes: Text, Title, List, Table, Figure.
-    #[cfg(test)]
-    pub(crate) fn from_publaynet_id(id: i64) -> Option<Self> {
-        match id {
-            0 => Some(Self::Text),
-            1 => Some(Self::Title),
-            2 => Some(Self::ListItem),
-            3 => Some(Self::Table),
-            4 => Some(Self::Picture),
-            _ => None,
-        }
-    }
-
     pub(crate) fn name(&self) -> &'static str {
         match self {
             Self::Caption => "caption",
@@ -201,15 +181,6 @@ impl LayoutClass {
             Self::Form => "form",
             Self::KeyValueRegion => "key_value_region",
         }
-    }
-
-    /// Whether this class is a "wrapper" type that can contain child elements.
-    #[cfg(test)]
-    pub(crate) fn is_wrapper(&self) -> bool {
-        matches!(
-            self,
-            Self::Form | Self::KeyValueRegion | Self::Table | Self::DocumentIndex
-        )
     }
 }
 
