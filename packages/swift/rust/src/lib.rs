@@ -1728,6 +1728,7 @@ mod ffi {
         fn table_count(&self) -> Option<usize>;
         fn hidden(&self) -> Option<bool>;
         fn is_blank(&self) -> Option<bool>;
+        fn has_vector_graphics(&self) -> bool;
     }
 
     extern "Rust" {
@@ -8448,6 +8449,12 @@ impl PageInfo {
                 .ok()
                 .and_then(|j| ::serde_json::from_value(j).ok())
         })
+    }
+    pub fn has_vector_graphics(&self) -> bool {
+        ::serde_json::to_value(&self.0.has_vector_graphics)
+            .ok()
+            .and_then(|j| ::serde_json::from_value(j).ok())
+            .unwrap_or_default()
     }
 }
 

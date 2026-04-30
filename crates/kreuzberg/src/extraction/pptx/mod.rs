@@ -284,6 +284,7 @@ fn extract_pptx_from_container<R: std::io::Read + std::io::Seek>(
                     table_count: None,
                     hidden: None,
                     is_blank: pc.is_blank,
+                    has_vector_graphics: false,
                 })
                 .collect()
         }),

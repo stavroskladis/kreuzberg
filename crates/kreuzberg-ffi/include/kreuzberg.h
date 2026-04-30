@@ -8129,6 +8129,13 @@ int32_t kreuzberg_page_info_hidden(const KREUZBERGPageInfo *ptr);
 int32_t kreuzberg_page_info_is_blank(const KREUZBERGPageInfo *ptr);
 
 /**
+ * Get the `has_vector_graphics` field from a `PageInfo`.
+ * # Safety
+ * Pointer must be a valid handle returned by this library.
+ */
+int32_t kreuzberg_page_info_has_vector_graphics(const KREUZBERGPageInfo *ptr);
+
+/**
  * Create a `PageContent` from a JSON string. Returns null on failure.
  * # Safety
  * JSON string must be valid UTF-8 and null-terminated.

@@ -238,6 +238,7 @@ fn build_page_structure(doc: &mut OxideDocument, boundaries: &[PageBoundary], co
             table_count: None,
             hidden: None,
             is_blank,
+            has_vector_graphics: false,
         });
     }
 

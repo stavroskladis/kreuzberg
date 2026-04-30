@@ -173,13 +173,38 @@ fn extract_pdf_specific_metadata(document: &PdfDocument<'_>) -> Result<PdfMetada
     Ok(metadata)
 }
 
+/// Detect whether a page contains non-trivial vector graphics.
+///
+/// Counts path objects on the page and applies a heuristic threshold:
+/// - If path count > threshold, returns `true`
+/// - Otherwise returns `false`
+///
+/// The threshold is set to detect pages with charts, diagrams, and complex shapes
+/// while avoiding false positives from simple decorative lines.
+fn detect_vector_graphics_on_page(page: &PdfPage<'_>) -> bool {
+    const VECTOR_GRAPHICS_THRESHOLD: usize = 8;
+
+    let mut path_count = 0;
+
+    for obj in page.objects().iter() {
+        if let PdfPageObject::Path(_) = obj {
+            path_count += 1;
+            if path_count > VECTOR_GRAPHICS_THRESHOLD {
+                return true;
+            }
+        }
+    }
+
+    false
+}
+
 /// Build a PageStructure from a document and page boundaries.
 ///
 /// Constructs a complete PageStructure including:
 /// - Total page count
 /// - Unit type (Page)
 /// - Character offset boundaries for each page
-/// - Optional per-page metadata with dimensions
+/// - Optional per-page metadata with dimensions and vector graphics flags
 ///
 /// # Validation
 ///
@@ -223,6 +248,13 @@ fn build_page_structure(
             None
         };
 
+        let has_vector_graphics = document
+            .pages()
+            .get(index as i32)
+            .ok()
+            .map(|page| detect_vector_graphics_on_page(&page))
+            .unwrap_or(false);
+
         pages.push(PageInfo {
             number: page_number,
             title: None,
@@ -231,6 +263,7 @@ fn build_page_structure(
             table_count: None,
             hidden: None,
             is_blank,
+            has_vector_graphics,
         });
     }
 
@@ -481,5 +514,91 @@ mod tests {
             boundaries_count, page_count
         );
         assert_eq!(error_msg, "Boundary count 3 doesn't match page count 5");
+    }
+
+    #[test]
+    fn test_page_info_default_has_vector_graphics() {
+        let page_info = PageInfo {
+            number: 1,
+            title: None,
+            dimensions: None,
+            image_count: None,
+            table_count: None,
+            hidden: None,
+            is_blank: None,
+            has_vector_graphics: false,
+        };
+
+        assert!(!page_info.has_vector_graphics);
+    }
+
+    #[test]
+    fn test_page_info_with_vector_graphics() {
+        let page_info = PageInfo {
+            number: 1,
+            title: Some("Chart Page".to_string()),
+            dimensions: Some((612.0, 792.0)),
+            image_count: None,
+            table_count: None,
+            hidden: None,
+            is_blank: Some(false),
+            has_vector_graphics: true,
+        };
+
+        assert!(page_info.has_vector_graphics);
+    }
+
+    #[test]
+    fn test_page_info_serialization_default_false() {
+        // When has_vector_graphics is false (default), it should be skipped in serialization
+        let page_info = PageInfo {
+            number: 1,
+            title: None,
+            dimensions: None,
+            image_count: None,
+            table_count: None,
+            hidden: None,
+            is_blank: None,
+            has_vector_graphics: false,
+        };
+
+        let json = serde_json::to_value(&page_info).expect("serialization failed");
+        // The field should not be present when false
+        assert!(
+            !json
+                .as_object()
+                .map(|o| o.contains_key("has_vector_graphics"))
+                .unwrap_or(false)
+        );
+    }
+
+    #[test]
+    fn test_page_info_serialization_true() {
+        // When has_vector_graphics is true, it should be present in serialization
+        let page_info = PageInfo {
+            number: 1,
+            title: None,
+            dimensions: None,
+            image_count: None,
+            table_count: None,
+            hidden: None,
+            is_blank: None,
+            has_vector_graphics: true,
+        };
+
+        let json = serde_json::to_value(&page_info).expect("serialization failed");
+        assert_eq!(
+            json.get("has_vector_graphics"),
+            Some(&serde_json::json!(true)),
+            "has_vector_graphics should be true"
+        );
+    }
+
+    #[test]
+    fn test_page_info_roundtrip_deserialization() {
+        // Test that default false is correctly deserialized even when not present
+        let json_str = r#"{"number": 1}"#;
+        let page_info: PageInfo = serde_json::from_str(json_str).expect("deserialization failed");
+        assert!(!page_info.has_vector_graphics, "default should be false");
     }
 }

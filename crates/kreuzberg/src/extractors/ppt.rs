@@ -195,6 +195,7 @@ impl DocumentExtractor for PptExtractor {
                             table_count: None,
                             hidden: None,
                             is_blank: None,
+                            has_vector_graphics: false,
                         })
                         .collect(),
                 ),

@@ -103,6 +103,19 @@ pub struct PageInfo {
     /// in scanned documents or PDFs with blank separator pages.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_blank: Option<bool>,
+
+    /// Whether this page contains non-trivial vector graphics (paths, shapes, curves)
+    ///
+    /// Indicates the presence of vector-drawn content such as charts, diagrams,
+    /// or geometric shapes (e.g., from Adobe InDesign, LaTeX TikZ). These are
+    /// invisible to `ExtractionResult.images` since they are not embedded as raster
+    /// XObjects. Set to `true` when path count exceeds a heuristic threshold,
+    /// signaling that downstream consumers may want to rasterize the page to
+    /// capture this content.
+    ///
+    /// Only populated for PDFs; `None` for other document types.
+    #[serde(default, skip_serializing_if = "is_default_bool")]
+    pub has_vector_graphics: bool,
 }
 
 /// Content for a single page/slide.
@@ -238,4 +251,9 @@ pub struct HierarchicalBlock {
     /// Contains coordinates as (left, top, right, bottom) in PDF units.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bbox: Option<(f32, f32, f32, f32)>,
+}
+
+/// Helper for skipping default bool values in serialization.
+fn is_default_bool(v: &bool) -> bool {
+    !*v
 }

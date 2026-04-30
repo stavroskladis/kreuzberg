@@ -1174,6 +1174,7 @@ impl DocumentExtractor for DocxExtractor {
                             table_count: None,
                             hidden: None,
                             is_blank: None,
+                            has_vector_graphics: false,
                         })
                         .collect(),
                 ),

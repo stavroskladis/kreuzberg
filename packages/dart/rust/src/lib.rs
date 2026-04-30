@@ -1162,6 +1162,7 @@ pub struct PageInfo {
     pub table_count: Option<i64>,
     pub hidden: Option<bool>,
     pub is_blank: Option<bool>,
+    pub has_vector_graphics: bool,
 }
 
 #[frb(mirror(PageContent))]
